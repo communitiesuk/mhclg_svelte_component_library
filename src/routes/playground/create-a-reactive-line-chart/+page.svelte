@@ -1,7 +1,37 @@
 <script>
   let { data } = $props();
 
-  $inspect(data);
+  $inspect(data.jsonData.chartData);
+
+  data.jsonData.chartData = data.jsonData.chartData.map((el) => ({
+    ...el,
+    yearInt: parseFloat(el.Year.slice(0, 4)),
+  }));
+
+  console.log(data.jsonData.chartData);
+
+  let metrics = [
+    ...new Set(
+      data.jsonData.chartData.map((d) => {
+        return d.Measure;
+      })
+    ),
+  ];
+  let areas = [...new Set(data.jsonData.chartData.map((el) => el.AreaCode))];
+
+  console.log(areas);
+
+  let manipulatedData = metrics.map((metric) => ({
+    metric: metric,
+    lines: areas.map((area) => ({
+      area: area,
+      data: data.jsonData.chartData.filter(
+        (el) => el.AreaCode === area && el.Measure === metric
+      ),
+    })),
+  }));
+
+  console.log(manipulatedData);
 </script>
 
 <div class="chart-container">
@@ -24,6 +54,10 @@
     </ul>
   </figure>
 </div>
+
+{#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
+  <p>An {item.name} is {item.colour}</p>
+{/each}
 
 <style>
   .chart-container {

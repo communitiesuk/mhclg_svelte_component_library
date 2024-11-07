@@ -1,9 +1,42 @@
 <script>
   let { data } = $props();
 
-  $inspect(data);
-</script>
+  $inspect(data.jsonData.chartData);
 
+  data.jsonData.chartData = data.jsonData.chartData.map((el) => ({
+    ...el,
+    yearInt: parseFloat(el.Year.slice(0, 4)),
+  }));
+
+  console.log(data.jsonData.chartData);
+
+  let metrics = [
+    ...new Set(
+      data.jsonData.chartData.map((d) => {
+        return d.Measure;
+      })
+    ),
+  ];
+
+  let areas = [...new Set(data.jsonData.chartData.map((el) => el.AreaCode))];
+
+  console.log(areas);
+
+  let manipulatedData = metrics.map((metric) => ({
+    metric: metric,
+    lines: areas.map((area) => ({
+      area: area,
+      data: data.jsonData.chartData.filter(
+        (el) => el.AreaCode === area && el.Measure === metric
+      ),
+    })),
+  }));
+
+  console.log(manipulatedData);
+
+
+</script>
+ 
 <div class="chart-container">
   <h5>We are going to build a reactive line chart</h5>
 
@@ -23,6 +56,27 @@
       </li>
     </ul>
   </figure>
+</div>
+
+<div class="radio-container">
+  
+  <label>Choose a metric:</label>
+  
+  <div>
+  <input type="radio" id="recycle-rate" name="metric-selection" value="Household waste recycling rate" checked />
+      <label for="recycle-rate">Household recycling rate</label>
+  </div>
+  
+  <div>
+  <input type="radio" id="contamination-rate" name="metric-selection" value="Recycling contamination rate" />
+      <label for="contamination-rate">Recycling contamination rate</label>
+  </div>
+  
+    <div>
+   <input type="radio" id="residual-household-waste" name="metric-selection" value="Residual household waste" />
+      <label for="residual-household-waste">Residual household waste</label>
+  </div>
+ 
 </div>
 
 <style>

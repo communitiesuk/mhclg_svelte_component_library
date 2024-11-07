@@ -1,0 +1,50 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body {
+	font-size: 1.2rem;
+	line-height: 1.5rem;
+}
+
+p {
+	margin: 1.5rem 0px;
+	padding: 0px;
+}
+
+h1 {
+	font-size: 2em;
+	font-weight: bold;
+}
+
+h2 {
+	font-size: 1.8em;
+	font-weight: bold;
+}
+
+h3 {
+	font-size: 1.6em;
+	font-weight: 600;
+}
+
+h4 {
+	font-size: 1.4em;
+	font-weight: 600;
+}
+
+h5 {
+	font-size: 1.2em;
+	font-weight: 600;
+}
+
+a {
+	color:blue;
+	text-decoration: underline;
+	text-underline-offset: 4px;
+}
+
+@layer components {
+    .g-top-level-container {
+        @apply w-full lg:w-3/4 max-w-3xl mx-auto my-10 px-5;
+    }
+}

@@ -1,112 +1,98 @@
 {
-    // Enable Svelte language support and plugins
-    "svelte.plugin.typescript.enable": true,
-    "svelte.plugin.css.enable": true,
-    "svelte.plugin.html.enable": true,
-    "svelte.plugin.javascript.enable": true,
-  
-    // Format on save for Svelte files
-    "editor.formatOnSave": true,
-    "[svelte]": {
-      "editor.defaultFormatter": "svelte.svelte-vscode"
+  // Enable Svelte language support and plugins
+  "svelte.plugin.typescript.enable": true,
+  "svelte.plugin.css.enable": true,
+  "svelte.plugin.html.enable": true,
+  "svelte.plugin.javascript.enable": true,
+  // Format on save for Svelte files
+  "editor.formatOnSave": true,
+  "[svelte]": {
+    "editor.defaultFormatter": "svelte.svelte-vscode"
+  },
+  // Prettier settings (for consistent formatting)
+  "prettier.enable": true,
+  "prettier.singleQuote": true, // Use single quotes
+  "prettier.semi": true, // Use semicolons
+  "prettier.trailingComma": "es5", // Use trailing commas where valid in ES5 (objects, arrays, etc.)
+  "prettier.svelteSortOrder": "options-scripts-markup-styles",
+  "prettier.svelteStrictMode": false, // Relax strict mode to avoid conflicts
+  "prettier.svelteBracketNewLine": true, // Controls if closing brackets should be on a new line
+  // Enable ESLint for linting (if ESLint is configured)
+  "eslint.validate": [
+    "javascript",
+    "svelte"
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit",
+    "source.organizeImports": "explicit"
+  },
+  // Optional: TypeScript configuration if using TypeScript in Svelte files
+  "typescript.svelte.plugin.enable": true,
+  "typescript.suggest.autoImports": true,
+  "javascript.suggest.autoImports": true,
+  // Disable conflicting formatters
+  "[javascript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode" // Use Prettier for JavaScript files
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode" // Use Prettier for TypeScript files
+  },
+  "editor.wordWrap": "on",
+  "material-icon-theme.files.color": "#43a047",
+  "material-icon-theme.folders.theme": "specific",
+  "material-icon-theme.hidesExplorerArrows": false,
+  "material-icon-theme.opacity": 0.5,
+  "material-icon-theme.saturation": 1,
+  "workbench.tree.indent": 16,
+  // GitLens: Enable/Disable
+  "gitlens.enabled": true,
+  // GitLens: Show blame annotations inline
+  "gitlens.currentLine.enabled": true, // Show blame info on the current line
+  "gitlens.currentLine.dateFormat": "MMM D, YYYY h:mma", // Format for displaying dates
+  // GitLens: Blame Annotations (on file gutters)
+  "gitlens.codeLens.enabled": true, // Enables code lens in the file
+  "gitlens.codeLens.authors.enabled": true, // Shows authors of code in CodeLens
+  "gitlens.codeLens.recentChange.enabled": true, // Shows recent changes in CodeLens
+  // GitLens: Show commit details in sidebar hover
+  "gitlens.hovers.enabled": true, // Enable hovers for commit details
+  "gitlens.hovers.currentLine.over": "line", // Shows hovers on the line blame annotation
+  "gitlens.hovers.details": true, // Shows detailed commit info on hover
+  "gitlens.hovers.annotations.enabled": true, // Enables hovering over annotation for details
+  // GitLens: Customize sidebar (Repositories, Commits, etc.)
+  "gitlens.views.repositories.files.layout": "tree", // Use tree layout for repositories
+  "gitlens.views.commits.files.layout": "list", // Use list layout for commit history
+  // GitLens: Customize status bar
+  "gitlens.statusBar.enabled": true, // Enables GitLens status bar
+  "gitlens.statusBar.alignment": "right", // Aligns GitLens status bar on the right
+  "gitlens.statusBar.command": "gitlens.showQuickFileHistory", // Command to run on click
+  // GitLens: Default repository and branch settings
+  "gitlens.defaultDateFormat": null, // Uses default format for dates
+  "gitlens.defaultTimeFormat": null, // Uses default format for times
+  // GitLens: Search & Compare options
+  "gitlens.searchCommits.limit": 100, // Limits commit search results
+  "gitlens.defaultGravatarsStyle": "mp",
+  "editor.colorDecoratorsActivatedOn": "hover",
+  "editor.defaultColorDecorators": true,
+  "better-comments.tags": [
+    {
+      "tag": "&&",
+      "color": "#98C379"
     },
-  
-    // Prettier settings (for consistent formatting)
-    "prettier.enable": true,
-    "prettier.singleQuote": true,           // Use single quotes
-    "prettier.semi": true,                  // Use semicolons
-    "prettier.trailingComma": "es5",        // Use trailing commas where valid in ES5 (objects, arrays, etc.)
-    "prettier.svelteSortOrder": "options-scripts-markup-styles",
-    "prettier.svelteStrictMode": false,     // Relax strict mode to avoid conflicts
-    "prettier.svelteBracketNewLine": true,  // Controls if closing brackets should be on a new line
-  
-    // Enable ESLint for linting (if ESLint is configured)
-    "eslint.validate": ["javascript", "svelte"],
-    "editor.codeActionsOnSave": {
-      "source.fixAll": "explicit",
-      "source.organizeImports": "explicit"
+    {
+      "tag": "?",
+      "color": "#3498DB",
     },
-  
-    // Optional: TypeScript configuration if using TypeScript in Svelte files
-    "typescript.svelte.plugin.enable": true,
-    "typescript.suggest.autoImports": true,
-    "javascript.suggest.autoImports": true,
-  
-    // Disable conflicting formatters
-    "[javascript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode" // Use Prettier for JavaScript files
+    {
+      "tag": "!",
+      "color": "#FF2D00",
     },
-    "[typescript]": {
-      "editor.defaultFormatter": "esbenp.prettier-vscode" // Use Prettier for TypeScript files
+    {
+      "tag": "todo",
+      "color": "#FF8C00",
     },
-    "editor.wordWrap": "on",
-    "material-icon-theme.files.color": "#43a047",
-    "material-icon-theme.folders.theme": "specific",
-    "material-icon-theme.hidesExplorerArrows": false,
-    "material-icon-theme.opacity": 0.5,
-    "material-icon-theme.saturation": 1,
-    "workbench.tree.indent": 16,
-    
-    // GitLens: Enable/Disable
-    "gitlens.enabled": true,
-
-    // GitLens: Show blame annotations inline
-    "gitlens.currentLine.enabled": true,            // Show blame info on the current line
-    "gitlens.currentLine.dateFormat": "MMM D, YYYY h:mma",  // Format for displaying dates
-
-    // GitLens: Blame Annotations (on file gutters)
-    "gitlens.codeLens.enabled": true,               // Enables code lens in the file
-    "gitlens.codeLens.authors.enabled": true,       // Shows authors of code in CodeLens
-    "gitlens.codeLens.recentChange.enabled": true,  // Shows recent changes in CodeLens
-
-    // GitLens: Show commit details in sidebar hover
-    "gitlens.hovers.enabled": true,                 // Enable hovers for commit details
-    "gitlens.hovers.currentLine.over": "line",      // Shows hovers on the line blame annotation
-    "gitlens.hovers.details": true,                 // Shows detailed commit info on hover
-    "gitlens.hovers.annotations.enabled": true,     // Enables hovering over annotation for details
-
-    // GitLens: Customize sidebar (Repositories, Commits, etc.)
-    "gitlens.views.repositories.files.layout": "tree",      // Use tree layout for repositories
-    "gitlens.views.commits.files.layout": "list",           // Use list layout for commit history
-
-    // GitLens: Customize status bar
-    "gitlens.statusBar.enabled": true,                      // Enables GitLens status bar
-    "gitlens.statusBar.alignment": "right",                 // Aligns GitLens status bar on the right
-    "gitlens.statusBar.command": "gitlens.showQuickFileHistory", // Command to run on click
-
-    // GitLens: Default repository and branch settings
-    "gitlens.defaultDateFormat": null,                       // Uses default format for dates
-    "gitlens.defaultTimeFormat": null,                       // Uses default format for times
-
-    // GitLens: Search & Compare options
-    "gitlens.searchCommits.limit": 100,                     // Limits commit search results
-    "gitlens.defaultGravatarsStyle": "mp",
-    "editor.colorDecoratorsActivatedOn": "hover",
-    "editor.defaultColorDecorators": true,
-    "editor.fontFamily": "NotoSans",
-
-    "better-comments.tags": [
-      {
-        "tag": "&&",
-        "color": "#98C379"
-      },
-      {
-        "tag": "?",
-        "color": "#3498DB",
-      },
-      {
-        "tag": "!",
-        "color": "#FF2D00",
-      },
-      {
-        "tag": "todo",
-        "color": "#FF8C00",
-      },
-      {
-        "tag": "<>",
-        "color": "#e833c4",
-      },
-      
-    ]
-  }
-  
+    {
+      "tag": "<>",
+      "color": "#e833c4",
+    },
+  ]
+}

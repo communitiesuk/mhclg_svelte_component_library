@@ -59,6 +59,23 @@
   <p>An {item.name} is {item.colour}</p>
 {/each}
 
+<div class="radio-container">
+  <label>Choose a metric:</label>
+
+  {#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
+    <div>
+      <input
+        type="radio"
+        id="recycle-rate"
+        name="metric-selection"
+        value="Household waste recycling rate"
+        checked
+      />
+      <label for="recycle-rate">{item.name}</label>
+    </div>
+  {/each}
+</div>
+
 <style>
   .chart-container {
     margin: 0px auto;
@@ -82,5 +99,18 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+  }
+
+  label {
+    margin-right: 5px;
+  }
+
+  .radio-container {
+    padding: 10px;
+    border-color: #cc7400;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
   }
 </style>

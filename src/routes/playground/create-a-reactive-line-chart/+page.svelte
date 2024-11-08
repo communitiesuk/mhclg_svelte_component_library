@@ -32,6 +32,16 @@
   }));
 
   console.log(manipulatedData);
+
+  let selectedMetric = $state();
+  let createChart = $derived(
+    {
+      'Household waste recycling rate': 'Yes - lets make a chart for recycling',
+    }[selectedMetric]
+  );
+
+  $inspect(selectedMetric);
+  $inspect(createChart);
 </script>
 
 <div class="chart-container">
@@ -55,14 +65,62 @@
   </figure>
 </div>
 
-{#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
+<!-- {#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
   <p>An {item.name} is {item.colour}</p>
-{/each}
+{/each} -->
 
-<div class="radio-container">
+<div class="radio-container mt-10">
   <label>Choose a metric:</label>
 
-  {#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
+  {#each metrics as metric}
+    <div>
+      <input
+        bind:group={selectedMetric}
+        type="radio"
+        id={metric.toLowerCase().replaceAll(' ', '_')}
+        name="metric-selection"
+        value={metric}
+        checked
+      />
+      <label for={metric.toLowerCase().replaceAll(' ', '_')}>{metric}</label>
+    </div>
+  {/each}
+
+  <div>
+    <p>The chart I am going to make will visualise {selectedMetric}</p>
+
+    {#if selectedMetric}
+      <svg width="600" height="600">
+        <line
+          x1={100}
+          x2={100}
+          y1={300}
+          y2={100}
+          stroke={{
+            'Household waste recycling rate': 'blue',
+            'Recycling contamination rate': 'red',
+          }[selectedMetric]}
+          stroke-width="2px"
+        ></line>
+      </svg>
+    {/if}
+
+    <p>----</p>
+
+    {#if selectedMetric === 'Household waste recycling rate'}
+      <p>
+        The chart I am going to make will visualise household recycling rate
+      </p>
+    {:else if selectedMetric === 'Recycling contamination rate'}
+      <p>The chart I am going to make will visualise contamination rates</p>
+    {:else if selectedMetric === 'Residual household waste'}
+      <p>
+        The chart I am going to make will visualise household recycling rate
+      </p>
+    {/if}
+  </div>
+
+  <!-- {#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
     <div>
       <input
         type="radio"
@@ -73,7 +131,7 @@
       />
       <label for="recycle-rate">{item.name}</label>
     </div>
-  {/each}
+  {/each} -->
 </div>
 
 <style>

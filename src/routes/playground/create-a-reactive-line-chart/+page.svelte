@@ -1,22 +1,22 @@
 <script>
   let { data } = $props();
 
- $inspect(data.jsonData.chartData);
+  $inspect(data.jsonData.chartData);
 
   data.jsonData.chartData = data.jsonData.chartData.map((el) => ({
     ...el,
     yearInt: parseFloat(el.Year.slice(0, 4)),
-    }));
+  }));
 
-console.log(data.jsonData.chartData);
+  console.log(data.jsonData.chartData);
 
-let metrics = [
-  ...new Set(
-    data.jsonData.chartData.map((d) => {
-      return d.Measure
-    })
-  ),
-];
+  let metrics = [
+    ...new Set(
+      data.jsonData.chartData.map((d) => {
+        return d.Measure;
+      })
+    ),
+  ];
 let areas = [...new Set(data.jsonData.chartData.map((el) => el.AreaCode))];
 
 console.log (areas);
@@ -29,48 +29,19 @@ console.log (areas);
 
 console.log (manipulateData);
 
-let areasNames = [
-  ...new Set(data.jsonData.chartData.map((el) => el.AreaNmae)),
-  ];
-  let metricNames = [
-   ...new Set(data.jsonData.chartData.map((el) => el.Measure)), 
-  ];
-let years = [...new Set(data.jsonData.chartData.map((el) => el.yearInt))];
+  let selectedMetric = $state();
+  let createChart = $derived(
+    {
+      'Household waste recycling rate': 'Yes -  lets make a chart for recycling',
+    }[selectedMetric]
+  );
 
-let selectedOption  = $state();
-$inspect(selectedOption);
+  $inspect(selectedMetric);
+  $inspect(createChart);
 </script>
 
- <div class="button-container">
- <p>Area</p>
-<select>
-{#each areasNames as area}
-<option value={area}>{area}</option>
-{/each}
-</select>
-
-<p>Metric</p>
-<form>
-{#each metricNames as option}
-<input type="radio" name="metrics-select" bind:group={selectedOption} />
-<label>
-{option}
-</label>
-<br />
-{/each}
-</form>
-<p>{selectedOption}</p>
-
-</div>
-
-
-
-
-
-<!-- </script> -->
-
 <div class="chart-container">
-  <h5>We are going to build a reactive line chart</h5>/
+  <h5>We are going to build a reactive line chart</h5>
 
   <figure>
     <figcaption>Steps:</figcaption>
@@ -90,34 +61,74 @@ $inspect(selectedOption);
   </figure>
 </div>
 
-<!--LABEL plus Rdio buttons -->
- <!--
-<div class="radio-container">
-  
+<!-- {#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
+  <p>An {item.name} is {item.colour}</p>
+{/each} -->
+
+<div class="radio-container mt-10">
   <label>Choose a metric:</label>
-  
- 
-  <div>
-  <input type="radio" id="recycle-rate" name="metric-selection" value="Household waste recycling rate" checked 
-  />
-      <label for="recycle-rate">Household recycling rate</label>
-  </div>
-  
-  <div>
-  <input type="radio" id="contamination-rate" name="metric-selection" value="Recycling contamination rate" />
-      <label for="contamination-rate">Recycling contamination rate</label>
-  </div>
-  
+
+  {#each metrics as metric}
     <div>
-   <input type="radio" id="residual-household-waste" name="metric-selection" value="Residual household waste" />
-      <label for="residual-household-waste">Residual household waste</label>
+      <input
+        bind:group={selectedMetric}
+        type="radio"
+        id={metric.toLowerCase().replaceAll(' ', '_')}
+        name="metric-selection"
+        value={metric}
+        checked
+      />
+      <label for={metric.toLowerCase().replaceAll(' ', '_')}>{metric}</label>
+    </div>
+  {/each}
+
+  <div>
+    <p>The chart I am going to make will visualise {selectedMetric}</p>
+
+    {#if selectedMetric}
+      <svg width="600" height="600">
+        <line
+          x1={100}
+          x2={100}
+          y1={300}
+          y2={100}
+          stroke={{
+            'Household waste recycling rate': 'blue',
+            'Recycling contamination rate': 'red',
+          }[selectedMetric]}
+          stroke-width="2px"
+        ></line>
+      </svg>
+    {/if}
+
+    <p>----</p>
+
+    {#if selectedMetric === 'Household waste recycling rate'}
+      <p>
+        The chart I am going to make will visualise household recycling rate
+      </p>
+    {:else if selectedMetric === 'Recycling contamination rate'}
+      <p>The chart I am going to make will visualise contamination rates</p>
+    {:else if selectedMetric === 'Residual household waste'}
+      <p>
+        The chart I am going to make will visualise household recycling rate
+      </p>
+    {/if}
   </div>
- -->
 
-
-
-
-<!-- ****************** CSS **************-->
+  <!-- {#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
+    <div>
+      <input
+        type="radio"
+        id="recycle-rate"
+        name="metric-selection"
+        value="Household waste recycling rate"
+        checked
+      />
+      <label for="recycle-rate">{item.name}</label>
+    </div>
+  {/each} -->
+</div>
 
 <style>
   .chart-container {
@@ -143,23 +154,17 @@ $inspect(selectedOption);
     flex-direction: column;
     gap: 15px;
   }
-  
-label {
-  margin-right: 5px;
-}
 
-option {
-  font-style: italic;
-}
+  label {
+    margin-right: 5px;
+  }
 
-.radio-container {
-  padding: 10px;
-  border-color: #cc7400;
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 20px;
-}
-
+  .radio-container {
+    padding: 10px;
+    border-color: #cc7400;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
 </style>
-

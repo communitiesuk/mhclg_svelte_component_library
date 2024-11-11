@@ -1,4 +1,7 @@
 <script>
+  import Linechart from './lib/Linechart.svelte';
+  import Radio from './lib/Radio.svelte';
+
   let { data } = $props();
 
   $inspect(data.jsonData.chartData);
@@ -34,9 +37,11 @@
 
   console.log(manipulatedData);
 
+  let selectedMetric = $state();
 
+  //let filteredData = $derived(manipulatedData)
 </script>
- 
+
 <div class="chart-container">
   <h5>We are going to build a reactive line chart</h5>
 
@@ -58,25 +63,18 @@
   </figure>
 </div>
 
+<label>Choose a metric:</label>
+
 <div class="radio-container">
-  
-  <label>Choose a metric:</label>
-  
-  <div>
-  <input type="radio" id="recycle-rate" name="metric-selection" value="Household waste recycling rate" checked />
-      <label for="recycle-rate">Household recycling rate</label>
-  </div>
-  
-  <div>
-  <input type="radio" id="contamination-rate" name="metric-selection" value="Recycling contamination rate" />
-      <label for="contamination-rate">Recycling contamination rate</label>
-  </div>
-  
-    <div>
-   <input type="radio" id="residual-household-waste" name="metric-selection" value="Residual household waste" />
-      <label for="residual-household-waste">Residual household waste</label>
-  </div>
- 
+  <Radio {metrics} bind:selectedMetric></Radio>
+</div>
+
+<div class="line chart">
+  <Linechart data={manipulatedData.find(el) => el.metric === selectedMetric}></Linechart>
+</div>
+
+<div class="chart">
+  <p>This chart is for {selectedMetric}</p>
 </div>
 
 <style>

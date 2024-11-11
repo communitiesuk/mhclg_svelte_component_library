@@ -11,7 +11,7 @@
 </script>
 
 {#snippet name()}
-	{@const nameDetails = { name: 'Line chart', folder: 'data-vis' }}
+	{@const nameDetails = { name: 'Line', folder: 'data-vis' }}
 	{#if detailsOnly}
 		<a href="/{nameDetails.folder}/{toUrlSlug(nameDetails.name)}">
 			<h5 class="underline underline-offset-4">{nameDetails.name}</h5></a
@@ -23,22 +23,12 @@
 
 {#snippet description()}
 	<div class="pr-5">
-		<p>This component takes flat data and renders a line chart.</p>
-		<p>
-			Using its child components, it provides options for styling each line differently, the setting
-			of scales, the placement of labels and more.
-		</p>
+		<p>This component takes flat time-series data, x and y scales and creates an SVG line.</p>
 	</div>
 {/snippet}
 
 {#snippet childComponents()}
-	{@const childComponentsArray = [
-		{ name: 'Line', folder: 'data-vis' },
-		{ name: 'Axis', folder: 'data-vis' },
-		{ name: 'Label', folder: 'data-vis' },
-		{ name: 'Legend', folder: 'data-vis' },
-		{ name: 'Button', folder: 'ui' }
-	]}
+	{@const childComponentsArray = []}
 	{#each childComponentsArray as component}
 		<li>
 			<a href="/{component.folder}/{toUrlSlug(component.name)}">

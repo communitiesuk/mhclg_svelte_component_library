@@ -46,7 +46,6 @@
 			</a>
 		</li>
 	{/each}
-	<!-- <li>None specified</li> -->
 {/snippet}
 
 <ComponentDetails {detailsOnly} {name} {description} {childComponents}></ComponentDetails>

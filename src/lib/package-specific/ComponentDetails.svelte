@@ -3,7 +3,7 @@
 	let { detailsOnly, name, description, childComponents } = $props();
 </script>
 
-<div class="flex flex-col gap-6 {detailsOnly ? 'bg-slate-300 p-5 rounded-lg' : ''}">
+<div class="flex flex-col gap-6 {detailsOnly ? 'bg-slate-100 p-5 rounded-lg' : ''}">
 	<div class={detailsOnly ? '' : 'mb-6'}>
 		{@render name()}
 	</div>

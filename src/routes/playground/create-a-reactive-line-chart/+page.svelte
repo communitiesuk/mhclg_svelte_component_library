@@ -4,14 +4,10 @@
 
   let { data } = $props();
 
-  $inspect(data.jsonData.chartData);
-
   data.jsonData.chartData = data.jsonData.chartData.map((el) => ({
     ...el,
     yearInt: parseFloat(el.Year.slice(0, 4)),
   }));
-
-  console.log(data.jsonData.chartData);
 
   let metrics = [
     ...new Set(
@@ -23,7 +19,7 @@
 
   let areas = [...new Set(data.jsonData.chartData.map((el) => el.AreaCode))];
 
-  console.log(areas);
+  $inspect(typeof data.jsonData.chartData);
 
   let manipulatedData = metrics.map((metric) => ({
     metric: metric,
@@ -69,8 +65,9 @@
   <Radio {metrics} bind:selectedMetric></Radio>
 </div>
 
-<div class="line chart">
-  <Linechart data={manipulatedData.find(el) => el.metric === selectedMetric}></Linechart>
+<div class="line-chart">
+  <Linechart data={manipulatedData.find((el) => el.metric === selectedMetric)}
+  ></Linechart>
 </div>
 
 <div class="chart">

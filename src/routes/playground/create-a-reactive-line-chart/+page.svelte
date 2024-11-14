@@ -1,4 +1,7 @@
 <script>
+  import LineChart from './lib/LineChart.svelte';
+  import Radio from './lib/Radio.svelte';
+
   let { data } = $props();
 
   $inspect(data.jsonData.chartData);
@@ -8,8 +11,6 @@
     yearInt: parseFloat(el.Year.slice(0, 4)),
   }));
 
-  console.log(data.jsonData.chartData);
-
   let metrics = [
     ...new Set(
       data.jsonData.chartData.map((d) => {
@@ -17,9 +18,8 @@
       })
     ),
   ];
-  let areas = [...new Set(data.jsonData.chartData.map((el) => el.AreaCode))];
 
-  console.log(areas);
+  let areas = [...new Set(data.jsonData.chartData.map((el) => el.AreaCode))];
 
   let manipulatedData = metrics.map((metric) => ({
     metric: metric,
@@ -31,20 +31,12 @@
     })),
   }));
 
-  console.log(manipulatedData);
-
-  let selectedMetric = $state();
-  let createChart = $derived(
-    {
-      'Household waste recycling rate': 'Yes - lets make a chart for recycling',
-    }[selectedMetric]
-  );
+  let selectedMetric = $state(metrics[0]);
 
   $inspect(selectedMetric);
-  $inspect(createChart);
 </script>
 
-<div class="chart-container">
+<div class="top-level-container">
   <h5>We are going to build a reactive line chart</h5>
 
   <figure>
@@ -65,82 +57,36 @@
   </figure>
 </div>
 
+<a href="../"> Link</a>
+
 <!-- {#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
   <p>An {item.name} is {item.colour}</p>
 {/each} -->
 
-<div class="radio-container mt-10">
-  <label>Choose a metric:</label>
-
-  {#each metrics as metric}
-    <div>
-      <input
-        bind:group={selectedMetric}
-        type="radio"
-        id={metric.toLowerCase().replaceAll(' ', '_')}
-        name="metric-selection"
-        value={metric}
-        checked
-      />
-      <label for={metric.toLowerCase().replaceAll(' ', '_')}>{metric}</label>
+<div class="mt-20">
+  <div
+    class="top-level-container border-solid rounded-lg border-2 border-current p-2"
+  >
+    <div class="radio-container">
+      <Radio {metrics} bind:selectedMetric></Radio>
     </div>
-  {/each}
-
-  <div>
-    <p>The chart I am going to make will visualise {selectedMetric}</p>
-
-    {#if selectedMetric}
-      <svg width="600" height="600">
-        <line
-          x1={100}
-          x2={100}
-          y1={300}
-          y2={100}
-          stroke={{
-            'Household waste recycling rate': 'blue',
-            'Recycling contamination rate': 'red',
-          }[selectedMetric]}
-          stroke-width="2px"
-        ></line>
-      </svg>
-    {/if}
-
-    <p>----</p>
-
-    {#if selectedMetric === 'Household waste recycling rate'}
-      <p>
-        The chart I am going to make will visualise household recycling rate
-      </p>
-    {:else if selectedMetric === 'Recycling contamination rate'}
-      <p>The chart I am going to make will visualise contamination rates</p>
-    {:else if selectedMetric === 'Residual household waste'}
-      <p>
-        The chart I am going to make will visualise household recycling rate
-      </p>
-    {/if}
+    <div class="svg-container">
+      {#if selectedMetric}
+        <LineChart
+          data={manipulatedData.find((el) => el.metric === selectedMetric)}
+        ></LineChart>
+      {/if}
+    </div>
   </div>
-
-  <!-- {#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
-    <div>
-      <input
-        type="radio"
-        id="recycle-rate"
-        name="metric-selection"
-        value="Household waste recycling rate"
-        checked
-      />
-      <label for="recycle-rate">{item.name}</label>
-    </div>
-  {/each} -->
 </div>
 
 <style>
-  .chart-container {
+  .top-level-container {
     margin: 0px auto;
-    width: 800px;
+    max-width: 800px;
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 20px;
   }
 
   figure {

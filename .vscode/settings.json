@@ -83,7 +83,6 @@
     "gitlens.defaultGravatarsStyle": "mp",
     "editor.colorDecoratorsActivatedOn": "hover",
     "editor.defaultColorDecorators": true,
-    "editor.fontFamily": "NotoSans",
 
     "better-comments.tags": [
       {

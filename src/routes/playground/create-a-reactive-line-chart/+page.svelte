@@ -1,7 +1,43 @@
 <script>
+  import LineChart from './lib/LineChart.svelte';
+  import Radio from './lib/Radio.svelte';
+
   let { data } = $props();
 
   $inspect(data);
+
+  let dataArray = data.jsonData.chartData;
+
+  dataArray = dataArray.map((el) => ({
+    ...el,
+    yearInt: parseFloat(el.Year.slice(0, 4)),
+  }));
+
+  $inspect(dataArray);
+
+  let metrics = [...new Set(dataArray.map((el) => el.Measure))];
+  let areas = [...new Set(dataArray.map((el) => el.AreaCode))];
+
+  $inspect({ areas, metrics });
+
+  let manipulatedData = metrics.map((metric) => ({
+    metric: metric,
+    lines: areas.map((area) => ({
+      area: area,
+      data: dataArray.filter(
+        (el) => el.AreaCode === area && el.Measure === metric
+      ),
+    })),
+  }));
+
+  $inspect({ manipulatedData });
+
+  let selectedMetric = $state(manipulatedData[0].metric);
+  $inspect({ selectedMetric });
+
+  // function onChange(event) {
+  //   selectedMetric = event.target.value;
+  // }
 </script>
 
 <div class="chart-container">
@@ -24,6 +60,16 @@
     </ul>
   </figure>
 </div>
+
+<Radio {manipulatedData} bind:selectedMetric />
+
+{#if selectedMetric}
+  <LineChart
+    {metrics}
+    data={manipulatedData.find((d) => d.metric === selectedMetric)}
+    {selectedMetric}
+  />
+{/if}
 
 <style>
   .chart-container {
@@ -48,5 +94,18 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+  }
+
+  label {
+    margin-right: 5px;
+  }
+
+  .radio-container {
+    padding: 10px;
+    border-color: #cc7400;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
   }
 </style>

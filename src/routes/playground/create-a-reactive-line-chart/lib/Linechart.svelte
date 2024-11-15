@@ -1,17 +1,33 @@
 <script>
+  import { scaleLinear } from 'd3-scale';
+
   let { data, selectedMetric } = $props();
   $inspect(data);
   $inspect(selectedMetric);
   let flatData = $derived(data.lines.map((el) => el.data).flat());
 
-  let allValues = $derived(flatData.map((el) => el.Value));
+  let allValues = $derived(
+    flatData
+      .map((el) => parseFloat(el.Value))
+      .filter((el) => el && isFinite(el))
+  );
+
+  let allYears = $derived(
+    flatData
+      .map((el) => parseFloat(el.yearInt))
+      .filter((el) => el && isFinite(el))
+  );
+
+  let yearsMinMax = $derived([Math.min(...allYears), Math.max(...allYears)]);
 
   $inspect(flatData);
   $inspect(allValues);
 
-  // let minValue = Math.min(...dataFlat.map((d) => d.yearInt));
-  //$inspect(flatData);
-  let xDomain = 'o';
+  let chartWidth = 200;
+  let chartHeight = 200;
+
+  let x = $derived(scaleLinear().domain(yearsMinMax).range([0, chartWidth]));
+  let y = $derived(scaleLinear().domain(yearsMinMax).range([chartHeight, 0]));
 </script>
 
 <div>

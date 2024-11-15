@@ -28,9 +28,12 @@
       ),
     })),
   }));
-  let selectedMetric = $state();
 
+  let selectedMetric = $state(metrics[0]);
+
+  $inspect(selectedMetric);
   $inspect(manipulatedData);
+  $inspect(manipulatedData.find((el) => el.metric === selectedMetric));
 
   //let filteredData = $derived(manipulatedData)
 </script>
@@ -62,10 +65,14 @@
   <Radio {metrics} bind:selectedMetric></Radio>
 </div>
 
-<div class="line-chart">
-  <Linechart data={manipulatedData.find((el) => el.metric === selectedMetric)}
-  ></Linechart>
-</div>
+{#if selectedMetric}
+  <div class="line-chart">
+    <Linechart
+      {selectedMetric}
+      data={manipulatedData.find((el) => el.metric === selectedMetric)}
+    ></Linechart>
+  </div>
+{/if}
 
 <div class="chart">
   <p>This chart is for {selectedMetric}</p>

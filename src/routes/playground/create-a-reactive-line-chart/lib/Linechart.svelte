@@ -1,7 +1,13 @@
 <script>
-  let { data } = $props();
+  let { data, selectedMetric } = $props();
   $inspect(data);
-  //let flatData = $derived(data.lines.map((el) => el.data).flat());
+  $inspect(selectedMetric);
+  let flatData = $derived(data.lines.map((el) => el.data).flat());
+
+  let allValues = $derived(flatData.map((el) => el.Value));
+
+  $inspect(flatData);
+  $inspect(allValues);
 
   // let minValue = Math.min(...dataFlat.map((d) => d.yearInt));
   //$inspect(flatData);

@@ -1,5 +1,11 @@
 <script>
   let { data } = $props();
+  $inspect(data);
+  //let flatData = $derived(data.lines.map((el) => el.data).flat());
+
+  // let minValue = Math.min(...dataFlat.map((d) => d.yearInt));
+  //$inspect(flatData);
+  let xDomain = 'o';
 </script>
 
 <div>

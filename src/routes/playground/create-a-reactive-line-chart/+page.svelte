@@ -19,8 +19,6 @@
 
   let areas = [...new Set(data.jsonData.chartData.map((el) => el.AreaCode))];
 
-  $inspect(typeof data.jsonData.chartData);
-
   let manipulatedData = metrics.map((metric) => ({
     metric: metric,
     lines: areas.map((area) => ({
@@ -30,10 +28,9 @@
       ),
     })),
   }));
-
-  console.log(manipulatedData);
-
   let selectedMetric = $state();
+
+  $inspect(manipulatedData);
 
   //let filteredData = $derived(manipulatedData)
 </script>

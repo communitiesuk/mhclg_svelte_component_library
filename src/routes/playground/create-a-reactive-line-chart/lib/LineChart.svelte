@@ -33,17 +33,17 @@
 
   let yearsMinMax = $derived([Math.min(...allYears), Math.max(...allYears)]);
 
-  let x = $derived(
-    scaleLinear()
-      .domain([yearsMinMax[0], yearsMinMax[1]])
-      .range([0, chartWidth])
-  );
+  let x = $derived(scaleLinear().domain(yearsMinMax).range([0, 500]));
+
+  $inspect(x(2018), x(2019), x(2020));
 
   let allValues = $derived(
     flatData
       .map((el) => parseFloat(el.Value))
       .filter((el) => el && isFinite(el))
   );
+
+  $inspect(allValues);
 
   let valuesMinMax = $derived([Math.min(...allValues), Math.max(...allValues)]);
 
@@ -54,6 +54,8 @@
   );
 
   $inspect(yearsMinMax);
+
+  $inspect(y(50));
 </script>
 
 <svg

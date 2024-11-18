@@ -57,12 +57,6 @@
   </figure>
 </div>
 
-<a href="../"> Link</a>
-
-<!-- {#each [{ name: 'apples', colour: 'green' }, { name: 'banana', colour: 'yellow' }] as item}
-  <p>An {item.name} is {item.colour}</p>
-{/each} -->
-
 <div class="mt-20">
   <div
     class="top-level-container border-solid rounded-lg border-2 border-current p-2"

@@ -1,6 +1,6 @@
 // src/routes/+page.server.js
 import { subFoldersLookup } from '$lib/config.js';
-import { identifyFolderStructure } from './lib/utils/identifyFolderStructure.js';
+import { identifyFolderStructure } from './local-lib/local-utils/identifyFolderStructure.js';
 
 export async function load() {
   let [playgroundFolders, componentsFolders] = ['playground', 'components'].map(

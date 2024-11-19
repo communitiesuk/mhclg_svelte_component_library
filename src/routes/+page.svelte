@@ -1,6 +1,5 @@
 <script>
-  import { libFoldersExcludedFromPreviewing } from '$lib/config.js';
-  import LoadComponentsArray from './lib/LoadComponentsArray.svelte';
+  import LoadComponentsArray from './local-lib/LoadComponentsArray.svelte';
 
   let { data } = $props();
 
@@ -14,44 +13,6 @@
    * <> 		Accessibility notes.
    */
 
-  /**
-   * && Finds all svelte files in the library's component-wrappers folder.
-   */
-  const componentsObj = import.meta.glob(
-    '/src/lib/component-wrappers/**/*.svelte'
-  );
-
-  /**
-   * && Based on the urls of the svelte files, identify the component-wrapper's sub-folders
-   */
-  const uniqueSubFolders = [
-    ...new Set(
-      Object.keys(componentsObj).map((url) => {
-        const match = url.match(/\/src\/lib\/component-wrappers\/([^/]+)/);
-        return match ? match[1] : null;
-      })
-    ),
-  ].filter((el) => !libFoldersExcludedFromPreviewing.includes(el));
-
-  /*let LineChart = $state();
-  import('./components/data-vis/line-chart/+page.svelte').then((module) => {
-    LineChart = module.default;
-  });*/
-
-  // Store dynamically imported components
-  let components = $state();
-
-  // Import all components dynamically
-  /*Promise.all(
-    data.playgroundFolders.map(async (info) => {
-      const module = await import(`./${data.p}/${data.c}/+page.svelte`);
-      return module.default;
-    })
-  ).then((loadedComponents) => {
-    components = loadedComponents;
-  });*/
-
-  $inspect(components);
 </script>
 
 <!--

@@ -1,9 +1,25 @@
 <script>
-	// @ts-nocheck
-	let { detailsOnly, name, description, childComponents } = $props();
+  // @ts-nocheck
+  import { toUrlSlug } from '$lib/utils/url-conversion/toUrlSlug.js';
+
+  let { homepage, details } = $props();
+
+  $inspect(details);
 </script>
 
-<div class="flex flex-col gap-6 {detailsOnly ? 'bg-slate-100 p-5 rounded-lg' : ''}">
+<div
+  class="flex flex-col gap-6 {homepage ? 'bg-slate-100 p-5 rounded-lg' : ''}"
+>
+  {#if homepage}
+    <a href="/components/{details.folder}/{toUrlSlug(details.name)}">
+      <h5 class="underline underline-offset-4">{details.name}</h5></a
+    >
+  {:else}
+    <h1>{details.name}</h1>
+  {/if}
+</div>
+
+<!-- <div class="flex flex-col gap-6 {detailsOnly ? 'bg-slate-100 p-5 rounded-lg' : ''}">
 	<div class={detailsOnly ? '' : 'mb-6'}>
 		{@render name()}
 	</div>
@@ -28,4 +44,4 @@
 			</figure>
 		</div>
 	{/if}
-</div>
+</div> -->

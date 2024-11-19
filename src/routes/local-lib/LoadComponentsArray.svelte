@@ -23,6 +23,6 @@
 
 <div class="flex flex-col gap-10">
   {#each components as component}
-    <svelte:component this={component} detailsOnly={true} />
+    <svelte:component this={component} homepage={true} />
   {/each}
 </div>

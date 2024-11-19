@@ -12,7 +12,6 @@
    * TODO		Remaining actions relating to this section of code.
    * <> 		Accessibility notes.
    */
-
 </script>
 
 <!--
@@ -55,24 +54,12 @@ TODO
         The playground is a sandbox space where developers can test code and
         practice combining components.
       </p>
-      <p>
-        All our playground examples are listed below. Click on a link to view.
-      </p>
+      <p>All our playground examples are listed below.</p>
       <LoadComponentsArray subFolder={data.playgroundFolders}
       ></LoadComponentsArray>
     </div>
   </div>
 </div>
-
-<!-- <div>
-  {#each uniqueSubFolders as subFolder}
-    <LibSubFolders {data} {subFolder} {componentsObj}></LibSubFolders>
-  {/each}
-
-  {#if LineChart}
-    <svelte:component this={LineChart} />
-  {/if}
-</div> -->
 
 <style>
   /**

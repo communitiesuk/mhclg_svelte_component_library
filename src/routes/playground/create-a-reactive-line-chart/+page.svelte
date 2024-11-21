@@ -1,11 +1,11 @@
 <script>
-  let { data, detailsOnly } = $props();
+  let { data, homepage } = $props();
 
   $inspect(data);
 </script>
 
-{#if detailsOnly}
-  <div>Playground</div>
+{#if homepage}
+  <div>{'Say my name, link it baby'}</div>
 {:else}
   <div class="chart-container">
     <h5>We are going to build a reactive line chart</h5>

@@ -1,5 +1,6 @@
 <script>
-  import LoadComponentsArray from './local-lib/LoadComponentsArray.svelte';
+  import DividerLine from '$lib/components/layout/DividerLine.svelte';
+  import LoadArrayOfComponents from './local-lib/LoadArrayOfComponents.svelte';
 
   let { data } = $props();
 
@@ -21,18 +22,20 @@
 TODO		
 <>		
 -->
-<div class="g-top-level-container mt-16">
+<div class="g-top-level-container">
   <div class="flex flex-col gap-6">
     <div>
-      <h2 class="mb-6">Introduction</h2>
+      <h4 class="mb-6">Introduction</h4>
       <p>
-        This library has been developed by members of the Office for Local
-        Government's Data Tools team to house components for use in the
-        organisation's public facing products.
+        This library has been developed by members of the MHCLG's Data Tools
+        team to house components for use in the organisation's public facing
+        products.
       </p>
+      <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
+
     <div>
-      <h2 class="mb-6">Components</h2>
+      <h4 class="mb-6">Components</h4>
       <p>The components available in this library are listed below.</p>
       <p>
         Click on a link to visit a component's wrapper page, where you can view
@@ -41,23 +44,25 @@ TODO
 
       {#each data.componentsSubFolders as subFolder}
         {#if subFolder.subFolders.length > 0}
-          <h3 class="underline underline-offset-4 mt-10 mb-6">
+          <h5 class="underline underline-offset-4 mt-10 mb-8">
             {subFolder.label}
-          </h3>
-          <LoadComponentsArray {subFolder}></LoadComponentsArray>
+          </h5>
+          <LoadArrayOfComponents {subFolder}></LoadArrayOfComponents>
         {/if}
       {/each}
+      <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
     <div>
-      <h2 class="mb-6 mt-10">Playground</h2>
+      <h4 class="mb-6 mt-10">Playground</h4>
       <p>
         The playground is a sandbox space where developers can test code and
         practice combining components.
       </p>
       <p>All our playground examples are listed below.</p>
-      <LoadComponentsArray subFolder={data.playgroundFolders}
-      ></LoadComponentsArray>
+      <LoadArrayOfComponents subFolder={data.playgroundFolders}
+      ></LoadArrayOfComponents>
     </div>
+    <DividerLine margin="1rem 0rem"></DividerLine>
   </div>
 </div>
 

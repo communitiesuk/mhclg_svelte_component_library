@@ -36,7 +36,7 @@ export function textStringConversion(text, caseType) {
 
     default:
       throw new Error(
-        'Invalid caseType provided. Choose from "pascal", "camel", "snake", "kebab", "upper-snake", "title, or "title-first-word".'
+        'Invalid caseType provided. Choose from "pascal", "camel", "snake", "kebab", "upper-snake", "title", or "title-first-word".'
       );
   }
 }

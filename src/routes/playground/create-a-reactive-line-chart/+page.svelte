@@ -1,6 +1,5 @@
 <script>
   import { page } from '$app/stores';
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
   import PlaygroundDetails from '$lib/package-wrapping/PlaygroundDetails.svelte';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
   import { details } from './details.js';
@@ -38,38 +37,6 @@
 
   $inspect(data);
 </script>
-
-{#snippet pageDescription()}
-  <p class="m-0">
-    This page was created as a sandbox environment for developers starting to
-    gain experience manipulating data in JS, writing efficient and clear code in
-    Svelte and creating components.
-  </p>
-
-  <p class="m-0">
-    Since this was one of the first test projects we worked on, before we were
-    building rigorously tested components, some of the code may not follow best
-    practice guidelines.
-  </p>
-
-  {#if !homepage}
-    <DividerLine margin="0.2rem 0rem"></DividerLine>
-
-    <figure class="mt-4">
-      <figcaption>Steps:</figcaption>
-      <ul class="grid gap-y-2">
-        {#each taskList as task, i}
-          <li class={task.complete ? 'text-green-700' : ''}>
-            <span>{i + 1}.</span>
-            <span class={task.complete ? 'line-through' : ''}
-              >{task.description}</span
-            >
-          </li>
-        {/each}
-      </ul>
-    </figure>
-  {/if}
-{/snippet}
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
 {#if !homepage}

@@ -2,11 +2,39 @@ import { base } from '$app/paths';
 import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async (event) => {
-  const jsonData = await (await event.fetch(`${base}/data/test.json`)).json();
+  const testData = await (
+    await event.fetch(`${base}/data/testData.json`)
+  ).json();
 
-  console.log(jsonData);
+  testData.chartData = testData.chartData.map((el) => ({
+    ...el,
+    yearInt: parseFloat(el.Year.slice(0, 4)),
+  }));
+
+  let metrics = [
+    ...new Set(
+      testData.chartData.map((d) => {
+        return d.Measure;
+      })
+    ),
+  ];
+
+  let areas = [...new Set(testData.chartData.map((el) => el.AreaCode))];
+
+  let dataInFormatForLineChart = metrics.map((metric) => ({
+    metric: metric,
+    lines: areas.map((area) => ({
+      area: area,
+      data: testData.chartData.filter(
+        (el) => el.AreaCode === area && el.Measure === metric
+      ),
+    })),
+  }));
 
   return {
-    jsonData,
+    testData,
+    metrics,
+    areas,
+    dataInFormatForLineChart,
   };
 };

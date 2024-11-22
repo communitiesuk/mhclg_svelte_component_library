@@ -4,16 +4,18 @@
   let { children } = $props();
 </script>
 
-<div class="g-top-level-container mb-16">
-  <div class="flex flex-row gap-10 items-center">
-    <img src="/images/oflog_crest_black.png" alt="MHCLG crest" />
-    <div class="flex flex-col leading-tight">
-      <h3>Svelte Component Library</h3>
+<div class="mb-20">
+  <div class="g-top-level-container mb-16">
+    <div class="flex flex-row gap-10 items-center">
+      <img src="/images/oflog_crest_black.png" alt="MHCLG crest" />
+      <div class="flex flex-col leading-tight">
+        <h3>Svelte Component Library</h3>
 
-      <p class="font-normal italic m-0 text-3xl">MHCLG Data Tools Team</p>
+        <p class="font-normal italic m-0 text-3xl">MHCLG Data Tools Team</p>
+      </div>
     </div>
+    <DividerLine margin="1rem 0rem"></DividerLine>
   </div>
-  <DividerLine margin="1rem 0rem"></DividerLine>
-</div>
 
-{@render children()}
+  {@render children()}
+</div>

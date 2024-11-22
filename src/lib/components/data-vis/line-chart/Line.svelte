@@ -1,7 +1,19 @@
 <script>
-  let { dataArray, lineFunction, color, strokeWidth, opacity, style } =
-    $props();
+  let { dataArray, pathFunction, x, y, color, strokeWidth, markers } = $props();
+
+  $inspect(dataArray);
 </script>
 
-<path d={lineFunction(dataArray)} fill="none" stroke="black" stroke-width="3px"
+<path
+  d={pathFunction(dataArray)}
+  fill="none"
+  stroke={color}
+  stroke-width={strokeWidth}
 ></path>
+
+{#if markers}
+  {#each dataArray as marker}
+    <circle cx={x(marker.x)} cy={y(marker.y)} r="6" stroke="white" fill={color}>
+    </circle>
+  {/each}
+{/if}

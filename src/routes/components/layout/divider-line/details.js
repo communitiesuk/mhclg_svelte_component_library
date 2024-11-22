@@ -4,7 +4,7 @@ export let details = {
    * ?      Available statuses are:
    * ?      'to_be_developed', 'in_progress', 'complete_untested', 'complete_in_use', 'complete_accessible'
    */
-  status: 'to_be_developed',
+  status: 'complete_untested',
   /**
    * &&     description - An array of paragraphs of text explaining what the component does, used within ComponentDetails
    * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
@@ -12,7 +12,7 @@ export let details = {
   description: [
     {
       content:
-        'This component takes an array of data and a line function and renders an svg path element.',
+        'This component provides a horizontal or vertical line to separate content.',
     },
   ],
   /**
@@ -22,12 +22,8 @@ export let details = {
   context: [
     {
       content:
-        "Used within svg elements as part of the creation of data visualisations - most notably by the <a href='/components/data-vis/line/'>Lines</a> component.",
+        "Used to separate content. Based on this <a href='https://design-system.service.gov.uk/styles/section-break/'>GDS component.</a>",
       markdown: true,
-    },
-    {
-      content:
-        'The Lines component renders a collection of lines as a group allowing all lines to update based on user interactions with a single line (e.g. reduce opacity of other lines when user hovers). Even individual lines should normally be created using the Lines component.',
     },
   ],
   /**
@@ -42,22 +38,5 @@ export let details = {
    * ?      For each paragraph there is an optional 'markdown' (default = false) parameter. When set to true, it uses the @html tag to render the content.
    * ?      For each paragraph there is an optional 'fulfilled' (default = false) parameter. When set to true, the text will be highlighted green and struck-through, demonstrating that this requirmeent has been coded up.
    */
-  requirements: [
-    {
-      label: 'Style the line',
-      description:
-        'Allow developer to provide custom styling to the line - including color, stroke-width, opacity.',
-      fulfilled: true,
-    },
-    {
-      label: 'Set the curvature of the line',
-      description:
-        "Allow developer to set the 'curve' of the line - using the d3 set of curve options.",
-    },
-    {
-      label: 'Markers',
-      description:
-        'Allow developer to add markers/value labels at different data points along their line.',
-    },
-  ],
+  requirements: undefined,
 };

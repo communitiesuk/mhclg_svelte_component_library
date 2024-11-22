@@ -1,7 +1,6 @@
 <script>
   // @ts-nocheck
   import { page } from '$app/stores';
-  import Line from '$lib/components/data-vis/line-chart/Line.svelte';
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
   import { details } from './details.js';
@@ -20,9 +19,3 @@
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>
-
-{#if !homepage}
-  <svg width="600" height="600">
-    <Line lineFunction={100}></Line>
-  </svg>
-{/if}

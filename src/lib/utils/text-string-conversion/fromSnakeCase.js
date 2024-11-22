@@ -1,6 +1,6 @@
 export function fromSnakeCase(input) {
   return input
-    .split('_') // Split the string by hyphens
+    .split('_') // Split the string
     .map(
       (word, index) =>
         index === 0

@@ -1,6 +1,7 @@
 export const subFoldersLookup = {
   ui: { label: 'User interaction' },
   'data-vis': { label: 'Data visualisation' },
+  layout: { label: 'Layout' },
 };
 
 export const componentStausLookup = {

@@ -4,7 +4,7 @@
 
   let { data } = $props();
 
-  $inspect(data);
+  $inspect(data.componentsSubFolders);
 
   /**
    * && 		Description of the code, how it works and what it does.

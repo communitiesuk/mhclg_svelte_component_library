@@ -1,11 +1,10 @@
 <script>
   // @ts-nocheck
+  import Pill from '$lib/components/content/Pill.svelte';
   import DividerLine from '$lib/components/layout/DividerLine.svelte';
-  import Pill from '$lib/components/layout/Pill.svelte';
 
   import { componentStausLookup } from '$lib/config.js';
-  import { fromSnakeCase } from '$lib/utils/text-string-conversion/fromSnakeCase.js';
-  import { toUrlSlug } from '$lib/utils/text-string-conversion/toUrlSlug.js';
+  import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
 
   let { homepage, details } = $props();
 
@@ -15,12 +14,12 @@
 {#snippet linkedNameOfComponent(folder, name, isLinkToChildComponent = true)}
   <a
     class="underline underline-offset-4"
-    href="/components/{folder}/{toUrlSlug(name)}"
+    href="/components/{folder}/{textStringConversion(name, 'kebab')}"
   >
     {#if isLinkToChildComponent}
       <p class="m-0">{name}</p>
     {:else}
-      <h4>{name}</h4>
+      <h6>{name}</h6>
     {/if}
   </a>
 {/snippet}
@@ -40,12 +39,14 @@
     {:else}
       <h2>{details.name}</h2>
     {/if}
-    <Pill
-      size={homepage ? 'small' : 'medium'}
-      textContent={fromSnakeCase(details.status)}
-      bgColor={componentStausLookup[details.status].bgColor}
-      textColor={componentStausLookup[details.status].color}
-    ></Pill>
+    {#if details.status}
+      <Pill
+        size={homepage ? 'small' : 'medium'}
+        textContent={textStringConversion(details.status, 'title-first-word')}
+        bgColor={componentStausLookup[details.status].bgColor}
+        textColor={componentStausLookup[details.status].color}
+      ></Pill>
+    {/if}
   </div>
 
   <DividerLine margin="0.2rem 0rem"></DividerLine>
@@ -54,7 +55,7 @@
     {#each ['description', 'context'] as detail}
       {@const detailData = details[detail]}
       {#if detailData?.length > 0}
-        <dt>{fromSnakeCase(detail)}:</dt>
+        <dt>{textStringConversion(detail, 'title-first-word')}:</dt>
         <dd>
           {#each detailData as paragraph}
             {#if paragraph.markdown}

@@ -7,7 +7,6 @@
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
   import { scaleLinear } from 'd3-scale';
   import { line } from 'd3-shape';
-  import { Input, Label } from 'flowbite-svelte';
   import { details } from './details.js';
 
   let { data, homepage = false, folders } = $props();
@@ -28,7 +27,6 @@
   let svgHeight = 300;
 
   let y = $derived(scaleLinear().domain([0, 100]).range([svgHeight, 0]));
-
   let x = $derived(scaleLinear().domain([2015, 2022]).range([svgWidth, 0]));
 
   let pathFunction = line()
@@ -56,7 +54,7 @@
     }, {})
   );
 
-  let color = $state('red');
+  /*let color = $state('red');
   let strokeWidth = $state('3px');
   let markers = $state(false);
   let dataArray = $state(
@@ -66,7 +64,7 @@
         y: el.Value,
       }))
     )
-  );
+  );*/
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>
@@ -81,7 +79,7 @@
       ></InputForParameter>
     {/each}
 
-    <div>
+    <!-- <div>
       <Label for="default-input" class="block mb-2" color="primary">Color</Label
       >
       <Input id="default-input" bind:value={color} color="primary" />
@@ -92,12 +90,11 @@
         >Stroke-width</Label
       >
       <Input id="default-input" bind:value={strokeWidth} color="primary" />
-    </div>
+    </div> -->
   </div>
 
   <svg class="mx-auto bg-slate-100" width={svgWidth} height={svgHeight}>
-    <Line {pathFunction} {x} {y} {color} {strokeWidth} {...parametersObject}
-    ></Line>
+    <Line {pathFunction} {x} {y} {...parametersObject}></Line>
   </svg>
 {/if}
 

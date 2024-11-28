@@ -1,8 +1,9 @@
 <script>
-    let { metrics, selectedMetric = $bindable() } = $props()
+//@ts-nocheck
+let { metrics, selectedMetric = $bindable() } = $props()
 </script>
 
-{#each metrics as metric}
+{#each metrics as metric , i}
 <div>
   <input
     type="radio"
@@ -10,6 +11,7 @@
     name="metric-selection"
     bind:group={selectedMetric}
     value={metric}
+    checked ={i === 0}
   />
   <label for="recycle-rate">{metric}</label>
 </div>

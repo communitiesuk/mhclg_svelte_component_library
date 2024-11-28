@@ -1,4 +1,5 @@
 <script>
+  // @ts-nocheck
 import Radio from './lib/Radio.svelte';
 import Linechart from './lib/Linechart.svelte';
 
@@ -37,15 +38,17 @@ console.log(metrics);
 
  console.log(manipulatedData); 
 
-  let selectedMetric = $state();
-  let createChart = $derived(
-    {
-      'Household waste recycling rate': 'Yes - lets make a chart for recycling',
-    }[selectedMetric]
-  );
+  //let selectedMetric = $state();
+  let selectedMetric = $state(metrics[0]);  //initialise with a default value of the 1st element
+
+  // let createChart = $derived(
+  //   {
+  //     'Household waste recycling rate': 'Yes - lets make a chart for recycling',
+  //   }[selectedMetric]
+  // );
 
   $inspect(selectedMetric);
-  $inspect(createChart);
+  //$inspect(createChart);
 </script>
 
 <div class="chart-container">
@@ -74,12 +77,19 @@ console.log(metrics);
   <Radio {metrics} bind:selectedMetric></Radio>
  </div>
 
-<div class="line-chart">
-  <Linechart data={manipulatedData.find((el) => el.metric === selectedMetric)}>
-  </Linechart>
- </div>
 
+ {#if selectedMetric}
+<div class="line-chart">
+  <Linechart
+  {selectedMetric}
+   data={manipulatedData.find((el) => el.metric === selectedMetric)}
+   ></Linechart>
+ </div>
+ {/if}
+
+ <div class="chart">
     <p>The chart I am going to make will visualise {selectedMetric}</p>
+ </div>
 
 <style>
   .chart-container {

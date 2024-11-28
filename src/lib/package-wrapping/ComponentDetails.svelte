@@ -114,7 +114,7 @@
 
 <style>
   [data-role='details-grid-container'] {
-    grid-template-columns: 150px auto;
+    grid-template-columns: 180px auto;
   }
   dd p:first-of-type {
     margin-top: 0;

@@ -6,33 +6,27 @@ export const load: LayoutLoad = async (event) => {
     await event.fetch(`${base}/data/testData.json`)
   ).json();
 
-  testData.chartData = testData.chartData.map((el) => ({
-    ...el,
-    yearInt: parseFloat(el.Year.slice(0, 4)),
-  }));
-
   let metrics = [
     ...new Set(
-      testData.chartData.map((d) => {
-        return d.Measure;
+      testData.flatMetricData.map((d) => {
+        return d.metric;
       })
     ),
   ];
 
-  let areas = [...new Set(testData.chartData.map((el) => el.AreaCode))];
+  let areas = [...new Set(testData.flatMetricData.map((el) => el.areaCode))];
 
   let dataInFormatForLineChart = metrics.map((metric) => ({
     metric: metric,
     lines: areas.map((area) => ({
-      area: area,
-      data: testData.chartData.filter(
-        (el) => el.AreaCode === area && el.Measure === metric
+      areaCode: area,
+      data: testData.flatMetricData.filter(
+        (el) => el.areaCode === area && el.metric === metric
       ),
     })),
   }));
 
   return {
-    testData,
     metrics,
     areas,
     dataInFormatForLineChart,

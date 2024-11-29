@@ -12,11 +12,7 @@
 
   let { source, value = $bindable() } = $props();
 
-  $inspect(source);
-
   let propPillObject = propPillLookup[source.isProp];
-
-  $inspect(source, propPillObject);
 </script>
 
 {#snippet parameterLabel(name, propPillObject, inline = false)}
@@ -66,9 +62,7 @@
 {:else if source.inputType === 'numberInput'}
   {@render parameterLabel(source.name, propPillObject)}
   <NumberInput bind:value />
-{/if}
-
-{#if source.inputType === 'event'}
+{:else if source.inputType === 'event'}
   {@render parameterLabel(source.name, propPillObject)}
   <p class="my-2 mx-0 p-0 text-sm text-black">
     The {source.name} event handler has been called {value[0]} time{value[0] ===
@@ -76,4 +70,18 @@
       ? ''
       : 's'}{value[1] ? ' (' + value[1] + ')' : ''}.
   </p>
+{:else if 'label' in source}
+  {@render parameterLabel(source.name, propPillObject)}
+{/if}
+
+{#if 'label' in source}
+  <p class="my-2 mx-0 p-0 text-sm text-black">{source.label}</p>
+  {#if source.exampleCode}
+    <p
+      class="mt-4 mb-0 mx-0 p-0 break-words text-sm rounded-md"
+      style="color: #ba029b"
+    >
+      <code>{@html source.exampleCode}</code>
+    </p>
+  {/if}
 {/if}

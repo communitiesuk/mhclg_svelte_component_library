@@ -22,11 +22,10 @@
     onMouseLeave,
     onMouseMove,
     onClickMarker,
+    onMouseEnterMarker,
+    onMouseLeaveMarker,
+    onMouseMoveMarker,
   } = $props();
-
-  $inspect(onClick);
-
-  $inspect(dataArray);
 </script>
 
 <g
@@ -50,6 +49,9 @@
       <g
         data-id={markersDataId + '-' + i}
         onclick={onClickMarker}
+        onmouseenter={onMouseEnterMarker}
+        onmouseleave={onMouseLeaveMarker}
+        onmousemove={onMouseMoveMarker}
         transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
       >
         {#if markerShape === 'circle'}

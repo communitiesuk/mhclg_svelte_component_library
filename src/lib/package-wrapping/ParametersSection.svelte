@@ -68,7 +68,7 @@
             {@const visibleParametersForCategory = parametersSourceArray.filter(
               (el) =>
                 el.category === category &&
-                el.inputType &&
+                (el.inputType || 'label' in el) &&
                 parametersVisibleArray[el.index]
             )}
 

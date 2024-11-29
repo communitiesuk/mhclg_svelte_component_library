@@ -7,8 +7,6 @@
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
 
   let { homepage, details } = $props();
-
-  $inspect(details);
 </script>
 
 {#snippet linkedNameOfComponent(folder, name, isLinkToChildComponent = true)}

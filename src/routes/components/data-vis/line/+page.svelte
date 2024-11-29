@@ -5,6 +5,7 @@
   import { defaultScreenWidthBreakpoints } from '$lib/config.js';
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
   import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
+  import ScreenSizeRadio from '$lib/package-wrapping/ScreenSizeRadio.svelte';
   import {
     convertToCSV,
     csvToArrayOfObjects,
@@ -22,10 +23,13 @@
     curveStep,
     line,
   } from 'd3-shape';
-  import { Radio } from 'flowbite-svelte';
 
   let { data, homepage = undefined, folders } = $props();
 
+  /**
+   * && 		The details object contains metadata which describes the purpose and status of the component. All keys are optional, but developers are encouraged to use them to succinctly describe the component for the benefit of future users.
+   *
+   */
   let details = {
     /**
      * &&     status - Used by the pill-status component within ComponentDetails
@@ -78,9 +82,9 @@
         fulfilled: true,
       },
       {
-        label: 'Set the curvature of the line',
+        label: 'Set scale and curve types',
         description:
-          "Allow developer to set the 'curve' of the line - using the d3 set of curve options.",
+          'Allow developer to set scale types (e.g. linear, log, time) and the curve of the line - using the d3 set of curve options.',
         fulfilled: true,
       },
       {
@@ -89,9 +93,17 @@
           'Allow developer to add markers at each data point along their line.',
         fulfilled: true,
       },
+      {
+        label: 'Events',
+        description: 'Add event handlers for line, and for individual markers.',
+        fulfilled: true,
+      },
     ],
   };
 
+  /**
+   * && 		details.name and details.folder are added based on a) the folders prop if on the homepage, b) the $page store if on the actual wrapper page.
+   */
   let pageInfo = $page?.route.id.split('/');
 
   details.name = textStringConversion(
@@ -102,8 +114,40 @@
     ? folders[folders.length - 2]
     : pageInfo[pageInfo.length - 2];
 
+  /**
+   * ? 		demoScreenWidth is a reactive variable which tracks which scren size the user has selected for demoing the component
+   */
   let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
+  /**
+   * && 		parametersSourceArray is where you define any props for the component whose initial value does not depend on other parameters. It can also be used for defining any parameters which are not passed to the component, but are used in the calculation of another parameter (An example would be a Line component's xFunction, which is calculated based on a scale, an xDomain and a graphWidth). Each prop is represented by a single object within the array.
+   * ? 		  name - Required. Name of the prop which is passed to the component. The name can also be referenced in the calculation of parameters which depend on this value. Names must be unique.
+   *
+   * ?      category - Required. Used purely for separating props into different accordions.
+   *
+   * ?      isProp - Required. Is a boolean - true means it will actually be passed to the commponent, false means it will not (and will instead be used just for calculating other parameters).
+   *
+   * ?      inputType - Optional. This can be a form input (available options are 'input', 'numberInput', 'dropdown', 'radio', 'textArea', 'checkbox') or it can be 'event' or null.
+   * ?      If it is a form input, a form component will be rendered allowing the user to change the value of this parameter and see how the component updates.
+   * ?      If inputType === 'event', the user cannot change the value of this prop, but a tracker will be rendered to indicate when the event handler is called.
+   * ?      If inputType is null, then no form input will be rendered. The prop name and description could still be rendered in its place if the 'label' field is defined - see below for more info.
+   *
+   * ?      value - optional. Used to set the default initial value for the parameter. Note that certain inputTypes don't require a value: dropdowns and radios will calculate it as the first element in their options array.
+   * ?      In addition, it's worth noting that the pattern is a bit different for parameters with inputType === "event": in this case the prop passed to the component will be the handlerFunction, and the value will be the output of that function. For events, unless the handlerFunction and value keys are defined, defaults are added automatically added - so it's best practice to not define these keys.
+   *
+   * ?      options - required for ['dropdown', 'radio'].includes(inputType), redundant otherwise. Provides an array representing the options that can be passed as the prop to the component.
+   *
+   * ?      visible - optional. Some props are irrelevant unless another prop is set to a particular value (e.g. in a Line component, markerRadius is irrelevant if includeMarkers is false). The visible key allows you to dynamically hide a props' input forms. You can do this by specifying an object with name - the parameter that you want to check against, and value - the value that the named parameter needs to be equal to for this input form to be visible. (e.g. for markerRadius we would use {name: includeMarkers, value: true}).
+   * ?      If you want the form to be visible only if multiple conditions are met, you can provide an array of condition objects instead.
+   * 
+   * ?      handlerFunction - optional. Redundant unless inputType === 'event'. You can provide a function that will run when the specified event occurs. A default function is provided if handlerFunction is set to undefined - using the default handlerFunction is recommended.
+   * 
+   * ?      label - optional. If the label field is defined, then 
+   * 
+   * If the object has a null inputType but does have a 'label' field, then a description (and optional code snippet) will be rendered instead. When inputType is null it is best practice to include a label so users can still see which props are being used by the component and how they're being calculated.
+   * 
+   * ?      exampleCode - optional
+   */
   let parametersSourceArray =
     homepage ??
     [
@@ -112,8 +156,7 @@
         category: 'dimensions',
         isProp: false,
         inputType: 'numberInput',
-        value: 400,
-        feedsInto: 'yFunction',
+        value: 500,
       },
       {
         name: 'paddingTop',
@@ -121,7 +164,6 @@
         isProp: false,
         inputType: 'numberInput',
         value: 50,
-        feedsInto: 'yFunction',
       },
       {
         name: 'paddingRight',
@@ -129,7 +171,6 @@
         isProp: false,
         inputType: 'numberInput',
         value: 50,
-        feedsInto: 'xFunction',
       },
       {
         name: 'paddingBottom',
@@ -137,7 +178,6 @@
         isProp: false,
         inputType: 'numberInput',
         value: 50,
-        feedsInto: 'xFunction',
       },
       {
         name: 'paddingLeft',
@@ -145,7 +185,6 @@
         isProp: false,
         inputType: 'numberInput',
         value: 50,
-        feedsInto: 'xFunction',
       },
       {
         name: 'dataSource',
@@ -153,7 +192,6 @@
         isProp: false,
         inputType: 'radio',
         options: ['from base data', 'custom'],
-        feedsInto: 'dataArray',
       },
       {
         name: 'metric',
@@ -162,7 +200,6 @@
         inputType: 'dropdown',
         options: data.metrics,
         visible: { name: 'dataSource', value: 'from base data' },
-        feedsInto: 'dataArray',
       },
       {
         name: 'area',
@@ -171,7 +208,6 @@
         inputType: 'dropdown',
         options: data.areas,
         visible: { name: 'dataSource', value: 'from base data' },
-        feedsInto: 'dataArray',
       },
       {
         name: 'customDataArray',
@@ -185,13 +221,14 @@
             y: el.y,
           }))
         ),
-        feedsInto: 'dataArray',
       },
       {
         name: 'dataArray',
         category: 'data',
         isProp: true,
         inputType: null,
+        label:
+          'Calculated based on dataSource, metric, area and customDataArray.',
       },
       {
         name: 'xDomainLowerBound',
@@ -204,7 +241,6 @@
             .flat()
             .map((el) => el.x)
         ),
-        feedsInto: ['xFunction', 'lineFunction'],
       },
       {
         name: 'xDomainUpperBound',
@@ -217,7 +253,6 @@
             .flat()
             .map((el) => el.x)
         ),
-        feedsInto: ['xFunction', 'lineFunction'],
       },
       {
         name: 'xScaleType',
@@ -225,13 +260,16 @@
         isProp: false,
         inputType: 'dropdown',
         options: ['scaleLinear', 'scaleLog', 'scaleTime'],
-        feedsInto: ['xFunction', 'lineFunction'],
       },
       {
         name: 'xFunction',
         category: 'xScale',
         isProp: true,
         inputType: null,
+        label:
+          'Calculated based on screenSize, paddingLeft, paddingRight, xDomainLowerBound, xDomainUpperBound and xScaleType.',
+        exampleCode:
+          'scaleLinear()<br>&emsp;&emsp;.domain[2015,2022]<br>&emsp;&emsp;.range([0,graphWidth])',
       },
       {
         name: 'yDomainLowerBound',
@@ -244,7 +282,6 @@
             .flat()
             .map((el) => el.y)
         ),
-        feedsInto: ['yFunction', 'lineFunction'],
       },
       {
         name: 'yDomainUpperBound',
@@ -257,7 +294,6 @@
             .flat()
             .map((el) => el.y)
         ),
-        feedsInto: ['yFunction', 'lineFunction'],
       },
       {
         name: 'yScaleType',
@@ -265,13 +301,16 @@
         isProp: false,
         inputType: 'dropdown',
         options: ['scaleLinear', 'scaleLog', 'scaleTime'],
-        feedsInto: ['yFunction', 'lineFunction'],
       },
       {
         name: 'yFunction',
         category: 'yScale',
         isProp: true,
         inputType: null,
+        label:
+          'Calculated based on svgHeight, paddingTop, paddingBottom, yDomainLowerBound, yDomainUpperBound and yScaleType.',
+        exampleCode:
+          'scaleLinear()<br>&emsp;&emsp;.domain[0,100]<br>&emsp;&emsp;.range([graphHeight,0])',
       },
       {
         name: 'curve',
@@ -286,13 +325,15 @@
           'curveStep',
           'curveMonotoneX',
         ],
-        feedsInto: 'lineFunction',
       },
       {
         name: 'lineFunction',
         category: 'lineFunction',
         isProp: true,
         inputType: null,
+        label: 'Calculated based on xFunction, yFunction and curve.',
+        exampleCode:
+          'line()<br>&emsp;&emsp;.x((d) => xFunction(d.x))<br>&emsp;&emsp;.y((d) => yFunction(d.y))<br>&emsp;&emsp;.curve(curveLinear)',
       },
       {
         name: 'pathStrokeColor',
@@ -420,20 +461,40 @@
         isProp: true,
         inputType: 'event',
       },
+      {
+        name: 'onMouseEnterMarker',
+        category: 'markerEvents',
+        isProp: true,
+        inputType: 'event',
+      },
+      {
+        name: 'onMouseLeaveMarker',
+        category: 'markerEvents',
+        isProp: true,
+        inputType: 'event',
+      },
+      {
+        name: 'onMouseMoveMarker',
+        category: 'markerEvents',
+        isProp: true,
+        inputType: 'event',
+      },
     ].map((el, i) => {
       if (el.inputType === 'event') {
         return {
           ...el,
           index: i,
-          value: [0, null],
-          handlerFunction: function (event) {
-            defineDefaultEventHandler(
-              event,
-              parametersSourceArray,
-              parametersValuesArray,
-              el.name
-            );
-          },
+          value: el.value ?? [0, null],
+          handlerFunction:
+            el.handlerFunction ??
+            function (event) {
+              defineDefaultEventHandler(
+                event,
+                parametersSourceArray,
+                parametersValuesArray,
+                el.name
+              );
+            },
         };
       } else {
         return { ...el, index: i };
@@ -663,25 +724,7 @@
   <div data-role="demo-section">
     <div>
       <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
-
-      <ul
-        class="my-4 mx-0 items-center w-full rounded-lg border border-gray-200 sm:flex dark:bg-gray-800 dark:border-gray-600 divide-x rtl:divide-x-reverse divide-gray-200 dark:divide-gray-600"
-        style="min-width: 800px;"
-      >
-        {#each Object.keys(defaultScreenWidthBreakpoints) as screenSizeOption}
-          <li class="w-full">
-            <Radio
-              bind:group={demoScreenWidth}
-              name="hor-list"
-              class="p-4 text-base"
-              value={defaultScreenWidthBreakpoints[screenSizeOption]}
-              >{screenSizeOption} ({defaultScreenWidthBreakpoints[
-                screenSizeOption
-              ]}px)</Radio
-            >
-          </li>
-        {/each}
-      </ul>
+      <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
     </div>
   </div>
 

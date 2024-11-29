@@ -2,9 +2,9 @@
   // @ts-nocheck
   import { page } from '$app/stores';
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
+  import { defaultScreenWidthBreakpoints } from '$lib/config.js';
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
-  import InputForParameter from '$lib/package-wrapping/InputForParameter.svelte';
+  import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
   import {
     convertToCSV,
     csvToArrayOfObjects,
@@ -22,7 +22,7 @@
     curveStep,
     line,
   } from 'd3-shape';
-  import { Accordion, AccordionItem } from 'flowbite-svelte';
+  import { Radio } from 'flowbite-svelte';
 
   let { data, homepage = undefined, folders } = $props();
 
@@ -102,19 +102,11 @@
     ? folders[folders.length - 2]
     : pageInfo[pageInfo.length - 2];
 
-  $inspect(data?.dataInFormatForLineChart);
+  let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
   let parametersSourceArray =
     homepage ??
     [
-      {
-        name: 'svgWidth',
-        category: 'dimensions',
-        isProp: false,
-        inputType: 'numberInput',
-        value: 800,
-        feedsInto: 'xFunction',
-      },
       {
         name: 'svgHeight',
         category: 'dimensions',
@@ -122,6 +114,38 @@
         inputType: 'numberInput',
         value: 400,
         feedsInto: 'yFunction',
+      },
+      {
+        name: 'paddingTop',
+        category: 'dimensions',
+        isProp: false,
+        inputType: 'numberInput',
+        value: 50,
+        feedsInto: 'yFunction',
+      },
+      {
+        name: 'paddingRight',
+        category: 'dimensions',
+        isProp: false,
+        inputType: 'numberInput',
+        value: 50,
+        feedsInto: 'xFunction',
+      },
+      {
+        name: 'paddingBottom',
+        category: 'dimensions',
+        isProp: false,
+        inputType: 'numberInput',
+        value: 50,
+        feedsInto: 'xFunction',
+      },
+      {
+        name: 'paddingLeft',
+        category: 'dimensions',
+        isProp: false,
+        inputType: 'numberInput',
+        value: 50,
+        feedsInto: 'xFunction',
       },
       {
         name: 'dataSource',
@@ -174,7 +198,12 @@
         category: 'xScale',
         isProp: false,
         inputType: 'numberInput',
-        value: 2015,
+        value: Math.min(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.x)
+        ),
         feedsInto: ['xFunction', 'lineFunction'],
       },
       {
@@ -182,7 +211,12 @@
         category: 'xScale',
         isProp: false,
         inputType: 'numberInput',
-        value: 2022,
+        value: Math.max(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.x)
+        ),
         feedsInto: ['xFunction', 'lineFunction'],
       },
       {
@@ -204,7 +238,12 @@
         category: 'yScale',
         isProp: false,
         inputType: 'numberInput',
-        value: 0,
+        value: Math.min(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.y)
+        ),
         feedsInto: ['yFunction', 'lineFunction'],
       },
       {
@@ -212,7 +251,12 @@
         category: 'yScale',
         isProp: false,
         inputType: 'numberInput',
-        value: 100,
+        value: Math.max(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.y)
+        ),
         feedsInto: ['yFunction', 'lineFunction'],
       },
       {
@@ -327,12 +371,74 @@
       },
       {
         name: 'opacity',
-        category: 'styling',
+        category: 'overallStyling',
         isProp: true,
         inputType: 'numberInput',
         value: 1,
       },
-    ].map((el, i) => ({ ...el, index: i }));
+      {
+        name: 'dataId',
+        category: 'lineEvents',
+        isProp: true,
+        inputType: 'input',
+        value: 'line-1',
+      },
+      {
+        name: 'onClick',
+        category: 'lineEvents',
+        isProp: true,
+        inputType: 'event',
+      },
+      {
+        name: 'onMouseEnter',
+        category: 'lineEvents',
+        isProp: true,
+        inputType: 'event',
+      },
+      {
+        name: 'onMouseLeave',
+        category: 'lineEvents',
+        isProp: true,
+        inputType: 'event',
+      },
+      {
+        name: 'onMouseMove',
+        category: 'lineEvents',
+        isProp: true,
+        inputType: 'event',
+      },
+      {
+        name: 'markersDataId',
+        category: 'markerEvents',
+        isProp: true,
+        inputType: 'input',
+        value: 'markers-group-1',
+      },
+      {
+        name: 'onClickMarker',
+        category: 'markerEvents',
+        isProp: true,
+        inputType: 'event',
+      },
+    ].map((el, i) => {
+      if (el.inputType === 'event') {
+        return {
+          ...el,
+          index: i,
+          value: [0, null],
+          handlerFunction: function (event) {
+            defineDefaultEventHandler(
+              event,
+              parametersSourceArray,
+              parametersValuesArray,
+              el.name
+            );
+          },
+        };
+      } else {
+        return { ...el, index: i };
+      }
+    });
 
   let parametersValuesArray = $state(
     homepage ??
@@ -348,20 +454,29 @@
           ? true
           : typeof el.visible === 'boolean'
             ? el.visible
-            : parametersValuesArray[
-                parametersSourceArray.findIndex(
-                  (elm) => elm.name === el.visible.name
-                )
-              ] === el.visible.value
+            : getValueFromParametersArray(
+                parametersSourceArray,
+                parametersValuesArray,
+                el.visible.name
+              ) === el.visible.value
       )
   );
 
   let parametersObject = $derived(
     homepage ??
-      parametersSourceArray.reduce((acc, { isProp, name }, index) => {
-        acc[name] = { isProp: isProp, value: parametersValuesArray[index] };
-        return acc;
-      }, {})
+      parametersSourceArray.reduce(
+        (acc, { isProp, name, inputType, handlerFunction }, index) => {
+          acc[name] = {
+            isProp: isProp,
+            value:
+              inputType === 'event'
+                ? handlerFunction
+                : parametersValuesArray[index],
+          };
+          return acc;
+        },
+        {}
+      )
   );
 
   let xFunction = $derived(
@@ -391,11 +506,17 @@
         ])
         .range([
           0,
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            'svgWidth'
-          ),
+          demoScreenWidth -
+            getValueFromParametersArray(
+              parametersSourceArray,
+              parametersValuesArray,
+              'paddingLeft'
+            ) -
+            getValueFromParametersArray(
+              parametersSourceArray,
+              parametersValuesArray,
+              'paddingRight'
+            ),
         ])
   );
 
@@ -429,7 +550,17 @@
             parametersSourceArray,
             parametersValuesArray,
             'svgHeight'
-          ),
+          ) -
+            getValueFromParametersArray(
+              parametersSourceArray,
+              parametersValuesArray,
+              'paddingTop'
+            ) -
+            getValueFromParametersArray(
+              parametersSourceArray,
+              parametersValuesArray,
+              'paddingBottom'
+            ),
           0,
         ])
   );
@@ -502,102 +633,97 @@
     homepage ?? [...new Set(parametersSourceArray.map((el) => el.category))]
   );
 
-  $inspect(parameterCategories);
+  function defineDefaultEventHandler(
+    event,
+    parametersSourceArray,
+    parametersValuesArray,
+    name
+  ) {
+    parametersValuesArray[
+      parametersSourceArray.findIndex((el) => el.name === name)
+    ][0] += 1;
+
+    parametersValuesArray[
+      parametersSourceArray.findIndex((el) => el.name === name)
+    ][1] = event.currentTarget.dataset.id;
+  }
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>
 
 {#if !homepage}
-  <div data-role="parameters-section" class="mx-auto">
-    <h5 class="mb-6 underline underline-offset-4">Parameters</h5>
-    <div class="mb-6" data-role="parameters-container">
-      {#each [0, 1, 2] as columnNumb}
-        <div data-role="parameters-container-column">
-          {#each parameterCategories as category, i}
-            {#if i % 3 === columnNumb}
-              {@const visibleParametersForCategory =
-                parametersSourceArray.filter(
-                  (el) =>
-                    el.category === category &&
-                    el.inputType &&
-                    parametersVisibleArray[el.index]
-                )}
+  <ParametersSection
+    {details}
+    {parameterCategories}
+    {parametersSourceArray}
+    {parametersVisibleArray}
+    bind:parametersValuesArray
+  ></ParametersSection>
 
-              <div
-                data-role="parameters-category-group"
-                class="px-4 pt-0 pb-4 rounded-xl bg-gray-200 bg-opacity-25"
-              >
-                <Accordion flush>
-                  <AccordionItem>
-                    <span class="text-2xl text-black" slot="header"
-                      >{category}</span
-                    >
-                    <div class="flex flex-col">
-                      {#each visibleParametersForCategory as parameter, i}
-                        <div>
-                          <InputForParameter
-                            source={parameter}
-                            bind:value={parametersValuesArray[parameter.index]}
-                          ></InputForParameter>
-                          {#if i < visibleParametersForCategory.length - 1}
-                            <DividerLine margin="15px 0px 15px 0px"
-                            ></DividerLine>
-                          {/if}
-                        </div>
-                      {/each}
-                    </div>
-                  </AccordionItem>
-                </Accordion>
-              </div>
-            {/if}
-          {/each}
-        </div>
-      {/each}
-    </div>
-    <DividerLine margin="15px 0px 15px 0px"></DividerLine>
-  </div>
-  <div data-role="demo-section" class="grid place-items-center">
+  <div data-role="demo-section">
     <div>
-      <h5 class="mb-6 mt-6 underline underline-offset-4">Component Demo</h5>
-      <svg
-        class="bg-slate-100"
-        width={getValueFromParametersArray(
+      <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+
+      <ul
+        class="my-4 mx-0 items-center w-full rounded-lg border border-gray-200 sm:flex dark:bg-gray-800 dark:border-gray-600 divide-x rtl:divide-x-reverse divide-gray-200 dark:divide-gray-600"
+        style="min-width: 800px;"
+      >
+        {#each Object.keys(defaultScreenWidthBreakpoints) as screenSizeOption}
+          <li class="w-full">
+            <Radio
+              bind:group={demoScreenWidth}
+              name="hor-list"
+              class="p-4 text-base"
+              value={defaultScreenWidthBreakpoints[screenSizeOption]}
+              >{screenSizeOption} ({defaultScreenWidthBreakpoints[
+                screenSizeOption
+              ]}px)</Radio
+            >
+          </li>
+        {/each}
+      </ul>
+    </div>
+  </div>
+
+  <div data-role="component-container">
+    <svg
+      width={demoScreenWidth}
+      height={getValueFromParametersArray(
+        parametersSourceArray,
+        parametersValuesArray,
+        'svgHeight'
+      )}
+    >
+      <g
+        transform="translate({getValueFromParametersArray(
           parametersSourceArray,
           parametersValuesArray,
-          'svgWidth'
-        )}
-        height={getValueFromParametersArray(
+          'paddingLeft'
+        )},{getValueFromParametersArray(
           parametersSourceArray,
           parametersValuesArray,
-          'svgHeight'
-        )}
+          'paddingTop'
+        )})"
       >
         <Line {...parametersObjectRefined}></Line>
-      </svg>
-    </div>
+      </g>
+    </svg>
   </div>
 {/if}
 
 <style>
   svg {
-    overflow: visible;
+    overflow: hidden;
+    background-color: #f8f8f8;
   }
 
-  [data-role='parameters-section'] {
-    max-width: 1000px;
-  }
-  [data-role='parameters-container'] {
-    display: flex;
-    gap: 10px;
+  [data-role='demo-section'] {
+    max-width: 1024px;
+    margin: 0px auto;
   }
 
-  [data-role='parameters-container-column'] {
-    flex: 1;
+  [data-role='component-container'] {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  [data-role='parameters-category-group'] {
-    border: 1px solid #e5e7eb;
+    justify-content: center;
   }
 </style>

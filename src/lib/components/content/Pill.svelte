@@ -9,10 +9,12 @@
     borderRadius = '5px',
     tooltipText = false,
     padding = null,
+    tailwindClass = '',
   } = $props();
 </script>
 
 <div
+  class={tailwindClass}
   data-role="pill-container-{size}"
   style="color: {textColor}; background-color: {bgColor}; border-radius: {borderRadius}; padding: {padding ??
     null};"

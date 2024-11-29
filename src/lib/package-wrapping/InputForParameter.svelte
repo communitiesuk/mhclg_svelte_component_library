@@ -67,3 +67,13 @@
   {@render parameterLabel(source.name, propPillObject)}
   <NumberInput bind:value />
 {/if}
+
+{#if source.inputType === 'event'}
+  {@render parameterLabel(source.name, propPillObject)}
+  <p class="my-2 mx-0 p-0 text-sm text-black">
+    The {source.name} event handler has been called {value[0]} time{value[0] ===
+    1
+      ? ''
+      : 's'}{value[1] ? ' (' + value[1] + ')' : ''}.
+  </p>
+{/if}

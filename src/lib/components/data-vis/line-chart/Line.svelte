@@ -15,12 +15,28 @@
     lineFunction,
     xFunction,
     yFunction,
+    dataId,
+    markersDataId,
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
+    onMouseMove,
+    onClickMarker,
   } = $props();
+
+  $inspect(onClick);
 
   $inspect(dataArray);
 </script>
 
-<g {opacity}>
+<g
+  data-id={dataId}
+  onclick={onClick}
+  onmouseenter={onMouseEnter}
+  onmouseleave={onMouseLeave}
+  onmousemove={onMouseMove}
+  {opacity}
+>
   <path
     d={lineFunction(dataArray)}
     fill={pathFillColor}
@@ -30,8 +46,12 @@
   ></path>
 
   {#if includeMarkers}
-    {#each dataArray as marker}
-      <g transform="translate({xFunction(marker.x)},{yFunction(marker.y)})">
+    {#each dataArray as marker, i}
+      <g
+        data-id={markersDataId + '-' + i}
+        onclick={onClickMarker}
+        transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
+      >
         {#if markerShape === 'circle'}
           <circle
             r={markerRadius}

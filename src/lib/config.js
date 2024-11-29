@@ -29,3 +29,11 @@ export const propPillLookup = {
     padding: '0.25rem 0.3rem 0.3rem 0.25rem',
   },
 };
+
+export const defaultScreenWidthBreakpoints = {
+  xs: 420,
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+};

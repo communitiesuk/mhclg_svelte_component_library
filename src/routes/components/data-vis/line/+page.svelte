@@ -1,6 +1,8 @@
 <script>
   // @ts-nocheck
   import { page } from '$app/stores';
+  import Line from '$lib/components/data-vis/line-chart/Line.svelte';
+  import DividerLine from '$lib/components/layout/DividerLine.svelte';
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
   import InputForParameter from '$lib/package-wrapping/InputForParameter.svelte';
   import {
@@ -8,11 +10,21 @@
     csvToArrayOfObjects,
   } from '$lib/utils/data-transformations/convertCSV.js';
   import { createRefinedParametersObject } from '$lib/utils/data-transformations/createRefinedParametersObject.js';
+  import { getValueFromParametersArray } from '$lib/utils/data-transformations/getValueFromParametersArray.js';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
-  import { scaleLinear } from 'd3-scale';
-  import { line } from 'd3-shape';
+  import { scaleLinear, scaleLog, scaleTime } from 'd3-scale';
+  import {
+    curveBasis,
+    curveCardinal,
+    curveLinear,
+    curveLinearClosed,
+    curveMonotoneX,
+    curveStep,
+    line,
+  } from 'd3-shape';
+  import { Accordion, AccordionItem } from 'flowbite-svelte';
 
-  let { data, homepage = false, folders } = $props();
+  let { data, homepage = undefined, folders } = $props();
 
   let details = {
     /**
@@ -20,7 +32,7 @@
      * ?      Available statuses are:
      * ?      'to_be_developed', 'in_progress', 'complete_untested', 'complete_in_use', 'complete_accessible'
      */
-    status: 'to_be_developed',
+    status: 'complete_untested',
     /**
      * &&     description - An array of paragraphs of text explaining what the component does, used within ComponentDetails
      * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
@@ -69,11 +81,13 @@
         label: 'Set the curvature of the line',
         description:
           "Allow developer to set the 'curve' of the line - using the d3 set of curve options.",
+        fulfilled: true,
       },
       {
         label: 'Markers',
         description:
-          'Allow developer to add markers/value labels at different data points along their line.',
+          'Allow developer to add markers at each data point along their line.',
+        fulfilled: true,
       },
     ],
   };
@@ -90,464 +104,500 @@
 
   $inspect(data?.dataInFormatForLineChart);
 
-  let svgWidth = 600;
-  let svgHeight = 300;
+  let parametersSourceArray =
+    homepage ??
+    [
+      {
+        name: 'svgWidth',
+        category: 'dimensions',
+        isProp: false,
+        inputType: 'numberInput',
+        value: 800,
+        feedsInto: 'xFunction',
+      },
+      {
+        name: 'svgHeight',
+        category: 'dimensions',
+        isProp: false,
+        inputType: 'numberInput',
+        value: 400,
+        feedsInto: 'yFunction',
+      },
+      {
+        name: 'dataSource',
+        category: 'data',
+        isProp: false,
+        inputType: 'radio',
+        options: ['from base data', 'custom'],
+        feedsInto: 'dataArray',
+      },
+      {
+        name: 'metric',
+        category: 'data',
+        isProp: false,
+        inputType: 'dropdown',
+        options: data.metrics,
+        visible: { name: 'dataSource', value: 'from base data' },
+        feedsInto: 'dataArray',
+      },
+      {
+        name: 'area',
+        category: 'data',
+        isProp: false,
+        inputType: 'dropdown',
+        options: data.areas,
+        visible: { name: 'dataSource', value: 'from base data' },
+        feedsInto: 'dataArray',
+      },
+      {
+        name: 'customDataArray',
+        category: 'data',
+        isProp: false,
+        inputType: 'textArea',
+        visible: { name: 'dataSource', value: 'custom' },
+        value: convertToCSV(
+          data.dataInFormatForLineChart[0].lines[0].data.map((el) => ({
+            x: el.x,
+            y: el.y,
+          }))
+        ),
+        feedsInto: 'dataArray',
+      },
+      {
+        name: 'dataArray',
+        category: 'data',
+        isProp: true,
+        inputType: null,
+      },
+      {
+        name: 'xDomainLowerBound',
+        category: 'xScale',
+        isProp: false,
+        inputType: 'numberInput',
+        value: 2015,
+        feedsInto: ['xFunction', 'lineFunction'],
+      },
+      {
+        name: 'xDomainUpperBound',
+        category: 'xScale',
+        isProp: false,
+        inputType: 'numberInput',
+        value: 2022,
+        feedsInto: ['xFunction', 'lineFunction'],
+      },
+      {
+        name: 'xScaleType',
+        category: 'xScale',
+        isProp: false,
+        inputType: 'dropdown',
+        options: ['scaleLinear', 'scaleLog', 'scaleTime'],
+        feedsInto: ['xFunction', 'lineFunction'],
+      },
+      {
+        name: 'xFunction',
+        category: 'xScale',
+        isProp: true,
+        inputType: null,
+      },
+      {
+        name: 'yDomainLowerBound',
+        category: 'yScale',
+        isProp: false,
+        inputType: 'numberInput',
+        value: 0,
+        feedsInto: ['yFunction', 'lineFunction'],
+      },
+      {
+        name: 'yDomainUpperBound',
+        category: 'yScale',
+        isProp: false,
+        inputType: 'numberInput',
+        value: 100,
+        feedsInto: ['yFunction', 'lineFunction'],
+      },
+      {
+        name: 'yScaleType',
+        category: 'yScale',
+        isProp: false,
+        inputType: 'dropdown',
+        options: ['scaleLinear', 'scaleLog', 'scaleTime'],
+        feedsInto: ['yFunction', 'lineFunction'],
+      },
+      {
+        name: 'yFunction',
+        category: 'yScale',
+        isProp: true,
+        inputType: null,
+      },
+      {
+        name: 'curve',
+        category: 'lineFunction',
+        isProp: false,
+        inputType: 'dropdown',
+        options: [
+          'curveLinear',
+          'curveLinearClosed',
+          'curveCardinal',
+          'curveBasis',
+          'curveStep',
+          'curveMonotoneX',
+        ],
+        feedsInto: 'lineFunction',
+      },
+      {
+        name: 'lineFunction',
+        category: 'lineFunction',
+        isProp: true,
+        inputType: null,
+      },
+      {
+        name: 'pathStrokeColor',
+        category: 'path',
+        isProp: true,
+        inputType: 'input',
+        value: '#b312a0',
+      },
+      {
+        name: 'pathStrokeWidth',
+        category: 'path',
+        isProp: true,
+        inputType: 'numberInput',
+        value: 3,
+      },
+      {
+        name: 'pathFillColor',
+        category: 'path',
+        isProp: true,
+        inputType: 'input',
+        value: 'none',
+      },
+      {
+        name: 'pathStrokeDashArray',
+        category: 'path',
+        isProp: true,
+        inputType: 'input',
+        value: 'none',
+      },
+      {
+        name: 'includeMarkers',
+        category: 'markers',
+        isProp: true,
+        inputType: 'checkbox',
+      },
+      {
+        name: 'markerShape',
+        category: 'markers',
+        isProp: true,
+        inputType: 'dropdown',
+        options: ['circle', 'square', 'diamond', 'triangle'],
+        visible: { name: 'includeMarkers', value: true },
+      },
+      {
+        name: 'markerRadius',
+        category: 'markers',
+        isProp: true,
+        inputType: 'numberInput',
+        value: 5,
+        visible: { name: 'includeMarkers', value: true },
+      },
 
-  let y = $derived(scaleLinear().domain([0, 100]).range([svgHeight, 0]));
-  let x = $derived(scaleLinear().domain([2015, 2022]).range([svgWidth, 0]));
-
-  let pathFunction = line()
-    .x((d) => x(d.x))
-    .y((d) => y(d.y));
-
-  let parametersSourceArray = [
-    {
-      name: 'dataSource',
-      category: 'data',
-      isProp: false,
-      inputType: 'radio',
-      options: ['from base data', 'custom'],
-    },
-    {
-      name: 'metric',
-      category: 'data',
-      isProp: false,
-      inputType: 'dropdown',
-      options: data.metrics,
-      visible: { name: 'dataSource', value: 'from base data' },
-    },
-    {
-      name: 'area',
-      category: 'data',
-      isProp: false,
-      inputType: 'dropdown',
-      options: data.areas,
-      visible: { name: 'dataSource', value: 'from base data' },
-    },
-    {
-      name: 'customDataArray',
-      category: 'data',
-      isProp: false,
-      inputType: 'textArea',
-      visible: { name: 'dataSource', value: 'custom' },
-      value: convertToCSV(data.dataInFormatForLineChart[0].lines[0].data),
-    },
-    {
-      name: 'dataArray',
-      category: 'data',
-      isProp: true,
-      inputType: null,
-    },
-  ].map((el, i) => ({ ...el, index: i }));
+      {
+        name: 'markerFill',
+        category: 'markers',
+        isProp: true,
+        inputType: 'input',
+        value: '#b312a0',
+        visible: { name: 'includeMarkers', value: true },
+      },
+      {
+        name: 'markerStroke',
+        category: 'markers',
+        isProp: true,
+        inputType: 'input',
+        value: 'white',
+        visible: { name: 'includeMarkers', value: true },
+      },
+      {
+        name: 'markerStrokeWidth',
+        category: 'markers',
+        isProp: true,
+        inputType: 'numberInput',
+        value: 1,
+        visible: { name: 'includeMarkers', value: true },
+      },
+      {
+        name: 'opacity',
+        category: 'styling',
+        isProp: true,
+        inputType: 'numberInput',
+        value: 1,
+      },
+    ].map((el, i) => ({ ...el, index: i }));
 
   let parametersValuesArray = $state(
-    parametersSourceArray.map((el) => {
-      return el.value ?? el.options?.[0] ?? null;
-    })
+    homepage ??
+      parametersSourceArray.map((el) => {
+        return el.value ?? el.options?.[0] ?? null;
+      })
   );
 
   let parametersVisibleArray = $derived(
-    parametersSourceArray.map((el) =>
-      !('visible' in el)
-        ? true
-        : typeof el.visible === 'boolean'
-          ? el.visible
-          : parametersValuesArray[
-              parametersSourceArray.findIndex(
-                (elm) => elm.name === el.visible.name
-              )
-            ] === el.visible.value
-    )
+    homepage ??
+      parametersSourceArray.map((el) =>
+        !('visible' in el)
+          ? true
+          : typeof el.visible === 'boolean'
+            ? el.visible
+            : parametersValuesArray[
+                parametersSourceArray.findIndex(
+                  (elm) => elm.name === el.visible.name
+                )
+              ] === el.visible.value
+      )
   );
 
   let parametersObject = $derived(
-    parametersSourceArray.reduce((acc, { isProp, name }, index) => {
-      acc[name] = { isProp: isProp, value: parametersValuesArray[index] };
-      return acc;
-    }, {})
+    homepage ??
+      parametersSourceArray.reduce((acc, { isProp, name }, index) => {
+        acc[name] = { isProp: isProp, value: parametersValuesArray[index] };
+        return acc;
+      }, {})
   );
 
-  let compositeValuesArray = $derived([
-    {
-      name: 'dataArray',
-      key: 'dataSource',
-      options: [
-        {
-          name: 'from base data',
-          value: data.dataInFormatForLineChart
-            .find((el) => el.metric === parametersObject.metric.value)
-            .lines.find((el) => el.areaCode === parametersObject.area.value)
-            .data,
-        },
-        {
-          name: 'custom',
-          value: csvToArrayOfObjects(
-            parametersValuesArray[
-              parametersSourceArray.findIndex(
-                (el) => el.name === 'customDataArray'
+  let xFunction = $derived(
+    homepage ??
+      {
+        scaleLinear: scaleLinear(),
+        scaleLog: scaleLog(),
+        scaleTime: scaleTime(),
+      }[
+        getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          'xScaleType'
+        )
+      ]
+        .domain([
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            'xDomainLowerBound'
+          ),
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            'xDomainUpperBound'
+          ),
+        ])
+        .range([
+          0,
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            'svgWidth'
+          ),
+        ])
+  );
+
+  let yFunction = $derived(
+    homepage ??
+      {
+        scaleLinear: scaleLinear(),
+        scaleLog: scaleLog(),
+        scaleTime: scaleTime(),
+      }[
+        getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          'yScaleType'
+        )
+      ]
+        .domain([
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            'yDomainLowerBound'
+          ),
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            'yDomainUpperBound'
+          ),
+        ])
+        .range([
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            'svgHeight'
+          ),
+          0,
+        ])
+  );
+
+  let compositeValuesArray = $derived(
+    homepage ?? [
+      {
+        name: 'xFunction',
+        value: xFunction,
+      },
+      {
+        name: 'yFunction',
+        value: yFunction,
+      },
+      {
+        name: 'lineFunction',
+        value: line()
+          .x((d) => xFunction(d.x))
+          .y((d) => yFunction(d.y))
+          .curve(
+            {
+              curveLinear: curveLinear,
+              curveLinearClosed: curveLinearClosed,
+              curveCardinal: curveCardinal,
+              curveBasis: curveBasis,
+              curveStep: curveStep,
+              curveMonotoneX: curveMonotoneX,
+            }[
+              getValueFromParametersArray(
+                parametersSourceArray,
+                parametersValuesArray,
+                'curve'
               )
             ]
           ),
-        },
-      ],
-    },
-  ]);
+      },
+
+      {
+        name: 'dataArray',
+        key: 'dataSource',
+        options: [
+          {
+            name: 'from base data',
+            value: data.dataInFormatForLineChart
+              .find((el) => el.metric === parametersObject.metric.value)
+              .lines.find((el) => el.areaCode === parametersObject.area.value)
+              .data,
+          },
+          {
+            name: 'custom',
+            value: csvToArrayOfObjects(
+              getValueFromParametersArray(
+                parametersSourceArray,
+                parametersValuesArray,
+                'customDataArray'
+              )
+            ),
+          },
+        ],
+      },
+    ]
+  );
 
   let parametersObjectRefined = $derived(
-    createRefinedParametersObject(parametersObject, compositeValuesArray)
+    homepage ??
+      createRefinedParametersObject(parametersObject, compositeValuesArray)
   );
 
-  $inspect(parametersObject, 'goodbye');
-  $inspect(parametersObjectRefined, 'hello');
-
-  //let ppO = $derived(createParametersObject(parametersSourceArray, parametersValuesArray, ))
-
-  /*let parametersObject = $derived(
-    parametersSourceArray.reduce((acc, { isProp, name }, index) => {
-      if (isProp) {
-        if (name === 'dataArray') {
-          acc[name] =
-            parametersValuesArray[
-              parametersSourceArray.findIndex(
-                (elm) => elm.name === 'dataSource'
-              )
-            ] === 'from base data'
-              ? 'doubleData'
-              : 10;
-        } else {
-          acc[name] = parametersValuesArray[index];
-        }
-      }
-      return acc;
-    }, {})
-  );*/
-
-  /*let parametersObject = $derived(
-    parametersArray.reduce((acc, { propName, value, inputType }) => {
-      acc[propName] = inputType === 'textArea' ? JSON.parse(value) : value;
-      return acc;
-    }, {})
-  );*/
-
-  /*let dataSource = $state(
-    setInitialValuesOfInputs({
-      propName: 'dataSource',
-      isProp: false,
-      category: 'data',
-      inputType: 'radio',
-      options: ['from base data', 'custom'],
-    })
+  let parameterCategories = $derived(
+    homepage ?? [...new Set(parametersSourceArray.map((el) => el.category))]
   );
 
-  $inspect(dataSource);
-
-  let metric = $state(
-    setInitialValuesOfInputs({
-      propName: 'metric',
-      isProp: false,
-      category: 'data',
-      inputType: 'dropdown',
-      options: data.metrics,
-      visibile: dataSource.value === 'from base data',
-    })
-  );
-
-  let area = $state(
-    setInitialValuesOfInputs({
-      propName: 'area',
-      isProp: false,
-      category: 'data',
-      inputType: 'dropdown',
-      options: data.areas,
-      visibile: dataSource.value === 'from base data',
-    })
-  );
-
-  let customDataArray = $state(
-    setInitialValuesOfInputs({
-      propName: 'customDataArray',
-      isProp: false,
-      category: 'data',
-      inputType: 'textArea',
-      value: data?.dataInFormatForLineChart
-        .find((el) => el.metric === metric.value)
-        .lines.find((el) => el.area === area.value).data,
-      visibile: dataSource.value === 'custom',
-    })
-  );
-
-  let dataArray = $state(
-    setInitialValuesOfInputs({
-      propName: 'dataArray',
-      isProp: true,
-      category: 'data',
-      inputType: null,
-      value:
-        dataSource.value === 'from base data'
-          ? data?.dataInFormatForLineChart
-              .find((el) => el.metric === metric.value)
-              .lines.find((el) => el.area === area.value).data
-          : customDataArray.value,
-      visibile: false,
-    })
-  );
-
-  let parametersArray = $state([
-    dataSource,
-    metric,
-    area,
-    customDataArray,
-    dataArray,
-  ]);*/
-
-  /*let parametersArray = $state([
-    dataSource,
-
-    {
-      propName: 'area',
-      isProp: false,
-      category: 'data',
-      inputType: 'dropdown',
-      options: data.areas,
-      visibile: { propName: 'dataSource', value: 'from base data' },
-    },
-    {
-      propName: 'customDataArray',
-      isProp: false,
-      category: 'data',
-      inputType: 'textArea',
-      options: data.areas,
-      visibile: { propName: 'dataSource', value: 'custom' },
-    },
-  ]);*/
-
-  /*let parametersArrayBase = $state(
-    setInitialValuesOfInputs([
-      {
-        propName: 'data source',
-        isProp: false,
-        category: 'data',
-        inputType: 'radio',
-        options: ['from base data', 'custom'],
-        visibile: true,
-      },
-    ])
-  );
-
-  let parametersArrayDerived1 = $derived(
-    setInitialValuesOfInputs([
-      {
-        propName: 'metric',
-        isProp: false,
-        category: 'data',
-        inputType: 'dropdown',
-        options: data.metrics,
-        visibile:
-          parametersArrayBase.find((el) => el.propName === 'data source')
-            .value === 'from source data',
-      },
-      {
-        propName: 'area',
-        isProp: false,
-        category: 'data',
-        inputType: 'dropdown',
-        options: data.areas,
-        visibile:
-          parametersArrayBase.find((el) => el.propName === 'data source')
-            .value === 'from source data',
-      },
-    ])
-  );
-
-  let parametersArrayDerived2 = $derived(setInitialValuesOfInputs([]));
-
-  let parametersArrayCombined = $derived([
-    ...parametersArrayBase,
-    ...parametersArrayDerived1,
-    ...parametersArrayDerived2,
-  ]);
-
-  let parameterCategories = $derived([
-    ...new Set(parametersArrayCombined.map((el) => el.category)),
-  ]);
-
-  let parametersArraySplitIntoCategories = $derived(
-    parameterCategories.map((el) => ({
-      category: el,
-      parameters: parametersArrayCombined.filter((elm) => elm.category === el),
-    }))
-  );
-
-  $inspect(parametersArraySplitIntoCategories);
   $inspect(parameterCategories);
-  $inspect(parametersArrayCombined);*/
-
-  /*let initialParametersArray = $state([
-    { x: initialParametersArray?.find((el) => el === 100) },
-  ]);*/
-
-  /*let initialParametersArray = $state(
-    [
-      {
-      propName: 'markers',
-      inputType: 'checkbox',
-      value: false,
-      determinant: true,
-    },
-      {
-        category: 'data',
-        propName: 'data source',
-        inputType: 'radio',
-        options: ['from base data', 'custom'],
-        determinant: true,
-        visibile: true,
-      },
-
-      {
-      propName: 'dataArray',
-      inputType: 'textArea',
-      value: JSON.stringify(
-        data?.dataInFormatForLineChart[0].lines[0].data.map((el) => ({
-          x: el.yearInt,
-          y: el.Value,
-        }))
-      ),
-    },
-    ].map((el) => {
-      if (['radio', 'dropdown'].includes(el.inputType)) {
-        el.value = el.options[0];
-      }
-      return el;
-    })
-  );
-
-  let metric = $derived({
-    category: 'data',
-    propName: 'metric',
-    inputType: 'dropdown',
-    options: data.metrics,
-    determinant: true,
-    visibile:
-      initialParametersArray.find((el) => el.propName === 'data source')
-        .value === 'from source data',
-  });
-
-  let area = $derived({
-    category: 'data',
-    propName: 'area',
-    inputType: 'dropdown',
-    options: data.areas,
-    determinant: true,
-    visibile:
-      initialParametersArray.find((el) => el.propName === 'data source')
-        .value === 'from source data',
-  });
-
-  let lineData = $derived({
-    category: 'data',
-    propName: 'lineData',
-    inputType: 'textArea',
-    determinant: true,
-    visibile: initialParametersArray.find((el) => el.propName === 'data source')
-      .visibile,
-    value:
-      initialParametersArray.find((el) => el.propName === 'data source')
-        .value === 'from base data'
-        ? data?.dataInFormatForLineChart.find((el) => el.metric === 100)
-        : 0,
-  });
-
-  let combinedParametersArray = $derived([
-    ...initialParametersArray,
-    metric,
-    area,
-    lineData,
-  ]);
-
-  $inspect(combinedParametersArray);*/
-
-  /*let parametersObject = $derived(
-    parametersArray.reduce((acc, { propName, value, inputType }) => {
-      acc[propName] = inputType === 'textArea' ? JSON.parse(value) : value;
-      return acc;
-    }, {})
-  );*/
-
-  /*let color = $state('red');
-  let strokeWidth = $state('3px');
-  let markers = $state(false);
-  let dataArray = $state(
-    JSON.stringify(
-      data?.dataInFormatForLineChart[0].lines[0].data.map((el) => ({
-        x: el.yearInt,
-        y: el.Value,
-      }))
-    )
-  );*/
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>
 
 {#if !homepage}
-  <div
-    data-role="parameters-container"
-    class="mx-auto flex flex-row gap-6 mb-6 flex-wrap items-start"
-  >
-    {#each [...new Set(parametersSourceArray.map((el) => el.category))] as category}
-      {category}
-      {#each parametersSourceArray.filter((el) => el.category === category) as parameter}
-        {#if parameter.inputType && parametersVisibleArray[parameter.index]}
-          <InputForParameter
-            source={parameter}
-            bind:value={parametersValuesArray[parameter.index]}
-          ></InputForParameter>
-        {/if}
-      {/each}
-    {/each}
+  <div data-role="parameters-section" class="mx-auto">
+    <h5 class="mb-6 underline underline-offset-4">Parameters</h5>
+    <div class="mb-6" data-role="parameters-container">
+      {#each [0, 1, 2] as columnNumb}
+        <div data-role="parameters-container-column">
+          {#each parameterCategories as category, i}
+            {#if i % 3 === columnNumb}
+              {@const visibleParametersForCategory =
+                parametersSourceArray.filter(
+                  (el) =>
+                    el.category === category &&
+                    el.inputType &&
+                    parametersVisibleArray[el.index]
+                )}
 
-    <!-- {#each parametersSourceArray as parameter, i}
-      {#if parameter.inputType && parametersVisibleArray[i]}
-        <InputForParameter
-          source={parameter}
-          bind:value={parametersValuesArray[i]}
-        ></InputForParameter>
-      {/if}
-    {/each} -->
-    <!-- {#each parametersArraySplitIntoCategories as row}
-      {row.category}
-      {#each row.parameters as parameter, i}
-        <InputForParameter bind:parameter={row.parameters[i]}
-        ></InputForParameter>
+              <div
+                data-role="parameters-category-group"
+                class="px-4 pt-0 pb-4 rounded-xl bg-gray-200 bg-opacity-25"
+              >
+                <Accordion flush>
+                  <AccordionItem>
+                    <span class="text-2xl text-black" slot="header"
+                      >{category}</span
+                    >
+                    <div class="flex flex-col">
+                      {#each visibleParametersForCategory as parameter, i}
+                        <div>
+                          <InputForParameter
+                            source={parameter}
+                            bind:value={parametersValuesArray[parameter.index]}
+                          ></InputForParameter>
+                          {#if i < visibleParametersForCategory.length - 1}
+                            <DividerLine margin="15px 0px 15px 0px"
+                            ></DividerLine>
+                          {/if}
+                        </div>
+                      {/each}
+                    </div>
+                  </AccordionItem>
+                </Accordion>
+              </div>
+            {/if}
+          {/each}
+        </div>
       {/each}
-    {/each} -->
-    <!-- {#each parametersArray as parameter, i}
-      <InputForParameter bind:parameter={parametersArray[i]}
-      ></InputForParameter>
-    {/each} -->
-
-    <!-- <div>
-      <Label for="default-input" class="block mb-2" color="primary">Color</Label
-      >
-      <Input id="default-input" bind:value={color} color="primary" />
     </div>
-
-    <div>
-      <Label for="default-input" class="block mb-2" color="primary"
-        >Stroke-width</Label
-      >
-      <Input id="default-input" bind:value={strokeWidth} color="primary" />
-    </div> -->
+    <DividerLine margin="15px 0px 15px 0px"></DividerLine>
   </div>
-
-  <!-- <Wrapper {...parametersObject}></Wrapper> -->
-
-  <!-- <svg class="mx-auto bg-slate-100" width={svgWidth} height={svgHeight}>
-    <Line {pathFunction} {x} {y} {...parametersObject}></Line>
-  </svg> -->
+  <div data-role="demo-section" class="grid place-items-center">
+    <div>
+      <h5 class="mb-6 mt-6 underline underline-offset-4">Component Demo</h5>
+      <svg
+        class="bg-slate-100"
+        width={getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          'svgWidth'
+        )}
+        height={getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          'svgHeight'
+        )}
+      >
+        <Line {...parametersObjectRefined}></Line>
+      </svg>
+    </div>
+  </div>
 {/if}
 
 <style>
   svg {
     overflow: visible;
+  }
+
+  [data-role='parameters-section'] {
+    max-width: 1000px;
+  }
+  [data-role='parameters-container'] {
+    display: flex;
+    gap: 10px;
+  }
+
+  [data-role='parameters-container-column'] {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  [data-role='parameters-category-group'] {
+    border: 1px solid #e5e7eb;
   }
 </style>

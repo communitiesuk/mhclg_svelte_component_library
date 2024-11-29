@@ -14,3 +14,18 @@ export const componentStausLookup = {
     color: 'white',
   },
 };
+
+export const propPillLookup = {
+  true: {
+    text: '{p}',
+    textColor: 'white',
+    bgColor: '#ba029b',
+    padding: '0.2rem 0.3rem 0.4rem 0.3rem',
+  },
+  false: {
+    text: '=>',
+    textColor: 'white',
+    bgColor: '#00695c',
+    padding: '0.25rem 0.3rem 0.3rem 0.25rem',
+  },
+};

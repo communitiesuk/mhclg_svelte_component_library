@@ -6,16 +6,19 @@ export function createRefinedParametersObject(
     Object.entries(parametersObject)
       .filter(([key, value]) => value.isProp)
       .map((el) => {
-        let value = el[1];
+        let value = el[1].value;
 
         compositeValueArray.forEach((elm) => {
           if (el[0] === elm.name) {
-            elm.options.forEach((element) => {
-              console.log(parametersObject, elm.key, element.name);
-              if (parametersObject[elm.key].value === element.name) {
-                value = element.value;
-              }
-            });
+            if ('value' in elm) {
+              value = elm.value;
+            } else {
+              elm.options.forEach((element) => {
+                if (parametersObject[elm.key].value === element.name) {
+                  value = element.value;
+                }
+              });
+            }
           }
         });
         return [el[0], value];

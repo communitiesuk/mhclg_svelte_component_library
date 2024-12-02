@@ -14,7 +14,7 @@
           ? `./../${folders[2]}/${folders[3]}/${folders[4]}/+page.svelte`
           : `./../${folders[2]}/${folders[3]}/+page.svelte`
       );
-      return module.default;
+      return { module: module.default, folders: folders };
     })
   ).then((loadedComponents) => {
     components = loadedComponents;
@@ -23,6 +23,10 @@
 
 <div class="flex flex-col gap-10">
   {#each components as component}
-    <svelte:component this={component} detailsOnly={true} />
+    <svelte:component
+      this={component.module}
+      folders={component.folders}
+      homepage={true}
+    />
   {/each}
 </div>

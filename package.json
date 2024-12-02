@@ -46,6 +46,8 @@
 		"eslint": "^9.7.0",
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-svelte": "^2.36.0",
+		"flowbite": "^2.5.2",
+		"flowbite-svelte": "^0.47.3",
 		"globals": "^15.0.0",
 		"mdsvex": "^0.11.2",
 		"prettier": "^3.3.2",
@@ -62,6 +64,7 @@
 	},
 	"dependencies": {
 		"csv-parser": "^3.0.0",
+		"d3": "^7.9.0",
 		"svelte-preprocess": "^6.0.3"
 	}
 }

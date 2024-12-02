@@ -18,10 +18,7 @@
   "prettier.svelteStrictMode": false, // Relax strict mode to avoid conflicts
   "prettier.svelteBracketNewLine": true, // Controls if closing brackets should be on a new line
   // Enable ESLint for linting (if ESLint is configured)
-  "eslint.validate": [
-    "javascript",
-    "svelte"
-  ],
+  "eslint.validate": ["javascript", "svelte"],
   "editor.codeActionsOnSave": {
     "source.fixAll": "explicit",
     "source.organizeImports": "explicit"
@@ -73,6 +70,8 @@
   "gitlens.defaultGravatarsStyle": "mp",
   "editor.colorDecoratorsActivatedOn": "hover",
   "editor.defaultColorDecorators": true,
+  "better-comments.highlightPlainText": true,
+  "better-comments.multilineComments": true,
   "better-comments.tags": [
     {
       "tag": "&&",
@@ -80,19 +79,27 @@
     },
     {
       "tag": "?",
-      "color": "#3498DB",
+      "color": "#3498DB"
     },
     {
       "tag": "!",
-      "color": "#FF2D00",
+      "color": "#FF2D00"
     },
     {
       "tag": "todo",
-      "color": "#FF8C00",
+      "color": "#FF8C00"
     },
     {
       "tag": "<>",
-      "color": "#e833c4",
+      "color": "#e833c4"
     },
+    {
+      "tag": "DONOTTOUCH",
+      "color": "#3ecfd6"
+    },
+    {
+      "tag": "CUSTOMISETHIS",
+      "color": "yellow"
+    }
   ]
 }

@@ -28,7 +28,17 @@
      * &&     description - An array of paragraphs of text explaining what the component does, used within ComponentDetails
      * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
      */
-    description: undefined,
+    description: [
+      {
+        content:
+          'A compact label that provides status or metadata for a primary interface area.',
+      },
+      {
+        content:
+          'Currently relying on the <a href="https://flowbite-svelte.com/docs/components/tooltip">Flowbite tooltip</a> for hover functionality.',
+        markdown: true,
+      },
+    ],
     /**
      * &&     context - An array of paragraphs of text explaining when the component will be used (e.g. what is it's parent component likely to be, what components will it be used in combination with) - used within ComponentDetails
      * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.

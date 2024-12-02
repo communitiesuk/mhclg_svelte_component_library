@@ -47,7 +47,7 @@
     description: [
       {
         content:
-          'This component takes an array of data, two scale functions and a line function and renders an svg path element.',
+          'This component takes an array of data, two scale functions and a line function and renders an svg path element (and optional markers at each data point).',
       },
     ],
     /**

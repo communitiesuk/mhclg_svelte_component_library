@@ -2,6 +2,7 @@
   // @ts-nocheck
   import { page } from '$app/stores';
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
+  import DividerLine from '$lib/components/layout/DividerLine.svelte';
   import { defaultScreenWidthBreakpoints } from '$lib/config.js';
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
   import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
@@ -10,8 +11,11 @@
     convertToCSV,
     csvToArrayOfObjects,
   } from '$lib/utils/data-transformations/convertCSV.js';
-  import { createRefinedParametersObject } from '$lib/utils/data-transformations/createRefinedParametersObject.js';
   import { getValueFromParametersArray } from '$lib/utils/data-transformations/getValueFromParametersArray.js';
+  import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
+  import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
+  import { defineDefaultEventHandler } from '$lib/utils/package-wrapping-specific/defineDefaultEventHandler.js';
+  import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
   import { scaleLinear, scaleLog, scaleTime } from 'd3-scale';
   import {
@@ -28,7 +32,6 @@
 
   /**
    * && 		The details object contains metadata which describes the purpose and status of the component. All keys are optional, but developers are encouraged to use them to succinctly describe the component for the benefit of future users.
-   *
    */
   let details = {
     /**
@@ -102,6 +105,7 @@
   };
 
   /**
+   * DONOTTOUCH *
    * && 		details.name and details.folder are added based on a) the folders prop if on the homepage, b) the $page store if on the actual wrapper page.
    */
   let pageInfo = $page?.route.id.split('/');
@@ -115,7 +119,8 @@
     : pageInfo[pageInfo.length - 2];
 
   /**
-   * ? 		demoScreenWidth is a reactive variable which tracks which scren size the user has selected for demoing the component
+   * DONOTTOUCH *
+   * ? 		demoScreenWidth is a reactive variable which tracks which screen size the user has selected for demoing the component
    */
   let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
@@ -139,18 +144,17 @@
    *
    * ?      visible - optional. Some props are irrelevant unless another prop is set to a particular value (e.g. in a Line component, markerRadius is irrelevant if includeMarkers is false). The visible key allows you to dynamically hide a props' input forms. You can do this by specifying an object with name - the parameter that you want to check against, and value - the value that the named parameter needs to be equal to for this input form to be visible. (e.g. for markerRadius we would use {name: includeMarkers, value: true}).
    * ?      If you want the form to be visible only if multiple conditions are met, you can provide an array of condition objects instead.
-   * 
+   *
    * ?      handlerFunction - optional. Redundant unless inputType === 'event'. You can provide a function that will run when the specified event occurs. A default function is provided if handlerFunction is set to undefined - using the default handlerFunction is recommended.
-   * 
-   * ?      label - optional. If the label field is defined, then 
-   * 
-   * If the object has a null inputType but does have a 'label' field, then a description (and optional code snippet) will be rendered instead. When inputType is null it is best practice to include a label so users can still see which props are being used by the component and how they're being calculated.
-   * 
-   * ?      exampleCode - optional
+   *
+   * ?      label - optional. If the label field is defined, then a description (and optional code snippet - see below) will be rendered. When inputType is null it is best practice to include a label so users can still see which props are being used by the component and how they're being calculated.
+   *
+   * ?      exampleCode - optional, redundant when label is not defined. Allows you to provide a snippet of example code for props which are calculated rather than inputted, demonstrating what you might set these props as (e.g. for a line function the snippet: line().x((d) => xFunction(d.x)).y((d) => yFunction(d.y)).
+   * ?      This input is rendered as html, so you can use <br> for line breaks and &emsp; for tabs.
    */
   let parametersSourceArray =
     homepage ??
-    [
+    addIndexAndInitalValue([
       {
         name: 'svgHeight',
         category: 'dimensions',
@@ -375,7 +379,7 @@
         isProp: true,
         inputType: 'dropdown',
         options: ['circle', 'square', 'diamond', 'triangle'],
-        visible: { name: 'includeMarkers', value: true },
+        visible: [{ name: 'includeMarkers', value: true }],
       },
       {
         name: 'markerRadius',
@@ -479,14 +483,11 @@
         isProp: true,
         inputType: 'event',
       },
-    ].map((el, i) => {
-      if (el.inputType === 'event') {
-        return {
-          ...el,
-          index: i,
-          value: el.value ?? [0, null],
-          handlerFunction:
-            el.handlerFunction ??
+    ]).map((el) => ({
+      ...el,
+      handlerFunction:
+        el.inputType === 'event'
+          ? (el.handlerFunction ??
             function (event) {
               defineDefaultEventHandler(
                 event,
@@ -494,52 +495,25 @@
                 parametersValuesArray,
                 el.name
               );
-            },
-        };
-      } else {
-        return { ...el, index: i };
-      }
-    });
+            })
+          : null,
+    }));
 
+  /**
+   * DONOTTOUCH *
+   * && 		parametersValuesArray's initial values are simply take from the source array with a one-to-one mapping.
+   * &&     This array is then used to track the values associated with each parameter as they are modified by the user using form inputs.
+   */
   let parametersValuesArray = $state(
-    homepage ??
-      parametersSourceArray.map((el) => {
-        return el.value ?? el.options?.[0] ?? null;
-      })
+    homepage ?? parametersSourceArray.map((el) => el.value) //&& Something
   );
 
-  let parametersVisibleArray = $derived(
-    homepage ??
-      parametersSourceArray.map((el) =>
-        !('visible' in el)
-          ? true
-          : typeof el.visible === 'boolean'
-            ? el.visible
-            : getValueFromParametersArray(
-                parametersSourceArray,
-                parametersValuesArray,
-                el.visible.name
-              ) === el.visible.value
-      )
-  );
-
-  let parametersObject = $derived(
-    homepage ??
-      parametersSourceArray.reduce(
-        (acc, { isProp, name, inputType, handlerFunction }, index) => {
-          acc[name] = {
-            isProp: isProp,
-            value:
-              inputType === 'event'
-                ? handlerFunction
-                : parametersValuesArray[index],
-          };
-          return acc;
-        },
-        {}
-      )
-  );
-
+  /**
+   * && 		Here you can define calculations for any additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
+   * &&     Note that these parameters STILL NEED TO BE LISTED in the source array (with a null input type and null value).
+   * &&     You must then also combine them into the derivedParametersObject below so that they are passed to the component.
+   * &&     The getValueFromParametersArray function can be helpful for calculating based on the value of another parameter.
+   */
   let xFunction = $derived(
     homepage ??
       {
@@ -626,88 +600,94 @@
         ])
   );
 
-  let compositeValuesArray = $derived(
-    homepage ?? [
-      {
-        name: 'xFunction',
-        value: xFunction,
-      },
-      {
-        name: 'yFunction',
-        value: yFunction,
-      },
-      {
-        name: 'lineFunction',
-        value: line()
-          .x((d) => xFunction(d.x))
-          .y((d) => yFunction(d.y))
-          .curve(
-            {
-              curveLinear: curveLinear,
-              curveLinearClosed: curveLinearClosed,
-              curveCardinal: curveCardinal,
-              curveBasis: curveBasis,
-              curveStep: curveStep,
-              curveMonotoneX: curveMonotoneX,
-            }[
-              getValueFromParametersArray(
-                parametersSourceArray,
-                parametersValuesArray,
-                'curve'
-              )
-            ]
-          ),
-      },
-
-      {
-        name: 'dataArray',
-        key: 'dataSource',
-        options: [
-          {
-            name: 'from base data',
-            value: data.dataInFormatForLineChart
-              .find((el) => el.metric === parametersObject.metric.value)
-              .lines.find((el) => el.areaCode === parametersObject.area.value)
-              .data,
-          },
-          {
-            name: 'custom',
-            value: csvToArrayOfObjects(
-              getValueFromParametersArray(
-                parametersSourceArray,
-                parametersValuesArray,
-                'customDataArray'
-              )
-            ),
-          },
-        ],
-      },
-    ]
-  );
-
-  let parametersObjectRefined = $derived(
+  let lineFunction = $derived(
     homepage ??
-      createRefinedParametersObject(parametersObject, compositeValuesArray)
+      line()
+        .x((d) => xFunction(d.x))
+        .y((d) => yFunction(d.y))
+        .curve(
+          {
+            curveLinear: curveLinear,
+            curveLinearClosed: curveLinearClosed,
+            curveCardinal: curveCardinal,
+            curveBasis: curveBasis,
+            curveStep: curveStep,
+            curveMonotoneX: curveMonotoneX,
+          }[
+            getValueFromParametersArray(
+              parametersSourceArray,
+              parametersValuesArray,
+              'curve'
+            )
+          ]
+        )
   );
 
-  let parameterCategories = $derived(
-    homepage ?? [...new Set(parametersSourceArray.map((el) => el.category))]
+  let dataArray = $derived(
+    (homepage ??
+      getValueFromParametersArray(
+        parametersSourceArray,
+        parametersValuesArray,
+        'dataSource'
+      ) === 'from base data')
+      ? data.dataInFormatForLineChart
+          .find(
+            (el) =>
+              el.metric ===
+              getValueFromParametersArray(
+                parametersSourceArray,
+                parametersValuesArray,
+                'metric'
+              )
+          )
+          .lines.find(
+            (el) =>
+              el.areaCode ===
+              getValueFromParametersArray(
+                parametersSourceArray,
+                parametersValuesArray,
+                'area'
+              )
+          ).data
+      : csvToArrayOfObjects(
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            'customDataArray'
+          )
+        )
   );
 
-  function defineDefaultEventHandler(
-    event,
-    parametersSourceArray,
-    parametersValuesArray,
-    name
-  ) {
-    parametersValuesArray[
-      parametersSourceArray.findIndex((el) => el.name === name)
-    ][0] += 1;
+  /**
+   * && 		Here you can add additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
+   * &&     Note that these parameters STILL NEED TO BE LISTED in the source array (with a null input type and null value).
+   * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
+   */
+  let derivedParametersObject = $derived(
+    homepage ?? { xFunction, yFunction, lineFunction, dataArray }
+  );
 
-    parametersValuesArray[
-      parametersSourceArray.findIndex((el) => el.name === name)
-    ][1] = event.currentTarget.dataset.id;
-  }
+  /**
+   * DONOTTOUCH *
+   * && 		parametersValuesArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible or not in the UI.
+   */
+  let parametersVisibleArray = $derived(
+    homepage ??
+      trackVisibleParameters(parametersSourceArray, parametersValuesArray)
+  );
+
+  /**
+   * DONOTTOUCH *
+   * && 		parametersObject takes the props to be passed to the component and converts them into a (parameterName: parameterValue) pattern.
+   */
+  let parametersObject = $derived(
+    homepage ??
+      createParametersObject(
+        parametersSourceArray,
+        parametersValuesArray,
+        derivedParametersObject
+      )
+  );
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>
@@ -715,7 +695,6 @@
 {#if !homepage}
   <ParametersSection
     {details}
-    {parameterCategories}
     {parametersSourceArray}
     {parametersVisibleArray}
     bind:parametersValuesArray
@@ -748,9 +727,14 @@
           'paddingTop'
         )})"
       >
-        <Line {...parametersObjectRefined}></Line>
+        <Line {...parametersObject}></Line>
       </g>
     </svg>
+  </div>
+
+  <div class="mt-20" data-role="examples-section">
+    <DividerLine margin="30px 0px 30px 0px"></DividerLine>
+    <h5 class="underline underline-offset-4">Examples</h5>
   </div>
 {/if}
 
@@ -758,6 +742,11 @@
   svg {
     overflow: hidden;
     background-color: #f8f8f8;
+  }
+
+  [data-role='examples-section'] {
+    max-width: 1024px;
+    margin: 0px auto;
   }
 
   [data-role='demo-section'] {

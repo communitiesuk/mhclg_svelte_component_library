@@ -12,6 +12,7 @@
    * ! 		  Known limitations, issues, bugs or warnings - anything that developers need to be mindful of.
    * TODO		Remaining actions relating to this section of code.
    * <> 		Accessibility notes.
+   * DONOTTOUCH   Used in the component wrapper pages to denote code that should not need to be edited
    */
 </script>
 

@@ -7,55 +7,60 @@
 
   let {
     details,
-    parameterCategories,
     parametersSourceArray,
     parametersVisibleArray,
     parametersValuesArray = $bindable(),
   } = $props();
+
+  let parameterCategories = $derived([
+    ...new Set(parametersSourceArray.map((el) => el.category)),
+  ]);
 </script>
 
 <div data-role="parameters-section" class="mx-auto">
   <h5 class="mb-6 underline underline-offset-4">Parameters</h5>
   <div class="flex flex-row gap-8">
-    <div class="flex flex-row gap-8">
+    <div class="flex flex-row gap-8 pr-4">
       <p class="m-0 p-0 font-bold">Key</p>
-      <div class="flex flex-row gap-2 mb-6">
-        <Pill
-          size="extraSmall"
-          textContent={propPillLookup[true].text}
-          bgColor={propPillLookup[true].bgColor}
-          textColor={propPillLookup[true].textColor}
-          borderRadius="15px"
-          padding={propPillLookup[true].padding}
-          tailwindClass={'self-start'}
-        ></Pill>
-        <p
-          class="m-0 p-0 text-sm"
-          style="color: {propPillLookup[true].bgColor}"
-        >
-          {'Parameters with this label are props which are passed directly to the <' +
-            details.name +
-            '> component.'}
-        </p>
-      </div>
-      <div class="flex flex-row gap-2">
-        <Pill
-          size="extraSmall"
-          textContent={propPillLookup[false].text}
-          bgColor={propPillLookup[false].bgColor}
-          textColor={propPillLookup[false].textColor}
-          borderRadius="15px"
-          padding={propPillLookup[false].padding}
-          tailwindClass={'self-start'}
-        ></Pill>
-        <p
-          class="m-0 p-0 text-sm"
-          style="color: {propPillLookup[false].bgColor}"
-        >
-          {'Parameters with this label are used in the calculation of a prop which is passed directly to the <' +
-            details.name +
-            '> component.'}
-        </p>
+      <div class="flex flex-row gap-12 mb-2">
+        <div class="flex flex-row gap-2 flex-1">
+          <Pill
+            size="extraSmall"
+            textContent={propPillLookup[true].text}
+            bgColor={propPillLookup[true].bgColor}
+            textColor={propPillLookup[true].textColor}
+            borderRadius="15px"
+            padding={propPillLookup[true].padding}
+            tailwindClass={'self-start'}
+          ></Pill>
+          <p
+            class="m-0 p-0 text-sm"
+            style="color: {propPillLookup[true].bgColor}"
+          >
+            {'Parameters with this label are props which are passed directly to the <' +
+              details.name +
+              '> component.'}
+          </p>
+        </div>
+        <div class="flex flex-row gap-2 flex-1">
+          <Pill
+            size="extraSmall"
+            textContent={propPillLookup[false].text}
+            bgColor={propPillLookup[false].bgColor}
+            textColor={propPillLookup[false].textColor}
+            borderRadius="15px"
+            padding={propPillLookup[false].padding}
+            tailwindClass={'self-start'}
+          ></Pill>
+          <p
+            class="m-0 p-0 text-sm"
+            style="color: {propPillLookup[false].bgColor}"
+          >
+            {'Parameters with this label are used in the calculation of a prop which is passed to the <' +
+              details.name +
+              '> component.'}
+          </p>
+        </div>
       </div>
     </div>
   </div>

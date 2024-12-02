@@ -1,7 +1,9 @@
 <script lang="ts">
   import DividerLine from '$lib/components/layout/DividerLine.svelte';
   import '../app.css';
-  let { children } = $props();
+  let { children, data } = $props();
+
+  $inspect(data);
 </script>
 
 <div class="mb-20">

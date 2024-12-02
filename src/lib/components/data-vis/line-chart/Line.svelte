@@ -26,6 +26,8 @@
     onMouseLeaveMarker,
     onMouseMoveMarker,
   } = $props();
+
+
 </script>
 
 <g

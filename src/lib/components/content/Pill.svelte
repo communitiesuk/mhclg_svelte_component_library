@@ -14,7 +14,7 @@
 </script>
 
 <div
-  class={tailwindClass}
+  class="pill-container {tailwindClass}"
   data-role="pill-container-{size}"
   style="color: {textColor}; background-color: {bgColor}; border-radius: {borderRadius}; padding: {padding ??
     null};"
@@ -26,6 +26,9 @@
 {/if}
 
 <style>
+  .pill-container {
+    display: inline;
+  }
   [data-role='pill-container-extraSmall'] {
     padding: 0.2rem 0.4rem;
     font-size: 0.9rem;

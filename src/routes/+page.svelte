@@ -31,6 +31,11 @@ TODO
         team to house components for use in the organisation's public facing
         products.
       </p>
+
+      <p>
+        Check out our <a href="/user-guide">user guide</a> for guidance on how to
+        build components for this library.
+      </p>
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
 

@@ -721,32 +721,37 @@ DONOTTOUCH  *
   </div>
 
   <div data-role="component-container">
-    <!--
+    <div
+      data-role="component-container-centered"
+      style="width: {demoScreenWidth}px;"
+    >
+      <!--
     CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
     -->
-    <svg
-      width={demoScreenWidth}
-      height={getValueFromParametersArray(
-        parametersSourceArray,
-        parametersValuesArray,
-        'svgHeight'
-      )}
-    >
-      <g
-        transform="translate({getValueFromParametersArray(
+      <svg
+        width={demoScreenWidth}
+        height={getValueFromParametersArray(
           parametersSourceArray,
           parametersValuesArray,
-          'paddingLeft'
-        )},{getValueFromParametersArray(
-          parametersSourceArray,
-          parametersValuesArray,
-          'paddingTop'
-        )})"
+          'svgHeight'
+        )}
       >
-        <Line {...parametersObject}></Line>
-      </g>
-    </svg>
+        <g
+          transform="translate({getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            'paddingLeft'
+          )},{getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            'paddingTop'
+          )})"
+        >
+          <Line {...parametersObject}></Line>
+        </g>
+      </svg>
+    </div>
   </div>
 
   <!--
@@ -762,7 +767,6 @@ DONOTTOUCH  *
 <style>
   svg {
     overflow: hidden;
-    background-color: #f8f8f8;
   }
 
   [data-role='examples-section'] {
@@ -776,7 +780,11 @@ DONOTTOUCH  *
   }
 
   [data-role='component-container'] {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    place-items: center;
+  }
+  [data-role='component-container-centered'] {
+    background-color: #f8f8f8;
+    padding: 20px 0px;
   }
 </style>

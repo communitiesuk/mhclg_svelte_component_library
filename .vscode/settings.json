@@ -95,6 +95,10 @@
     },
     {
       "tag": "DONOTTOUCH",
+      "color": "#3ecfd6"
+    },
+    {
+      "tag": "CUSTOMISETHIS",
       "color": "yellow"
     }
   ]

@@ -125,6 +125,7 @@
   let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
   /**
+   * CUSTOMISETHIS  Add your parameters to the array.
    * && 		parametersSourceArray is where you define any props for the component whose initial value does not depend on other parameters. It can also be used for defining any parameters which are not passed to the component, but are used in the calculation of another parameter (An example would be a Line component's xFunction, which is calculated based on a scale, an xDomain and a graphWidth). Each prop is represented by a single object within the array.
    * ? 		  name - Required. Name of the prop which is passed to the component. The name can also be referenced in the calculation of parameters which depend on this value. Names must be unique.
    *
@@ -509,6 +510,7 @@
   );
 
   /**
+   * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
    * && 		Here you can define calculations for any additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
    * &&     Note that these parameters STILL NEED TO BE LISTED in the source array (with a null input type and null value).
    * &&     You must then also combine them into the derivedParametersObject below so that they are passed to the component.
@@ -659,6 +661,7 @@
   );
 
   /**
+   * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
    * && 		Here you can add additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
    * &&     Note that these parameters STILL NEED TO BE LISTED in the source array (with a null input type and null value).
    * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
@@ -690,9 +693,17 @@
   );
 </script>
 
+<!--
+DONOTTOUCH  *
+&&          Uses details to render metadata for the component.
+-->
 <ComponentDetails {homepage} {details}></ComponentDetails>
 
 {#if !homepage}
+  <!--
+  DONOTTOUCH  *
+  &&          Create input forms for each parameter based on the source array.
+  -->
   <ParametersSection
     {details}
     {parametersSourceArray}
@@ -701,13 +712,19 @@
   ></ParametersSection>
 
   <div data-role="demo-section">
-    <div>
-      <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
-      <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
-    </div>
+    <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+    <!--
+    DONOTTOUCH  *
+    &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
+    -->
+    <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
   </div>
 
   <div data-role="component-container">
+    <!--
+    CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
+    &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
+    -->
     <svg
       width={demoScreenWidth}
       height={getValueFromParametersArray(
@@ -732,6 +749,10 @@
     </svg>
   </div>
 
+  <!--
+    DONOTTOUCH  *
+    &&          Creates a list of examples where the component is used (if any examples exist).
+    -->
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
     <h5 class="underline underline-offset-4">Examples</h5>

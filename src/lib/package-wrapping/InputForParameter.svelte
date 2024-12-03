@@ -1,14 +1,7 @@
 <script>
   import Pill from '$lib/components/content/Pill.svelte';
   import { propPillLookup } from '$lib/config.js';
-  import {
-    Checkbox,
-    Input,
-    NumberInput,
-    Radio,
-    Select,
-    Textarea,
-  } from 'flowbite-svelte';
+  import { Checkbox, Input, Radio, Select, Textarea } from 'flowbite-svelte';
 
   let { source, value = $bindable() } = $props();
 
@@ -61,7 +54,16 @@
   <Input size="lg" bind:value />
 {:else if source.inputType === 'numberInput'}
   {@render parameterLabel(source.name, propPillObject)}
-  <NumberInput bind:value />
+  <Input let:props>
+    <input
+      type="number"
+      {...props}
+      step={source?.step}
+      min={source?.min}
+      max={source?.max}
+      bind:value
+    />
+  </Input>
 {:else if source.inputType === 'event'}
   {@render parameterLabel(source.name, propPillObject)}
   <p class="my-2 mx-0 p-0 text-sm text-black">

@@ -421,6 +421,9 @@
         isProp: true,
         inputType: 'numberInput',
         value: 1,
+        step: 0.1,
+        min: 0,
+        max: 1,
       },
       {
         name: 'dataId',

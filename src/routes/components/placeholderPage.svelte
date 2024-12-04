@@ -1,7 +1,6 @@
 <script>
   // @ts-nocheck
   import { page } from '$app/stores';
-  import Pill from '$lib/components/content/Pill.svelte';
   import DividerLine from '$lib/components/layout/DividerLine.svelte';
   import { defaultScreenWidthBreakpoints } from '$lib/config.js';
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
@@ -194,19 +193,6 @@ DONOTTOUCH  *
       CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
       &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
       -->
-      <div class="flex gap-4 flex-wrap items-center">
-        <h6>A placeholder title of some kind</h6>
-        <Pill
-          {...parametersObject}
-          textContent="Pill placeholder text"
-          size="medium"
-          bgColor="pink"
-          textColor="black"
-          borderRadius="5px"
-          ,
-          tooltipText="false,"
-        ></Pill>
-      </div>
     </div>
   </div>
 

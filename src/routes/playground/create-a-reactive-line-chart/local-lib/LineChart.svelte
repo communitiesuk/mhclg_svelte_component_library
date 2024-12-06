@@ -1,6 +1,8 @@
 <script>
   // @ts-nocheck
+  import Line from '$lib/components/data-vis/line-chart/Line.svelte';
   import { scaleLinear } from 'd3-scale';
+  import { curveLinear, line } from 'd3-shape';
 
   let { data } = $props();
 
@@ -41,6 +43,13 @@
   let yFunction = $derived(
     scaleLinear().domain(valuesMinMax).range([chartHeight, 0])
   );
+
+  let lineFunction = $derived(
+    line()
+      .x((d) => xFunction(d.x))
+      .y((d) => yFunction(d.y))
+      .curve(curveLinear)
+  );
 </script>
 
 <div bind:clientWidth={svgWidth}>
@@ -61,6 +70,26 @@
             stroke="black"
             stroke-width="2px"
           ></path>
+        </g>
+
+        <g data-role="lines-group">
+          {#each data.lines as line, i}
+            <Line
+              {lineFunction}
+              dataArray={line.data}
+              pathStrokeColor="black"
+              pathStrokeWidth="1"
+              opacity="0.15"
+            ></Line>
+          {/each}
+          <Line
+            {lineFunction}
+            dataArray={data.lines.find((el) => el.areaCode === 'E07000223')
+              .data}
+            pathStrokeColor="pink"
+            pathStrokeWidth="5"
+            opacity="1"
+          ></Line>
         </g>
       </g>
     {/if}

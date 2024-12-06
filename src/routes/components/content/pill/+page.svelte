@@ -108,7 +108,38 @@
    * ?      exampleCode - optional, redundant when label is not defined. Allows you to provide a snippet of example code for props which are calculated rather than inputted, demonstrating what you might set these props as (e.g. for a line function the snippet: line().x((d) => xFunction(d.x)).y((d) => yFunction(d.y)).
    * ?      This input is rendered as html, so you can use <br> for line breaks and &emsp; for tabs.
    */
-  let parametersSourceArray = homepage ?? addIndexAndInitalValue([]);
+  let parametersSourceArray =
+    homepage ??
+    addIndexAndInitalValue([
+      {
+        name: 'textContent',
+        category: 'content',
+        isProp: true,
+        inputType: 'input',
+        value: 'Pill placeholder text',
+      },
+      {
+        name: 'bgColor',
+        category: 'styling',
+        isProp: true,
+        inputType: 'input',
+        value: 'pink',
+      },
+      {
+        name: 'textColor',
+        category: 'styling',
+        isProp: true,
+        inputType: 'input',
+        value: 'black',
+      },
+      {
+        name: 'size',
+        category: 'styling',
+        isProp: true,
+        inputType: 'dropdown',
+        options: ['extraSmall', 'small', 'medium', 'large'],
+      },
+    ]);
 
   /**
    * DONOTTOUCH *
@@ -196,15 +227,7 @@ DONOTTOUCH  *
       -->
       <div class="flex gap-4 flex-wrap items-center">
         <h6>A placeholder title of some kind</h6>
-        <Pill
-          {...parametersObject}
-          textContent="Pill placeholder text"
-          size="medium"
-          bgColor="pink"
-          textColor="black"
-          borderRadius="5px"
-          ,
-          tooltipText="false,"
+        <Pill {...parametersObject} borderRadius="5px" tooltipText="false"
         ></Pill>
       </div>
     </div>

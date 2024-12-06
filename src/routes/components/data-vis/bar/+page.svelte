@@ -1,6 +1,7 @@
 <script>
   // @ts-nocheck
   import { page } from '$app/stores';
+  import Bar from '$lib/components/data-vis/bar-chart/Bar.svelte';
   import DividerLine from '$lib/components/layout/DividerLine.svelte';
   import { defaultScreenWidthBreakpoints } from '$lib/config.js';
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
@@ -183,6 +184,9 @@ DONOTTOUCH  *
       CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
       &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
       -->
+      <svg width="800px" height="800px">
+        <Bar></Bar>
+      </svg>
     </div>
   </div>
 

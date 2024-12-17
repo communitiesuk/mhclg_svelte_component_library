@@ -50,12 +50,14 @@
       .y((d) => yFunction(d.y))
       .curve(curveLinear)
   );
+
+  let selectedAreaCode = $state('E07000223');
 </script>
 
 <div bind:clientWidth={svgWidth}>
   <svg
-    width="{svgWidth}px"
-    height="{svgHeight}px"
+    width={svgWidth ?? 400}
+    height={svgHeight}
     style="background-color: #f5f5f5"
   >
     {#if svgWidth}
@@ -80,15 +82,25 @@
               pathStrokeColor="black"
               pathStrokeWidth="1"
               opacity="0.15"
+              dataId={line.areaCode}
+              onMouseMove={() => {
+                selectedAreaCode = line.areaCode;
+              }}
             ></Line>
           {/each}
           <Line
             {lineFunction}
-            dataArray={data.lines.find((el) => el.areaCode === 'E07000223')
+            dataArray={data.lines.find((el) => el.areaCode === selectedAreaCode)
               .data}
-            pathStrokeColor="pink"
+            pathStrokeColor="red"
             pathStrokeWidth="5"
             opacity="1"
+            includeMarkers={true}
+            markerRadius="8"
+            markerStroke="red"
+            markerFill="white"
+            {xFunction}
+            {yFunction}
           ></Line>
         </g>
       </g>

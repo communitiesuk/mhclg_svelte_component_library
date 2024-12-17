@@ -37,9 +37,7 @@
     },
   ];
 
-  $inspect(data);
-
-  let selectedMetric = $state(data.metrics[0]);
+  let selectedMetric = $state(data?.metrics[0]);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>

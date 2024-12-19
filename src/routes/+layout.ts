@@ -16,6 +16,8 @@ export const load: LayoutLoad = async (event) => {
 
   let areas = [...new Set(testData.flatMetricData.map((el) => el.areaCode))];
 
+  let years = [...new Set(testData.flatMetricData.map((el) => el.x))];
+
   let dataInFormatForLineChart = metrics.map((metric) => ({
     metric: metric,
     lines: areas.map((area) => ({
@@ -26,9 +28,21 @@ export const load: LayoutLoad = async (event) => {
     })),
   }));
 
+  let dataInFormatForBarChart = years.map((year) => ({
+    x: year,
+    bars: areas.map((area) => ({
+      areaCode: area,
+      y: testData.flatMetricData
+        .filter((el) => el.metric === 'Household waste recycling rate')
+        .find((el) => el.areaCode === area && el.x === year)?.y,
+    })),
+  }));
+
   return {
     metrics,
     areas,
+    years,
     dataInFormatForLineChart,
+    dataInFormatForBarChart,
   };
 };

@@ -12,4 +12,4 @@
   <Bar></Bar>
   <RowValue></RowValue>
   <RowLabel></RowLabel>
-</g>
+</g>p

@@ -5,10 +5,13 @@
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
   import Row from './Row.svelte';
 
+  // dataArray is an input to the RowChart component
   let { dataArray } = $props();
 
   $inspect(dataArray);
 
+  // UI reacts when svgWidth changes
+  // but I don't understand the syntax after state
   let svgWidth = $state(),
     svgHeight = 500;
 
@@ -19,6 +22,8 @@
 </script>
 
 <div class="mt-10">
+  <p>this is the Row Chart component</p>
+  <Row></Row>
   <TitleAndSubtitle></TitleAndSubtitle>
   <Legend></Legend>
   <div bind:clientWidth={svgWidth}>

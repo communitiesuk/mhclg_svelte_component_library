@@ -1,0 +1,16 @@
+Work out Row.svelte -> RowChart.svelte connection - DONE
+
+Put anything in Row.svelte and get it displaying on our playground page - DONE
+
+Make a row in Row.svelte and render it on our playground page - DONE
+
+
+Understand the code in RowChart.svelte
+
+Place it in an appropriate place on the chart
+
+Make a bar within a row
+
+Use for loop to create multiple rows with bars
+
+Define a function that separates rows evenly along the height of the chart.

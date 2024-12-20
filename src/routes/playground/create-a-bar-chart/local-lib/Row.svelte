@@ -6,6 +6,8 @@
   let { row } = $props();
 </script>
 
+<p>this is the row component</p>
+
 <g class="row-group">
   <Bar></Bar>
   <RowValue></RowValue>

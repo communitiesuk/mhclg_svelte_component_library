@@ -44,5 +44,6 @@ export const load: LayoutLoad = async (event) => {
     years,
     dataInFormatForLineChart,
     dataInFormatForBarChart,
+    areaCodeLookup: testData.areaCodeLookup,
   };
 };

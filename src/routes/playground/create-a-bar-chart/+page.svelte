@@ -17,6 +17,19 @@
 
   let selectedYear = $state(data?.years[0]);
   let numberOfBars = $state(10);
+
+  let dataArray = $derived(
+    data?.dataInFormatForBarChart
+      .find((el) => el.x === selectedYear)
+      .bars.slice(0, numberOfBars)
+      .map((el) => ({
+        ...el,
+        label: data.areaCodeLookup[el.areaCode],
+        color: el.areaCode === 'E07000032' ? 'blue' : null,
+      }))
+  );
+
+  $inspect(dataArray);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -52,11 +65,7 @@
           </Input>
         </div>
         <div class="row-chart-container">
-          <RowChart
-            dataArray={data?.dataInFormatForBarChart
-              .find((el) => el.x === selectedYear)
-              .bars.slice(0, numberOfBars)}
-          ></RowChart>
+          <RowChart {dataArray}></RowChart>
         </div>
       </div>
     </div>

@@ -69,7 +69,7 @@
   "gitlens.searchCommits.limit": 100, // Limits commit search results
   "gitlens.defaultGravatarsStyle": "mp",
   "editor.colorDecoratorsActivatedOn": "hover",
-  "editor.defaultColorDecorators": true,
+  "editor.defaultColorDecorators": "auto",
   "better-comments.highlightPlainText": true,
   "better-comments.multilineComments": true,
   "better-comments.tags": [

@@ -10,8 +10,6 @@
     id: string;
   }[] = [];
 
-  let accordionId = 'accordion-' + Math.random().toString(36).substr(2, 9);
-
   onMount(async () => {
     if (browser) {
       const { initAll } = await import('govuk-frontend');
@@ -20,7 +18,7 @@
   });
 </script>
 
-<div class="govuk-accordion" data-module="govuk-accordion" id={accordionId}>
+<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
   {#each sections as section}
     <div class="govuk-accordion__section">
       <div class="govuk-accordion__section-header">
@@ -38,7 +36,9 @@
         class="govuk-accordion__section-content"
         aria-labelledby="{section.id}-heading"
       >
-        <div class="govuk-body">{section.content}</div>
+        <p class="govuk-body">
+          {section.content}
+        </p>
       </div>
     </div>
   {/each}

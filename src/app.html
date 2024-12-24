@@ -15,10 +15,7 @@
 	<script>document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');</script>
 	<div>%sveltekit.body%</div>
 	<script type="module" src="%sveltekit.assets%/js/govuk-frontend.min.js"></script>
-	<script type="module">
-		import { initAll } from '%sveltekit.assets%/js/govuk-frontend.min.js'
-		initAll()
-	</script>
+
 </body>
 
 </html>

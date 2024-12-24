@@ -1,59 +1,45 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
+  import 'govuk-frontend/dist/govuk/govuk-frontend.min.css';
+  import { onMount } from 'svelte';
+
+  // Accept an array of sections as props
   export let sections: {
     heading: string;
     content: string;
     id: string;
   }[] = [];
 
-  let activeSection: string | null = null;
+  let accordionId = 'accordion-' + Math.random().toString(36).substr(2, 9);
 
-  function toggleSection(id: string) {
-    activeSection = activeSection === id ? null : id;
-  }
-
-  function handleKeydown(event: KeyboardEvent, id: string) {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      toggleSection(id);
+  onMount(async () => {
+    if (browser) {
+      const { initAll } = await import('govuk-frontend');
+      initAll();
     }
-  }
+  });
 </script>
 
-<div
-  class="govuk-accordion"
-  data-module="govuk-accordion"
-  id="accordion-default"
->
-  {#each sections as section, index}
-    <div
-      class="govuk-accordion__section"
-      class:govuk-accordion__section--expanded={activeSection === section.id}
-    >
+<div class="govuk-accordion" data-module="govuk-accordion" id={accordionId}>
+  {#each sections as section}
+    <div class="govuk-accordion__section">
       <div class="govuk-accordion__section-header">
         <h2 class="govuk-accordion__section-heading">
-          <button
-            type="button"
+          <span
             class="govuk-accordion__section-button"
-            id="accordion-default-heading-{index + 1}"
-            on:click={() => toggleSection(section.id)}
-            on:keydown={(e) => handleKeydown(e, section.id)}
-            aria-expanded={activeSection === section.id}
-            aria-controls="accordion-default-content-{index + 1}"
+            id="{section.id}-heading"
           >
             {section.heading}
-          </button>
+          </span>
         </h2>
       </div>
-      {#if activeSection === section.id}
-        <div
-          id="accordion-default-content-{index + 1}"
-          class="govuk-accordion__section-content"
-          role="region"
-          aria-labelledby="accordion-default-heading-{index + 1}"
-        >
-          <p class="govuk-body">{section.content}</p>
-        </div>
-      {/if}
+      <div
+        id="{section.id}-content"
+        class="govuk-accordion__section-content"
+        aria-labelledby="{section.id}-heading"
+      >
+        <div class="govuk-body">{section.content}</div>
+      </div>
     </div>
   {/each}
 </div>

@@ -12,12 +12,14 @@
 </head>
 
 <body class="govuk-template__body">
-	<script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
+	<script>
+		document.body.className += ' js-enabled' + ('noModule' in HTMLScriptElement.prototype ? ' govuk-frontend-supported' : '');
+	</script>
 	<div>%sveltekit.body%</div>
 	<script type="module" src="%sveltekit.assets%/js/govuk-frontend.min.js"></script>
 	<script type="module">
-		import { initAll } from '%sveltekit.assets%/js/govuk-frontend.mjs';
-		initAll();
+		import { initAll } from '%sveltekit.assets%/js/govuk-frontend.min.js'
+		initAll()
 	</script>
 </body>
 

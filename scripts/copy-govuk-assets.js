@@ -68,8 +68,8 @@ if (fs.existsSync(cssSrc)) {
 }
 
 // Copy JavaScript
-const jsSrc = join(govukPath, 'all.mjs');
-const jsDest = join(projectRoot, 'static/js/govuk-frontend.mjs');
+const jsSrc = join(govukPath, 'govuk-frontend.min.js');
+const jsDest = join(projectRoot, 'static/js/govuk-frontend.min.js');
 if (fs.existsSync(jsSrc)) {
     fs.copyFileSync(jsSrc, jsDest);
     console.log(`Copied JavaScript to ${jsDest}`);

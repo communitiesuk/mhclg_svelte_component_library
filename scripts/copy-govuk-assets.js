@@ -11,7 +11,8 @@ const dirs = [
     join(projectRoot, 'static/assets'),
     join(projectRoot, 'static/assets/images'),
     join(projectRoot, 'static/assets/fonts'),
-    join(projectRoot, 'static/css')
+    join(projectRoot, 'static/css'),
+    join(projectRoot, 'static/js')
 ];
 
 dirs.forEach(dir => {
@@ -34,6 +35,16 @@ function copyDir(src, dest) {
     }
 }
 
+// Copy manifest.json
+const manifestSrc = join(govukPath, 'assets/manifest.json');
+const manifestDest = join(projectRoot, 'static/assets/manifest.json');
+if (fs.existsSync(manifestSrc)) {
+    fs.copyFileSync(manifestSrc, manifestDest);
+    console.log(`Copied manifest.json to ${manifestDest}`);
+} else {
+    console.warn(`manifest.json not found at ${manifestSrc}`);
+}
+
 // Copy images
 copyDir(
     join(govukPath, 'assets/images'),
@@ -54,6 +65,16 @@ if (fs.existsSync(cssSrc)) {
     console.log(`Copied CSS to ${cssDest}`);
 } else {
     console.warn(`CSS file not found at ${cssSrc}`);
+}
+
+// Copy JavaScript
+const jsSrc = join(govukPath, 'all.mjs');
+const jsDest = join(projectRoot, 'static/js/govuk-frontend.mjs');
+if (fs.existsSync(jsSrc)) {
+    fs.copyFileSync(jsSrc, jsDest);
+    console.log(`Copied JavaScript to ${jsDest}`);
+} else {
+    console.warn(`JavaScript file not found at ${jsSrc}`);
 }
 
 console.log('GOV.UK Frontend assets copy process completed!');

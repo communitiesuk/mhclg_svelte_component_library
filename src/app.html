@@ -14,8 +14,9 @@
 <body class="govuk-template__body">
 	<script>document.body.className = ((document.body.className) ? document.body.className + ' js-enabled' : 'js-enabled');</script>
 	<div>%sveltekit.body%</div>
+	<script type="module" src="%sveltekit.assets%/js/govuk-frontend.min.js"></script>
 	<script type="module">
-		import { initAll } from 'govuk-frontend';
+		import { initAll } from '%sveltekit.assets%/js/govuk-frontend.mjs';
 		initAll();
 	</script>
 </body>

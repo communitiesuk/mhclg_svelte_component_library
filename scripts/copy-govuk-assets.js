@@ -6,13 +6,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, '..');
 
-// Create necessary directories if they don't exist
+// Add components directory
 const dirs = [
     join(projectRoot, 'static/assets'),
     join(projectRoot, 'static/assets/images'),
     join(projectRoot, 'static/assets/fonts'),
     join(projectRoot, 'static/css'),
-    join(projectRoot, 'static/js')
+    join(projectRoot, 'static/js'),
+    join(projectRoot, 'src/lib/components/js/components')
 ];
 
 dirs.forEach(dir => {
@@ -76,5 +77,76 @@ if (fs.existsSync(jsSrc)) {
 } else {
     console.warn(`JavaScript file not found at ${jsSrc}`);
 }
+
+// Add new function to copy .mjs files and common directory
+function copyMjsAndCommonFiles() {
+    const govukSrcDir = govukPath;
+    const jsDir = join(projectRoot, 'src/lib/components/js');
+    const componentsDir = join(govukSrcDir, 'components');
+
+    // Create base directory if it doesn't exist
+    if (!fs.existsSync(jsDir)) {
+        fs.mkdirSync(jsDir, { recursive: true });
+    }
+
+    // Copy common directory
+    const commonSrcDir = join(govukSrcDir, 'common');
+    const commonDestDir = join(jsDir, 'common');
+    if (fs.existsSync(commonSrcDir)) {
+        fs.cpSync(commonSrcDir, commonDestDir, { recursive: true });
+        console.log(`Copied common directory to ${commonDestDir}`);
+    }
+
+    // Copy components recursively
+    if (fs.existsSync(componentsDir)) {
+        fs.readdirSync(componentsDir).forEach(component => {
+            const componentSrcDir = join(componentsDir, component);
+            const componentDestDir = join(jsDir, 'components', component);
+
+            if (fs.statSync(componentSrcDir).isDirectory()) {
+                // Create component directory
+                fs.mkdirSync(componentDestDir, { recursive: true });
+
+                // Copy component files recursively
+                function copyComponentFiles(srcDir, destDir) {
+                    const files = fs.readdirSync(srcDir);
+                    files.forEach(file => {
+                        const srcPath = join(srcDir, file);
+                        const destPath = join(destDir, file);
+                        const stat = fs.statSync(srcPath);
+
+                        if (stat.isDirectory()) {
+                            fs.mkdirSync(destPath, { recursive: true });
+                            copyComponentFiles(srcPath, destPath);
+                        } else if (file.endsWith('.mjs')) {
+                            fs.copyFileSync(srcPath, destPath);
+                            console.log(`Copied ${component}/${file} to ${destPath}`);
+                        }
+                    });
+                }
+
+                copyComponentFiles(componentSrcDir, componentDestDir);
+            }
+        });
+    }
+
+    // Copy root .mjs files
+    fs.readdirSync(govukSrcDir).forEach(file => {
+        if (file.endsWith('.mjs') && file !== 'common.mjs') {
+            const componentName = file.replace('.mjs', '');
+            const componentDir = join(jsDir, 'components', componentName);
+            
+            fs.mkdirSync(componentDir, { recursive: true });
+            fs.copyFileSync(
+                join(govukSrcDir, file),
+                join(componentDir, file)
+            );
+            console.log(`Copied root component file ${file} to ${componentDir}`);
+        }
+    });
+}
+
+// Call new function after existing asset copying
+copyMjsAndCommonFiles();
 
 console.log('GOV.UK Frontend assets copy process completed!');

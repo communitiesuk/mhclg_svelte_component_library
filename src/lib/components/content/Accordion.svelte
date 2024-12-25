@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
-  import 'govuk-frontend/dist/govuk/govuk-frontend.min.css';
   import { onMount } from 'svelte';
+  import { initAll } from 'govuk-frontend';
 
   // Accept an array of sections as props
   export let sections: {
@@ -10,15 +9,16 @@
     id: string;
   }[] = [];
 
-  onMount(async () => {
-    if (browser) {
-      const { initAll } = await import('govuk-frontend');
-      initAll();
-    }
+  onMount(() => {
+    initAll();
   });
 </script>
 
-<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+<div
+  class="govuk-accordion"
+  data-module="govuk-accordion"
+  id="accordion-default"
+>
   {#each sections as section}
     <div class="govuk-accordion__section">
       <div class="govuk-accordion__section-header">

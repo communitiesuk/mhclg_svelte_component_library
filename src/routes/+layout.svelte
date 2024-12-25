@@ -1,18 +1,10 @@
 <script lang="ts">
-  import { browser } from '$app/environment';
   import DividerLine from '$lib/components/layout/DividerLine.svelte';
-  import { onMount } from 'svelte';
   import '../app.css';
   let { children, data } = $props();
 
   $inspect(data);
 
-  // onMount(async () => {
-  //   if (browser) {
-  //     const { initAll } = await import('govuk-frontend');
-  //     initAll();
-  //   }
-  // });
 </script>
 
 <div class="mb-20">

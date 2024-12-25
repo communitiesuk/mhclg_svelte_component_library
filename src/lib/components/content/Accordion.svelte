@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { initAll } from 'govuk-frontend';
+  import { browser } from '$app/environment';
 
   // Accept an array of sections as props
   export let sections: {
@@ -9,8 +9,12 @@
     id: string;
   }[] = [];
 
-  onMount(() => {
-    initAll();
+  let module;
+  onMount(async () => {
+    if (browser) {
+      const { initAll } = await import('../../components/js/govuk-frontend.min.js');
+      initAll();
+    }
   });
 </script>
 

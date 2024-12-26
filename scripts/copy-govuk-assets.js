@@ -82,7 +82,6 @@ if (fs.existsSync(jsSrc)) {
 function copyMjsAndCommonFiles() {
     const govukSrcDir = govukPath;
     const jsDir = join(projectRoot, 'src/lib/components/js');
-    const componentsDir = join(govukSrcDir, 'components');
 
     // Create base directory if it doesn't exist
     if (!fs.existsSync(jsDir)) {
@@ -97,7 +96,18 @@ function copyMjsAndCommonFiles() {
         console.log(`Copied common directory to ${commonDestDir}`);
     }
 
+    // Copy errors directory
+    const errorsSrcDir = join(govukSrcDir, 'errors');
+    const errorsDestDir = join(jsDir, 'errors');
+    if (fs.existsSync(errorsSrcDir)) {
+        fs.cpSync(errorsSrcDir, errorsDestDir, { recursive: true });
+        console.log(`Copied errors directory to ${errorsDestDir}`);
+    } else {
+        console.warn(`Errors directory not found at ${errorsSrcDir}`);
+    }
+
     // Copy components recursively
+    const componentsDir = join(govukSrcDir, 'components');
     if (fs.existsSync(componentsDir)) {
         fs.readdirSync(componentsDir).forEach(component => {
             const componentSrcDir = join(componentsDir, component);

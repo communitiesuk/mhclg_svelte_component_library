@@ -64,29 +64,23 @@
         value: JSON.stringify(
           [
             {
-              heading: {
-                text: 'Writing well for the web'
-              },
-              content: {
-                text: 'This is the content for Writing well for the web.'
-              }
+              id: '1',
+              heading: 'Writing well for the web',
+              summary: 'Learn about writing content for your website',
+              content: 'This is the content for Writing well for the web.',
             },
             {
-              heading: {
-                text: 'Writing well for specialists'
-              },
-              content: {
-                text: 'This is the content for Writing well for specialists.'
-              }
+              id: '2',
+              heading: 'Writing well for specialists',
+              summary: 'Guidance for writing technical content',
+              content: 'This is the content for Writing well for specialists.',
             },
             {
-              heading: {
-                text: 'Know your audience'
-              },
-              content: {
-                text: 'This is the content for Know your audience.'
-              }
-            }
+              id: '3',
+              heading: 'Know your audience',
+              summary: 'Understanding who your users are',
+              content: 'This is the content for Know your audience.',
+            },
           ],
           null,
           2
@@ -145,7 +139,7 @@
     >
       <div class="flex flex-col gap-4">
         <h6>Example Accordion</h6>
-        <Accordion items={parametersObject.sections}></Accordion>
+        <Accordion {...parametersObject} key={JSON.stringify(parametersObject.sections)}></Accordion>
       </div>
     </div>
   </div>

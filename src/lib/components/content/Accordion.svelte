@@ -1,120 +1,143 @@
-<script>
-	import { onMount } from 'svelte';
-	import Accordion from '../govuk-esm/components/accordion/accordion.mjs';
-	/**
-	 * @typedef Heading
-	 * @type {object}
-	 * @property {string=} text Required. The title of each section. If heading.html is supplied, this is ignored.
-	 * @property {string=} html Required. The HTML content of the header for each section. Used as the title for each section. The header is inside the HTML <button> element, so you can only add phrasing content to it.
-	 *
-	 * @typedef Summary
-	 * @type {object}
-	 * @property {string=} text Text content for summary line. If summary.html is supplied, this is ignored.
-	 * @property {string=} html The HTML content for the summary line. The summary line is inside the HTML <button> element, so you can only add phrasing content to it.
-	 *
-	 * @typedef Content
-	 * @type {object}
-	 * @property {string=} text Required. The text content of each section, which is hidden when the section is closed. If content.html is supplied, this is ignored.
-	 * @property {string=} html Required. The HTML content of each section, which is hidden when the section is closed.
-	 *
-	 * @typedef Item
-	 * @type {object}
-	 * @property {Heading} heading
-	 * @property {Summary=} summary
-	 * @property {Content} content
-	 * @property {boolean=} expanded Sets whether the section should be expanded when the page loads for the first time. Defaults to false.
-	 */
-	/** @type {string} */
-	export let id = '';
-	/** @type {number=} */
-	export let headingLevel = 2;
-	/** @type {string=} */
-	export let classes = '';
-	/** @type {object=} */
-	export let attributes = {};
-	/** @type {boolean=} */
-	export let rememberExpanded = true;
-	/** @type {string=} */
-	export let hideAllSectionsText = 'Hide all sections';
-	/** @type {string=} */
-	export let hideSectionText = 'Hide';
-	/** @type {string=} */
-	export let hideSectionAriaLabelText = 'Hide this section';
-	/** @type {string=} */
-	export let showAllSectionsText = 'Show all sections';
-	/** @type {string=} */
-	export let showSectionText = 'Show';
-	/** @type {string=} */
-	export let showSectionAriaLabelText = 'Show this section';
-	/** @type {Array<Item>} */
-	export let items = [];
+<script lang="ts">
+  // Props
+  export let sections: {
+    heading: string;
+    summary?: string; // new optional property
+    content: string;
+    id: string;
+  }[] = [];
 
-	const a = {
-		class: `govuk-accordion${classes ? ` ${classes}` : ''}`,
-		'data-module': 'govuk-accordion',
-		id,
-		...(hideAllSectionsText && { 'data-i18n.hide-all-sections': hideAllSectionsText }),
-		...(hideSectionText && { 'data-i18n.hide-section': hideSectionText }),
-		...(hideSectionAriaLabelText && {
-			'data-i18n.hide-section-aria-label': hideSectionAriaLabelText
-		}),
-		...(showAllSectionsText && { 'data-i18n.show-all-sections': showAllSectionsText }),
-		...(showSectionText && { 'data-i18n.show-section': showSectionText }),
-		...(showSectionAriaLabelText && {
-			'data-i18n.show-section-aria-label': showSectionAriaLabelText
-		}),
-		...(rememberExpanded !== undefined && { 'data-remember-expanded': rememberExpanded }),
-		...attributes
-	};
+  // State
+  let expandedSections = new Set<string>();
+  $: allExpanded = expandedSections.size === sections.length;
 
-	/** @type {Element} */
-	let module;
-	onMount(() => new Accordion(module).init());
+  // i18n translations (can be made into props if needed)
+  const i18n = {
+    hideAllSections: 'Hide all sections',
+    hideSection: 'Hide',
+    hideSectionAriaLabel: 'Hide this section',
+    showAllSections: 'Show all sections',
+    showSection: 'Show',
+    showSectionAriaLabel: 'Show this section'
+  };
+
+  // Event handlers
+  function toggleSection(id: string) {
+    const newSet = new Set(expandedSections);
+    if (newSet.has(id)) {
+      newSet.delete(id);
+    } else {
+      newSet.add(id);
+    }
+    expandedSections = newSet;
+  }
+
+  function toggleAll() {
+    if (allExpanded) {
+      expandedSections.clear();
+    } else {
+      expandedSections = new Set(sections.map(section => section.id));
+    }
+    expandedSections = expandedSections; // trigger reactivity
+  }
+
+  // Browser storage (optional)
+  import { browser } from '$app/environment';
+  import { onMount } from 'svelte';
+
+  onMount(() => {
+    if (browser) {
+      // Restore state from sessionStorage
+      sections.forEach(section => {
+        try {
+          const stored = sessionStorage.getItem(section.id);
+          if (stored === 'true') {
+            expandedSections.add(section.id);
+          }
+        } catch (e) {
+          // Handle storage errors gracefully
+        }
+      });
+      expandedSections = expandedSections; // trigger reactivity
+    }
+  });
+
+  // Update sessionStorage when sections change
+  $: if (browser) {
+    sections.forEach(section => {
+      try {
+        sessionStorage.setItem(
+          section.id,
+          expandedSections.has(section.id).toString()
+        );
+      } catch (e) {
+        // Handle storage errors gracefully
+      }
+    });
+  }
 </script>
 
-<div {...a} bind:this={module}>
-	{#each items as item, index}
-		{#if item}
-			<div
-				class={`govuk-accordion__section${
-					item.expanded ? ' govuk-accordion__section--expanded' : ''
-				}`}
-			>
-				<div class="govuk-accordion__section-header">
-					<svelte:element this={`h${headingLevel}`} class="govuk-accordion__section-heading">
-						<span class="govuk-accordion__section-button" id={`${id}-heading-${index + 1}`}>
-							{#if item.heading.html}
-								{@html item.heading.html}
-							{:else}
-								{item.heading.text}
-							{/if}
-						</span>
-					</svelte:element>
-					{#if item.summary?.html || item.summary?.text}
-						<div
-							class="govuk-accordion__section-summary govuk-body"
-							id={`${id}-summary-${index + 1}`}
-						>
-							{#if item.summary.html}
-								{@html item.summary.html}
-							{:else}
-								{item.summary.text}
-							{/if}
-						</div>
-					{/if}
-				</div>
-				<div
-					id={`${id}-content-${index + 1}`}
-					class="govuk-accordion__section-content"
-					aria-labelledby={`${id}-heading-${index + 1}`}
-				>
-					{#if item.content.html}
-						{@html item.content.html}
-					{:else if item.content.text}
-						<p class="govuk-body">{item.content.text}</p>
-					{/if}
-				</div>
-			</div>
-		{/if}
-	{/each}
+<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
+  <div class="govuk-accordion__controls">
+    <button
+      type="button"
+      class="govuk-accordion__show-all"
+      aria-expanded={allExpanded}
+      on:click={toggleAll}
+    >
+      <span class="govuk-accordion__show-all-text">
+        {allExpanded ? i18n.hideAllSections : i18n.showAllSections}
+      </span>
+      <span class="govuk-accordion-nav__chevron" class:govuk-accordion-nav__chevron--down={!allExpanded}></span>
+    </button>
+  </div>
+
+  {#each sections as section}
+    {@const isExpanded = expandedSections.has(section.id)}
+    <div class="govuk-accordion__section" class:govuk-accordion__section--expanded={isExpanded}>
+      <div class="govuk-accordion__section-header">
+        <h2 class="govuk-accordion__section-heading">
+          <button
+            type="button"
+            aria-controls="{section.id}-content"
+            class="govuk-accordion__section-button"
+            aria-expanded={isExpanded}
+            on:click={() => toggleSection(section.id)}
+            aria-label="{section.heading}, {isExpanded ? i18n.hideSectionAriaLabel : i18n.showSectionAriaLabel}"
+          >
+            <span class="govuk-accordion__section-heading-text">
+              <span class="govuk-accordion__section-heading-text-focus">{section.heading}</span>
+            </span>
+
+            {#if section.summary}
+              <span class="govuk-visually-hidden govuk-accordion__section-heading-divider">, </span>
+              <span class="govuk-accordion__section-summary govuk-body">
+                <span class="govuk-accordion__section-summary-focus">{section.summary}</span>
+              </span>
+            {/if}
+
+            <span class="govuk-accordion__section-toggle" data-nosnippet>
+              <span class="govuk-accordion__section-toggle-focus">
+                <span 
+                  class="govuk-accordion-nav__chevron"
+                  class:govuk-accordion-nav__chevron--down={!isExpanded}
+                ></span>
+                <span class="govuk-accordion__section-toggle-text">
+                  {isExpanded ? i18n.hideSection : i18n.showSection}
+                </span>
+              </span>
+            </span>
+          </button>
+        </h2>
+      </div>
+      <div
+        id="{section.id}-content"
+        class="govuk-accordion__section-content"
+        aria-labelledby="{section.id}-heading"
+        hidden={!isExpanded}
+      >
+        <p class="govuk-body">{section.content}</p>
+      </div>
+    </div>
+  {/each}
 </div>

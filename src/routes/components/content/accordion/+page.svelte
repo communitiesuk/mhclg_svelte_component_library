@@ -68,12 +68,14 @@
               heading: 'Writing well for the web',
               summary: 'Learn about writing content for your website',
               content: 'This is the content for Writing well for the web.',
+              expanded: true
             },
             {
               id: '2',
               heading: 'Writing well for specialists',
               summary: 'Guidance for writing technical content',
               content: 'This is the content for Writing well for specialists.',
+              expanded: false
             },
             {
               id: '3',

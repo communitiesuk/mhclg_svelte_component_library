@@ -5,6 +5,7 @@
     summary?: string; // new optional property
     content: string;
     id: string;
+    expanded?: boolean; // Add optional expanded property
   }[] = [];
 
   export let hideAllSections: string = 'Hide all sections';
@@ -44,15 +45,20 @@
 
   onMount(() => {
     if (browser) {
-      // Restore state from sessionStorage
+      // Initialize expanded sections from props first
       sections.forEach(section => {
-        try {
-          const stored = sessionStorage.getItem(section.id);
-          if (stored === 'true') {
-            expandedSections.add(section.id);
+        if (section.expanded) {
+          expandedSections.add(section.id);
+        } else {
+          // Fall back to sessionStorage only if expanded is not specified
+          try {
+            const stored = sessionStorage.getItem(section.id);
+            if (stored === 'true') {
+              expandedSections.add(section.id);
+            }
+          } catch (e) {
+            // Handle storage errors gracefully
           }
-        } catch (e) {
-          // Handle storage errors gracefully
         }
       });
       expandedSections = expandedSections; // trigger reactivity

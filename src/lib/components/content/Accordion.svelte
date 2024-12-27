@@ -7,19 +7,16 @@
     id: string;
   }[] = [];
 
+  export let hideAllSections: string = 'Hide all sections';
+  export let hideSection: string = 'Hide';
+  export let hideSectionAriaLabel: string = 'Hide this section';
+  export let showAllSections: string = 'Show all sections';
+  export let showSection: string = 'Show';
+  export let showSectionAriaLabel: string = 'Show this section';
+
   // State
   let expandedSections = new Set<string>();
   $: allExpanded = expandedSections.size === sections.length;
-
-  // i18n translations (can be made into props if needed)
-  const i18n = {
-    hideAllSections: 'Hide all sections',
-    hideSection: 'Hide',
-    hideSectionAriaLabel: 'Hide this section',
-    showAllSections: 'Show all sections',
-    showSection: 'Show',
-    showSectionAriaLabel: 'Show this section'
-  };
 
   // Event handlers
   function toggleSection(id: string) {
@@ -86,7 +83,7 @@
       on:click={toggleAll}
     >
       <span class="govuk-accordion__show-all-text">
-        {allExpanded ? i18n.hideAllSections : i18n.showAllSections}
+        {allExpanded ? hideAllSections : showAllSections}
       </span>
       <span class="govuk-accordion-nav__chevron" class:govuk-accordion-nav__chevron--down={!allExpanded}></span>
     </button>
@@ -103,7 +100,7 @@
             class="govuk-accordion__section-button"
             aria-expanded={isExpanded}
             on:click={() => toggleSection(section.id)}
-            aria-label="{section.heading}, {isExpanded ? i18n.hideSectionAriaLabel : i18n.showSectionAriaLabel}"
+            aria-label="{section.heading}, {isExpanded ? hideSectionAriaLabel : showSectionAriaLabel}"
           >
             <span class="govuk-accordion__section-heading-text">
               <span class="govuk-accordion__section-heading-text-focus">{section.heading}</span>
@@ -123,7 +120,7 @@
                   class:govuk-accordion-nav__chevron--down={!isExpanded}
                 ></span>
                 <span class="govuk-accordion__section-toggle-text">
-                  {isExpanded ? i18n.hideSection : i18n.showSection}
+                  {isExpanded ? hideSection : showSection}
                 </span>
               </span>
             </span>

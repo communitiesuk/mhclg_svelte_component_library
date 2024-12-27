@@ -139,7 +139,16 @@
     >
       <div class="flex flex-col gap-4">
         <h6>Example Accordion</h6>
-        <Accordion {...parametersObject} key={JSON.stringify(parametersObject.sections)}></Accordion>
+        <Accordion 
+          {...parametersObject} 
+          key={JSON.stringify(parametersObject.sections)}
+          hideAllSections="Hide all sections please"
+          hideSection="Hide"
+          hideSectionAriaLabel="Hide this section"
+          showAllSections="Show all sections"
+          showSection="Show"
+          showSectionAriaLabel="Show this section"
+        ></Accordion>
       </div>
     </div>
   </div>

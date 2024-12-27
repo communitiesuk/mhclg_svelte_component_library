@@ -86,6 +86,48 @@
           2
         ),
       },
+      {
+        name: 'hideAllSections',
+        category: 'i18n',
+        isProp: true,
+        inputType: 'input',
+        value: 'Hide all sections please',
+      },
+      {
+        name: 'hideSection',
+        category: 'i18n',
+        isProp: true,
+        inputType: 'input',
+        value: 'Hide',
+      },
+      {
+        name: 'hideSectionAriaLabel',
+        category: 'i18n',
+        isProp: true,
+        inputType: 'input',
+        value: 'Hide this section',
+      },
+      {
+        name: 'showAllSections',
+        category: 'i18n',
+        isProp: true,
+        inputType: 'input',
+        value: 'Show all sections',
+      },
+      {
+        name: 'showSection',
+        category: 'i18n',
+        isProp: true,
+        inputType: 'input',
+        value: 'Show',
+      },
+      {
+        name: 'showSectionAriaLabel',
+        category: 'i18n',
+        isProp: true,
+        inputType: 'input',
+        value: 'Show this section',
+      },
     ]);
 
   let parametersValuesArray = $state(
@@ -142,12 +184,6 @@
         <Accordion 
           {...parametersObject} 
           key={JSON.stringify(parametersObject.sections)}
-          hideAllSections="Hide all sections please"
-          hideSection="Hide"
-          hideSectionAriaLabel="Hide this section"
-          showAllSections="Show all sections"
-          showSection="Show"
-          showSectionAriaLabel="Show this section"
         ></Accordion>
       </div>
     </div>

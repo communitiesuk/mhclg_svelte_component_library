@@ -2,6 +2,7 @@
   // Props
   export let sections: {
     heading: string;
+    summary?: string; // new optional property
     content: string;
     id: string;
   }[] = [];
@@ -107,6 +108,14 @@
             <span class="govuk-accordion__section-heading-text">
               <span class="govuk-accordion__section-heading-text-focus">{section.heading}</span>
             </span>
+
+            {#if section.summary}
+              <span class="govuk-visually-hidden govuk-accordion__section-heading-divider">, </span>
+              <span class="govuk-accordion__section-summary govuk-body">
+                <span class="govuk-accordion__section-summary-focus">{section.summary}</span>
+              </span>
+            {/if}
+
             <span class="govuk-accordion__section-toggle" data-nosnippet>
               <span class="govuk-accordion__section-toggle-focus">
                 <span 

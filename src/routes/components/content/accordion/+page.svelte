@@ -66,16 +66,19 @@
             {
               id: '1',
               heading: 'Writing well for the web',
+              summary: 'Learn about writing content for your website',
               content: 'This is the content for Writing well for the web.',
             },
             {
               id: '2',
               heading: 'Writing well for specialists',
+              summary: 'Guidance for writing technical content',
               content: 'This is the content for Writing well for specialists.',
             },
             {
               id: '3',
               heading: 'Know your audience',
+              summary: 'Understanding who your users are',
               content: 'This is the content for Know your audience.',
             },
           ],

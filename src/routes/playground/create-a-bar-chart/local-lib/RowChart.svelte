@@ -1,4 +1,5 @@
 <script>
+  import { scaleLinear } from 'd3-scale';
   import Axes from './external/Axes.svelte';
   import Legend from './external/Legend.svelte';
   import Source from './external/Source.svelte';
@@ -16,6 +17,8 @@
 
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
+
+  let yFunction = $derived(scaleLinear().domain(10).range([0, chartHeight]));
 </script>
 
 <div class="mt-10">
@@ -31,11 +34,11 @@
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
 
-          {#each dataArray as row, i}
-            <g transform="translate({0},{0})">
-              <Row {row}></Row>
-            </g>
-          {/each}
+            {#each dataArray as row, i}
+              <g transform="translate({0},{i*50})">
+                <Row {row}></Row>
+              </g>
+            {/each}
         </g>
       {/if}
     </svg>

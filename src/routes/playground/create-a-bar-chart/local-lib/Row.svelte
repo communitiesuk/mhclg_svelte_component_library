@@ -4,9 +4,11 @@
   import RowValue from './rowComponents/RowValue.svelte';
 
   let { row } = $props();
+  $inspect(row.y);
 </script>
 
-<g class="row-group">
+<g>
+  <rect width={row.y} height={20} />
   <Bar></Bar>
   <RowValue></RowValue>
   <RowLabel></RowLabel>

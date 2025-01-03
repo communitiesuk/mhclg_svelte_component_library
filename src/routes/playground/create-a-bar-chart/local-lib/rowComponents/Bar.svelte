@@ -1,6 +1,5 @@
 <script>
-    let { row } = $props();
-    
-  </script>
+  let { row } = $props();
+</script>
 
-<rect width={row.y} height={20} />
+<rect width={row.y} height={10} />

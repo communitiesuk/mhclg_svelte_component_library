@@ -4,7 +4,7 @@
   import Legend from './external/Legend.svelte';
   import Source from './external/Source.svelte';
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
-  import Row from './Row.svelte';
+  import Rows from './Rows.svelte';
 
   let { dataArray } = $props();
 
@@ -33,12 +33,7 @@
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
-
-            {#each dataArray as row, i}
-              <g transform="translate({0},{i*50})">
-                <Row {row}></Row>
-              </g>
-            {/each}
+          <Rows {dataArray}></Rows>
         </g>
       {/if}
     </svg>

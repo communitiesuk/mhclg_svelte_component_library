@@ -1,9 +1,10 @@
 <script>
-  import Bar from './rowComponents/Bar.svelte.js';
-  import RowLabel from './rowComponents/RowLabel.svelte.js';
-  import RowValue from './rowComponents/RowValue.svelte.js';
-
-  let { row } = $props();
+  let { dataArray } = $props();
+  import Row from './Row.svelte';
 </script>
 
-<div></div>
+{#each dataArray as row, i}
+  <g transform="translate({0},{i * 50})">
+    <Row {row}></Row>
+  </g>
+{/each}

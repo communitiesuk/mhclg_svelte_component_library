@@ -8,8 +8,7 @@
 </script>
 
 <g>
-  <rect width={row.y} height={20} />
-  <Bar></Bar>
+  <Bar {row}></Bar>
   <RowValue></RowValue>
   <RowLabel></RowLabel>
 </g>

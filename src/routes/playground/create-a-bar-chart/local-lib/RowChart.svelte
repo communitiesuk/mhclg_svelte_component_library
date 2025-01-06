@@ -7,8 +7,6 @@
 
   let { dataArray } = $props();
 
-  $inspect(dataArray);
-
   let svgWidth = $state(),
     svgHeight = 500;
 
@@ -30,7 +28,7 @@
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
-          <Rows {dataArray}{chartHeight}></Rows>
+          <Rows {dataArray} {chartHeight} ></Rows>
         </g>
       {/if}
     </svg>

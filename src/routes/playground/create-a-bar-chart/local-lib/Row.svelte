@@ -4,7 +4,6 @@
   import RowValue from './rowComponents/RowValue.svelte';
 
   let { row } = $props();
-  $inspect(row.y);
 </script>
 
 <g>

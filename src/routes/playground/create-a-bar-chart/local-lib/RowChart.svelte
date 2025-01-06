@@ -28,7 +28,7 @@
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
-          <Rows {dataArray} {chartHeight} ></Rows>
+          <Rows {dataArray} {chartHeight} {chartWidth}></Rows>
         </g>
       {/if}
     </svg>

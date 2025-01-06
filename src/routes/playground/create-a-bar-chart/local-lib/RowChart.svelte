@@ -1,4 +1,8 @@
 <script>
+  import { defaultScreenWidthBreakpoints } from '$lib/config.js';
+  import { svgWidthCategoryToRowLabelPermutationsLookup } from '../local-config.js';
+  import { calculateLabelSplitsAndSpace } from '../local-utils/calculateLabelSplitsAndSpace.js';
+  import { categoriseContainerWidth } from '../local-utils/categoriseContainerWidth.js';
   import Axes from './external/Axes.svelte';
   import Legend from './external/Legend.svelte';
   import Source from './external/Source.svelte';
@@ -16,6 +20,23 @@
 
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
+
+  let svgWidthCategory = $derived(
+    svgWidth ??
+      categoriseContainerWidth(defaultScreenWidthBreakpoints, svgWidth)
+  );
+
+  $inspect(svgWidthCategory);
+
+  let [dataArrayWithSplitLabels, spaceForLabels] = $derived(
+    svgWidth ??
+      calculateLabelSplitsAndSpace(
+        svgWidthCategoryToRowLabelPermutationsLookup[svgWidthCategory],
+        dataArray
+      )
+  );
+
+  $inspect(dataArrayWithSplitLabels);
 </script>
 
 <div class="mt-10">

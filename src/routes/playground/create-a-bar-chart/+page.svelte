@@ -21,15 +21,14 @@
   let dataArray = $derived(
     data?.dataInFormatForBarChart
       .find((el) => el.x === selectedYear)
-      .bars.slice(0, numberOfBars)
-      .map((el) => ({
+      ?.bars.map((el) => ({
         ...el,
         label: data.areaCodeLookup[el.areaCode],
         color: el.areaCode === 'E07000032' ? 'blue' : null,
       }))
+      .sort((a, b) => b.label.length - a.label.length)
+      .slice(0, numberOfBars)
   );
-
-  $inspect(dataArray);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>

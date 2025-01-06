@@ -6,6 +6,10 @@ export const load: LayoutLoad = async (event) => {
     await event.fetch(`${base}/data/testData.json`)
   ).json();
 
+  const svgFontDimensions = await (
+    await event.fetch(`${base}/data/svgFontDimensions.json`)
+  ).json();
+
   let metrics = [
     ...new Set(
       testData.flatMetricData.map((d) => {
@@ -45,5 +49,6 @@ export const load: LayoutLoad = async (event) => {
     dataInFormatForLineChart,
     dataInFormatForBarChart,
     areaCodeLookup: testData.areaCodeLookup,
+    svgFontDimensions,
   };
 };

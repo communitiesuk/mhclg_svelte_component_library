@@ -1,8 +1,8 @@
 <script>
-  let { row } = $props();
+  let { row, barHeight } = $props();
   $inspect(row);
 </script>
 
 <g transform="translate({-30},{0})">
-  <text x={-70} y={10}>{row.areaCode}</text>
+  <text x={-70} y={barHeight}>{row.areaCode}</text>
 </g>

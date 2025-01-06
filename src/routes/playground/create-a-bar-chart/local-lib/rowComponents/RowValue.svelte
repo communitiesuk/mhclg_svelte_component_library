@@ -1,10 +1,9 @@
 <script>
-  let { row, xFunction } = $props();
+  let { row, xFunction, barHeight } = $props();
   let offsetX = $derived(xFunction(row.y) + 10); // Reactive declaration
-$inspect(offsetX)
-
+  $inspect(offsetX);
 </script>
 
-<g transform="translate({offsetX},{0})">
-    <text x={0} y={10}>{row.y}</text>
-  </g>
+<g transform="translate({offsetX},{barHeight})">
+  <text x={0} y={0}>{row.y}</text>
+</g>

@@ -1,6 +1,6 @@
 <script>
-  let { row, xFunction} = $props();
+  let { row, xFunction, barHeight} = $props();
 
 </script>
 
-<rect width={xFunction(row.y)} height={10} />
+<rect width={xFunction(row.y)} height={barHeight} fill={row.y > 30 ? "blue" : "red"}/>

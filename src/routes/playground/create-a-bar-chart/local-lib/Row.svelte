@@ -1,15 +1,17 @@
 <script>
-  import Bar from './rowComponents/Bar.svelte';
-  import RowLabel from './rowComponents/RowLabel.svelte';
-  import RowValue from './rowComponents/RowValue.svelte';
-
-  let { row } = $props();
+  // let { row } = $props();
 </script>
 
-<p>this is the row component</p>
-
-<g class="row-group">
+<!-- <g class="row-group">
   <Bar></Bar>
   <RowValue></RowValue>
   <RowLabel></RowLabel>
-</g>p
+</g> -->
+
+<svg>
+  <rect
+    width="400"
+    height="50"
+    style="fill:#ADD8E6;stroke-width:1;stroke:#00008B"
+  />
+</svg>

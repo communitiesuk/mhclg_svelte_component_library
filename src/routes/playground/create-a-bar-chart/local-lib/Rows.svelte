@@ -3,11 +3,12 @@
   import { scaleLinear } from 'd3-scale';
 
   import Row from './Row.svelte';
-  let halfSpace = $derived(chartHeight / dataArray.length / 2);
+  let quarterSpace = $derived(chartHeight / dataArray.length / 4);
+
   let yFunction = $derived(
     scaleLinear()
       .domain([0, dataArray.length])
-      .range([halfSpace, chartHeight + halfSpace])
+      .range([quarterSpace, chartHeight + quarterSpace])
   );
 
   let allValues = $derived(dataArray.map((el) => el.y));
@@ -18,14 +19,14 @@
     scaleLinear().domain([0, valueMax]).range([0, chartWidth])
   );
 
-  let barHeight = $derived(halfSpace);
+  let barHeight = $derived(quarterSpace * 2);
 
   //let sortedArray = $derived(dataArray.slice().sort((a, b) => a.y - b.y));
 </script>
 
 <g>
   {#each dataArray as row, i}
-    <g transform="translate({0},{yFunction(i) - barHeight / 2})">
+    <g transform="translate({0},{yFunction(i)})">
       <Row {row} {xFunction} {barHeight} {focusColour} {focusBars}></Row>
     </g>
   {/each}

@@ -3,6 +3,6 @@
   $inspect(row);
 </script>
 
-<g transform="translate({-30},{0})">
-  <text x={-70} y={barHeight}>{row.areaCode}</text>
+<g transform="translate({-30},{barHeight})">
+  <text x={-70} y={0}>{row.areaCode}</text>
 </g>

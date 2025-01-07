@@ -15,8 +15,6 @@
   export let showSection: string = 'Show';
   export let showSectionAriaLabel: string = 'Show this section';
 
-  $: console.log(sections);
-
   // State
   let expandedSections = new Set<string>();
   $: allExpanded = expandedSections.size === sections.length;
@@ -36,7 +34,7 @@
     if (allExpanded) {
       expandedSections.clear();
     } else {
-      expandedSections = new Set(sections.map((section) => section.id));
+      expandedSections = new Set(sections.map(section => section.id));
     }
     expandedSections = expandedSections; // trigger reactivity
   }
@@ -48,7 +46,7 @@
   onMount(() => {
     if (browser) {
       // Initialize expanded sections from props first
-      sections.forEach((section) => {
+      sections.forEach(section => {
         if (section.expanded) {
           expandedSections.add(section.id);
         } else {
@@ -69,7 +67,7 @@
 
   // Update sessionStorage when sections change
   $: if (browser) {
-    sections.forEach((section) => {
+    sections.forEach(section => {
       try {
         sessionStorage.setItem(
           section.id,
@@ -82,11 +80,7 @@
   }
 </script>
 
-<div
-  class="govuk-accordion"
-  data-module="govuk-accordion"
-  id="accordion-default"
->
+<div class="govuk-accordion" data-module="govuk-accordion" id="accordion-default">
   <div class="govuk-accordion__controls">
     <button
       type="button"
@@ -97,19 +91,13 @@
       <span class="govuk-accordion__show-all-text">
         {allExpanded ? hideAllSections : showAllSections}
       </span>
-      <span
-        class="govuk-accordion-nav__chevron"
-        class:govuk-accordion-nav__chevron--down={!allExpanded}
-      ></span>
+      <span class="govuk-accordion-nav__chevron" class:govuk-accordion-nav__chevron--down={!allExpanded}></span>
     </button>
   </div>
 
   {#each sections as section}
     {@const isExpanded = expandedSections.has(section.id)}
-    <div
-      class="govuk-accordion__section"
-      class:govuk-accordion__section--expanded={isExpanded}
-    >
+    <div class="govuk-accordion__section" class:govuk-accordion__section--expanded={isExpanded}>
       <div class="govuk-accordion__section-header">
         <h2 class="govuk-accordion__section-heading">
           <button
@@ -118,31 +106,22 @@
             class="govuk-accordion__section-button"
             aria-expanded={isExpanded}
             on:click={() => toggleSection(section.id)}
-            aria-label="{section.heading}, {isExpanded
-              ? hideSectionAriaLabel
-              : showSectionAriaLabel}"
+            aria-label="{section.heading}, {isExpanded ? hideSectionAriaLabel : showSectionAriaLabel}"
           >
             <span class="govuk-accordion__section-heading-text">
-              <span class="govuk-accordion__section-heading-text-focus"
-                >{section.heading}</span
-              >
+              <span class="govuk-accordion__section-heading-text-focus">{section.heading}</span>
             </span>
 
             {#if section.summary}
-              <span
-                class="govuk-visually-hidden govuk-accordion__section-heading-divider"
-                >,
-              </span>
+              <span class="govuk-visually-hidden govuk-accordion__section-heading-divider">, </span>
               <span class="govuk-accordion__section-summary govuk-body">
-                <span class="govuk-accordion__section-summary-focus"
-                  >{section.summary}</span
-                >
+                <span class="govuk-accordion__section-summary-focus">{section.summary}</span>
               </span>
             {/if}
 
             <span class="govuk-accordion__section-toggle" data-nosnippet>
               <span class="govuk-accordion__section-toggle-focus">
-                <span
+                <span 
                   class="govuk-accordion-nav__chevron"
                   class:govuk-accordion-nav__chevron--down={!isExpanded}
                 ></span>

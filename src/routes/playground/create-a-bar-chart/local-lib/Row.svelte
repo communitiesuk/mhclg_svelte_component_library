@@ -1,4 +1,5 @@
 <script>
+  let { rowHeight } = $props();
   // let { row } = $props();
 </script>
 
@@ -11,7 +12,7 @@
 <svg>
   <rect
     width="400"
-    height="50"
+    height={rowHeight}
     style="fill:#ADD8E6;stroke-width:1;stroke:#00008B"
   />
 </svg>

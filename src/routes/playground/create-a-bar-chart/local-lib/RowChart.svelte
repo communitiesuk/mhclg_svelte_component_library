@@ -22,8 +22,9 @@
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
 
-  let numberOfRows = 5;
-  let timesToBeRendered = 3;
+  let numberOfRows = 10;
+
+  let rowHeight = chartHeight / numberOfRows;
 </script>
 
 <div class="mt-10">
@@ -44,8 +45,8 @@
           <Axes {chartHeight} {chartWidth}></Axes>
 
           {#each { length: numberOfRows } as _, i}
-            <g transform="translate(0,{i * 60})">
-              <Row></Row>
+            <g transform="translate(0,{i * rowHeight})">
+              <Row {rowHeight}></Row>
             </g>
           {/each}
 

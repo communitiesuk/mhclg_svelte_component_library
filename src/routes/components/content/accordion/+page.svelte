@@ -7,6 +7,8 @@
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
   import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
   import ScreenSizeRadio from '$lib/package-wrapping/ScreenSizeRadio.svelte';
+  import { csvToArrayOfObjects } from '$lib/utils/data-transformations/convertCSV.js';
+  import { getValueFromParametersArray } from '$lib/utils/data-transformations/getValueFromParametersArray.js';
   import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
   import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
   import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
@@ -68,14 +70,14 @@
               heading: 'Writing well for the web',
               summary: 'Learn about writing content for your website',
               content: 'This is the content for Writing well for the web.',
-              expanded: true
+              expanded: true,
             },
             {
               id: '2',
               heading: 'Writing well for specialists',
               summary: 'Guidance for writing technical content',
               content: 'This is the content for Writing well for specialists.',
-              expanded: false
+              expanded: false,
             },
             {
               id: '3',
@@ -136,7 +138,20 @@
     homepage ?? parametersSourceArray.map((el) => el.value)
   );
 
-  let derivedParametersObject = $derived(homepage ?? {});
+  let sections = $derived(
+    homepage ??
+      csvToArrayOfObjects(
+        getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          'sections'
+        )
+      )
+  );
+
+  $inspect(sections);
+
+  let derivedParametersObject = $derived(homepage ?? { sections });
 
   let parametersVisibleArray = $derived(
     homepage ??
@@ -159,6 +174,8 @@
       console.error('Invalid JSON in sections parameter');
     }
   }
+
+  $inspect(parametersValuesArray);
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>
@@ -183,8 +200,8 @@
     >
       <div class="flex flex-col gap-4">
         <h6>Example Accordion</h6>
-        <Accordion 
-          {...parametersObject} 
+        <Accordion
+          {...parametersObject}
           key={JSON.stringify(parametersObject.sections)}
         ></Accordion>
       </div>

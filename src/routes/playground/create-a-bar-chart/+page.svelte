@@ -17,28 +17,18 @@
 
   let selectedYear = $state(data?.years[0]);
   let numberOfBars = $state(10);
-  let selectedOrder = $state('ascending');
-  let focusColour = $state('#facafa');
+  let sortMethod = $state('ascending');
+  let sortKey = $state('y');
+  let focusBars = $state('E07000223');
+  let focusColour = $state('#002fa7');
 
-  //   // Custom sorting functions
-  //   const sortingFunctions = {
-  //   alphabetical: (key) => (a, b) => a[key].localeCompare(b[key]),
-  //   numerical: (key) => (a, b) => a[key] - b[key],
-  //   descending: (key) => (a, b) => b[key] - a[key],
-  // };
+  $inspect(sortMethod)
 
-  // // Variables to control sorting
-  // let sortMethod = 'alphabetical'; // Default sorting method
-  // let sortKey = 'name';           // Default key to sort by
-
-  // // Function to sort data dynamically based on current sortMethod and sortKey
-  // $: sortedData = data.slice().sort(sortingFunctions[sortMethod](sortKey));
-
-  // // Function to update sorting parameters
-  // function updateSort(method, key) {
-  //   sortMethod = method;
-  //   sortKey = key;
-  // }
+  const sortingFunctions = {
+    alphabetical: (key) => (a, b) => a[key].localeCompare(b[key]),
+    ascending: (key) => (a, b) => a[key] - b[key],
+    descending: (key) => (a, b) => b[key] - a[key],
+  };
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -74,6 +64,12 @@
           </Input>
         </div>
         <div class="mt-5">
+          <p class="my-2 mx-0 p-0 text-sm">Focus bars:</p>
+          <Input let:props>
+            <input type="string" {...props} bind:value={focusBars} />
+          </Input>
+        </div>
+        <div class="mt-5">
           <p class="my-2 mx-0 p-0 text-sm">Focus colour:</p>
           <Input let:props>
             <input type="string" {...props} bind:value={focusColour} />
@@ -82,8 +78,8 @@
         <div class="radio-container">
           <p class="my-2 mx-0 p-0 text-sm">Order:</p>
           <div class="flex flex-row flex-wrap gap-2">
-            {#each ['Unordered', 'Ascending', 'Descending'] as option, i}
-              <Radio value={option} bind:group={selectedOrder}>
+            {#each ['alphabetical', 'ascending', 'descending'] as option, i}
+              <Radio value={option} bind:group={sortMethod}>
                 <span class="text-base font-normal">
                   {option}
                 </span>
@@ -95,8 +91,11 @@
           <RowChart
             dataArray={data?.dataInFormatForBarChart
               .find((el) => el.x === selectedYear)
-              .bars.slice(0, numberOfBars)}
+              .bars.slice(0, numberOfBars)
+              // .sort(sortingFunctions[sortMethod](sortKey))
+              }
             {focusColour}
+            {focusBars}
           ></RowChart>
         </div>
       </div>

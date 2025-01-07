@@ -1,6 +1,9 @@
 <script>
-  let { row, xFunction, barHeight} = $props();
-
+  let { row, xFunction, barHeight, focusColour, focusBars } = $props();
 </script>
 
-<rect width={xFunction(row.y)} height={barHeight} fill={row.y > 30 ? "blue" : "red"}/>
+<rect
+  width={xFunction(row.y)}
+  height={barHeight}
+  fill={focusBars.includes(row.areaCode) ? focusColour : '#bababa'}
+/>

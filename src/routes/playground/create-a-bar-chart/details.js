@@ -21,11 +21,11 @@ export let details = {
     },
     {
       label:
-        'Define a function that separates rows evenly along the height of the chart.',
+        'Define a function that separates rows evenly along the height of the chart.', complete: true
     },
     {
       label:
-        'Define an xScale based on data, use it to plot a bar for each row.',
+        'Define an xScale based on data, use it to plot a bar for each row.', complete: true
     },
     {
       label:
@@ -33,7 +33,7 @@ export let details = {
     },
     {
       label:
-        'Create functionality that allows a developer to change the color of specific bars.',
+        'Create functionality that allows a developer to change the color of specific bars.', complete: true
     },
 
     {

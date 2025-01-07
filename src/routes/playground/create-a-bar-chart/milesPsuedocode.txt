@@ -16,6 +16,8 @@ Place it in an appropriate place on the chart - DONE
 
 temporarily color the rows so that I can see how they are being rendered during development - DONE
 
-Figure out how to render multiple rows so that appear one after another
+Figure out how to render multiple rows so that appear one after another -DONE
 
 Add and style the row components: bar, row label, row value
+
+Define function to space evenly along the height of the chart

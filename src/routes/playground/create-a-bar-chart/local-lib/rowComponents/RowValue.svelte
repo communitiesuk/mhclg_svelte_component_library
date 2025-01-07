@@ -4,6 +4,6 @@
   $inspect(offsetX);
 </script>
 
-<g transform="translate({offsetX},{barHeight})">
-  <text x={0} y={0}>{row.y}</text>
+<g transform="translate({offsetX},{barHeight/2})">
+  <text dominant-baseline="central" x={0} y={0}>{row.y}</text>
 </g>

@@ -3,7 +3,9 @@
   import { scaleLinear } from 'd3-scale';
 
   import Row from './Row.svelte';
-  let quarterSpace = $derived(chartHeight / dataArray.length / 4);
+  let barHeight = $derived(chartHeight / dataArray.length / 2);
+
+  let quarterSpace = $derived(barHeight / 2);
 
   let yFunction = $derived(
     scaleLinear()
@@ -18,8 +20,6 @@
   let xFunction = $derived(
     scaleLinear().domain([0, valueMax]).range([0, chartWidth])
   );
-
-  let barHeight = $derived(quarterSpace * 2);
 
   //let sortedArray = $derived(dataArray.slice().sort((a, b) => a.y - b.y));
 </script>

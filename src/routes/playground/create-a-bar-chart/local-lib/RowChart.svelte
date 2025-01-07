@@ -7,7 +7,7 @@
   import Row from './Row.svelte';
 
   // dataArray is an input to the RowChart component
-  let { dataArray } = $props();
+  let { dataArray, numberOfBars } = $props();
 
   $inspect(dataArray);
 
@@ -22,9 +22,7 @@
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
 
-  let numberOfRows = 10;
-
-  let rowHeight = chartHeight / numberOfRows;
+  let rowHeight = $derived(chartHeight / numberOfBars);
 </script>
 
 <div class="mt-10">
@@ -44,7 +42,7 @@
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
 
-          {#each { length: numberOfRows } as _, i}
+          {#each { length: numberOfBars } as _, i}
             <g transform="translate(0,{i * rowHeight})">
               <Row {rowHeight}></Row>
             </g>

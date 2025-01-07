@@ -17,6 +17,8 @@
 
   let selectedYear = $state(data?.years[0]);
   let numberOfBars = $state(10);
+
+  $inspect(numberOfBars);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -53,6 +55,7 @@
         </div>
         <div class="row-chart-container">
           <RowChart
+            {numberOfBars}
             dataArray={data?.dataInFormatForBarChart
               .find((el) => el.x === selectedYear)
               .bars.slice(0, numberOfBars)}

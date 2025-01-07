@@ -22,6 +22,7 @@ export let details = {
     {
       label:
         'Define a function that separates rows evenly along the height of the chart.',
+      complete: true,
     },
     {
       label:

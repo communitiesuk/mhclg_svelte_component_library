@@ -37,7 +37,7 @@ export let details = {
     },
 
     {
-      label: 'Add name-labels and value-labels for each row.',
+      label: 'Add name-labels and value-labels for each row.', complete: true
     },
   ],
 };

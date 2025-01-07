@@ -6,7 +6,7 @@
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
   import Row from './Row.svelte';
 
-  // dataArray is an input to the RowChart component
+  // dataArray and numberOfBars are inputs to the RowChart component
   let { dataArray, numberOfBars } = $props();
 
   $inspect(dataArray);

@@ -7,6 +7,7 @@
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
   import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
   import ScreenSizeRadio from '$lib/package-wrapping/ScreenSizeRadio.svelte';
+  import { getValueFromParametersArray } from '$lib/utils/data-transformations/getValueFromParametersArray.js';
   import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
   import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
   import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
@@ -68,14 +69,14 @@
               heading: 'Writing well for the web',
               summary: 'Learn about writing content for your website',
               content: 'This is the content for Writing well for the web.',
-              expanded: true
+              expanded: true,
             },
             {
               id: '2',
               heading: 'Writing well for specialists',
               summary: 'Guidance for writing technical content',
               content: 'This is the content for Writing well for specialists.',
-              expanded: false
+              expanded: false,
             },
             {
               id: '3',
@@ -136,12 +137,25 @@
     homepage ?? parametersSourceArray.map((el) => el.value)
   );
 
-  let derivedParametersObject = $derived(homepage ?? {});
+  let sections = $derived(
+    homepage ??
+      JSON.parse(
+        getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          'sections'
+        )
+      )
+  );
+
+  let derivedParametersObject = $derived(homepage ?? { sections });
 
   let parametersVisibleArray = $derived(
     homepage ??
       trackVisibleParameters(parametersSourceArray, parametersValuesArray)
   );
+
+  $inspect(parametersValuesArray);
 
   let parametersObject = $derived(
     homepage ??
@@ -151,7 +165,6 @@
         derivedParametersObject
       )
   );
-
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>

@@ -11,7 +11,7 @@ export function createParametersObject(
     // Destructure fields that give extra info about param type and therefore special handling needed
     const {
       name,
-      isProp = true,      // default to true if not provided
+      isProp = true, // default to true if not provided
       inputType,
       handlerFunction,
     } = param;
@@ -26,14 +26,14 @@ export function createParametersObject(
       inputType === 'event' ? handlerFunction : parametersValuesArray[index];
 
     // 3. Integrate the accordian "sections" JSON parse logic
-    if (name === 'sections') {
+    /*if (name === 'sections') {
       try {
         newValue = JSON.parse(parametersValuesArray[index]);
       } catch (e) {
         console.error('Error parsing sections JSON:', e);
         newValue = []; // fallback if parse fails
       }
-    }
+    }*/
 
     // 4. If there's a matching derived value for this parameter name,
     //    that should overwrite whatever we currently have:

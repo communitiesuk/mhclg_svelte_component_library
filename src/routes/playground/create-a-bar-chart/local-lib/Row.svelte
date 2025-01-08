@@ -3,6 +3,7 @@
   // this information is passed in when the component is called
 
   // let { row } = $props();
+  let { rowHeight, rowWidth } = $props();
 
   $inspect(rowWidth);
 </script>

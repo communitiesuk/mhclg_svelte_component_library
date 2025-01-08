@@ -152,13 +152,6 @@
       )
   );
 
-  $derived: if (!homepage && parametersObject.sections) {
-    try {
-      parametersObject.sections = JSON.parse(parametersObject.sections);
-    } catch (e) {
-      console.error('Invalid JSON in sections parameter');
-    }
-  }
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>
@@ -183,10 +176,7 @@
     >
       <div class="flex flex-col gap-4">
         <h6>Example Accordion</h6>
-        <Accordion 
-          {...parametersObject} 
-          key={JSON.stringify(parametersObject.sections)}
-        ></Accordion>
+        <Accordion {...parametersObject}></Accordion>
       </div>
     </div>
   </div>

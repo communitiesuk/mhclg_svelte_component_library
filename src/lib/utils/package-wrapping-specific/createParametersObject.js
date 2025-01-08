@@ -1,41 +1,18 @@
-export function createParametersObject(
-  parametersSourceArray,
-  parametersValuesArray,
-  derivedParametersObject
-) {
-  let derivedParametersArray = Object.keys(derivedParametersObject).map(
-    (el) => ({
-      name: el,
-      value: derivedParametersObject[el],
-    })
-  );
+export function createParametersObject(sourceArray, valuesArray, derivedObject = {}) {
+  const result = { ...derivedObject };
+  
+  sourceArray.forEach((param, index) => {
+    if (param.name === 'sections') {
+      try {
+        result[param.name] = JSON.parse(valuesArray[index]);
+      } catch (e) {
+        console.error('Error parsing sections JSON:', e);
+        result[param.name] = [];
+      }
+    } else {
+      result[param.name] = valuesArray[index];
+    }
+  });
 
-  let parametersObject = parametersSourceArray.reduce(
-    (acc, { isProp, name, inputType, handlerFunction }, index) => {
-      acc[name] = {
-        isProp: isProp,
-        value:
-          inputType === 'event'
-            ? handlerFunction
-            : parametersValuesArray[index],
-      };
-      return acc;
-    },
-    {}
-  );
-
-  return Object.fromEntries(
-    Object.entries(parametersObject)
-      .filter(([key, value]) => value.isProp)
-      .map((el) => {
-        let value = el[1].value;
-
-        derivedParametersArray.forEach((elm) => {
-          if (el[0] === elm.name) {
-            value = elm.value;
-          }
-        });
-        return [el[0], value];
-      })
-  );
+  return result;
 }

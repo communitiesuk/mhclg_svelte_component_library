@@ -9,7 +9,8 @@
     showSection = 'Show',
     showSectionAriaLabel = 'Show this section',
     allSectionToggle = true,
-    minSectionsAllSectionToggle = 2
+    minSectionsAllSectionToggle = 2,
+    rememberIsExpandedState = true,
   }: {
     sections: {
       heading: string;
@@ -26,6 +27,7 @@
     showSectionAriaLabel?: string;
     allSectionToggle?: boolean;
     minSectionsAllSectionToggle?: number;
+    rememberIsExpandedState?: boolean;
   } = $props();
 
 
@@ -63,32 +65,42 @@
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
 
+  // Only use session storage logic if rememberIsExpandedState is true
   onMount(() => {
-    if (browser) {
-      // Initialise expanded sections from props first
+    if (browser && rememberIsExpandedState) {
       const updatedExpandedSections = new Set(expandedSections);
       sections.forEach((section) => {
+        // If the section is explicitly expanded, respect that.
+        // Otherwise, try to restore from session storage.
         if (section.expanded) {
           updatedExpandedSections.add(section.id);
         } else {
-          // Fall back to sessionStorage only if expanded is not specified
           try {
             const stored = sessionStorage.getItem(section.id);
             if (stored === 'true') {
               updatedExpandedSections.add(section.id);
             }
           } catch (e) {
-            // Handle storage errors gracefully
+            // Handle storage errors gracefully (e.g. private mode)
           }
         }
       });
-      expandedSections = updatedExpandedSections; // trigger reactivity
+      expandedSections = updatedExpandedSections; // triggers reactivity
+    } else {
+      // If rememberIsExpandedState is false, just respect the initial `section.expanded` values
+      const updatedExpandedSections = new Set(expandedSections);
+      sections.forEach((section) => {
+        if (section.expanded) {
+          updatedExpandedSections.add(section.id);
+        }
+      });
+      expandedSections = updatedExpandedSections;
     }
   });
 
   // Effect to update sessionStorage when sections change
   $effect(() => {
-    if (browser) {
+    if (browser && rememberIsExpandedState) {
       sections.forEach((section) => {
         try {
           sessionStorage.setItem(

@@ -52,9 +52,10 @@
             {console.log(rowWidth, row.y, dataArray)}
             {@const rowLabel = row.areaCode}
             {console.log('rowLabel is ' + rowLabel)}
-            <g transform="translate(-50,{i * rowHeight})">
+            {@const rowValue = +row.y}
+            <g transform="translate(-100,{i * rowHeight})">
               <!--{rowHeight} is short hand for rowHeight = {rowHeight}-->
-              <Row {rowHeight} {rowWidth} {rowLabel}></Row>
+              <Row {rowHeight} {rowWidth} {rowLabel} {rowValue}></Row>
             </g>
           {/each}
         </g>

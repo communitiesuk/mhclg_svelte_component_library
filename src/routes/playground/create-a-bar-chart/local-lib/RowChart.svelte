@@ -6,8 +6,8 @@
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
   import Row from './Row.svelte';
 
-  // dataArray and numberOfBars are inputs to the RowChart component
-  let { dataArray, numberOfBars } = $props();
+  // dataArray is an input to the RowChart component
+  let { dataArray } = $props();
 
   $inspect(dataArray);
 
@@ -22,7 +22,7 @@
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
 
-  let rowHeight = $derived(chartHeight / numberOfBars);
+  let rowHeight = $derived(chartHeight / dataArray.length);
 
   let maxValue = $derived(Math.max(...dataArray.map((item) => item.y)));
 
@@ -46,12 +46,8 @@
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
 
-          <!--render bars-->
-          <!-- {#each { length: numberOfBars } as _, i}
-            <g transform="translate(0,{i * rowHeight})">
-              <Row {rowHeight}></Row>
-            </g>
-          {/each} -->
+          <!--add labels to x axis-->
+          <g transform="translate(0,0"> Some text </g>
 
           <!--i represents the current data point-->
           {#each dataArray as row, i}

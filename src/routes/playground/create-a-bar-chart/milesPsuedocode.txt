@@ -25,7 +25,10 @@ output: row height
 
 Use existing parameter numberOfBars instead of my new parameter numberOfRows - DONE
 
-Define an xScale based on data, use it to plot a bar for each row.
+DONE - Define an xScale based on data, use it to plot a bar for each row.
+option 1 - import a library like d3
+    how does d3 work? range from 0 to maximum / range of space. translation from data value to pixel value
+option 2 - write my own transformation
 
 
 

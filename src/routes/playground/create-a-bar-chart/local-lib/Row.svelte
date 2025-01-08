@@ -1,15 +1,21 @@
 <script>
   import Bar from './rowComponents/Bar.svelte';
+  import RowLabel from './rowComponents/RowLabel.svelte';
   // this information is passed in when the component is called
 
   // let { row } = $props();
-  let { rowHeight, rowWidth } = $props();
+  let { rowHeight, rowWidth, rowLabel } = $props();
 
   $inspect(rowWidth);
 </script>
 
 <g class="row-group">
-  <Bar {rowHeight} {rowWidth}></Bar>
+  <g transform="translate(0,0)">
+    <RowLabel {rowLabel}></RowLabel>
+  </g>
+  <g transform="translate(50,0)">
+    <Bar {rowHeight} {rowWidth}></Bar>
+  </g>
+
   <!-- <RowValue></RowValue> -->
-  <!-- <RowLabel></RowLabel> -->
 </g>

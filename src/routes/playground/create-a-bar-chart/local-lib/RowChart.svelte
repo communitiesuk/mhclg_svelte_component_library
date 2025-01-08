@@ -46,16 +46,15 @@
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
 
-          <!--add labels to x axis-->
-          <g transform="translate(0,0"> Some text </g>
-
           <!--i represents the current data point-->
           {#each dataArray as row, i}
             {@const rowWidth = +row.y * (chartWidth / maxValue)}
             {console.log(rowWidth, row.y, dataArray)}
-            <g transform="translate(0,{i * rowHeight})">
+            {@const rowLabel = row.areaCode}
+            {console.log('rowLabel is ' + rowLabel)}
+            <g transform="translate(-50,{i * rowHeight})">
               <!--{rowHeight} is short hand for rowHeight = {rowHeight}-->
-              <Row {rowHeight} {rowWidth}></Row>
+              <Row {rowHeight} {rowWidth} {rowLabel}></Row>
             </g>
           {/each}
         </g>

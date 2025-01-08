@@ -55,83 +55,97 @@
   let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
   let parametersSourceArray =
-    homepage ??
-    addIndexAndInitalValue([
-      {
-        name: 'sections',
-        category: 'Content',
-        isProp: true,
-        inputType: 'textArea',
-        value: JSON.stringify(
-          [
-            {
-              id: '1',
-              heading: 'Writing well for the web',
-              summary: 'Learn about writing content for your website',
-              content: 'This is the content for Writing well for the web.',
-              expanded: true,
-            },
-            {
-              id: '2',
-              heading: 'Writing well for specialists',
-              summary: 'Guidance for writing technical content',
-              content: 'This is the content for Writing well for specialists.',
-              expanded: false,
-            },
-            {
-              id: '3',
-              heading: 'Know your audience',
-              summary: 'Understanding who your users are',
-              content: 'This is the content for Know your audience.',
-            },
-          ],
-          null,
-          2
-        ),
-      },
-      {
-        name: 'hideAllSections',
-        category: 'UI Toggle Labels',
-        isProp: true,
-        inputType: 'input',
-        value: 'Hide all sections please',
-      },
-      {
-        name: 'hideSection',
-        category: 'UI Toggle Labels',
-        isProp: true,
-        inputType: 'input',
-        value: 'Hide',
-      },
-      {
-        name: 'hideSectionAriaLabel',
-        category: 'UI Toggle Labels',
-        isProp: true,
-        inputType: 'input',
-        value: 'Hide this section',
-      },
-      {
-        name: 'showAllSections',
-        category: 'UI Toggle Labels',
-        isProp: true,
-        inputType: 'input',
-        value: 'Show all sections',
-      },
-      {
-        name: 'showSection',
-        category: 'UI Toggle Labels',
-        isProp: true,
-        inputType: 'input',
-        value: 'Show',
-      },
-      {
-        name: 'showSectionAriaLabel',
-        category: 'UI Toggle Labels',
-        isProp: true,
-        inputType: 'input',
-        value: 'Show this section',
-      },
-    ]);
+  homepage ??
+  addIndexAndInitalValue([
+    {
+      name: 'sections',
+      category: 'Content',
+      isProp: true,
+      inputType: 'textArea',
+      value: JSON.stringify(
+        [
+          {
+            id: '1',
+            heading: 'Writing well for the web',
+            summary: 'Learn about writing content for your website',
+            content: 'This is the content for Writing well for the web.',
+            expanded: true,
+          },
+          {
+            id: '2',
+            heading: 'Writing well for specialists',
+            summary: 'Guidance for writing technical content',
+            content: 'This is the content for Writing well for specialists.',
+            expanded: false,
+          },
+          {
+            id: '3',
+            heading: 'Know your audience',
+            summary: 'Understanding who your users are',
+            content: 'This is the content for Know your audience.',
+          },
+        ],
+        null,
+        2
+      ),
+    },
+    {
+      name: 'hideAllSections',
+      category: 'UI Toggle Labels',
+      isProp: true,
+      inputType: 'input',
+      value: 'Hide all sections please',
+    },
+    {
+      name: 'hideSection',
+      category: 'UI Toggle Labels',
+      isProp: true,
+      inputType: 'input',
+      value: 'Hide',
+    },
+    {
+      name: 'hideSectionAriaLabel',
+      category: 'UI Toggle Labels',
+      isProp: true,
+      inputType: 'input',
+      value: 'Hide this section',
+    },
+    {
+      name: 'showAllSections',
+      category: 'UI Toggle Labels',
+      isProp: true,
+      inputType: 'input',
+      value: 'Show all sections',
+    },
+    {
+      name: 'showSection',
+      category: 'UI Toggle Labels',
+      isProp: true,
+      inputType: 'input',
+      value: 'Show',
+    },
+    {
+      name: 'showSectionAriaLabel',
+      category: 'UI Toggle Labels',
+      isProp: true,
+      inputType: 'input',
+      value: 'Show this section',
+    },
+    {
+      name: 'allSectionToggle',
+      category: 'Accordion Toggle Options',
+      isProp: true,
+      inputType: 'checkbox',
+      value: 'true',
+    },
+    {
+      name: 'minSectionsAllSectionToggle',
+      category: 'Accordion Toggle Options',
+      isProp: true,
+      inputType: 'input',
+      value: '2',
+    },
+  ]);
 
   let parametersValuesArray = $state(
     homepage ?? parametersSourceArray.map((el) => el.value)

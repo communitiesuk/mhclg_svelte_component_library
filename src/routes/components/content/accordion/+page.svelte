@@ -59,7 +59,7 @@
     addIndexAndInitalValue([
       {
         name: 'sections',
-        category: 'content',
+        category: 'Content',
         isProp: true,
         inputType: 'textArea',
         value: JSON.stringify(
@@ -91,42 +91,42 @@
       },
       {
         name: 'hideAllSections',
-        category: 'i18n',
+        category: 'UI Toggle Labels',
         isProp: true,
         inputType: 'input',
         value: 'Hide all sections please',
       },
       {
         name: 'hideSection',
-        category: 'i18n',
+        category: 'UI Toggle Labels',
         isProp: true,
         inputType: 'input',
         value: 'Hide',
       },
       {
         name: 'hideSectionAriaLabel',
-        category: 'i18n',
+        category: 'UI Toggle Labels',
         isProp: true,
         inputType: 'input',
         value: 'Hide this section',
       },
       {
         name: 'showAllSections',
-        category: 'i18n',
+        category: 'UI Toggle Labels',
         isProp: true,
         inputType: 'input',
         value: 'Show all sections',
       },
       {
         name: 'showSection',
-        category: 'i18n',
+        category: 'UI Toggle Labels',
         isProp: true,
         inputType: 'input',
         value: 'Show',
       },
       {
         name: 'showSectionAriaLabel',
-        category: 'i18n',
+        category: 'UI Toggle Labels',
         isProp: true,
         inputType: 'input',
         value: 'Show this section',

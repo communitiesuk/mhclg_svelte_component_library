@@ -148,6 +148,22 @@
       )
   );
 
+  /*let sections = $derived(
+    (() => {
+      try {
+        return JSON.parse(
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            'sections'
+          )
+        );
+      } catch {
+        return [];
+      }
+    })()
+  );*/
+
   let derivedParametersObject = $derived(homepage ?? { sections });
 
   let parametersVisibleArray = $derived(

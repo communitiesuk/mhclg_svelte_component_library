@@ -15,8 +15,6 @@
   export let showSection: string = 'Show';
   export let showSectionAriaLabel: string = 'Show this section';
 
-  $: console.log(sections);
-
   // State
   let expandedSections = new Set<string>();
   $: allExpanded = expandedSections.size === sections.length;

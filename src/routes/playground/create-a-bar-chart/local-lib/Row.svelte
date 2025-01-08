@@ -1,6 +1,9 @@
 <script>
-  let { rowHeight } = $props();
+  // this information is passed in when the component is called
+  let { rowHeight, rowWidth } = $props();
   // let { row } = $props();
+
+  $inspect(rowWidth);
 </script>
 
 <!-- <g class="row-group">
@@ -11,7 +14,7 @@
 
 <svg>
   <rect
-    width="400"
+    width={rowWidth}
     height={rowHeight}
     style="fill:#ADD8E6;stroke-width:1;stroke:#00008B"
   />

@@ -23,6 +23,10 @@
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
 
   let rowHeight = $derived(chartHeight / numberOfBars);
+
+  let maxValue = $derived(Math.max(...dataArray.map((item) => item.y)));
+
+  console.log(maxValue);
 </script>
 
 <div class="mt-10">
@@ -42,16 +46,20 @@
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
 
-          {#each { length: numberOfBars } as _, i}
+          <!--render bars-->
+          <!-- {#each { length: numberOfBars } as _, i}
             <g transform="translate(0,{i * rowHeight})">
               <Row {rowHeight}></Row>
             </g>
-          {/each}
+          {/each} -->
 
           <!--i represents the current data point-->
           {#each dataArray as row, i}
-            <g transform="translate({0},{0})">
-              <!-- <Row {row}></Row> -->
+            {@const rowWidth = +row.y * (chartWidth / maxValue)}
+            {console.log(rowWidth, row.y, dataArray)}
+            <g transform="translate(0,{i * rowHeight})">
+              <!--{rowHeight} is short hand for rowHeight = {rowHeight}-->
+              <Row {rowHeight} {rowWidth}></Row>
             </g>
           {/each}
         </g>

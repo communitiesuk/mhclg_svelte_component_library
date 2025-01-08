@@ -23,9 +23,11 @@ input: number of rows
 calculation: row height = chart height / number of rows
 output: row height
 
+Use existing parameter numberOfBars instead of my new parameter numberOfRows - DONE
+
 Define an xScale based on data, use it to plot a bar for each row.
 
-Use existing parameter numberOfBars instead of my new parameter numberOfRows
+
 
 Add and style the row components: bar, row label, row value
 

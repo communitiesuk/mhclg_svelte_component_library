@@ -27,6 +27,7 @@ export let details = {
     {
       label:
         'Define an xScale based on data, use it to plot a bar for each row.',
+      complete: true,
     },
     {
       label:

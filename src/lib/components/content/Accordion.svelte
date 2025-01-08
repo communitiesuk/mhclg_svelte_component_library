@@ -7,7 +7,9 @@
     hideSectionAriaLabel = 'Hide this section',
     showAllSections = 'Show all sections',
     showSection = 'Show',
-    showSectionAriaLabel = 'Show this section'
+    showSectionAriaLabel = 'Show this section',
+    allSectionToggle = true,
+    minSectionsAllSectionToggle = 2
   }: {
     sections: {
       heading: string;
@@ -22,7 +24,10 @@
     showAllSections?: string;
     showSection?: string;
     showSectionAriaLabel?: string;
+    allSectionToggle?: boolean;
+    minSectionsAllSectionToggle?: number;
   } = $props();
+
 
   // State and derived stores
   let expandedSections = $state(new Set<string>());
@@ -103,7 +108,10 @@
   data-module="govuk-accordion"
   id="accordion-default"
 >
-  <div class="govuk-accordion__controls">
+  <div
+  class="govuk-accordion__controls"
+  hidden={!allSectionToggle || sections.length < minSectionsAllSectionToggle}
+  >
     <button
       type="button"
       class="govuk-accordion__show-all"

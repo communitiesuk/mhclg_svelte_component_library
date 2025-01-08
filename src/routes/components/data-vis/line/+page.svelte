@@ -703,6 +703,8 @@
         derivedParametersObject
       )
   );
+
+  $inspect(parametersObject);
 </script>
 
 <!--

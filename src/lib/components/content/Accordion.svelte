@@ -1,85 +1,101 @@
 <script lang="ts">
   // Props
-  export let sections: {
-    heading: string;
-    summary?: string; // new optional property
-    content: string;
-    id: string;
-    expanded?: boolean; // Add optional expanded property
-  }[] = [];
+  let {
+    sections = [],
+    hideAllSections = 'Hide all sections',
+    hideSection = 'Hide',
+    hideSectionAriaLabel = 'Hide this section',
+    showAllSections = 'Show all sections',
+    showSection = 'Show',
+    showSectionAriaLabel = 'Show this section'
+  }: {
+    sections: {
+      heading: string;
+      summary?: string;
+      content: string;
+      id: string;
+      expanded?: boolean;
+    }[];
+    hideAllSections?: string;
+    hideSection?: string;
+    hideSectionAriaLabel?: string;
+    showAllSections?: string;
+    showSection?: string;
+    showSectionAriaLabel?: string;
+  } = $props();
 
-  export let hideAllSections: string = 'Hide all sections';
-  export let hideSection: string = 'Hide';
-  export let hideSectionAriaLabel: string = 'Hide this section';
-  export let showAllSections: string = 'Show all sections';
-  export let showSection: string = 'Show';
-  export let showSectionAriaLabel: string = 'Show this section';
-
-  $: console.log(sections);
-
-  // State
-  let expandedSections = new Set<string>();
-  $: allExpanded = expandedSections.size === sections.length;
+  // State and derived stores
+  let expandedSections = $state(new Set<string>());
+  let allExpanded = $derived(expandedSections.size === sections.length);
 
   // Event handlers
+
   function toggleSection(id: string) {
-    const newSet = new Set(expandedSections);
-    if (newSet.has(id)) {
-      newSet.delete(id);
+    // Create a new reference to trigger Svelte 5 reactivity
+    const updatedExpandedSections = new Set(expandedSections);
+    if (updatedExpandedSections.has(id)) {
+      updatedExpandedSections.delete(id);
     } else {
-      newSet.add(id);
+      updatedExpandedSections.add(id);
     }
-    expandedSections = newSet;
+    // Reassign so Svelte treats this as a new value
+    expandedSections = updatedExpandedSections;
   }
 
   function toggleAll() {
+    // Create a new reference to trigger Svelte 5 reactivity
+    const updatedExpandedSections = new Set(expandedSections);
     if (allExpanded) {
-      expandedSections.clear();
+      updatedExpandedSections.clear();
     } else {
-      expandedSections = new Set(sections.map((section) => section.id));
+      sections.forEach(section => updatedExpandedSections.add(section.id));
     }
-    expandedSections = expandedSections; // trigger reactivity
+    // Reassign so Svelte treats this as a new value
+    expandedSections = updatedExpandedSections;
   }
 
-  // Browser storage (optional)
+  // Browser storage
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
 
   onMount(() => {
     if (browser) {
-      // Initialize expanded sections from props first
+      // Initialise expanded sections from props first
+      const updatedExpandedSections = new Set(expandedSections);
       sections.forEach((section) => {
         if (section.expanded) {
-          expandedSections.add(section.id);
+          updatedExpandedSections.add(section.id);
         } else {
           // Fall back to sessionStorage only if expanded is not specified
           try {
             const stored = sessionStorage.getItem(section.id);
             if (stored === 'true') {
-              expandedSections.add(section.id);
+              updatedExpandedSections.add(section.id);
             }
           } catch (e) {
             // Handle storage errors gracefully
           }
         }
       });
-      expandedSections = expandedSections; // trigger reactivity
+      expandedSections = updatedExpandedSections; // trigger reactivity
     }
   });
 
-  // Update sessionStorage when sections change
-  $: if (browser) {
-    sections.forEach((section) => {
-      try {
-        sessionStorage.setItem(
-          section.id,
-          expandedSections.has(section.id).toString()
-        );
-      } catch (e) {
-        // Handle storage errors gracefully
-      }
-    });
-  }
+  // Effect to update sessionStorage when sections change
+  $effect(() => {
+    if (browser) {
+      sections.forEach((section) => {
+        try {
+          sessionStorage.setItem(
+            section.id,
+            expandedSections.has(section.id).toString()
+          );
+        } catch (e) {
+          // Handle storage errors gracefully
+        }
+      });
+    }
+  });
 </script>
 
 <div
@@ -92,7 +108,7 @@
       type="button"
       class="govuk-accordion__show-all"
       aria-expanded={allExpanded}
-      on:click={toggleAll}
+      onclick={toggleAll}
     >
       <span class="govuk-accordion__show-all-text">
         {allExpanded ? hideAllSections : showAllSections}
@@ -117,7 +133,7 @@
             aria-controls="{section.id}-content"
             class="govuk-accordion__section-button"
             aria-expanded={isExpanded}
-            on:click={() => toggleSection(section.id)}
+            onclick={() => toggleSection(section.id)}
             aria-label="{section.heading}, {isExpanded
               ? hideSectionAriaLabel
               : showSectionAriaLabel}"

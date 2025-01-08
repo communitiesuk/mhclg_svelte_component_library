@@ -145,6 +145,13 @@
       inputType: 'input',
       value: '2',
     },
+    {
+      name: 'rememberIsExpandedState',
+      category: 'Accordion Toggle Options',
+      isProp: true,
+      inputType: 'checkbox',
+      value: 'true',
+    },
   ]);
 
   let parametersValuesArray = $state(

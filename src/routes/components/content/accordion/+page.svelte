@@ -15,6 +15,15 @@
 
   let { data, homepage = undefined, folders } = $props();
 
+  let snippetSections = [
+    {
+      id: '1',
+      heading: 'Section 1',
+      content: content1,
+    },
+    // ...existing code...
+  ];
+
   let details = {
     status: 'in_progress',
     description: [
@@ -230,12 +239,16 @@
       </div>
     </div>
   </div>
-
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
     <h5 class="underline underline-offset-4">Examples</h5>
+    <Accordion sections={snippetSections} />
   </div>
 {/if}
+
+{#snippet content1()}
+<p>This is a more complex content for section 1, including <strong>HTML elements</strong>.</p>
+{/snippet}
 
 <style>
   [data-role='examples-section'] {
@@ -258,3 +271,4 @@
     padding: 20px 0px;
   }
 </style>
+

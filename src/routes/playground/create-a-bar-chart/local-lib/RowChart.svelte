@@ -7,7 +7,9 @@
 
   let { dataArray } = $props();
 
-  $inspect(dataArray);
+  //Find the maximum value for scaling - need to get all the values and then do some cleaning before getting the max
+  let rowData = $derived(dataArray.map((d) => d.y).filter((d) => d));
+  let rowMax = $derived(Math.max(...rowData));
 
   let svgWidth = $state(),
     svgHeight = 500;
@@ -32,8 +34,9 @@
           <Axes {chartHeight} {chartWidth}></Axes>
 
           {#each dataArray as row, i}
-            <g transform="translate({0},{0})">
-              <Row {row}></Row>
+            {@const rowHeight = chartHeight / rowData.length}
+            <g transform="translate({0},{rowHeight / 2 + i * rowHeight})">
+              <Row {chartWidth} {row} {rowMax} {rowHeight}></Row>
             </g>
           {/each}
         </g>

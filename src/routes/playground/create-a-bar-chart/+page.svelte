@@ -2,9 +2,10 @@
   import { page } from '$app/stores';
   import PlaygroundDetails from '$lib/package-wrapping/PlaygroundDetails.svelte';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
-  import { Input, Radio } from 'flowbite-svelte';
+  import { Button, ButtonGroup, Input, Radio, Select } from 'flowbite-svelte';
   import { details } from './details.js';
   import RowChart from './local-lib/RowChart.svelte';
+  import Table from './local-lib/Table.svelte';
 
   let { data, homepage = false, folders } = $props();
 
@@ -17,6 +18,8 @@
 
   let selectedYear = $state(data?.years[0]);
   let numberOfBars = $state(10);
+  let sortOrder = $state('none');
+  let chart = $state(true);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -51,13 +54,56 @@
             />
           </Input>
         </div>
-        <div class="row-chart-container">
-          <RowChart
-            dataArray={data?.dataInFormatForBarChart
-              .find((el) => el.x === selectedYear)
-              .bars.slice(0, numberOfBars)}
-          ></RowChart>
+        <div class="mt-5">
+          <p class="my-2 mx-0 p-0 text-sm">Sort:</p>
+          <Select
+            items={[
+              { value: 'none', name: 'None' },
+              { value: 'ascending', name: 'Ascending' },
+              { value: 'descending', name: 'Descending' },
+            ]}
+            bind:value={sortOrder}
+          ></Select>
         </div>
+        <div>
+          <p class="my-2 mx-0 p-0 text-sm">View data as:</p>
+          <ButtonGroup>
+            <Button on:click={() => (chart = true)}>Bar chart</Button>
+            <Button on:click={() => (chart = false)}>Table</Button>
+          </ButtonGroup>
+        </div>
+        {#if chart}
+          <div class="row-chart-container">
+            <RowChart
+              dataArray={data?.dataInFormatForBarChart
+                .find((el) => el.x === selectedYear)
+                .bars.slice(0, numberOfBars)
+                .sort((a, b) =>
+                  sortOrder === 'ascending'
+                    ? a.y - b.y
+                    : sortOrder === 'descending'
+                      ? b.y - a.y
+                      : null
+                )}
+            ></RowChart>
+          </div>
+        {:else}
+          <div class="table-container">
+            <Table
+              dataArray={data?.dataInFormatForBarChart
+                .find((el) => el.x === selectedYear)
+                .bars.slice(0, numberOfBars)
+                .sort((a, b) =>
+                  sortOrder === 'ascending'
+                    ? a.y - b.y
+                    : sortOrder === 'descending'
+                      ? b.y - a.y
+                      : null
+                )}
+              {selectedYear}
+            />
+          </div>
+        {/if}
       </div>
     </div>
   </div>

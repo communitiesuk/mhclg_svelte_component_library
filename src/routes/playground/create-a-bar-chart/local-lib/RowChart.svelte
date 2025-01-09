@@ -5,7 +5,7 @@
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
   import Row from './Row.svelte';
 
-  let { dataArray } = $props();
+  let { dataArray, colouredBars } = $props();
 
   //Find the maximum value for scaling - need to get all the values and then do some cleaning before getting the max
   let rowData = $derived(dataArray.map((d) => d.y).filter((d) => d));
@@ -36,7 +36,7 @@
           {#each dataArray as row, i}
             {@const rowHeight = chartHeight / rowData.length}
             <g transform="translate({0},{rowHeight / 2 + i * rowHeight})">
-              <Row {chartWidth} {row} {rowMax} {rowHeight}></Row>
+              <Row {chartWidth} {row} {rowMax} {rowHeight} {colouredBars}></Row>
             </g>
           {/each}
         </g>

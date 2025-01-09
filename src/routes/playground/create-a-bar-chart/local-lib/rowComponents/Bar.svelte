@@ -4,7 +4,9 @@
     rowHeight,
     rowLabel,
     selectedBar = $bindable(),
+    colouredBars,
   } = $props();
+  $inspect(colouredBars, rowLabel);
 </script>
 
 {#if scaledValue}
@@ -14,7 +16,11 @@
     height={0.9 * rowHeight}
     onmousemove={() => (selectedBar = rowLabel)}
     onmouseout={() => (selectedBar = null)}
-    fill={rowLabel == selectedBar ? 'darkturquoise' : 'lightblue'}
+    fill={rowLabel == selectedBar
+      ? 'darkturquoise'
+      : colouredBars?.includes(rowLabel)
+        ? 'teal'
+        : 'lightblue'}
   ></rect>
 {/if}
 

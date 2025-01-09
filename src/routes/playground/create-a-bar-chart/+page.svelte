@@ -2,7 +2,14 @@
   import { page } from '$app/stores';
   import PlaygroundDetails from '$lib/package-wrapping/PlaygroundDetails.svelte';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
-  import { Button, ButtonGroup, Input, Radio, Select } from 'flowbite-svelte';
+  import {
+    Button,
+    ButtonGroup,
+    Input,
+    MultiSelect,
+    Radio,
+    Select,
+  } from 'flowbite-svelte';
   import { details } from './details.js';
   import RowChart from './local-lib/RowChart.svelte';
   import Table from './local-lib/Table.svelte';
@@ -20,6 +27,8 @@
   let numberOfBars = $state(10);
   let sortOrder = $state('none');
   let chart = $state(true);
+  let colouredBars = $state(['E07000223']);
+  $inspect(colouredBars);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -65,6 +74,25 @@
             bind:value={sortOrder}
           ></Select>
         </div>
+        <div class="mt-5">
+          <p class="my-2 mx-0 p-0 text-sm">Change colour of bars:</p>
+          <MultiSelect
+            items={data?.dataInFormatForBarChart
+              .find((el) => el.x === selectedYear)
+              .bars.slice(0, numberOfBars)
+              .sort((a, b) =>
+                sortOrder === 'ascending'
+                  ? a.y - b.y
+                  : sortOrder === 'descending'
+                    ? b.y - a.y
+                    : null
+              )
+              .map((d) => {
+                return { value: d.areaCode, name: d.areaCode };
+              })}
+            bind:value={colouredBars}
+          ></MultiSelect>
+        </div>
         <div>
           <p class="my-2 mx-0 p-0 text-sm">View data as:</p>
           <ButtonGroup>
@@ -85,6 +113,7 @@
                       ? b.y - a.y
                       : null
                 )}
+              {colouredBars}
             ></RowChart>
           </div>
         {:else}

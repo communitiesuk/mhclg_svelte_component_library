@@ -12,6 +12,7 @@
   import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
   import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
+  import Line from '$lib/components/data-vis/line-chart/Line.svelte';
 
   let { data, homepage = undefined, folders } = $props();
 
@@ -21,7 +22,16 @@
       heading: 'Section 1',
       content: content1,
     },
-    // ...existing code...
+    {
+      id: '2',
+      heading: 'Section 2',
+      content: content2,
+    },
+    {
+      id: '3',
+      heading: 'Section 3',
+      content: content3,
+    },
   ];
 
   let details = {
@@ -211,6 +221,22 @@
         derivedParametersObject
       )
   );
+
+  // Example data/line function
+  const sampleLineData = [
+    { x: 0, y: 0 },
+    { x: 10, y: 30 },
+    { x: 20, y: 10 },
+    { x: 30, y: 50 },
+  ];
+
+  function simpleLineFunction(dArray) {
+    let path = 'M ' + (dArray[0].x * 10) + ' ' + (200 - dArray[0].y * 4);
+    for (let i = 1; i < dArray.length; i++) {
+      path += ' L ' + (dArray[i].x * 10) + ' ' + (200 - dArray[i].y * 4);
+    }
+    return path;
+  }
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>
@@ -241,13 +267,91 @@
   </div>
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
+
     <h5 class="underline underline-offset-4">Examples</h5>
+
+    <h6>Accordion with snippet-based content</h6>
     <Accordion sections={snippetSections} />
+    
+    <h6>Accordion with minimum sections for toggle</h6>
+    <Accordion
+      sections={[
+        {
+          id: 'example1',
+          heading: 'Title One',
+          content: 'Some content for the first section.',
+        },
+      ]}
+      allSectionToggle={true}
+      minSectionsAllSectionToggle={2}
+    />
+
+    <h6>Accordion respecting expanded session state</h6>
+    <Accordion
+      sections={[
+        {
+          id: 'example2',
+          heading: 'Remember state 1',
+          content: 'This section’s expansion will be saved in sessionStorage.',
+          expanded: true,
+        },
+        {
+          id: 'example3',
+          heading: 'Remember state 2',
+          content: 'Session state is also saved here.',
+        },
+      ]}
+      rememberIsExpandedState={true}
+    />
+
+    <h6>Accordion with custom toggle labels</h6>
+    <Accordion
+      sections={[
+        {
+          id: 'example4',
+          heading: 'Custom Toggle Section',
+          summary: 'Showing override for labels',
+          content: 'This accordion uses custom hide/show labels.',
+        },
+      ]}
+      hideAllSections="Collapse All"
+      hideSection="Collapse"
+      showAllSections="Expand All"
+      showSection="Expand"
+    />
   </div>
 {/if}
 
 {#snippet content1()}
 <p>This is a more complex content for section 1, including <strong>HTML elements</strong>.</p>
+{/snippet}
+
+{#snippet content2()}
+<p>
+  For section 2, you can have <em>even more markup</em> such as lists and headings:
+</p>
+<ul>
+  <li>List item 1</li>
+  <li>List item 2</li>
+</ul>
+{/snippet}
+
+{#snippet content3()}
+<p>
+  Section 3 snippet: advanced <strong>HTML</strong> or media elements could go here.
+</p>
+<svg viewBox="0 0 300 200" width="300" height="200">
+  <Line
+    dataArray={sampleLineData}
+    xFunction={(val) => val * 10}
+    yFunction={(val) => 200 - val * 4}
+    lineFunction={simpleLineFunction}
+    pathStrokeColor="blue"
+    pathStrokeWidth={2}
+    includeMarkers={true}
+    markerRadius={4}
+  />
+</svg>
 {/snippet}
 
 <style>

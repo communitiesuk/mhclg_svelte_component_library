@@ -8,11 +8,20 @@
   import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
   import ScreenSizeRadio from '$lib/package-wrapping/ScreenSizeRadio.svelte';
   import { getValueFromParametersArray } from '$lib/utils/data-transformations/getValueFromParametersArray.js';
-  import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
+import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
   import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
   import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
+  import { onMount } from 'svelte';
+  import 'prismjs/themes/prism.css';
+  import Prism from 'prismjs';
+  import 'prism-svelte';
+
+  onMount(() => {
+  Prism.highlightAll();
+});
+
 
   let { data, homepage = undefined, folders } = $props();
 
@@ -260,20 +269,31 @@
       style="width: {demoScreenWidth}px;"
     >
       <div class="flex flex-col gap-4">
-        <h6>Example Accordion</h6>
         <Accordion {...parametersObject}></Accordion>
       </div>
     </div>
   </div>
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-
-    <h5 class="underline underline-offset-4">Examples</h5>
+    
+    <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
+    <pre><code class="language-svelte">{`<Accordion sections={snippetSections} />`}</code></pre>
     <Accordion sections={snippetSections} />
     
     <h6>Accordion with minimum sections for toggle</h6>
+    <pre><code class="language-svelte">{`
+<Accordion
+  sections={[{
+    id: 'example1',
+    heading: 'Title One',
+    content: 'Some content for the first section.',
+  }]}
+  allSectionToggle={true}
+  minSectionsAllSectionToggle={2}
+/>
+`}</code></pre>
     <Accordion
       sections={[
         {
@@ -287,6 +307,21 @@
     />
 
     <h6>Accordion respecting expanded session state</h6>
+    <pre><code class="language-svelte">{`
+<Accordion
+  sections={[{
+    id: 'example2',
+    heading: 'Remember state 1',
+    content: 'This section’s expansion will be saved in sessionStorage.',
+    expanded: true,
+  }, {
+    id: 'example3',
+    heading: 'Remember state 2',
+    content: 'Session state is also saved here.',
+  }]}
+  rememberIsExpandedState={true}
+/>
+`}</code></pre>
     <Accordion
       sections={[
         {
@@ -305,6 +340,20 @@
     />
 
     <h6>Accordion with custom toggle labels</h6>
+    <pre><code class="language-svelte">{`
+<Accordion
+  sections={[{
+    id: 'example4',
+    heading: 'Custom Toggle Section',
+    summary: 'Showing override for labels',
+    content: 'This accordion uses custom hide/show labels.',
+  }]}
+  hideAllSections="Collapse All"
+  hideSection="Collapse"
+  showAllSections="Expand All"
+  showSection="Expand"
+/>
+`}</code></pre>
     <Accordion
       sections={[
         {
@@ -374,5 +423,19 @@
     background-color: #f8f8f8;
     padding: 20px 0px;
   }
-</style>
 
+  /* pre code {
+    background: #282c34;
+    color: #abb2bf;
+    padding: 1rem;
+    display: block;
+    border-radius: 6px;
+    overflow-x: auto;
+    font-size: 0.875rem;
+    line-height: 1.6;
+  } */
+
+  /* .language-svelte {
+    color: #e06c75;
+  } */
+</style>

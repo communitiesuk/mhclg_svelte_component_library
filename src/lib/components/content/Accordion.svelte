@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Snippet } from 'svelte'
+
   // Props
   let {
     sections = [],
@@ -15,7 +17,7 @@
     sections: {
       heading: string;
       summary?: string;
-      content: string;
+      content: string | Snippet;
       id: string;
       expanded?: boolean;
     }[];
@@ -196,7 +198,11 @@
         aria-labelledby="{section.id}-heading"
         hidden={!isExpanded}
       >
+        {#if typeof section.content === 'string'}
         <p class="govuk-body">{section.content}</p>
+        {:else}
+        {@render section.content()}
+        {/if}
       </div>
     </div>
   {/each}

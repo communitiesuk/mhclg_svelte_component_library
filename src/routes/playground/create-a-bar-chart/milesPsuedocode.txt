@@ -31,6 +31,11 @@ option 1 - import a library like d3
 option 2 - write my own transformation
 
 
+Create functionality that allows a developer to re-order rows from highest to smallest.
 
-Add and style the row components: bar, row label, row value
-
+--- create buttons for user to select ascending or descending order
+    --- create button component with the text as input variable
+    --- when button is clicked, run a function that sorts dataArray
+--- clicking the button triggers a re-rendering of the chart
+    --- first data array is sorted by the rowWidth value
+    --- then it's the existing process of looping through dataArray

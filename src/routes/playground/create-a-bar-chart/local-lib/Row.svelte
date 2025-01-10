@@ -19,12 +19,13 @@
   ></Bar>
   {#if rowHeight > 20 || selectedBar == row.areaCode}
     <RowLabel label={row.areaCode}></RowLabel>
-    {#if rowHeight > 18}
+    {#if rowHeight > 18 || selectedBar == row.areaCode}
       <RowValue
         {scaledValue}
         value={row.y}
         {selectedBar}
         rowLabel={row.areaCode}
+        {rowHeight}
       ></RowValue>
     {/if}
   {/if}

@@ -18,8 +18,6 @@
     )
   );
 
-  $inspect(sortedData, sortOrder);
-
   //Find the maximum value for scaling - need to get all the values and then do some cleaning before getting the max
   let rowData = $derived(dataArray.map((d) => d.y).filter((d) => d));
   let rowMax = $derived(Math.max(...rowData));

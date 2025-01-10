@@ -1,3 +1,7 @@
+// run this copying script to copy the GOV.UK Frontend assets to the project's static directory. This script will create the necessary directories and copy the required files from the installed govuk frontend module (make sure you have updated this if you want most recent files).
+
+// terminal command: node scripts/copy-govuk-assets.js
+
 import fs from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';

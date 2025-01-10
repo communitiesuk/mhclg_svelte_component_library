@@ -122,7 +122,7 @@
       category: 'UI Toggle Labels',
       isProp: true,
       inputType: 'input',
-      value: 'Hide all sections please',
+      value: 'Hide all sections',
     },
     {
       name: 'hideSection',

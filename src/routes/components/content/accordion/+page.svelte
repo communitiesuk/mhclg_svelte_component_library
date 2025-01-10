@@ -269,7 +269,11 @@
       style="width: {demoScreenWidth}px;"
     >
       <div class="flex flex-col gap-4">
-        <Accordion {...parametersObject}></Accordion>
+        <div class="app-example-wrapper">
+          <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+            <Accordion {...parametersObject}></Accordion>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -352,7 +356,11 @@
 
 <Accordion sections={snippetSections} />
 `}</code></pre>
-    <Accordion sections={snippetSections} />
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+        <Accordion sections={snippetSections} />
+      </div>
+    </div>
     
     <h6>Accordion with minimum sections for toggle</h6>
     <pre><code class="language-svelte">{`
@@ -366,17 +374,21 @@
   minSectionsAllSectionToggle={2}
 />
 `}</code></pre>
-    <Accordion
-      sections={[
-        {
-          id: 'example1',
-          heading: 'Title One',
-          content: 'Some content for the first section.',
-        },
-      ]}
-      allSectionToggle={true}
-      minSectionsAllSectionToggle={2}
-    />
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+        <Accordion
+          sections={[
+            {
+              id: 'example1',
+              heading: 'Title One',
+              content: 'Some content for the first section.',
+            },
+          ]}
+          allSectionToggle={true}
+          minSectionsAllSectionToggle={2}
+        />
+      </div>
+    </div>
 
     <h6>Accordion respecting expanded session state</h6>
     <pre><code class="language-svelte">{`
@@ -394,22 +406,26 @@
   rememberIsExpandedState={true}
 />
 `}</code></pre>
-    <Accordion
-      sections={[
-        {
-          id: 'example2',
-          heading: 'Remember state 1',
-          content: 'This section’s expansion will be saved in sessionStorage.',
-          expanded: true,
-        },
-        {
-          id: 'example3',
-          heading: 'Remember state 2',
-          content: 'Session state is also saved here.',
-        },
-      ]}
-      rememberIsExpandedState={true}
-    />
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+        <Accordion
+          sections={[
+            {
+              id: 'example2',
+              heading: 'Remember state 1',
+              content: 'This section’s expansion will be saved in sessionStorage.',
+              expanded: true,
+            },
+            {
+              id: 'example3',
+              heading: 'Remember state 2',
+              content: 'Session state is also saved here.',
+            },
+          ]}
+          rememberIsExpandedState={true}
+        />
+      </div>
+    </div>
 
     <h6>Accordion with custom toggle labels</h6>
     <pre><code class="language-svelte">{`
@@ -426,20 +442,24 @@
   showSection="Expand"
 />
 `}</code></pre>
-    <Accordion
-      sections={[
-        {
-          id: 'example4',
-          heading: 'Custom Toggle Section',
-          summary: 'Showing override for labels',
-          content: 'This accordion uses custom hide/show labels.',
-        },
-      ]}
-      hideAllSections="Collapse All"
-      hideSection="Collapse"
-      showAllSections="Expand All"
-      showSection="Expand"
-    />
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+        <Accordion
+          sections={[
+            {
+              id: 'example4',
+              heading: 'Custom Toggle Section',
+              summary: 'Showing override for labels',
+              content: 'This accordion uses custom hide/show labels.',
+            },
+          ]}
+          hideAllSections="Collapse All"
+          hideSection="Collapse"
+          showAllSections="Expand All"
+          showSection="Expand"
+        />
+      </div>
+    </div>
   </div>
 {/if}
 
@@ -492,7 +512,7 @@
   }
 
   [data-role='component-container-centered'] {
-    background-color: #f8f8f8;
+    /* background-color: #f8f8f8; */
     padding: 20px 0px;
   }
 

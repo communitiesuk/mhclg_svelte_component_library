@@ -28,7 +28,6 @@
   let sortOrder = $state('none');
   let chart = $state(true);
   let colouredBars = $state(['E07000223']);
-  $inspect(colouredBars);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -82,9 +81,9 @@
               .bars.slice(0, numberOfBars)
               .sort((a, b) =>
                 sortOrder === 'ascending'
-                  ? a.y - b.y
+                  ? (a.y ?? Infinity) - (b.y ?? Infinity)
                   : sortOrder === 'descending'
-                    ? b.y - a.y
+                    ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
                     : null
               )
               .map((d) => {
@@ -108,9 +107,9 @@
                 .bars.slice(0, numberOfBars)
                 .sort((a, b) =>
                   sortOrder === 'ascending'
-                    ? a.y - b.y
+                    ? (a.y ?? Infinity) - (b.y ?? Infinity)
                     : sortOrder === 'descending'
-                      ? b.y - a.y
+                      ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
                       : null
                 )}
               {colouredBars}
@@ -124,9 +123,9 @@
                 .bars.slice(0, numberOfBars)
                 .sort((a, b) =>
                   sortOrder === 'ascending'
-                    ? a.y - b.y
+                    ? (a.y ?? Infinity) - (b.y ?? Infinity)
                     : sortOrder === 'descending'
-                      ? b.y - a.y
+                      ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
                       : null
                 )}
               {selectedYear}

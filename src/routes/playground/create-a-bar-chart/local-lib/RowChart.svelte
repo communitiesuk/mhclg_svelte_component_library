@@ -27,19 +27,11 @@
 
   let maxValue = $derived(Math.max(...dataArray.map((item) => item.y)));
 
-  function orderBars(arr) {
-    // sorts the object by the y values
-    dataArray = dataArray.sort((a, b) => a.y - b.y);
-    dataArray = [];
-  }
-
   let highestToLowest = $state(false);
 
   let orderDataArray = $derived(
-    highestToLowest ? dataArray.sort((a, b) => a.y - b.y) : dataArray
+    highestToLowest ? [...dataArray.sort((a, b) => a.y - b.y)] : dataArray
   );
-
-  $inspect(highestToLowest);
 
   $inspect(orderDataArray);
 </script>

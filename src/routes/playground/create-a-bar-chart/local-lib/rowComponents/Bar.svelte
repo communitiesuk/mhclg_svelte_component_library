@@ -6,7 +6,6 @@
     selectedBar = $bindable(),
     colouredBars,
   } = $props();
-  $inspect(colouredBars, rowLabel);
 </script>
 
 {#if scaledValue}

@@ -104,14 +104,8 @@
             <RowChart
               dataArray={data?.dataInFormatForBarChart
                 .find((el) => el.x === selectedYear)
-                .bars.slice(0, numberOfBars)
-                .sort((a, b) =>
-                  sortOrder === 'ascending'
-                    ? (a.y ?? Infinity) - (b.y ?? Infinity)
-                    : sortOrder === 'descending'
-                      ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
-                      : null
-                )}
+                .bars.slice(0, numberOfBars)}
+              {sortOrder}
               {colouredBars}
             ></RowChart>
           </div>

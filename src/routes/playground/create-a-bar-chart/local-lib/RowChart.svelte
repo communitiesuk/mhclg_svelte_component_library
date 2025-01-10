@@ -1,6 +1,7 @@
 <script>
   // import the external components
   import Axes from './external/Axes.svelte';
+  import Button from './external/Button.svelte';
   import Legend from './external/Legend.svelte';
   import Source from './external/Source.svelte';
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
@@ -26,12 +27,20 @@
 
   let maxValue = $derived(Math.max(...dataArray.map((item) => item.y)));
 
-  console.log(maxValue);
+  function orderBars(arr) {
+    // sorts the object by the y values
+    console.log(arr);
+    arr.sort((a, b) => a.y - b.y);
+    console.log('hello');
+    console.log(arr);
+  }
 </script>
 
 <div class="mt-10">
   <TitleAndSubtitle></TitleAndSubtitle>
   <Legend></Legend>
+  <Button buttonText={'Highest to lowest'} onClick={orderBars} {dataArray}
+  ></Button>
   <!--whenever svgWidth changes it is binded to the clientWidth-->
   <!--clientWidth is the size of the window-->
   <div bind:clientWidth={svgWidth}>
@@ -49,9 +58,7 @@
           <!--i represents the current data point-->
           {#each dataArray as row, i}
             {@const rowWidth = +row.y * (chartWidth / maxValue)}
-            {console.log(rowWidth, row.y, dataArray)}
             {@const rowLabel = row.areaCode}
-            {console.log('rowLabel is ' + rowLabel)}
             {@const rowValue = +row.y}
             <g transform="translate(-100,{i * rowHeight})">
               <!--{rowHeight} is short hand for rowHeight = {rowHeight}-->

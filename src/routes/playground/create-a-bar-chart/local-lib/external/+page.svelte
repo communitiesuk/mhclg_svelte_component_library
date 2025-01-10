@@ -7,24 +7,22 @@
   $inspect(arr);
 
   // modify the existing array but don't return anything
-  function orderArray(anArray) {
-    // sorts the object by the y values
+  function ascending(anArray) {
     anArray.sort((a, b) => a - b);
-    //return anArray.map((element) => element * 2);
-    //console.log(anArray.length);
+  }
+  function descending(anArray) {
+    anArray.sort((a, b) => b - a);
   }
 </script>
 
-<Btn onClick={orderArray} buttonContent={'order array'} {arr}></Btn>
+<Btn onClick={ascending} buttonContent={'ascending'} {arr}></Btn>
+<br />
+<Btn onClick={descending} buttonContent={'descending'} {arr}></Btn>
 <br />
 
-<button onclick={() => console.log(arr)}>console log array</button>
-
-<!-- {#each { length: 5 } as _, i} -->
 <svg height="1000">
   {#each arr as _, i}
     {@const barLength = arr[i]}
-    {console.log(arr[i])}
     <g transform="translate(0,{i * 50})">
       <GreenBar {barLength}></GreenBar>
     </g>

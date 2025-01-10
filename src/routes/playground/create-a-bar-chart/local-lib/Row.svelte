@@ -6,8 +6,6 @@
 
   // let { row } = $props();
   let { rowHeight, rowWidth, rowLabel, rowValue } = $props();
-
-  $inspect(rowWidth);
 </script>
 
 <g class="row-group">

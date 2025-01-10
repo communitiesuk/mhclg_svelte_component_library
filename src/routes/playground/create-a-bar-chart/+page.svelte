@@ -19,11 +19,6 @@
   let numberOfBars = $state(10);
 
   $inspect(numberOfBars);
-
-  function orderBars(arr) {
-    // sorts the object by the y values
-    arr.sort((a, b) => a.y - b.y);
-  }
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -58,12 +53,6 @@
             />
           </Input>
         </div>
-        <!-- <div class="buttons">
-          <Button rowOrder={'Highest to lowest'} onclick={orderBars(dataArray)}
-          ></Button>
-          <br />
-          <Button rowOrder={'Lowest to highest'}></Button>
-        </div> -->
         <div class="row-chart-container">
           <RowChart
             {numberOfBars}

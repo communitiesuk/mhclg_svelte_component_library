@@ -1,8 +1,8 @@
 <script>
-  let { rowOrder, orderBars } = $props();
+  let { buttonText, onClick, dataArray } = $props();
 </script>
 
-<button>{rowOrder}</button>
+<button on:click={() => onClick(dataArray)}>{buttonText}</button>
 
 <style>
   * {

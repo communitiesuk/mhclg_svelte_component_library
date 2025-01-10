@@ -18,16 +18,15 @@
   let selectedYear = $state(data?.years[0]);
   let numberOfBars = $state(10);
   let sortMethod = $state('ascending');
-  let sortKey = $state('y');
   let focusBars = $state('E07000223');
   let focusColour = $state('#002fa7');
 
-  $inspect(sortMethod)
+  $inspect(sortMethod);
 
   const sortingFunctions = {
-    alphabetical: (key) => (a, b) => a[key].localeCompare(b[key]),
-    ascending: (key) => (a, b) => a[key] - b[key],
-    descending: (key) => (a, b) => b[key] - a[key],
+    alphabetical: (a, b) => a['areaCode'].localeCompare(b['areaCode']),
+    ascending: (a, b) => a['y'] - b['y'],
+    descending: (a, b) => b['y'] - a['y'],
   };
 </script>
 
@@ -92,8 +91,7 @@
             dataArray={data?.dataInFormatForBarChart
               .find((el) => el.x === selectedYear)
               .bars.slice(0, numberOfBars)
-              // .sort(sortingFunctions[sortMethod](sortKey))
-              }
+              .sort(sortingFunctions[sortMethod])}
             {focusColour}
             {focusBars}
           ></RowChart>

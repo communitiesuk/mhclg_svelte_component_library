@@ -29,7 +29,7 @@ export let details = {
     },
     {
       label:
-        'Create functionality that allows a developer to re-order rows from highest to smallest.',
+        'Create functionality that allows a developer to re-order rows from highest to smallest.', complete:true 
     },
     {
       label:

@@ -33,6 +33,7 @@
   /**
    * && 		The details object contains metadata which describes the purpose and status of the component. All keys are optional, but developers are encouraged to use them to succinctly describe the component for the benefit of future users.
    */
+
   let details = {
     /**
      * &&     status - Used by the pill-status component within ComponentDetails
@@ -154,6 +155,7 @@
    * ?      exampleCode - optional, redundant when label is not defined. Allows you to provide a snippet of example code for props which are calculated rather than inputted, demonstrating what you might set these props as (e.g. for a line function the snippet: line().x((d) => xFunction(d.x)).y((d) => yFunction(d.y)).
    * ?      This input is rendered as html, so you can use <br> for line breaks and &emsp; for tabs.
    */
+
   let parametersSourceArray =
     homepage ??
     addIndexAndInitalValue([
@@ -664,14 +666,6 @@
         )
   );
 
-  $inspect(
-    getValueFromParametersArray(
-      parametersSourceArray,
-      parametersValuesArray,
-      'customDataArray'
-    )
-  );
-
   /**
    * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
    * && 		Here you can add additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
@@ -703,8 +697,6 @@
         derivedParametersObject
       )
   );
-
-  $inspect(parametersObject);
 </script>
 
 <!--

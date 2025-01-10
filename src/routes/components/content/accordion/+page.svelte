@@ -19,9 +19,8 @@
   import 'prism-svelte';
 
   onMount(() => {
-  Prism.highlightAll();
-});
-
+    Prism.highlightAll();
+  });
 
   let { data, homepage = undefined, folders } = $props();
 
@@ -83,104 +82,104 @@
   let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
   let parametersSourceArray =
-  homepage ??
-  addIndexAndInitalValue([
-    {
-      name: 'sections',
-      category: 'Content',
-      isProp: true,
-      inputType: 'textArea',
-      value: JSON.stringify(
-        [
-          {
-            id: '1',
-            heading: 'Writing well for the web',
-            summary: 'Learn about writing content for your website',
-            content: 'This is the content for Writing well for the web.',
-            expanded: true,
-          },
-          {
-            id: '2',
-            heading: 'Writing well for specialists',
-            summary: 'Guidance for writing technical content',
-            content: 'This is the content for Writing well for specialists.',
-            expanded: false,
-          },
-          {
-            id: '3',
-            heading: 'Know your audience',
-            summary: 'Understanding who your users are',
-            content: 'This is the content for Know your audience.',
-          },
-        ],
-        null,
-        2
-      ),
-    },
-    {
-      name: 'hideAllSections',
-      category: 'UI Toggle Labels',
-      isProp: true,
-      inputType: 'input',
-      value: 'Hide all sections',
-    },
-    {
-      name: 'hideSection',
-      category: 'UI Toggle Labels',
-      isProp: true,
-      inputType: 'input',
-      value: 'Hide',
-    },
-    {
-      name: 'hideSectionAriaLabel',
-      category: 'UI Toggle Labels',
-      isProp: true,
-      inputType: 'input',
-      value: 'Hide this section',
-    },
-    {
-      name: 'showAllSections',
-      category: 'UI Toggle Labels',
-      isProp: true,
-      inputType: 'input',
-      value: 'Show all sections',
-    },
-    {
-      name: 'showSection',
-      category: 'UI Toggle Labels',
-      isProp: true,
-      inputType: 'input',
-      value: 'Show',
-    },
-    {
-      name: 'showSectionAriaLabel',
-      category: 'UI Toggle Labels',
-      isProp: true,
-      inputType: 'input',
-      value: 'Show this section',
-    },
-    {
-      name: 'allSectionToggle',
-      category: 'Accordion Toggle Options',
-      isProp: true,
-      inputType: 'checkbox',
-      value: 'true',
-    },
-    {
-      name: 'minSectionsAllSectionToggle',
-      category: 'Accordion Toggle Options',
-      isProp: true,
-      inputType: 'input',
-      value: '2',
-    },
-    {
-      name: 'rememberIsExpandedState',
-      category: 'Accordion Toggle Options',
-      isProp: true,
-      inputType: 'checkbox',
-      value: 'true',
-    },
-  ]);
+    homepage ??
+    addIndexAndInitalValue([
+      {
+        name: 'sections',
+        category: 'Content',
+        isProp: true,
+        inputType: 'textArea',
+        value: JSON.stringify(
+          [
+            {
+              id: '1',
+              heading: 'Writing well for the web',
+              summary: 'Learn about writing content for your website',
+              content: 'This is the content for Writing well for the web.',
+              expanded: true,
+            },
+            {
+              id: '2',
+              heading: 'Writing well for specialists',
+              summary: 'Guidance for writing technical content',
+              content: 'This is the content for Writing well for specialists.',
+              expanded: false,
+            },
+            {
+              id: '3',
+              heading: 'Know your audience',
+              summary: 'Understanding who your users are',
+              content: 'This is the content for Know your audience.',
+            },
+          ],
+          null,
+          2
+        ),
+      },
+      {
+        name: 'hideAllSections',
+        category: 'UI Toggle Labels',
+        isProp: true,
+        inputType: 'input',
+        value: 'Hide all sections',
+      },
+      {
+        name: 'hideSection',
+        category: 'UI Toggle Labels',
+        isProp: true,
+        inputType: 'input',
+        value: 'Hide',
+      },
+      {
+        name: 'hideSectionAriaLabel',
+        category: 'UI Toggle Labels',
+        isProp: true,
+        inputType: 'input',
+        value: 'Hide this section',
+      },
+      {
+        name: 'showAllSections',
+        category: 'UI Toggle Labels',
+        isProp: true,
+        inputType: 'input',
+        value: 'Show all sections',
+      },
+      {
+        name: 'showSection',
+        category: 'UI Toggle Labels',
+        isProp: true,
+        inputType: 'input',
+        value: 'Show',
+      },
+      {
+        name: 'showSectionAriaLabel',
+        category: 'UI Toggle Labels',
+        isProp: true,
+        inputType: 'input',
+        value: 'Show this section',
+      },
+      {
+        name: 'allSectionToggle',
+        category: 'Accordion Toggle Options',
+        isProp: true,
+        inputType: 'checkbox',
+        value: 'true',
+      },
+      {
+        name: 'minSectionsAllSectionToggle',
+        category: 'Accordion Toggle Options',
+        isProp: true,
+        inputType: 'input',
+        value: '2',
+      },
+      {
+        name: 'rememberIsExpandedState',
+        category: 'Accordion Toggle Options',
+        isProp: true,
+        inputType: 'checkbox',
+        value: 'true',
+      },
+    ]);
 
   let parametersValuesArray = $state(
     homepage ?? parametersSourceArray.map((el) => el.value)
@@ -240,9 +239,9 @@
   ];
 
   function simpleLineFunction(dArray) {
-    let path = 'M ' + (dArray[0].x * 10) + ' ' + (200 - dArray[0].y * 4);
+    let path = 'M ' + dArray[0].x * 10 + ' ' + (200 - dArray[0].y * 4);
     for (let i = 1; i < dArray.length; i++) {
-      path += ' L ' + (dArray[i].x * 10) + ' ' + (200 - dArray[i].y * 4);
+      path += ' L ' + dArray[i].x * 10 + ' ' + (200 - dArray[i].y * 4);
     }
     return path;
   }
@@ -270,7 +269,9 @@
     >
       <div class="flex flex-col gap-4">
         <div class="app-example-wrapper">
-          <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+          <div
+            class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6"
+          >
             <Accordion {...parametersObject}></Accordion>
           </div>
         </div>
@@ -279,11 +280,12 @@
   </div>
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-    
+
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
-    <pre><code class="language-svelte">{`
+    <pre><code class="language-svelte"
+        >{`
 <script>
   import Accordion from '$lib/components/content/Accordion.svelte';
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
@@ -355,15 +357,19 @@
   {/snippet}
 
 <Accordion sections={snippetSections} />
-`}</code></pre>
+`}</code
+      ></pre>
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6"
+      >
         <Accordion sections={snippetSections} />
       </div>
     </div>
-    
+
     <h6>Accordion with minimum sections for toggle</h6>
-    <pre><code class="language-svelte">{`
+    <pre><code class="language-svelte"
+        >{`
 <Accordion
   sections={[{
     id: 'example1',
@@ -373,9 +379,12 @@
   allSectionToggle={true}
   minSectionsAllSectionToggle={2}
 />
-`}</code></pre>
+`}</code
+      ></pre>
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <Accordion
           sections={[
             {
@@ -391,7 +400,8 @@
     </div>
 
     <h6>Accordion respecting expanded session state</h6>
-    <pre><code class="language-svelte">{`
+    <pre><code class="language-svelte"
+        >{`
 <Accordion
   sections={[{
     id: 'example2',
@@ -405,15 +415,19 @@
   }]}
   rememberIsExpandedState={true}
 />
-`}</code></pre>
+`}</code
+      ></pre>
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--l p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--l p-6"
+      >
         <Accordion
           sections={[
             {
               id: 'example2',
               heading: 'Remember state 1',
-              content: 'This section’s expansion will be saved in sessionStorage.',
+              content:
+                'This section’s expansion will be saved in sessionStorage.',
               expanded: true,
             },
             {
@@ -428,7 +442,8 @@
     </div>
 
     <h6>Accordion with custom toggle labels</h6>
-    <pre><code class="language-svelte">{`
+    <pre><code class="language-svelte"
+        >{`
 <Accordion
   sections={[{
     id: 'example4',
@@ -441,9 +456,12 @@
   showAllSections="Expand All"
   showSection="Expand"
 />
-`}</code></pre>
+`}</code
+      ></pre>
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <Accordion
           sections={[
             {
@@ -464,35 +482,40 @@
 {/if}
 
 {#snippet content1()}
-<p>This is a more complex content for section 1, including <strong>HTML elements</strong>.</p>
+  <p>
+    This is a more complex content for section 1, including <strong
+      >HTML elements</strong
+    >.
+  </p>
 {/snippet}
 
 {#snippet content2()}
-<p>
-  For section 2, you can have <em>even more markup</em> such as lists and headings:
-</p>
-<ul>
-  <li>List item 1</li>
-  <li>List item 2</li>
-</ul>
+  <p>
+    For section 2, you can have <em>even more markup</em> such as lists and headings:
+  </p>
+  <ul>
+    <li>List item 1</li>
+    <li>List item 2</li>
+  </ul>
 {/snippet}
 
 {#snippet content3()}
-<p>
-  Section 3 snippet: advanced <strong>HTML</strong> or media elements could go here.
-</p>
-<svg viewBox="0 0 300 200" width="300" height="200">
-  <Line
-    dataArray={sampleLineData}
-    xFunction={(val) => val * 10}
-    yFunction={(val) => 200 - val * 4}
-    lineFunction={simpleLineFunction}
-    pathStrokeColor="blue"
-    pathStrokeWidth={2}
-    includeMarkers={true}
-    markerRadius={4}
-  />
-</svg>
+  <p>
+    Section 3 snippet: advanced <strong>HTML</strong> or media elements could go
+    here.
+  </p>
+  <svg viewBox="0 0 300 200" width="300" height="200">
+    <Line
+      dataArray={sampleLineData}
+      xFunction={(val) => val * 10}
+      yFunction={(val) => 200 - val * 4}
+      lineFunction={simpleLineFunction}
+      pathStrokeColor="blue"
+      pathStrokeWidth={2}
+      includeMarkers={true}
+      markerRadius={4}
+    />
+  </svg>
 {/snippet}
 
 <style>

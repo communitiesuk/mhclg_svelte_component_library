@@ -4,6 +4,6 @@ export function getValueFromParametersArray(
   fieldName
 ) {
   return parametersValuesArray[
-    parametersSourceArray.findIndex((el) => el.name === fieldName)
+    parametersSourceArray?.findIndex((el) => el.name === fieldName)
   ];
 }

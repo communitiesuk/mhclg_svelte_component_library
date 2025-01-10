@@ -10,7 +10,7 @@
   <a class="text-inherit no-underline" href="/">
     <div class="g-top-level-container mb-16">
       <div class="flex flex-row gap-10 items-center">
-        <img src="/images/oflog_crest_black.png" alt="MHCLG crest" />
+        <img src="/assets/images/oflog_crest_black.png" alt="MHCLG crest" />
         <div class="flex flex-col leading-tight">
           <h3>Svelte Component Library</h3>
 

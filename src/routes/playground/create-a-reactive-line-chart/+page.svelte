@@ -15,28 +15,6 @@
     'title-first-word'
   );
 
-  let taskList = [
-    { description: 'Manipulate data', complete: true },
-    { description: 'Create radio button components', complete: true },
-    {
-      description:
-        'Add on-click functionalilty to radio buttons, that reactively filters for the data we want to visualise',
-      complete: true,
-    },
-    {
-      description: 'Create scale and line functions for our line chart',
-      complete: false,
-    },
-    {
-      description: 'Plot lines, with labels and basic hover functionality',
-      complete: false,
-    },
-    {
-      description: 'Create x and y axes',
-      complete: false,
-    },
-  ];
-
   let selectedMetric = $state(data?.metrics[0]);
 </script>
 

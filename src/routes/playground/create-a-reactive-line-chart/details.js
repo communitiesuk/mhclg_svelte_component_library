@@ -6,7 +6,7 @@ export let details = {
   description: [
     {
       content:
-        'This page was created as a sandbox environment for developers starting to gain experience manipulating data in JS writing efficient and clear code in Svelte and creating components.',
+        'This page was created as a sandbox environment for developers starting to gain experience building component.',
     },
     {
       content:

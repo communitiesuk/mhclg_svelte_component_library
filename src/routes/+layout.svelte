@@ -3,7 +3,7 @@
   import '../app.css';
   let { children, data } = $props();
 
-  $inspect(data);
+  //$inspect(data);
 </script>
 
 <div class="mb-20">

@@ -60,3 +60,105 @@ a {
     @apply w-full lg:w-3/4 max-w-3xl mx-auto my-10 px-5;
   }
 }
+
+/* GDS Example frame styles */
+.app-example-wrapper {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #b1b4b6;
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(177, 180, 182);
+  border-right-color: rgb(177, 180, 182);
+  border-bottom-color: rgb(177, 180, 182);
+  border-left-color: rgb(177, 180, 182);
+  border-image-source: initial;
+  border-image-slice: initial;
+  border-image-width: initial;
+  border-image-outset: initial;
+  border-image-repeat: initial;
+  /* border-top: 0; */
+  border-top-width: 1px;
+  /* border-top-style: initial;
+  border-top-color: initial; */
+}
+
+.app-example {
+  position: relative;
+  font-size: 16px;
+  line-height: 1.25;
+  border-top: 1px solid #b1b4b6;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJUlEQVQoU2P88ePHfwY0wMHBwYguxjgUFKI7GsTH5m4M3w1ChQAZTSeO0/AZpgAAAABJRU5ErkJggg==") repeat;
+}
+
+.app-example--tabs {
+  margin-bottom: 0;
+}
+
+.app-example__toolbar {
+  padding: 10px;
+  border-bottom: 1px solid #b1b4b6;
+  background: #ffffff;
+}
+
+.app-example__frame {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+  border-right: 1px solid #b1b4b6;
+  background: #ffffff;
+}
+
+/* Frame sizes */
+.app-example__frame,
+.app-example__frame--xs {
+  height: 150px;
+}
+
+.app-example__frame--s {
+  height: 250px;
+}
+
+.app-example__frame--m {
+  height: 350px;
+}
+
+.app-example__frame--l {
+  height: 450px;
+}
+
+.app-example__frame--xl {
+  height: 550px;
+}
+
+.app-example__frame--resizable {
+  min-width: 230px;
+  min-height: 50px;
+  overflow: auto;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (min-width: 40.0625em) {
+  .app-example__frame--resizable {
+    resize: both;
+  }
+}
+
+.app-example__code {
+  position: relative;
+}
+
+/* Responsive margin utilities */
+@media (min-width: 40.0625em) {
+  .app-example-wrapper {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+}

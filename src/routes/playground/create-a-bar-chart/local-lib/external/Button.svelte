@@ -2,7 +2,7 @@
   let { rowOrder, orderBars } = $props();
 </script>
 
-<button onclick={orderBars(dataArray)}>{rowOrder}</button>
+<button>{rowOrder}</button>
 
 <style>
   * {

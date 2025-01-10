@@ -1,42 +1,32 @@
 <script>
   import Btn from './Btn.svelte';
-  import Circle from './Circle.svelte';
+  import GreenBar from './GreenBar.svelte';
 
-  function printInConsole(a) {
-    console.log(a);
-  }
-
-  let arr = [
-    { name: 'John', age: 25 },
-    { name: 'Pete', age: 30 },
-    { name: 'Mary', age: 28 },
-  ];
-
-  console.log(arr[0].age);
+  let arr = $state([40, 20, 30, 10, 60, 50]);
 
   $inspect(arr);
 
-  // modify the existing array
-  // don't return anything
+  // modify the existing array but don't return anything
   function orderArray(anArray) {
     // sorts the object by the y values
-    anArray.sort((a, b) => b.age - a.age);
+    anArray.sort((a, b) => a - b);
+    //return anArray.map((element) => element * 2);
+    //console.log(anArray.length);
   }
 </script>
 
-<Btn></Btn>
-<br />
-<button onclick={() => orderArray(arr)}>button</button>
-
+<Btn onClick={orderArray} buttonContent={'order array'} {arr}></Btn>
 <br />
 
-<button onclick={() => console.log(arr)}>button</button>
+<button onclick={() => console.log(arr)}>console log array</button>
 
-<svg height="500">
-  {#each { length: 5 } as _, i}
+<!-- {#each { length: 5 } as _, i} -->
+<svg height="1000">
+  {#each arr as _, i}
+    {@const barLength = arr[i]}
     {console.log(arr[i])}
     <g transform="translate(0,{i * 50})">
-      <Circle barLength={i * 20}></Circle>
+      <GreenBar {barLength}></GreenBar>
     </g>
   {/each}
 </svg>

@@ -1,4 +1,8 @@
-<button onclick={() => console.log('button clicked')}>Ascending</button>
+<script>
+  let { buttonContent, onClick, arr } = $props();
+</script>
+
+<button on:click={() => onClick(arr)}>{buttonContent}</button>
 
 <style>
   button {

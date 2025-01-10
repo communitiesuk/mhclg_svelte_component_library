@@ -5,7 +5,6 @@
   import { Input, Radio } from 'flowbite-svelte';
   import { details } from './details.js';
   import RowChart from './local-lib/RowChart.svelte';
-  import Button from './local-lib/external/Button.svelte';
 
   let { data, homepage = false, folders } = $props();
 
@@ -59,12 +58,12 @@
             />
           </Input>
         </div>
-        <div class="buttons">
+        <!-- <div class="buttons">
           <Button rowOrder={'Highest to lowest'} onclick={orderBars(dataArray)}
           ></Button>
           <br />
           <Button rowOrder={'Lowest to highest'}></Button>
-        </div>
+        </div> -->
         <div class="row-chart-container">
           <RowChart
             {numberOfBars}

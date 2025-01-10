@@ -29,17 +29,28 @@
 
   function orderBars(arr) {
     // sorts the object by the y values
-    console.log(arr);
-    arr.sort((a, b) => a.y - b.y);
-    console.log('hello');
-    console.log(arr);
+    dataArray = dataArray.sort((a, b) => a.y - b.y);
+    dataArray = [];
   }
+
+  let highestToLowest = $state(false);
+
+  let orderDataArray = $derived(
+    highestToLowest ? dataArray.sort((a, b) => a.y - b.y) : dataArray
+  );
+
+  $inspect(highestToLowest);
+
+  $inspect(orderDataArray);
 </script>
 
 <div class="mt-10">
   <TitleAndSubtitle></TitleAndSubtitle>
   <Legend></Legend>
-  <Button buttonText={'Highest to lowest'} onClick={orderBars} {dataArray}
+  <Button
+    buttonText={'Highest to lowest'}
+    onClick={() => (highestToLowest = true)}
+    {dataArray}
   ></Button>
   <!--whenever svgWidth changes it is binded to the clientWidth-->
   <!--clientWidth is the size of the window-->
@@ -56,7 +67,7 @@
           <Axes {chartHeight} {chartWidth}></Axes>
 
           <!--i represents the current data point-->
-          {#each dataArray as row, i}
+          {#each orderDataArray as row, i}
             {@const rowWidth = +row.y * (chartWidth / maxValue)}
             {@const rowLabel = row.areaCode}
             {@const rowValue = +row.y}

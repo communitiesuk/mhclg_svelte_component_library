@@ -375,7 +375,7 @@
 />
 `}</code></pre>
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
         <Accordion
           sections={[
             {
@@ -407,7 +407,7 @@
 />
 `}</code></pre>
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--l p-6">
         <Accordion
           sections={[
             {
@@ -443,7 +443,7 @@
 />
 `}</code></pre>
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
         <Accordion
           sections={[
             {

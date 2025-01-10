@@ -8,7 +8,7 @@
   import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
   import ScreenSizeRadio from '$lib/package-wrapping/ScreenSizeRadio.svelte';
   import { getValueFromParametersArray } from '$lib/utils/data-transformations/getValueFromParametersArray.js';
-import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
+  import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
   import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
   import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
@@ -279,7 +279,79 @@ import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/add
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
-    <pre><code class="language-svelte">{`<Accordion sections={snippetSections} />`}</code></pre>
+    <pre><code class="language-svelte">{`
+<script>
+  import Accordion from '$lib/components/content/Accordion.svelte';
+  import Line from '$lib/components/data-vis/line-chart/Line.svelte';
+
+  const sampleLineData = [
+    { x: 0, y: 0 },
+    { x: 10, y: 30 },
+    { x: 20, y: 10 },
+    { x: 30, y: 50 },
+  ];
+
+  function simpleLineFunction(dArray) {
+    let path = 'M ' + (dArray[0].x * 10) + ' ' + (200 - dArray[0].y * 4);
+    for (let i = 1; i < dArray.length; i++) {
+      path += ' L ' + (dArray[i].x * 10) + ' ' + (200 - dArray[i].y * 4);
+    }
+    return path;
+  }
+
+  let snippetSections = [
+    {
+      id: '1',
+      heading: 'Section 1',
+      content: content1,
+    },
+    {
+      id: '2',
+      heading: 'Section 2',
+      content: content2,
+    },
+    {
+      id: '3',
+      heading: 'Section 3',
+      content: content3,
+    },
+  ];
+</script>
+
+  {#snippet content1()}
+  <p>This is a more complex content for section 1, including <strong>HTML elements</strong>.</p>
+  {/snippet}
+
+  {#snippet content2()}
+  <p>
+    For section 2, you can have <em>even more markup</em> such as lists and headings:
+  </p>
+  <ul>
+    <li>List item 1</li>
+    <li>List item 2</li>
+  </ul>
+  {/snippet}
+
+  {#snippet content3()}
+  <p>
+    Section 3 snippet: advanced <strong>HTML</strong> or media elements could go here.
+  </p>
+  <svg viewBox="0 0 300 200" width="300" height="200">
+    <Line
+      dataArray={sampleLineData}
+      xFunction={(val) => val * 10}
+      yFunction={(val) => 200 - val * 4}
+      lineFunction={simpleLineFunction}
+      pathStrokeColor="blue"
+      pathStrokeWidth={2}
+      includeMarkers={true}
+      markerRadius={4}
+    />
+  </svg>
+  {/snippet}
+
+<Accordion sections={snippetSections} />
+`}</code></pre>
     <Accordion sections={snippetSections} />
     
     <h6>Accordion with minimum sections for toggle</h6>

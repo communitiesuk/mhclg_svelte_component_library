@@ -5,9 +5,22 @@
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
   import Row from './Row.svelte';
 
-  let { dataArray } = $props();
+  let { dataArray, sortOrder, colouredBars } = $props();
 
-  $inspect(dataArray);
+  //Apply the sortOrder - note that I had to copy [...] the dataArray to use it - "Svelte will disallow state changes (e.g. count++) inside derived expressions."
+  let sortedData = $derived(
+    [...dataArray].sort((a, b) =>
+      sortOrder === 'ascending'
+        ? (a.y ?? Infinity) - (b.y ?? Infinity)
+        : sortOrder === 'descending'
+          ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
+          : null
+    )
+  );
+
+  //Find the maximum value for scaling - need to get all the values and then do some cleaning before getting the max
+  let rowData = $derived(dataArray.map((d) => d.y).filter((d) => d));
+  let rowMax = $derived(Math.max(...rowData));
 
   let svgWidth = $state(),
     svgHeight = 500;
@@ -31,9 +44,10 @@
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
 
-          {#each dataArray as row, i}
-            <g transform="translate({0},{0})">
-              <Row {row}></Row>
+          {#each sortedData as row, i}
+            {@const rowHeight = chartHeight / rowData.length}
+            <g transform="translate({0},{rowHeight / 2 + i * rowHeight})">
+              <Row {chartWidth} {row} {rowMax} {rowHeight} {colouredBars}></Row>
             </g>
           {/each}
         </g>

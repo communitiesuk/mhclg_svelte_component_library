@@ -51,7 +51,7 @@
       },
       {
         content:
-          'Based on the GOV.UK Design System accordion component pattern.',
+            'Based on the <a href="https://design-system.service.gov.uk/components/accordion/" target="_blank" rel="noopener noreferrer">GOV.UK Design System accordion component</a> pattern.',
         markdown: true,
       },
     ],

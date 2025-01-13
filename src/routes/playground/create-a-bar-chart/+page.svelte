@@ -107,6 +107,7 @@
                 .bars.slice(0, numberOfBars)}
               {sortOrder}
               {colouredBars}
+              areasLookup={data.areasLookup}
             ></RowChart>
           </div>
         {:else}

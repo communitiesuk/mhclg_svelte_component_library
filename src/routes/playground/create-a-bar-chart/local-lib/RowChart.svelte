@@ -5,7 +5,7 @@
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
   import Row from './Row.svelte';
 
-  let { dataArray, sortOrder, colouredBars } = $props();
+  let { dataArray, areasLookup, sortOrder, colouredBars } = $props();
 
   //Apply the sortOrder - note that I had to copy [...] the dataArray to use it - "Svelte will disallow state changes (e.g. count++) inside derived expressions."
   let sortedData = $derived(
@@ -47,7 +47,14 @@
           {#each sortedData as row, i}
             {@const rowHeight = chartHeight / rowData.length}
             <g transform="translate({0},{rowHeight / 2 + i * rowHeight})">
-              <Row {chartWidth} {row} {rowMax} {rowHeight} {colouredBars}></Row>
+              <Row
+                {chartWidth}
+                {row}
+                {areasLookup}
+                {rowMax}
+                {rowHeight}
+                {colouredBars}
+              ></Row>
             </g>
           {/each}
         </g>

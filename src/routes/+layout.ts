@@ -15,7 +15,7 @@ export const load: LayoutLoad = async (event) => {
   ];
 
   let areas = [...new Set(testData.flatMetricData.map((el) => el.areaCode))];
-
+  let areasLookup = testData.areaCodeToName;
   let years = [...new Set(testData.flatMetricData.map((el) => el.x))];
 
   let dataInFormatForLineChart = metrics.map((metric) => ({
@@ -41,6 +41,7 @@ export const load: LayoutLoad = async (event) => {
   return {
     metrics,
     areas,
+    areasLookup,
     years,
     dataInFormatForLineChart,
     dataInFormatForBarChart,

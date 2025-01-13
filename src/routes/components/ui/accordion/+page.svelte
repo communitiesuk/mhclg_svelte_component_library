@@ -1,7 +1,7 @@
 <script>
   // @ts-nocheck
   import { page } from '$app/stores';
-  import Accordion from '$lib/components/content/Accordion.svelte';
+  import Accordion from '$lib/components/ui/Accordion.svelte';
   import DividerLine from '$lib/components/layout/DividerLine.svelte';
   import { defaultScreenWidthBreakpoints } from '$lib/config.js';
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
@@ -51,7 +51,7 @@
       },
       {
         content:
-            'Based on the <a href="https://design-system.service.gov.uk/components/accordion/" target="_blank" rel="noopener noreferrer">GOV.UK Design System accordion component</a> pattern.',
+          'Based on the <a href="https://design-system.service.gov.uk/components/accordion/" target="_blank" rel="noopener noreferrer">GOV.UK Design System accordion component</a> pattern.',
         markdown: true,
       },
     ],
@@ -287,7 +287,7 @@
     <pre><code class="language-svelte"
         >{`
 <script>
-  import Accordion from '$lib/components/content/Accordion.svelte';
+  import Accordion from '$lib/components/ui/Accordion.svelte';
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
 
   const sampleLineData = [

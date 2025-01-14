@@ -37,6 +37,7 @@ export let details = {
     {
       label:
         'Create functionality that allows a developer to change the color of specific bars.',
+        complete: true,
     },
 
     {

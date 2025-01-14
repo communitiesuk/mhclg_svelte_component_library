@@ -19,6 +19,9 @@
   let numberOfBars = $state(10);
 
   $inspect(numberOfBars);
+
+  let barColor = $state('#ADD8E6');
+  // let barColor = $state('#8B0000');
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -52,6 +55,7 @@
               bind:value={numberOfBars}
             />
           </Input>
+          <input bind:value={barColor} />
         </div>
         <div class="row-chart-container">
           <RowChart
@@ -59,6 +63,7 @@
             dataArray={data?.dataInFormatForBarChart
               .find((el) => el.x === selectedYear)
               .bars.slice(0, numberOfBars)}
+            {barColor}
           ></RowChart>
         </div>
       </div>

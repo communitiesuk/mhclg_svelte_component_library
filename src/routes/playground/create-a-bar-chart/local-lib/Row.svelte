@@ -5,7 +5,7 @@
   // this information is passed in when the component is called
 
   // let { row } = $props();
-  let { rowHeight, rowWidth, rowLabel, rowValue } = $props();
+  let { rowHeight, rowWidth, rowLabel, rowValue, barColor } = $props();
 </script>
 
 <g class="row-group">
@@ -13,7 +13,7 @@
     <RowLabel {rowLabel}></RowLabel>
   </g>
   <g transform="translate(100,0)">
-    <Bar {rowHeight} {rowWidth}></Bar>
+    <Bar {rowHeight} {rowWidth} {barColor}></Bar>
   </g>
   <g transform="translate({rowWidth + 110},30)">
     <RowValue {rowValue}></RowValue>

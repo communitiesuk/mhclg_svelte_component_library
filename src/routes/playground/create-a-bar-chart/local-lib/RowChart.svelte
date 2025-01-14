@@ -8,9 +8,9 @@
   import Row from './Row.svelte';
 
   // dataArray is an input to the RowChart component
-  let { dataArray } = $props();
+  let { dataArray, barColor } = $props();
 
-  $inspect(dataArray);
+  $inspect(barColor);
 
   // UI reacts when svgWidth changes
   let svgWidth = $state(),
@@ -75,7 +75,8 @@
             {@const rowValue = +row.y}
             <g transform="translate(-100,{i * rowHeight})">
               <!--{rowHeight} is short hand for rowHeight = {rowHeight}-->
-              <Row {rowHeight} {rowWidth} {rowLabel} {rowValue}></Row>
+              <Row {rowHeight} {rowWidth} {rowLabel} {rowValue} {barColor}
+              ></Row>
             </g>
           {/each}
         </g>

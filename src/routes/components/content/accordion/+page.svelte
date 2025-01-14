@@ -16,7 +16,7 @@
   import { onMount } from 'svelte';
   import 'prismjs/themes/prism.css';
   import Prism from 'prismjs';
-  import 'prism-svelte';
+  // import 'prism-svelte';
 
   onMount(() => {
     Prism.highlightAll();

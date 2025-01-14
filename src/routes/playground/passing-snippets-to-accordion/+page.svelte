@@ -5,7 +5,7 @@
 
   let { data, homepage = false, folders } = $props();
 
-  let details = null;
+  let details = {};
 
   let pageInfo = $page?.route.id.split('/');
 

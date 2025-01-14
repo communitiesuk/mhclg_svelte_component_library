@@ -8,7 +8,7 @@
   import Row from './Row.svelte';
 
   // dataArray is an input to the RowChart component
-  let { dataArray, barColor } = $props();
+  let { dataArray, barColor, inputSelectedAreaCode } = $props();
 
   $inspect(barColor);
 
@@ -75,8 +75,20 @@
             {@const rowValue = +row.y}
             <g transform="translate(-100,{i * rowHeight})">
               <!--{rowHeight} is short hand for rowHeight = {rowHeight}-->
-              <Row {rowHeight} {rowWidth} {rowLabel} {rowValue} {barColor}
+              <Row
+                {rowHeight}
+                {rowWidth}
+                {rowLabel}
+                {rowValue}
+                barColor={row.areaCode === inputSelectedAreaCode
+                  ? 'red'
+                  : '#ADD8E6'}
               ></Row>
+              <!--
+                just have one barColor variable
+                barColor = red if row.areaCode===inputSelectedAreaCode
+                and blue otherwise
+              -->
             </g>
           {/each}
         </g>

@@ -21,7 +21,7 @@
   $inspect(numberOfBars);
 
   let barColor = $state('#ADD8E6');
-  // let barColor = $state('#8B0000');
+  let inputSelectedAreaCode = $state('');
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -55,7 +55,9 @@
               bind:value={numberOfBars}
             />
           </Input>
-          <input bind:value={barColor} />
+          <br />
+          <div>Type in an area code that you want to color:</div>
+          <input bind:value={inputSelectedAreaCode} />
         </div>
         <div class="row-chart-container">
           <RowChart
@@ -64,6 +66,7 @@
               .find((el) => el.x === selectedYear)
               .bars.slice(0, numberOfBars)}
             {barColor}
+            {inputSelectedAreaCode}
           ></RowChart>
         </div>
       </div>

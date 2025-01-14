@@ -28,12 +28,17 @@
   let maxValue = $derived(Math.max(...dataArray.map((item) => item.y)));
 
   let highestToLowest = $state(false);
+  let lowestToHighest = $state(false);
 
-  let orderDataArray = $derived(
-    highestToLowest ? [...dataArray.sort((a, b) => a.y - b.y)] : dataArray
+  let orderedDataArray = $derived(
+    highestToLowest
+      ? [...dataArray.sort((a, b) => a.y - b.y)]
+      : lowestToHighest
+        ? [...dataArray.sort((a, b) => b.y - a.y)]
+        : dataArray
   );
 
-  $inspect(orderDataArray);
+  $inspect(orderedDataArray, highestToLowest, lowestToHighest);
 </script>
 
 <div class="mt-10">
@@ -41,7 +46,12 @@
   <Legend></Legend>
   <Button
     buttonText={'Highest to lowest'}
-    onClick={() => (highestToLowest = true)}
+    onClick={() => (highestToLowest = true) && (lowestToHighest = false)}
+    {dataArray}
+  ></Button>
+  <Button
+    buttonText={'Lowest to highest'}
+    onClick={() => (lowestToHighest = true) && (highestToLowest = false)}
     {dataArray}
   ></Button>
   <!--whenever svgWidth changes it is binded to the clientWidth-->
@@ -59,7 +69,7 @@
           <Axes {chartHeight} {chartWidth}></Axes>
 
           <!--i represents the current data point-->
-          {#each orderDataArray as row, i}
+          {#each orderedDataArray as row, i}
             {@const rowWidth = +row.y * (chartWidth / maxValue)}
             {@const rowLabel = row.areaCode}
             {@const rowValue = +row.y}

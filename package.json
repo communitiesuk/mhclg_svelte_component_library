@@ -68,6 +68,7 @@
 		"csv-parser": "^3.0.0",
 		"d3": "^7.9.0",
 		"govuk-frontend": "^5.7.1",
+		"npm": "^11.0.0",
 		"prism-svelte": "^0.5.0",
 		"prismjs": "^1.29.0",
 		"svelte-preprocess": "^6.0.3"

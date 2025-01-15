@@ -11,7 +11,7 @@
 
   let { dataArray } = $props();
 
-  $inspect(dataArray);
+  //$inspect(dataArray);
 
   let svgWidth = $state(),
     svgHeight = 500;
@@ -20,6 +20,9 @@
 
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
+
+  let rowHeight = $derived(chartHeight / dataArray.length);
+  let maxValue = $derived(Math.max(...dataArray.map((item) => item.y)));
 
   let svgWidthCategory = $derived(
     svgWidth ??
@@ -53,8 +56,9 @@
           <Axes {chartHeight} {chartWidth}></Axes>
 
           {#each dataArray as row, i}
-            <g transform="translate({0},{0})">
-              <Row {row}></Row>
+            {@const rowWidth = +row.y * (chartWidth / maxValue)}
+            <g transform="translate({0},{i * rowHeight})">
+              <Row {row} {rowHeight} {rowWidth}></Row>
             </g>
           {/each}
         </g>

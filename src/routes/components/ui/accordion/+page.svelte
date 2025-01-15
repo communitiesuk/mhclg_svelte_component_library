@@ -1,8 +1,9 @@
 <script>
   // @ts-nocheck
   import { page } from '$app/stores';
-  import Accordion from '$lib/components/ui/Accordion.svelte';
+  import Line from '$lib/components/data-vis/line-chart/Line.svelte';
   import DividerLine from '$lib/components/layout/DividerLine.svelte';
+  import Accordion from '$lib/components/ui/Accordion.svelte';
   import { defaultScreenWidthBreakpoints } from '$lib/config.js';
   import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
   import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
@@ -12,11 +13,11 @@
   import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
   import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
-  import Line from '$lib/components/data-vis/line-chart/Line.svelte';
-  import { onMount } from 'svelte';
-  import 'prismjs/themes/prism.css';
   import Prism from 'prismjs';
-  // import 'prism-svelte';
+  import 'prismjs/themes/prism.css';
+  import { onMount } from 'svelte';
+
+  import 'prism-svelte';
 
   onMount(() => {
     Prism.highlightAll();
@@ -322,7 +323,7 @@
       content: content3,
     },
   ];
-</script>
+<\/script>
 
   {#snippet content1()}
   <p>This is a more complex content for section 1, including <strong>HTML elements</strong>.</p>

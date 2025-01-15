@@ -4,8 +4,6 @@
 
   let { data } = $props();
 
-  $inspect(data);
-
   /**
    * && 		Description of the code, how it works and what it does.
    * ? 		  Descriptions of parameters - where they come from and what they do.

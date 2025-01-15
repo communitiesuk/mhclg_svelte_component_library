@@ -39,3 +39,9 @@ Create functionality that allows a developer to re-order rows from highest to sm
 --- clicking the button triggers a re-rendering of the chart
     --- first data array is sorted by the rowWidth value
     --- then it's the existing process of looping through dataArray
+
+DONE - Create lowest to highest button
+
+
+
+Create functionality that allows the developer to change the color of specific bars

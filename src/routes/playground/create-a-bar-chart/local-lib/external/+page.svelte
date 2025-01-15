@@ -4,8 +4,6 @@
 
   let arr = $state([40, 20, 30, 10, 60, 50]);
 
-  $inspect(arr);
-
   // modify the existing array but don't return anything
   function ascending(anArray) {
     anArray.sort((a, b) => a - b);

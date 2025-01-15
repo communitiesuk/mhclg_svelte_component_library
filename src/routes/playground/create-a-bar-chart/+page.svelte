@@ -8,6 +8,8 @@
 
   let { data, homepage = false, folders } = $props();
 
+  $inspect(data);
+
   let pageInfo = $page?.route.id.split('/');
 
   details.name = textStringConversion(
@@ -17,8 +19,6 @@
 
   let selectedYear = $state(data?.years[0]);
   let numberOfBars = $state(10);
-
-  $inspect(numberOfBars);
 
   let barColor = $state('#ADD8E6');
   let inputSelectedAreaCode = $state('');

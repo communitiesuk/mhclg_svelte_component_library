@@ -1,8 +1,6 @@
 <script>
   let { subFolder } = $props();
 
-  $inspect(subFolder);
-
   // Store dynamically imported components
   let components = $state();
 

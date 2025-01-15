@@ -10,8 +10,6 @@
   // dataArray is an input to the RowChart component
   let { dataArray, barColor, inputSelectedAreaCode } = $props();
 
-  $inspect(barColor);
-
   // UI reacts when svgWidth changes
   let svgWidth = $state(),
     svgHeight = 500;
@@ -37,8 +35,6 @@
         ? [...dataArray.sort((a, b) => b.y - a.y)]
         : dataArray
   );
-
-  $inspect(orderedDataArray, highestToLowest, lowestToHighest);
 </script>
 
 <div class="mt-10">

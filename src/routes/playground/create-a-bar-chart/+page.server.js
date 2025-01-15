@@ -1,7 +1,7 @@
-import { localAuthorityLookup } from './milesTestLookup.js';
+import { localAuthorityCodeLookup } from './localAuthorityCodeLookup.js';
 
 export function load() {
     return {
-        localAuthorityLookup
+        localAuthorityCodeLookup
     }
 }

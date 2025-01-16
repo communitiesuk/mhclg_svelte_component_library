@@ -20,14 +20,14 @@
     const { default: svelte } = await import('shiki/langs/svelte.mjs');
     const highlighter = await getHighlighter({
       langs: [svelte],
-      themes: ['github-dark'],
-      theme: 'github-dark',
+      themes: ['vitesse-light'],
+      theme: 'vitesse-light',
     });
     const codeBlocks = document.querySelectorAll('pre code');
     codeBlocks.forEach((block) => {
       block.innerHTML = highlighter.codeToHtml(block.textContent, {
         lang: 'svelte',
-        theme: 'github-dark',
+        theme: 'vitesse-light',
       });
     });
   });
@@ -547,6 +547,14 @@
   [data-role='component-container-centered'] {
     /* background-color: #f8f8f8; */
     padding: 20px 0px;
+  }
+
+  :global(pre) {
+    background-color: #f3f3f3 !important; /* Slightly darker grey background */
+  }
+
+  :global(pre code) {
+    background-color: transparent !important;
   }
 
   /* pre code {

@@ -1,9 +1,9 @@
 <script>
-  let { scaledValue, value, rowLabel, selectedBar, rowHeight } = $props();
+  let { scaledValue, value, rowHeight } = $props();
 </script>
 
 <text
-  x={scaledValue}
+  transform="translate ({scaledValue} 0)"
   dx={rowHeight > 18 ? '-10' : '10'}
   style={rowHeight > 18 ? 'text-anchor: end' : 'text-anchor: start'}
   >{value}</text

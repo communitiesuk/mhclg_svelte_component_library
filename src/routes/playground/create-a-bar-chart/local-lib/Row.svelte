@@ -3,31 +3,18 @@
   import RowLabel from './rowComponents/RowLabel.svelte';
   import RowValue from './rowComponents/RowValue.svelte';
 
-  let { chartWidth, row, areasLookup, rowMax, rowHeight, colouredBars } =
-    $props();
+  let { chartWidth, row, rowMax, rowMin, rowHeight } = $props();
   let selectedBar = $state(null);
 
-  let scaledValue = $derived((row.y / rowMax) * chartWidth);
+  let scaledValue = $derived((row.y / (rowMax - rowMin)) * chartWidth);
 </script>
 
 <g class="row-group">
-  <Bar
-    {scaledValue}
-    {rowHeight}
-    rowLabel={row.areaCode}
-    bind:selectedBar
-    {colouredBars}
-  ></Bar>
+  <Bar {scaledValue} {rowHeight} bind:selectedBar {row}></Bar>
   {#if rowHeight > 20 || selectedBar == row.areaCode}
-    <RowLabel label={areasLookup[0][row.areaCode]}></RowLabel>
+    <RowLabel label={row.areaName}></RowLabel>
     {#if rowHeight > 18 || selectedBar == row.areaCode}
-      <RowValue
-        {scaledValue}
-        value={row.y}
-        {selectedBar}
-        rowLabel={row.areaCode}
-        {rowHeight}
-      ></RowValue>
+      <RowValue {scaledValue} value={row.y} {rowHeight}></RowValue>
     {/if}
   {/if}
 </g>

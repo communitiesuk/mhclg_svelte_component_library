@@ -1,25 +1,16 @@
 <script>
-  let {
-    scaledValue,
-    rowHeight,
-    rowLabel,
-    selectedBar = $bindable(),
-    colouredBars,
-  } = $props();
+  let { scaledValue, rowHeight, selectedBar = $bindable(), row } = $props();
 </script>
 
 {#if scaledValue}
   <rect
+    x={scaledValue >= 0 ? 0 : scaledValue}
     y={-rowHeight / 2}
-    width={scaledValue}
+    width={Math.abs(scaledValue)}
     height={0.9 * rowHeight}
-    onmousemove={() => (selectedBar = rowLabel)}
+    onmousemove={() => (selectedBar = row.areaCode)}
     onmouseout={() => (selectedBar = null)}
-    fill={rowLabel == selectedBar
-      ? 'darkturquoise'
-      : colouredBars?.includes(rowLabel)
-        ? 'teal'
-        : 'lightblue'}
+    fill={row.areaCode == selectedBar ? 'darkturquoise' : row.color}
   ></rect>
 {/if}
 

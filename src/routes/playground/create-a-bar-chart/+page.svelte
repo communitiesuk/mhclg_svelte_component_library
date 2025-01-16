@@ -28,6 +28,27 @@
   let sortOrder = $state('none');
   let chart = $state(true);
   let colouredBars = $state(['E07000223']);
+
+  function processData(data) {
+    return data?.dataInFormatForBarChart
+      .find((el) => el.x === selectedYear)
+      .bars.slice(0, numberOfBars)
+      .sort((a, b) =>
+        sortOrder === 'ascending'
+          ? (a.y ?? Infinity) - (b.y ?? Infinity)
+          : sortOrder === 'descending'
+            ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
+            : null
+      )
+      .map((d, i) => {
+        return {
+          ...d,
+          y: i % 2 === 0 ? d.y : -d.y,
+          color: colouredBars.includes(d.areaCode) ? 'teal' : 'lightblue',
+          areaName: data.areasLookup[0][d.areaCode],
+        };
+      });
+  }
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -76,19 +97,9 @@
         <div class="mt-5">
           <p class="my-2 mx-0 p-0 text-sm">Change colour of bars:</p>
           <MultiSelect
-            items={data?.dataInFormatForBarChart
-              .find((el) => el.x === selectedYear)
-              .bars.slice(0, numberOfBars)
-              .sort((a, b) =>
-                sortOrder === 'ascending'
-                  ? (a.y ?? Infinity) - (b.y ?? Infinity)
-                  : sortOrder === 'descending'
-                    ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
-                    : null
-              )
-              .map((d) => {
-                return { value: d.areaCode, name: d.areaCode };
-              })}
+            items={processData(data).map((d) => {
+              return { value: d.areaCode, name: d.areaCode };
+            })}
             bind:value={colouredBars}
           ></MultiSelect>
         </div>
@@ -101,30 +112,11 @@
         </div>
         {#if chart}
           <div class="row-chart-container">
-            <RowChart
-              dataArray={data?.dataInFormatForBarChart
-                .find((el) => el.x === selectedYear)
-                .bars.slice(0, numberOfBars)}
-              {sortOrder}
-              {colouredBars}
-              areasLookup={data.areasLookup}
-            ></RowChart>
+            <RowChart dataArray={processData(data)} {sortOrder}></RowChart>
           </div>
         {:else}
           <div class="table-container">
-            <Table
-              dataArray={data?.dataInFormatForBarChart
-                .find((el) => el.x === selectedYear)
-                .bars.slice(0, numberOfBars)
-                .sort((a, b) =>
-                  sortOrder === 'ascending'
-                    ? (a.y ?? Infinity) - (b.y ?? Infinity)
-                    : sortOrder === 'descending'
-                      ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
-                      : null
-                )}
-              {selectedYear}
-            />
+            <Table dataArray={processData(data)} {selectedYear} />
           </div>
         {/if}
       </div>

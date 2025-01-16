@@ -4,9 +4,12 @@
 
 <text
   transform="translate ({scaledValue} 0)"
-  dx={rowHeight > 18 ? '-10' : '10'}
-  style={rowHeight > 18 ? 'text-anchor: end' : 'text-anchor: start'}
-  >{value}</text
+  dx={rowHeight > 18 ? (scaledValue >= 0 ? '-10' : '10') : 10}
+  style={rowHeight > 18
+    ? scaledValue >= 0
+      ? 'text-anchor: end'
+      : 'text-anchor: start'
+    : 'text-anchor: start'}>{value}</text
 >
 
 <style>

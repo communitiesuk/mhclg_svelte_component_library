@@ -13,14 +13,23 @@
   import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
   import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
-  import Prism from 'prismjs';
-  import 'prismjs/themes/prism.css';
   import { onMount } from 'svelte';
 
-  import 'prism-svelte';
-
-  onMount(() => {
-    Prism.highlightAll();
+  onMount(async () => {
+    const { getHighlighter } = await import('shiki');
+    const { default: svelte } = await import('shiki/langs/svelte.mjs');
+    const highlighter = await getHighlighter({
+      langs: [svelte],
+      themes: ['github-dark'],
+      theme: 'github-dark',
+    });
+    const codeBlocks = document.querySelectorAll('pre code');
+    codeBlocks.forEach((block) => {
+      block.innerHTML = highlighter.codeToHtml(block.textContent, {
+        lang: 'svelte',
+        theme: 'github-dark',
+      });
+    });
   });
 
   let { data, homepage = undefined, folders } = $props();

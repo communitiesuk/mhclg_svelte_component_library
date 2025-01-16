@@ -55,6 +55,7 @@
 		"prettier": "^3.3.2",
 		"prettier-plugin-svelte": "^3.2.6",
 		"publint": "^0.2.0",
+		"shiki": "^1.27.2",
 		"svelte": "^5.0.0",
 		"svelte-check": "^4.0.0",
 		"sveltekit-autoimport": "^1.8.1",

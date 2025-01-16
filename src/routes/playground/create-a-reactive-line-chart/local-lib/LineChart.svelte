@@ -3,6 +3,7 @@
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
   import { scaleLinear } from 'd3-scale';
   import { curveLinear, line } from 'd3-shape';
+  import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
 
   let { data } = $props();
 
@@ -53,6 +54,29 @@
 
   let selectedAreaCode = $state('E07000223');
 </script>
+
+<!-- Add this before the chart -->
+<h3>Example Usage</h3>
+<pre><code use:highlight>{`
+<script>
+  import LineChart from './LineChart.svelte';
+  
+  const data = {
+    lines: [
+      {
+        areaCode: "E07000223",
+        data: [
+          { x: 2019, y: 45 },
+          { x: 2020, y: 72 },
+          { x: 2021, y: 89 }
+        ]
+      }
+    ]
+  };
+<\/script>
+
+<LineChart {data} />
+`}</code></pre>
 
 <div bind:clientWidth={svgWidth}>
   <svg

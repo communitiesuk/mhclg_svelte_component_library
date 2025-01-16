@@ -278,7 +278,7 @@
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
-    <pre><code class="language-svelte" use:highlight>
+    <pre><code  use:highlight>
         {`
 <script>
   import Accordion from '$lib/components/ui/Accordion.svelte';
@@ -362,7 +362,7 @@
     </div>
 
     <h6>Accordion with minimum sections for toggle</h6>
-    <pre><code class="language-svelte" use:highlight>
+    <pre><code  use:highlight>
         {`
 <Accordion
   sections={[{
@@ -394,7 +394,7 @@
     </div>
 
     <h6>Accordion respecting expanded session state</h6>
-    <pre><code class="language-svelte" use:highlight>
+    <pre><code  use:highlight>
         {`
 <Accordion
   sections={[{
@@ -436,7 +436,7 @@
     </div>
 
     <h6>Accordion with custom toggle labels</h6>
-    <pre><code class="language-svelte" use:highlight>
+    <pre><code  use:highlight>
         {`
 <Accordion
   sections={[{

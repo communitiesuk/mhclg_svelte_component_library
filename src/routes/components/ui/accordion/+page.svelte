@@ -14,23 +14,7 @@
   import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
   import { onMount } from 'svelte';
-
-  onMount(async () => {
-    const { getHighlighter } = await import('shiki');
-    const { default: svelte } = await import('shiki/langs/svelte.mjs');
-    const highlighter = await getHighlighter({
-      langs: [svelte],
-      themes: ['vitesse-light'],
-      theme: 'vitesse-light',
-    });
-    const codeBlocks = document.querySelectorAll('pre code');
-    codeBlocks.forEach((block) => {
-      block.innerHTML = highlighter.codeToHtml(block.textContent, {
-        lang: 'svelte',
-        theme: 'vitesse-light',
-      });
-    });
-  });
+  import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
 
   let { data, homepage = undefined, folders } = $props();
 
@@ -92,7 +76,7 @@
   let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
   let parametersSourceArray =
-    homepage ??
+    homepage ?? 
     addIndexAndInitalValue([
       {
         name: 'sections',
@@ -196,7 +180,7 @@
   );
 
   let sections = $derived(
-    homepage ??
+    homepage ?? 
       JSON.parse(
         getValueFromParametersArray(
           parametersSourceArray,
@@ -225,14 +209,14 @@
   let derivedParametersObject = $derived(homepage ?? { sections });
 
   let parametersVisibleArray = $derived(
-    homepage ??
+    homepage ?? 
       trackVisibleParameters(parametersSourceArray, parametersValuesArray)
   );
 
   $inspect(parametersValuesArray);
 
   let parametersObject = $derived(
-    homepage ??
+    homepage ?? 
       createParametersObject(
         parametersSourceArray,
         parametersValuesArray,
@@ -294,8 +278,8 @@
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
-    <pre><code class="language-svelte"
-        >{`
+    <pre><code class="language-svelte" use:highlight>
+        {`
 <script>
   import Accordion from '$lib/components/ui/Accordion.svelte';
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
@@ -378,8 +362,8 @@
     </div>
 
     <h6>Accordion with minimum sections for toggle</h6>
-    <pre><code class="language-svelte"
-        >{`
+    <pre><code class="language-svelte" use:highlight>
+        {`
 <Accordion
   sections={[{
     id: 'example1',
@@ -410,8 +394,8 @@
     </div>
 
     <h6>Accordion respecting expanded session state</h6>
-    <pre><code class="language-svelte"
-        >{`
+    <pre><code class="language-svelte" use:highlight>
+        {`
 <Accordion
   sections={[{
     id: 'example2',
@@ -452,8 +436,8 @@
     </div>
 
     <h6>Accordion with custom toggle labels</h6>
-    <pre><code class="language-svelte"
-        >{`
+    <pre><code class="language-svelte" use:highlight>
+        {`
 <Accordion
   sections={[{
     id: 'example4',

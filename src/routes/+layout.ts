@@ -2,9 +2,20 @@ import { base } from '$app/paths';
 import type { LayoutLoad } from './$types';
 
 export const load: LayoutLoad = async (event) => {
-  const testData = await (
+  let testData = await (
     await event.fetch(`${base}/data/testData.json`)
   ).json();
+
+  const LAD = await (
+    await event.fetch(`${base}/data/Local_Authority_Districts.geojson`)
+  ).json();
+
+  let ONSLookup = LAD.features.reduce((acc, obj) => {
+    acc[obj.properties.LAD22CD] = obj.properties.LAD22NM;
+    return acc;
+  }, {});
+
+  // testData = ONSLookup.map((d) => d.areaCode, {...testData})
 
   let metrics = [
     ...new Set(

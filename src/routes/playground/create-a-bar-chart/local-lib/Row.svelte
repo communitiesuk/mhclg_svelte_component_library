@@ -8,22 +8,20 @@
   let { rowHeight, rowWidth, rowLabel, rowValue, barColor } = $props();
 </script>
 
-<!-- <g class="row-group">
-  <g transform="translate(-50,30)">
+<g class="row-group">
+  <g transform="translate(-10,0)">
     <RowLabel {rowLabel}></RowLabel>
   </g>
-  <g transform="translate(100,0)">
+  <g transform="translate(0,0)">
     <Bar {rowHeight} {rowWidth} {barColor}></Bar>
   </g>
-  <g transform="translate({rowWidth + 110},30)">
+  <g transform="translate({rowWidth + 10},30)">
     <RowValue {rowValue}></RowValue>
   </g>
-</g> -->
-
-<g class="row-group">
-  <RowLabel {rowLabel}></RowLabel>
-
-  <Bar {rowHeight} {rowWidth} {barColor}></Bar>
-
-  <RowValue {rowValue}></RowValue>
 </g>
+
+<style>
+  .row-group {
+    position: relative;
+  }
+</style>

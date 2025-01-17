@@ -6,3 +6,9 @@
 <g>
   <text>{rowLabel}</text>
 </g>
+
+<style>
+  text {
+    text-anchor: end;
+  }
+</style>

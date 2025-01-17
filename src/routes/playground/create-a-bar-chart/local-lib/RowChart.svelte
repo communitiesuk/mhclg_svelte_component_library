@@ -73,7 +73,7 @@
               (area) => area.areaCode === row.areaCode
             ).localAuthorityName}
             {@const rowValue = +row.y}
-            <g transform="translate(-100,{i * rowHeight})">
+            <g transform="translate(0,{i * rowHeight})">
               <!--{rowHeight} is short hand for rowHeight = {rowHeight}-->
               <Row
                 {rowHeight}

@@ -11,7 +11,14 @@
 
   let { dataArray } = $props();
 
-  //$inspect(dataArray);
+  let storted = $state(false);
+
+  let orderedData = storted
+    ? new Map([...dataArray.entries()].sort((a, b) => a.y - b.y))
+    : dataArray;
+
+  $inspect(dataArray);
+  $inspect(storted);
 
   let svgWidth = $state(),
     svgHeight = 500;
@@ -23,7 +30,6 @@
 
   let rowHeight = $derived(chartHeight / dataArray.length);
   let maxValue = $derived(Math.max(...dataArray.map((item) => item.y)));
-
   let svgWidthCategory = $derived(
     svgWidth ??
       categoriseContainerWidth(defaultScreenWidthBreakpoints, svgWidth)
@@ -44,7 +50,10 @@
 
 <div class="mt-10">
   <TitleAndSubtitle></TitleAndSubtitle>
+  <p>Order</p>
+  <input type="checkbox" bind:checked={storted} onchange={orderedData} />
   <Legend></Legend>
+
   <div bind:clientWidth={svgWidth}>
     <svg
       width={svgWidth ?? 400}
@@ -55,7 +64,7 @@
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
 
-          {#each dataArray as row, i}
+          {#each orderedData as row, i}
             {@const rowWidth = +row.y * (chartWidth / maxValue)}
             <g transform="translate({0},{i * rowHeight})">
               <Row {row} {rowHeight} {rowWidth}></Row>
@@ -64,7 +73,6 @@
         </g>
       {/if}
     </svg>
-
     <Source></Source>
   </div>
 </div>

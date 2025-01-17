@@ -16,7 +16,8 @@
   <Bar {scaledValue} {rowHeight} bind:selectedBar {row}></Bar>
 
   {#if rowHeight > 18 || selectedBar == row.areaCode}
-    <RowValue {scaledValue} value={row.y} {rowHeight}></RowValue>
+    <RowValue {scaledValue} value={row.y} max={row.y == rowMax} {rowHeight}
+    ></RowValue>
   {/if}
 </g>
 {#if rowHeight > 20 || selectedBar == row.areaCode}

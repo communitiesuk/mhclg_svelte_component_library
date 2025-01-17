@@ -9,7 +9,7 @@
   <caption>Data for {selectedYear}</caption>
   <thead>
     <tr>
-      {#each Object.keys(dataArray[0]) as heading}
+      {#each Object.keys(dataArray[0]).slice(0, 2) as heading}
         <th scope="col">{heading}</th>
       {/each}
     </tr>

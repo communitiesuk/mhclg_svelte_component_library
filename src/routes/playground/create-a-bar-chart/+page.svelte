@@ -5,6 +5,7 @@
   import { Input, Radio } from 'flowbite-svelte';
   import { details } from './details.js';
   import RowChart from './local-lib/RowChart.svelte';
+  import { localAuthorityCodeLookup } from './localAuthorityCodeLookup.js';
 
   let { data, homepage = false, folders } = $props();
 
@@ -65,6 +66,7 @@
             dataArray={data?.dataInFormatForBarChart
               .find((el) => el.x === selectedYear)
               .bars.slice(0, numberOfBars)}
+            {localAuthorityCodeLookup}
             {barColor}
             {inputSelectedAreaCode}
           ></RowChart>

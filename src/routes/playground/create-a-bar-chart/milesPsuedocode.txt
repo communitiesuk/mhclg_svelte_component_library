@@ -42,6 +42,4 @@ Create functionality that allows a developer to re-order rows from highest to sm
 
 DONE - Create lowest to highest button
 
-
-
-Create functionality that allows the developer to change the color of specific bars
+DONE - Create functionality that allows the developer to change the color of specific bars

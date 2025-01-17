@@ -8,8 +8,9 @@
   import Row from './Row.svelte';
 
   // dataArray is an input to the RowChart component
-  let { dataArray, barColor, inputSelectedAreaCode } = $props();
+  let { dataArray, inputSelectedAreaCode, localAuthorityCodeLookup } = $props();
 
+  $inspect(localAuthorityCodeLookup);
   // UI reacts when svgWidth changes
   let svgWidth = $state(),
     svgHeight = 500;
@@ -35,6 +36,7 @@
         ? [...dataArray.sort((a, b) => b.y - a.y)]
         : dataArray
   );
+  $inspect(orderedDataArray);
 </script>
 
 <div class="mt-10">
@@ -67,7 +69,9 @@
           <!--i represents the current data point-->
           {#each orderedDataArray as row, i}
             {@const rowWidth = +row.y * (chartWidth / maxValue)}
-            {@const rowLabel = row.areaCode}
+            {@const rowLabel = localAuthorityCodeLookup.find(
+              (area) => area.areaCode === row.areaCode
+            ).localAuthorityName}
             {@const rowValue = +row.y}
             <g transform="translate(-100,{i * rowHeight})">
               <!--{rowHeight} is short hand for rowHeight = {rowHeight}-->

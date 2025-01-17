@@ -55,7 +55,6 @@
   let selectedAreaCode = $state('E07000223');
 </script>
 
-<!-- Add this before the chart -->
 <h3>Example Usage</h3>
 <pre><code use:highlight>{`
 <script>

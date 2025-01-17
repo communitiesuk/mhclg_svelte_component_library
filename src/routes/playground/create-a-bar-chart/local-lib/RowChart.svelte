@@ -13,9 +13,9 @@
 
   let storted = $state(false);
 
-  let orderedData = storted
-    ? new Map([...dataArray.entries()].sort((a, b) => a.y - b.y))
-    : dataArray;
+  let orderedData = $derived(
+    storted ? [...dataArray.sort((a, b) => a.y - b.y)] : dataArray
+  );
 
   $inspect(dataArray);
   $inspect(storted);
@@ -34,7 +34,7 @@
     svgWidth ??
       categoriseContainerWidth(defaultScreenWidthBreakpoints, svgWidth)
   );
-
+  $inspect(orderedData);
   $inspect(svgWidthCategory);
 
   let [dataArrayWithSplitLabels, spaceForLabels] = $derived(
@@ -51,7 +51,7 @@
 <div class="mt-10">
   <TitleAndSubtitle></TitleAndSubtitle>
   <p>Order</p>
-  <input type="checkbox" bind:checked={storted} onchange={orderedData} />
+  <input type="checkbox" bind:checked={storted} />
   <Legend></Legend>
 
   <div bind:clientWidth={svgWidth}>

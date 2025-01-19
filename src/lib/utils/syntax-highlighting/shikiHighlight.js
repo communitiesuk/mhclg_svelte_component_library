@@ -13,7 +13,13 @@ export const highlight = async (node, options = { lang: 'svelte', theme: 'vitess
 
   const html = highlighter.codeToHtml(node.textContent, {
     lang: options.lang,
-    theme: options.theme
+    theme: options.theme,
+    transformers: [{
+      pre(node) {
+        node.properties['data-language'] = options.lang;
+        return node;
+      }
+    }]
   });
   node.innerHTML = html;
 
@@ -25,7 +31,13 @@ export const highlight = async (node, options = { lang: 'svelte', theme: 'vitess
       options = { ...options, ...newOptions };
       node.innerHTML = highlighter.codeToHtml(node.textContent, {
         lang: options.lang,
-        theme: options.theme
+        theme: options.theme,
+        transformers: [{
+          pre(node) {
+            node.properties['data-language'] = options.lang;
+            return node;
+          }
+        }]
       });
     }
   };

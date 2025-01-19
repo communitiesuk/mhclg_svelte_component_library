@@ -444,6 +444,7 @@
     summary: 'Showing override for labels',
     content: 'This accordion uses custom hide/show labels.',
   }]}
+  minSectionsAllSectionToggle={0}
   hideAllSections="Collapse All"
   hideSection="Collapse"
   showAllSections="Expand All"
@@ -463,6 +464,7 @@
               content: 'This accordion uses custom hide/show labels.',
             },
           ]}
+          minSectionsAllSectionToggle={0}
           hideAllSections="Collapse All"
           hideSection="Collapse"
           showAllSections="Expand All"

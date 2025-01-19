@@ -12,9 +12,8 @@
   import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
   import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
   import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
-  import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
-  import { onMount } from 'svelte';
   import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
+  import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
 
   let { data, homepage = undefined, folders } = $props();
 
@@ -76,7 +75,7 @@
   let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
   let parametersSourceArray =
-    homepage ?? 
+    homepage ??
     addIndexAndInitalValue([
       {
         name: 'sections',
@@ -180,7 +179,7 @@
   );
 
   let sections = $derived(
-    homepage ?? 
+    homepage ??
       JSON.parse(
         getValueFromParametersArray(
           parametersSourceArray,
@@ -209,14 +208,14 @@
   let derivedParametersObject = $derived(homepage ?? { sections });
 
   let parametersVisibleArray = $derived(
-    homepage ?? 
+    homepage ??
       trackVisibleParameters(parametersSourceArray, parametersValuesArray)
   );
 
   $inspect(parametersValuesArray);
 
   let parametersObject = $derived(
-    homepage ?? 
+    homepage ??
       createParametersObject(
         parametersSourceArray,
         parametersValuesArray,
@@ -278,8 +277,8 @@
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
-    <div use:highlight>
-        {`
+    <div class="code-block" use:highlight>
+      {`
 <script>
   import Accordion from '$lib/components/ui/Accordion.svelte';
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
@@ -354,14 +353,16 @@
 `}
     </div>
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6"
+      >
         <Accordion sections={snippetSections} />
       </div>
     </div>
 
     <h6>Accordion with minimum sections for toggle</h6>
-    <div use:highlight>
-        {`
+    <div class="code-block" use:highlight>
+      {`
 <Accordion
   sections={[{
     id: 'example1',
@@ -374,13 +375,17 @@
 `}
     </div>
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <Accordion
-          sections={[{
-            id: 'example1',
-            heading: 'Title One',
-            content: 'Some content for the first section.',
-          }]}
+          sections={[
+            {
+              id: 'example1',
+              heading: 'Title One',
+              content: 'Some content for the first section.',
+            },
+          ]}
           allSectionToggle={true}
           minSectionsAllSectionToggle={2}
         />
@@ -388,8 +393,8 @@
     </div>
 
     <h6>Accordion respecting expanded session state</h6>
-    <div use:highlight>
-        {`
+    <div class="code-block" use:highlight>
+      {`
 <Accordion
   sections={[{
     id: 'example2',
@@ -407,8 +412,8 @@
     </div>
 
     <h6>Accordion with custom toggle labels</h6>
-    <div use:highlight>
-        {`
+    <div class="code-block" use:highlight>
+      {`
 <Accordion
   sections={[{
     id: 'example4',
@@ -420,8 +425,7 @@
   hideSection="Collapse"
   showAllSections="Expand All"
   showSection="Expand"
-/>
-you`}
+/>`}
     </div>
   </div>
 {/if}
@@ -483,27 +487,4 @@ you`}
     /* background-color: #f8f8f8; */
     padding: 20px 0px;
   }
-
-  /* :global(pre) {
-    background-color: #f3f3f3 !important; 
-  } */
-
-  /* :global(pre code) {
-    background-color: transparent !important;
-  } */
-
-  /* pre code {
-    background: #282c34;
-    color: #abb2bf;
-    padding: 1rem;
-    display: block;
-    border-radius: 6px;
-    overflow-x: auto;
-    font-size: 0.875rem;
-    line-height: 1.6;
-  } */
-
-  /* .language-svelte {
-    color: #e06c75;
-  } */
 </style>

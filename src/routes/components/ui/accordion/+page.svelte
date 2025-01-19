@@ -410,6 +410,29 @@
 />
 `}
     </div>
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--l p-6"
+      >
+        <Accordion
+          sections={[
+            {
+              id: 'example2',
+              heading: 'Remember state 1',
+              content:
+                "This section's expansion will be saved in sessionStorage.",
+              expanded: true,
+            },
+            {
+              id: 'example3',
+              heading: 'Remember state 2',
+              content: 'Session state is also saved here.',
+            },
+          ]}
+          rememberIsExpandedState={true}
+        />
+      </div>
+    </div>
 
     <h6>Accordion with custom toggle labels</h6>
     <div class="code-block" use:highlight>
@@ -427,6 +450,27 @@
   showSection="Expand"
 />`}
     </div>
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <Accordion
+          sections={[
+            {
+              id: 'example4',
+              heading: 'Custom Toggle Section',
+              summary: 'Showing override for labels',
+              content: 'This accordion uses custom hide/show labels.',
+            },
+          ]}
+          hideAllSections="Collapse All"
+          hideSection="Collapse"
+          showAllSections="Expand All"
+          showSection="Expand"
+        />
+      </div>
+    </div>
+
   </div>
 {/if}
 

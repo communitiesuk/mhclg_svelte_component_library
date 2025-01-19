@@ -278,7 +278,7 @@
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
-    <pre><code  use:highlight>
+    <div use:highlight>
         {`
 <script>
   import Accordion from '$lib/components/ui/Accordion.svelte';
@@ -351,18 +351,16 @@
   {/snippet}
 
 <Accordion sections={snippetSections} />
-`}</code
-      ></pre>
+`}
+    </div>
     <div class="app-example-wrapper">
-      <div
-        class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6"
-      >
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6">
         <Accordion sections={snippetSections} />
       </div>
     </div>
 
     <h6>Accordion with minimum sections for toggle</h6>
-    <pre><code  use:highlight>
+    <div use:highlight>
         {`
 <Accordion
   sections={[{
@@ -373,20 +371,16 @@
   allSectionToggle={true}
   minSectionsAllSectionToggle={2}
 />
-`}</code
-      ></pre>
+`}
+    </div>
     <div class="app-example-wrapper">
-      <div
-        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-      >
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
         <Accordion
-          sections={[
-            {
-              id: 'example1',
-              heading: 'Title One',
-              content: 'Some content for the first section.',
-            },
-          ]}
+          sections={[{
+            id: 'example1',
+            heading: 'Title One',
+            content: 'Some content for the first section.',
+          }]}
           allSectionToggle={true}
           minSectionsAllSectionToggle={2}
         />
@@ -394,13 +388,13 @@
     </div>
 
     <h6>Accordion respecting expanded session state</h6>
-    <pre><code  use:highlight>
+    <div use:highlight>
         {`
 <Accordion
   sections={[{
     id: 'example2',
     heading: 'Remember state 1',
-    content: 'This section’s expansion will be saved in sessionStorage.',
+    content: 'This section's expansion will be saved in sessionStorage.',
     expanded: true,
   }, {
     id: 'example3',
@@ -409,34 +403,11 @@
   }]}
   rememberIsExpandedState={true}
 />
-`}</code
-      ></pre>
-    <div class="app-example-wrapper">
-      <div
-        class="app-example__frame app-example__frame--resizable app-example__frame--l p-6"
-      >
-        <Accordion
-          sections={[
-            {
-              id: 'example2',
-              heading: 'Remember state 1',
-              content:
-                'This section’s expansion will be saved in sessionStorage.',
-              expanded: true,
-            },
-            {
-              id: 'example3',
-              heading: 'Remember state 2',
-              content: 'Session state is also saved here.',
-            },
-          ]}
-          rememberIsExpandedState={true}
-        />
-      </div>
+`}
     </div>
 
     <h6>Accordion with custom toggle labels</h6>
-    <pre><code  use:highlight>
+    <div use:highlight>
         {`
 <Accordion
   sections={[{
@@ -450,27 +421,7 @@
   showAllSections="Expand All"
   showSection="Expand"
 />
-`}</code
-      ></pre>
-    <div class="app-example-wrapper">
-      <div
-        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-      >
-        <Accordion
-          sections={[
-            {
-              id: 'example4',
-              heading: 'Custom Toggle Section',
-              summary: 'Showing override for labels',
-              content: 'This accordion uses custom hide/show labels.',
-            },
-          ]}
-          hideAllSections="Collapse All"
-          hideSection="Collapse"
-          showAllSections="Expand All"
-          showSection="Expand"
-        />
-      </div>
+you`}
     </div>
   </div>
 {/if}
@@ -533,13 +484,13 @@
     padding: 20px 0px;
   }
 
-  :global(pre) {
-    background-color: #f3f3f3 !important; /* Slightly darker grey background */
-  }
+  /* :global(pre) {
+    background-color: #f3f3f3 !important; 
+  } */
 
-  :global(pre code) {
+  /* :global(pre code) {
     background-color: transparent !important;
-  }
+  } */
 
   /* pre code {
     background: #282c34;

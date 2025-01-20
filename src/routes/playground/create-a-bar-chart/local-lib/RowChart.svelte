@@ -84,7 +84,7 @@
                   (area) => area.areaCode === row.areaCode
                 ).localAuthorityName === inputSelectedArea
                   ? '#FF6961'
-                  : '#ADD8E6'}
+                  : '#B3EBF2'}
               ></Row>
             </g>
           {/each}

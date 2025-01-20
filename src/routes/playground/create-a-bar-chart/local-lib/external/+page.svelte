@@ -1,6 +1,5 @@
 <script>
-  import Btn from './Btn.svelte';
-  import GreenBar from './GreenBar.svelte';
+  import TextBar from './TextBar.svelte';
 
   let arr = $state([40, 20, 30, 10, 60, 50]);
 
@@ -12,6 +11,10 @@
     anArray.sort((a, b) => b - a);
   }
 </script>
+
+<g>
+  <TextBar></TextBar>
+</g>
 
 <Btn onClick={ascending} buttonContent={'ascending'} {arr}></Btn>
 <br />

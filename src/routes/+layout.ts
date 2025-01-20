@@ -15,7 +15,9 @@ export const load: LayoutLoad = async (event) => {
     return acc;
   }, {});
 
-  // testData = ONSLookup.map((d) => d.areaCode, {...testData})
+  testData.flatMetricData.forEach(item => {
+    item.areaName = ONSLookup[item.areaCode]
+});
 
   let metrics = [
     ...new Set(
@@ -48,6 +50,8 @@ export const load: LayoutLoad = async (event) => {
         .find((el) => el.areaCode === area && el.x === year)?.y,
     })),
   }));
+
+  console.log("!!!!!!!", dataInFormatForBarChart)
 
   return {
     metrics,

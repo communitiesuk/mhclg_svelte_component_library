@@ -8,14 +8,14 @@
   let { rowHeight, rowWidth, rowLabel, rowValue, barColor } = $props();
 </script>
 
-<g class="row-group">
-  <g transform="translate(-10,0)">
+<g dominant-baseline="middle" class="row-group">
+  <g transform="translate(-10,{rowHeight / 2})">
     <RowLabel {rowLabel}></RowLabel>
   </g>
-  <g transform="translate(0,0)">
+  <g transform="translate(0,{(rowHeight * 0.2) / 2})">
     <Bar {rowHeight} {rowWidth} {barColor}></Bar>
   </g>
-  <g transform="translate({rowWidth + 10},30)">
+  <g transform="translate({rowWidth + 10},{rowHeight / 2})">
     <RowValue {rowValue}></RowValue>
   </g>
 </g>

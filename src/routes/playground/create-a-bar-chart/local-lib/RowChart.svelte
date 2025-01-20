@@ -8,7 +8,7 @@
   import Row from './Row.svelte';
 
   // dataArray is an input to the RowChart component
-  let { dataArray, inputSelectedAreaCode, localAuthorityCodeLookup } = $props();
+  let { dataArray, inputSelectedArea, localAuthorityCodeLookup } = $props();
 
   $inspect(localAuthorityCodeLookup);
   // UI reacts when svgWidth changes
@@ -80,15 +80,12 @@
                 {rowWidth}
                 {rowLabel}
                 {rowValue}
-                barColor={row.areaCode === inputSelectedAreaCode
-                  ? 'red'
+                barColor={localAuthorityCodeLookup.find(
+                  (area) => area.areaCode === row.areaCode
+                ).localAuthorityName === inputSelectedArea
+                  ? '#FF6961'
                   : '#ADD8E6'}
               ></Row>
-              <!--
-                just have one barColor variable
-                barColor = red if row.areaCode===inputSelectedAreaCode
-                and blue otherwise
-              -->
             </g>
           {/each}
         </g>

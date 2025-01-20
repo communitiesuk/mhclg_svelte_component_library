@@ -5,7 +5,7 @@
 <svg>
   <rect
     width={rowWidth}
-    height={rowHeight}
+    height={rowHeight * 0.8}
     fill={barColor}
     style="stroke-width:1;stroke:#00008B"
   />

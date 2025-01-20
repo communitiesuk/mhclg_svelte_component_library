@@ -22,7 +22,8 @@
   let numberOfBars = $state(10);
 
   let barColor = $state('#ADD8E6');
-  let inputSelectedAreaCode = $state('');
+  let inputSelectedArea = $state('');
+  $inspect(inputSelectedArea);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -57,8 +58,8 @@
             />
           </Input>
           <br />
-          <div>Type in an area code that you want to color:</div>
-          <input bind:value={inputSelectedAreaCode} />
+          <div>Type in an area that you want to color:</div>
+          <input bind:value={inputSelectedArea} />
         </div>
         <div class="row-chart-container">
           <RowChart
@@ -68,7 +69,7 @@
               .bars.slice(0, numberOfBars)}
             {localAuthorityCodeLookup}
             {barColor}
-            {inputSelectedAreaCode}
+            {inputSelectedArea}
           ></RowChart>
         </div>
       </div>

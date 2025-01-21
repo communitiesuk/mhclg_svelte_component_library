@@ -30,7 +30,7 @@
   );
 
   let xEqualsZeroLine = $derived(
-    minValueAbsolute * (chartWidth / (minValueAbsolute + maxValue))
+    minValueAbsolute * (chartWidth / (minValueAbsolute + maxValue)) + 10
   );
 
   $inspect(xEqualsZeroLine);

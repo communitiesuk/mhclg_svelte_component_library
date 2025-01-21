@@ -1,38 +1,72 @@
 <script>
   // @ts-nocheck
-
   import { page } from "$app/stores";
-  import { onMount } from "svelte";
 
-  let components = [];
+  let { data } = $props();
 
-  // Reactive statement to update slugArray when the URL changes
+  /**
+   * &&   Splits the URL into parts, then takes the last two entries, which are used for locating the relevant wrapper svelte file.
+   * &&   Note that these variables are reactive so that if the user navigates directly to another component, the slugArray will update and so the current wrapper svelte file will be swapped for the new one.
+   */
   let slugArray = $derived($page?.url.pathname.split("/").filter(Boolean));
+  let folder = $derived(slugArray[slugArray.length - 2]);
+  let wrapper = $derived(
+    slugArray[slugArray.length - 1][0].toUpperCase() +
+      slugArray[slugArray.length - 1].substring(1),
+  );
 
-  $inspect(slugArray);
+  /**
+   * &&   Imports the wrapper component, reports error if the URL does not correspond to a component.
+   */
+  let Component = $state();
+  let errorImportingComponent = $state();
 
-  // Function to dynamically import components based on slugArray
-  async function loadComponents() {
-    components = await Promise.all(
-      slugArray.map(async (slug) => {
-        try {
-          const module = await import(`/src/wrapper/data-vis/Line.svelte`);
-          return { component: module.default, slug };
-        } catch (error) {
-          console.error(`Failed to load component for slug: ${slug}`, error);
-          return null;
-        }
-      }),
-    );
-    // Filter out any null components due to import errors
-    components = components.filter(Boolean);
-  }
-
-  // Load components on component mount
-  onMount(loadComponents);
+  $effect(() => {
+    (async () => {
+      try {
+        const module = await import(`/src/wrapper/${folder}/${wrapper}.svelte`);
+        Component = module.default;
+      } catch (error) {
+        errorImportingComponent = true;
+        console.log(error);
+      }
+    })();
+  });
 </script>
 
-<!-- Render the dynamically imported components -->
-{#each components as { component: Component, slug }}
-  <svelte:component this={Component} />
-{/each}
+{#if Component}
+  <svelte:component this={Component} {data}></svelte:component>
+{:else if errorImportingComponent}
+  <div class="g-top-level-container">
+    <h3>Failed to import componnet</h3>
+    <p>
+      Oops...we've returned an error when trying to import the component wrapper
+      associated with this URL.
+    </p>
+    <p class="underline font-bold">Things to check</p>
+    <div class="grid-container">
+      <div>1.</div>
+      <div>Does the component wrapper file exist?</div>
+      <div>2.</div>
+      <div>
+        Is the component wrapper file called <span class="font-bold"
+          >{wrapper}.svelte</span
+        >?
+      </div>
+      <div>3.</div>
+      <div>
+        Is the component wrapper file contained within a folder called <span
+          class="font-bold">{folder}</span
+        >?
+      </div>
+    </div>
+  </div>
+{/if}
+
+<style>
+  .grid-container {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 10px; /* Adjusts the space between grid items */
+  }
+</style>

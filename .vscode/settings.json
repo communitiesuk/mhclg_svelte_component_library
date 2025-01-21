@@ -1,15 +1,18 @@
 {
   // Enable Svelte language support and plugins
+  "svelte.enable-ts-plugin": true,
   "svelte.plugin.typescript.enable": true,
   "svelte.plugin.css.enable": true,
   "svelte.plugin.html.enable": true,
   "svelte.plugin.javascript.enable": true,
+  "svelte.plugin.svelte.format.config.svelteStrictMode": true,
   // Format on save for Svelte files
-  "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[svelte]": {
     "editor.defaultFormatter": "svelte.svelte-vscode"
   },
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {},
 
   // Prettier settings (for consistent formatting)
   "prettier.enable": true,
@@ -21,14 +24,11 @@
   "prettier.svelteBracketNewLine": true, // Controls if closing brackets should be on a new line
   // Enable ESLint for linting (if ESLint is configured)
   "eslint.validate": ["javascript", "svelte"],
-  "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
-    "source.organizeImports": "explicit"
-  },
   // Optional: TypeScript configuration if using TypeScript in Svelte files
   "typescript.svelte.plugin.enable": true,
   "typescript.suggest.autoImports": true,
   "javascript.suggest.autoImports": true,
+  
   // Disable conflicting formatters
   "[javascript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode" // Use Prettier for JavaScript files

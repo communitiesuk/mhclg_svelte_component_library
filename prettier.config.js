@@ -1,7 +1,7 @@
 /** @type {import("prettier").Config} */
 const config = {
   plugins: ["prettier-plugin-svelte"],
-  svelteStrictMode: false,
+  svelteStrictMode: true,
   svelteBracketNewLine: true,
   svelteAllowShorthand: true,
   svelteIndentScriptAndStyle: true,

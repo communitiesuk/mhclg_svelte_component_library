@@ -3,6 +3,7 @@
   import Axes from './external/Axes.svelte';
   import Button from './external/Button.svelte';
   import Legend from './external/Legend.svelte';
+  import Line from './external/Line.svelte';
   import Source from './external/Source.svelte';
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
   import Row from './Row.svelte';
@@ -24,6 +25,9 @@
   let rowHeight = $derived(chartHeight / dataArray.length);
 
   let maxValue = $derived(Math.max(...dataArray.map((item) => item.y)));
+  let minValueAbsolute = $derived(
+    Math.abs(Math.min(...dataArray.map((item) => item.y)))
+  );
 
   let highestToLowest = $state(false);
   let lowestToHighest = $state(false);
@@ -63,11 +67,15 @@
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
-          <!-- <Line xZeroPosition={250}></Line> -->
+          <Line
+            xEqualsZeroLine={minValueAbsolute *
+              (chartWidth / (minValueAbsolute + maxValue))}
+          ></Line>
 
           <!--i represents the current data point-->
           {#each orderedDataArray as row, i}
-            {@const barWidth = +row.y * (chartWidth / maxValue)}
+            {@const barWidth =
+              Math.abs(row.y) * (chartWidth / (minValueAbsolute + maxValue))}
             {@const rowLabel = localAuthorityCodeLookup.find(
               (area) => area.areaCode === row.areaCode
             ).localAuthorityName}

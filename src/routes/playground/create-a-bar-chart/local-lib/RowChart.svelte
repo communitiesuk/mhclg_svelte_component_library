@@ -29,6 +29,12 @@
     Math.abs(Math.min(...dataArray.map((item) => item.y)))
   );
 
+  let xEqualsZeroLine = $derived(
+    minValueAbsolute * (chartWidth / (minValueAbsolute + maxValue))
+  );
+
+  $inspect(xEqualsZeroLine);
+
   let highestToLowest = $state(false);
   let lowestToHighest = $state(false);
 
@@ -67,10 +73,7 @@
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
-          <Line
-            xEqualsZeroLine={minValueAbsolute *
-              (chartWidth / (minValueAbsolute + maxValue))}
-          ></Line>
+          <Line {xEqualsZeroLine}></Line>
 
           <!--i represents the current data point-->
           {#each orderedDataArray as row, i}
@@ -93,7 +96,11 @@
                 ).localAuthorityName === inputSelectedArea
                   ? '#FF6961'
                   : '#B3EBF2'}
+                barStartPostion={row.y > 0
+                  ? xEqualsZeroLine
+                  : xEqualsZeroLine - barWidth}
               ></Row>
+              <!-- {console.log(barStartPosition)} -->
             </g>
           {/each}
         </g>
@@ -103,3 +110,11 @@
     <Source></Source>
   </div>
 </div>
+
+<!-- // barStartPosition = {row.y > 0 ? }
+
+barStartPosition={row.y > 0
+                  ? xEqualsZeroLine
+                  : xEqualsZeroLine - barWidth}
+                
+                -->

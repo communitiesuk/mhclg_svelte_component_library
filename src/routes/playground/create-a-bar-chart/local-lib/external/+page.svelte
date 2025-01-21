@@ -1,7 +1,7 @@
 <script>
-  import Line from '../rowComponents/Line.svelte';
   import Btn from './Btn.svelte';
   import GreenBar from './GreenBar.svelte';
+  import Line from './Line.svelte';
   let arr = $state([40, 20, 30, 10, 60, 50]);
 
   // modify the existing array but don't return anything

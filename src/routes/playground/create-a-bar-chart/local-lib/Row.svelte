@@ -5,14 +5,15 @@
   // this information is passed in when the component is called
 
   // let { row } = $props();
-  let { rowHeight, rowWidth, rowLabel, rowValue, barColor } = $props();
+  let { rowHeight, rowWidth, rowLabel, rowValue, barColor, barStart } =
+    $props();
 </script>
 
 <g dominant-baseline="middle" class="row-group">
   <g transform="translate(-10,{rowHeight / 2})">
     <RowLabel {rowLabel}></RowLabel>
   </g>
-  <g transform="translate(0,{(rowHeight * 0.2) / 2})">
+  <g transform="translate({barStart},{(rowHeight * 0.2) / 2})">
     <Bar {rowHeight} {rowWidth} {barColor}></Bar>
   </g>
   <g transform="translate({rowWidth + 10},{rowHeight / 2})">

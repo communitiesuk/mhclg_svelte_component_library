@@ -1,6 +1,7 @@
 <script>
-  import TextBar from './TextBar.svelte';
-
+  import Line from '../rowComponents/Line.svelte';
+  import Btn from './Btn.svelte';
+  import GreenBar from './GreenBar.svelte';
   let arr = $state([40, 20, 30, 10, 60, 50]);
 
   // modify the existing array but don't return anything
@@ -12,9 +13,7 @@
   }
 </script>
 
-<g>
-  <TextBar></TextBar>
-</g>
+<Line></Line>
 
 <Btn onClick={ascending} buttonContent={'ascending'} {arr}></Btn>
 <br />

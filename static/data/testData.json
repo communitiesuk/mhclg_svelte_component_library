@@ -8,14 +8,14 @@
             "areaCode": "E07000223"
         },
         {
-            "y": "-35.8",
+            "y": "35.8",
             "x": 2022,
             "xLabel": "2022-23",
             "metric": "Household waste recycling rate",
             "areaCode": "E07000026"
         },
         {
-            "y": "32.1",
+            "y": "-32.1",
             "x": 2022,
             "xLabel": "2022-23",
             "metric": "Household waste recycling rate",
@@ -29,7 +29,7 @@
             "areaCode": "E07000224"
         },
         {
-            "y": "35.0",
+            "y": "-35.0",
             "x": 2022,
             "xLabel": "2022-23",
             "metric": "Household waste recycling rate",

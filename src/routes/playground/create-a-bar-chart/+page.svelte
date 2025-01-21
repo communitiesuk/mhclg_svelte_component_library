@@ -9,8 +9,6 @@
 
   let { data, homepage = false, folders } = $props();
 
-  $inspect(data);
-
   let pageInfo = $page?.route.id.split('/');
 
   details.name = textStringConversion(
@@ -23,7 +21,6 @@
 
   let barColor = $state('#ADD8E6');
   let inputSelectedArea = $state('');
-  $inspect(inputSelectedArea);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>

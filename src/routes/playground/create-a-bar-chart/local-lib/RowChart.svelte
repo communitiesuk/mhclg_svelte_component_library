@@ -6,12 +6,10 @@
   import Source from './external/Source.svelte';
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
   import Row from './Row.svelte';
-  import Line from './rowComponents/Line.svelte';
 
   // dataArray is an input to the RowChart component
   let { dataArray, inputSelectedArea, localAuthorityCodeLookup } = $props();
 
-  $inspect(localAuthorityCodeLookup);
   // UI reacts when svgWidth changes
   let svgWidth = $state(),
     svgHeight = 500;
@@ -37,13 +35,6 @@
         ? [...dataArray.sort((a, b) => b.y - a.y)]
         : dataArray
   );
-  $inspect(orderedDataArray);
-
-  let xZeroPosition =
-    -1 * Math.min(...orderedDataArray.map((area) => area.y)) + 10; // this is wrong because it's giving me the y value + 10
-  // not the pixels
-
-  $inspect(xZeroPosition);
 </script>
 
 <div class="mt-10">
@@ -72,11 +63,11 @@
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
-          <Line xZeroPosition={250}></Line>
+          <!-- <Line xZeroPosition={250}></Line> -->
 
           <!--i represents the current data point-->
           {#each orderedDataArray as row, i}
-            {@const rowWidth = +row.y * (chartWidth / maxValue)}
+            {@const barWidth = +row.y * (chartWidth / maxValue)}
             {@const rowLabel = localAuthorityCodeLookup.find(
               (area) => area.areaCode === row.areaCode
             ).localAuthorityName}
@@ -86,7 +77,7 @@
               <!--{rowHeight} is short hand for rowHeight = {rowHeight}-->
               <Row
                 {rowHeight}
-                {rowWidth}
+                {barWidth}
                 {rowLabel}
                 {rowValue}
                 barColor={localAuthorityCodeLookup.find(
@@ -94,7 +85,6 @@
                 ).localAuthorityName === inputSelectedArea
                   ? '#FF6961'
                   : '#B3EBF2'}
-                barStart={row.y > 0 ? xZeroPosition : xZeroPosition + row.y}
               ></Row>
             </g>
           {/each}

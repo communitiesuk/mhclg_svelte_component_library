@@ -5,7 +5,7 @@
   // this information is passed in when the component is called
 
   // let { row } = $props();
-  let { rowHeight, rowWidth, rowLabel, rowValue, barColor, barStart } =
+  let { rowHeight, barWidth, rowLabel, rowValue, barColor, barStart } =
     $props();
 </script>
 
@@ -14,9 +14,9 @@
     <RowLabel {rowLabel}></RowLabel>
   </g>
   <g transform="translate({barStart},{(rowHeight * 0.2) / 2})">
-    <Bar {rowHeight} {rowWidth} {barColor}></Bar>
+    <Bar {rowHeight} {barWidth} {barColor}></Bar>
   </g>
-  <g transform="translate({rowWidth + 10},{rowHeight / 2})">
+  <g transform="translate({barWidth + 10},{rowHeight / 2})">
     <RowValue {rowValue}></RowValue>
   </g>
 </g>

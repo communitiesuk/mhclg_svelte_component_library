@@ -6,9 +6,11 @@
   "svelte.plugin.javascript.enable": true,
   // Format on save for Svelte files
   "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[svelte]": {
     "editor.defaultFormatter": "svelte.svelte-vscode"
   },
+
   // Prettier settings (for consistent formatting)
   "prettier.enable": true,
   "prettier.singleQuote": true, // Use single quotes

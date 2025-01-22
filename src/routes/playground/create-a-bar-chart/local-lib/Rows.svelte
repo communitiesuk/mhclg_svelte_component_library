@@ -15,6 +15,8 @@
 
   let allValues = $derived(dataArray.map((el) => el.y));
 
+  $inspect(allValues)
+
   let valueMax = $derived(Math.max(...allValues));
 
   let xFunction = $derived(

@@ -1,188 +1,134 @@
 <script lang="ts">
   import type { SvelteComponent } from "svelte";
 
-  // Types
-  type CheckboxOption = {
+  // Define the CheckboxOption type
+  export type CheckboxOption = {
     value: string;
     label: string;
     hint?: string;
     exclusive?: boolean;
     conditional?: {
       id: string;
-      content: string | SvelteComponent;
+      content: string | typeof SvelteComponent;
     };
   };
 
-  type Props = {
-    legend: string;
-    hint?: string;
-    error?: string;
-    isPageHeading?: boolean;
-    legendSize?: "l" | "m" | "s";
-    small?: boolean;
-    name: string;
-    options: CheckboxOption[];
-  };
-
-  // Props
-  const props: Props = $props();
+  // Component props
   const {
     legend,
     hint,
     error,
+    name,
     isPageHeading = false,
     legendSize = "l",
     small = false,
-    name,
-    options,
-  } = props;
+    options = [],
+  } = $props<{
+    legend: string;
+    hint?: string;
+    error?: string;
+    name: string;
+    isPageHeading?: boolean;
+    legendSize?: "l" | "m" | "s";
+    small?: boolean;
+    options?: CheckboxOption[];
+  }>();
 
-  // State
-  let root: HTMLDivElement;
-  let selectedValues = $state<Array<string>>([]);
-  let exclusiveValue = $state<string | null>(null);
+  // Component state
+  let selectedValues = $state([]);
 
-  // Derived values
-  const ariaDescribedBy = $derived(() => {
-    const parts = [hint && "hint", error && "error"].filter(Boolean);
-    return parts.length ? parts.join(" ") : undefined;
-  });
+  // Derived state to check if a value is selected
+  let isChecked = $derived((value: string) => selectedValues.includes(value));
 
-  const isSelected = $derived((value: string) =>
-    selectedValues.includes(value),
-  );
-
-  // Effects for managing conditional reveals
-  $effect(() => {
-    const inputs = root?.querySelectorAll<HTMLInputElement>(
-      'input[type="checkbox"]',
-    );
-    if (!inputs) return;
-
-    inputs.forEach((input) => {
-      const targetId = input.getAttribute("data-aria-controls");
-      if (!targetId) return;
-
-      const target = document.getElementById(targetId);
-      if (!target) {
-        console.error(`Conditional reveal (id="${targetId}") not found`);
-        return;
-      }
-
-      // Update ARIA attributes
-      input.setAttribute("aria-controls", targetId);
-      input.removeAttribute("data-aria-controls");
-
-      // Update conditional visibility
-      const isChecked = selectedValues.includes(input.value);
-      input.setAttribute("aria-expanded", isChecked.toString());
-      target.classList.toggle(
-        "govuk-checkboxes__conditional--hidden",
-        !isChecked,
-      );
-    });
-  });
-
-  // Handle checkbox changes
-  function handleChange(event: Event) {
-    const input = event.target as HTMLInputElement;
-    const value = input.value;
-    const isExclusive = input.getAttribute("data-behaviour") === "exclusive";
-
-    if (isExclusive) {
-      if (input.checked) {
-        selectedValues = [value];
-        exclusiveValue = value;
-      } else {
-        selectedValues = [];
-        exclusiveValue = null;
-      }
+  // Function to toggle checkbox selection
+  function toggleCheckbox(option: CheckboxOption) {
+    if (option.exclusive) {
+      selectedValues = selectedValues.includes(option.value)
+        ? []
+        : [option.value];
     } else {
-      if (input.checked) {
-        // If checking a regular option, uncheck exclusive option
-        if (exclusiveValue !== null) {
-          selectedValues = [];
-          exclusiveValue = null;
-        }
-        selectedValues = [...selectedValues, value];
-      } else {
-        selectedValues = selectedValues.filter((v) => v !== value);
-      }
+      selectedValues = selectedValues.includes(option.value)
+        ? selectedValues.filter((v) => v !== option.value)
+        : [
+            ...selectedValues.filter(
+              (v) => !options.find((o) => o.value === v && o.exclusive),
+            ),
+            option.value,
+          ];
     }
   }
 </script>
 
-<div
-  class="govuk-form-group {error ? 'govuk-form-group--error' : ''}"
-  bind:this={root}
->
-  <fieldset class="govuk-fieldset" aria-describedby={ariaDescribedBy()}>
+<div class="govuk-form-group{error ? ' govuk-form-group--error' : ''}">
+  <fieldset
+    class="govuk-fieldset"
+    aria-describedby={hint ? `${name}-hint` : null}
+  >
     <legend class="govuk-fieldset__legend govuk-fieldset__legend--{legendSize}">
       {#if isPageHeading}
-        <h1 class="govuk-fieldset__heading">
-          {legend}
-        </h1>
+        <h1 class="govuk-fieldset__heading">{legend}</h1>
       {:else}
         {legend}
       {/if}
     </legend>
 
     {#if hint}
-      <div id="hint" class="govuk-hint">
-        {hint}
-      </div>
+      <div id="{name}-hint" class="govuk-hint">{hint}</div>
     {/if}
 
     {#if error}
-      <p id="error" class="govuk-error-message">
+      <p id="{name}-error" class="govuk-error-message">
         <span class="govuk-visually-hidden">Error:</span>
         {error}
       </p>
     {/if}
 
     <div
-      class="govuk-checkboxes {small ? 'govuk-checkboxes--small' : ''}"
+      class="govuk-checkboxes{small ? ' govuk-checkboxes--small' : ''}"
       data-module="govuk-checkboxes"
     >
       {#each options as option, i}
+        {#if option.exclusive && i > 0}
+          <div class="govuk-checkboxes__divider">or</div>
+        {/if}
+
         <div class="govuk-checkboxes__item">
           <input
-            class="govuk-checkboxes__input"
-            id="{name}-{i}"
-            {name}
             type="checkbox"
+            {name}
+            id="{name}-{i}"
+            class="govuk-checkboxes__input"
             value={option.value}
-            checked={isSelected(option.value)}
-            data-behaviour={option.exclusive ? "exclusive" : undefined}
-            data-aria-controls={option.conditional?.id}
-            aria-describedby={option.hint ? `${name}-${i}-hint` : undefined}
-            onchange={handleChange}
+            aria-controls={option.conditional?.id}
+            aria-expanded={isChecked(option.value)}
+            aria-describedby={option.hint ? `${name}-${i}-hint` : null}
+            checked={isChecked(option.value)}
+            onchange={() => toggleCheckbox(option)}
           />
           <label class="govuk-label govuk-checkboxes__label" for="{name}-{i}">
             {option.label}
           </label>
+
           {#if option.hint}
             <div id="{name}-{i}-hint" class="govuk-hint govuk-checkboxes__hint">
               {option.hint}
             </div>
           {/if}
         </div>
+
         {#if option.conditional}
           <div
-            class="govuk-checkboxes__conditional govuk-checkboxes__conditional--hidden"
             id={option.conditional.id}
+            class="govuk-checkboxes__conditional{isChecked(option.value)
+              ? ''
+              : ' govuk-checkboxes__conditional--hidden'}"
           >
             {#if typeof option.conditional.content === "string"}
               {@html option.conditional.content}
             {:else}
-              {#key option.conditional.content}
-                {option.conditional.content}
-              {/key}
+              <option.conditional.content />
             {/if}
           </div>
-        {/if}
-        {#if option.exclusive}
-          <div class="govuk-checkboxes__divider">or</div>
         {/if}
       {/each}
     </div>

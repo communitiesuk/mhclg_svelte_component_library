@@ -1,7 +1,7 @@
 @import 'tailwindcss/base';
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
-
+@import '/css/govuk-frontend.min.css';
 :root {
   /* Font families */
   --sk-font-family-ui: "Fira Sans", -apple-system, sans-serif;
@@ -37,8 +37,6 @@
  
   scrollbar-width: thin;
   scrollbar-color: var(--sk-scrollbar) transparent;
-  margin: 0;
-  padding: 0;
 }
 
 ::selection {

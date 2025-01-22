@@ -19,6 +19,30 @@
 
   let { data, homepage = undefined, folders } = $props();
 
+  // Validation function for the checkbox example
+  function validateContactPreferences(values: string[]): string | undefined {
+    // If no options are selected
+    if (values.length === 0) {
+      return "Please select at least one contact method";
+    }
+
+    // If "none" is selected along with other options
+    if (values.includes("none") && values.length > 1) {
+      return "You cannot select other options when opting out of all communications";
+    }
+
+    // If email is selected, ensure it's not the only digital option
+    if (
+      values.includes("email") &&
+      !values.includes("sms") &&
+      !values.includes("none")
+    ) {
+      return "Please select SMS as a backup digital contact method when using email";
+    }
+
+    return undefined;
+  }
+
   let snippetSections = [
     {
       id: "1",
@@ -190,22 +214,6 @@
         ),
       ),
   );
-
-  /*let sections = $derived(
-    (() => {
-      try {
-        return JSON.parse(
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            'sections'
-          )
-        );
-      } catch {
-        return [];
-      }
-    })()
-  );*/
 
   let derivedParametersObject = $derived(homepage ?? { sections });
 
@@ -615,11 +623,11 @@
         <CheckBox
           legend="Advanced Contact Preferences"
           hint="Complete example showing all CheckBox component features"
-          error="Please select at least one contact method"
           name="advanced-contact"
           isPageHeading={true}
           legendSize="m"
           small={true}
+          validate={validateContactPreferences}
           options={[
             {
               value: "email",
@@ -672,14 +680,35 @@
 
     <CodeBlock
       code={`
+<script lang="ts">
+  function validateContactPreferences(values: string[]): string | undefined {
+    // If no options are selected
+    if (values.length === 0) {
+      return "Please select at least one contact method";
+    }
+    
+    // If "none" is selected along with other options
+    if (values.includes("none") && values.length > 1) {
+      return "You cannot select other options when opting out of all communications";
+    }
+    
+    // If email is selected, ensure it's not the only digital option
+    if (values.includes("email") && !values.includes("sms") && !values.includes("none")) {
+      return "Please select SMS as a backup digital contact method when using email";
+    }
+    
+    return undefined;
+  }
+</script>
+
 <CheckBox
   legend="Advanced Contact Preferences"
   hint="Complete example showing all CheckBox component features"
-  error="Please select at least one contact method"
   name="advanced-contact"
   isPageHeading={true}
   legendSize="m"
   small={true}
+  validate={validateContactPreferences}
   options={[
     {
       value: "email",

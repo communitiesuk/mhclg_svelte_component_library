@@ -29,6 +29,9 @@
     line,
   } from "d3-shape";
 
+  const filePath = __FILE_PATH__;
+  console.log("Component file path:", filePath);
+
   let { data } = $props();
 
   /**

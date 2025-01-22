@@ -1,5 +1,8 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte'
+  import type { Snippet } from 'svelte';
+  // Browser storage
+  import { browser } from '$app/environment'; //Do we need this? Will the app ever NOT run in the browser?
+  import { onMount } from 'svelte';
 
   // Props
   let {
@@ -32,71 +35,67 @@
     rememberIsExpandedState?: boolean;
   } = $props();
 
-
   // State and derived stores
-  let expandedSections = $state(new Set<string>());
-  let allExpanded = $derived(expandedSections.size === sections.length);
+  let expandedSections: string[] = $state(
+    []
+    // sections
+    //   .filter((section) => section.expanded)
+    //   .map((section) => section.id + section.heading.slice(0, 2))
+  );
+  $inspect(expandedSections.length);
+  let allExpanded = $derived(expandedSections.length === sections.length);
 
   // Event handlers
 
   function toggleSection(id: string) {
+    // const update = new SvelteSet(expandedSections);
     // Create a new reference to trigger Svelte 5 reactivity
-    const updatedExpandedSections = new Set(expandedSections);
-    if (updatedExpandedSections.has(id)) {
-      updatedExpandedSections.delete(id);
+    if (expandedSections.includes(id)) {
+      let index = expandedSections.indexOf(id);
+      expandedSections.splice(index, 1);
     } else {
-      updatedExpandedSections.add(id);
+      expandedSections.push(id);
     }
-    // Reassign so Svelte treats this as a new value
-    expandedSections = updatedExpandedSections;
   }
 
   function toggleAll() {
-    // Create a new reference to trigger Svelte 5 reactivity
-    const updatedExpandedSections = new Set(expandedSections);
-    if (allExpanded) {
-      updatedExpandedSections.clear();
-    } else {
-      sections.forEach(section => updatedExpandedSections.add(section.id));
-    }
-    // Reassign so Svelte treats this as a new value
-    expandedSections = updatedExpandedSections;
-  }
+    // const update = new SvelteSet(expandedSections);
 
-  // Browser storage
-  import { browser } from '$app/environment';
-  import { onMount } from 'svelte';
+    if (!allExpanded) {
+      expandedSections = [];
+      sections.forEach((section) => expandedSections.push(section.id));
+    } else {
+      expandedSections = [];
+    }
+  }
 
   // Only use session storage logic if rememberIsExpandedState is true
   onMount(() => {
     if (browser && rememberIsExpandedState) {
-      const updatedExpandedSections = new Set(expandedSections);
       sections.forEach((section) => {
         // If the section is explicitly expanded, respect that.
         // Otherwise, try to restore from session storage.
+        // **** Is this the behaviour we want? Shouldn't it be the other way around?
         if (section.expanded) {
-          updatedExpandedSections.add(section.id);
+          expandedSections.push(section.id);
         } else {
-          try {
-            const stored = sessionStorage.getItem(section.id);
-            if (stored === 'true') {
-              updatedExpandedSections.add(section.id);
-            }
-          } catch (e) {
-            // Handle storage errors gracefully (e.g. private mode)
+          // try {
+          const stored = sessionStorage.getItem(section.id);
+          if (stored === 'true') {
+            expandedSections.push(section.id);
           }
+          // } catch (e) {
+          //   // Handle storage errors gracefully (e.g. private mode)
+          // }
         }
       });
-      expandedSections = updatedExpandedSections; // triggers reactivity
     } else {
       // If rememberIsExpandedState is false, just respect the initial `section.expanded` values
-      const updatedExpandedSections = new Set(expandedSections);
       sections.forEach((section) => {
         if (section.expanded) {
-          updatedExpandedSections.add(section.id);
+          expandedSections.push(section.id);
         }
       });
-      expandedSections = updatedExpandedSections;
     }
   });
 
@@ -104,14 +103,14 @@
   $effect(() => {
     if (browser && rememberIsExpandedState) {
       sections.forEach((section) => {
-        try {
-          sessionStorage.setItem(
-            section.id,
-            expandedSections.has(section.id).toString()
-          );
-        } catch (e) {
-          // Handle storage errors gracefully
-        }
+        // try {
+        sessionStorage.setItem(
+          section.id,
+          expandedSections.includes(section.id).toString()
+        );
+        // } catch (e) {
+        //   // Handle storage errors gracefully
+        // }
       });
     }
   });
@@ -123,8 +122,8 @@
   id="accordion-default"
 >
   <div
-  class="govuk-accordion__controls"
-  hidden={!allSectionToggle || sections.length < minSectionsAllSectionToggle}
+    class="govuk-accordion__controls"
+    hidden={!allSectionToggle || sections.length < minSectionsAllSectionToggle}
   >
     <button
       type="button"
@@ -143,7 +142,7 @@
   </div>
 
   {#each sections as section}
-    {@const isExpanded = expandedSections.has(section.id)}
+    {@const isExpanded = expandedSections.includes(section.id)}
     <div
       class="govuk-accordion__section"
       class:govuk-accordion__section--expanded={isExpanded}
@@ -199,9 +198,9 @@
         hidden={!isExpanded}
       >
         {#if typeof section.content === 'string'}
-        <p class="govuk-body">{section.content}</p>
+          <p class="govuk-body">{section.content}</p>
         {:else}
-        {@render section.content()}
+          {@render section.content()}
         {/if}
       </div>
     </div>

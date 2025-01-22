@@ -15,6 +15,7 @@
   import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
   import CodeBlock from '$lib/components/content/CodeBlock.svelte';
+  import CheckBox from '$lib/components/ui/CheckBox.svelte';
 
   let { data, homepage = undefined, folders } = $props();
 
@@ -437,7 +438,34 @@
         />
       </div>
     </div>
-
+    <CheckBox
+  legend="Contact preferences"
+  hint="Select how you'd like to be contacted"
+  name="contact"
+  options={[
+    {
+      value: "email",
+      label: "Email",
+      conditional: {
+        id: "email-input",
+        content: `<div class="govuk-form-group">
+          <label class="govuk-label" for="email">Email address</label>
+          <input class="govuk-input" id="email" name="email" type="email">
+        </div>`
+      }
+    },
+    {
+      value: "phone",
+      label: "Phone",
+      hint: "We'll only call during business hours"
+    },
+    {
+      value: "none",
+      label: "Do not contact me",
+      exclusive: true
+    }
+    ]}
+    />
     <h6>Accordion with custom toggle labels</h6>
     <CodeBlock
       code={`
@@ -478,6 +506,8 @@
       </div>
     </div>
   </div>
+
+
 {/if}
 
 {#snippet content1()}

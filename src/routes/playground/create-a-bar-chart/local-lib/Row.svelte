@@ -5,8 +5,17 @@
   // this information is passed in when the component is called
 
   // let { row } = $props();
-  let { rowHeight, barWidth, rowLabel, rowValue, barColor, barStartPostion } =
-    $props();
+  let {
+    rowHeight,
+    barWidth,
+    rowLabel,
+    rowValue,
+    barColor,
+    barStartPostion,
+    rowValuePosition,
+  } = $props();
+
+  $inspect(rowValuePosition);
 </script>
 
 <g dominant-baseline="middle" class="row-group">
@@ -16,7 +25,7 @@
   <g transform="translate({barStartPostion},{(rowHeight * 0.2) / 2})">
     <Bar {rowHeight} {barWidth} {barColor}></Bar>
   </g>
-  <g transform="translate({barStartPostion + barWidth - 6},{rowHeight / 2})">
+  <g transform="translate({rowValuePosition},{rowHeight / 2})">
     <RowValue {rowValue}></RowValue>
   </g>
 </g>

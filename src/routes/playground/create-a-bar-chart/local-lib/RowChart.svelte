@@ -45,6 +45,13 @@
         ? [...dataArray.sort((a, b) => b.y - a.y)]
         : dataArray
   );
+
+  // let rowValuePosition;
+  // if (rowValue > 0) {
+  //   rowValuePosition = barStartPostion + barWidth - 6;
+  // } else {
+  //   rowValuePosition = barStartPostion + 6;
+  // }
 </script>
 
 <div class="mt-10">
@@ -99,6 +106,9 @@
                 barStartPostion={row.y > 0
                   ? xEqualsZeroLine
                   : xEqualsZeroLine - barWidth}
+                rowValuePosition={row.y > 0
+                  ? xEqualsZeroLine + barWidth - 6
+                  : xEqualsZeroLine - barWidth + 6}
               ></Row>
             </g>
           {/each}

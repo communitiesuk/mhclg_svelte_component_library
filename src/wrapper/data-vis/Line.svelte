@@ -1,7 +1,3 @@
-<script module>
-  export { snippetExample };
-</script>
-
 <script>
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
@@ -688,6 +684,8 @@
   );
 </script>
 
+
+
 <!--
 DONOTTOUCH  *
 &&          Uses details to render metadata for the component.
@@ -758,10 +756,6 @@ DONOTTOUCH  *
     <h5 class="underline underline-offset-4">Examples</h5>
   </div>
 {/if}
-
-{#snippet snippetExample()}
-  hello there
-{/snippet}
 
 <style>
   svg {

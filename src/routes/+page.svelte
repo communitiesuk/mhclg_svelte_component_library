@@ -2,7 +2,6 @@
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import LoadArrayOfComponents from "./local-lib/LoadArrayOfComponents.svelte";
 
-  import { snippetExample } from "./../wrapper/data-vis/Line.svelte";
 
   let { data } = $props();
 
@@ -22,7 +21,6 @@
 TODO		
 <>		
 -->
-{@render snippetExample()}
 
 <div class="g-top-level-container">
   <div class="flex flex-col gap-6">

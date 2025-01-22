@@ -238,6 +238,18 @@
     }
     return path;
   }
+
+  function copyHighlightedCode(event) {
+    const block = event.currentTarget.closest('.code-block');
+    if (!block) return;
+
+    const codeElement = block.querySelector('code');
+    if (!codeElement) return;
+
+    // Get text content while preserving new lines
+    const text = codeElement.innerText || codeElement.textContent;
+    navigator.clipboard.writeText(text);
+  }
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>
@@ -277,7 +289,17 @@
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
-    <div class="code-block" use:highlight>
+    <div class="code-block">
+      <div class="controls">
+        <span class="filename" data-ext=".svelte">App</span>
+        <button
+          class="copy-to-clipboard raised"
+          onclick={copyHighlightedCode}
+          title="Copy to clipboard"
+          aria-label="Copy to clipboard"
+        ></button>
+      </div>
+      <div use:highlight>
       {`
 <script>
   import Accordion from '$lib/components/ui/Accordion.svelte';
@@ -351,6 +373,7 @@
 
 <Accordion sections={snippetSections} />
 `}
+      </div>
     </div>
     <div class="app-example-wrapper">
       <div
@@ -361,7 +384,17 @@
     </div>
 
     <h6>Accordion with minimum sections for toggle</h6>
-    <div class="code-block" use:highlight>
+    <div class="code-block">
+      <div class="controls">
+        <span class="filename" data-ext=".svelte">App</span>
+        <button
+          class="copy-to-clipboard raised"
+          onclick={copyHighlightedCode}
+          title="Copy to clipboard"
+          aria-label="Copy to clipboard"
+        ></button>
+      </div>
+      <div use:highlight>
       {`
 <Accordion
   sections={[{
@@ -373,6 +406,7 @@
   minSectionsAllSectionToggle={2}
 />
 `}
+      </div>
     </div>
     <div class="app-example-wrapper">
       <div
@@ -393,7 +427,17 @@
     </div>
 
     <h6>Accordion respecting expanded session state</h6>
-    <div class="code-block" use:highlight>
+    <div class="code-block">
+      <div class="controls">
+        <span class="filename" data-ext=".svelte">App</span>
+        <button
+          class="copy-to-clipboard raised"
+          onclick={copyHighlightedCode}
+          title="Copy to clipboard"
+          aria-label="Copy to clipboard"
+        ></button>
+      </div>
+      <div use:highlight>
       {`
 <Accordion
   sections={[{
@@ -409,6 +453,7 @@
   rememberIsExpandedState={true}
 />
 `}
+      </div>
     </div>
     <div class="app-example-wrapper">
       <div
@@ -435,7 +480,17 @@
     </div>
 
     <h6>Accordion with custom toggle labels</h6>
-    <div class="code-block" use:highlight>
+    <div class="code-block">
+      <div class="controls">
+        <span class="filename" data-ext=".svelte">App</span>
+        <button
+          class="copy-to-clipboard raised"
+          onclick={copyHighlightedCode}
+          title="Copy to clipboard"
+          aria-label="Copy to clipboard"
+        ></button>
+      </div>
+      <div use:highlight>
       {`
 <Accordion
   sections={[{
@@ -450,6 +505,7 @@
   showAllSections="Expand All"
   showSection="Expand"
 />`}
+      </div>
     </div>
     <div class="app-example-wrapper">
       <div

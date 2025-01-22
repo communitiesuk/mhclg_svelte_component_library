@@ -1,48 +1,48 @@
 <script>
   // @ts-nocheck
-  import { page } from '$app/stores';
-  import Line from '$lib/components/data-vis/line-chart/Line.svelte';
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
-  import Accordion from '$lib/components/ui/Accordion.svelte';
-  import { defaultScreenWidthBreakpoints } from '$lib/config.js';
-  import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
-  import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
-  import ScreenSizeRadio from '$lib/package-wrapping/ScreenSizeRadio.svelte';
-  import { getValueFromParametersArray } from '$lib/utils/data-transformations/getValueFromParametersArray.js';
-  import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
-  import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
-  import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
-  import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
-  import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
-  import CodeBlock from '$lib/components/content/CodeBlock.svelte';
-  import CheckBox from '$lib/components/ui/CheckBox.svelte';
+  import { page } from "$app/stores";
+  import Line from "$lib/components/data-vis/line-chart/Line.svelte";
+  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import Accordion from "$lib/components/ui/Accordion.svelte";
+  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
+  import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
+  import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
+  import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
+  import { getValueFromParametersArray } from "$lib/utils/data-transformations/getValueFromParametersArray.js";
+  import { addIndexAndInitalValue } from "$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js";
+  import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
+  import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
+  import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
+  import CodeBlock from "$lib/components/content/CodeBlock.svelte";
+  import CheckBox from "$lib/components/ui/CheckBox.svelte";
 
   let { data, homepage = undefined, folders } = $props();
 
   let snippetSections = [
     {
-      id: '1',
-      heading: 'Section 1',
+      id: "1",
+      heading: "Section 1",
       content: content1,
     },
     {
-      id: '2',
-      heading: 'Section 2',
+      id: "2",
+      heading: "Section 2",
       content: content2,
     },
     {
-      id: '3',
-      heading: 'Section 3',
+      id: "3",
+      heading: "Section 3",
       content: content3,
     },
   ];
 
   let details = {
-    status: 'in_progress',
+    status: "in_progress",
     description: [
       {
         content:
-          'An expandable and collapsible section component that allows users to show and hide content.',
+          "An expandable and collapsible section component that allows users to show and hide content.",
       },
       {
         content:
@@ -53,22 +53,22 @@
     context: [
       {
         content:
-          'Use the accordion component to let users show and hide sections of related content on a page.',
+          "Use the accordion component to let users show and hide sections of related content on a page.",
       },
       {
         content:
-          'Only use an accordion if there is evidence it is helpful for users.',
+          "Only use an accordion if there is evidence it is helpful for users.",
       },
     ],
     childComponents: undefined,
     requirements: undefined,
   };
 
-  let pageInfo = $page?.route.id.split('/');
+  let pageInfo = $page?.route.id.split("/");
 
   details.name = textStringConversion(
     folders ? folders[folders.length - 1] : pageInfo[pageInfo.length - 1],
-    'title-first-word'
+    "title-first-word",
   );
   details.folder = folders
     ? folders[folders.length - 2]
@@ -80,104 +80,104 @@
     homepage ??
     addIndexAndInitalValue([
       {
-        name: 'sections',
-        category: 'Content',
+        name: "sections",
+        category: "Content",
         isProp: true,
-        inputType: 'textArea',
+        inputType: "textArea",
         value: JSON.stringify(
           [
             {
-              id: '1',
-              heading: 'Writing well for the web',
-              summary: 'Learn about writing content for your website',
-              content: 'This is the content for Writing well for the web.',
+              id: "1",
+              heading: "Writing well for the web",
+              summary: "Learn about writing content for your website",
+              content: "This is the content for Writing well for the web.",
               expanded: true,
             },
             {
-              id: '2',
-              heading: 'Writing well for specialists',
-              summary: 'Guidance for writing technical content',
-              content: 'This is the content for Writing well for specialists.',
+              id: "2",
+              heading: "Writing well for specialists",
+              summary: "Guidance for writing technical content",
+              content: "This is the content for Writing well for specialists.",
               expanded: false,
             },
             {
-              id: '3',
-              heading: 'Know your audience',
-              summary: 'Understanding who your users are',
-              content: 'This is the content for Know your audience.',
+              id: "3",
+              heading: "Know your audience",
+              summary: "Understanding who your users are",
+              content: "This is the content for Know your audience.",
             },
           ],
           null,
-          2
+          2,
         ),
       },
       {
-        name: 'hideAllSections',
-        category: 'UI Toggle Labels',
+        name: "hideAllSections",
+        category: "UI Toggle Labels",
         isProp: true,
-        inputType: 'input',
-        value: 'Hide all sections',
+        inputType: "input",
+        value: "Hide all sections",
       },
       {
-        name: 'hideSection',
-        category: 'UI Toggle Labels',
+        name: "hideSection",
+        category: "UI Toggle Labels",
         isProp: true,
-        inputType: 'input',
-        value: 'Hide',
+        inputType: "input",
+        value: "Hide",
       },
       {
-        name: 'hideSectionAriaLabel',
-        category: 'UI Toggle Labels',
+        name: "hideSectionAriaLabel",
+        category: "UI Toggle Labels",
         isProp: true,
-        inputType: 'input',
-        value: 'Hide this section',
+        inputType: "input",
+        value: "Hide this section",
       },
       {
-        name: 'showAllSections',
-        category: 'UI Toggle Labels',
+        name: "showAllSections",
+        category: "UI Toggle Labels",
         isProp: true,
-        inputType: 'input',
-        value: 'Show all sections',
+        inputType: "input",
+        value: "Show all sections",
       },
       {
-        name: 'showSection',
-        category: 'UI Toggle Labels',
+        name: "showSection",
+        category: "UI Toggle Labels",
         isProp: true,
-        inputType: 'input',
-        value: 'Show',
+        inputType: "input",
+        value: "Show",
       },
       {
-        name: 'showSectionAriaLabel',
-        category: 'UI Toggle Labels',
+        name: "showSectionAriaLabel",
+        category: "UI Toggle Labels",
         isProp: true,
-        inputType: 'input',
-        value: 'Show this section',
+        inputType: "input",
+        value: "Show this section",
       },
       {
-        name: 'allSectionToggle',
-        category: 'Accordion Toggle Options',
+        name: "allSectionToggle",
+        category: "Accordion Toggle Options",
         isProp: true,
-        inputType: 'checkbox',
-        value: 'true',
+        inputType: "checkbox",
+        value: "true",
       },
       {
-        name: 'minSectionsAllSectionToggle',
-        category: 'Accordion Toggle Options',
+        name: "minSectionsAllSectionToggle",
+        category: "Accordion Toggle Options",
         isProp: true,
-        inputType: 'input',
-        value: '2',
+        inputType: "input",
+        value: "2",
       },
       {
-        name: 'rememberIsExpandedState',
-        category: 'Accordion Toggle Options',
+        name: "rememberIsExpandedState",
+        category: "Accordion Toggle Options",
         isProp: true,
-        inputType: 'checkbox',
-        value: 'true',
+        inputType: "checkbox",
+        value: "true",
       },
     ]);
 
   let parametersValuesArray = $state(
-    homepage ?? parametersSourceArray.map((el) => el.value)
+    homepage ?? parametersSourceArray.map((el) => el.value),
   );
 
   let sections = $derived(
@@ -186,9 +186,9 @@
         getValueFromParametersArray(
           parametersSourceArray,
           parametersValuesArray,
-          'sections'
-        )
-      )
+          "sections",
+        ),
+      ),
   );
 
   /*let sections = $derived(
@@ -211,7 +211,7 @@
 
   let parametersVisibleArray = $derived(
     homepage ??
-      trackVisibleParameters(parametersSourceArray, parametersValuesArray)
+      trackVisibleParameters(parametersSourceArray, parametersValuesArray),
   );
 
   $inspect(parametersValuesArray);
@@ -221,8 +221,8 @@
       createParametersObject(
         parametersSourceArray,
         parametersValuesArray,
-        derivedParametersObject
-      )
+        derivedParametersObject,
+      ),
   );
 
   // Example data/line function
@@ -234,9 +234,9 @@
   ];
 
   function simpleLineFunction(dArray) {
-    let path = 'M ' + dArray[0].x * 10 + ' ' + (200 - dArray[0].y * 4);
+    let path = "M " + dArray[0].x * 10 + " " + (200 - dArray[0].y * 4);
     for (let i = 1; i < dArray.length; i++) {
-      path += ' L ' + dArray[i].x * 10 + ' ' + (200 - dArray[i].y * 4);
+      path += " L " + dArray[i].x * 10 + " " + (200 - dArray[i].y * 4);
     }
     return path;
   }
@@ -286,45 +286,45 @@
     </div>
   </div>
 
+  <div class="mt-20" data-role="examples-section">
+    <DividerLine margin="30px 0px 30px 0px"></DividerLine>
+    <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
-  
-    <div class="mt-20" data-role="examples-section">
-      <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-      <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
-      
-      <h6>Checkbox with conditional content</h6>
-      <div class="app-example-wrapper">
-        <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
-          <CheckBox
-            legend="Contact preferences"
-            hint="Select how you'd like to be contacted"
-            name="contact"
-            options={[
-              {
-                value: "email",
-                label: "Email",
-                conditional: {
-                  id: "email-input",
-                  content: `<div class="govuk-form-group">
+    <h6>Checkbox with conditional content</h6>
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <CheckBox
+          legend="Contact preferences"
+          hint="Select how you'd like to be contacted"
+          name="contact"
+          options={[
+            {
+              value: "email",
+              label: "Email",
+              conditional: {
+                id: "email-input",
+                content: `<div class="govuk-form-group">
                     <label class="govuk-label" for="email">Email address</label>
                     <input class="govuk-input" id="email" name="email" type="email">
-                  </div>`
-                }
+                  </div>`,
               },
-              {
-                value: "phone",
-                label: "Phone",
-                hint: "We'll only call during business hours"
-              },
-              {
-                value: "none",
-                label: "Do not contact me",
-                exclusive: true
-              }
-            ]}
-          />
-        </div>
+            },
+            {
+              value: "phone",
+              label: "Phone",
+              hint: "We'll only call during business hours",
+            },
+            {
+              value: "none",
+              label: "Do not contact me",
+              exclusive: true,
+            },
+          ]}
+        />
       </div>
+    </div>
 
     <h6>Accordion with snippet-based content</h6>
 <<<<<<< HEAD
@@ -473,9 +473,9 @@
         <Accordion
           sections={[
             {
-              id: 'example1',
-              heading: 'Title One',
-              content: 'Some content for the first section.',
+              id: "example1",
+              heading: "Title One",
+              content: "Some content for the first section.",
             },
           ]}
           allSectionToggle={true}
@@ -530,16 +530,16 @@
         <Accordion
           sections={[
             {
-              id: 'example2',
-              heading: 'Remember state 1',
+              id: "example2",
+              heading: "Remember state 1",
               content:
                 "This section's expansion will be saved in sessionStorage.",
               expanded: true,
             },
             {
-              id: 'example3',
-              heading: 'Remember state 2',
-              content: 'Session state is also saved here.',
+              id: "example3",
+              heading: "Remember state 2",
+              content: "Session state is also saved here.",
             },
           ]}
           rememberIsExpandedState={true}
@@ -592,10 +592,10 @@
         <Accordion
           sections={[
             {
-              id: 'example4',
-              heading: 'Custom Toggle Section',
-              summary: 'Showing override for labels',
-              content: 'This accordion uses custom hide/show labels.',
+              id: "example4",
+              heading: "Custom Toggle Section",
+              summary: "Showing override for labels",
+              content: "This accordion uses custom hide/show labels.",
             },
           ]}
           minSectionsAllSectionToggle={0}
@@ -606,9 +606,129 @@
         />
       </div>
     </div>
+
+    <h6>Checkbox with all props demonstrated</h6>
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <CheckBox
+          legend="Advanced Contact Preferences"
+          hint="Complete example showing all CheckBox component features"
+          error="Please select at least one contact method"
+          name="advanced-contact"
+          isPageHeading={true}
+          legendSize="m"
+          small={true}
+          options={[
+            {
+              value: "email",
+              label: "Email notifications",
+              hint: "We'll send updates to your email address",
+              conditional: {
+                id: "email-settings",
+                content: `
+                  <div class="govuk-form-group">
+                    <label class="govuk-label" for="email">Email address</label>
+                    <input class="govuk-input" id="email" name="email" type="email">
+                    <div class="govuk-form-group">
+                      <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                        <div class="govuk-checkboxes__item">
+                          <input class="govuk-checkboxes__input" id="email-marketing" name="email-marketing" type="checkbox">
+                          <label class="govuk-label govuk-checkboxes__label" for="email-marketing">
+                            Also send marketing emails
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>`,
+              },
+            },
+            {
+              value: "sms",
+              label: "SMS notifications",
+              hint: "Text messages to your mobile phone",
+            },
+            {
+              value: "phone",
+              label: "Phone calls",
+              hint: "Direct phone calls during business hours",
+            },
+            {
+              value: "post",
+              label: "Postal mail",
+              hint: "Physical letters to your address",
+            },
+            {
+              value: "none",
+              label: "Opt out of all communications",
+              hint: "You won't receive any notifications from us",
+              exclusive: true,
+            },
+          ]}
+        />
+      </div>
+    </div>
+
+    <CodeBlock
+      code={`
+<CheckBox
+  legend="Advanced Contact Preferences"
+  hint="Complete example showing all CheckBox component features"
+  error="Please select at least one contact method"
+  name="advanced-contact"
+  isPageHeading={true}
+  legendSize="m"
+  small={true}
+  options={[
+    {
+      value: "email",
+      label: "Email notifications",
+      hint: "We'll send updates to your email address",
+      conditional: {
+        id: "email-settings",
+        content: \`
+          <div class="govuk-form-group">
+            <label class="govuk-label" for="email">Email address</label>
+            <input class="govuk-input" id="email" name="email" type="email">
+            <div class="govuk-form-group">
+              <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                <div class="govuk-checkboxes__item">
+                  <input class="govuk-checkboxes__input" id="email-marketing" name="email-marketing" type="checkbox">
+                  <label class="govuk-label govuk-checkboxes__label" for="email-marketing">
+                    Also send marketing emails
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>\`
+      }
+    },
+    {
+      value: "sms",
+      label: "SMS notifications", 
+      hint: "Text messages to your mobile phone"
+    },
+    {
+      value: "phone",
+      label: "Phone calls",
+      hint: "Direct phone calls during business hours"
+    },
+    {
+      value: "post",
+      label: "Postal mail",
+      hint: "Physical letters to your address"
+    },
+    {
+      value: "none",
+      label: "Opt out of all communications",
+      hint: "You won't receive any notifications from us",
+      exclusive: true
+    }
+  ]}
+/>`}
+    />
   </div>
-
-
 {/if}
 
 {#snippet content1()}
@@ -649,22 +769,22 @@
 {/snippet}
 
 <style>
-  [data-role='examples-section'] {
+  [data-role="examples-section"] {
     max-width: 1024px;
     margin: 0px auto;
   }
 
-  [data-role='demo-section'] {
+  [data-role="demo-section"] {
     max-width: 1024px;
     margin: 0px auto;
   }
 
-  [data-role='component-container'] {
+  [data-role="component-container"] {
     display: grid;
     place-items: center;
   }
 
-  [data-role='component-container-centered'] {
+  [data-role="component-container-centered"] {
     /* background-color: #f8f8f8; */
     padding: 20px 0px;
   }

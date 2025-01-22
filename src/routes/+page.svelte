@@ -3,6 +3,7 @@
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { foldersLookup } from "$lib/config.js";
   import ComponentDetailsUpdate from "$lib/package-wrapping/ComponentDetailsUpdate.svelte";
+  import LoadArrayOfComponents from "./local-lib/LoadArrayOfComponents.svelte";
 
   let { data } = $props();
 

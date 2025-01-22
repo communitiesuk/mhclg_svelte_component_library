@@ -1,10 +1,5 @@
 <script module>
-  export { WrapperNameAndStatus, WrapperDescription, WrapperContext };
-
-  const name = "Line";
-  const folder = "data-vis";
-
-  import Pill from "$lib/components/content/Pill.svelte";
+  export { snippetExample };
 </script>
 
 <script>
@@ -691,46 +686,6 @@
   );
 </script>
 
-{#snippet WrapperNameAndStatus(homepage = true)}
-  <h2>
-    <a
-      class="underline underline-offset-4"
-      href="/components/{folder}/{name.toLowerCase()}">{name}</a
-    >
-  </h2>
-  {@const statusArray = ["Completed", "Accessible", "Tested"]}
-  {#each statusArray as status}
-    <Pill
-      size={homepage ? "small" : "medium"}
-      textContent={status}
-      bgColor={componentStausLookup[status].bgColor ?? "black"}
-      textColor={componentStausLookup[status].color ?? "white"}
-    ></Pill>
-  {/each}
-{/snippet}
-
-{#snippet WrapperDescription()}
-  <p>
-    This component takes an array of data, two scale functions and a line
-    function and renders an svg path element (and optional markers at each data
-    point).
-  </p>
-{/snippet}
-
-{#snippet WrapperContext()}
-  <p>
-    Used within svg elements as part of the creation of data visualisations -
-    most notably by the <a href="/components/data-vis/line/">Lines</a> component.
-  </p>
-
-  <p>
-    The Lines component renders a collection of lines as a group allowing all
-    lines to update based on user interactions with a single line (e.g. reduce
-    opacity of other lines when user hovers). Even individual lines should
-    normally be created using the Lines component.
-  </p>
-{/snippet}
-
 <!--
 DONOTTOUCH  *
 &&          Uses details to render metadata for the component.
@@ -795,10 +750,15 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
     -->
-<div class="mt-20" data-role="examples-section">
-  <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-  <h5 class="underline underline-offset-4">Examples</h5>
-</div>
+  <div class="mt-20" data-role="examples-section">
+    <DividerLine margin="30px 0px 30px 0px"></DividerLine>
+    <h5 class="underline underline-offset-4">Examples</h5>
+  </div>
+{/if}
+
+{#snippet snippetExample()}
+  hello there
+{/snippet}
 
 <style>
   svg {

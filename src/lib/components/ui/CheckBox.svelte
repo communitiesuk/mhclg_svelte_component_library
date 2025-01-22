@@ -23,6 +23,7 @@
     legendSize = "l",
     small = false,
     options = [],
+    validate = undefined,
   } = $props<{
     legend: string;
     hint?: string;
@@ -32,10 +33,12 @@
     legendSize?: "l" | "m" | "s";
     small?: boolean;
     options?: CheckboxOption[];
+    validate?: (values: string[]) => string | undefined;
   }>();
 
   // Component state
-  let selectedValues = $state([]);
+  let selectedValues = $state<string[]>([]);
+  let validationError = $state<string | undefined>(undefined);
 
   // Derived state to check if a value is selected
   let isChecked = $derived((value: string) => selectedValues.includes(value));
@@ -56,10 +59,26 @@
             option.value,
           ];
     }
+
+    // Run validation if provided
+    if (validate) {
+      validationError = validate(selectedValues);
+    }
   }
+
+  // Run initial validation
+  $effect(() => {
+    if (validate) {
+      validationError = validate(selectedValues);
+    }
+  });
 </script>
 
-<div class="govuk-form-group{error ? ' govuk-form-group--error' : ''}">
+<div
+  class="govuk-form-group{validationError || error
+    ? ' govuk-form-group--error'
+    : ''}"
+>
   <fieldset
     class="govuk-fieldset"
     aria-describedby={hint ? `${name}-hint` : null}
@@ -76,10 +95,10 @@
       <div id="{name}-hint" class="govuk-hint">{hint}</div>
     {/if}
 
-    {#if error}
+    {#if validationError || error}
       <p id="{name}-error" class="govuk-error-message">
         <span class="govuk-visually-hidden">Error:</span>
-        {error}
+        {validationError || error}
       </p>
     {/if}
 

@@ -1,10 +1,12 @@
 <script>
   import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
-  
+
   export let code = '';
   export let filename = 'App';
   export let extension = '.svelte';
-  
+  export let language = 'svelte';
+  export let theme = 'vitesse-light';
+
   function copyHighlightedCode(event) {
     const block = event.currentTarget.closest('.code-block');
     if (!block) return;
@@ -27,7 +29,7 @@
       aria-label="Copy to clipboard"
     ></button>
   </div>
-  <div use:highlight>
+  <div use:highlight={{ lang: language, theme : theme }}>
     {code}
   </div>
 </div>

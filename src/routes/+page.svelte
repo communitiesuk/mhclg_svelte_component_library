@@ -6,6 +6,23 @@
 
   let { data } = $props();
 
+  const components = import.meta.glob("./../wrapper/data-vis/*.svelte", {
+    eager: true,
+  });
+
+  let xxx;
+
+  for (const path in components) {
+    const componentModule = components[path];
+    console.log(
+      `Imported component from ${path}`,
+      componentModule.snippetExample,
+    );
+
+    xxx = componentModule.snippetExample;
+    // You can now use 'componentModule' as needed
+  }
+
   /**
    * && 		Description of the code, how it works and what it does.
    * ? 		  Descriptions of parameters - where they come from and what they do.
@@ -23,6 +40,7 @@ TODO
 <>		
 -->
 {@render snippetExample()}
+{@render xxx()}
 
 <div class="g-top-level-container">
   <div class="flex flex-col gap-6">

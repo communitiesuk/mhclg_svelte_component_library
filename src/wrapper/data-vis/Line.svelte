@@ -29,7 +29,7 @@
     line,
   } from "d3-shape";
 
-  let { data, homepage = undefined, folders } = $props();
+  let { data } = $props();
 
   /**
    * && 		The details object contains metadata which describes the purpose and status of the component. All keys are optional, but developers are encouraged to use them to succinctly describe the component for the benefit of future users.
@@ -145,355 +145,353 @@
    * ?      This input is rendered as html, so you can use <br> for line breaks and &emsp; for tabs.
    */
 
-  let parametersSourceArray =
-    homepage ??
-    addIndexAndInitalValue([
-      {
-        name: "svgHeight",
-        category: "dimensions",
-        isProp: false,
-        inputType: "numberInput",
-        value: 500,
-      },
-      {
-        name: "paddingTop",
-        category: "dimensions",
-        isProp: false,
-        inputType: "numberInput",
-        value: 50,
-      },
-      {
-        name: "paddingRight",
-        category: "dimensions",
-        isProp: false,
-        inputType: "numberInput",
-        value: 50,
-      },
-      {
-        name: "paddingBottom",
-        category: "dimensions",
-        isProp: false,
-        inputType: "numberInput",
-        value: 50,
-      },
-      {
-        name: "paddingLeft",
-        category: "dimensions",
-        isProp: false,
-        inputType: "numberInput",
-        value: 50,
-      },
-      {
-        name: "dataSource",
-        category: "data",
-        isProp: false,
-        inputType: "radio",
-        options: ["from base data", "custom"],
-      },
-      {
-        name: "metric",
-        category: "data",
-        isProp: false,
-        inputType: "dropdown",
-        options: data.metrics,
-        visible: { name: "dataSource", value: "from base data" },
-      },
-      {
-        name: "area",
-        category: "data",
-        isProp: false,
-        inputType: "dropdown",
-        options: data.areas,
-        visible: { name: "dataSource", value: "from base data" },
-      },
-      {
-        name: "customDataArray",
-        category: "data",
-        isProp: false,
-        inputType: "textArea",
-        visible: { name: "dataSource", value: "custom" },
-        value: convertToCSV(
-          data.dataInFormatForLineChart[0].lines[0].data.map((el) => ({
-            x: el.x,
-            y: el.y,
-          })),
-        ),
-      },
-      {
-        name: "dataArray",
-        category: "data",
-        isProp: true,
-        inputType: null,
-        label:
-          "Calculated based on dataSource, metric, area and customDataArray.",
-      },
-      {
-        name: "xDomainLowerBound",
-        category: "xScale",
-        isProp: false,
-        inputType: "numberInput",
-        value: Math.min(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.x),
-        ),
-      },
-      {
-        name: "xDomainUpperBound",
-        category: "xScale",
-        isProp: false,
-        inputType: "numberInput",
-        value: Math.max(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.x),
-        ),
-      },
-      {
-        name: "xScaleType",
-        category: "xScale",
-        isProp: false,
-        inputType: "dropdown",
-        options: ["scaleLinear", "scaleLog", "scaleTime"],
-      },
-      {
-        name: "xFunction",
-        category: "xScale",
-        isProp: true,
-        inputType: null,
-        label:
-          "Calculated based on screenSize, paddingLeft, paddingRight, xDomainLowerBound, xDomainUpperBound and xScaleType.",
-        exampleCode:
-          "scaleLinear()<br>&emsp;&emsp;.domain[2015,2022]<br>&emsp;&emsp;.range([0,graphWidth])",
-      },
-      {
-        name: "yDomainLowerBound",
-        category: "yScale",
-        isProp: false,
-        inputType: "numberInput",
-        value: Math.min(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.y),
-        ),
-      },
-      {
-        name: "yDomainUpperBound",
-        category: "yScale",
-        isProp: false,
-        inputType: "numberInput",
-        value: Math.max(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.y),
-        ),
-      },
-      {
-        name: "yScaleType",
-        category: "yScale",
-        isProp: false,
-        inputType: "dropdown",
-        options: ["scaleLinear", "scaleLog", "scaleTime"],
-      },
-      {
-        name: "yFunction",
-        category: "yScale",
-        isProp: true,
-        inputType: null,
-        label:
-          "Calculated based on svgHeight, paddingTop, paddingBottom, yDomainLowerBound, yDomainUpperBound and yScaleType.",
-        exampleCode:
-          "scaleLinear()<br>&emsp;&emsp;.domain[0,100]<br>&emsp;&emsp;.range([graphHeight,0])",
-      },
-      {
-        name: "curve",
-        category: "lineFunction",
-        isProp: false,
-        inputType: "dropdown",
-        options: [
-          "curveLinear",
-          "curveLinearClosed",
-          "curveCardinal",
-          "curveBasis",
-          "curveStep",
-          "curveMonotoneX",
-        ],
-      },
-      {
-        name: "lineFunction",
-        category: "lineFunction",
-        isProp: true,
-        inputType: null,
-        label: "Calculated based on xFunction, yFunction and curve.",
-        exampleCode:
-          "line()<br>&emsp;&emsp;.x((d) => xFunction(d.x))<br>&emsp;&emsp;.y((d) => yFunction(d.y))<br>&emsp;&emsp;.curve(curveLinear)",
-      },
-      {
-        name: "pathStrokeColor",
-        category: "path",
-        isProp: true,
-        inputType: "input",
-        value: "#b312a0",
-      },
-      {
-        name: "pathStrokeWidth",
-        category: "path",
-        isProp: true,
-        inputType: "numberInput",
-        value: 3,
-      },
-      {
-        name: "pathFillColor",
-        category: "path",
-        isProp: true,
-        inputType: "input",
-        value: "none",
-      },
-      {
-        name: "pathStrokeDashArray",
-        category: "path",
-        isProp: true,
-        inputType: "input",
-        value: "none",
-      },
-      {
-        name: "includeMarkers",
-        category: "markers",
-        isProp: true,
-        inputType: "checkbox",
-      },
-      {
-        name: "markerShape",
-        category: "markers",
-        isProp: true,
-        inputType: "dropdown",
-        options: ["circle", "square", "diamond", "triangle"],
-        visible: [{ name: "includeMarkers", value: true }],
-      },
-      {
-        name: "markerRadius",
-        category: "markers",
-        isProp: true,
-        inputType: "numberInput",
-        value: 5,
-        visible: { name: "includeMarkers", value: true },
-      },
+  let parametersSourceArray = addIndexAndInitalValue([
+    {
+      name: "svgHeight",
+      category: "dimensions",
+      isProp: false,
+      inputType: "numberInput",
+      value: 500,
+    },
+    {
+      name: "paddingTop",
+      category: "dimensions",
+      isProp: false,
+      inputType: "numberInput",
+      value: 50,
+    },
+    {
+      name: "paddingRight",
+      category: "dimensions",
+      isProp: false,
+      inputType: "numberInput",
+      value: 50,
+    },
+    {
+      name: "paddingBottom",
+      category: "dimensions",
+      isProp: false,
+      inputType: "numberInput",
+      value: 50,
+    },
+    {
+      name: "paddingLeft",
+      category: "dimensions",
+      isProp: false,
+      inputType: "numberInput",
+      value: 50,
+    },
+    {
+      name: "dataSource",
+      category: "data",
+      isProp: false,
+      inputType: "radio",
+      options: ["from base data", "custom"],
+    },
+    {
+      name: "metric",
+      category: "data",
+      isProp: false,
+      inputType: "dropdown",
+      options: data.metrics,
+      visible: { name: "dataSource", value: "from base data" },
+    },
+    {
+      name: "area",
+      category: "data",
+      isProp: false,
+      inputType: "dropdown",
+      options: data.areas,
+      visible: { name: "dataSource", value: "from base data" },
+    },
+    {
+      name: "customDataArray",
+      category: "data",
+      isProp: false,
+      inputType: "textArea",
+      visible: { name: "dataSource", value: "custom" },
+      value: convertToCSV(
+        data.dataInFormatForLineChart[0].lines[0].data.map((el) => ({
+          x: el.x,
+          y: el.y,
+        })),
+      ),
+    },
+    {
+      name: "dataArray",
+      category: "data",
+      isProp: true,
+      inputType: null,
+      label:
+        "Calculated based on dataSource, metric, area and customDataArray.",
+    },
+    {
+      name: "xDomainLowerBound",
+      category: "xScale",
+      isProp: false,
+      inputType: "numberInput",
+      value: Math.min(
+        ...data.dataInFormatForLineChart[0].lines
+          .map((el) => el.data)
+          .flat()
+          .map((el) => el.x),
+      ),
+    },
+    {
+      name: "xDomainUpperBound",
+      category: "xScale",
+      isProp: false,
+      inputType: "numberInput",
+      value: Math.max(
+        ...data.dataInFormatForLineChart[0].lines
+          .map((el) => el.data)
+          .flat()
+          .map((el) => el.x),
+      ),
+    },
+    {
+      name: "xScaleType",
+      category: "xScale",
+      isProp: false,
+      inputType: "dropdown",
+      options: ["scaleLinear", "scaleLog", "scaleTime"],
+    },
+    {
+      name: "xFunction",
+      category: "xScale",
+      isProp: true,
+      inputType: null,
+      label:
+        "Calculated based on screenSize, paddingLeft, paddingRight, xDomainLowerBound, xDomainUpperBound and xScaleType.",
+      exampleCode:
+        "scaleLinear()<br>&emsp;&emsp;.domain[2015,2022]<br>&emsp;&emsp;.range([0,graphWidth])",
+    },
+    {
+      name: "yDomainLowerBound",
+      category: "yScale",
+      isProp: false,
+      inputType: "numberInput",
+      value: Math.min(
+        ...data.dataInFormatForLineChart[0].lines
+          .map((el) => el.data)
+          .flat()
+          .map((el) => el.y),
+      ),
+    },
+    {
+      name: "yDomainUpperBound",
+      category: "yScale",
+      isProp: false,
+      inputType: "numberInput",
+      value: Math.max(
+        ...data.dataInFormatForLineChart[0].lines
+          .map((el) => el.data)
+          .flat()
+          .map((el) => el.y),
+      ),
+    },
+    {
+      name: "yScaleType",
+      category: "yScale",
+      isProp: false,
+      inputType: "dropdown",
+      options: ["scaleLinear", "scaleLog", "scaleTime"],
+    },
+    {
+      name: "yFunction",
+      category: "yScale",
+      isProp: true,
+      inputType: null,
+      label:
+        "Calculated based on svgHeight, paddingTop, paddingBottom, yDomainLowerBound, yDomainUpperBound and yScaleType.",
+      exampleCode:
+        "scaleLinear()<br>&emsp;&emsp;.domain[0,100]<br>&emsp;&emsp;.range([graphHeight,0])",
+    },
+    {
+      name: "curve",
+      category: "lineFunction",
+      isProp: false,
+      inputType: "dropdown",
+      options: [
+        "curveLinear",
+        "curveLinearClosed",
+        "curveCardinal",
+        "curveBasis",
+        "curveStep",
+        "curveMonotoneX",
+      ],
+    },
+    {
+      name: "lineFunction",
+      category: "lineFunction",
+      isProp: true,
+      inputType: null,
+      label: "Calculated based on xFunction, yFunction and curve.",
+      exampleCode:
+        "line()<br>&emsp;&emsp;.x((d) => xFunction(d.x))<br>&emsp;&emsp;.y((d) => yFunction(d.y))<br>&emsp;&emsp;.curve(curveLinear)",
+    },
+    {
+      name: "pathStrokeColor",
+      category: "path",
+      isProp: true,
+      inputType: "input",
+      value: "#b312a0",
+    },
+    {
+      name: "pathStrokeWidth",
+      category: "path",
+      isProp: true,
+      inputType: "numberInput",
+      value: 3,
+    },
+    {
+      name: "pathFillColor",
+      category: "path",
+      isProp: true,
+      inputType: "input",
+      value: "none",
+    },
+    {
+      name: "pathStrokeDashArray",
+      category: "path",
+      isProp: true,
+      inputType: "input",
+      value: "none",
+    },
+    {
+      name: "includeMarkers",
+      category: "markers",
+      isProp: true,
+      inputType: "checkbox",
+    },
+    {
+      name: "markerShape",
+      category: "markers",
+      isProp: true,
+      inputType: "dropdown",
+      options: ["circle", "square", "diamond", "triangle"],
+      visible: [{ name: "includeMarkers", value: true }],
+    },
+    {
+      name: "markerRadius",
+      category: "markers",
+      isProp: true,
+      inputType: "numberInput",
+      value: 5,
+      visible: { name: "includeMarkers", value: true },
+    },
 
-      {
-        name: "markerFill",
-        category: "markers",
-        isProp: true,
-        inputType: "input",
-        value: "#b312a0",
-        visible: { name: "includeMarkers", value: true },
-      },
-      {
-        name: "markerStroke",
-        category: "markers",
-        isProp: true,
-        inputType: "input",
-        value: "white",
-        visible: { name: "includeMarkers", value: true },
-      },
-      {
-        name: "markerStrokeWidth",
-        category: "markers",
-        isProp: true,
-        inputType: "numberInput",
-        value: 1,
-        visible: { name: "includeMarkers", value: true },
-      },
-      {
-        name: "opacity",
-        category: "overallStyling",
-        isProp: true,
-        inputType: "numberInput",
-        value: 1,
-        step: 0.1,
-        min: 0,
-        max: 1,
-      },
-      {
-        name: "dataId",
-        category: "lineEvents",
-        isProp: true,
-        inputType: "input",
-        value: "line-1",
-      },
-      {
-        name: "onClick",
-        category: "lineEvents",
-        isProp: true,
-        inputType: "event",
-      },
-      {
-        name: "onMouseEnter",
-        category: "lineEvents",
-        isProp: true,
-        inputType: "event",
-      },
-      {
-        name: "onMouseLeave",
-        category: "lineEvents",
-        isProp: true,
-        inputType: "event",
-      },
-      {
-        name: "onMouseMove",
-        category: "lineEvents",
-        isProp: true,
-        inputType: "event",
-      },
-      {
-        name: "markersDataId",
-        category: "markerEvents",
-        isProp: true,
-        inputType: "input",
-        value: "markers-group-1",
-      },
-      {
-        name: "onClickMarker",
-        category: "markerEvents",
-        isProp: true,
-        inputType: "event",
-      },
-      {
-        name: "onMouseEnterMarker",
-        category: "markerEvents",
-        isProp: true,
-        inputType: "event",
-      },
-      {
-        name: "onMouseLeaveMarker",
-        category: "markerEvents",
-        isProp: true,
-        inputType: "event",
-      },
-      {
-        name: "onMouseMoveMarker",
-        category: "markerEvents",
-        isProp: true,
-        inputType: "event",
-      },
-    ]).map((el) => ({
-      ...el,
-      handlerFunction:
-        el.inputType === "event"
-          ? (el.handlerFunction ??
-            function (event) {
-              defineDefaultEventHandler(
-                event,
-                parametersSourceArray,
-                parametersValuesArray,
-                el.name,
-              );
-            })
-          : null,
-    }));
+    {
+      name: "markerFill",
+      category: "markers",
+      isProp: true,
+      inputType: "input",
+      value: "#b312a0",
+      visible: { name: "includeMarkers", value: true },
+    },
+    {
+      name: "markerStroke",
+      category: "markers",
+      isProp: true,
+      inputType: "input",
+      value: "white",
+      visible: { name: "includeMarkers", value: true },
+    },
+    {
+      name: "markerStrokeWidth",
+      category: "markers",
+      isProp: true,
+      inputType: "numberInput",
+      value: 1,
+      visible: { name: "includeMarkers", value: true },
+    },
+    {
+      name: "opacity",
+      category: "overallStyling",
+      isProp: true,
+      inputType: "numberInput",
+      value: 1,
+      step: 0.1,
+      min: 0,
+      max: 1,
+    },
+    {
+      name: "dataId",
+      category: "lineEvents",
+      isProp: true,
+      inputType: "input",
+      value: "line-1",
+    },
+    {
+      name: "onClick",
+      category: "lineEvents",
+      isProp: true,
+      inputType: "event",
+    },
+    {
+      name: "onMouseEnter",
+      category: "lineEvents",
+      isProp: true,
+      inputType: "event",
+    },
+    {
+      name: "onMouseLeave",
+      category: "lineEvents",
+      isProp: true,
+      inputType: "event",
+    },
+    {
+      name: "onMouseMove",
+      category: "lineEvents",
+      isProp: true,
+      inputType: "event",
+    },
+    {
+      name: "markersDataId",
+      category: "markerEvents",
+      isProp: true,
+      inputType: "input",
+      value: "markers-group-1",
+    },
+    {
+      name: "onClickMarker",
+      category: "markerEvents",
+      isProp: true,
+      inputType: "event",
+    },
+    {
+      name: "onMouseEnterMarker",
+      category: "markerEvents",
+      isProp: true,
+      inputType: "event",
+    },
+    {
+      name: "onMouseLeaveMarker",
+      category: "markerEvents",
+      isProp: true,
+      inputType: "event",
+    },
+    {
+      name: "onMouseMoveMarker",
+      category: "markerEvents",
+      isProp: true,
+      inputType: "event",
+    },
+  ]).map((el) => ({
+    ...el,
+    handlerFunction:
+      el.inputType === "event"
+        ? (el.handlerFunction ??
+          function (event) {
+            defineDefaultEventHandler(
+              event,
+              parametersSourceArray,
+              parametersValuesArray,
+              el.name,
+            );
+          })
+        : null,
+  }));
 
   /**
    * DONOTTOUCH *
@@ -501,7 +499,7 @@
    * &&     This array is then used to track the values associated with each parameter as they are modified by the user using form inputs.
    */
   let parametersValuesArray = $state(
-    homepage ?? parametersSourceArray.map((el) => el.value), //&& Something
+    parametersSourceArray.map((el) => el.value), //&& Something
   );
 
   /**
@@ -512,121 +510,117 @@
    * &&     The getValueFromParametersArray function can be helpful for calculating based on the value of another parameter.
    */
   let xFunction = $derived(
-    homepage ??
-      {
-        scaleLinear: scaleLinear(),
-        scaleLog: scaleLog(),
-        scaleTime: scaleTime(),
-      }[
-        getValueFromParametersArray(
-          parametersSourceArray,
-          parametersValuesArray,
-          "xScaleType",
-        )
-      ]
-        .domain([
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "xDomainLowerBound",
-          ),
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "xDomainUpperBound",
-          ),
-        ])
-        .range([
-          0,
-          demoScreenWidth -
-            getValueFromParametersArray(
-              parametersSourceArray,
-              parametersValuesArray,
-              "paddingLeft",
-            ) -
-            getValueFromParametersArray(
-              parametersSourceArray,
-              parametersValuesArray,
-              "paddingRight",
-            ),
-        ]),
-  );
-
-  let yFunction = $derived(
-    homepage ??
-      {
-        scaleLinear: scaleLinear(),
-        scaleLog: scaleLog(),
-        scaleTime: scaleTime(),
-      }[
-        getValueFromParametersArray(
-          parametersSourceArray,
-          parametersValuesArray,
-          "yScaleType",
-        )
-      ]
-        .domain([
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "yDomainLowerBound",
-          ),
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "yDomainUpperBound",
-          ),
-        ])
-        .range([
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "svgHeight",
-          ) -
-            getValueFromParametersArray(
-              parametersSourceArray,
-              parametersValuesArray,
-              "paddingTop",
-            ) -
-            getValueFromParametersArray(
-              parametersSourceArray,
-              parametersValuesArray,
-              "paddingBottom",
-            ),
-          0,
-        ]),
-  );
-
-  let lineFunction = $derived(
-    homepage ??
-      line()
-        .x((d) => xFunction(d.x))
-        .y((d) => yFunction(d.y))
-        .curve(
-          {
-            curveLinear: curveLinear,
-            curveLinearClosed: curveLinearClosed,
-            curveCardinal: curveCardinal,
-            curveBasis: curveBasis,
-            curveStep: curveStep,
-            curveMonotoneX: curveMonotoneX,
-          }[
-            getValueFromParametersArray(
-              parametersSourceArray,
-              parametersValuesArray,
-              "curve",
-            )
-          ],
-        ),
-  );
-
-  let dataArray = $derived(
-    (homepage ??
+    {
+      scaleLinear: scaleLinear(),
+      scaleLog: scaleLog(),
+      scaleTime: scaleTime(),
+    }[
       getValueFromParametersArray(
         parametersSourceArray,
         parametersValuesArray,
-        "dataSource",
-      ) === "from base data")
+        "xScaleType",
+      )
+    ]
+      .domain([
+        getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          "xDomainLowerBound",
+        ),
+        getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          "xDomainUpperBound",
+        ),
+      ])
+      .range([
+        0,
+        demoScreenWidth -
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            "paddingLeft",
+          ) -
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            "paddingRight",
+          ),
+      ]),
+  );
+
+  let yFunction = $derived(
+    {
+      scaleLinear: scaleLinear(),
+      scaleLog: scaleLog(),
+      scaleTime: scaleTime(),
+    }[
+      getValueFromParametersArray(
+        parametersSourceArray,
+        parametersValuesArray,
+        "yScaleType",
+      )
+    ]
+      .domain([
+        getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          "yDomainLowerBound",
+        ),
+        getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          "yDomainUpperBound",
+        ),
+      ])
+      .range([
+        getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          "svgHeight",
+        ) -
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            "paddingTop",
+          ) -
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            "paddingBottom",
+          ),
+        0,
+      ]),
+  );
+
+  let lineFunction = $derived(
+    line()
+      .x((d) => xFunction(d.x))
+      .y((d) => yFunction(d.y))
+      .curve(
+        {
+          curveLinear: curveLinear,
+          curveLinearClosed: curveLinearClosed,
+          curveCardinal: curveCardinal,
+          curveBasis: curveBasis,
+          curveStep: curveStep,
+          curveMonotoneX: curveMonotoneX,
+        }[
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            "curve",
+          )
+        ],
+      ),
+  );
+
+  let dataArray = $derived(
+    getValueFromParametersArray(
+      parametersSourceArray,
+      parametersValuesArray,
+      "dataSource",
+    ) === "from base data"
       ? data.dataInFormatForLineChart
           .find(
             (el) =>
@@ -661,17 +655,19 @@
    * &&     Note that these parameters STILL NEED TO BE LISTED in the source array (with a null input type and null value).
    * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
    */
-  let derivedParametersObject = $derived(
-    homepage ?? { xFunction, yFunction, lineFunction, dataArray },
-  );
+  let derivedParametersObject = $derived({
+    xFunction,
+    yFunction,
+    lineFunction,
+    dataArray,
+  });
 
   /**
    * DONOTTOUCH *
    * && 		parametersValuesArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible or not in the UI.
    */
   let parametersVisibleArray = $derived(
-    homepage ??
-      trackVisibleParameters(parametersSourceArray, parametersValuesArray),
+    trackVisibleParameters(parametersSourceArray, parametersValuesArray),
   );
 
   /**
@@ -679,12 +675,11 @@
    * && 		parametersObject takes the props to be passed to the component and converts them into a (parameterName: parameterValue) pattern.
    */
   let parametersObject = $derived(
-    homepage ??
-      createParametersObject(
-        parametersSourceArray,
-        parametersValuesArray,
-        derivedParametersObject,
-      ),
+    createParametersObject(
+      parametersSourceArray,
+      parametersValuesArray,
+      derivedParametersObject,
+    ),
   );
 </script>
 
@@ -692,72 +687,70 @@
 DONOTTOUCH  *
 &&          Uses details to render metadata for the component.
 -->
-<ComponentDetails {homepage} {details}></ComponentDetails>
+<ComponentDetails homepage={false} {details}></ComponentDetails>
 
-{#if !homepage}
-  <!--
+<!--
   DONOTTOUCH  *
   &&          Create input forms for each parameter based on the source array.
   -->
-  <ParametersSection
-    {details}
-    {parametersSourceArray}
-    {parametersVisibleArray}
-    bind:parametersValuesArray
-  ></ParametersSection>
+<ParametersSection
+  {details}
+  {parametersSourceArray}
+  {parametersVisibleArray}
+  bind:parametersValuesArray
+></ParametersSection>
 
-  <div data-role="demo-section">
-    <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
-    <!--
+<div data-role="demo-section">
+  <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+  <!--
     DONOTTOUCH  *
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
     -->
-    <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
-  </div>
+  <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
+</div>
 
-  <div data-role="component-container">
-    <div
-      data-role="component-container-centered"
-      style="width: {demoScreenWidth}px;"
-    >
-      <!--
+<div data-role="component-container">
+  <div
+    data-role="component-container-centered"
+    style="width: {demoScreenWidth}px;"
+  >
+    <!--
     CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
     -->
-      <svg
-        width={demoScreenWidth}
-        height={getValueFromParametersArray(
+    <svg
+      width={demoScreenWidth}
+      height={getValueFromParametersArray(
+        parametersSourceArray,
+        parametersValuesArray,
+        "svgHeight",
+      )}
+    >
+      <g
+        transform="translate({getValueFromParametersArray(
           parametersSourceArray,
           parametersValuesArray,
-          "svgHeight",
-        )}
+          'paddingLeft',
+        )},{getValueFromParametersArray(
+          parametersSourceArray,
+          parametersValuesArray,
+          'paddingTop',
+        )})"
       >
-        <g
-          transform="translate({getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            'paddingLeft',
-          )},{getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            'paddingTop',
-          )})"
-        >
-          <Line {...parametersObject}></Line>
-        </g>
-      </svg>
-    </div>
+        <Line {...parametersObject}></Line>
+      </g>
+    </svg>
   </div>
+</div>
 
-  <!--
+<!--
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
     -->
-  <div class="mt-20" data-role="examples-section">
-    <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-    <h5 class="underline underline-offset-4">Examples</h5>
-  </div>
-{/if}
+<div class="mt-20" data-role="examples-section">
+  <DividerLine margin="30px 0px 30px 0px"></DividerLine>
+  <h5 class="underline underline-offset-4">Examples</h5>
+</div>
 
 {#snippet snippetExample()}
   hello there

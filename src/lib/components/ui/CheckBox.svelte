@@ -38,10 +38,12 @@
 
   // Component state
   let selectedValues = $state<string[]>([]);
-  let validationError = $state<string | undefined>(undefined);
 
-  // Derived state to check if a value is selected
+  // Derived state to check if a value is selected and handle validation
   let isChecked = $derived((value: string) => selectedValues.includes(value));
+  let validationError = $derived(
+    validate ? validate(selectedValues) : undefined,
+  );
 
   // Function to toggle checkbox selection
   function toggleCheckbox(option: CheckboxOption) {
@@ -59,19 +61,7 @@
             option.value,
           ];
     }
-
-    // Run validation if provided
-    if (validate) {
-      validationError = validate(selectedValues);
-    }
   }
-
-  // Run initial validation
-  $effect(() => {
-    if (validate) {
-      validationError = validate(selectedValues);
-    }
-  });
 </script>
 
 <div

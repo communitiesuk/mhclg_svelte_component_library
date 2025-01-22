@@ -14,6 +14,7 @@
   import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
   import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
+  import CodeBlock from '$lib/components/content/CodeBlock.svelte';
 
   let { data, homepage = undefined, folders } = $props();
 
@@ -238,18 +239,6 @@
     }
     return path;
   }
-
-  function copyHighlightedCode(event) {
-    const block = event.currentTarget.closest('.code-block');
-    if (!block) return;
-
-    const codeElement = block.querySelector('code');
-    if (!codeElement) return;
-
-    // Get text content while preserving new lines
-    const text = codeElement.innerText || codeElement.textContent;
-    navigator.clipboard.writeText(text);
-  }
 </script>
 
 <ComponentDetails {homepage} {details}></ComponentDetails>
@@ -289,18 +278,8 @@
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
-    <div class="code-block">
-      <div class="controls">
-        <span class="filename" data-ext=".svelte">App</span>
-        <button
-          class="copy-to-clipboard raised"
-          onclick={copyHighlightedCode}
-          title="Copy to clipboard"
-          aria-label="Copy to clipboard"
-        ></button>
-      </div>
-      <div use:highlight>
-      {`
+    <CodeBlock
+      code={`
 <script>
   import Accordion from '$lib/components/ui/Accordion.svelte';
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
@@ -373,8 +352,8 @@
 
 <Accordion sections={snippetSections} />
 `}
-      </div>
-    </div>
+    />
+
     <div class="app-example-wrapper">
       <div
         class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6"
@@ -384,18 +363,8 @@
     </div>
 
     <h6>Accordion with minimum sections for toggle</h6>
-    <div class="code-block">
-      <div class="controls">
-        <span class="filename" data-ext=".svelte">App</span>
-        <button
-          class="copy-to-clipboard raised"
-          onclick={copyHighlightedCode}
-          title="Copy to clipboard"
-          aria-label="Copy to clipboard"
-        ></button>
-      </div>
-      <div use:highlight>
-      {`
+    <CodeBlock
+      code={`
 <Accordion
   sections={[{
     id: 'example1',
@@ -406,8 +375,8 @@
   minSectionsAllSectionToggle={2}
 />
 `}
-      </div>
-    </div>
+    />
+
     <div class="app-example-wrapper">
       <div
         class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
@@ -427,18 +396,8 @@
     </div>
 
     <h6>Accordion respecting expanded session state</h6>
-    <div class="code-block">
-      <div class="controls">
-        <span class="filename" data-ext=".svelte">App</span>
-        <button
-          class="copy-to-clipboard raised"
-          onclick={copyHighlightedCode}
-          title="Copy to clipboard"
-          aria-label="Copy to clipboard"
-        ></button>
-      </div>
-      <div use:highlight>
-      {`
+    <CodeBlock
+      code={`
 <Accordion
   sections={[{
     id: 'example2',
@@ -453,8 +412,8 @@
   rememberIsExpandedState={true}
 />
 `}
-      </div>
-    </div>
+    />
+
     <div class="app-example-wrapper">
       <div
         class="app-example__frame app-example__frame--resizable app-example__frame--l p-6"
@@ -480,18 +439,8 @@
     </div>
 
     <h6>Accordion with custom toggle labels</h6>
-    <div class="code-block">
-      <div class="controls">
-        <span class="filename" data-ext=".svelte">App</span>
-        <button
-          class="copy-to-clipboard raised"
-          onclick={copyHighlightedCode}
-          title="Copy to clipboard"
-          aria-label="Copy to clipboard"
-        ></button>
-      </div>
-      <div use:highlight>
-      {`
+    <CodeBlock
+      code={`
 <Accordion
   sections={[{
     id: 'example4',
@@ -505,8 +454,8 @@
   showAllSections="Expand All"
   showSection="Expand"
 />`}
-      </div>
-    </div>
+    />
+
     <div class="app-example-wrapper">
       <div
         class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"

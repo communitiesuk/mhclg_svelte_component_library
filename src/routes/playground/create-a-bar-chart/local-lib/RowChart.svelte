@@ -11,6 +11,8 @@
   // dataArray is an input to the RowChart component
   let { dataArray, inputSelectedArea, localAuthorityCodeLookup } = $props();
 
+  $inspect(dataArray);
+
   // UI reacts when svgWidth changes
   let svgWidth = $state(),
     svgHeight = 500;
@@ -32,8 +34,6 @@
   let xEqualsZeroLine = $derived(
     minValueAbsolute * (chartWidth / (minValueAbsolute + maxValue)) + 10
   );
-
-  $inspect(xEqualsZeroLine);
 
   let highestToLowest = $state(false);
   let lowestToHighest = $state(false);
@@ -100,7 +100,6 @@
                   ? xEqualsZeroLine
                   : xEqualsZeroLine - barWidth}
               ></Row>
-              <!-- {console.log(barStartPosition)} -->
             </g>
           {/each}
         </g>
@@ -110,11 +109,3 @@
     <Source></Source>
   </div>
 </div>
-
-<!-- // barStartPosition = {row.y > 0 ? }
-
-barStartPosition={row.y > 0
-                  ? xEqualsZeroLine
-                  : xEqualsZeroLine - barWidth}
-                
-                -->

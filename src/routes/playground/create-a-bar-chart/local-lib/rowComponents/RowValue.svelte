@@ -6,3 +6,9 @@
 <g>
   <text>{rowValue}</text>
 </g>
+
+<style>
+  text {
+    text-anchor: end;
+  }
+</style>

@@ -7,8 +7,6 @@
   // let { row } = $props();
   let { rowHeight, barWidth, rowLabel, rowValue, barColor, barStartPostion } =
     $props();
-
-  $inspect(barStartPostion);
 </script>
 
 <g dominant-baseline="middle" class="row-group">
@@ -18,7 +16,7 @@
   <g transform="translate({barStartPostion},{(rowHeight * 0.2) / 2})">
     <Bar {rowHeight} {barWidth} {barColor}></Bar>
   </g>
-  <g transform="translate({barWidth + 10},{rowHeight / 2})">
+  <g transform="translate({barStartPostion + barWidth - 6},{rowHeight / 2})">
     <RowValue {rowValue}></RowValue>
   </g>
 </g>

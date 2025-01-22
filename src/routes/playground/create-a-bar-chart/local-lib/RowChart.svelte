@@ -45,13 +45,6 @@
         ? [...dataArray.sort((a, b) => b.y - a.y)]
         : dataArray
   );
-
-  // let rowValuePosition;
-  // if (rowValue > 0) {
-  //   rowValuePosition = barStartPostion + barWidth - 6;
-  // } else {
-  //   rowValuePosition = barStartPostion + 6;
-  // }
 </script>
 
 <div class="mt-10">
@@ -80,7 +73,7 @@
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
-          <Line {xEqualsZeroLine}></Line>
+          <Line {xEqualsZeroLine} {chartHeight} {chartWidth}></Line>
 
           <!--i represents the current data point-->
           {#each orderedDataArray as row, i}

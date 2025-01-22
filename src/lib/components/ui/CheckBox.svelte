@@ -39,9 +39,9 @@
   // Component state
   let selectedValues = $state<string[]>([]);
 
-  // Derived state to check if a value is selected and handle validation
+    // Derived state to check if a value is selected and handle validation
   let isChecked = $derived((value: string) => selectedValues.includes(value));
-  let validationError = $derived(
+  let validationError = $derived<string | undefined>(
     validate ? validate(selectedValues) : undefined,
   );
 
@@ -53,10 +53,10 @@
         : [option.value];
     } else {
       selectedValues = selectedValues.includes(option.value)
-        ? selectedValues.filter((v) => v !== option.value)
+        ? selectedValues.filter((v: string) => v !== option.value)
         : [
             ...selectedValues.filter(
-              (v) => !options.find((o) => o.value === v && o.exclusive),
+              (v: string) => !options.find((o) => o.value === v && o.exclusive),
             ),
             option.value,
           ];

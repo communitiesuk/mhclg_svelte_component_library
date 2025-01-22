@@ -35,6 +35,7 @@ export const load: LayoutLoad = async (event) => {
     metric: metric,
     lines: areas.map((area) => ({
       areaCode: area,
+      areaName: ONSLookup[area],
       data: testData.flatMetricData.filter(
         (el) => el.areaCode === area && el.metric === metric
       ),
@@ -45,13 +46,12 @@ export const load: LayoutLoad = async (event) => {
     x: year,
     bars: areas.map((area) => ({
       areaCode: area,
+      areaName: ONSLookup[area],
       y: testData.flatMetricData
         .filter((el) => el.metric === 'Household waste recycling rate')
         .find((el) => el.areaCode === area && el.x === year)?.y,
     })),
   }));
-
-  console.log("!!!!!!!", dataInFormatForBarChart)
 
   return {
     metrics,

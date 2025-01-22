@@ -2,26 +2,31 @@
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import LoadArrayOfComponents from "./local-lib/LoadArrayOfComponents.svelte";
 
-  import { snippetExample } from "./../wrapper/data-vis/Line.svelte";
-
   let { data } = $props();
 
-  const wrapperComponents = import.meta.glob("./../wrapper/*/*.svelte", {
+  const wrapperComponentsObject = import.meta.glob("./../wrapper/*/*.svelte", {
     eager: true,
   });
 
-  let xxx;
+  const wrapperComponentsArray = Object.keys(wrapperComponentsObject).map(
+    (el) => {
+      const splitPath = el.split("/");
 
-  for (const path in wrapperComponents) {
-    const componentModule = wrapperComponents[path];
-    console.log(
-      `Imported component from ${path}`,
-      componentModule.snippetExample,
-    );
+      return {
+        component: wrapperComponentsObject[el],
+        name: splitPath[splitPath.length - 1].replace("Wrapper.svelte", ""),
+        folder: splitPath[splitPath.length - 2],
+      };
+    },
+  );
 
-    xxx = componentModule.snippetExample;
-    // You can now use 'componentModule' as needed
-  }
+  const wrapperPaths = Object.keys(wrapperComponentsObject);
+  const wrapperFolders = wrapperPaths.map((el) => {
+    const splitPath = el.split("/");
+    return splitPath[splitPath.length - 2];
+  });
+
+  console.log(wrapperFolders);
 
   /**
    * && 		Description of the code, how it works and what it does.
@@ -39,12 +44,12 @@
 TODO		
 <>		
 -->
-{#each Object.keys(wrapperComponents) as path}
-  {path}
-  {@render wrapperComponents[path].snippetExample()}
+
+{#each wrapperComponentsArray as wrapper}
+  <h2>{wrapper.name}</h2>
+  <h4>{wrapper.folder}</h4>
+  {@render wrapper.component.snippetExample()}
 {/each}
-{@render snippetExample()}
-{@render xxx()}
 
 <div class="g-top-level-container">
   <div class="flex flex-col gap-6">

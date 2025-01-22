@@ -24,7 +24,9 @@
   $effect(() => {
     (async () => {
       try {
-        const module = await import(`/src/wrapper/${folder}/${wrapper}.svelte`);
+        const module = await import(
+          `/src/wrapper/${folder}/${wrapper}Wrapper.svelte`
+        );
         Component = module.default;
       } catch (error) {
         errorImportingComponent = true;

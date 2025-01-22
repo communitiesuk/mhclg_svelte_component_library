@@ -1,11 +1,19 @@
-<script>
+<script lang="ts">
   import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
 
-  export let code = '';
-  export let filename = 'App';
-  export let extension = '.svelte';
-  export let language = 'svelte';
-  export let theme = 'vitesse-light';
+  let {
+    code = '',
+    filename = 'App',
+    extension = '.svelte',
+    language = 'svelte',
+    theme = 'vitesse-light'
+  }: {
+    code: string;
+    filename?: string;
+    extension?: string;
+    language?: string;
+    theme?: string;
+  } = $props();
 
   function copyHighlightedCode(event) {
     const block = event.currentTarget.closest('.code-block');

@@ -6,14 +6,14 @@
 
   let { data } = $props();
 
-  const components = import.meta.glob("./../wrapper/data-vis/*.svelte", {
+  const wrapperComponents = import.meta.glob("./../wrapper/*/*.svelte", {
     eager: true,
   });
 
   let xxx;
 
-  for (const path in components) {
-    const componentModule = components[path];
+  for (const path in wrapperComponents) {
+    const componentModule = wrapperComponents[path];
     console.log(
       `Imported component from ${path}`,
       componentModule.snippetExample,
@@ -39,6 +39,10 @@
 TODO		
 <>		
 -->
+{#each Object.keys(wrapperComponents) as path}
+  {path}
+  {@render wrapperComponents[path].snippetExample()}
+{/each}
 {@render snippetExample()}
 {@render xxx()}
 

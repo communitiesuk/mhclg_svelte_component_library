@@ -27,12 +27,10 @@
   let valueMin = $derived(Math.min(...allValues));
   let valueRange = $derived(Math.abs(valueMax) + Math.abs(valueMin));
   let midpoint = $derived(valueMin + valueRange / 2);
-  $inspect(midpoint);
+  $inspect({chartWidth});
 
   let xFunction = $derived(
-    scaleLinear()
-      .domain([midpoint, valueMax])
-      .range([chartWidth / 2, chartWidth])
+    scaleLinear().domain([valueMin, valueMax]).range([0, chartWidth])
   );
 </script>
 

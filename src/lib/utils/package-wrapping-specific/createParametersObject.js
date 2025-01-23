@@ -25,6 +25,16 @@ export function createParametersObject(
     let newValue =
       inputType === 'event' ? handlerFunction : parametersValuesArray[index];
 
+    // Parse string as a function if inputType is "function"
+    if (inputType === 'function') {
+      try {
+        newValue = new Function(`return (${parametersValuesArray[index]})`)();
+      } catch(e) {
+        // Fallback in case of parsing error
+        newValue = undefined;
+      }
+    }
+
     // 3. If there's a matching derived value for this parameter name,
     //    that should overwrite whatever we currently have:
     if (Object.prototype.hasOwnProperty.call(derivedObject, name)) {

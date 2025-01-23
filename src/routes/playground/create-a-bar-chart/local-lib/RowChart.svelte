@@ -5,7 +5,7 @@
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
   import Rows from './Rows.svelte';
 
-  let { dataArray, focusColour, focusBars } = $props();
+  let { dataArray, focusColour } = $props();
 
   let svgWidth = $state(),
     svgHeight = 500;
@@ -28,8 +28,7 @@
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth}></Axes>
-          <Rows {dataArray} {chartHeight} {chartWidth} {focusColour} {focusBars}
-          ></Rows>
+          <Rows {dataArray} {chartHeight} {chartWidth} {focusColour}></Rows>
         </g>
       {/if}
     </svg>

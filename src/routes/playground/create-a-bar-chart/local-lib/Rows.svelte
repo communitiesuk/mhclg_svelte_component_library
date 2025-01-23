@@ -1,5 +1,5 @@
 <script>
-  let { dataArray, chartHeight, chartWidth, focusColour, focusBars } = $props();
+  let { dataArray, chartHeight, chartWidth, focusColour } = $props();
   import { scaleLinear } from 'd3-scale';
 
   import Row from './Row.svelte';
@@ -27,14 +27,16 @@
   let midpoint = $derived(valueMin + valueRange / 2);
 
   let xFunction = $derived(
-    scaleLinear().domain([valueMin, valueMax]).range([0+50, chartWidth-50])
+    scaleLinear()
+      .domain([valueMin, valueMax])
+      .range([0 + 50, chartWidth - 50])
   );
 </script>
 
 <g>
   {#each dataArray as row, i}
     <g transform="translate({0},{yFunction(i)})">
-      <Row {row} {xFunction} {barHeight} {focusColour} {focusBars}></Row>
+      <Row {row} {xFunction} {barHeight} {focusColour}></Row>
     </g>
   {/each}
 </g>

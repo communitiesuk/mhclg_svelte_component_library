@@ -18,9 +18,7 @@
   let selectedYear = $state(data?.years[0]);
   let numberOfBars = $state(10);
   let sortMethod = $state('ascending');
-  let focusBars = $state('E07000223');
-  let focusColour = $state('#002fa7');
-
+  let focusColour = $state({ E07000223: '#002fa7' });
 
   const sortingFunctions = {
     alphabetical: (a, b) => a['areaCode'].localeCompare(b['areaCode']),
@@ -62,12 +60,6 @@
           </Input>
         </div>
         <div class="mt-5">
-          <p class="my-2 mx-0 p-0 text-sm">Focus bars:</p>
-          <Input let:props>
-            <input type="string" {...props} bind:value={focusBars} />
-          </Input>
-        </div>
-        <div class="mt-5">
           <p class="my-2 mx-0 p-0 text-sm">Focus colour:</p>
           <Input let:props>
             <input type="string" {...props} bind:value={focusColour} />
@@ -92,7 +84,6 @@
               .bars.slice(0, numberOfBars)
               .sort(sortingFunctions[sortMethod])}
             {focusColour}
-            {focusBars}
           ></RowChart>
         </div>
       </div>

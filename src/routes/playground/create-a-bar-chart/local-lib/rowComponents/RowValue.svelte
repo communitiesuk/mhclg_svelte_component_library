@@ -1,19 +1,24 @@
 <script>
-  let { scaledValue, value, max, barColor, selected, rowHeight } = $props();
-  $inspect(max);
+  let { scaledValue, value, max, min, barColor, selected, rowHeight } =
+    $props();
+
   let textAnchor = $derived(
     max
       ? 'text-anchor: end;'
-      : scaledValue >= 0
+      : min
         ? 'text-anchor: start;'
-        : 'text-anchor: end;'
+        : scaledValue >= 0
+          ? 'text-anchor: start;'
+          : 'text-anchor: end;'
   );
-  let textColor = $derived(selected ? '#222' : max ? barColor.text : '#222');
+  let textColor = $derived(
+    selected ? '#222' : max || min ? barColor.text : '#222'
+  );
 </script>
 
 <text
   transform="translate ({scaledValue} 0)"
-  dx={max ? -10 : scaledValue >= 0 ? '10' : '-10'}
+  dx={max ? -10 : min ? 10 : scaledValue >= 0 ? '10' : '-10'}
   style={textAnchor + ' fill: ' + textColor}>{value}</text
 >
 

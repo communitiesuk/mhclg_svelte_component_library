@@ -11,7 +11,7 @@
 
 <g
   class="row-group"
-  transform="translate ({((0 - rowMin) / (rowMax - rowMin)) * chartWidth})"
+  transform="translate ({(Math.abs(rowMin) / (rowMax - rowMin)) * chartWidth})"
 >
   <Bar {scaledValue} {rowHeight} bind:selectedBar {row}></Bar>
 
@@ -21,6 +21,7 @@
       barColor={row.color}
       value={row.y}
       max={row.y == rowMax}
+      min={row.y == rowMin}
       {rowHeight}
       selected={selectedBar == row.areaCode}
     ></RowValue>

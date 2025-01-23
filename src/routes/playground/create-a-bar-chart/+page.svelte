@@ -41,6 +41,7 @@
             : null
       );
   }
+  $inspect(data.areasLookup[0]);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -90,7 +91,10 @@
           <p class="my-2 mx-0 p-0 text-sm">Change colour of bars:</p>
           <MultiSelect
             items={processData(data).map((d) => {
-              return { value: d.areaCode, name: d.areaCode };
+              return {
+                value: d.areaCode,
+                name: data.areasLookup[0][d.areaCode],
+              };
             })}
             bind:value={colouredBars}
           ></MultiSelect>

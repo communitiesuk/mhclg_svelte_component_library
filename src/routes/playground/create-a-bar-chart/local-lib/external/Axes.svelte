@@ -1,9 +1,14 @@
 <script>
-  let { chartHeight, chartWidth } = $props();
+  let { chartHeight, chartWidth, yFunction } = $props();
 </script>
 
 <g data-role="x-axis">
-  <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"></path>
+  <path
+    transform="translate({yFunction(0)},0)"
+    d="M0 0 l0 {chartHeight}"
+    stroke="black"
+    stroke-width="2px"
+  ></path>
   {#each [0, 1, 2, 3, 4, 5] as tick}
     <path
       transform="translate({(chartWidth * tick) / 5},0)"

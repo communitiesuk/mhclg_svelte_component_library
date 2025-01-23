@@ -24,7 +24,14 @@
   </div>
 {/snippet}
 
-{#if source.inputType === 'dropdown'}
+{#if source.inputType === 'function'}
+  {@render parameterName(source.name, propPillObject)}
+  <Textarea
+    bind:value
+    rows={9}
+    class="text-base"
+  />
+{:else if source.inputType === 'dropdown'}
   {@render parameterName(source.name, propPillObject)}
   <Select
     class="text-base"

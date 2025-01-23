@@ -3,11 +3,11 @@
   import { scaleLinear } from 'd3-scale';
 
   import Row from './Row.svelte';
-  dataArray.forEach((el, index) => {
-    if (index % 2 === 0) {
-      el.y = -el.y;
-    }
-  });
+  // dataArray.forEach((el, index) => {
+  //   if (index % 2 === 0) {
+  //     el.y = -el.y;
+  //   }
+  // });
 
   let barHeight = $derived(chartHeight / dataArray.length / 2);
 

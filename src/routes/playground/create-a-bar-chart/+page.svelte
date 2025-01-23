@@ -18,7 +18,7 @@
   let selectedYear = $state(data?.years[0]);
   let numberOfBars = $state(10);
   let sortMethod = $state('ascending');
-  let focusColour = $state({ E07000223: '#002fa7' });
+  let focusColour = $state('#002fa7');
   let colourNegativeBars = $state(false);
   let negativeBarColour = $state('#ae3b21');
 
@@ -33,6 +33,20 @@
     ascending: (a, b) => a['y'] - b['y'],
     descending: (a, b) => b['y'] - a['y'],
   };
+
+  let dataArray = $derived(
+    data?.dataInFormatForBarChart
+      .find((el) => el.x === selectedYear)
+      .bars.map((el, index) => ({
+        ...el,
+        colour: el.areaCode === 'E07000032' ? focusColour : '#ababab',
+        y: index % 2 === 0 ? -el.y : el.y,
+      }))
+      .slice(0, numberOfBars)
+      .sort(sortingFunctions[sortMethod])
+  );
+
+  $inspect(dataArray);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -103,13 +117,7 @@
           {/if}
         </div>
         <div class="row-chart-container">
-          <RowChart
-            dataArray={data?.dataInFormatForBarChart
-              .find((el) => el.x === selectedYear)
-              .bars.slice(0, numberOfBars)
-              .sort(sortingFunctions[sortMethod])}
-            {colours}
-          ></RowChart>
+          <RowChart {dataArray} {colours}></RowChart>
         </div>
       </div>
     </div>

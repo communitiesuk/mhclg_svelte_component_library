@@ -3,6 +3,12 @@
   import { scaleLinear } from 'd3-scale';
 
   import Row from './Row.svelte';
+  dataArray.forEach((el, index) => {
+  if (index % 2 === 1) {
+    el.y = -el.y;
+  }
+});
+
   let barHeight = $derived(chartHeight / dataArray.length / 2);
 
   let quarterSpace = $derived(barHeight / 2);
@@ -18,12 +24,12 @@
   $inspect(allValues)
 
   let valueMax = $derived(Math.max(...allValues));
+  let valueMin = $derived(Math.min(...allValues));
+
 
   let xFunction = $derived(
-    scaleLinear().domain([0, valueMax]).range([0, chartWidth])
+    scaleLinear().domain([0, valueMax]).range([chartWidth/2, chartWidth])
   );
-
-  //let sortedArray = $derived(dataArray.slice().sort((a, b) => a.y - b.y));
 </script>
 
 <g>

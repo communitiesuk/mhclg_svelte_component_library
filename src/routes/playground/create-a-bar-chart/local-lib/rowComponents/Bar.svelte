@@ -3,7 +3,8 @@
 </script>
 
 <rect
-  width={xFunction(row.y)}
+  width={xFunction(Math.abs(row.y))}
   height={barHeight}
+  x={(row.y < 0 ? xFunction(0-100) + row.y : xFunction(0))}
   fill={focusBars.includes(row.areaCode) ? focusColour : '#bababa'}
 />

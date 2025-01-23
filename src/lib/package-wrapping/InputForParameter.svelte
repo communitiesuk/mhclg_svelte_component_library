@@ -9,7 +9,7 @@
 
   let propPillObject = propPillLookup[source.isProp];
 
-  let editorContainer;
+  let editorContainer = $state(null);
   let monacoEditor;
 
   onMount(async () => {
@@ -60,7 +60,7 @@
 
 {#if source.inputType === 'function' || source.inputType === 'javascript'}
   {@render parameterName(source.name, propPillObject)}
-  <div bind:this={editorContainer} class="h-[280px] w-full border rounded" />
+  <div bind:this={editorContainer} class="h-[280px] w-full border rounded"></div>
 {:else if source.inputType === 'dropdown'}
   {@render parameterName(source.name, propPillObject)}
   <Select

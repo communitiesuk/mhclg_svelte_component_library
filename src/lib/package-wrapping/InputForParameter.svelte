@@ -13,12 +13,12 @@
   let monacoEditor;
 
   onMount(async () => {
-    if (source.inputType === 'function') {
+    if (source.inputType === 'function' || source.inputType === 'javascript') {
       const monaco = await loader.init();
       
       monacoEditor = monaco.editor.create(editorContainer, {
         value,
-        language: 'javascript',
+        language: source.inputType === 'javascript' ? 'json' : 'javascript',
         theme: 'vs-dark',
         minimap: { enabled: false },
         lineNumbers: 'on',
@@ -26,7 +26,8 @@
         scrollBeyondLastLine: false,
         automaticLayout: true,
         fontSize: 14,
-        // wordWrap: 'on',
+        formatOnPaste: true,
+        formatOnType: true
       });
 
       // Update the bound value when editor content changes
@@ -57,7 +58,7 @@
   </div>
 {/snippet}
 
-{#if source.inputType === 'function'}
+{#if source.inputType === 'function' || source.inputType === 'javascript'}
   {@render parameterName(source.name, propPillObject)}
   <div bind:this={editorContainer} class="h-[280px] w-full border rounded" />
 {:else if source.inputType === 'dropdown'}

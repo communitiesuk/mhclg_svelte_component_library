@@ -2,7 +2,7 @@
   import { page } from '$app/stores';
   import PlaygroundDetails from '$lib/package-wrapping/PlaygroundDetails.svelte';
   import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
-  import { Input, Radio } from 'flowbite-svelte';
+  import { Checkbox, Input, Radio } from 'flowbite-svelte';
   import { details } from './details.js';
   import RowChart from './local-lib/RowChart.svelte';
 
@@ -75,6 +75,9 @@
                 </span>
               </Radio>
             {/each}
+          </div>
+          <div>
+            <Checkbox>Default checkbox</Checkbox>
           </div>
         </div>
         <div class="row-chart-container">

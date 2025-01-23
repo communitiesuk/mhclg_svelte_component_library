@@ -15,33 +15,9 @@
   import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import CodeBlock from "$lib/components/content/CodeBlock.svelte";
-  import CheckBox from "$lib/components/ui/CheckBox.svelte";
 
   let { data, homepage = undefined, folders } = $props();
 
-  // Validation function for the checkbox example
-  function validateContactPreferences(values: string[]): string | undefined {
-    // If no options are selected
-    if (values.length === 0) {
-      return "Please select at least one contact method";
-    }
-
-    // If "none" is selected along with other options
-    if (values.includes("none") && values.length > 1) {
-      return "You cannot select other options when opting out of all communications";
-    }
-
-    // If email is selected, ensure it's not the only digital option
-    if (
-      values.includes("email") &&
-      !values.includes("sms") &&
-      !values.includes("none")
-    ) {
-      return "Please select SMS as a backup digital contact method when using email";
-    }
-
-    return undefined;
-  }
 
   let snippetSections = [
     {
@@ -286,42 +262,6 @@
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
-    <h6>Checkbox with conditional content</h6>
-    <div class="app-example-wrapper">
-      <div
-        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-      >
-        <CheckBox
-          legend="Contact preferences"
-          hint="Select how you'd like to be contacted"
-          name="contact"
-          options={[
-            {
-              value: "email",
-              label: "Email",
-              conditional: {
-                id: "email-input",
-                content: `<div class="govuk-form-group">
-                    <label class="govuk-label" for="email">Email address</label>
-                    <input class="govuk-input" id="email" name="email" type="email">
-                  </div>`,
-              },
-            },
-            {
-              value: "phone",
-              label: "Phone",
-              hint: "We'll only call during business hours",
-            },
-            {
-              value: "none",
-              label: "Do not contact me",
-              exclusive: true,
-            },
-          ]}
-        />
-      </div>
-    </div>
-
     <h6>Accordion with snippet-based content</h6>
     <CodeBlock
       code={`
@@ -522,149 +462,6 @@
         />
       </div>
     </div>
-
-    <h6>Checkbox with all props demonstrated</h6>
-    <div class="app-example-wrapper">
-      <div
-        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-      >
-        <CheckBox
-          legend="Advanced Contact Preferences"
-          hint="Complete example showing all CheckBox component features"
-          name="advanced-contact"
-          isPageHeading={true}
-          legendSize="m"
-          small={true}
-          validate={validateContactPreferences}
-          options={[
-            {
-              value: "email",
-              label: "Email notifications",
-              hint: "We'll send updates to your email address",
-              conditional: {
-                id: "email-settings",
-                content: `
-                  <div class="govuk-form-group">
-                    <label class="govuk-label" for="email">Email address</label>
-                    <input class="govuk-input" id="email" name="email" type="email">
-                    <div class="govuk-form-group">
-                      <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                        <div class="govuk-checkboxes__item">
-                          <input class="govuk-checkboxes__input" id="email-marketing" name="email-marketing" type="checkbox">
-                          <label class="govuk-label govuk-checkboxes__label" for="email-marketing">
-                            Also send marketing emails
-                          </label>
-                        </div>
-                      </div>
-                    </div>
-                  </div>`,
-              },
-            },
-            {
-              value: "sms",
-              label: "SMS notifications",
-              hint: "Text messages to your mobile phone",
-            },
-            {
-              value: "phone",
-              label: "Phone calls",
-              hint: "Direct phone calls during business hours",
-            },
-            {
-              value: "post",
-              label: "Postal mail",
-              hint: "Physical letters to your address",
-            },
-            {
-              value: "none",
-              label: "Opt out of all communications",
-              hint: "You won't receive any notifications from us",
-              exclusive: true,
-            },
-          ]}
-        />
-      </div>
-    </div>
-
-    <CodeBlock
-      code={`
-<script lang="ts">
-  function validateContactPreferences(values: string[]): string | undefined {
-    // If no options are selected
-    if (values.length === 0) {
-      return "Please select at least one contact method";
-    }
-    
-    // If "none" is selected along with other options
-    if (values.includes("none") && values.length > 1) {
-      return "You cannot select other options when opting out of all communications";
-    }
-    
-    // If email is selected, ensure it's not the only digital option
-    if (values.includes("email") && !values.includes("sms") && !values.includes("none")) {
-      return "Please select SMS as a backup digital contact method when using email";
-    }
-    
-    return undefined;
-  }
-</script>
-
-<CheckBox
-  legend="Advanced Contact Preferences"
-  hint="Complete example showing all CheckBox component features"
-  name="advanced-contact"
-  isPageHeading={true}
-  legendSize="m"
-  small={true}
-  validate={validateContactPreferences}
-  options={[
-    {
-      value: "email",
-      label: "Email notifications",
-      hint: "We'll send updates to your email address",
-      conditional: {
-        id: "email-settings",
-        content: \`
-          <div class="govuk-form-group">
-            <label class="govuk-label" for="email">Email address</label>
-            <input class="govuk-input" id="email" name="email" type="email">
-            <div class="govuk-form-group">
-              <div class="govuk-checkboxes" data-module="govuk-checkboxes">
-                <div class="govuk-checkboxes__item">
-                  <input class="govuk-checkboxes__input" id="email-marketing" name="email-marketing" type="checkbox">
-                  <label class="govuk-label govuk-checkboxes__label" for="email-marketing">
-                    Also send marketing emails
-                  </label>
-                </div>
-              </div>
-            </div>
-          </div>\`
-      }
-    },
-    {
-      value: "sms",
-      label: "SMS notifications", 
-      hint: "Text messages to your mobile phone"
-    },
-    {
-      value: "phone",
-      label: "Phone calls",
-      hint: "Direct phone calls during business hours"
-    },
-    {
-      value: "post",
-      label: "Postal mail",
-      hint: "Physical letters to your address"
-    },
-    {
-      value: "none",
-      label: "Opt out of all communications",
-      hint: "You won't receive any notifications from us",
-      exclusive: true
-    }
-  ]}
-/>`}
-    />
   </div>
 {/if}
 

@@ -1,3 +1,4 @@
+// data was downloaded from the data explorer and manipulated to get area code lookup Table. Excel was used to get into javascript data array form
 export const localAuthorityCodeLookup = [
     {'areaCode':'E07000223','localAuthorityName':'Adur'},
 {'areaCode':'E07000026','localAuthorityName':'Allerdale'},

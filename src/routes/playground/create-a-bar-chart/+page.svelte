@@ -25,11 +25,11 @@
   let colours = $derived({
     colourNegativeBars: colourNegativeBars,
     negativeBarColour: negativeBarColour,
+    custom: focusColour,
   });
-  $inspect(colours);
 
   const sortingFunctions = {
-    alphabetical: (a, b) => a['areaCode'].localeCompare(b['areaCode']),
+    alphabetical: (a, b) => a['areaName'].localeCompare(b['areaName']),
     ascending: (a, b) => a['y'] - b['y'],
     descending: (a, b) => b['y'] - a['y'],
   };
@@ -89,6 +89,18 @@
               >Different colour for negative bars?</Checkbox
             >
           </div>
+          {#if colourNegativeBars}
+            <div class="mt-5">
+              <p class="my-2 mx-0 p-0 text-sm">Negative bar colour:</p>
+              <Input let:props>
+                <input
+                  type="string"
+                  {...props}
+                  bind:value={negativeBarColour}
+                />
+              </Input>
+            </div>
+          {/if}
         </div>
         <div class="row-chart-container">
           <RowChart
@@ -96,7 +108,6 @@
               .find((el) => el.x === selectedYear)
               .bars.slice(0, numberOfBars)
               .sort(sortingFunctions[sortMethod])}
-            {colours}
             {colours}
           ></RowChart>
         </div>

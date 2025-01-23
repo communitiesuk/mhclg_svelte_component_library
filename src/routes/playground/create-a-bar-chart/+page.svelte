@@ -19,6 +19,14 @@
   let numberOfBars = $state(10);
   let sortMethod = $state('ascending');
   let focusColour = $state({ E07000223: '#002fa7' });
+  let colourNegativeBars = $state(false);
+  let negativeBarColour = $state('#ae3b21');
+
+  let colours = $derived({
+    colourNegativeBars: colourNegativeBars,
+    negativeBarColour: negativeBarColour,
+  });
+  $inspect(colours);
 
   const sortingFunctions = {
     alphabetical: (a, b) => a['areaCode'].localeCompare(b['areaCode']),
@@ -77,7 +85,9 @@
             {/each}
           </div>
           <div>
-            <Checkbox>Default checkbox</Checkbox>
+            <Checkbox bind:checked={colourNegativeBars}
+              >Different colour for negative bars?</Checkbox
+            >
           </div>
         </div>
         <div class="row-chart-container">
@@ -86,7 +96,8 @@
               .find((el) => el.x === selectedYear)
               .bars.slice(0, numberOfBars)
               .sort(sortingFunctions[sortMethod])}
-            {focusColour}
+            {colours}
+            {colours}
           ></RowChart>
         </div>
       </div>

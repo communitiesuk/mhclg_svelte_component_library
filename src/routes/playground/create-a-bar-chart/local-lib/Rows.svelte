@@ -1,5 +1,5 @@
 <script>
-  let { dataArray, chartHeight, chartWidth, focusColour } = $props();
+  let { dataArray, chartHeight, chartWidth, colours } = $props();
   import { scaleLinear } from 'd3-scale';
 
   import Row from './Row.svelte';
@@ -36,7 +36,7 @@
 <g>
   {#each dataArray as row, i}
     <g transform="translate({0},{yFunction(i)})">
-      <Row {row} {xFunction} {barHeight} {focusColour}></Row>
+      <Row {row} {xFunction} {barHeight} {colours}></Row>
     </g>
   {/each}
 </g>

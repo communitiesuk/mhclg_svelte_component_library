@@ -9,7 +9,7 @@
 
   let propPillObject = propPillLookup[source.isProp];
 
-  let editorContainer = $state(null);
+  let editorContainer = $state();
   let monacoEditor;
 
   onMount(async () => {

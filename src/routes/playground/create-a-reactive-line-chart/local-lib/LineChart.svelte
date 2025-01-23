@@ -6,12 +6,8 @@
 
   let { data } = $props();
 
-  $inspect(data);
-
   let svgWidth = $state(),
     svgHeight = 600;
-
-  $inspect(data);
 
   /*let staticMargin = { top: 10, right: 20, bottom: 20, left: 10 };
   let dynamicMargin = $derived({ top: 0, right: 0, bottom: 0, left: 0 });

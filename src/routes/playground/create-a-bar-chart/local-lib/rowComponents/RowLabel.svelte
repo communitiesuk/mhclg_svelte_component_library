@@ -1,6 +1,5 @@
 <script>
   let { row, barHeight } = $props();
-  $inspect(row);
 </script>
 
 <g transform="translate({-10},{barHeight/2})">

@@ -21,7 +21,6 @@
   let focusBars = $state('E07000223');
   let focusColour = $state('#002fa7');
 
-  $inspect(sortMethod);
 
   const sortingFunctions = {
     alphabetical: (a, b) => a['areaCode'].localeCompare(b['areaCode']),

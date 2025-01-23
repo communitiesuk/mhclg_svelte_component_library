@@ -4,7 +4,7 @@
 
   import Row from './Row.svelte';
   dataArray.forEach((el, index) => {
-    if (index % 2 === 1) {
+    if (index % 2 === 0) {
       el.y = -el.y;
     }
   });
@@ -21,16 +21,13 @@
 
   let allValues = $derived(dataArray.map((el) => el.y));
 
-  $inspect(allValues);
-
   let valueMax = $derived(Math.max(...allValues));
   let valueMin = $derived(Math.min(...allValues));
   let valueRange = $derived(Math.abs(valueMax) + Math.abs(valueMin));
   let midpoint = $derived(valueMin + valueRange / 2);
-  $inspect({chartWidth});
 
   let xFunction = $derived(
-    scaleLinear().domain([valueMin, valueMax]).range([0, chartWidth])
+    scaleLinear().domain([valueMin, valueMax]).range([0+50, chartWidth-50])
   );
 </script>
 

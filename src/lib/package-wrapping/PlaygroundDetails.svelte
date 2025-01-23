@@ -6,7 +6,6 @@
 
   let { homepage, details } = $props();
 
-  $inspect(details);
 </script>
 
 {#snippet pageDescription()}

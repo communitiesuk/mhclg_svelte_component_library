@@ -1,7 +1,6 @@
 <script>
   let { row, xFunction, barHeight } = $props();
   let offsetX = $derived(xFunction(row.y));
-  $inspect(offsetX);
 </script>
 
 <g transform="translate({offsetX},{barHeight/2})">

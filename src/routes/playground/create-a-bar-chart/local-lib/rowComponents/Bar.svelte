@@ -10,7 +10,7 @@
     height={0.9 * rowHeight}
     onmousemove={() => (selectedBar = row.areaCode)}
     onmouseout={() => (selectedBar = null)}
-    fill={row.areaCode == selectedBar ? 'darkturquoise' : row.color}
+    fill={row.areaCode == selectedBar ? 'darkturquoise' : row.color.bar}
   ></rect>
 {/if}
 

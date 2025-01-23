@@ -5,21 +5,32 @@
   import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
   import Row from './Row.svelte';
 
-  let { dataArray, sortOrder } = $props();
+  let { dataArray, areasLookup, colouredBars, sortOrder } = $props();
 
   //Apply the sortOrder - note that I had to copy [...] the dataArray to use it - "Svelte will disallow state changes (e.g. count++) inside derived expressions."
   let sortedData = $derived(
-    [...dataArray].sort((a, b) =>
-      sortOrder === 'ascending'
-        ? (a.y ?? Infinity) - (b.y ?? Infinity)
-        : sortOrder === 'descending'
-          ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
-          : null
-    )
+    [...dataArray]
+      .map((d, i) => {
+        return {
+          ...d,
+          y: i % 2 === 0 ? d.y : -d.y,
+          color: colouredBars.includes(d.areaCode)
+            ? { bar: '#008080', text: '#FFF' }
+            : { bar: '#ADD8E6', text: '#222' },
+          areaName: areasLookup[d.areaCode],
+        };
+      })
+      .sort((a, b) =>
+        sortOrder === 'ascending'
+          ? (a.y ?? Infinity) - (b.y ?? Infinity)
+          : sortOrder === 'descending'
+            ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
+            : null
+      )
   );
 
   //Find the maximum value for scaling - need to get all the values and then do some cleaning before getting the max
-  let rowData = $derived(dataArray.map((d) => d.y).filter((d) => d));
+  let rowData = $derived(sortedData.map((d) => d.y).filter((d) => d));
   let rowMax = $derived(Math.max(...rowData));
   let rowMin = $derived(Math.min(...rowData));
 

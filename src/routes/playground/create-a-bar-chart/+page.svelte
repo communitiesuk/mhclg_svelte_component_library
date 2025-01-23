@@ -39,15 +39,7 @@
           : sortOrder === 'descending'
             ? (b.y ?? -Infinity) - (a.y ?? -Infinity)
             : null
-      )
-      .map((d, i) => {
-        return {
-          ...d,
-          y: i % 2 === 0 ? d.y : -d.y,
-          color: colouredBars.includes(d.areaCode) ? 'teal' : 'lightblue',
-          areaName: data.areasLookup[0][d.areaCode],
-        };
-      });
+      );
   }
 </script>
 
@@ -112,7 +104,12 @@
         </div>
         {#if chart}
           <div class="row-chart-container">
-            <RowChart dataArray={processData(data)} {sortOrder}></RowChart>
+            <RowChart
+              dataArray={processData(data)}
+              areasLookup={data.areasLookup[0]}
+              {colouredBars}
+              {sortOrder}
+            ></RowChart>
           </div>
         {:else}
           <div class="table-container">

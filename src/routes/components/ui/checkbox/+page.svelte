@@ -221,7 +221,7 @@
 
   <div data-role="demo-section">
     <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
-    <ScreenSizeRadio bind:value={demoScreenWidth} />
+    <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
   </div>
 
   <div data-role="component-container">
@@ -338,7 +338,6 @@
 {/if}
 
 <style>
-
   [data-role="examples-section"] {
     max-width: 1024px;
     margin: 0px auto;

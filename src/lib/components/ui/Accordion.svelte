@@ -1,10 +1,9 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
-  // Browser storage
-  import { browser } from '$app/environment'; //Do we need this? Will the app ever NOT run in the browser?
+
+  import { browser } from '$app/environment';
   import { onMount } from 'svelte';
 
-  // Props
   let {
     sections = [],
     hideAllSections = 'Hide all sections',
@@ -16,6 +15,7 @@
     allSectionToggle = true,
     minSectionsAllSectionToggle = 2,
     rememberIsExpandedState = true,
+    headingLevel = 'h4',
   }: {
     sections: {
       heading: string;
@@ -33,8 +33,10 @@
     allSectionToggle?: boolean;
     minSectionsAllSectionToggle?: number;
     rememberIsExpandedState?: boolean;
+    headingLevel?: string;
   } = $props();
 
+  // let headingLevel: string = 'h4';
   // State and derived stores
   let expandedSections: string[] = $state(
     []
@@ -141,6 +143,49 @@
     </button>
   </div>
 
+  {#snippet content(section, isExpanded)}
+    <button
+      type="button"
+      aria-controls="{section.id}-content"
+      class="govuk-accordion__section-button"
+      aria-expanded={isExpanded}
+      onclick={() => toggleSection(section.id)}
+      aria-label="{section.heading}, {isExpanded
+        ? hideSectionAriaLabel
+        : showSectionAriaLabel}"
+    >
+      <span class="govuk-accordion__section-heading-text">
+        <span class="govuk-accordion__section-heading-text-focus"
+          >{section.heading}</span
+        >
+      </span>
+
+      {#if section.summary}
+        <span
+          class="govuk-visually-hidden govuk-accordion__section-heading-divider"
+          >,
+        </span>
+        <span class="govuk-accordion__section-summary govuk-body">
+          <span class="govuk-accordion__section-summary-focus"
+            >{section.summary}</span
+          >
+        </span>
+      {/if}
+
+      <span class="govuk-accordion__section-toggle" data-nosnippet>
+        <span class="govuk-accordion__section-toggle-focus">
+          <span
+            class="govuk-accordion-nav__chevron"
+            class:govuk-accordion-nav__chevron--down={!isExpanded}
+          ></span>
+          <span class="govuk-accordion__section-toggle-text">
+            {isExpanded ? hideSection : showSection}
+          </span>
+        </span>
+      </span>
+    </button>
+  {/snippet}
+
   {#each sections as section}
     {@const isExpanded = expandedSections.includes(section.id)}
     <div
@@ -148,48 +193,28 @@
       class:govuk-accordion__section--expanded={isExpanded}
     >
       <div class="govuk-accordion__section-header">
-        <h2 class="govuk-accordion__section-heading">
-          <button
-            type="button"
-            aria-controls="{section.id}-content"
-            class="govuk-accordion__section-button"
-            aria-expanded={isExpanded}
-            onclick={() => toggleSection(section.id)}
-            aria-label="{section.heading}, {isExpanded
-              ? hideSectionAriaLabel
-              : showSectionAriaLabel}"
-          >
-            <span class="govuk-accordion__section-heading-text">
-              <span class="govuk-accordion__section-heading-text-focus"
-                >{section.heading}</span
-              >
-            </span>
-
-            {#if section.summary}
-              <span
-                class="govuk-visually-hidden govuk-accordion__section-heading-divider"
-                >,
-              </span>
-              <span class="govuk-accordion__section-summary govuk-body">
-                <span class="govuk-accordion__section-summary-focus"
-                  >{section.summary}</span
-                >
-              </span>
-            {/if}
-
-            <span class="govuk-accordion__section-toggle" data-nosnippet>
-              <span class="govuk-accordion__section-toggle-focus">
-                <span
-                  class="govuk-accordion-nav__chevron"
-                  class:govuk-accordion-nav__chevron--down={!isExpanded}
-                ></span>
-                <span class="govuk-accordion__section-toggle-text">
-                  {isExpanded ? hideSection : showSection}
-                </span>
-              </span>
-            </span>
-          </button>
-        </h2>
+        <!-- <h2 class="govuk-accordion__section-heading"> -->
+        {#if headingLevel == 'h2'}
+          <h2 class="govuk-accordion__section-heading">
+            {@render content(section, isExpanded)}
+          </h2>
+        {:else if headingLevel == 'h3'}
+          <h3 class="govuk-accordion__section-heading">
+            {@render content(section, isExpanded)}
+          </h3>
+        {:else if headingLevel == 'h4'}
+          <h4 class="govuk-accordion__section-heading">
+            {@render content(section, isExpanded)}
+          </h4>
+        {:else if headingLevel == 'h5'}
+          <h5 class="govuk-accordion__section-heading">
+            {@render content(section, isExpanded)}
+          </h5>
+        {:else if headingLevel == 'h6'}
+          <h6 class="govuk-accordion__section-heading">
+            {@render content(section, isExpanded)}
+          </h6>
+        {/if}
       </div>
       <div
         id="{section.id}-content"

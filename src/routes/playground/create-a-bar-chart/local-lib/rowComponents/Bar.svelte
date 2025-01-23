@@ -5,6 +5,6 @@
 <rect
   width={xFunction(Math.abs(row.y))}
   height={barHeight}
-  x={(row.y < 0 ? xFunction(0-100) + row.y : xFunction(0))}
+  x={(row.y < 0 ? xFunction(row.y) - xFunction(0) : xFunction(0))}
   fill={focusBars.includes(row.areaCode) ? focusColour : '#bababa'}
 />

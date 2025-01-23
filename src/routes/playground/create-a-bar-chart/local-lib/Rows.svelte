@@ -4,10 +4,10 @@
 
   import Row from './Row.svelte';
   dataArray.forEach((el, index) => {
-  if (index % 2 === 1) {
-    el.y = -el.y;
-  }
-});
+    if (index % 2 === 1) {
+      el.y = -el.y;
+    }
+  });
 
   let barHeight = $derived(chartHeight / dataArray.length / 2);
 
@@ -21,14 +21,18 @@
 
   let allValues = $derived(dataArray.map((el) => el.y));
 
-  $inspect(allValues)
+  $inspect(allValues);
 
   let valueMax = $derived(Math.max(...allValues));
   let valueMin = $derived(Math.min(...allValues));
-
+  let valueRange = $derived(Math.abs(valueMax) + Math.abs(valueMin));
+  let midpoint = $derived(valueMin + valueRange / 2);
+  $inspect(midpoint);
 
   let xFunction = $derived(
-    scaleLinear().domain([0, valueMax]).range([chartWidth/2, chartWidth])
+    scaleLinear()
+      .domain([midpoint, valueMax])
+      .range([chartWidth / 2, chartWidth])
   );
 </script>
 

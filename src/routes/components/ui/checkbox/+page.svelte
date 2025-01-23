@@ -225,10 +225,17 @@
   </div>
 
   <div data-role="component-container">
-    <div data-role="component-container-centered">
-      <div class="example-area">
-        <div class="example-area__content" style="width: {demoScreenWidth}px">
-          <CheckBox {...parametersObject} />
+    <div
+      data-role="component-container-centered"
+      style="width: {demoScreenWidth}px;"
+    >
+      <div class="flex flex-col gap-4">
+        <div class="app-example-wrapper">
+          <div
+            class="app-example__frame app-example__frame--resizable app-example__frame--l p-6"
+          >
+            <CheckBox {...parametersObject} />
+          </div>
         </div>
       </div>
     </div>
@@ -331,16 +338,6 @@
 {/if}
 
 <style>
-  .example-area {
-    padding: 30px;
-    background-color: #f8f8f8;
-    border: 1px solid #b1b4b6;
-  }
-
-  .example-area__content {
-    margin: 0 auto;
-    transition: width 0.3s ease-in-out;
-  }
 
   [data-role="examples-section"] {
     max-width: 1024px;

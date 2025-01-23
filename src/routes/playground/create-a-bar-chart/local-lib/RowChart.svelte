@@ -17,7 +17,23 @@
   let svgWidth = $state(),
     svgHeight = 500;
 
-  let totalMargin = { top: 40, right: 50, bottom: 20, left: 250 };
+  let requiredSpaceForLabelsArray = $state(new Array(dataArray.length));
+  let filteredRequiredSpaceForLabelsArray = $derived(
+    requiredSpaceForLabelsArray.filter((el) => el !== undefined),
+  );
+
+  let requiredSpaceForLabels = $derived(
+    filteredRequiredSpaceForLabelsArray.length > 0
+      ? Math.max(...filteredRequiredSpaceForLabelsArray)
+      : 100,
+  );
+
+  let totalMargin = $derived({
+    top: 40,
+    right: 50,
+    bottom: 20,
+    left: 250,
+  });
 
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
@@ -63,7 +79,13 @@
 
           {#each dataArray as row, i}
             <g transform="translate({0},{rowHeight * (i + 0.5) + 10})">
-              <Row {row} {yFunction} {rowHeight} {chartWidth}></Row>
+              <Row
+                {row}
+                {yFunction}
+                {rowHeight}
+                {chartWidth}
+                bind:requiredSpaceForLabel={requiredSpaceForLabelsArray[i]}
+              ></Row>
             </g>
           {/each}
         </g>

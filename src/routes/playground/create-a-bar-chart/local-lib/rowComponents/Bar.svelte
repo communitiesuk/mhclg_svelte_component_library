@@ -1,7 +1,5 @@
 <script>
   let { row, yFunction, rowHeight } = $props();
-
-  $inspect(row.color);
 </script>
 
 <line

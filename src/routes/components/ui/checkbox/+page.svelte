@@ -143,20 +143,20 @@
         value: "false",
       },
       {
-        name: "legendSize",
-        category: "UI Options",
-        isProp: true,
-        inputType: "select",
-        options: ["l", "m", "s"],
-        value: "l",
-      },
-      {
         name: "small",
         category: "UI Options",
         isProp: true,
         inputType: "checkbox",
         value: "false",
       },
+      {
+        name: "legendSize",
+        category: "UI Options",
+        isProp: true,
+        inputType: "dropdown",
+        options: ["l", "m", "s"],
+        value: "l",
+      },     
     ]);
 
   let parametersValuesArray = $state(

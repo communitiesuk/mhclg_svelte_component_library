@@ -100,7 +100,7 @@
         name: "options",
         category: "Content",
         isProp: true,
-        inputType: "textArea",
+        inputType: "javascript",
         value: JSON.stringify(
           [
             {
@@ -174,7 +174,7 @@
   }
   return undefined;
 }`,
-      },     
+      },
     ]);
 
   let parametersValuesArray = $state(
@@ -228,9 +228,7 @@
     <div data-role="component-container-centered">
       <div class="example-area">
         <div class="example-area__content" style="width: {demoScreenWidth}px">
-          <CheckBox
-            {...parametersObject}
-          />
+          <CheckBox {...parametersObject} />
         </div>
       </div>
     </div>

@@ -244,42 +244,166 @@
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px" />
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
+
+    <!-- Example 1: Basic Usage -->
     <h3 class="govuk-heading-m">Basic Usage</h3>
     <CodeBlock
       code={`<script>
   import CheckBox from "$lib/components/ui/CheckBox.svelte";
 
   const options = [
-    {
-      value: "email",
-      label: "Email",
-      hint: "We'll send updates to your inbox"
-    },
-    {
-      value: "sms",
-      label: "Text message",
-      hint: "UK mobile numbers only"
-    }
+    { value: "option1", label: "Option 1" },
+    { value: "option2", label: "Option 2" },
+    { value: "option3", label: "Option 3" }
   ];
 </script>
 
 <CheckBox
-  legend="How would you like to be contacted?"
-  hint="Select all that apply"
-  name="contact-preferences"
-  {options}
+  legend="Select your options"
+  name="basic-options"
+  options={options}
 />`}
       language="svelte"
     />
 
-    <h3 class="govuk-heading-m">With Validation</h3>
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <CheckBox
+          legend="Select your options"
+          name="basic-options"
+          options={[
+            { value: "option1", label: "Option 1" },
+            { value: "option2", label: "Option 2" },
+            { value: "option3", label: "Option 3" }
+          ]}
+        />
+      </div>
+    </div>
+
+    <!-- Example 2: With Hint -->
+    <h3 class="govuk-heading-m">With Hint</h3>
     <CodeBlock
       code={`<script>
   import CheckBox from "$lib/components/ui/CheckBox.svelte";
 
-  function validateContactPreferences(values: string[]): string | undefined {
+  const options = [
+    { value: "news", label: "Newsletter", hint: "Receive monthly updates" },
+    { value: "updates", label: "Product Updates", hint: "Stay informed about new features" }
+  ];
+</script>
+
+<CheckBox
+  legend="Choose your subscriptions"
+  hint="Select all that apply"
+  name="subscriptions"
+  options={options}
+/>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <CheckBox
+          legend="Choose your subscriptions"
+          hint="Select all that apply"
+          name="subscriptions"
+          options={[
+            { value: "news", label: "Newsletter", hint: "Receive monthly updates" },
+            { value: "updates", label: "Product Updates", hint: "Stay informed about new features" }
+          ]}
+        />
+      </div>
+    </div>
+
+    <!-- Example 3: With Validation -->
+    <h3 class="govuk-heading-m">With Validation</h3>
+    <CodeBlock
+      code={`<script lang="ts">
+  import CheckBox from "$lib/components/ui/CheckBox.svelte";
+
+  function validateSelection(values: string[]): string | undefined {
     if (values.length === 0) {
-      return "Please select at least one contact method";
+      return "Please select at least one option.";
+    }
+    return undefined;
+  }
+
+  const options = [
+    { value: "agree", label: "I agree to the terms and conditions" }
+  ];
+</script>
+
+<CheckBox
+  legend="Terms and Conditions"
+  name="terms"
+  options={options}
+  validate={validateSelection}
+/>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <CheckBox
+          legend="Terms and Conditions"
+          name="terms"
+          options={[
+            { value: "agree", label: "I agree to the terms and conditions" }
+          ]}
+          validate={(values) => {
+            if (values.length === 0) {
+              return "Please select at least one option.";
+            }
+            return undefined;
+          }}
+        />
+      </div>
+    </div>
+
+    <!-- Example 4: Exclusive Option -->
+    <h3 class="govuk-heading-m">Exclusive Option</h3>
+    <CodeBlock
+      code={`<script>
+  import CheckBox from "$lib/components/ui/CheckBox.svelte";
+
+  const options = [
+    { value: "email", label: "Email Notifications" },
+    { value: "sms", label: "SMS Notifications" },
+    { value: "none", label: "Do not receive any notifications", exclusive: true }
+  ];
+</script>
+
+<CheckBox
+  legend="Notification Preferences"
+  name="notifications"
+  options={options}
+/>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <CheckBox
+          legend="Notification Preferences"
+          name="notifications"
+          options={[
+            { value: "email", label: "Email Notifications" },
+            { value: "sms", label: "SMS Notifications" },
+            { value: "none", label: "Do not receive any notifications", exclusive: true }
+          ]}
+        />
+      </div>
+    </div>
+
+    <!-- Example 5: Conditional Content -->
+    <h3 class="govuk-heading-m">With Conditional Content</h3>
+    <CodeBlock
+      code={`<script>
+  import CheckBox from "$lib/components/ui/CheckBox.svelte";
+
+  function validatePreferences(values: string[]): string | undefined {
+    if (values.length === 0) {
+      return "Please select at least one contact method.";
     }
     return undefined;
   }
@@ -287,53 +411,306 @@
   const options = [
     {
       value: "email",
-      label: "Email"
+      label: "Email",
+      conditional: {
+        id: "email-settings",
+        content: \`
+          <div class="govuk-form-group">
+            <label class="govuk-label" for="email">Email Address</label>
+            <input class="govuk-input" id="email" name="email" type="email">
+          </div>
+        \`
+      }
     },
-    {
-      value: "sms",
-      label: "Text message"
-    }
+    { value: "sms", label: "SMS" }
   ];
 </script>
 
 <CheckBox
-  legend="How would you like to be contacted?"
-  name="contact-preferences"
-  {options}
-  validate={validateContactPreferences}
+  legend="Contact Methods"
+  name="contact-methods"
+  options={options}
+  validate={validatePreferences}
 />`}
       language="svelte"
     />
 
-    <h3 class="govuk-heading-m">With Exclusive Option</h3>
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <CheckBox
+          legend="Contact Methods"
+          name="contact-methods"
+          options={[
+            {
+              value: "email",
+              label: "Email",
+              conditional: {
+                id: "email-settings",
+                content: `
+                  <div class="govuk-form-group">
+                    <label class="govuk-label" for="email">Email Address</label>
+                    <input class="govuk-input" id="email" name="email" type="email">
+                  </div>
+                `
+              }
+            },
+            { value: "sms", label: "SMS" }
+          ]}
+          validate={(values) => {
+            if (values.length === 0) {
+              return "Please select at least one contact method.";
+            }
+            return undefined;
+          }}
+        />
+      </div>
+    </div>
+
+    <!-- Example 6: Small Variation -->
+    <h3 class="govuk-heading-m">Small Variation</h3>
     <CodeBlock
       code={`<script>
   import CheckBox from "$lib/components/ui/CheckBox.svelte";
 
   const options = [
+    { value: "option1", label: "Option 1" },
+    { value: "option2", label: "Option 2" }
+  ];
+</script>
+
+<CheckBox
+  legend="Select items"
+  name="select-items"
+  options={options}
+  small={true}
+/>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <CheckBox
+          legend="Select items"
+          name="select-items"
+          options={[
+            { value: "option1", label: "Option 1" },
+            { value: "option2", label: "Option 2" }
+          ]}
+          small={true}
+        />
+      </div>
+    </div>
+
+    <!-- Example 7: Page Heading -->
+    <h3 class="govuk-heading-m">As Page Heading</h3>
+    <CodeBlock
+      code={`<script>
+  import CheckBox from "$lib/components/ui/CheckBox.svelte";
+
+  const options = [
+    { value: "optionA", label: "Option A" },
+    { value: "optionB", label: "Option B" }
+  ];
+</script>
+
+<CheckBox
+  legend="Main Preferences"
+  name="main-preferences"
+  options={options}
+  isPageHeading={true}
+/>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <CheckBox
+          legend="Main Preferences"
+          name="main-preferences"
+          options={[
+            { value: "optionA", label: "Option A" },
+            { value: "optionB", label: "Option B" }
+          ]}
+          isPageHeading={true}
+        />
+      </div>
+    </div>
+
+    <!-- Example 8: Legend Size -->
+    <h3 class="govuk-heading-m">Legend Size</h3>
+    <CodeBlock
+      code={`<script>
+  import CheckBox from "$lib/components/ui/CheckBox.svelte";
+
+  const options = [
+    { value: "low", label: "Low" },
+    { value: "medium", label: "Medium" },
+    { value: "high", label: "High" }
+  ];
+</script>
+
+<CheckBox
+  legend="Priority Levels"
+  name="priority-levels"
+  options={options}
+  legendSize="s"
+/>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <CheckBox
+          legend="Priority Levels"
+          name="priority-levels"
+          options={[
+            { value: "low", label: "Low" },
+            { value: "medium", label: "Medium" },
+            { value: "high", label: "High" }
+          ]}
+          legendSize="s"
+        />
+      </div>
+    </div>
+
+    <!-- Example 9: Multiple Conditional Contents -->
+    <h3 class="govuk-heading-m">Multiple Conditional Contents</h3>
+    <CodeBlock
+      code={`<script>
+  import CheckBox from "$lib/components/ui/CheckBox.svelte";
+
+  function validateOptions(values: string[]): string | undefined {
+    if (values.length < 2) {
+      return "Please select at least two options.";
+    }
+    return undefined;
+  }
+
+  const options = [
     {
-      value: "email",
-      label: "Email"
+      value: "option1",
+      label: "Option 1",
+      conditional: {
+        id: "option1-details",
+        content: \`
+          <div class="govuk-form-group">
+            <label class="govuk-label" for="option1-detail">Details for Option 1</label>
+            <input class="govuk-input" id="option1-detail" name="option1-detail" type="text">
+          </div>
+        \`
+      }
     },
     {
-      value: "sms",
-      label: "Text message"
-    },
-    {
-      value: "none",
-      label: "Do not contact me",
-      exclusive: true
+      value: "option2",
+      label: "Option 2",
+      conditional: {
+        id: "option2-details",
+        content: \`
+          <div class="govuk-form-group">
+            <label class="govuk-label" for="option2-detail">Details for Option 2</label>
+            <input class="govuk-input" id="option2-detail" name="option2-detail" type="text">
+          </div>
+        \`
+      }
     }
   ];
 </script>
 
 <CheckBox
-  legend="How would you like to be contacted?"
-  name="contact-preferences"
-  {options}
+  legend="Multiple Options"
+  name="multiple-options"
+  options={options}
+  validate={validateOptions}
 />`}
       language="svelte"
     />
+
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <CheckBox
+          legend="Multiple Options"
+          name="multiple-options"
+          options={[
+            {
+              value: "option1",
+              label: "Option 1",
+              conditional: {
+                id: "option1-details",
+                content: `
+                  <div class="govuk-form-group">
+                    <label class="govuk-label" for="option1-detail">Details for Option 1</label>
+                    <input class="govuk-input" id="option1-detail" name="option1-detail" type="text">
+                  </div>
+                `
+              }
+            },
+            {
+              value: "option2",
+              label: "Option 2",
+              conditional: {
+                id: "option2-details",
+                content: `
+                  <div class="govuk-form-group">
+                    <label class="govuk-label" for="option2-detail">Details for Option 2</label>
+                    <input class="govuk-input" id="option2-detail" name="option2-detail" type="text">
+                  </div>
+                `
+              }
+            }
+          ]}
+          validate={(values) => {
+            if (values.length < 2) {
+              return "Please select at least two options.";
+            }
+            return undefined;
+          }}
+        />
+      </div>
+    </div>
+
+    <!-- Example 10: Dynamic Options -->
+    <h3 class="govuk-heading-m">Dynamic Options</h3>
+    <CodeBlock
+      code={`<script>
+  import CheckBox from "$lib/components/ui/CheckBox.svelte";
+  import { onMount } from "svelte";
+
+  let options = [];
+
+  onMount(() => {
+    // Fetch options from an API or other source
+    options = [
+      { value: "dynamic1", label: "Dynamic Option 1" },
+      { value: "dynamic2", label: "Dynamic Option 2" },
+      { value: "dynamic3", label: "Dynamic Option 3" }
+    ];
+  });
+</script>
+
+<CheckBox
+  legend="Dynamic Options"
+  name="dynamic-options"
+  options={options}
+/>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <CheckBox
+          legend="Dynamic Options"
+          name="dynamic-options"
+          options={[
+            { value: "dynamic1", label: "Dynamic Option 1" },
+            { value: "dynamic2", label: "Dynamic Option 2" },
+            { value: "dynamic3", label: "Dynamic Option 3" }
+          ]}
+        />
+      </div>
+    </div>
+
+    <!-- ...additional examples as needed... -->
+
   </div>
 {/if}
 

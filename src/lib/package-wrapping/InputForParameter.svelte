@@ -1,4 +1,6 @@
 <script>
+  import { onMount } from 'svelte';
+  import loader from '@monaco-editor/loader';
   import Pill from '$lib/components/content/Pill.svelte';
   import { propPillLookup } from '$lib/config.js';
   import { Checkbox, Input, Radio, Select, Textarea } from 'flowbite-svelte';
@@ -6,6 +8,37 @@
   let { source, value = $bindable() } = $props();
 
   let propPillObject = propPillLookup[source.isProp];
+
+  let editorContainer;
+  let monacoEditor;
+
+  onMount(async () => {
+    if (source.inputType === 'function') {
+      const monaco = await loader.init();
+      
+      monacoEditor = monaco.editor.create(editorContainer, {
+        value,
+        language: 'javascript',
+        theme: 'vs-dark',
+        minimap: { enabled: false },
+        lineNumbers: 'on',
+        folding: false,
+        scrollBeyondLastLine: false,
+        automaticLayout: true,
+        fontSize: 14,
+        // wordWrap: 'on',
+      });
+
+      // Update the bound value when editor content changes
+      monacoEditor.onDidChangeModelContent(() => {
+        value = monacoEditor.getValue();
+      });
+
+      return () => {
+        monacoEditor?.dispose();
+      };
+    }
+  });
 </script>
 
 {#snippet parameterName(name, propPillObject, inline = false)}
@@ -26,11 +59,7 @@
 
 {#if source.inputType === 'function'}
   {@render parameterName(source.name, propPillObject)}
-  <Textarea
-    bind:value
-    rows={9}
-    class="text-base"
-  />
+  <div bind:this={editorContainer} class="h-[280px] w-full border rounded" />
 {:else if source.inputType === 'dropdown'}
   {@render parameterName(source.name, propPillObject)}
   <Select

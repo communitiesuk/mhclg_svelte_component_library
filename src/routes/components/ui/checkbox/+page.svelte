@@ -156,6 +156,13 @@
         inputType: "dropdown",
         options: ["l", "m", "s"],
         value: "l",
+      },
+      {
+        name: "validate",
+        category: "Validation",
+        isProp: true,
+        inputType: "event",
+        handlerFunction: validateContactPreferences
       },     
     ]);
 
@@ -212,7 +219,6 @@
         <div class="example-area__content" style="width: {demoScreenWidth}px">
           <CheckBox
             {...parametersObject}
-            validate={validateContactPreferences}
           />
         </div>
       </div>

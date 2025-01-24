@@ -267,14 +267,16 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <CheckBox
           legend="Select your options"
           name="basic-options"
           options={[
             { value: "option1", label: "Option 1" },
             { value: "option2", label: "Option 2" },
-            { value: "option3", label: "Option 3" }
+            { value: "option3", label: "Option 3" },
           ]}
         />
       </div>
@@ -302,14 +304,24 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <CheckBox
           legend="Choose your subscriptions"
           hint="Select all that apply"
           name="subscriptions"
           options={[
-            { value: "news", label: "Newsletter", hint: "Receive monthly updates" },
-            { value: "updates", label: "Product Updates", hint: "Stay informed about new features" }
+            {
+              value: "news",
+              label: "Newsletter",
+              hint: "Receive monthly updates",
+            },
+            {
+              value: "updates",
+              label: "Product Updates",
+              hint: "Stay informed about new features",
+            },
           ]}
         />
       </div>
@@ -343,12 +355,14 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <CheckBox
           legend="Terms and Conditions"
           name="terms"
           options={[
-            { value: "agree", label: "I agree to the terms and conditions" }
+            { value: "agree", label: "I agree to the terms and conditions" },
           ]}
           validate={(values) => {
             if (values.length === 0) {
@@ -382,14 +396,20 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <CheckBox
           legend="Notification Preferences"
           name="notifications"
           options={[
             { value: "email", label: "Email Notifications" },
             { value: "sms", label: "SMS Notifications" },
-            { value: "none", label: "Do not receive any notifications", exclusive: true }
+            {
+              value: "none",
+              label: "Do not receive any notifications",
+              exclusive: true,
+            },
           ]}
         />
       </div>
@@ -436,7 +456,9 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <CheckBox
           legend="Contact Methods"
           name="contact-methods"
@@ -451,10 +473,10 @@
                     <label class="govuk-label" for="email">Email Address</label>
                     <input class="govuk-input" id="email" name="email" type="email">
                   </div>
-                `
-              }
+                `,
+              },
             },
-            { value: "sms", label: "SMS" }
+            { value: "sms", label: "SMS" },
           ]}
           validate={(values) => {
             if (values.length === 0) {
@@ -488,13 +510,15 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <CheckBox
           legend="Select items"
           name="select-items"
           options={[
             { value: "option1", label: "Option 1" },
-            { value: "option2", label: "Option 2" }
+            { value: "option2", label: "Option 2" },
           ]}
           small={true}
         />
@@ -523,13 +547,15 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <CheckBox
           legend="Main Preferences"
           name="main-preferences"
           options={[
             { value: "optionA", label: "Option A" },
-            { value: "optionB", label: "Option B" }
+            { value: "optionB", label: "Option B" },
           ]}
           isPageHeading={true}
         />
@@ -559,14 +585,16 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <CheckBox
           legend="Priority Levels"
           name="priority-levels"
           options={[
             { value: "low", label: "Low" },
             { value: "medium", label: "Medium" },
-            { value: "high", label: "High" }
+            { value: "high", label: "High" },
           ]}
           legendSize="s"
         />
@@ -626,7 +654,9 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <CheckBox
           legend="Multiple Options"
           name="multiple-options"
@@ -641,8 +671,8 @@
                     <label class="govuk-label" for="option1-detail">Details for Option 1</label>
                     <input class="govuk-input" id="option1-detail" name="option1-detail" type="text">
                   </div>
-                `
-              }
+                `,
+              },
             },
             {
               value: "option2",
@@ -654,9 +684,9 @@
                     <label class="govuk-label" for="option2-detail">Details for Option 2</label>
                     <input class="govuk-input" id="option2-detail" name="option2-detail" type="text">
                   </div>
-                `
-              }
-            }
+                `,
+              },
+            },
           ]}
           validate={(values) => {
             if (values.length < 2) {
@@ -696,23 +726,124 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <CheckBox
           legend="Dynamic Options"
           name="dynamic-options"
           options={[
             { value: "dynamic1", label: "Dynamic Option 1" },
             { value: "dynamic2", label: "Dynamic Option 2" },
-            { value: "dynamic3", label: "Dynamic Option 3" }
+            { value: "dynamic3", label: "Dynamic Option 3" },
+          ]}
+        />
+      </div>
+    </div>
+
+    <!-- Example 11: Using Snippets for Conditional Content -->
+    <h3 class="govuk-heading-m">Using Snippets for Conditional Content</h3>
+    <CodeBlock
+      code={`<script>
+  import CheckBox from "$lib/components/ui/CheckBox.svelte";
+
+  let snippetSections = [
+    {
+      value: "email",
+      label: "Email",
+      conditional: {
+        id: "email-details",
+        content: content1
+      }
+    },
+    {
+      value: "phone",
+      label: "Phone",
+      conditional: {
+        id: "phone-details",
+        content: content2
+      }
+    }
+  ];
+</script>
+
+<CheckBox
+  legend="Contact Methods"
+  name="contact-methods-snippets"
+  options={snippetSections}
+/>
+
+{#snippet content1()}
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="email-input">Email Address</label>
+    <div class="govuk-hint">We'll use this for important notifications</div>
+    <input class="govuk-input" id="email-input" name="email-input" type="email">
+  </div>
+{/snippet}
+
+{#snippet content2()}
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="phone-input">Phone Number</label>
+    <div class="govuk-hint">Include country code if international</div>
+    <input class="govuk-input" id="phone-input" name="phone-input" type="tel">
+  </div>
+{/snippet}`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <CheckBox
+          legend="Contact Methods"
+          name="contact-methods-snippets"
+          options={[
+            {
+              value: "email",
+              label: "Email",
+              conditional: {
+                id: "email-details",
+                content: content1,
+              },
+            },
+            {
+              value: "phone",
+              label: "Phone",
+              conditional: {
+                id: "phone-details",
+                content: content2,
+              },
+            },
           ]}
         />
       </div>
     </div>
 
     <!-- ...additional examples as needed... -->
-
   </div>
 {/if}
+
+{#snippet content1()}
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="email-input">Email Address</label>
+    <div class="govuk-hint">We'll use this for important notifications</div>
+    <input
+      class="govuk-input"
+      id="email-input"
+      name="email-input"
+      type="email"
+    />
+  </div>
+{/snippet}
+
+{#snippet content2()}
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="phone-input">Phone Number</label>
+    <div class="govuk-hint">Include country code if international</div>
+    <input class="govuk-input" id="phone-input" name="phone-input" type="tel" />
+  </div>
+{/snippet}
 
 <style>
   [data-role="examples-section"] {

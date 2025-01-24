@@ -103,7 +103,9 @@
     </legend>
 
     {#if hint}
-      <div id="{name}-hint" class="govuk-hint">{hint}</div>
+      <div id="{name}-hint" class="govuk-hint" role="note">
+        {hint}
+      </div>
     {/if}
 
     {#if (isSupported && validationError) || error}

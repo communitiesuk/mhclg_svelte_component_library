@@ -207,6 +207,33 @@
         derivedParametersObject,
       ),
   );
+
+  let snippetSections = [
+    {
+      value: "email",
+      label: "Email",
+      conditional: {
+        id: "email-details",
+        content: content1,
+      },
+    },
+    {
+      value: "phone",
+      label: "Phone",
+      conditional: {
+        id: "phone-details",
+        content: content2,
+      },
+    },
+    {
+      value: "preferences",
+      label: "Communication Preferences",
+      conditional: {
+        id: "preferences-details",
+        content: content3,
+      },
+    },
+  ];
 </script>
 
 <ComponentDetails {homepage} {details} />
@@ -742,7 +769,9 @@
     </div>
 
     <!-- Example 11: Using Snippets for Conditional Content -->
-    <h3 class="govuk-heading-m">Using Snippets for Conditional Content</h3>
+    <h3 class="govuk-heading-m">
+      Using Snippets and Nested Components for Conditional Content
+    </h3>
     <CodeBlock
       code={`<script>
   import CheckBox from "$lib/components/ui/CheckBox.svelte";
@@ -762,6 +791,14 @@
       conditional: {
         id: "phone-details",
         content: content2
+      }
+    },
+    {
+      value: "preferences",
+      label: "Communication Preferences",
+      conditional: {
+        id: "preferences-details",
+        content: content3
       }
     }
   ];
@@ -786,6 +823,23 @@
     <label class="govuk-label" for="phone-input">Phone Number</label>
     <div class="govuk-hint">Include country code if international</div>
     <input class="govuk-input" id="phone-input" name="phone-input" type="tel">
+  </div>
+{/snippet}
+
+{#snippet content3()}
+  <div class="govuk-form-group">
+    <CheckBox
+      legend="When should we contact you?"
+      name="contact-timing"
+      small={true}
+      legendSize="s"
+      validate={(values) => values.length === 0 ? "Please select at least one time slot" : undefined}
+      options={[
+        { value: "morning", label: "Morning (9am - 12pm)" },
+        { value: "afternoon", label: "Afternoon (12pm - 5pm)" },
+        { value: "evening", label: "Evening (5pm - 8pm)" },
+      ]}
+    />
   </div>
 {/snippet}`}
       language="svelte"
@@ -815,6 +869,14 @@
                 content: content2,
               },
             },
+            {
+              value: "preferences",
+              label: "Communication Preferences",
+              conditional: {
+                id: "preferences-details",
+                content: content3,
+              },
+            },
           ]}
         />
       </div>
@@ -842,6 +904,26 @@
     <label class="govuk-label" for="phone-input">Phone Number</label>
     <div class="govuk-hint">Include country code if international</div>
     <input class="govuk-input" id="phone-input" name="phone-input" type="tel" />
+  </div>
+{/snippet}
+
+{#snippet content3()}
+  <div class="govuk-form-group">
+    <CheckBox
+      legend="When should we contact you?"
+      name="contact-timing"
+      small={true}
+      legendSize="s"
+      validate={(values) =>
+        values.length === 0
+          ? "Please select at least one time slot"
+          : undefined}
+      options={[
+        { value: "morning", label: "Morning (9am - 12pm)" },
+        { value: "afternoon", label: "Afternoon (12pm - 5pm)" },
+        { value: "evening", label: "Evening (5pm - 8pm)" },
+      ]}
+    />
   </div>
 {/snippet}
 

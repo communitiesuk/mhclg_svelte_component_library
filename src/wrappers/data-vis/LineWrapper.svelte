@@ -1,11 +1,19 @@
 <script module>
-  export { snippetExample };
+  export { WrapperNameAndStatus, WrapperDescription, WrapperContext };
+
+  const name = "Line";
+  const folder = "data-vis";
+
+  import Pill from "$lib/components/content/Pill.svelte";
 </script>
 
 <script>
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
-  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
+  import {
+    componentStausLookup,
+    defaultScreenWidthBreakpoints,
+  } from "$lib/config.js";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
   import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
@@ -28,9 +36,6 @@
     curveStep,
     line,
   } from "d3-shape";
-
-  const filePath = __FILE_PATH__;
-  console.log("Component file path:", filePath);
 
   let { data } = $props();
 
@@ -686,6 +691,46 @@
   );
 </script>
 
+{#snippet WrapperNameAndStatus(homepage = true)}
+  <h2>
+    <a
+      class="underline underline-offset-4"
+      href="/components/{folder}/{name.toLowerCase()}">{name}</a
+    >
+  </h2>
+  {@const statusArray = ["Completed", "Accessible", "Tested"]}
+  {#each statusArray as status}
+    <Pill
+      size={homepage ? "small" : "medium"}
+      textContent={status}
+      bgColor={componentStausLookup[status].bgColor ?? "black"}
+      textColor={componentStausLookup[status].color ?? "white"}
+    ></Pill>
+  {/each}
+{/snippet}
+
+{#snippet WrapperDescription()}
+  <p>
+    This component takes an array of data, two scale functions and a line
+    function and renders an svg path element (and optional markers at each data
+    point).
+  </p>
+{/snippet}
+
+{#snippet WrapperContext()}
+  <p>
+    Used within svg elements as part of the creation of data visualisations -
+    most notably by the <a href="/components/data-vis/line/">Lines</a> component.
+  </p>
+
+  <p>
+    The Lines component renders a collection of lines as a group allowing all
+    lines to update based on user interactions with a single line (e.g. reduce
+    opacity of other lines when user hovers). Even individual lines should
+    normally be created using the Lines component.
+  </p>
+{/snippet}
+
 <!--
 DONOTTOUCH  *
 &&          Uses details to render metadata for the component.
@@ -754,10 +799,6 @@ DONOTTOUCH  *
   <DividerLine margin="30px 0px 30px 0px"></DividerLine>
   <h5 class="underline underline-offset-4">Examples</h5>
 </div>
-
-{#snippet snippetExample()}
-  hello there
-{/snippet}
 
 <style>
   svg {

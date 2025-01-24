@@ -18,6 +18,8 @@
     svgHeight = 500;
 
   let requiredSpaceForLabelsArray = $state(new Array(dataArray.length));
+  $inspect(requiredSpaceForLabelsArray);
+
   let filteredRequiredSpaceForLabelsArray = $derived(
     requiredSpaceForLabelsArray.filter((el) => el !== undefined),
   );
@@ -32,7 +34,7 @@
     top: 40,
     right: 50,
     bottom: 20,
-    left: 250,
+    left: requiredSpaceForLabels + 15,
   });
 
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);

@@ -1,5 +1,11 @@
 <script>
-  let { row, yFunction, chartWidth } = $props();
+  let {
+    row,
+    yFunction,
+    chartWidth,
+    labelsInside = false,
+    edgeOfChartThreshold = 40,
+  } = $props();
 </script>
 
 {#snippet rowValueLabel(color, textAnchor, x)}
@@ -7,13 +13,21 @@
 {/snippet}
 
 <g transform="translate({yFunction(row.y)},7)">
-  {#if yFunction(row.y) > 40 && yFunction(row.y) < chartWidth - 40}
-    {@render rowValueLabel(
-      row.color ?? "black",
-      row.y > 0 ? "start" : "end",
-      (row.y > 0 ? 1 : -1) * 5,
-    )}
-  {:else if yFunction(row.y) <= 40}
+  {#if yFunction(row.y) > edgeOfChartThreshold && yFunction(row.y) < chartWidth - edgeOfChartThreshold}
+    {#if labelsInside}
+      {@render rowValueLabel(
+        row.color ?? "white",
+        row.y > 0 ? "end" : "start",
+        (row.y > 0 ? -1 : 1) * 5,
+      )}
+    {:else}
+      {@render rowValueLabel(
+        row.color ?? "black",
+        row.y > 0 ? "start" : "end",
+        (row.y > 0 ? 1 : -1) * 5,
+      )}
+    {/if}
+  {:else if yFunction(row.y) <= edgeOfChartThreshold}
     {@render rowValueLabel("white", "start", 10)}
   {:else}
     {@render rowValueLabel("white", "end", -10)}

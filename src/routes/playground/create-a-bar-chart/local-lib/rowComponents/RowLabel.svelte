@@ -1,16 +1,22 @@
 <script>
   import { text } from "@sveltejs/kit";
 
-  let { row, requiredSpaceForLabel = $bindable() } = $props();
+  let {
+    row,
+    requiredSpaceForLabel = $bindable(),
+    labelXOffset = 10,
+  } = $props();
 
   let textDimObject = $state();
 
   $effect(() => {
     requiredSpaceForLabel = textDimObject?.width;
   });
+
+  $inspect(requiredSpaceForLabel);
 </script>
 
-<g transform="translate(-10,7)">
+<g transform="translate(-{labelXOffset},7)">
   <text
     bind:contentRect={textDimObject}
     text-anchor="end"

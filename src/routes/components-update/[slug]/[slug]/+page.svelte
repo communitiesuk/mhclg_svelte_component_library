@@ -25,7 +25,7 @@
     (async () => {
       try {
         const module = await import(
-          `/src/wrapper/${folder}/${wrapper}Wrapper.svelte`
+          `/src/wrappers/${folder}/${wrapper}Wrapper.svelte`
         );
         Component = module.default;
       } catch (error) {

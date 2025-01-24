@@ -1,18 +1,18 @@
-export const subFoldersLookup = {
-  ui: { label: 'User interaction' },
-  'data-vis': { label: 'Data visualisation' },
-  layout: { label: 'Layout' },
+export const foldersLookup = {
+  'ui': 'user interaction',
+  'data-vis': 'data visualisation'
 };
 
 export const componentStausLookup = {
-  to_be_developed: { bgColor: '#A23E48', color: 'white' },
-  in_progress: { bgColor: '#FF8C42', color: 'black' },
-  complete_untested: { bgColor: '#FFF275', color: 'black' },
-  complete_in_use: { bgColor: '#9E8FB2', color: 'black' },
-  complete_accessible: {
-    bgColor: '#33658A',
-    color: 'white',
-  },
+  "To be developed": { bgColor: '#A23E48', color: 'white' },
+  "In progress": { bgColor: '#FF8C42', color: 'black' },
+  "Completed": { bgColor: '#FFF275', color: 'black' },
+  "Accessible": { bgColor: '#33658A', color: 'white' },
+  "Progressively enhanced": { bgColor: '#9E8FB2', color: 'black' },
+  "Responsive": { bgColor: '#9E8FB2', color: 'black' },
+  "Tested": { bgColor: '#9E8FB2', color: 'black' },
+  "In use": { bgColor: '#9E8FB2', color: 'black' },
+
 };
 
 export const propPillLookup = {

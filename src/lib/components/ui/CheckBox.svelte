@@ -1,5 +1,5 @@
 <script lang="ts">
-  import type { SvelteComponent } from "svelte";
+  import type { SvelteComponent, Snippet } from "svelte";
   import { onMount } from "svelte";
   // Define the CheckboxOption type
   export type CheckboxOption = {
@@ -9,7 +9,7 @@
     exclusive?: boolean;
     conditional?: {
       id: string;
-      content: string | typeof SvelteComponent;
+      content: string | typeof SvelteComponent | Snippet;
     };
   };
 
@@ -186,6 +186,8 @@
           >
             {#if typeof option.conditional.content === "string"}
               {@html option.conditional.content}
+            {:else if option.conditional.content satisfies Snippet}
+              {@render option.conditional.content()}
             {:else}
               <option.conditional.content />
             {/if}

@@ -79,12 +79,22 @@
   class="govuk-form-group{validationError || error
     ? ' govuk-form-group--error'
     : ''}"
+  role="group"
+  aria-labelledby="{name}-legend"
 >
   <fieldset
     class="govuk-fieldset"
-    aria-describedby={hint ? `${name}-hint` : null}
+    aria-describedby={[
+      hint ? `${name}-hint` : null,
+      error || validationError ? `${name}-error` : null,
+    ]
+      .filter(Boolean)
+      .join(" ")}
   >
-    <legend class="govuk-fieldset__legend govuk-fieldset__legend--{legendSize}">
+    <legend
+      id="{name}-legend"
+      class="govuk-fieldset__legend govuk-fieldset__legend--{legendSize}"
+    >
       {#if isPageHeading}
         <h1 class="govuk-fieldset__heading">{legend}</h1>
       {:else}
@@ -106,13 +116,25 @@
     <div
       class="govuk-checkboxes{small ? ' govuk-checkboxes--small' : ''}"
       data-module="govuk-checkboxes"
+      role="group"
+      aria-labelledby="{name}-legend"
     >
       {#each options as option, i}
         {#if option.exclusive && i > 0}
-          <div class="govuk-checkboxes__divider">or</div>
+          <div
+            class="govuk-checkboxes__divider"
+            role="separator"
+            aria-orientation="horizontal"
+          >
+            or
+          </div>
         {/if}
 
-        <div class="govuk-checkboxes__item">
+        <div
+          class="govuk-checkboxes__item"
+          role="checkbox"
+          aria-checked={isChecked(option.value)}
+        >
           <input
             type="checkbox"
             {name}
@@ -121,17 +143,30 @@
             value={option.value}
             data-aria-controls={option.conditional?.id}
             aria-expanded={isSupported ? isChecked(option.value) : null}
-            aria-describedby={option.hint ? `${name}-${i}-hint` : null}
+            aria-describedby={[
+              option.hint ? `${name}-${i}-hint` : null,
+              option.conditional ? option.conditional.id : null,
+            ]
+              .filter(Boolean)
+              .join(" ")}
             checked={isChecked(option.value)}
             onchange={() => toggleCheckbox(option)}
             data-behaviour={option.exclusive ? "exclusive" : undefined}
           />
-          <label class="govuk-label govuk-checkboxes__label" for="{name}-{i}">
+          <label
+            class="govuk-label govuk-checkboxes__label"
+            for="{name}-{i}"
+            id="{name}-${i}-label"
+          >
             {option.label}
           </label>
 
           {#if option.hint}
-            <div id="{name}-{i}-hint" class="govuk-hint govuk-checkboxes__hint">
+            <div
+              id="{name}-{i}-hint"
+              class="govuk-hint govuk-checkboxes__hint"
+              role="note"
+            >
               {option.hint}
             </div>
           {/if}
@@ -144,6 +179,8 @@
             !isChecked(option.value)
               ? ' govuk-checkboxes__conditional--hidden'
               : ''}"
+            role="region"
+            aria-labelledby="{name}-${i}-label"
           >
             {#if typeof option.conditional.content === "string"}
               {@html option.conditional.content}

@@ -3,6 +3,7 @@
 
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
+  import { SvelteSet } from 'svelte/reactivity';
 
   let {
     sections = [],
@@ -36,38 +37,27 @@
     headingLevel?: string;
   } = $props();
 
-  // let headingLevel: string = 'h4';
-  // State and derived stores
-  let expandedSections: string[] = $state(
-    []
-    // sections
-    //   .filter((section) => section.expanded)
-    //   .map((section) => section.id + section.heading.slice(0, 2))
+  let expandedSections = new SvelteSet(
+    sections.filter((section) => section.expanded).map((section) => section.id)
   );
-  $inspect(expandedSections.length);
-  let allExpanded = $derived(expandedSections.length === sections.length);
+
+  let allExpanded = $derived(expandedSections.size === sections.length);
 
   // Event handlers
 
   function toggleSection(id: string) {
-    // const update = new SvelteSet(expandedSections);
-    // Create a new reference to trigger Svelte 5 reactivity
-    if (expandedSections.includes(id)) {
-      let index = expandedSections.indexOf(id);
-      expandedSections.splice(index, 1);
+    if (expandedSections.has(id)) {
+      expandedSections.delete(id);
     } else {
-      expandedSections.push(id);
+      expandedSections.add(id);
     }
   }
 
   function toggleAll() {
-    // const update = new SvelteSet(expandedSections);
-
     if (!allExpanded) {
-      expandedSections = [];
-      sections.forEach((section) => expandedSections.push(section.id));
+      sections.forEach((section) => expandedSections.add(section.id));
     } else {
-      expandedSections = [];
+      expandedSections.clear();
     }
   }
 
@@ -79,23 +69,19 @@
         // Otherwise, try to restore from session storage.
         // **** Is this the behaviour we want? Shouldn't it be the other way around?
         if (section.expanded) {
-          expandedSections.push(section.id);
+          expandedSections.add(section.id);
         } else {
-          // try {
           const stored = sessionStorage.getItem(section.id);
           if (stored === 'true') {
-            expandedSections.push(section.id);
+            expandedSections.add(section.id);
           }
-          // } catch (e) {
-          //   // Handle storage errors gracefully (e.g. private mode)
-          // }
         }
       });
     } else {
       // If rememberIsExpandedState is false, just respect the initial `section.expanded` values
       sections.forEach((section) => {
         if (section.expanded) {
-          expandedSections.push(section.id);
+          expandedSections.add(section.id);
         }
       });
     }
@@ -105,14 +91,10 @@
   $effect(() => {
     if (browser && rememberIsExpandedState) {
       sections.forEach((section) => {
-        // try {
         sessionStorage.setItem(
           section.id,
-          expandedSections.includes(section.id).toString()
+          expandedSections.has(section.id).toString()
         );
-        // } catch (e) {
-        //   // Handle storage errors gracefully
-        // }
       });
     }
   });
@@ -187,7 +169,7 @@
   {/snippet}
 
   {#each sections as section}
-    {@const isExpanded = expandedSections.includes(section.id)}
+    {@const isExpanded = expandedSections.has(section.id)}
     <div
       class="govuk-accordion__section"
       class:govuk-accordion__section--expanded={isExpanded}

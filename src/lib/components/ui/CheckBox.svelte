@@ -133,7 +133,7 @@
         <div
           class="govuk-checkboxes__item"
           role="checkbox"
-          aria-checked={isChecked(option.value)}
+          aria-checked={isSupported ? isChecked(option.value) : null}
         >
           <input
             type="checkbox"

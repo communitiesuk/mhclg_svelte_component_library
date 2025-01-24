@@ -1,6 +1,6 @@
 <script lang="ts">
   import type { SvelteComponent } from "svelte";
-
+  import { onMount } from "svelte";
   // Define the CheckboxOption type
   export type CheckboxOption = {
     value: string;
@@ -39,14 +39,25 @@
   // Component state
   let selectedValues = $state<string[]>([]);
 
-    // Derived state to check if a value is selected and handle validation
+  // Add support detection
+  let isSupported = $state(false);
+  // Check for browser support on mount
+  onMount(() => {
+    isSupported =
+      document.body?.classList.contains("govuk-frontend-supported") ?? false;
+  });
+
+  // Derived state to check if a value is selected and handle validation
   let isChecked = $derived((value: string) => selectedValues.includes(value));
   let validationError = $derived<string | undefined>(
-    validate ? validate(selectedValues) : undefined,
+    isSupported && validate ? validate(selectedValues) : undefined,
   );
 
-  // Function to toggle checkbox selection
+  // Modify toggleCheckbox to handle non-JS scenarios
   function toggleCheckbox(option: CheckboxOption) {
+    // If JS/modern features aren't supported, let the native checkbox behavior work
+    if (!isSupported) return;
+
     if (option.exclusive) {
       selectedValues = selectedValues.includes(option.value)
         ? []
@@ -85,7 +96,7 @@
       <div id="{name}-hint" class="govuk-hint">{hint}</div>
     {/if}
 
-    {#if validationError || error}
+    {#if (isSupported && validationError) || error}
       <p id="{name}-error" class="govuk-error-message">
         <span class="govuk-visually-hidden">Error:</span>
         {validationError || error}
@@ -108,11 +119,12 @@
             id="{name}-{i}"
             class="govuk-checkboxes__input"
             value={option.value}
-            aria-controls={option.conditional?.id}
-            aria-expanded={isChecked(option.value)}
+            data-aria-controls={option.conditional?.id}
+            aria-expanded={isSupported ? isChecked(option.value) : null}
             aria-describedby={option.hint ? `${name}-${i}-hint` : null}
             checked={isChecked(option.value)}
             onchange={() => toggleCheckbox(option)}
+            data-behaviour={option.exclusive ? "exclusive" : undefined}
           />
           <label class="govuk-label govuk-checkboxes__label" for="{name}-{i}">
             {option.label}
@@ -128,9 +140,10 @@
         {#if option.conditional}
           <div
             id={option.conditional.id}
-            class="govuk-checkboxes__conditional{isChecked(option.value)
-              ? ''
-              : ' govuk-checkboxes__conditional--hidden'}"
+            class="govuk-checkboxes__conditional{!isSupported ||
+            !isChecked(option.value)
+              ? ' govuk-checkboxes__conditional--hidden'
+              : ''}"
           >
             {#if typeof option.conditional.content === "string"}
               {@html option.conditional.content}

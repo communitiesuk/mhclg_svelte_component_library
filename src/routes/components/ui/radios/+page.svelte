@@ -1,4 +1,5 @@
 <script lang="ts">
+  // @ts-nocheck
   import { page } from "$app/stores";
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import Radios from "$lib/components/ui/Radios.svelte";

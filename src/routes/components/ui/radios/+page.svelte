@@ -108,7 +108,7 @@
             },
             {
               value: "phone",
-              label: "Phone call",
+              label: "Phone",
               hint: "We'll call during business hours",
             },
             {
@@ -203,6 +203,33 @@
         derivedParametersObject,
       ),
   );
+
+  let snippetSections = [
+    {
+      value: "email",
+      label: "Email",
+      conditional: {
+        id: "email-details",
+        content: content1,
+      },
+    },
+    {
+      value: "phone",
+      label: "Phone",
+      conditional: {
+        id: "phone-details",
+        content: content2,
+      },
+    },
+    {
+      value: "preferences",
+      label: "Communication Preferences",
+      conditional: {
+        id: "preferences-details",
+        content: content3,
+      },
+    },
+  ];
 </script>
 
 <ComponentDetails {homepage} {details} />
@@ -537,9 +564,125 @@
       </div>
     </div>
 
-    <!-- ...additional examples as needed... -->
+    <!-- Example: Using Snippets -->
+    <h3 class="govuk-heading-m">Using Snippets and Nested Components for Conditional Content</h3>
+    <CodeBlock
+      code={`<script>
+  import Radios from "$lib/components/ui/Radios.svelte";
+
+  let snippetSections = [
+    {
+      value: "email",
+      label: "Email",
+      conditional: {
+        id: "email-details",
+        content: content1
+      }
+    },
+    {
+      value: "phone",
+      label: "Phone",
+      conditional: {
+        id: "phone-details",
+        content: content2
+      }
+    },
+    {
+      value: "preferences",
+      label: "Communication Preferences",
+      conditional: {
+        id: "preferences-details",
+        content: content3
+      }
+    }
+  ];
+</script>
+
+<Radios
+  legend="Contact Method"
+  name="contact-method-snippets"
+  options={snippetSections}
+/>
+
+{#snippet content1()}
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="email-input">Email Address</label>
+    <div class="govuk-hint">We'll use this for important notifications</div>
+    <input class="govuk-input" id="email-input" name="email-input" type="email">
+  </div>
+{/snippet}
+
+{#snippet content2()}
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="phone-input">Phone Number</label>
+    <div class="govuk-hint">Include country code if international</div>
+    <input class="govuk-input" id="phone-input" name="phone-input" type="tel">
+  </div>
+{/snippet}
+
+{#snippet content3()}
+  <div class="govuk-form-group">
+    <Radios
+      legend="When should we contact you?"
+      name="contact-timing"
+      small={true}
+      legendSize="s"
+      validate={(value) => !value ? "Please select a time slot" : undefined}
+      options={[
+        { value: "morning", label: "Morning (9am - 12pm)" },
+        { value: "afternoon", label: "Afternoon (12pm - 5pm)" },
+        { value: "evening", label: "Evening (5pm - 8pm)" },
+      ]}
+    />
+  </div>
+{/snippet}`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+        <Radios
+          legend="Contact Method"
+          name="contact-method-snippets"
+          options={snippetSections}
+        />
+      </div>
+    </div>
   </div>
 {/if}
+
+{#snippet content1()}
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="email-input">Email Address</label>
+    <div class="govuk-hint">We'll use this for important notifications</div>
+    <input class="govuk-input" id="email-input" name="email-input" type="email">
+  </div>
+{/snippet}
+
+{#snippet content2()}
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="phone-input">Phone Number</label>
+    <div class="govuk-hint">Include country code if international</div>
+    <input class="govuk-input" id="phone-input" name="phone-input" type="tel">
+  </div>
+{/snippet}
+
+{#snippet content3()}
+  <div class="govuk-form-group">
+    <Radios
+      legend="When should we contact you?"
+      name="contact-timing"
+      small={true}
+      legendSize="s"
+      validate={(value) => !value ? "Please select a time slot" : undefined}
+      options={[
+        { value: "morning", label: "Morning (9am - 12pm)" },
+        { value: "afternoon", label: "Afternoon (12pm - 5pm)" },
+        { value: "evening", label: "Evening (5pm - 8pm)" },
+      ]}
+    />
+  </div>
+{/snippet}
 
 <style>
   [data-role="examples-section"] {

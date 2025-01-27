@@ -43,6 +43,9 @@
 
   let allExpanded = $derived(expandedSections.size === sections.length);
 
+  let ariaLiveValue: 'polite' | 'off' | 'assertive' | null | undefined =
+    $state('polite');
+
   // Event handlers
 
   function toggleSection(id: string) {
@@ -51,6 +54,8 @@
     } else {
       expandedSections.add(id);
     }
+    //Announce the contents change when an accoridion section is expanded
+    ariaLiveValue = 'polite';
   }
 
   function toggleAll() {
@@ -59,6 +64,8 @@
     } else {
       expandedSections.clear();
     }
+    //Don't announce all of the changes when we open all sections - this gets noisy and the content isn't associated with the label
+    ariaLiveValue = 'off';
   }
 
   // Only use session storage logic if rememberIsExpandedState is true
@@ -132,7 +139,7 @@
       class="govuk-accordion__section-button"
       aria-expanded={isExpanded}
       onclick={() => toggleSection(section.id)}
-      aria-label="{section.heading}, {isExpanded
+      aria-label="{section.heading}, {section?.summary}, {isExpanded
         ? hideSectionAriaLabel
         : showSectionAriaLabel}"
     >
@@ -202,6 +209,7 @@
         id="{section.id}-content"
         class="govuk-accordion__section-content"
         aria-labelledby="{section.id}-heading"
+        aria-live={ariaLiveValue}
         hidden={!isExpanded}
       >
         {#if typeof section.content === 'string'}

@@ -105,6 +105,16 @@
       aria-labelledby="{name}-legend"
     >
       {#each options as option, i}
+        {#if option.exclusive && i > 0}
+          <div
+            class="govuk-radios__divider"
+            role="separator"
+            aria-orientation="horizontal"
+          >
+            or
+          </div>
+        {/if}
+
         <div
           class="govuk-radios__item"
           role="radio"

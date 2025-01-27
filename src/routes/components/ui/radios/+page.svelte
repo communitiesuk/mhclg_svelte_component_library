@@ -374,7 +374,7 @@
   const options = [
     { value: "carrier-pigeon", label: "Carrier Pigeon" },
     { value: "postal-mail", label: "Postal Mail" },
-    { value: "none", label: "I do not wish to receive updates" }
+    { value: "none", label: "I do not wish to receive updates", exclusive: true }
   ];
 </script>
 
@@ -396,7 +396,11 @@
           options={[
             { value: "carrier-pigeon", label: "Carrier Pigeon" },
             { value: "postal-mail", label: "Postal Mail" },
-            { value: "none", label: "I do not wish to receive updates" },
+            {
+              value: "none",
+              label: "I do not wish to receive updates",
+              exclusive: true
+            },
           ]}
         />
       </div>

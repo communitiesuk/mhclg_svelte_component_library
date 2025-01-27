@@ -164,6 +164,13 @@
   return undefined;
 }`,
       },
+      {
+        name: "inline",
+        category: "UI Options",
+        isProp: true,
+        inputType: "checkbox",
+        value: false,
+      },
     ]);
 
   let parametersValuesArray = $state(
@@ -485,6 +492,47 @@
               },
             },
           ]}
+        />
+      </div>
+    </div>
+
+    <!-- Example: Inline Layout -->
+    <h3 class="govuk-heading-m">Inline Layout</h3>
+    <CodeBlock
+      code={`<script>
+  import Radios from "$lib/components/ui/Radios.svelte";
+
+  const options = [
+    { value: "yes", label: "Yes" },
+    { value: "no", label: "No" }
+  ];
+</script>
+
+<Radios
+  legend="Have you changed your name?"
+  hint="This includes changing your last name or spelling your name differently"
+  name="changedName"
+  options={options}
+  inline={true}
+  isPageHeading={true}
+/>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <Radios
+          legend="Have you changed your name?"
+          hint="This includes changing your last name or spelling your name differently"
+          name="changedName"
+          options={[
+            { value: "yes", label: "Yes" },
+            { value: "no", label: "No" },
+          ]}
+          inline={true}
+          isPageHeading={true}
         />
       </div>
     </div>

@@ -22,6 +22,7 @@
     isPageHeading = false,
     legendSize = "l",
     small = false,
+    inline = false,
     options = [],
     validate = undefined,
   } = $props<{
@@ -32,6 +33,7 @@
     isPageHeading?: boolean;
     legendSize?: "l" | "m" | "s";
     small?: boolean;
+    inline?: boolean;
     options?: RadioOption[];
     validate?: (value: string) => string | undefined;
   }>();
@@ -99,7 +101,7 @@
     {/if}
 
     <div
-      class="govuk-radios{small ? ' govuk-radios--small' : ''}"
+      class="govuk-radios{small ? ' govuk-radios--small' : ''}{inline ? ' govuk-radios--inline' : ''}"
       data-module="govuk-radios"
       role="group"
       aria-labelledby="{name}-legend"

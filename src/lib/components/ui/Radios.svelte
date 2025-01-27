@@ -103,7 +103,7 @@
     <div
       class="govuk-radios{small ? ' govuk-radios--small' : ''}{inline ? ' govuk-radios--inline' : ''}"
       data-module="govuk-radios"
-      role="group"
+      role="radiogroup"
       aria-labelledby="{name}-legend"
     >
       {#each options as option, i}

@@ -4,12 +4,13 @@
   let minSpaceOutside = $derived(chartWidth - 70)
 </script>
 
-{#snippet rowValueLabel(x, textAnchor)}
+{#snippet rowValueLabel(x, textAnchor, color = "black")}
 <g transform="translate({offsetX},{barHeight / 2})">
   <text
     dominant-baseline="central"
     x={x}
     y={0}
+    fill={color}
     text-anchor={textAnchor}>{row.y}</text></g>
 {/snippet}
 

@@ -27,16 +27,14 @@
   let midpoint = $derived(valueMin + valueRange / 2);
 
   let xFunction = $derived(
-    scaleLinear()
-      .domain([valueMin, valueMax])
-      .range([0 + 50, chartWidth - 50])
+    scaleLinear().domain([valueMin, valueMax]).range([0, chartWidth])
   );
 </script>
 
 <g>
   {#each dataArray as row, i}
     <g transform="translate({0},{yFunction(i)})">
-      <Row {row} {xFunction} {barHeight} {colours}></Row>
+      <Row {row} {xFunction} {barHeight} {colours} {chartWidth}></Row>
     </g>
   {/each}
 </g>

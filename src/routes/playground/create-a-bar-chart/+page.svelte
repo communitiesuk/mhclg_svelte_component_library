@@ -18,6 +18,7 @@
   let selectedYear = $state(data?.years[0]);
   let numberOfBars = $state(10);
   let sortMethod = $state('ascending');
+  let focusBars = $state('E07000032');
   let focusColour = $state('#002fa7');
   let colourNegativeBars = $state(false);
   let negativeBarColour = $state('#ae3b21');
@@ -39,7 +40,7 @@
       .find((el) => el.x === selectedYear)
       .bars.map((el, index) => ({
         ...el,
-        colour: el.areaCode === 'E07000032' ? focusColour : '#ababab',
+        colour: el.areaCode === focusBars ? focusColour : '#ababab',
         y: index % 2 === 0 ? -el.y : el.y,
       }))
       .slice(0, numberOfBars)
@@ -79,6 +80,12 @@
               max={100}
               bind:value={numberOfBars}
             />
+          </Input>
+        </div>
+        <div class="mt-5">
+          <p class="my-2 mx-0 p-0 text-sm">Focus bars:</p>
+          <Input let:props>
+            <input type="string" {...props} bind:value={focusBars} />
           </Input>
         </div>
         <div class="mt-5">

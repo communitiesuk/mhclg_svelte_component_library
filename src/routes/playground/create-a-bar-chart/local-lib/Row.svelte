@@ -3,11 +3,11 @@
   import RowLabel from './rowComponents/RowLabel.svelte';
   import RowValue from './rowComponents/RowValue.svelte';
 
-  let { row, xFunction, barHeight, colours } = $props();
+  let { row, xFunction, barHeight, colours, chartWidth } = $props();
 </script>
 
 <g>
   <Bar {row} {xFunction} {barHeight} {colours}></Bar>
-  <RowValue {row} {xFunction} {barHeight}></RowValue>
+  <RowValue {row} {xFunction} {barHeight} {chartWidth}></RowValue>
   <RowLabel {row} {barHeight}></RowLabel>
 </g>

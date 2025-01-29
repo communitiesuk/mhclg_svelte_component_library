@@ -18,7 +18,6 @@
 
   let { data, homepage = undefined, folders } = $props();
 
-
   let snippetSections = [
     {
       id: "1",

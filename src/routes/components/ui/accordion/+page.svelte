@@ -18,7 +18,6 @@
 
   let { data, homepage = undefined, folders } = $props();
 
-
   let snippetSections = [
     {
       id: "1",
@@ -226,10 +225,10 @@
   }
 
   function copyHighlightedCode(event) {
-    const block = event.currentTarget.closest('.code-block');
+    const block = event.currentTarget.closest(".code-block");
     if (!block) return;
 
-    const codeElement = block.querySelector('code');
+    const codeElement = block.querySelector("code");
     if (!codeElement) return;
 
     // Get text content while preserving new lines
@@ -275,23 +274,8 @@
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
-<<<<<<< HEAD
     <CodeBlock
       code={`
-=======
-    <div class="code-block">
-      <div class="controls">
-        <span class="filename" data-ext=".svelte">App</span>
-        <button
-          class="copy-to-clipboard raised"
-          onclick={copyHighlightedCode}
-          title="Copy to clipboard"
-          aria-label="Copy to clipboard"
-        ></button>
-      </div>
-      <div use:highlight>
-      {`
->>>>>>> fd4ff71 (Added controls including code block copy-to-clipboard functionality. Added relavent global css needed.)
 <script>
   import Accordion from '$lib/components/ui/Accordion.svelte';
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
@@ -364,13 +348,8 @@
 
 <Accordion sections={snippetSections} />
 `}
-<<<<<<< HEAD
     />
 
-=======
-      </div>
-    </div>
->>>>>>> fd4ff71 (Added controls including code block copy-to-clipboard functionality. Added relavent global css needed.)
     <div class="app-example-wrapper">
       <div
         class="app-example__frame app-example__frame--resizable app-example__frame--xl p-6"
@@ -380,23 +359,8 @@
     </div>
 
     <h6>Accordion with minimum sections for toggle</h6>
-<<<<<<< HEAD
     <CodeBlock
       code={`
-=======
-    <div class="code-block">
-      <div class="controls">
-        <span class="filename" data-ext=".svelte">App</span>
-        <button
-          class="copy-to-clipboard raised"
-          onclick={copyHighlightedCode}
-          title="Copy to clipboard"
-          aria-label="Copy to clipboard"
-        ></button>
-      </div>
-      <div use:highlight>
-      {`
->>>>>>> fd4ff71 (Added controls including code block copy-to-clipboard functionality. Added relavent global css needed.)
 <Accordion
   sections={[{
     id: 'example1',
@@ -407,13 +371,8 @@
   minSectionsAllSectionToggle={2}
 />
 `}
-<<<<<<< HEAD
     />
 
-=======
-      </div>
-    </div>
->>>>>>> fd4ff71 (Added controls including code block copy-to-clipboard functionality. Added relavent global css needed.)
     <div class="app-example-wrapper">
       <div
         class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
@@ -433,23 +392,8 @@
     </div>
 
     <h6>Accordion respecting expanded session state</h6>
-<<<<<<< HEAD
     <CodeBlock
       code={`
-=======
-    <div class="code-block">
-      <div class="controls">
-        <span class="filename" data-ext=".svelte">App</span>
-        <button
-          class="copy-to-clipboard raised"
-          onclick={copyHighlightedCode}
-          title="Copy to clipboard"
-          aria-label="Copy to clipboard"
-        ></button>
-      </div>
-      <div use:highlight>
-      {`
->>>>>>> fd4ff71 (Added controls including code block copy-to-clipboard functionality. Added relavent global css needed.)
 <Accordion
   sections={[{
     id: 'example2',
@@ -464,13 +408,8 @@
   rememberIsExpandedState={true}
 />
 `}
-<<<<<<< HEAD
     />
 
-=======
-      </div>
-    </div>
->>>>>>> fd4ff71 (Added controls including code block copy-to-clipboard functionality. Added relavent global css needed.)
     <div class="app-example-wrapper">
       <div
         class="app-example__frame app-example__frame--resizable app-example__frame--l p-6"
@@ -496,23 +435,8 @@
     </div>
 
     <h6>Accordion with custom toggle labels</h6>
-<<<<<<< HEAD
     <CodeBlock
       code={`
-=======
-    <div class="code-block">
-      <div class="controls">
-        <span class="filename" data-ext=".svelte">App</span>
-        <button
-          class="copy-to-clipboard raised"
-          onclick={copyHighlightedCode}
-          title="Copy to clipboard"
-          aria-label="Copy to clipboard"
-        ></button>
-      </div>
-      <div use:highlight>
-      {`
->>>>>>> fd4ff71 (Added controls including code block copy-to-clipboard functionality. Added relavent global css needed.)
 <Accordion
   sections={[{
     id: 'example4',
@@ -526,13 +450,8 @@
   showAllSections="Expand All"
   showSection="Expand"
 />`}
-<<<<<<< HEAD
     />
 
-=======
-      </div>
-    </div>
->>>>>>> fd4ff71 (Added controls including code block copy-to-clipboard functionality. Added relavent global css needed.)
     <div class="app-example-wrapper">
       <div
         class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"

@@ -682,8 +682,6 @@
   );
 </script>
 
-
-
 <!--
 DONOTTOUCH  *
 &&          Uses details to render metadata for the component.
@@ -748,11 +746,10 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
     -->
-  <div class="mt-20" data-role="examples-section">
-    <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-    <h5 class="underline underline-offset-4">Examples</h5>
-  </div>
-{/if}
+<div class="mt-20" data-role="examples-section">
+  <DividerLine margin="30px 0px 30px 0px"></DividerLine>
+  <h5 class="underline underline-offset-4">Examples</h5>
+</div>
 
 <style>
   svg {

@@ -13,9 +13,12 @@
     barColor,
     barStartPostion,
     rowValuePosition,
+    textAnchor,
   } = $props();
 
-  $inspect(rowValuePosition);
+  // $inspect('bar width is ' + barWidth, 'row position is ' + rowValuePosition);
+
+  $inspect(textAnchor);
 </script>
 
 <g dominant-baseline="middle" class="row-group">
@@ -26,7 +29,7 @@
     <Bar {rowHeight} {barWidth} {barColor}></Bar>
   </g>
   <g transform="translate({rowValuePosition},{rowHeight / 2})">
-    <RowValue {rowValue}></RowValue>
+    <RowValue {rowValue} {textAnchor}></RowValue>
   </g>
 </g>
 

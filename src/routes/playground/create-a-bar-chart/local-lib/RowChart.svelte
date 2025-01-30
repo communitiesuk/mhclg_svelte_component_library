@@ -27,13 +27,19 @@
   let rowHeight = $derived(chartHeight / dataArray.length);
 
   let maxValue = $derived(Math.max(...dataArray.map((item) => item.y)));
+  let minValue = $derived(Math.min(...dataArray.map((item) => item.y)));
+
   let minValueAbsolute = $derived(
     Math.abs(Math.min(...dataArray.map((item) => item.y)))
   );
 
   let xEqualsZeroLine = $derived(
-    minValueAbsolute * (chartWidth / (minValueAbsolute + maxValue)) + 10
+    minValue < 0
+      ? minValueAbsolute * (chartWidth / (minValueAbsolute + maxValue)) + 10
+      : 0
   );
+
+  // $inspect('min value is ' + minValueAbsolute, 'x line is ' + xEqualsZeroLine);
 
   let highestToLowest = $state(false);
   let lowestToHighest = $state(false);
@@ -51,12 +57,12 @@
   <TitleAndSubtitle></TitleAndSubtitle>
   <Legend></Legend>
   <Button
-    buttonText={'Highest to lowest'}
+    buttonText={'Lowest to highest'}
     onClick={() => (highestToLowest = true) && (lowestToHighest = false)}
     {dataArray}
   ></Button>
   <Button
-    buttonText={'Lowest to highest'}
+    buttonText={'Highest to lowest'}
     onClick={() => (lowestToHighest = true) && (highestToLowest = false)}
     {dataArray}
   ></Button>
@@ -83,7 +89,11 @@
               (area) => area.areaCode === row.areaCode
             ).localAuthorityName}
             {@const rowValue = +row.y}
-
+            {@const rowValuePosition =
+              row.y > 0
+                ? xEqualsZeroLine + barWidth - 6
+                : xEqualsZeroLine - barWidth + 6}
+            {@const textAnchor = rowValue < 0 ? 'start' : 'end'}
             <g transform="translate(0,{i * rowHeight})">
               <!--{rowHeight} is short hand for rowHeight = {rowHeight}-->
               <Row
@@ -99,10 +109,17 @@
                 barStartPostion={row.y > 0
                   ? xEqualsZeroLine
                   : xEqualsZeroLine - barWidth}
-                rowValuePosition={row.y > 0
-                  ? xEqualsZeroLine + barWidth - 6
-                  : xEqualsZeroLine - barWidth + 6}
+                {rowValuePosition}
+                {textAnchor}
               ></Row>
+              {console.log(
+                xEqualsZeroLine,
+                barWidth,
+                rowValuePosition,
+                rowValue,
+                textAnchor
+              )}
+              {textAnchor}
             </g>
           {/each}
         </g>

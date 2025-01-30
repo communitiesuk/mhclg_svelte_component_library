@@ -1,13 +1,13 @@
 <script>
   // the y values in dataArray must be passed down from a parent component
-  let { rowValue } = $props();
+  let { rowValue, textAnchor } = $props();
 
-  let textAnchor;
-  if (rowValue > 0) {
-    textAnchor = 'end';
-  } else {
-    textAnchor = 'start';
-  }
+  // let textAnchor;
+  // if (rowValue > 0) {
+  //   textAnchor = 'end';
+  // } else {
+  //   textAnchor = 'start';
+  // }
 </script>
 
 <g>

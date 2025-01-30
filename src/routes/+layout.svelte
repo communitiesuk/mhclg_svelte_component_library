@@ -1,6 +1,6 @@
 <script lang="ts">
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
-  import '../app.css';
+  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import "../app.css";
   let { children, data } = $props();
 
   //$inspect(data);

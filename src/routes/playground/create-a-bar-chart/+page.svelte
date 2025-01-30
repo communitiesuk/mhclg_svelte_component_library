@@ -1,18 +1,18 @@
 <script>
-  import { page } from '$app/stores';
-  import PlaygroundDetails from '$lib/package-wrapping/PlaygroundDetails.svelte';
-  import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
-  import { Input, Radio } from 'flowbite-svelte';
-  import { details } from './details.js';
-  import RowChart from './local-lib/RowChart.svelte';
+  import { page } from "$app/stores";
+  import PlaygroundDetails from "$lib/package-wrapping/PlaygroundDetails.svelte";
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
+  import { Input, Radio } from "flowbite-svelte";
+  import { details } from "./details.js";
+  import RowChart from "./local-lib/RowChart.svelte";
 
   let { data, homepage = false, folders } = $props();
 
-  let pageInfo = $page?.route.id.split('/');
+  let pageInfo = $page?.route.id.split("/");
 
   details.name = textStringConversion(
     folders ? folders[folders.length - 1] : pageInfo[pageInfo.length - 1],
-    'title-first-word'
+    "title-first-word",
   );
 
   let selectedYear = $state(data?.years[0]);
@@ -21,13 +21,17 @@
   let dataArray = $derived(
     data?.dataInFormatForBarChart
       .find((el) => el.x === selectedYear)
-      ?.bars.map((el) => ({
+      ?.bars.map((el, index) => ({
         ...el,
         label: data.areaCodeLookup[el.areaCode],
-        color: el.areaCode === 'E07000032' ? 'blue' : null,
+        color:
+          data.areaCodeLookup[el.areaCode] === "North West Leicestershire"
+            ? "blue"
+            : null,
+        y: (index % 2 === 0 ? 1 : -1) * el.y,
       }))
       .sort((a, b) => b.label.length - a.label.length)
-      .slice(0, numberOfBars)
+      .slice(0, numberOfBars),
   );
 </script>
 

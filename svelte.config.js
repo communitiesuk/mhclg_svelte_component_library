@@ -19,7 +19,7 @@ const config = {
 		},
 		alias: {
 			'govuk-frontend': join(process.cwd(), 'node_modules/govuk-frontend')
-		}
+		},
 	},
 
 	extensions: ['.svelte', '.svx']

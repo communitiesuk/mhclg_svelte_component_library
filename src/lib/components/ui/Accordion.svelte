@@ -154,9 +154,9 @@
       class="govuk-accordion__section-button"
       aria-expanded={isExpanded}
       onclick={() => toggleSection(section.uniqueid)}
-      aria-label="{section.heading}, {section?.summary}, {isExpanded
-        ? hideSectionAriaLabel
-        : showSectionAriaLabel}"
+      aria-label="{section.heading}, {section.summary
+        ? section.summary + ','
+        : ''} {isExpanded ? hideSectionAriaLabel : showSectionAriaLabel}"
     >
       <span class="govuk-accordion__section-heading-text">
         <span class="govuk-accordion__section-heading-text-focus"
@@ -197,23 +197,23 @@
       class:govuk-accordion__section--expanded={isExpanded}
     >
       <div class="govuk-accordion__section-header">
-        {#if headingLevel == 'h2'}
+        {#if headingLevel.toLowerCase() == 'h2'}
           <h2 class="govuk-accordion__section-heading">
             {@render content(section, isExpanded)}
           </h2>
-        {:else if headingLevel == 'h3'}
+        {:else if headingLevel.toLowerCase() == 'h3'}
           <h3 class="govuk-accordion__section-heading">
             {@render content(section, isExpanded)}
           </h3>
-        {:else if headingLevel == 'h4'}
+        {:else if headingLevel.toLowerCase() == 'h4'}
           <h4 class="govuk-accordion__section-heading">
             {@render content(section, isExpanded)}
           </h4>
-        {:else if headingLevel == 'h5'}
+        {:else if headingLevel.toLowerCase() == 'h5'}
           <h5 class="govuk-accordion__section-heading">
             {@render content(section, isExpanded)}
           </h5>
-        {:else if headingLevel == 'h6'}
+        {:else if headingLevel.toLowerCase() == 'h6'}
           <h6 class="govuk-accordion__section-heading">
             {@render content(section, isExpanded)}
           </h6>
@@ -222,7 +222,6 @@
       <div
         id="{section.uniqueid}-content"
         class="govuk-accordion__section-content"
-        aria-labelledby="{section.uniqueid}-heading"
         aria-live={ariaLiveValue}
         hidden={!isExpanded}
       >

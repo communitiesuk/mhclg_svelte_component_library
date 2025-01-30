@@ -147,7 +147,7 @@
     </button>
   </div>
 
-  {#snippet content(section, isExpanded)}
+  {#snippet headerContent(section, isExpanded)}
     <button
       type="button"
       aria-controls="{section.uniqueid}-content"
@@ -199,23 +199,23 @@
       <div class="govuk-accordion__section-header">
         {#if headingLevel.toLowerCase() == 'h2'}
           <h2 class="govuk-accordion__section-heading">
-            {@render content(section, isExpanded)}
+            {@render headerContent(section, isExpanded)}
           </h2>
         {:else if headingLevel.toLowerCase() == 'h3'}
           <h3 class="govuk-accordion__section-heading">
-            {@render content(section, isExpanded)}
+            {@render headerContent(section, isExpanded)}
           </h3>
         {:else if headingLevel.toLowerCase() == 'h4'}
           <h4 class="govuk-accordion__section-heading">
-            {@render content(section, isExpanded)}
+            {@render headerContent(section, isExpanded)}
           </h4>
         {:else if headingLevel.toLowerCase() == 'h5'}
           <h5 class="govuk-accordion__section-heading">
-            {@render content(section, isExpanded)}
+            {@render headerContent(section, isExpanded)}
           </h5>
         {:else if headingLevel.toLowerCase() == 'h6'}
           <h6 class="govuk-accordion__section-heading">
-            {@render content(section, isExpanded)}
+            {@render headerContent(section, isExpanded)}
           </h6>
         {/if}
       </div>

@@ -26,7 +26,8 @@
   let colours = $derived({
     colourNegativeBars: colourNegativeBars,
     negativeBarColour: negativeBarColour,
-    custom: focusColour,
+    focusColour: focusColour,
+    focusBars: focusBars,
   });
 
   const sortingFunctions = {

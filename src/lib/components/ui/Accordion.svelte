@@ -152,6 +152,7 @@
     <button
       type="button"
       aria-controls="{section.uniqueid}-content"
+      id="{section.uniqueid}-button"
       class="govuk-accordion__section-button"
       aria-expanded={isExpanded}
       onclick={() => toggleSection(section.uniqueid)}
@@ -225,6 +226,10 @@
         class="govuk-accordion__section-content"
         aria-live={ariaLiveValue}
         hidden={!isExpanded}
+        role={uniqueSections.length < 6 ? 'region' : ''}
+        aria-labelledby={uniqueSections.length < 6
+          ? section.uniqueid + '-button'
+          : ''}
       >
         {#if typeof section.content === 'string'}
           <p class="govuk-body">{section.content}</p>

@@ -1,6 +1,8 @@
 <script>
   // @ts-nocheck
+  import CategoryLabel from '$lib/components/data-vis/line-chart/CategoryLabel.svelte';
   import Line from '$lib/components/data-vis/line-chart/Line.svelte';
+
   import { scaleLinear } from 'd3-scale';
   import { curveLinear, line } from 'd3-shape';
   import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
@@ -34,7 +36,9 @@
   let yearsMinMax = $derived([Math.min(...allYears), Math.max(...allYears)]);
 
   let xFunction = $derived(
-    scaleLinear().domain(yearsMinMax).range([0, chartWidth])
+    scaleLinear()
+      .domain(yearsMinMax)
+      .range([0 + 50, chartWidth - 50])
   );
 
   let allValues = $derived(flatData.map((el) => el.y));
@@ -111,20 +115,33 @@
               }}
             ></Line>
           {/each}
-          <Line
-            {lineFunction}
-            dataArray={data.lines.find((el) => el.areaCode === selectedAreaCode)
-              .data}
-            pathStrokeColor="red"
-            pathStrokeWidth="5"
-            opacity="1"
-            includeMarkers={true}
-            markerRadius="8"
-            markerStroke="red"
-            markerFill="white"
-            {xFunction}
-            {yFunction}
-          ></Line>
+          <g>
+            <Line
+              {lineFunction}
+              dataArray={data.lines.find(
+                (el) => el.areaCode === selectedAreaCode
+              ).data}
+              pathStrokeColor="red"
+              pathStrokeWidth="5"
+              opacity="1"
+              includeMarkers={true}
+              markerRadius="8"
+              markerStroke="red"
+              markerFill="white"
+              {xFunction}
+              {yFunction}
+            ></Line>
+            <CategoryLabel
+              {chartWidth}
+              {lineFunction}
+              dataArray={data.lines.find(
+                (el) => el.areaCode === selectedAreaCode
+              ).data}
+              {xFunction}
+              {yFunction}
+              text="hello"
+            ></CategoryLabel>
+          </g>
         </g>
       </g>
     {/if}

@@ -111,6 +111,13 @@
         ),
       },
       {
+        name: "headingLevel",
+        category: "Content",
+        isProp: true,
+        inputType: "input",
+        value: "h4",
+      },
+      {
         name: "hideAllSections",
         category: "UI Toggle Labels",
         isProp: true,

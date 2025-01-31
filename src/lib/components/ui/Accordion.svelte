@@ -1,7 +1,6 @@
 <script lang="ts">
   import type { Snippet } from 'svelte';
 
-  import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import { SvelteSet } from 'svelte/reactivity';
 
@@ -85,11 +84,10 @@
 
   // Only use session storage logic if rememberIsExpandedState is true
   onMount(() => {
-    if (browser && rememberIsExpandedState) {
+    if (rememberIsExpandedState) {
       uniqueSections.forEach((section) => {
         // If the section is explicitly expanded, respect that.
         // Otherwise, try to restore from session storage.
-        // **** Is this the behaviour we want? Shouldn't it be the other way around?
         if (section.expanded) {
           expandedSections.add(section.uniqueid);
         } else {
@@ -111,7 +109,7 @@
 
   // Effect to update sessionStorage when uniqueSections change
   $effect(() => {
-    if (browser && rememberIsExpandedState) {
+    if (rememberIsExpandedState) {
       uniqueSections.forEach((section) => {
         sessionStorage.setItem(
           section.uniqueid,

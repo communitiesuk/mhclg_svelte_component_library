@@ -7,7 +7,10 @@
 </script>
 
 <g transform="translate({chartWidth},{0})">
-  <text dominant-baseline="central" x={0} y={yFunction(dataArray[0].y)}
-    >{dataArray[0].areaCode}</text
+  <text
+    dominant-baseline="central"
+    text-anchor="end"
+    x={40}
+    y={yFunction(dataArray[0].y)}>{dataArray[0].areaCode}</text
   >
 </g>

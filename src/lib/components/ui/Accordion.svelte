@@ -37,6 +37,7 @@
     headingLevel?: string;
   } = $props();
 
+  //Attempt to ensure that ids are unique by attaching extra characters
   let uniqueSections = sections.map((section, i) => {
     return {
       ...section,
@@ -108,7 +109,7 @@
     }
   });
 
-  // Effect to update sessionStorage when sections change
+  // Effect to update sessionStorage when uniqueSections change
   $effect(() => {
     if (browser && rememberIsExpandedState) {
       uniqueSections.forEach((section) => {

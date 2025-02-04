@@ -1,4 +1,6 @@
 <script>
+  import ValueLabel from './ValueLabel.svelte';
+
   let {
     dataArray,
     opacity = 1,
@@ -7,6 +9,7 @@
     pathFillColor = 'none',
     pathStrokeDashArray = 'none',
     includeMarkers = false,
+    markerLabels = true,
     markerShape = 'circle',
     markerRadius = 5,
     markerFill = '#b312a0',
@@ -22,10 +25,20 @@
     onMouseLeave,
     onMouseMove,
     onClickMarker,
-    onMouseEnterMarker,
-    onMouseLeaveMarker,
+    // onMouseEnterMarker,
+    // onMouseLeaveMarker,
     onMouseMoveMarker,
   } = $props();
+
+  let hoveredMarker = $state();
+
+  function onMouseEnterMarker(i) {
+    hoveredMarker = i;
+  }
+
+  function onMouseLeaveMarker(i) {
+    hoveredMarker = null;
+  }
 </script>
 
 <g
@@ -49,8 +62,8 @@
       <g
         data-id={markersDataId + '-' + i}
         onclick={onClickMarker}
-        onmouseenter={onMouseEnterMarker}
-        onmouseleave={onMouseLeaveMarker}
+        onmouseenter={() => onMouseEnterMarker(i)}
+        onmouseleave={() => onMouseLeaveMarker(i)}
         onmousemove={onMouseMoveMarker}
         transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
       >
@@ -80,6 +93,11 @@
             fill={markerFill}
             stroke-width={markerStrokeWidth}
           ></polygon>
+        {/if}
+        {#if markerLabels}
+          {#if i == hoveredMarker}
+            <ValueLabel {marker}></ValueLabel>
+          {/if}
         {/if}
       </g>
     {/each}

@@ -95,9 +95,9 @@
           ></polygon>
         {/if}
         {#if markerLabels}
-          {#if i == hoveredMarker}
+          <!-- {#if i == hoveredMarker} -->
             <ValueLabel {marker}></ValueLabel>
-          {/if}
+          <!-- {/if} -->
         {/if}
       </g>
     {/each}

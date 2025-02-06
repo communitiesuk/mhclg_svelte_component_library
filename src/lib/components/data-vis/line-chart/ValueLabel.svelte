@@ -9,7 +9,7 @@
 <svg width="300" height="50">
   {#if textDimensions}
     <rect
-      x="10"
+      x="0"
       y="10"
       height="30"
       rx="5"
@@ -21,10 +21,10 @@
   <text
     bind:contentRect={textDimensions}
     text-anchor="start"
-    x={textPadding}
+    x={textPadding / 2}
     y="30"
     font-size="16"
-    fill="white"
+    fill="black"
   >
     {marker.y}
   </text>

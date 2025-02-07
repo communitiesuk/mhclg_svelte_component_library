@@ -1,31 +1,32 @@
 <script>
-  let { marker } = $props();
+  import { text } from "@sveltejs/kit";
+
+  let { marker, textContent } = $props();
 
   let textDimensions = $state();
-  $inspect(textDimensions);
-  let textPadding = $state(15);
+  let lineSpacing = $state(20);
+  let verticalPadding = $state(8);
+  let horizontalPadding = $derived(verticalPadding * 2);
 </script>
 
-<svg width="300" height="50">
+<svg width="300" height="300">
   {#if textDimensions}
     <rect
-      x="0"
-      y="10"
-      height="30"
+      height={textDimensions.height + verticalPadding}
       rx="5"
       ry="5"
       fill="dimgrey"
-      width={textDimensions.width + textPadding}
-    />
+      width={textDimensions.width + horizontalPadding}
+    ></rect>
   {/if}
   <text
-    bind:contentRect={textDimensions}
     text-anchor="start"
-    x={textPadding / 2}
-    y="30"
     font-size="16"
     fill="black"
+    bind:contentRect={textDimensions}
   >
-    {marker.y}
+    {#each textContent as line, i}
+      <tspan x={horizontalPadding / 2} dy={lineSpacing}>{line}</tspan>
+    {/each}
   </text>
 </svg>

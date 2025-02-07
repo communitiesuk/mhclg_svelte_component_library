@@ -1,19 +1,19 @@
 <script>
-  import ValueLabel from './ValueLabel.svelte';
+  import ValueLabel from "./ValueLabel.svelte";
 
   let {
     dataArray,
     opacity = 1,
-    pathStrokeColor = '#b312a0',
+    pathStrokeColor = "#b312a0",
     pathStrokeWidth = 1,
-    pathFillColor = 'none',
-    pathStrokeDashArray = 'none',
+    pathFillColor = "none",
+    pathStrokeDashArray = "none",
     includeMarkers = false,
     markerLabels = true,
-    markerShape = 'circle',
+    markerShape = "circle",
     markerRadius = 5,
-    markerFill = '#b312a0',
-    markerStroke = 'white',
+    markerFill = "#b312a0",
+    markerStroke = "white",
     markerStrokeWidth = 3,
     lineFunction,
     xFunction,
@@ -60,21 +60,21 @@
   {#if includeMarkers}
     {#each dataArray as marker, i}
       <g
-        data-id={markersDataId + '-' + i}
+        data-id={markersDataId + "-" + i}
         onclick={onClickMarker}
         onmouseenter={() => onMouseEnterMarker(i)}
         onmouseleave={() => onMouseLeaveMarker(i)}
         onmousemove={onMouseMoveMarker}
         transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
       >
-        {#if markerShape === 'circle'}
+        {#if markerShape === "circle"}
           <circle
             r={markerRadius}
             stroke={markerStroke}
             fill={markerFill}
             stroke-width={markerStrokeWidth}
           ></circle>
-        {:else if ['square', 'diamond'].includes(markerShape)}
+        {:else if ["square", "diamond"].includes(markerShape)}
           <rect
             transform="rotate({markerShape === 'diamond' ? 45 : 0})"
             x={-markerRadius}
@@ -85,7 +85,7 @@
             fill={markerFill}
             stroke-width={markerStrokeWidth}
           ></rect>
-        {:else if markerShape === 'triangle'}
+        {:else if markerShape === "triangle"}
           <polygon
             points="0,{-markerRadius * 2} {markerRadius *
               1.733},{markerRadius} {-markerRadius * 1.733},{markerRadius}"
@@ -95,9 +95,10 @@
           ></polygon>
         {/if}
         {#if markerLabels}
-          <!-- {#if i == hoveredMarker} -->
-            <ValueLabel {marker}></ValueLabel>
-          <!-- {/if} -->
+          {#if i == hoveredMarker}
+            <ValueLabel {marker} textContent={[marker.y, marker.x]}
+            ></ValueLabel>
+          {/if}
         {/if}
       </g>
     {/each}

@@ -8,8 +8,10 @@
   import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
+  import { page } from "$app/stores";
 
-  let { homepage = undefined } = $props();
+  let { homepage = undefined, folders } = $props();
 
   let details = {
     status: "in_progress",
@@ -36,6 +38,16 @@
     childComponents: undefined,
     requirements: undefined,
   };
+
+  let pageInfo = $page?.route.id.split("/");
+
+  details.name = textStringConversion(
+    folders ? folders[folders.length - 1] : pageInfo[pageInfo.length - 1],
+    "title-first-word",
+  );
+  details.folder = folders
+    ? folders[folders.length - 2]
+    : pageInfo[pageInfo.length - 2];
 
   let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
@@ -93,7 +105,6 @@
       style="width: {demoScreenWidth}px;"
     >
       <div class="flex gap-4 flex-wrap items-center">
-        <h6>A placeholder title of some kind</h6>
         <Details {...parametersObject}></Details>
       </div>
     </div>
@@ -104,3 +115,14 @@
     <h5 class="underline underline-offset-4">Examples</h5>
   </div>
 {/if}
+
+<style>
+  [data-role="component-container"] {
+    display: grid;
+    place-items: center;
+  }
+  [data-role="component-container-centered"] {
+    background-color: #f8f8f8;
+    padding: 20px 0px;
+  }
+</style>

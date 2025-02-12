@@ -1,6 +1,10 @@
 <script>
   import Details from "$lib/components/ui/Details.svelte";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
+  import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
+  import { addIndexAndInitalValue } from "$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js";
+  import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
+  import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
 
   let { homepage = undefined } = $props();
 
@@ -29,8 +33,47 @@
     childComponents: undefined,
     requirements: undefined,
   };
+
+  let parametersSourceArray =
+    homepage ??
+    addIndexAndInitalValue([
+      {
+        name: "textColor",
+        category: "styling",
+        isProp: true,
+        inputType: "input",
+        value: "black",
+      },
+    ]);
+
+  let parametersValuesArray = $state(
+    homepage ?? parametersSourceArray.map((el) => el.value),
+  );
+
+  let derivedParametersObject = $derived(homepage ?? {});
+
+  let parametersVisibleArray = $derived(
+    homepage ??
+      trackVisibleParameters(parametersSourceArray, parametersValuesArray),
+  );
+
+  let parametersObject = $derived(
+    homepage ??
+      createParametersObject(
+        parametersSourceArray,
+        parametersValuesArray,
+        derivedParametersObject,
+      ),
+  );
 </script>
 
 <ComponentDetails {homepage} {details} />
 
-<Details></Details>
+<ParametersSection
+  {details}
+  {parametersSourceArray}
+  {parametersVisibleArray}
+  bind:parametersValuesArray
+></ParametersSection>
+
+<Details {...parametersObject}></Details>

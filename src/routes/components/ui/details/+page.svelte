@@ -5,6 +5,9 @@
   import { addIndexAndInitalValue } from "$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js";
   import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
   import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
+  import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
+  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
+  import DividerLine from "$lib/components/layout/DividerLine.svelte";
 
   let { homepage = undefined } = $props();
 
@@ -33,6 +36,8 @@
     childComponents: undefined,
     requirements: undefined,
   };
+
+  let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
   let parametersSourceArray =
     homepage ??
@@ -69,11 +74,33 @@
 
 <ComponentDetails {homepage} {details} />
 
-<ParametersSection
-  {details}
-  {parametersSourceArray}
-  {parametersVisibleArray}
-  bind:parametersValuesArray
-></ParametersSection>
+{#if !homepage}
+  <ParametersSection
+    {details}
+    {parametersSourceArray}
+    {parametersVisibleArray}
+    bind:parametersValuesArray
+  ></ParametersSection>
 
-<Details {...parametersObject}></Details>
+  <div data-role="demo-section">
+    <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+    <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
+  </div>
+
+  <div data-role="component-container">
+    <div
+      data-role="component-container-centered"
+      style="width: {demoScreenWidth}px;"
+    >
+      <div class="flex gap-4 flex-wrap items-center">
+        <h6>A placeholder title of some kind</h6>
+        <Details {...parametersObject}></Details>
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-20" data-role="examples-section">
+    <DividerLine margin="30px 0px 30px 0px"></DividerLine>
+    <h5 class="underline underline-offset-4">Examples</h5>
+  </div>
+{/if}

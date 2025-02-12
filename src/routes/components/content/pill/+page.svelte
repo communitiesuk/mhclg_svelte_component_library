@@ -1,16 +1,15 @@
-<script>
-  // @ts-nocheck
-  import { page } from '$app/stores';
-  import Pill from '$lib/components/content/Pill.svelte';
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
-  import { defaultScreenWidthBreakpoints } from '$lib/config.js';
-  import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
-  import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
-  import ScreenSizeRadio from '$lib/package-wrapping/ScreenSizeRadio.svelte';
-  import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
-  import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
-  import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
-  import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
+<script lang="ts">
+  import { page } from "$app/state";
+  import Pill from "$lib/components/content/Pill.svelte";
+  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
+  import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
+  import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
+  import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
+  import { addIndexAndInitalValue } from "$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js";
+  import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
+  import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
 
   let { data, homepage = undefined, folders } = $props();
 
@@ -23,7 +22,7 @@
      * ?      Available statuses are:
      * ?      'to_be_developed', 'in_progress', 'complete_untested', 'complete_in_use', 'complete_accessible'
      */
-    status: 'in_progress',
+    status: "in_progress",
     /**
      * &&     description - An array of paragraphs of text explaining what the component does, used within ComponentDetails
      * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
@@ -31,7 +30,7 @@
     description: [
       {
         content:
-          'A compact label that provides status or metadata for a primary interface area.',
+          "A compact label that provides status or metadata for a primary interface area.",
       },
       {
         content:
@@ -63,11 +62,11 @@
    * DONOTTOUCH *
    * && 		details.name and details.folder are added based on a) the folders prop if on the homepage, b) the $page store if on the actual wrapper page.
    */
-  let pageInfo = $page?.route.id.split('/');
+  let pageInfo = page?.route.id.split("/");
 
   details.name = textStringConversion(
     folders ? folders[folders.length - 1] : pageInfo[pageInfo.length - 1],
-    'title-first-word'
+    "title-first-word",
   );
   details.folder = folders
     ? folders[folders.length - 2]
@@ -112,32 +111,32 @@
     homepage ??
     addIndexAndInitalValue([
       {
-        name: 'textContent',
-        category: 'content',
+        name: "textContent",
+        category: "content",
         isProp: true,
-        inputType: 'input',
-        value: 'Pill placeholder text',
+        inputType: "input",
+        value: "Pill placeholder text",
       },
       {
-        name: 'bgColor',
-        category: 'styling',
+        name: "bgColor",
+        category: "styling",
         isProp: true,
-        inputType: 'input',
-        value: 'pink',
+        inputType: "input",
+        value: "pink",
       },
       {
-        name: 'textColor',
-        category: 'styling',
+        name: "textColor",
+        category: "styling",
         isProp: true,
-        inputType: 'input',
-        value: 'black',
+        inputType: "input",
+        value: "black",
       },
       {
-        name: 'size',
-        category: 'styling',
+        name: "size",
+        category: "styling",
         isProp: true,
-        inputType: 'dropdown',
-        options: ['extraSmall', 'small', 'medium', 'large'],
+        inputType: "dropdown",
+        options: ["extraSmall", "small", "medium", "large"],
       },
     ]);
 
@@ -147,7 +146,7 @@
    * &&     This array is then used to track the values associated with each parameter as they are modified by the user using form inputs.
    */
   let parametersValuesArray = $state(
-    homepage ?? parametersSourceArray.map((el) => el.value) //&& Something
+    homepage ?? parametersSourceArray.map((el) => el.value), //&& Something
   );
 
   /**
@@ -172,7 +171,7 @@
    */
   let parametersVisibleArray = $derived(
     homepage ??
-      trackVisibleParameters(parametersSourceArray, parametersValuesArray)
+      trackVisibleParameters(parametersSourceArray, parametersValuesArray),
   );
 
   /**
@@ -184,8 +183,8 @@
       createParametersObject(
         parametersSourceArray,
         parametersValuesArray,
-        derivedParametersObject
-      )
+        derivedParametersObject,
+      ),
   );
 </script>
 
@@ -244,21 +243,21 @@ DONOTTOUCH  *
 {/if}
 
 <style>
-  [data-role='examples-section'] {
+  [data-role="examples-section"] {
     max-width: 1024px;
     margin: 0px auto;
   }
 
-  [data-role='demo-section'] {
+  [data-role="demo-section"] {
     max-width: 1024px;
     margin: 0px auto;
   }
 
-  [data-role='component-container'] {
+  [data-role="component-container"] {
     display: grid;
     place-items: center;
   }
-  [data-role='component-container-centered'] {
+  [data-role="component-container-centered"] {
     background-color: #f8f8f8;
     padding: 20px 0px;
   }

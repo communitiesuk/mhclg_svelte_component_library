@@ -1,6 +1,4 @@
 <script lang="ts">
-  // import highlight from "$lib/utils/syntax-highlighting/shikiAlt.svelte.js";
-
   import { codeToHtml } from "shiki";
 
   let {

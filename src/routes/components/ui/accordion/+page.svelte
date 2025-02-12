@@ -12,7 +12,6 @@
   import { addIndexAndInitalValue } from "$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js";
   import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
   import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
-  import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import CodeBlock from "$lib/components/content/CodeBlock.svelte";
   import * as examples from "./codeBlocks.js";

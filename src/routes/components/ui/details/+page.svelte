@@ -55,6 +55,21 @@
     homepage ??
     addIndexAndInitalValue([
       {
+        name: "summaryText",
+        category: "content",
+        isProp: true,
+        inputType: "input",
+        value: "Summary text",
+      },
+      {
+        name: "detailedText",
+        category: "content",
+        isProp: true,
+        inputType: "input",
+        value:
+          "This is information that only certain users need to see. It is hidden from view by default to make scanning the page easier for the majority of users who do not need to see it.",
+      },
+      {
         name: "textColor",
         category: "styling",
         isProp: true,

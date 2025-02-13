@@ -172,6 +172,13 @@
         inputType: "checkbox",
         value: false,
       },
+      {
+        name: "selectedValue",
+        category: "Form",
+        isProp: true,
+        inputType: "input",
+        value: "",
+      },
     ]);
 
   let parametersValuesArray = $state(
@@ -434,7 +441,7 @@
             {
               value: "none",
               label: "I do not wish to receive updates",
-              exclusive: true
+              exclusive: true,
             },
           ]}
         />
@@ -566,7 +573,9 @@
     </div>
 
     <!-- Example: Using Snippets -->
-    <h3 class="govuk-heading-m">Using Snippets and Nested Components for Conditional Content</h3>
+    <h3 class="govuk-heading-m">
+      Using Snippets and Nested Components for Conditional Content
+    </h3>
     <CodeBlock
       code={`<script>
   import Radios from "$lib/components/ui/Radios.svelte";
@@ -641,7 +650,9 @@
     />
 
     <div class="app-example-wrapper">
-      <div class="app-example__frame app-example__frame--resizable app-example__frame--m p-6">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
         <Radios
           legend="Contact Method"
           name="contact-method-snippets"
@@ -656,7 +667,12 @@
   <div class="govuk-form-group">
     <label class="govuk-label" for="email-input">Email Address</label>
     <div class="govuk-hint">We'll use this for important notifications</div>
-    <input class="govuk-input" id="email-input" name="email-input" type="email">
+    <input
+      class="govuk-input"
+      id="email-input"
+      name="email-input"
+      type="email"
+    />
   </div>
 {/snippet}
 
@@ -664,7 +680,7 @@
   <div class="govuk-form-group">
     <label class="govuk-label" for="phone-input">Phone Number</label>
     <div class="govuk-hint">Include country code if international</div>
-    <input class="govuk-input" id="phone-input" name="phone-input" type="tel">
+    <input class="govuk-input" id="phone-input" name="phone-input" type="tel" />
   </div>
 {/snippet}
 
@@ -675,7 +691,7 @@
       name="contact-timing"
       small={true}
       legendSize="s"
-      validate={(value) => !value ? "Please select a time slot" : undefined}
+      validate={(value) => (!value ? "Please select a time slot" : undefined)}
       options={[
         { value: "morning", label: "Morning (9am - 12pm)" },
         { value: "afternoon", label: "Afternoon (12pm - 5pm)" },

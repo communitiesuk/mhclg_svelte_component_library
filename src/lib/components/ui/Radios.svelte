@@ -25,6 +25,7 @@
     inline = false,
     options = [],
     validate = undefined,
+    selectedValue = null,
   } = $props<{
     legend: string;
     hint?: string;
@@ -36,10 +37,11 @@
     inline?: boolean;
     options?: RadioOption[];
     validate?: (value: string) => string | undefined;
+    selectedValue?: string | null;
   }>();
 
-  // Component state for single selection
-  let selectedValue = $state<string | null>(null);
+  // Create state variable initialised with prop value
+  let value = $state(selectedValue);
 
   // Add support detection
   let isSupported = $state(false);
@@ -48,16 +50,9 @@
       document.body?.classList.contains("govuk-frontend-supported") ?? false;
   });
 
-  // Derived state to check if a value is selected and handle validation
-  let isChecked = $derived((value: string) => selectedValue === value);
   let validationError = $derived<string | undefined>(
-    isSupported && validate ? validate(selectedValue ?? "") : undefined,
+    isSupported && validate ? validate(value ?? "") : undefined,
   );
-
-  function toggleRadio(option: RadioOption) {
-    if (!isSupported) return;
-    selectedValue = selectedValue === option.value ? null : option.value;
-  }
 </script>
 
 <div
@@ -101,7 +96,9 @@
     {/if}
 
     <div
-      class="govuk-radios{small ? ' govuk-radios--small' : ''}{inline ? ' govuk-radios--inline' : ''}"
+      class="govuk-radios{small ? ' govuk-radios--small' : ''}{inline
+        ? ' govuk-radios--inline'
+        : ''}"
       data-module="govuk-radios"
       role="radiogroup"
       aria-labelledby="{name}-legend"
@@ -120,7 +117,7 @@
         <div
           class="govuk-radios__item"
           role="radio"
-          aria-checked={isSupported ? isChecked(option.value) : null}
+          aria-checked={isSupported ? value === option.value : null}
         >
           <input
             type="radio"
@@ -128,6 +125,7 @@
             id="{name}-{i}"
             class="govuk-radios__input"
             value={option.value}
+            bind:group={value}
             data-aria-controls={option.conditional?.id}
             aria-describedby={[
               option.hint ? `${name}-${i}-hint` : null,
@@ -135,8 +133,6 @@
             ]
               .filter(Boolean)
               .join(" ")}
-            checked={isChecked(option.value)}
-            onchange={() => toggleRadio(option)}
             data-behaviour={option.exclusive ? "exclusive" : undefined}
           />
           <label
@@ -162,7 +158,7 @@
           <div
             id={option.conditional.id}
             class="govuk-radios__conditional{!isSupported ||
-            !isChecked(option.value)
+            value !== option.value
               ? ' govuk-radios__conditional--hidden'
               : ''}"
             role="region"

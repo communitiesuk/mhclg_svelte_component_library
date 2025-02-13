@@ -1,14 +1,12 @@
 <script>
-  let { textColor } = $props();
+  let { textColor, summaryText, detailedText } = $props();
 </script>
 
 <details class="govuk-details" style="color: {textColor}">
   <summary class="govuk-details__summary">
-    <span class="govuk-details__summary-text">Summary text</span>
+    <span class="govuk-details__summary-text">{summaryText}</span>
   </summary>
   <div class="govuk-details__text">
-    This is information that only certain users need to see. It is hidden from
-    view by default to make scanning the page easier for the majority of users
-    who do not need to see it.
+    {detailedText}
   </div>
 </details>

@@ -1,8 +1,8 @@
 <script>
-  let { textColor, summaryText, detailedText } = $props();
+  let { summaryText, detailedText } = $props();
 </script>
 
-<details class="govuk-details" style="color: {textColor}">
+<details class="govuk-details">
   <summary class="govuk-details__summary">
     <span class="govuk-details__summary-text">{summaryText}</span>
   </summary>

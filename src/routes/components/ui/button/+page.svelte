@@ -108,15 +108,9 @@
     ]);
 
   let parametersValuesArray = $state(
-    homepage ?? parametersSourceArray.map((el) => el.value), //&& Something
+    homepage ?? parametersSourceArray.map((el) => el.value),
   );
 
-  /**
-   * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
-   * && 		Here you can add additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
-   * &&     Note that these parameters STILL NEED TO BE LISTED in the source array (with a null input type and null value).
-   * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
-   */
   let derivedParametersObject = $derived(homepage ?? {});
 
   let parametersVisibleArray = $derived(
@@ -155,13 +149,8 @@
       data-role="component-container-centered"
       style="width: {demoScreenWidth}px;"
     >
-      <!--
-      CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
-      &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
-      -->
       <div class="flex gap-4 flex-wrap items-center">
-        <Button {...parametersObject} borderRadius="5px" tooltipText="false"
-        ></Button>
+        <Button {...parametersObject}></Button>
       </div>
     </div>
   </div>

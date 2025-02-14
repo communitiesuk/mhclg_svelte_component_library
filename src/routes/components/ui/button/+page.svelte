@@ -98,25 +98,12 @@
         value: "Click me",
       },
       {
-        name: "bgColor",
-        category: "styling",
-        isProp: true,
-        inputType: "input",
-        value: "pink",
-      },
-      {
-        name: "textColor",
-        category: "styling",
-        isProp: true,
-        inputType: "input",
-        value: "black",
-      },
-      {
-        name: "size",
-        category: "styling",
+        name: "buttonType",
+        category: "content",
         isProp: true,
         inputType: "dropdown",
-        options: ["extraSmall", "small", "medium", "large"],
+        options: ["default", "secondary"],
+        value: "default",
       },
     ]);
 

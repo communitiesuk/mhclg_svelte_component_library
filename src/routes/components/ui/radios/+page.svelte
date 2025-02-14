@@ -212,6 +212,9 @@
       ),
   );
 
+  // Demo state for bindable example
+  let demoSelectedOption = $state("option2");
+
   let snippetSections = [
     {
       value: "email",
@@ -658,6 +661,77 @@
           name="contact-method-snippets"
           options={snippetSections}
         />
+      </div>
+    </div>
+
+    <!-- Example: Bindable Value -->
+    <h3 class="govuk-heading-m">Bindable Value</h3>
+    <CodeBlock
+      code={`<script>
+  import Radios from "$lib/components/ui/Radios.svelte";
+  
+  let selectedOption = $state("option2");
+  
+  const options = [
+    { value: "option1", label: "Option 1" },
+    { value: "option2", label: "Option 2" },
+    { value: "option3", label: "Option 3" }
+  ];
+</script>
+
+<div class="govuk-form-group">
+  <label class="govuk-label" for="option-input">
+    Type 'option1', 'option2', or 'option3' to select a radio button
+  </label>
+  <input
+    class="govuk-input"
+    id="option-input"
+    bind:value={selectedOption}
+    placeholder="Type an option value..."
+  />
+</div>
+
+<Radios
+  legend="Select an option"
+  name="bindable-demo"
+  {options}
+  bind:selectedValue={selectedOption}
+/>
+
+<p class="govuk-body">Currently selected: {selectedOption}</p>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="option-input">
+            Type 'option1', 'option2', or 'option3' to select a radio button
+          </label>
+          <input
+            class="govuk-input"
+            id="option-input"
+            bind:value={demoSelectedOption}
+            placeholder="Type an option value..."
+          />
+        </div>
+
+        <div class="mt-4">
+          <Radios
+            legend="Select an option"
+            name="bindable-demo"
+            options={[
+              { value: "option1", label: "Option 1" },
+              { value: "option2", label: "Option 2" },
+              { value: "option3", label: "Option 3" },
+            ]}
+            bind:selectedValue={demoSelectedOption}
+          />
+        </div>
+
+        <p class="govuk-body mt-4">Currently selected: {demoSelectedOption}</p>
       </div>
     </div>
   </div>

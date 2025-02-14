@@ -14,7 +14,8 @@
   };
 
   // Component props
-  const {
+  let {
+    selectedValue = $bindable(null),
     legend,
     hint,
     error,
@@ -25,7 +26,6 @@
     inline = false,
     options = [],
     validate = undefined,
-    selectedValue = null,
   } = $props<{
     legend: string;
     hint?: string;
@@ -40,9 +40,6 @@
     selectedValue?: string | null;
   }>();
 
-  // Create state variable initialised with prop value
-  let value = $state(selectedValue);
-
   // Add support detection
   let isSupported = $state(false);
   onMount(() => {
@@ -51,7 +48,7 @@
   });
 
   let validationError = $derived<string | undefined>(
-    isSupported && validate ? validate(value ?? "") : undefined,
+    isSupported && validate ? validate(selectedValue ?? "") : undefined,
   );
 </script>
 
@@ -117,7 +114,7 @@
         <div
           class="govuk-radios__item"
           role="radio"
-          aria-checked={isSupported ? value === option.value : null}
+          aria-checked={isSupported ? selectedValue === option.value : null}
         >
           <input
             type="radio"
@@ -125,7 +122,7 @@
             id="{name}-{i}"
             class="govuk-radios__input"
             value={option.value}
-            bind:group={value}
+            bind:group={selectedValue}
             data-aria-controls={option.conditional?.id}
             aria-describedby={[
               option.hint ? `${name}-${i}-hint` : null,
@@ -158,7 +155,7 @@
           <div
             id={option.conditional.id}
             class="govuk-radios__conditional{!isSupported ||
-            value !== option.value
+            selectedValue !== option.value
               ? ' govuk-radios__conditional--hidden'
               : ''}"
             role="region"

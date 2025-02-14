@@ -20,7 +20,7 @@
     description: [
       {
         content:
-          "Use the button component to help users carry out an action like starting an application or saving their information.",
+          "It enables the user to carry out some action by clicking on it, e.g. Sign in or Save and continue",
       },
       {
         content:
@@ -28,14 +28,14 @@
         markdown: true,
       },
     ],
-    /**
-     * &&     context - An array of paragraphs of text explaining when the component will be used (e.g. what is it's parent component likely to be, what components will it be used in combination with) - used within ComponentDetails
-     * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
-     */
     context: [
       {
         content:
-          "Use the button component to help users carry out an action like starting an application or saving their information.",
+          "The text in the button should accurately describe the action, e.g. 'Accept and claim a tax refund'",
+      },
+      {
+        content:
+          "It will often be a stand alone component on a webpage. It normally won't have a parent component. It will never have a child component",
       },
       {
         content:
@@ -43,12 +43,6 @@
       },
     ],
     childComponents: undefined,
-    /**
-     * &&     requirements - Optional detail, can be used by developers to track which requirements for the component have been coded up.
-     * ?      The 'description' parameter is optional (default is not to provide a description).
-     * ?      For each paragraph there is an optional 'markdown' (default = false) parameter. When set to true, it uses the @html tag to render the content.
-     * ?      For each paragraph there is an optional 'fulfilled' (default = false) parameter. When set to true, the text will be highlighted green and struck-through, demonstrating that this requirmeent has been coded up.
-     */
     requirements: undefined,
   };
 

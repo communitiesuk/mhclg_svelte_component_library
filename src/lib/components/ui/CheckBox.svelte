@@ -14,7 +14,7 @@
   };
 
   // Component props
-  const {
+  let {
     legend,
     hint,
     error,
@@ -24,6 +24,7 @@
     small = false,
     options = [],
     validate = undefined,
+    selectedValues = $bindable([]),
   } = $props<{
     legend: string;
     hint?: string;
@@ -34,10 +35,8 @@
     small?: boolean;
     options?: CheckboxOption[];
     validate?: (values: string[]) => string | undefined;
+    selectedValues?: string[];
   }>();
-
-  // Component state
-  let selectedValues = $state<string[]>([]);
 
   // Add support detection
   let isSupported = $state(false);

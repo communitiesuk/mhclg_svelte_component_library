@@ -84,6 +84,13 @@
         value: "",
       },
       {
+        name: "selectedValue",
+        category: "Content",
+        isProp: true,
+        inputType: "input",
+        value: "",
+      },
+      {
         name: "name",
         category: "Form",
         isProp: true,
@@ -171,13 +178,6 @@
         isProp: true,
         inputType: "checkbox",
         value: false,
-      },
-      {
-        name: "selectedValue",
-        category: "Form",
-        isProp: true,
-        inputType: "input",
-        value: "",
       },
     ]);
 

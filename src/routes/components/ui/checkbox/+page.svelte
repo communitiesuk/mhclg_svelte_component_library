@@ -91,6 +91,13 @@
         value: "Select all that apply",
       },
       {
+        name: "selectedValues",
+        category: "Content",
+        isProp: true,
+        inputType: "javascript",
+        value: "[]",
+      },
+      {
         name: "name",
         category: "Form",
         isProp: true,

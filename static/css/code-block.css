@@ -1,0 +1,119 @@
+/* Code block styles */
+.code-block {
+  background: var(--sk-bg-2);
+  border: 1px solid var(--sk-border);
+  border-radius: var(--sk-border-radius);
+  margin: calc(0.5 * var(--sk-line-height-body)) 0;
+  position: relative;
+}
+
+.code-block pre {
+  box-sizing: border-box;
+  color: var(--shiki-color-text);
+  border-radius: var(--sk-border-radius);
+  width: 100%;
+  margin: 0;
+  padding: 0.7rem 1rem;
+  position: relative;
+  overflow-x: auto;
+}
+
+.code-block pre code {
+  background: 0 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: block;
+  top: 0;
+}
+
+@media (min-width: 767px) {
+  .code-block {
+    margin: var(--sk-line-height-body) 0;
+  }
+}
+
+.code-block .controls {
+  --height: 3.6rem;
+  height: var(--height);
+  z-index: 2;
+  box-sizing: border-box;
+  justify-content: end;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.code-block .controls:has(.filename) {
+  background: var(--sk-bg-3);
+  padding-left: 1rem;
+  position: relative;
+}
+
+.code-block .controls:not(:has(.filename)) {
+  background: inherit;
+}
+
+.code-block .controls .filename {
+  content: attr(data-file);
+  font: var(--sk-font-ui-small);
+  color: var(--sk-fg-3);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  display: block;
+  position: relative;
+  top: 0.1rem;
+  overflow: hidden;
+}
+
+.code-block .controls .filename:after {
+  content: attr(data-ext);
+}
+
+.controls .copy-to-clipboard {
+  height: calc(var(--height) - 1rem);
+  aspect-ratio: 1;
+  border-radius: var(--sk-border-radius);
+  position: relative;
+}
+
+.code-block .controls .copy-to-clipboard[disabled] {
+  opacity: 1;
+}
+
+.code-block .controls .copy-to-clipboard:before,
+.code-block .controls .copy-to-clipboard:after {
+  content: "";
+  background: 50%/1.6rem 1.6rem no-repeat;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.2s 0.6s;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.code-block .controls .copy-to-clipboard:before {
+  background-image: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3e%3crect%20width='11.2'%20height='14'%20x='7.9'%20y='3'%20rx='1.5'%20ry='1.5'%20style='fill:none;stroke:%23000000e0;stroke-miterlimit:10;stroke-width:1.5px'/%3e%3cpath%20d='M4%207v12.5c0%20.8.7%201.5%201.5%201.5h10'%20style='fill:none;stroke:%23000000e0;stroke-miterlimit:10;stroke-width:1.5px;stroke-linecap:round'/%3e%3c/svg%3e");
+}
+
+.code-block .controls .copy-to-clipboard:after {
+  opacity: 0;
+  background-image: url("data:image/svg+xml,%3csvg%20height='24'%20viewBox='0%200%2024%2024'%20width='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='m21%207-12%2012-5.5-5.5%201.41-1.41%204.09%204.08%2010.59-10.58z'%20fill='%23000000e0'/%3e%3c/svg%3e");
+}
+
+.code-block .controls .copy-to-clipboard:active:before {
+  opacity: 0;
+  transition: none;
+}
+
+.code-block .controls .copy-to-clipboard:active:after {
+  opacity: 1;
+  transition: none;
+}

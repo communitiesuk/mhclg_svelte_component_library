@@ -1,0 +1,39 @@
+@layer components {
+  [data-role="details-container"]
+    [data-role="component-information-array-container"] {
+    @apply flex flex-col gap-6;
+  }
+
+  [data-role="details-container"]
+    [data-role="component-information-detail-grid-container"] {
+    @apply grid grid-cols-[120px_auto] gap-x-6;
+  }
+
+  [data-role="details-container"]
+    [data-role="component-information-detail-grid-container"] {
+    dt {
+      @apply break-words hyphens-auto;
+    }
+  }
+
+  [data-role="details-container"]
+    [data-role="component-information-detail-grid-container"]
+    dd
+    p:first-of-type {
+    @apply mt-0;
+  }
+
+  [data-role="details-container"]
+    [data-role="component-information-detail-grid-container"]
+    dd
+    p:last-of-type {
+    @apply mb-0;
+  }
+
+  [data-role="examples-section"] {
+    @apply max-w-screen-lg mx-auto my-0;
+  }
+  [data-role="demo-section"] {
+    @apply max-w-screen-lg mx-auto my-0;
+  }
+}

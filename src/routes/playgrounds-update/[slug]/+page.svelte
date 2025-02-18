@@ -9,7 +9,6 @@
    * &&   Note that these variables are reactive so that if the user navigates directly to another component, the slugArray will update and so the current wrapper svelte file will be swapped for the new one.
    */
   let slugArray = $derived($page?.url.pathname.split("/").filter(Boolean));
-  let folder = $derived(slugArray[slugArray.length - 2]);
   let wrapper = $derived(
     slugArray[slugArray.length - 1][0].toUpperCase() +
       slugArray[slugArray.length - 1].substring(1),
@@ -25,7 +24,7 @@
     (async () => {
       try {
         const module = await import(
-          `/src/wrappers/components/${folder}/${wrapper}Wrapper.svelte`
+          `/src/wrappers/playgrounds/${wrapper}.svelte`
         );
         Component = module.default;
       } catch (error) {
@@ -42,23 +41,17 @@
   <div class="g-top-level-container">
     <h3>Failed to import componnet</h3>
     <p>
-      Oops...we've returned an error when trying to import the component wrapper
-      associated with this URL.
+      Oops...we've returned an error when trying to import the playground
+      wrapper associated with this URL.
     </p>
     <p class="underline font-bold">Things to check</p>
     <div class="grid-container">
       <div>1.</div>
-      <div>Does the component wrapper file exist?</div>
+      <div>Does the playground wrapper file exist?</div>
       <div>2.</div>
       <div>
-        Is the component wrapper file called <span class="font-bold"
+        Is the playground wrapper file called <span class="font-bold"
           >{wrapper}.svelte</span
-        >?
-      </div>
-      <div>3.</div>
-      <div>
-        Is the component wrapper file contained within a folder called <span
-          class="font-bold">{folder}</span
         >?
       </div>
     </div>

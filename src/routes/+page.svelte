@@ -2,13 +2,12 @@
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { foldersLookup } from "$lib/config.js";
-  import ComponentDetailsUpdate from "$lib/package-wrapping/ComponentDetailsUpdate.svelte";
-  import LoadArrayOfComponents from "./local-lib/LoadArrayOfComponents.svelte";
+  import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
 
   let { data } = $props();
 
   const wrappersComponentsObject = import.meta.glob(
-    "./../wrappers/*/*.svelte",
+    "./../wrappers/components/*/*.svelte",
     {
       eager: true,
     },
@@ -32,7 +31,23 @@
     return splitPath[splitPath.length - 2];
   });
 
-  console.log(wrappersComponentsArray);
+  const wrappersPlaygroundsObject = import.meta.glob(
+    "./../wrappers/playgrounds/*.svelte",
+    {
+      eager: true,
+    },
+  );
+
+  const wrappersPlaygroundsArray = Object.keys(wrappersPlaygroundsObject).map(
+    (el) => {
+      const splitPath = el.split("/");
+
+      return {
+        component: wrappersPlaygroundsObject[el],
+        name: splitPath[splitPath.length - 1].replace(".svelte", ""),
+      };
+    },
+  );
 
   /**
    * && 		Description of the code, how it works and what it does.
@@ -87,18 +102,10 @@ TODO
           (el) => el.folder === folder,
         )}
         {#each wrappersArray as wrapper}
-          <ComponentDetailsUpdate {wrapper}></ComponentDetailsUpdate>
+          <WrapperDetailsUpdate {wrapper} homepage="true"
+          ></WrapperDetailsUpdate>
         {/each}
       {/each}
-
-      <!-- {#each data.componentsSubFolders as subFolder}
-        {#if subFolder.subFolders.length > 0}
-          <h5 class="underline underline-offset-4 mt-10 mb-8">
-            {subFolder.label}
-          </h5>
-          <LoadArrayOfComponents {subFolder}></LoadArrayOfComponents>
-        {/if}
-      {/each} -->
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
     <div>
@@ -108,6 +115,9 @@ TODO
         practice combining components.
       </p>
       <p>All our playground examples are listed below.</p>
+      {#each wrappersPlaygroundsArray as wrapper}
+        <WrapperDetailsUpdate {wrapper} homepage="true"></WrapperDetailsUpdate>
+      {/each}
       <!-- <LoadArrayOfComponents subFolder={data.playgroundFolders}
       ></LoadArrayOfComponents> -->
     </div>

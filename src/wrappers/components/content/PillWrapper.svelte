@@ -1,5 +1,4 @@
 <script module>
-  export { snippetExample };
 </script>
 
 <script>
@@ -28,9 +27,6 @@
     curveStep,
     line,
   } from "d3-shape";
-
-  const filePath = __FILE_PATH__;
-  console.log("Component file path:", filePath);
 
   let { data } = $props();
 
@@ -754,10 +750,6 @@
   <DividerLine margin="30px 0px 30px 0px"></DividerLine>
   <h5 class="underline underline-offset-4">Examples</h5>
 </div>
-
-{#snippet snippetExample()}
-  hello there
-{/snippet}
 
 <style>
   svg {

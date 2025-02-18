@@ -6,19 +6,18 @@
   import Axes from "./external/Axes.svelte";
   import Legend from "./external/Legend.svelte";
   import Source from "./external/Source.svelte";
+  import Ticks from "./rowComponents/Ticks.svelte";
   import TitleAndSubtitle from "./external/TitleAndSubtitle.svelte";
   import Row from "./Row.svelte";
   import { scaleLinear } from "d3-scale";
 
   let { dataArray } = $props();
 
-  $inspect(dataArray);
-
   let svgWidth = $state(),
     svgHeight = 500;
 
   let requiredSpaceForLabelsArray = $state(new Array(dataArray.length));
-  $inspect(requiredSpaceForLabelsArray);
+  //$inspect(requiredSpaceForLabelsArray);
 
   let filteredRequiredSpaceForLabelsArray = $derived(
     requiredSpaceForLabelsArray.filter((el) => el !== undefined),
@@ -64,6 +63,20 @@
   );
 
   let rowHeight = $derived((chartHeight - 20) / dataArray.length);
+
+  function generateTicks(min, max, numTicks) {
+    const step = (max - min) / (numTicks - 1);
+    return Array.from({ length: numTicks }, (_, i) => {
+      const value = min + i * step;
+      return value < 0 ? Math.floor(value) : Math.ceil(value);
+    });
+  }
+
+  let ticksArray = $derived(
+    generateTicks(Math.min(...allXValues) - 3, Math.max(...allXValues) + 3, 14),
+  );
+
+  $inspect(ticksArray);
 </script>
 
 <div class="mt-10">
@@ -78,7 +91,7 @@
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
           <Axes {chartHeight} {chartWidth} {yFunction}></Axes>
-
+          <Ticks {ticksArray} {chartWidth} {yFunction}></Ticks>
           {#each dataArray as row, i}
             <g transform="translate({0},{rowHeight * (i + 0.5) + 10})">
               <Row

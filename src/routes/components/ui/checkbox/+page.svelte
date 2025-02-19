@@ -91,6 +91,13 @@
         value: "Select all that apply",
       },
       {
+        name: "selectedValues",
+        category: "Content",
+        isProp: true,
+        inputType: "javascript",
+        value: "[]",
+      },
+      {
         name: "name",
         category: "Form",
         isProp: true,
@@ -208,6 +215,16 @@
         derivedParametersObject,
       ),
   );
+
+  // Demo state for bindable example
+  let demoSelected = $state([]);
+
+  const demoOptions = [
+    { value: "option1", label: "Option 1" },
+    { value: "option2", label: "Option 2" },
+    { value: "option3", label: "Option 3" },
+    { value: "none", label: "None of the above", exclusive: true },
+  ];
 
   let snippetSections = [
     {
@@ -853,33 +870,95 @@
         <CheckBox
           legend="Contact Methods"
           name="contact-methods-snippets"
-          options={[
-            {
-              value: "email",
-              label: "Email",
-              conditional: {
-                id: "email-details",
-                content: content1,
-              },
-            },
-            {
-              value: "phone",
-              label: "Phone",
-              conditional: {
-                id: "phone-details",
-                content: content2,
-              },
-            },
-            {
-              value: "preferences",
-              label: "Communication Preferences",
-              conditional: {
-                id: "preferences-details",
-                content: content3,
-              },
-            },
-          ]}
+          options={snippetSections}
         />
+      </div>
+    </div>
+
+    <!-- Example 12: Bindable Values -->
+    <h3 class="govuk-heading-m">Bindable Values</h3>
+    <CodeBlock
+      code={`<script>
+  import CheckBox from "$lib/components/ui/CheckBox.svelte";
+  
+  let selected = $state([]); // Initialise empty array for selections
+  
+  const options = [
+    { value: "option1", label: "Option 1" },
+    { value: "option2", label: "Option 2" },
+    { value: "option3", label: "Option 3" },
+    { value: "none", label: "None of the above", exclusive: true }
+  ];
+</script>
+
+<!-- Multiple select bound to the same values -->
+<div class="govuk-form-group">
+  <label class="govuk-label" for="select-input">
+    Select options from dropdown
+  </label>
+  <select
+    class="govuk-select"
+    id="select-input"
+    multiple
+    bind:value={selected}
+    size="4"
+    style="min-width: 300px; padding: 8px; height: auto;"
+  >
+    {#each options as option}
+      <option value={option.value} style="padding: 8px;">{option.label}</option>
+    {/each}
+  </select>
+</div>
+
+<div class="govuk-form-group mt-4">
+  <CheckBox
+    legend="Select options"
+    name="bindable-demo"
+    {options}
+    bind:selectedValues={selected}
+  />
+</div>
+
+<p class="govuk-body mt-4">Currently selected: {selected.join(', ')}</p>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <div class="govuk-form-group">
+          <label class="govuk-label" for="select-input">
+            Select options from dropdown
+          </label>
+          <select
+            class="govuk-select"
+            id="select-input"
+            multiple
+            bind:value={demoSelected}
+            size="4"
+            style="min-width: 300px; padding: 8px; height: auto;"
+          >
+            {#each demoOptions as option}
+              <option value={option.value} style="padding: 8px;"
+                >{option.label}</option
+              >
+            {/each}
+          </select>
+        </div>
+
+        <div class="govuk-form-group mt-4">
+          <CheckBox
+            legend="Select options"
+            name="bindable-demo"
+            options={demoOptions}
+            bind:selectedValues={demoSelected}
+          />
+        </div>
+
+        <p class="govuk-body mt-4">
+          Currently selected: {demoSelected.join(", ")}
+        </p>
       </div>
     </div>
 

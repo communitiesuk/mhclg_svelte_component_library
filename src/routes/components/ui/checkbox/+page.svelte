@@ -575,51 +575,7 @@
 
       <!-- Example 12: Bindable Values -->
       <h3 class="govuk-heading-m">Bindable Values</h3>
-      <CodeBlock
-        code={`<script>
-  import CheckBox from "$lib/components/ui/CheckBox.svelte";
-  
-  let selected = $state([]); // Initialise empty array for selections
-  
-  const options = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-    { value: "none", label: "None of the above", exclusive: true }
-  ];
-</script>
-
-<!-- Multiple select bound to the same values -->
-<div class="govuk-form-group">
-  <label class="govuk-label" for="select-input">
-    Select options from dropdown
-  </label>
-  <select
-    class="govuk-select"
-    id="select-input"
-    multiple
-    bind:value={selected}
-    size="4"
-    style="min-width: 300px; padding: 8px; height: auto;"
-  >
-    {#each options as option}
-      <option value={option.value} style="padding: 8px;">{option.label}</option>
-    {/each}
-  </select>
-</div>
-
-<div class="govuk-form-group mt-4">
-  <CheckBox
-    legend="Select options"
-    name="bindable-demo"
-    {options}
-    bind:selectedValues={selected}
-  />
-</div>
-
-<p class="govuk-body mt-4">Currently selected: {selected.join(', ')}</p>`}
-        language="svelte"
-      />
+      <CodeBlock code={examples.codeBlockTwelve} language="svelte" />
 
       <div class="app-example-wrapper">
         <div

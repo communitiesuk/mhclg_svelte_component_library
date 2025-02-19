@@ -32,16 +32,19 @@
     { label: "Context", arr: contextArray, visibleOnHomepage: false },
   ];
 
-  let childComponents = {
-    arr: [
-      { name: "Line", folder: "data-vis" },
-      { name: "Line", folder: "data-vis" },
-      { name: "Something something else", folder: "data-vis" },
-      { name: "Something something else", folder: "data-vis" },
-      { name: "Something something else", folder: "data-vis" },
-    ],
-    visibleOnHomepage: false,
-  };
+  let connectedComponentsArray = [
+    {
+      label: "Child components",
+      arr: [
+        { name: "Line", folder: "data-vis" },
+        { name: "Line", folder: "data-vis" },
+        { name: "Something something else", folder: "data-vis" },
+        { name: "Something something else", folder: "data-vis" },
+        { name: "Something something else", folder: "data-vis" },
+      ],
+      visibleOnHomepage: false,
+    },
+  ];
 </script>
 
 {#snippet WrapperNameAndStatus(name, folder, homepage)}
@@ -55,7 +58,7 @@
 {/snippet}
 
 {#snippet WrapperInformation(homepage)}
-  <BaseInformation {homepage} {detailsArray} {childComponents}
+  <BaseInformation {homepage} {detailsArray} {connectedComponentsArray}
   ></BaseInformation>
 {/snippet}
 

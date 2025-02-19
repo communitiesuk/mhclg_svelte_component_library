@@ -1,11 +1,63 @@
 <script module>
+  import BaseNameAndStatus from "$lib/package-wrapping/BaseNameAndStatus.svelte";
+  import BaseInformation from "$lib/package-wrapping/BaseInformation.svelte";
+  export { WrapperNameAndStatus, WrapperInformation };
+
+  let statusObject = {
+    progress: {
+      "To be developed": false,
+      "In progress": false,
+      "Baseline completed": true,
+      "In use": false,
+    },
+    features: {
+      Accessible: true,
+      Responsive: true,
+      "Prog. enhanced": true,
+    },
+    checks: {
+      Reviewed: true,
+      Tested: false,
+    },
+  };
+
+  let descriptionArray = [
+    {
+      content:
+        "A checkbox component that allows users to select one or more options from a list.",
+    },
+    {
+      content:
+        'Based on the <a href="https://design-system.service.gov.uk/components/checkboxes/" target="_blank" rel="noopener noreferrer">GOV.UK Design System checkbox component</a> pattern.',
+      markdown: true,
+    },
+  ];
+
+  let contextArray = [
+    {
+      content:
+        "Use the checkbox component when you need to let users select one or more options from a list.",
+    },
+    {
+      content:
+        "You can also use checkboxes to toggle a single option on or off.",
+    },
+  ];
+
+  let detailsArray = [
+    { label: "Description", arr: descriptionArray, visibleOnHomepage: true },
+    { label: "Context", arr: contextArray, visibleOnHomepage: true },
+  ];
+
+  let connectedComponentsArray = [];
 </script>
 
 <script>
+  import { page } from "$app/state";
+  import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
-  import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
   import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
   import {
@@ -17,6 +69,7 @@
   import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
   import { defineDefaultEventHandler } from "$lib/utils/package-wrapping-specific/defineDefaultEventHandler.js";
   import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
   import {
     curveBasis,
@@ -30,83 +83,11 @@
 
   let { data } = $props();
 
-  /**
-   * && 		The details object contains metadata which describes the purpose and status of the component. All keys are optional, but developers are encouraged to use them to succinctly describe the component for the benefit of future users.
-   */
-
-  let details = {
-    name: "Line",
-    folder: "data-vis",
-    /**
-     * &&     status - Used by the pill-status component within ComponentDetails
-     * ?      Available statuses are:
-     * ?      'to_be_developed', 'in_progress', 'complete_untested', 'complete_in_use', 'complete_accessible'
-     */
-    status: "complete_untested",
-    /**
-     * &&     description - An array of paragraphs of text explaining what the component does, used within ComponentDetails
-     * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
-     */
-    description: [
-      {
-        content:
-          "This component takes an array of data, two scale functions and a line function and renders an svg path element (and optional markers at each data point).",
-        markdown: true,
-      },
-    ],
-    /**
-     * &&     context - An array of paragraphs of text explaining when the component will be used (e.g. what is it's parent component likely to be, what components will it be used in combination with) - used within ComponentDetails
-     * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
-     */
-    context: [
-      {
-        content:
-          "Used within svg elements as part of the creation of data visualisations - most notably by the <a href='/components/data-vis/line/'>Lines</a> component.",
-        markdown: true,
-      },
-      {
-        content:
-          "The Lines component renders a collection of lines as a group allowing all lines to update based on user interactions with a single line (e.g. reduce opacity of other lines when user hovers). Even individual lines should normally be created using the Lines component.",
-      },
-    ],
-    /**
-     * &&     childComponents - Optional detail, can be used by developers to link to components which this component relies upon.
-     * ?     'name' and 'folder' must match the routes folder structure (see documentation above for 'name' and 'folder' above for available options)
-     * ?      example array would be [{name: 'svg', folder: 'data-vis'},{name: 'line', folder: 'data-vis'}]
-     */
-    childComponents: undefined,
-    /**
-     * &&     requirements - Optional detail, can be used by developers to track which requirements for the component have been coded up.
-     * ?      The 'description' parameter is optional (default is not to provide a description).
-     * ?      For each paragraph there is an optional 'markdown' (default = false) parameter. When set to true, it uses the @html tag to render the content.
-     * ?      For each paragraph there is an optional 'fulfilled' (default = false) parameter. When set to true, the text will be highlighted green and struck-through, demonstrating that this requirmeent has been coded up.
-     */
-    requirements: [
-      {
-        label: "Style the line",
-        description:
-          "Allow developer to provide custom styling to the line - including color, stroke-width, opacity.",
-        fulfilled: true,
-      },
-      {
-        label: "Set scale and curve types",
-        description:
-          "Allow developer to set scale types (e.g. linear, log, time) and the curve of the line - using the d3 set of curve options.",
-        fulfilled: true,
-      },
-      {
-        label: "Markers",
-        description:
-          "Allow developer to add markers at each data point along their line.",
-        fulfilled: true,
-      },
-      {
-        label: "Events",
-        description: "Add event handlers for line, and for individual markers.",
-        fulfilled: true,
-      },
-    ],
-  };
+  let pageInfo = page.url.pathname.split("/");
+  let pageName = textStringConversion(
+    pageInfo[pageInfo.length - 1],
+    "title-first-word",
+  );
 
   /**
    * DONOTTOUCH *
@@ -682,18 +663,38 @@
   );
 </script>
 
-<!--
-  DONOTTOUCH  *
-  &&          Uses details to render metadata for the component.
-  -->
-<ComponentDetails homepage={false} {details}></ComponentDetails>
+{#snippet WrapperNameAndStatus(name, folder, homepage)}
+  <BaseNameAndStatus
+    {name}
+    {folder}
+    {homepage}
+    {statusObject}
+    parentFolder="components-update"
+  ></BaseNameAndStatus>
+{/snippet}
+
+{#snippet WrapperInformation(homepage)}
+  <BaseInformation {homepage} {detailsArray} {connectedComponentsArray}
+  ></BaseInformation>
+{/snippet}
 
 <!--
-    DONOTTOUCH  *
-    &&          Create input forms for each parameter based on the source array.
-    -->
+DONOTTOUCH  *
+&&          Uses snippets to render metadata for the component.
+-->
+<WrapperDetailsUpdate
+  wrapper={{
+    component: { WrapperInformation, WrapperNameAndStatus },
+    name: pageName,
+  }}
+  homepage={false}
+></WrapperDetailsUpdate>
+<!--
+  DONOTTOUCH  *
+  &&          Create input forms for each parameter based on the source array.
+  -->
 <ParametersSection
-  {details}
+  details={{ name: pageName }}
   {parametersSourceArray}
   {parametersVisibleArray}
   bind:parametersValuesArray
@@ -702,9 +703,9 @@
 <div data-role="demo-section">
   <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
   <!--
-      DONOTTOUCH  *
-      &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
-      -->
+    DONOTTOUCH  *
+    &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
+    -->
   <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
 </div>
 
@@ -714,9 +715,9 @@
     style="width: {demoScreenWidth}px;"
   >
     <!--
-      CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
-      &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
-      -->
+    CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
+    &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
+    -->
     <svg
       width={demoScreenWidth}
       height={getValueFromParametersArray(
@@ -743,9 +744,9 @@
 </div>
 
 <!--
-      DONOTTOUCH  *
-      &&          Creates a list of examples where the component is used (if any examples exist).
-      -->
+    DONOTTOUCH  *
+    &&          Creates a list of examples where the component is used (if any examples exist).
+    -->
 <div class="mt-20" data-role="examples-section">
   <DividerLine margin="30px 0px 30px 0px"></DividerLine>
   <h5 class="underline underline-offset-4">Examples</h5>
@@ -754,16 +755,6 @@
 <style>
   svg {
     overflow: hidden;
-  }
-
-  [data-role="examples-section"] {
-    max-width: 1024px;
-    margin: 0px auto;
-  }
-
-  [data-role="demo-section"] {
-    max-width: 1024px;
-    margin: 0px auto;
   }
 
   [data-role="component-container"] {

@@ -102,7 +102,10 @@ TODO
           (el) => el.folder === folder,
         )}
         {#each wrappersArray as wrapper}
-          <WrapperDetailsUpdate {wrapper} homepage="true"
+          <WrapperDetailsUpdate
+            {wrapper}
+            homepage="true"
+            wrapperType="component"
           ></WrapperDetailsUpdate>
         {/each}
       {/each}
@@ -116,7 +119,8 @@ TODO
       </p>
       <p>All our playground examples are listed below.</p>
       {#each wrappersPlaygroundsArray as wrapper}
-        <WrapperDetailsUpdate {wrapper} homepage="true"></WrapperDetailsUpdate>
+        <WrapperDetailsUpdate {wrapper} homepage="true" wrapperType="playground"
+        ></WrapperDetailsUpdate>
       {/each}
       <!-- <LoadArrayOfComponents subFolder={data.playgroundFolders}
       ></LoadArrayOfComponents> -->

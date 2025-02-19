@@ -3,21 +3,21 @@
   import BaseInformation from "$lib/package-wrapping/BaseInformation.svelte";
   export { WrapperNameAndStatus, WrapperInformation };
 
+  /**
+   * CUSTOMISETHIS  Update the description and metdata for this component.
+   * && 		statusObject determines which pills are shown next to the component's name.
+   * ?  progress - 'To be developed', 'In progress', 'Baseline completed', 'In use'
+   */
   let statusObject = {
-    progress: {
-      "To be developed": true,
-      "In progress": false,
-      "Baseline completed": false,
-      "In use": false,
-    },
+    progress: "To be developed",
     features: {
       Accessible: false,
-      Responsive: true,
-      "Prog. enhanced": false,
+      Responsive: false,
+      "Prog. enhanced": true,
     },
     checks: {
-      Reviewed: true,
-      Tested: true,
+      Reviewed: { status: false, homepage: false },
+      Tested: { status: false, homepage: false },
     },
   };
 
@@ -43,23 +43,26 @@
 
   let detailsArray = [
     { label: "Description", arr: descriptionArray, visibleOnHomepage: true },
-    { label: "Context", arr: contextArray, visibleOnHomepage: true },
+    { label: "Context", arr: contextArray, visibleOnHomepage: false },
   ];
 
-  let childComponents = {
-    arr: [
-      { name: "Line", folder: "data-vis" },
-      { name: "Line", folder: "data-vis" },
-      { name: "Something something else", folder: "data-vis" },
-      { name: "Something something else", folder: "data-vis" },
-      { name: "Something something else", folder: "data-vis" },
-    ],
-    visibleOnHomepage: true,
-  };
+  let connectedComponentsArray = [
+    {
+      label: "Child components",
+      arr: [
+        { name: "Line", folder: "data-vis" },
+        { name: "Line", folder: "data-vis" },
+        { name: "Something something else", folder: "data-vis" },
+        { name: "Something something else", folder: "data-vis" },
+        { name: "Something something else", folder: "data-vis" },
+      ],
+      visibleOnHomepage: false,
+    },
+  ];
 </script>
 
 <script>
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
@@ -89,15 +92,11 @@
 
   let { data } = $props();
 
-  let pageInfo = $page.url.pathname.split("/");
+  let pageInfo = page.url.pathname.split("/");
   let pageName = textStringConversion(
     pageInfo[pageInfo.length - 1],
     "title-first-word",
   );
-
-  /**
-   * && 		The details object contains metadata which describes the purpose and status of the component. All keys are optional, but developers are encouraged to use them to succinctly describe the component for the benefit of future users.
-   */
 
   /**
    * DONOTTOUCH *
@@ -684,7 +683,7 @@
 {/snippet}
 
 {#snippet WrapperInformation(homepage)}
-  <BaseInformation {homepage} {detailsArray} {childComponents}
+  <BaseInformation {homepage} {detailsArray} {connectedComponentsArray}
   ></BaseInformation>
 {/snippet}
 

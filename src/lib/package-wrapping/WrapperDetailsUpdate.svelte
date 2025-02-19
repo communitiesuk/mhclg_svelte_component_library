@@ -1,7 +1,10 @@
 <script>
-  let { wrapper, homepage } = $props();
+  let { wrapper, homepage, wrapperType = null } = $props();
 
-  $inspect(wrapper);
+  let backgroundColor = {
+    component: "bg-slate-100",
+    playground: "bg-teal-50",
+  }[wrapperType];
 </script>
 
 <div
@@ -9,13 +12,10 @@
   class="{homepage
     ? ''
     : 'g-top-level-container'} flex flex-col gap-4 p-5 rounded-lg {homepage
-    ? 'bg-slate-100 p-5 rounded-lg'
+    ? `${backgroundColor} p-5 rounded-lg`
     : ''}"
 >
-  <div
-    data-role="name-and-pill-container"
-    class="flex flex-row items-center gap-4"
-  >
+  <div data-role="name-and-pill-container">
     {#if wrapper.component.WrapperNameAndStatus && wrapper?.name}
       {@render wrapper.component.WrapperNameAndStatus(
         wrapper.name,

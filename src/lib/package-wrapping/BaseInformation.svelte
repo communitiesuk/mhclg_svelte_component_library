@@ -2,7 +2,7 @@
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
 
-  let { homepage, detailsArray, childComponents } = $props();
+  let { homepage, detailsArray, connectedComponentsArray } = $props();
 </script>
 
 {#if detailsArray && detailsArray.filter((el) => !homepage || el.visibleOnHomepage).length > 0}
@@ -28,26 +28,31 @@
     {/each}
   </div>
 {/if}
-{#if childComponents && (!homepage || childComponents?.visibleOnHomepage) && childComponents.arr.length > 0}
-  <DividerLine></DividerLine>
-  <div data-role="component-information-detail-grid-container">
-    <dt>Child components:</dt>
-    <dd>
-      <ul class="flex flex-row flex-wrap gap-4 gap-y-2">
-        {#each childComponents.arr as child}
-          <li>
-            <a
-              class="link-to-other-page"
-              href="/components/{child.folder}/{textStringConversion(
-                child.name,
-                'kebab',
-              )}"
-            >
-              {child.name}
-            </a>
-          </li>
-        {/each}
-      </ul>
-    </dd>
-  </div>
+
+{#if connectedComponentsArray}
+  {#each connectedComponentsArray as connectedComponents}
+    {#if (!homepage || connectedComponents?.visibleOnHomepage) && connectedComponents.arr.length > 0}
+      <DividerLine></DividerLine>
+      <div data-role="component-information-detail-grid-container">
+        <dt>{connectedComponents.label}:</dt>
+        <dd>
+          <ul class="flex flex-row flex-wrap gap-4 gap-y-2">
+            {#each connectedComponents.arr as child}
+              <li>
+                <a
+                  class="link-to-other-page"
+                  href="/components/{child.folder}/{textStringConversion(
+                    child.name,
+                    'kebab',
+                  )}"
+                >
+                  {child.name}
+                </a>
+              </li>
+            {/each}
+          </ul>
+        </dd>
+      </div>
+    {/if}
+  {/each}
 {/if}

@@ -1,18 +1,18 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 
-@import '/css/govuk-frontend.min.css';
-@import '/css/govuk-additional.css';
-@import '/css/code-block.css';
-@import '/css/fonts.css';
+@import "/css/govuk-frontend.min.css";
+@import "/css/govuk-additional.css";
+@import "/css/code-block.css";
+@import "/css/fonts.css";
 
-@import '/css/base.css';
-@import '/css/components.css';
-@import '/css/utilities.css';
+@import "/css/base.css";
+@import "/css/components.css";
+@import "/css/utilities.css";
 
 body {
-  font-family: 'GDS Transport';
+  font-family: "GDS Transport";
   font-size: 1.2rem;
   line-height: 1.5rem;
   color: #222222;
@@ -60,7 +60,7 @@ h6 {
 }
 
 a {
-  color: blue;
+  color: #1d70b8;
   text-decoration: underline;
   text-underline-offset: 4px;
 }

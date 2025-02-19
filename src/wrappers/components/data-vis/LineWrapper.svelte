@@ -4,23 +4,43 @@
   export { WrapperNameAndStatus, WrapperInformation };
 
   /**
-   * CUSTOMISETHIS  Update the description and metdata for this component.
-   * && 		statusObject determines which pills are shown next to the component's name.
-   * ?  progress - 'To be developed', 'In progress', 'Baseline completed', 'In use'
+   * CUSTOMISETHIS  Update the status for this component.
+   * && 	statusObject.progress determines which pill is shown against the component's name, based
+   * ?  progress must be one of:
+   * ?  1. 'To be developed' - This is the inital status, when the component files have been generated but the work to actually build out the code for the component has not started.
+   * ?  2. 'In progress' - This is the status while the component is being built. This lets developers know that the full fuctionality of the component has not been completed and that it may change in the future.
+   * ?  3. 'Baseline completed' - This means the core functionality of the component has been completed and it is ready for use. However, small changes to the component may still occur in the future.
+   * ?  4. 'In use' - This means the component is completed and being using in products. Therefore, developers need to be mindful of its existing uses when making any changes.
+   * &&   statusObject.statusRow determines the sets of ticks/crosses shown below the component name.
+   * &&   The ticks/crosses are separated into rows with one row for each entry of the statusRows array.
+   * &&   Any entries can be included, but by default the following are provided, initally all set to false:
+   * ?  Accessible - The component has been developed with reference to the WCAG guidelines. The component has been checked against our accessibility checklist, including testing it on screen readers.
+   * ?  Responsive - The component has been checked against our mobile design checklist. The component has been tested on multiple mobile devices.
+   * ?  Prog. enhanced - Potential progressive enhancements have been considered, and if appropriate, implemented for this component.
+   * ?  Reviewed - The component requirements, functionality and code have been reviewed and approved.
+   * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
     progress: "To be developed",
-    features: {
-      Accessible: false,
-      Responsive: false,
-      "Prog. enhanced": true,
-    },
-    checks: {
-      Reviewed: { status: false, homepage: false },
-      Tested: { status: false, homepage: false },
-    },
+    statusRows: [
+      {
+        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
+        visibleOnHompepage: false,
+      },
+      {
+        obj: { Reviewed: true, Tested: false },
+        visibleOnHomepage: false,
+      },
+    ],
   };
 
+  /**
+   * CUSTOMISETHIS  Update detailsArray to provide description of what this component does and when it should be used.
+   * &&   By default the detailsArray includes description and context. The description is intended to explain what the component does, the context is intended to explain when the component will be used (e.g. what is it's parent component likely to be, what components will it be used in combination with).
+   * ?  Within each array, an object has an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content (e.g. this can be used for including links to other pages).
+   * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
+   *
+   */
   let descriptionArray = [
     {
       content:
@@ -46,6 +66,9 @@
     { label: "Context", arr: contextArray, visibleOnHomepage: false },
   ];
 
+  /**
+   * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any child, parent or related components.
+   */
   let connectedComponentsArray = [
     {
       label: "Child components",
@@ -92,6 +115,10 @@
 
   let { data } = $props();
 
+  /**
+   * DONOTTOUCH *
+   * ? 		uses the page url to identify the name of the component and the folder it belongs to (folder is only used by snippets exported to the homepage to link back to this page).
+   */
   let pageInfo = page.url.pathname.split("/");
   let pageName = textStringConversion(
     pageInfo[pageInfo.length - 1],
@@ -672,6 +699,9 @@
   );
 </script>
 
+<!--
+  &&  WrapperNameAndStatus and WraaperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
+  -->
 {#snippet WrapperNameAndStatus(name, folder, homepage)}
   <BaseNameAndStatus
     {name}

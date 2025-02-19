@@ -1,15 +1,15 @@
 <script>
-  import { Tooltip } from 'flowbite-svelte';
+  import { Tooltip } from "flowbite-svelte";
 
   let {
     textContent,
-    size = 'medium',
+    size = "medium",
     bgColor,
     textColor,
-    borderRadius = '5px',
+    borderRadius = "5px",
     tooltipText = false,
     padding = null,
-    tailwindClass = '',
+    tailwindClass = "",
   } = $props();
 </script>
 
@@ -29,24 +29,24 @@
   .pill-container {
     display: inline;
   }
-  [data-role='pill-container-extraSmall'] {
+  [data-role="pill-container-xs"] {
     padding: 0.2rem 0.4rem;
     font-size: 0.9rem;
     line-height: 0.9rem;
   }
-  [data-role='pill-container-small'] {
+  [data-role="pill-container-sm"] {
     padding: 0.3rem 0.4rem;
     font-size: 1.1rem;
     line-height: 1.1rem;
   }
 
-  [data-role='pill-container-medium'] {
+  [data-role="pill-container-md"] {
     padding: 0.35rem 0.5rem;
     font-size: 1.35rem;
     line-height: 1.35rem;
   }
 
-  [data-role='pill-container-large'] {
+  [data-role="pill-container-lg"] {
     padding: 0.6rem;
     font-size: 1.6rem;
     line-height: 1.6rem;

@@ -162,7 +162,8 @@
       name: "selectedValues",
       category: "Content",
       isProp: true,
-      inputType: "javascript",
+      isBindable: true,
+      inputType: "input",
       value: "[]",
     },
     {
@@ -239,21 +240,21 @@
       isProp: true,
       inputType: "function",
       value: `function validateContactPreferences(values) {
-          if (values.length === 0) {
-            return "Please select at least one contact method";
-          }
-          if (values.includes("none") && values.length > 1) {
-            return "You cannot select other options when opting out of all communications";
-          }
-          if (
-            values.includes("email") &&
-            !values.includes("sms") &&
-            !values.includes("none")
-          ) {
-            return "Please select SMS as a backup digital contact method when using email";
-          }
-          return undefined;
-        }`,
+  if (values.length === 0) {
+    return "Please select at least one contact method";
+  }
+  if (values.includes("none") && values.length > 1) {
+    return "You cannot select other options when opting out of all communications";
+  }
+  if (
+    values.includes("email") &&
+    !values.includes("sms") &&
+    !values.includes("none")
+  ) {
+    return "Please select SMS as a backup digital contact method when using email";
+  }
+  return undefined;
+}`,
     },
   ]).map((el) => ({
     ...el,

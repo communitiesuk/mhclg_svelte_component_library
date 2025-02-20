@@ -7,12 +7,16 @@
     extension = ".svelte",
     language = "svelte",
     theme = "vitesse-light",
+    size = "sm",
+    includeHeader = true,
   }: {
     code: string;
     filename?: string;
     extension?: string;
     language?: string;
     theme?: string;
+    size?: string;
+    includeHeader?: boolean;
   } = $props();
 
   function copyHighlightedCode(event) {
@@ -38,16 +42,18 @@
   let content = highlight(code, language, theme);
 </script>
 
-<div class="code-block text-sm">
-  <div class="controls">
-    <span class="filename" data-ext={extension}>{filename}</span>
-    <button
-      class="copy-to-clipboard raised"
-      onclick={copyHighlightedCode}
-      title="Copy to clipboard"
-      aria-label="Copy to clipboard"
-    ></button>
-  </div>
+<div class="code-block text-{size}">
+  {#if includeHeader}
+    <div class="controls">
+      <span class="filename" data-ext={extension}>{filename}</span>
+      <button
+        class="copy-to-clipboard raised"
+        onclick={copyHighlightedCode}
+        title="Copy to clipboard"
+        aria-label="Copy to clipboard"
+      ></button>
+    </div>
+  {/if}
   <div>
     {#await content then content}
       {@html content}

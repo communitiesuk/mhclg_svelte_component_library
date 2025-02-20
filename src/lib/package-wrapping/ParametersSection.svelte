@@ -22,7 +22,7 @@
   <div class="flex flex-row gap-8">
     <div class="flex flex-row gap-8 pr-4">
       <p class="m-0 p-0 font-bold">Key</p>
-      <div class="flex flex-row gap-12 mb-2">
+      <div class="flex flex-row gap-4 mb-2">
         <div class="flex flex-row gap-2 flex-1">
           <Pill
             size={propPillLookup[true].size}
@@ -40,6 +40,25 @@
             {"Parameters with this label are props which are passed directly to the <" +
               details.name +
               "> component."}
+          </p>
+        </div>
+        <div class="flex flex-row gap-2 flex-1">
+          <Pill
+            size={propPillLookup["bindable"].size}
+            textContent={propPillLookup["bindable"].text}
+            bgColor={propPillLookup["bindable"].bgColor}
+            textColor={propPillLookup["bindable"].textColor}
+            borderRadius="15px"
+            padding={propPillLookup["bindable"].padding}
+            tailwindClass={"self-start"}
+          ></Pill>
+          <p
+            class="m-0 p-0 text-sm"
+            style="color: {propPillLookup['bindable'].bgColor}"
+          >
+            {"Parameters with this label are bindable props which are accessible outside the <" +
+              details.name +
+              "> component but updated within it."}
           </p>
         </div>
         <div class="flex flex-row gap-2 flex-1">

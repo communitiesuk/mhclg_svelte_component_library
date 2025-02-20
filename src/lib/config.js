@@ -5,8 +5,8 @@ export const foldersLookup = {
 
 export const componentStatusProgressBackgroundColorLookup = {
   "To be developed": "#b53c17",
-  "In progress": "#5C53A2",
-  "Baseline completed": "#201335",
+  "In progress": "#542059",
+  "Baseline completed": "#5C53A2",
   "In use": "#136F63",
 };
 
@@ -18,6 +18,13 @@ export const propPillLookup = {
     text: "{p}",
     textColor: "white",
     bgColor: "#ba029b",
+    padding: "0.4rem 0.32rem 0.5rem 0.3rem",
+  },
+  bindable: {
+    size: "xs",
+    text: "{b}",
+    textColor: "white",
+    bgColor: "#5C53A2",
     padding: "0.4rem 0.32rem 0.5rem 0.3rem",
   },
   false: {

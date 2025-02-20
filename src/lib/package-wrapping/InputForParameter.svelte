@@ -58,7 +58,7 @@
       {source.name}
     </p>
     <Pill
-      size="extraSmall"
+      size={propPillObject.size}
       textContent={propPillObject.text}
       bgColor={propPillObject.bgColor}
       textColor={propPillObject.textColor}

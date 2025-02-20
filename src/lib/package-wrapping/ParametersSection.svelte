@@ -1,9 +1,9 @@
 <script>
-  import Pill from '$lib/components/content/Pill.svelte';
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
-  import { propPillLookup } from '$lib/config.js';
-  import { Accordion, AccordionItem } from 'flowbite-svelte';
-  import InputForParameter from './InputForParameter.svelte';
+  import Pill from "$lib/components/content/Pill.svelte";
+  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import { propPillLookup } from "$lib/config.js";
+  import { Accordion, AccordionItem } from "flowbite-svelte";
+  import InputForParameter from "./InputForParameter.svelte";
 
   let {
     details,
@@ -17,7 +17,7 @@
   ]);
 </script>
 
-<div data-role="parameters-section" class="mx-auto">
+<div data-role="parameters-section" class="mx-auto px-5">
   <h5 class="mb-6 underline underline-offset-4">Parameters</h5>
   <div class="flex flex-row gap-8">
     <div class="flex flex-row gap-8 pr-4">
@@ -25,40 +25,40 @@
       <div class="flex flex-row gap-12 mb-2">
         <div class="flex flex-row gap-2 flex-1">
           <Pill
-            size="extraSmall"
+            size={propPillLookup[true].size}
             textContent={propPillLookup[true].text}
             bgColor={propPillLookup[true].bgColor}
             textColor={propPillLookup[true].textColor}
             borderRadius="15px"
             padding={propPillLookup[true].padding}
-            tailwindClass={'self-start'}
+            tailwindClass={"self-start"}
           ></Pill>
           <p
             class="m-0 p-0 text-sm"
             style="color: {propPillLookup[true].bgColor}"
           >
-            {'Parameters with this label are props which are passed directly to the <' +
+            {"Parameters with this label are props which are passed directly to the <" +
               details.name +
-              '> component.'}
+              "> component."}
           </p>
         </div>
         <div class="flex flex-row gap-2 flex-1">
           <Pill
-            size="extraSmall"
+            size={propPillLookup[false].size}
             textContent={propPillLookup[false].text}
             bgColor={propPillLookup[false].bgColor}
             textColor={propPillLookup[false].textColor}
             borderRadius="15px"
             padding={propPillLookup[false].padding}
-            tailwindClass={'self-start'}
+            tailwindClass={"self-start"}
           ></Pill>
           <p
             class="m-0 p-0 text-sm"
             style="color: {propPillLookup[false].bgColor}"
           >
-            {'Parameters with this label are used in the calculation of a prop which is passed to the <' +
+            {"Parameters with this label are used in the calculation of a prop which is passed to the <" +
               details.name +
-              '> component.'}
+              "> component."}
           </p>
         </div>
       </div>
@@ -73,8 +73,8 @@
             {@const visibleParametersForCategory = parametersSourceArray.filter(
               (el) =>
                 el.category === category &&
-                (el.inputType || 'label' in el) &&
-                parametersVisibleArray[el.index]
+                (el.inputType || "label" in el) &&
+                parametersVisibleArray[el.index],
             )}
 
             <div
@@ -111,21 +111,21 @@
 </div>
 
 <style>
-  [data-role='parameters-section'] {
+  [data-role="parameters-section"] {
     max-width: 1024px;
   }
-  [data-role='parameters-container'] {
+  [data-role="parameters-container"] {
     display: flex;
     gap: 10px;
   }
 
-  [data-role='parameters-container-column'] {
+  [data-role="parameters-container-column"] {
     flex: 1;
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
-  [data-role='parameters-category-group'] {
+  [data-role="parameters-category-group"] {
     border: 1px solid #e5e7eb;
   }
 </style>

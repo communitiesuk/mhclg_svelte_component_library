@@ -21,14 +21,14 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "In progress",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
         visibleOnHompepage: false,
       },
       {
-        obj: { Reviewed: true, Tested: false },
+        obj: { Reviewed: false, Tested: false },
         visibleOnHomepage: false,
       },
     ],
@@ -69,39 +69,31 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any child, parent or related components.
    */
-  let connectedComponentsArray = [
-    {
-      label: "Child components",
-      arr: [
-        { name: "Line", folder: "data-vis" },
-        { name: "Line", folder: "data-vis" },
-        { name: "Something something else", folder: "data-vis" },
-        { name: "Something something else", folder: "data-vis" },
-        { name: "Something something else", folder: "data-vis" },
-      ],
-      visibleOnHomepage: false,
-    },
-  ];
+  let connectedComponentsArray = [];
 </script>
 
 <script>
   import { page } from "$app/state";
   import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
-  import Line from "$lib/components/data-vis/line-chart/Line.svelte";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
-  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
   import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
-  import {
-    convertToCSV,
-    csvToArrayOfObjects,
-  } from "$lib/utils/data-transformations/convertCSV.js";
+  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+
+  import Line from "$lib/components/data-vis/line-chart/Line.svelte";
+
+  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
+
   import { getValueFromParametersArray } from "$lib/utils/data-transformations/getValueFromParametersArray.js";
   import { addIndexAndInitalValue } from "$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js";
   import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
   import { defineDefaultEventHandler } from "$lib/utils/package-wrapping-specific/defineDefaultEventHandler.js";
   import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
+
+  import {
+    convertToCSV,
+    csvToArrayOfObjects,
+  } from "$lib/utils/data-transformations/convertCSV.js";
   import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
   import {
     curveBasis,
@@ -758,6 +750,7 @@ DONOTTOUCH  *
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
     -->
     <svg
+      class="overflow-hidden"
       width={demoScreenWidth}
       height={getValueFromParametersArray(
         parametersSourceArray,
@@ -787,21 +780,9 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
     -->
 <div class="mt-20" data-role="examples-section">
-  <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-  <h5 class="underline underline-offset-4">Examples</h5>
+  <!-- <DividerLine margin="30px 0px 30px 0px"></DividerLine>
+  <h5 class="underline underline-offset-4">Examples of specific use cases</h5> -->
+
+  <!-- <DividerLine margin="30px 0px 30px 0px"></DividerLine>
+  <h5 class="underline underline-offset-4">Examples from the playground</h5> -->
 </div>
-
-<style>
-  svg {
-    overflow: hidden;
-  }
-
-  [data-role="component-container"] {
-    display: grid;
-    place-items: center;
-  }
-  [data-role="component-container-centered"] {
-    background-color: #f8f8f8;
-    padding: 20px 0px;
-  }
-</style>

@@ -1,4 +1,6 @@
 <script>
+  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+
   let { wrapper, homepage, wrapperType = null } = $props();
 
   let backgroundColor = {
@@ -11,7 +13,7 @@
   data-role="details-container"
   class="{homepage
     ? ''
-    : 'g-top-level-container'} flex flex-col gap-4 p-5 rounded-lg {homepage
+    : 'g-top-level-container'} flex flex-col gap-4 px-5 rounded-lg {homepage
     ? `${backgroundColor} p-5 rounded-lg`
     : ''}"
 >
@@ -30,4 +32,7 @@
       {@render wrapper.component.WrapperInformation(homepage)}
     {/if}
   </div>
+  {#if !homepage}
+    <DividerLine></DividerLine>
+  {/if}
 </div>

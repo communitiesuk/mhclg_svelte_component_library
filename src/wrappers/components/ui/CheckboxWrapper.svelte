@@ -3,24 +3,44 @@
   import BaseInformation from "$lib/package-wrapping/BaseInformation.svelte";
   export { WrapperNameAndStatus, WrapperInformation };
 
+  /**
+   * CUSTOMISETHIS  Update the status for this component.
+   * && 	statusObject.progress determines which pill is shown against the component's name, based
+   * ?  progress must be one of:
+   * ?  1. 'To be developed' - This is the inital status, when the component files have been generated but the work to actually build out the code for the component has not started.
+   * ?  2. 'In progress' - This is the status while the component is being built. This lets developers know that the full fuctionality of the component has not been completed and that it may change in the future.
+   * ?  3. 'Baseline completed' - This means the core functionality of the component has been completed and it is ready for use. However, small changes to the component may still occur in the future.
+   * ?  4. 'In use' - This means the component is completed and being using in products. Therefore, developers need to be mindful of its existing uses when making any changes.
+   * &&   statusObject.statusRow determines the sets of ticks/crosses shown below the component name.
+   * &&   The ticks/crosses are separated into rows with one row for each entry of the statusRows array.
+   * &&   Any entries can be included, but by default the following are provided, initally all set to false:
+   * ?  Accessible - The component has been developed with reference to the WCAG guidelines. The component has been checked against our accessibility checklist, including testing it on screen readers.
+   * ?  Responsive - The component has been checked against our mobile design checklist. The component has been tested on multiple mobile devices.
+   * ?  Prog. enhanced - Potential progressive enhancements have been considered, and if appropriate, implemented for this component.
+   * ?  Reviewed - The component requirements, functionality and code have been reviewed and approved.
+   * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
+   */
   let statusObject = {
-    progress: {
-      "To be developed": false,
-      "In progress": false,
-      "Baseline completed": true,
-      "In use": false,
-    },
-    features: {
-      Accessible: true,
-      Responsive: true,
-      "Prog. enhanced": true,
-    },
-    checks: {
-      Reviewed: true,
-      Tested: false,
-    },
+    progress: "Baseline completed",
+    statusRows: [
+      {
+        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
+        visibleOnHompepage: false,
+      },
+      {
+        obj: { Reviewed: true, Tested: false },
+        visibleOnHomepage: false,
+      },
+    ],
   };
 
+  /**
+   * CUSTOMISETHIS  Update detailsArray to provide description of what this component does and when it should be used.
+   * &&   By default the detailsArray includes description and context. The description is intended to explain what the component does, the context is intended to explain when the component will be used (e.g. what is it's parent component likely to be, what components will it be used in combination with).
+   * ?  Within each array, an object has an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content (e.g. this can be used for including links to other pages).
+   * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
+   *
+   */
   let descriptionArray = [
     {
       content:
@@ -46,43 +66,41 @@
 
   let detailsArray = [
     { label: "Description", arr: descriptionArray, visibleOnHomepage: true },
-    { label: "Context", arr: contextArray, visibleOnHomepage: true },
+    { label: "Context", arr: contextArray, visibleOnHomepage: false },
   ];
 
+  /**
+   * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any child, parent or related components.
+   */
   let connectedComponentsArray = [];
 </script>
 
 <script>
+  //@ts-nocheck
   import { page } from "$app/state";
   import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
-  import Line from "$lib/components/data-vis/line-chart/Line.svelte";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
-  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
   import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
-  import {
-    convertToCSV,
-    csvToArrayOfObjects,
-  } from "$lib/utils/data-transformations/convertCSV.js";
-  import { getValueFromParametersArray } from "$lib/utils/data-transformations/getValueFromParametersArray.js";
+  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+
+  import { browser } from "$app/environment";
+  import Checkbox from "$lib/components/ui/Checkbox.svelte";
+  import Examples from "./checkbox/Examples.svelte";
+
+  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
+
   import { addIndexAndInitalValue } from "$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js";
   import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
-  import { defineDefaultEventHandler } from "$lib/utils/package-wrapping-specific/defineDefaultEventHandler.js";
   import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
-  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
-  import {
-    curveBasis,
-    curveCardinal,
-    curveLinear,
-    curveLinearClosed,
-    curveMonotoneX,
-    curveStep,
-    line,
-  } from "d3-shape";
+  import { getValueFromParametersArray } from "$lib/utils/data-transformations/getValueFromParametersArray.js";
 
   let { data } = $props();
 
+  /**
+   * DONOTTOUCH *
+   * ? 		uses the page url to identify the name of the component and the folder it belongs to (folder is only used by snippets exported to the homepage to link back to this page).
+   */
   let pageInfo = page.url.pathname.split("/");
   let pageName = textStringConversion(
     pageInfo[pageInfo.length - 1],
@@ -127,335 +145,115 @@
 
   let parametersSourceArray = addIndexAndInitalValue([
     {
-      name: "svgHeight",
-      category: "dimensions",
-      isProp: false,
-      inputType: "numberInput",
-      value: 500,
-    },
-    {
-      name: "paddingTop",
-      category: "dimensions",
-      isProp: false,
-      inputType: "numberInput",
-      value: 50,
-    },
-    {
-      name: "paddingRight",
-      category: "dimensions",
-      isProp: false,
-      inputType: "numberInput",
-      value: 50,
-    },
-    {
-      name: "paddingBottom",
-      category: "dimensions",
-      isProp: false,
-      inputType: "numberInput",
-      value: 50,
-    },
-    {
-      name: "paddingLeft",
-      category: "dimensions",
-      isProp: false,
-      inputType: "numberInput",
-      value: 50,
-    },
-    {
-      name: "dataSource",
-      category: "data",
-      isProp: false,
-      inputType: "radio",
-      options: ["from base data", "custom"],
-    },
-    {
-      name: "metric",
-      category: "data",
-      isProp: false,
-      inputType: "dropdown",
-      options: data.metrics,
-      visible: { name: "dataSource", value: "from base data" },
-    },
-    {
-      name: "area",
-      category: "data",
-      isProp: false,
-      inputType: "dropdown",
-      options: data.areas,
-      visible: { name: "dataSource", value: "from base data" },
-    },
-    {
-      name: "customDataArray",
-      category: "data",
-      isProp: false,
-      inputType: "textArea",
-      visible: { name: "dataSource", value: "custom" },
-      value: convertToCSV(
-        data.dataInFormatForLineChart[0].lines[0].data.map((el) => ({
-          x: el.x,
-          y: el.y,
-        })),
-      ),
-    },
-    {
-      name: "dataArray",
-      category: "data",
-      isProp: true,
-      inputType: null,
-      label:
-        "Calculated based on dataSource, metric, area and customDataArray.",
-    },
-    {
-      name: "xDomainLowerBound",
-      category: "xScale",
-      isProp: false,
-      inputType: "numberInput",
-      value: Math.min(
-        ...data.dataInFormatForLineChart[0].lines
-          .map((el) => el.data)
-          .flat()
-          .map((el) => el.x),
-      ),
-    },
-    {
-      name: "xDomainUpperBound",
-      category: "xScale",
-      isProp: false,
-      inputType: "numberInput",
-      value: Math.max(
-        ...data.dataInFormatForLineChart[0].lines
-          .map((el) => el.data)
-          .flat()
-          .map((el) => el.x),
-      ),
-    },
-    {
-      name: "xScaleType",
-      category: "xScale",
-      isProp: false,
-      inputType: "dropdown",
-      options: ["scaleLinear", "scaleLog", "scaleTime"],
-    },
-    {
-      name: "xFunction",
-      category: "xScale",
-      isProp: true,
-      inputType: null,
-      label:
-        "Calculated based on screenSize, paddingLeft, paddingRight, xDomainLowerBound, xDomainUpperBound and xScaleType.",
-      exampleCode:
-        "scaleLinear()<br>&emsp;&emsp;.domain[2015,2022]<br>&emsp;&emsp;.range([0,graphWidth])",
-    },
-    {
-      name: "yDomainLowerBound",
-      category: "yScale",
-      isProp: false,
-      inputType: "numberInput",
-      value: Math.min(
-        ...data.dataInFormatForLineChart[0].lines
-          .map((el) => el.data)
-          .flat()
-          .map((el) => el.y),
-      ),
-    },
-    {
-      name: "yDomainUpperBound",
-      category: "yScale",
-      isProp: false,
-      inputType: "numberInput",
-      value: Math.max(
-        ...data.dataInFormatForLineChart[0].lines
-          .map((el) => el.data)
-          .flat()
-          .map((el) => el.y),
-      ),
-    },
-    {
-      name: "yScaleType",
-      category: "yScale",
-      isProp: false,
-      inputType: "dropdown",
-      options: ["scaleLinear", "scaleLog", "scaleTime"],
-    },
-    {
-      name: "yFunction",
-      category: "yScale",
-      isProp: true,
-      inputType: null,
-      label:
-        "Calculated based on svgHeight, paddingTop, paddingBottom, yDomainLowerBound, yDomainUpperBound and yScaleType.",
-      exampleCode:
-        "scaleLinear()<br>&emsp;&emsp;.domain[0,100]<br>&emsp;&emsp;.range([graphHeight,0])",
-    },
-    {
-      name: "curve",
-      category: "lineFunction",
-      isProp: false,
-      inputType: "dropdown",
-      options: [
-        "curveLinear",
-        "curveLinearClosed",
-        "curveCardinal",
-        "curveBasis",
-        "curveStep",
-        "curveMonotoneX",
-      ],
-    },
-    {
-      name: "lineFunction",
-      category: "lineFunction",
-      isProp: true,
-      inputType: null,
-      label: "Calculated based on xFunction, yFunction and curve.",
-      exampleCode:
-        "line()<br>&emsp;&emsp;.x((d) => xFunction(d.x))<br>&emsp;&emsp;.y((d) => yFunction(d.y))<br>&emsp;&emsp;.curve(curveLinear)",
-    },
-    {
-      name: "pathStrokeColor",
-      category: "path",
+      name: "legend",
+      category: "Content",
       isProp: true,
       inputType: "input",
-      value: "#b312a0",
+      value: "How would you like to be contacted?",
     },
     {
-      name: "pathStrokeWidth",
-      category: "path",
-      isProp: true,
-      inputType: "numberInput",
-      value: 3,
-    },
-    {
-      name: "pathFillColor",
-      category: "path",
+      name: "hint",
+      category: "Content",
       isProp: true,
       inputType: "input",
-      value: "none",
+      value: "Select all that apply",
     },
     {
-      name: "pathStrokeDashArray",
-      category: "path",
+      name: "selectedValues",
+      category: "Content",
+      isProp: true,
+      inputType: "javascript",
+      value: "[]",
+    },
+    {
+      name: "name",
+      category: "Form",
       isProp: true,
       inputType: "input",
-      value: "none",
+      value: "contact-preferences",
     },
     {
-      name: "includeMarkers",
-      category: "markers",
+      name: "options",
+      category: "Content",
+      isProp: true,
+      inputType: "javascript",
+      value: JSON.stringify(
+        [
+          {
+            value: "email",
+            label: "Email",
+            hint: "We'll send updates to your inbox",
+          },
+          {
+            value: "sms",
+            label: "Text message",
+            hint: "UK mobile numbers only",
+          },
+          {
+            value: "phone",
+            label: "Phone call",
+            hint: "We'll call during business hours",
+          },
+          {
+            value: "none",
+            label: "Do not contact me",
+            exclusive: true,
+          },
+        ],
+        null,
+        2,
+      ),
+    },
+    {
+      name: "error",
+      category: "Validation",
+      isProp: true,
+      inputType: "input",
+      value: "",
+    },
+    {
+      name: "isPageHeading",
+      category: "UI Options",
       isProp: true,
       inputType: "checkbox",
+      value: "false",
     },
     {
-      name: "markerShape",
-      category: "markers",
+      name: "small",
+      category: "UI Options",
+      isProp: true,
+      inputType: "checkbox",
+      value: "false",
+    },
+    {
+      name: "legendSize",
+      category: "UI Options",
       isProp: true,
       inputType: "dropdown",
-      options: ["circle", "square", "diamond", "triangle"],
-      visible: [{ name: "includeMarkers", value: true }],
+      options: ["l", "m", "s"],
+      value: "l",
     },
     {
-      name: "markerRadius",
-      category: "markers",
+      name: "validate",
+      category: "Validation",
       isProp: true,
-      inputType: "numberInput",
-      value: 5,
-      visible: { name: "includeMarkers", value: true },
-    },
-
-    {
-      name: "markerFill",
-      category: "markers",
-      isProp: true,
-      inputType: "input",
-      value: "#b312a0",
-      visible: { name: "includeMarkers", value: true },
-    },
-    {
-      name: "markerStroke",
-      category: "markers",
-      isProp: true,
-      inputType: "input",
-      value: "white",
-      visible: { name: "includeMarkers", value: true },
-    },
-    {
-      name: "markerStrokeWidth",
-      category: "markers",
-      isProp: true,
-      inputType: "numberInput",
-      value: 1,
-      visible: { name: "includeMarkers", value: true },
-    },
-    {
-      name: "opacity",
-      category: "overallStyling",
-      isProp: true,
-      inputType: "numberInput",
-      value: 1,
-      step: 0.1,
-      min: 0,
-      max: 1,
-    },
-    {
-      name: "dataId",
-      category: "lineEvents",
-      isProp: true,
-      inputType: "input",
-      value: "line-1",
-    },
-    {
-      name: "onClick",
-      category: "lineEvents",
-      isProp: true,
-      inputType: "event",
-    },
-    {
-      name: "onMouseEnter",
-      category: "lineEvents",
-      isProp: true,
-      inputType: "event",
-    },
-    {
-      name: "onMouseLeave",
-      category: "lineEvents",
-      isProp: true,
-      inputType: "event",
-    },
-    {
-      name: "onMouseMove",
-      category: "lineEvents",
-      isProp: true,
-      inputType: "event",
-    },
-    {
-      name: "markersDataId",
-      category: "markerEvents",
-      isProp: true,
-      inputType: "input",
-      value: "markers-group-1",
-    },
-    {
-      name: "onClickMarker",
-      category: "markerEvents",
-      isProp: true,
-      inputType: "event",
-    },
-    {
-      name: "onMouseEnterMarker",
-      category: "markerEvents",
-      isProp: true,
-      inputType: "event",
-    },
-    {
-      name: "onMouseLeaveMarker",
-      category: "markerEvents",
-      isProp: true,
-      inputType: "event",
-    },
-    {
-      name: "onMouseMoveMarker",
-      category: "markerEvents",
-      isProp: true,
-      inputType: "event",
+      inputType: "function",
+      value: `function validateContactPreferences(values) {
+          if (values.length === 0) {
+            return "Please select at least one contact method";
+          }
+          if (values.includes("none") && values.length > 1) {
+            return "You cannot select other options when opting out of all communications";
+          }
+          if (
+            values.includes("email") &&
+            !values.includes("sms") &&
+            !values.includes("none")
+          ) {
+            return "Please select SMS as a backup digital contact method when using email";
+          }
+          return undefined;
+        }`,
     },
   ]).map((el) => ({
     ...el,
@@ -489,144 +287,14 @@
    * &&     You must then also combine them into the derivedParametersObject below so that they are passed to the component.
    * &&     The getValueFromParametersArray function can be helpful for calculating based on the value of another parameter.
    */
-  let xFunction = $derived(
-    {
-      scaleLinear: scaleLinear(),
-      scaleLog: scaleLog(),
-      scaleTime: scaleTime(),
-    }[
+  let options = $derived(
+    JSON.parse(
       getValueFromParametersArray(
         parametersSourceArray,
         parametersValuesArray,
-        "xScaleType",
-      )
-    ]
-      .domain([
-        getValueFromParametersArray(
-          parametersSourceArray,
-          parametersValuesArray,
-          "xDomainLowerBound",
-        ),
-        getValueFromParametersArray(
-          parametersSourceArray,
-          parametersValuesArray,
-          "xDomainUpperBound",
-        ),
-      ])
-      .range([
-        0,
-        demoScreenWidth -
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "paddingLeft",
-          ) -
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "paddingRight",
-          ),
-      ]),
-  );
-
-  let yFunction = $derived(
-    {
-      scaleLinear: scaleLinear(),
-      scaleLog: scaleLog(),
-      scaleTime: scaleTime(),
-    }[
-      getValueFromParametersArray(
-        parametersSourceArray,
-        parametersValuesArray,
-        "yScaleType",
-      )
-    ]
-      .domain([
-        getValueFromParametersArray(
-          parametersSourceArray,
-          parametersValuesArray,
-          "yDomainLowerBound",
-        ),
-        getValueFromParametersArray(
-          parametersSourceArray,
-          parametersValuesArray,
-          "yDomainUpperBound",
-        ),
-      ])
-      .range([
-        getValueFromParametersArray(
-          parametersSourceArray,
-          parametersValuesArray,
-          "svgHeight",
-        ) -
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "paddingTop",
-          ) -
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "paddingBottom",
-          ),
-        0,
-      ]),
-  );
-
-  let lineFunction = $derived(
-    line()
-      .x((d) => xFunction(d.x))
-      .y((d) => yFunction(d.y))
-      .curve(
-        {
-          curveLinear: curveLinear,
-          curveLinearClosed: curveLinearClosed,
-          curveCardinal: curveCardinal,
-          curveBasis: curveBasis,
-          curveStep: curveStep,
-          curveMonotoneX: curveMonotoneX,
-        }[
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "curve",
-          )
-        ],
+        "options",
       ),
-  );
-
-  let dataArray = $derived(
-    getValueFromParametersArray(
-      parametersSourceArray,
-      parametersValuesArray,
-      "dataSource",
-    ) === "from base data"
-      ? data.dataInFormatForLineChart
-          .find(
-            (el) =>
-              el.metric ===
-              getValueFromParametersArray(
-                parametersSourceArray,
-                parametersValuesArray,
-                "metric",
-              ),
-          )
-          .lines.find(
-            (el) =>
-              el.areaCode ===
-              getValueFromParametersArray(
-                parametersSourceArray,
-                parametersValuesArray,
-                "area",
-              ),
-          ).data
-      : csvToArrayOfObjects(
-          getValueFromParametersArray(
-            parametersSourceArray,
-            parametersValuesArray,
-            "customDataArray",
-          ),
-        ),
+    ),
   );
 
   /**
@@ -635,12 +303,7 @@
    * &&     Note that these parameters STILL NEED TO BE LISTED in the source array (with a null input type and null value).
    * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
    */
-  let derivedParametersObject = $derived({
-    xFunction,
-    yFunction,
-    lineFunction,
-    dataArray,
-  });
+  let derivedParametersObject = $derived({ options });
 
   /**
    * DONOTTOUCH *
@@ -661,8 +324,42 @@
       derivedParametersObject,
     ),
   );
+
+  /**
+   *  CUSTOMISETHIS Add any additional JS specific to the component wrapper here
+   *
+   */
+  let demoSelected = $state([]);
+
+  const demoOptions = [
+    { value: "option1", label: "Option 1" },
+    { value: "option2", label: "Option 2" },
+    { value: "option3", label: "Option 3" },
+    { value: "none", label: "None of the above", exclusive: true },
+  ];
+
+  // Validation function for the checkbox example
+  function validateContactPreferences(value) {
+    if (values.length === 0) {
+      return "Please select at least one contact method";
+    }
+    if (values.includes("none") && values.length > 1) {
+      return "You cannot select other options when opting out of all communications";
+    }
+    if (
+      values.includes("email") &&
+      !values.includes("sms") &&
+      !values.includes("none")
+    ) {
+      return "Please select SMS as a backup digital contact method when using email";
+    }
+    return undefined;
+  }
 </script>
 
+<!--
+  &&  WrapperNameAndStatus and WraaperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
+  -->
 {#snippet WrapperNameAndStatus(name, folder, homepage)}
   <BaseNameAndStatus
     {name}
@@ -676,6 +373,50 @@
 {#snippet WrapperInformation(homepage)}
   <BaseInformation {homepage} {detailsArray} {connectedComponentsArray}
   ></BaseInformation>
+{/snippet}
+
+<!--
+  &&  Snippets used in examples 
+  -->
+{#snippet Content1()}
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="email-input">Email Address</label>
+    <div class="govuk-hint">We'll use this for important notifications</div>
+    <input
+      class="govuk-input"
+      id="email-input"
+      name="email-input"
+      type="email"
+    />
+  </div>
+{/snippet}
+
+{#snippet Content2()}
+  <div class="govuk-form-group">
+    <label class="govuk-label" for="phone-input">Phone Number</label>
+    <div class="govuk-hint">Include country code if international</div>
+    <input class="govuk-input" id="phone-input" name="phone-input" type="tel" />
+  </div>
+{/snippet}
+
+{#snippet Content3()}
+  <div class="govuk-form-group">
+    <CheckBox
+      legend="When should we contact you?"
+      name="contact-timing"
+      small={true}
+      legendSize="s"
+      validate={(values) =>
+        values.length === 0
+          ? "Please select at least one time slot"
+          : undefined}
+      options={[
+        { value: "morning", label: "Morning (9am - 12pm)" },
+        { value: "afternoon", label: "Afternoon (12pm - 5pm)" },
+        { value: "evening", label: "Evening (5pm - 8pm)" },
+      ]}
+    />
+  </div>
 {/snippet}
 
 <!--
@@ -700,7 +441,7 @@ DONOTTOUCH  *
   bind:parametersValuesArray
 ></ParametersSection>
 
-<div data-role="demo-section">
+<div data-role="demo-section" class="px-5">
   <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
   <!--
     DONOTTOUCH  *
@@ -718,28 +459,15 @@ DONOTTOUCH  *
     CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
     -->
-    <svg
-      width={demoScreenWidth}
-      height={getValueFromParametersArray(
-        parametersSourceArray,
-        parametersValuesArray,
-        "svgHeight",
-      )}
-    >
-      <g
-        transform="translate({getValueFromParametersArray(
-          parametersSourceArray,
-          parametersValuesArray,
-          'paddingLeft',
-        )},{getValueFromParametersArray(
-          parametersSourceArray,
-          parametersValuesArray,
-          'paddingTop',
-        )})"
-      >
-        <Line {...parametersObject}></Line>
-      </g>
-    </svg>
+    <div class="flex flex-col gap-4">
+      <div class="app-example-wrapper">
+        <div
+          class="app-example__frame app-example__frame--resizable app-example__frame--l p-6"
+        >
+          <Checkbox {...parametersObject} />
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -747,22 +475,17 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
     -->
-<div class="mt-20" data-role="examples-section">
-  <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-  <h5 class="underline underline-offset-4">Examples</h5>
+<div data-role="examples-section" class="px-5">
+  <div class="my-20">
+    <h5 class="underline underline-offset-4 my-6">
+      Examples of specific use cases
+    </h5>
+    <Examples></Examples>
+  </div>
+
+  <div class="my-20">
+    <h5 class="underline underline-offset-4 my-6">
+      Examples from the playground
+    </h5>
+  </div>
 </div>
-
-<style>
-  svg {
-    overflow: hidden;
-  }
-
-  [data-role="component-container"] {
-    display: grid;
-    place-items: center;
-  }
-  [data-role="component-container-centered"] {
-    background-color: #f8f8f8;
-    padding: 20px 0px;
-  }
-</style>

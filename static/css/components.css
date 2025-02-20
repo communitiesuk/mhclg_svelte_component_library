@@ -36,4 +36,11 @@
   [data-role="demo-section"] {
     @apply max-w-screen-lg mx-auto my-0;
   }
+
+  [data-role="component-container"] {
+    @apply grid place-items-center;
+  }
+  [data-role="component-container-centered"] {
+    @apply bg-[#f8f8f8] px-0 py-5;
+  }
 }

@@ -27,12 +27,6 @@
   top: 0;
 }
 
-@media (min-width: 767px) {
-  .code-block {
-    margin: var(--sk-line-height-body) 0;
-  }
-}
-
 .code-block .controls {
   --height: 3.6rem;
   height: var(--height);

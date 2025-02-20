@@ -34,6 +34,8 @@
       }
     })();
   });
+
+  $inspect(Component);
 </script>
 
 {#if Component}
@@ -52,7 +54,7 @@
       <div>2.</div>
       <div>
         Is the component wrapper file called <span class="font-bold"
-          >{wrapper}.svelte</span
+          >{wrapper}Wrapper.svelte</span
         >?
       </div>
       <div>3.</div>

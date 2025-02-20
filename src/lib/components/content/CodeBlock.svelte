@@ -38,7 +38,7 @@
   let content = highlight(code, language, theme);
 </script>
 
-<div class="code-block">
+<div class="code-block text-sm">
   <div class="controls">
     <span class="filename" data-ext={extension}>{filename}</span>
     <button

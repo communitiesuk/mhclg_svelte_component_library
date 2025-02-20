@@ -10,18 +10,21 @@ export const componentStatusProgressBackgroundColorLookup = {
   "In use": "#136F63",
 };
 
+export const componentStausLookup = {};
+
 export const propPillLookup = {
   true: {
+    size: "xs",
     text: "{p}",
     textColor: "white",
     bgColor: "#ba029b",
-    padding: "0.2rem 0.3rem 0.4rem 0.3rem",
+    padding: "0.4rem 0.32rem 0.5rem 0.3rem",
   },
   false: {
     text: "=>",
     textColor: "white",
     bgColor: "#00695c",
-    padding: "0.25rem 0.3rem 0.3rem 0.25rem",
+    padding: "0.1rem 0.15rem",
   },
 };
 

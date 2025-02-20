@@ -29,8 +29,10 @@
   {/if}
 </div>
 
-{#if statusObject?.statusRows && statusObject?.statusRows.length > 0}
-  <div class="flex flex-col gap-2 my-2">
+{#if statusObject?.statusRows && statusObject?.statusRows.length > 0 && statusObject?.statusRows
+    .map((el) => Object.keys(el.obj))
+    .flat().length > 0}
+  <div class="flex flex-col gap-2 mt-4 mb-2">
     {#each statusObject.statusRows as row}
       {#if !homepage || row.visibleOnHomepage}
         <div class="flex flex-row gap-2">

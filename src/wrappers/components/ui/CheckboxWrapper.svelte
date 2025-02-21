@@ -309,6 +309,8 @@
     ),
   );
 
+  $inspect(typeof selectedValues);
+
   /**
    * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
    * && 		Here you can add additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.

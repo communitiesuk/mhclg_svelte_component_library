@@ -80,6 +80,7 @@
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
 
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
+  import * as codeBlocks from "./line/codeBlocks.js";
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
@@ -271,8 +272,7 @@
       inputType: null,
       label:
         "Calculated based on screenSize, paddingLeft, paddingRight, xDomainLowerBound, xDomainUpperBound and xScaleType.",
-      exampleCode:
-        "scaleLinear()<br>&emsp;&emsp;.domain[2015,2022]<br>&emsp;&emsp;.range([0,graphWidth])",
+      exampleCode: codeBlocks.codeBlockOne,
     },
     {
       name: "yDomainLowerBound",
@@ -312,8 +312,7 @@
       inputType: null,
       label:
         "Calculated based on svgHeight, paddingTop, paddingBottom, yDomainLowerBound, yDomainUpperBound and yScaleType.",
-      exampleCode:
-        "scaleLinear()<br>&emsp;&emsp;.domain[0,100]<br>&emsp;&emsp;.range([graphHeight,0])",
+      exampleCode: codeBlocks.codeBlockTwo,
     },
     {
       name: "curve",
@@ -335,8 +334,7 @@
       isProp: true,
       inputType: null,
       label: "Calculated based on xFunction, yFunction and curve.",
-      exampleCode:
-        "line()<br>&emsp;&emsp;.x((d) => xFunction(d.x))<br>&emsp;&emsp;.y((d) => yFunction(d.y))<br>&emsp;&emsp;.curve(curveLinear)",
+      exampleCode: codeBlocks.codeBlockThree,
     },
     {
       name: "pathStrokeColor",
@@ -779,10 +777,17 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
     -->
-<div class="mt-20" data-role="examples-section">
-  <!-- <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-  <h5 class="underline underline-offset-4">Examples of specific use cases</h5> -->
+<div data-role="examples-section" class="px-5">
+  <!-- <div class="my-20">
+        <h5 class="underline underline-offset-4 my-6">
+          Examples of specific use cases
+        </h5>
+        <Examples></Examples>
+      </div> -->
 
-  <!-- <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-  <h5 class="underline underline-offset-4">Examples from the playground</h5> -->
+  <!-- <div class="my-20">
+        <h5 class="underline underline-offset-4 my-6">
+          Examples from the playground
+        </h5>
+      </div> -->
 </div>

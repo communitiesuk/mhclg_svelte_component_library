@@ -108,6 +108,12 @@
   </div>
 {/snippet}
 
+{#if source.inputType === "checkbox"}
+  <Checkbox bind:checked={value} color="orange">
+    {@render parameterName(source.name, propPillObject, true)}
+  </Checkbox>
+{/if}
+
 {#if source.inputType === "function" || source.inputType === "javascript"}
   {@render parameterName(source.name, propPillObject, false, true)}
   <!-- Container div for the Monaco editor:
@@ -147,10 +153,6 @@
     {@render parameterName(source.name, propPillObject)}
     <Textarea id="textarea-id" bind:value rows={9} />
   </div>
-{:else if source.inputType === "checkbox"}
-  <Checkbox bind:checked={value} color="orange">
-    {@render parameterName(source.name, propPillObject, true)}
-  </Checkbox>
 {:else if source.inputType === "input"}
   {@render parameterName(source.name, propPillObject)}
   <Input size="lg" bind:value />
@@ -185,7 +187,12 @@
       class="mt-4 mb-0 mx-0 p-0 break-words text-sm rounded-md"
       style="color: #ba029b"
     >
-      <code>{@html source.exampleCode}</code>
+      <CodeBlock
+        code={source.exampleCode}
+        language="svelte"
+        size="xs"
+        includeHeader={false}
+      />
     </p>
   {/if}
 {/if}

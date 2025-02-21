@@ -15,6 +15,7 @@ export const codeBlockOne = `
   options={options}
 />
 `;
+
 export const codeBlockTwo = `
 <script>
   import CheckBox from "$lib/components/ui/CheckBox.svelte";

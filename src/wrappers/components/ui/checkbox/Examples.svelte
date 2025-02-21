@@ -1,7 +1,7 @@
 <script>
   import Accordion from "$lib/components/ui/Accordion.svelte";
   import CodeBlock from "$lib/components/content/CodeBlock.svelte";
-  import * as exampleCodeBlocks from "./exampleCodeBlocks.js";
+  import * as codeBlocks from "./codeBlocks.js";
 
   import Checkbox from "$lib/components/ui/Checkbox.svelte";
 
@@ -111,7 +111,7 @@
 {#snippet Example1()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockOne} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockOne} language="svelte" />
 
       <div class="app-example-wrapper">
         <div
@@ -136,7 +136,7 @@
 {#snippet Example2()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockTwo} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockTwo} language="svelte" />
 
       <div class="app-example-wrapper">
         <div
@@ -169,7 +169,7 @@
 {#snippet Example3()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockThree} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockThree} language="svelte" />
 
       <div class="app-example-wrapper">
         <div
@@ -198,7 +198,7 @@
 {#snippet Example4()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockFour} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockFour} language="svelte" />
 
       <div class="app-example-wrapper">
         <div
@@ -227,7 +227,7 @@
 {#snippet Example5()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockFive} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockFive} language="svelte" />
 
       <div class="app-example-wrapper">
         <div
@@ -264,7 +264,7 @@
 {#snippet Example6()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockSix} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockSix} language="svelte" />
 
       <div class="app-example-wrapper">
         <div
@@ -288,7 +288,7 @@
 {#snippet Example7()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockSeven} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockSeven} language="svelte" />
 
       <div class="app-example-wrapper">
         <div
@@ -313,7 +313,7 @@
 {#snippet Example8()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockEight} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockEight} language="svelte" />
       <div class="app-example-wrapper">
         <div
           class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
@@ -337,7 +337,7 @@
 {#snippet Example9()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockNine} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockNine} language="svelte" />
 
       <div class="app-example-wrapper">
         <div
@@ -390,7 +390,7 @@
 {#snippet Example10()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockTen} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockTen} language="svelte" />
 
       <div class="app-example-wrapper">
         <div
@@ -455,7 +455,7 @@
 {#snippet Example11()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockEleven} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockEleven} language="svelte" />
 
       <div class="app-example-wrapper">
         <div
@@ -475,7 +475,7 @@
 {#snippet Example12()}
   <div class="bg-slate-100 py-1">
     <div class="mx-4">
-      <CodeBlock code={exampleCodeBlocks.codeBlockTwelve} language="svelte" />
+      <CodeBlock code={codeBlocks.codeBlockTwelve} language="svelte" />
 
       <div class="app-example-wrapper">
         <div

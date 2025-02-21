@@ -46,6 +46,8 @@
       document.body?.classList.contains("govuk-frontend-supported") ?? false;
   });
 
+  $inspect(selectedValues);
+
   // Derived state to check if a value is selected and handle validation
   let isChecked = $derived((value: string) => selectedValues.includes(value));
   let validationError = $derived<string | undefined>(

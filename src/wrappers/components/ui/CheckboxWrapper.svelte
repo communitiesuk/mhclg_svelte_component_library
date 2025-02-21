@@ -82,6 +82,7 @@
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
   import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import CodeBlock from "$lib/components/content/CodeBlock.svelte";
 
   import { browser } from "$app/environment";
   import Checkbox from "$lib/components/ui/Checkbox.svelte";
@@ -298,13 +299,23 @@
     ),
   );
 
+  let selectedValues = $derived(
+    JSON.parse(
+      getValueFromParametersArray(
+        parametersSourceArray,
+        parametersValuesArray,
+        "selectedValues",
+      ),
+    ),
+  );
+
   /**
    * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
    * && 		Here you can add additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
    * &&     Note that these parameters STILL NEED TO BE LISTED in the source array (with a null input type and null value).
    * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
    */
-  let derivedParametersObject = $derived({ options });
+  let derivedParametersObject = $derived({ options, selectedValues });
 
   /**
    * DONOTTOUCH *
@@ -325,37 +336,12 @@
       derivedParametersObject,
     ),
   );
-
   /**
    *  CUSTOMISETHIS Add any additional JS specific to the component wrapper here
    *
    */
-  let demoSelected = $state([]);
 
-  const demoOptions = [
-    { value: "option1", label: "Option 1" },
-    { value: "option2", label: "Option 2" },
-    { value: "option3", label: "Option 3" },
-    { value: "none", label: "None of the above", exclusive: true },
-  ];
-
-  // Validation function for the checkbox example
-  function validateContactPreferences(value) {
-    if (values.length === 0) {
-      return "Please select at least one contact method";
-    }
-    if (values.includes("none") && values.length > 1) {
-      return "You cannot select other options when opting out of all communications";
-    }
-    if (
-      values.includes("email") &&
-      !values.includes("sms") &&
-      !values.includes("none")
-    ) {
-      return "Please select SMS as a backup digital contact method when using email";
-    }
-    return undefined;
-  }
+  $inspect(selectedValues);
 </script>
 
 <!--
@@ -374,50 +360,6 @@
 {#snippet WrapperInformation(homepage)}
   <BaseInformation {homepage} {detailsArray} {connectedComponentsArray}
   ></BaseInformation>
-{/snippet}
-
-<!--
-  &&  Snippets used in examples 
-  -->
-{#snippet Content1()}
-  <div class="govuk-form-group">
-    <label class="govuk-label" for="email-input">Email Address</label>
-    <div class="govuk-hint">We'll use this for important notifications</div>
-    <input
-      class="govuk-input"
-      id="email-input"
-      name="email-input"
-      type="email"
-    />
-  </div>
-{/snippet}
-
-{#snippet Content2()}
-  <div class="govuk-form-group">
-    <label class="govuk-label" for="phone-input">Phone Number</label>
-    <div class="govuk-hint">Include country code if international</div>
-    <input class="govuk-input" id="phone-input" name="phone-input" type="tel" />
-  </div>
-{/snippet}
-
-{#snippet Content3()}
-  <div class="govuk-form-group">
-    <CheckBox
-      legend="When should we contact you?"
-      name="contact-timing"
-      small={true}
-      legendSize="s"
-      validate={(values) =>
-        values.length === 0
-          ? "Please select at least one time slot"
-          : undefined}
-      options={[
-        { value: "morning", label: "Morning (9am - 12pm)" },
-        { value: "afternoon", label: "Afternoon (12pm - 5pm)" },
-        { value: "evening", label: "Evening (5pm - 8pm)" },
-      ]}
-    />
-  </div>
 {/snippet}
 
 <!--
@@ -444,6 +386,7 @@ DONOTTOUCH  *
 
 <div data-role="demo-section" class="px-5">
   <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+
   <!--
     DONOTTOUCH  *
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.

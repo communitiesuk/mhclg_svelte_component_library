@@ -24,7 +24,7 @@ export const propPillLookup = {
     size: "xs",
     text: "{b}",
     textColor: "white",
-    bgColor: "#5C53A2",
+    bgColor: "#1B4079",
     padding: "0.4rem 0.32rem 0.5rem 0.3rem",
   },
   false: {

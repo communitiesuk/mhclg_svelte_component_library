@@ -88,7 +88,10 @@
     </div>
     {#if modal}
       <div class="flex flex-col justify-center text-xs">
-        <Button class="p-0 pl-1  m-0 h-[22px]" on:click={createModal}>
+        <Button
+          class="p-0 pl-1  m-0 h-[22px] bg-gray-700"
+          on:click={createModal}
+        >
           <span class="text-xs">Edit</span>
           <svg width="22" height="22">
             <g transform="translate(2,2)scale(0.25)">

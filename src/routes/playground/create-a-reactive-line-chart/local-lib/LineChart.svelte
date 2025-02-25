@@ -1,11 +1,11 @@
 <script>
   // @ts-nocheck
-  import CategoryLabel from '$lib/components/data-vis/line-chart/CategoryLabel.svelte';
-  import Line from '$lib/components/data-vis/line-chart/Line.svelte';
+  import CategoryLabel from "$lib/components/data-vis/line-chart/CategoryLabel.svelte";
+  import Line from "$lib/components/data-vis/line-chart/Line.svelte";
 
-  import { scaleLinear } from 'd3-scale';
-  import { curveLinear, line } from 'd3-shape';
-  import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
+  import { scaleLinear } from "d3-scale";
+  import { curveLinear, line } from "d3-shape";
+  import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
 
   let { data } = $props();
 
@@ -24,7 +24,7 @@
     bottom: staticMargin.bottom + dynamicMargin.bottom,
     left: staticMargin.left + dynamicMargin.left,
   });*/
-  let totalMargin = { top: 20, right: 50, bottom: 40, left: 50 };
+  let totalMargin = { top: 20, right: 150, bottom: 40, left: 50 };
 
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
@@ -38,7 +38,7 @@
   let xFunction = $derived(
     scaleLinear()
       .domain(yearsMinMax)
-      .range([0 + 50, chartWidth - 50])
+      .range([0 + 50, chartWidth - 50]),
   );
 
   let allValues = $derived(flatData.map((el) => el.y));
@@ -46,21 +46,22 @@
   let valuesMinMax = $derived([Math.min(...allValues), Math.max(...allValues)]);
 
   let yFunction = $derived(
-    scaleLinear().domain(valuesMinMax).range([chartHeight, 0])
+    scaleLinear().domain(valuesMinMax).range([chartHeight, 0]),
   );
 
   let lineFunction = $derived(
     line()
       .x((d) => xFunction(d.x))
       .y((d) => yFunction(d.y))
-      .curve(curveLinear)
+      .curve(curveLinear),
   );
 
-  let selectedAreaCode = $state('E07000223');
+  let selectedAreaCode = $state("E07000223");
 </script>
 
 <h3>Example Usage</h3>
-<pre><code use:highlight>{`
+<pre><code use:highlight
+    >{`
 <script>
   import LineChart from './LineChart.svelte';
   
@@ -79,7 +80,8 @@
 <\/script>
 
 <LineChart {data} />
-`}</code></pre>
+`}</code
+  ></pre>
 
 <div bind:clientWidth={svgWidth}>
   <svg
@@ -119,7 +121,7 @@
             <Line
               {lineFunction}
               dataArray={data.lines.find(
-                (el) => el.areaCode === selectedAreaCode
+                (el) => el.areaCode === selectedAreaCode,
               ).data}
               pathStrokeColor="red"
               pathStrokeWidth="5"
@@ -135,7 +137,7 @@
               {chartWidth}
               {lineFunction}
               dataArray={data.lines.find(
-                (el) => el.areaCode === selectedAreaCode
+                (el) => el.areaCode === selectedAreaCode,
               ).data}
               {xFunction}
               {yFunction}

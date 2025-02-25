@@ -10,7 +10,7 @@
   <text
     dominant-baseline="central"
     text-anchor="end"
-    x={40}
+    x={70}
     y={yFunction(dataArray[0].y)}>{dataArray[0].areaCode}</text
   >
 </g>

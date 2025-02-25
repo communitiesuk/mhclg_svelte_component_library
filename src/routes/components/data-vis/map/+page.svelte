@@ -2,6 +2,7 @@
   import Map from "$lib/components/data-vis/map/Map.svelte";
   import Map2 from "$lib/components/data-vis/map/Map2.svelte";
   import Map3 from "$lib/components/data-vis/map/Map3.svelte";
+  import Map4 from "$lib/components/data-vis/map/Map4.svelte";
 </script>
 
 <h1>Map implementation examples</h1>
@@ -13,3 +14,6 @@
 
 <h2>With more colours</h2>
 <Map3 />
+
+<h2>Maptiler</h2>
+<Map4 />

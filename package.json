@@ -66,6 +66,7 @@
 		"vite": "^5.0.11"
 	},
 	"dependencies": {
+		"@maptiler/sdk": "^3.0.1",
 		"@monaco-editor/loader": "^1.4.0",
 		"@onsvisual/svelte-maps": "^1.2.26",
 		"csv-parser": "^3.0.0",

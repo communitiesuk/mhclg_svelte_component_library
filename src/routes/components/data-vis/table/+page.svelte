@@ -62,8 +62,8 @@
         name: "zebraStriping",
         category: "aesthetic",
         isProp: true,
-        inputType: "radio",
-        value: "Caption placeholder text",
+        inputType: "checkbox",
+        value: "true",
       },
     ]);
 

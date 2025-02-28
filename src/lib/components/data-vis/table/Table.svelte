@@ -2,7 +2,7 @@
   let { captionText, zebraStriping } = $props();
 </script>
 
-<table class="govuk-table" class:zebra={zebraStriping}>
+<!-- <table class="govuk-table" class:zebra={zebraStriping}>
   <caption class="govuk-table__caption govuk-table__caption--m"
     >{captionText}</caption
   >
@@ -26,6 +26,32 @@
     <tr class="govuk-table__row">
       <td class="govuk-table__cell">Brighton</td>
       <td class="govuk-table__cell govuk-table__cell--numeric">90%</td>
+    </tr>
+  </tbody>
+</table> -->
+
+<table class="govuk-table" class:zebra={zebraStriping}>
+  <caption class="govuk-table__caption govuk-table__caption--m"
+    >{captionText}</caption
+  >
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th scope="col" class="govuk-table__header">Local authority</th>
+      <th scope="col" class="govuk-table__header">Recycling rate</th>
+    </tr>
+  </thead>
+  <tbody class="govuk-table__body">
+    <tr class="govuk-table__row">
+      <th scope="row" class="govuk-table__header">Stockport</th>
+      <td class="govuk-table__cell">56.5%</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row" class="govuk-table__header">Leeds</th>
+      <td class="govuk-table__cell">80%</td>
+    </tr>
+    <tr class="govuk-table__row">
+      <th scope="row" class="govuk-table__header">Brighton</th>
+      <td class="govuk-table__cell">90%</td>
     </tr>
   </tbody>
 </table>

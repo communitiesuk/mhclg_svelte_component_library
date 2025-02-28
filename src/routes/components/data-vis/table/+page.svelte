@@ -72,6 +72,13 @@
         inputType: "numberInput",
         value: 3,
       },
+      {
+        name: "numberOfColumns",
+        category: "content",
+        isProp: true,
+        inputType: "numberInput",
+        value: 3,
+      },
     ]);
 
   let parametersValuesArray = $state(

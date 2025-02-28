@@ -1,10 +1,7 @@
 <script>
-  let { captionText, zebraStriping, numberOfRows } = $props();
-
-  $inspect(numberOfRows);
+  let { captionText, zebraStriping, numberOfRows, numberOfColumns } = $props();
 </script>
 
-<p>{numberOfRows}</p>
 <table class="govuk-table" class:zebra={zebraStriping}>
   <caption class="govuk-table__caption govuk-table__caption--m"
     >{captionText}</caption
@@ -18,8 +15,9 @@
   <tbody class="govuk-table__body">
     {#each Array(numberOfRows) as _, i}
       <tr>
-        <td>row {i + 1}, col 1</td>
-        <td>row {i + 1}, col 2</td>
+        {#each Array(numberOfColumns) as _, j}
+          <td>data cell {i + 1} - {j + 1}</td>
+        {/each}
       </tr>
     {/each}
   </tbody>

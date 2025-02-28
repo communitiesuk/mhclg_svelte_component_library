@@ -52,7 +52,7 @@
     homepage ??
     addIndexAndInitalValue([
       {
-        name: "caption",
+        name: "captionText",
         category: "content",
         isProp: true,
         inputType: "input",

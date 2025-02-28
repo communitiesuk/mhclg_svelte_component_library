@@ -1,6 +1,10 @@
+<script>
+  let { captionText } = $props();
+</script>
+
 <table class="govuk-table">
   <caption class="govuk-table__caption govuk-table__caption--m"
-    >Recycling rates</caption
+    >{captionText}</caption
   >
   <thead class="govuk-table__head">
     <tr class="govuk-table__row">

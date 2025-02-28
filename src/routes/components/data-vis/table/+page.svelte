@@ -58,6 +58,13 @@
         inputType: "input",
         value: "Caption placeholder text",
       },
+      {
+        name: "zebraStriping",
+        category: "aesthetic",
+        isProp: true,
+        inputType: "radio",
+        value: "Caption placeholder text",
+      },
     ]);
 
   let parametersValuesArray = $state(

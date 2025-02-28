@@ -1,8 +1,8 @@
 <script>
-  let { captionText } = $props();
+  let { captionText, zebraStriping } = $props();
 </script>
 
-<table class="govuk-table">
+<table class="govuk-table" class:zebra={zebraStriping}>
   <caption class="govuk-table__caption govuk-table__caption--m"
     >{captionText}</caption
   >
@@ -31,7 +31,7 @@
 </table>
 
 <style>
-  tbody tr:nth-child(odd) {
+  .zebra tbody tr:nth-child(odd) {
     background: #eee;
   }
 </style>

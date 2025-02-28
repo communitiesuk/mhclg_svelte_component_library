@@ -23,5 +23,15 @@
       <td class="govuk-table__cell">Leeds</td>
       <td class="govuk-table__cell govuk-table__cell--numeric">80%</td>
     </tr>
+    <tr class="govuk-table__row">
+      <td class="govuk-table__cell">Brighton</td>
+      <td class="govuk-table__cell govuk-table__cell--numeric">90%</td>
+    </tr>
   </tbody>
 </table>
+
+<style>
+  tbody tr:nth-child(odd) {
+    background: #eee;
+  }
+</style>

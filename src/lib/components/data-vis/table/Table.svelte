@@ -2,6 +2,19 @@
   let { captionText, zebraStriping } = $props();
 </script>
 
+<table class="govuk-table" class:zebra={zebraStriping}>
+  <caption class="govuk-table__caption govuk-table__caption--m"
+    >{captionText}</caption
+  >
+  <thead class="govuk-table__head">
+    <tr class="govuk-table__row">
+      <th scope="col" class="govuk-table__header">Local authority</th>
+      <th scope="col" class="govuk-table__header">Recycling rate</th>
+    </tr>
+  </thead>
+  <tbody class="govuk-table__body"> </tbody>
+</table>
+
 <!-- <table class="govuk-table" class:zebra={zebraStriping}>
   <caption class="govuk-table__caption govuk-table__caption--m"
     >{captionText}</caption
@@ -30,7 +43,7 @@
   </tbody>
 </table> -->
 
-<table class="govuk-table" class:zebra={zebraStriping}>
+<!-- <table class="govuk-table" class:zebra={zebraStriping}>
   <caption class="govuk-table__caption govuk-table__caption--m"
     >{captionText}</caption
   >
@@ -54,7 +67,7 @@
       <td class="govuk-table__cell">90%</td>
     </tr>
   </tbody>
-</table>
+</table> -->
 
 <style>
   .zebra tbody tr:nth-child(odd) {

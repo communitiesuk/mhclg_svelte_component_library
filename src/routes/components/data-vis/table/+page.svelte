@@ -29,7 +29,16 @@
       },
     ],
 
-    context: undefined,
+    context: [
+      {
+        content:
+          "This table component is for small static tables of data. The developer selects the number of rows and columns and manually inputs the data.",
+      },
+      {
+        content:
+          "We will also want an interactive table component. This could be a separate component or included in this one.",
+      },
+    ],
 
     childComponents: undefined,
 
@@ -56,7 +65,8 @@
         category: "content",
         isProp: true,
         inputType: "input",
-        value: "Caption placeholder text",
+        value:
+          "A small table component in which the dev manually enters the data",
       },
       {
         name: "zebraStriping",
@@ -70,14 +80,14 @@
         category: "content",
         isProp: true,
         inputType: "numberInput",
-        value: 3,
+        value: 2,
       },
       {
         name: "numberOfColumns",
         category: "content",
         isProp: true,
         inputType: "numberInput",
-        value: 3,
+        value: 2,
       },
     ]);
 

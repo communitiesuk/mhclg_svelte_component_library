@@ -1,7 +1,10 @@
 <script>
-  let { captionText, zebraStriping } = $props();
+  let { captionText, zebraStriping, numberOfRows } = $props();
+
+  $inspect(numberOfRows);
 </script>
 
+<p>{numberOfRows}</p>
 <table class="govuk-table" class:zebra={zebraStriping}>
   <caption class="govuk-table__caption govuk-table__caption--m"
     >{captionText}</caption
@@ -12,7 +15,14 @@
       <th scope="col" class="govuk-table__header">Recycling rate</th>
     </tr>
   </thead>
-  <tbody class="govuk-table__body"> </tbody>
+  <tbody class="govuk-table__body">
+    {#each Array(numberOfRows) as _, i}
+      <tr>
+        <td>row {i + 1}, col 1</td>
+        <td>row {i + 1}, col 2</td>
+      </tr>
+    {/each}
+  </tbody>
 </table>
 
 <!-- <table class="govuk-table" class:zebra={zebraStriping}>

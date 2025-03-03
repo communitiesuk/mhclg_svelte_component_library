@@ -1,4 +1,5 @@
 <script>
+  import D3Maps from "./local-libs/D3Maps.svelte";
   import Map from "./local-libs/Map.svelte";
   //mport D3Maps from  "./local-libs/D3Maps.svelte";
 </script>
@@ -8,6 +9,7 @@
     <h1>Map Libre svelte Map</h1>
     <Map></Map>
     <h1>d3 Map</h1>
+    <D3Maps></D3Maps>
   </div>
 </div>
 

@@ -3,6 +3,7 @@
   import Map2 from "$lib/components/data-vis/map/Map2.svelte";
   import Map3 from "$lib/components/data-vis/map/Map3.svelte";
   import Map4 from "$lib/components/data-vis/map/Map4.svelte";
+  import Map5 from "$lib/components/data-vis/map/Map5.svelte";
 </script>
 
 <h1>Map implementation examples</h1>
@@ -17,3 +18,6 @@
 
 <h2>Maptiler</h2>
 <Map4 />
+
+<h2>TopoJson with svelte-maplibre</h2>
+<Map5 />

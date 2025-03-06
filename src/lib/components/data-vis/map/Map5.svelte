@@ -10,7 +10,10 @@
   import { contrastingColor } from "./colors.js";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { ExpressionSpecification } from "maplibre-gl";
+  import topo from "./topo.json";
+  import * as topojson from "topojson-client";
 
+  const geojsonData = topojson.feature(topo, topo.objects.lad2023);
   let showBorder = $state(true);
   let showFill = $state(true);
   let fillColor = $state("#006600");
@@ -66,7 +69,7 @@
   center={[-2.5879, 51.4545]}
   zoom={9}
 >
-  <GeoJSON id="states" data={states} promoteId="LAD23NM">
+  <GeoJSON id="states" data={geojsonData} promoteId="LAD23NM">
     {#if showFill}
       <FillLayer
         paint={{

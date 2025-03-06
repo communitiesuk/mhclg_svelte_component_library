@@ -7,13 +7,14 @@
   import { LineLayer } from "svelte-maplibre";
   // import { mapClasses } from '../styles.js';
   import states from "./lad2023.json";
+  import pconData from "./salary-pcon10.json";
   import { contrastingColor } from "./colors.js";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { ExpressionSpecification } from "maplibre-gl";
 
   let showBorder = $state(true);
   let showFill = $state(true);
-  let fillColor = $state(["#006600", "#207093", "#123345"]);
+  let fillColor = $state(["#006600", "#207093", "#123345", "red", "pink"]);
   let borderColor = $state("#003300");
   $inspect(fillColor);
 
@@ -45,6 +46,74 @@
   let filter: ExpressionSpecification | undefined = $derived(
     filterStates ? ["==", "B", ["slice", ["get", "LAD23NM"], 0, 1]] : undefined,
   );
+
+  function getColor(value, breaks, colors) {
+    let color;
+    let found = false;
+    let i = 1;
+    while (found == false) {
+      if (value <= breaks[i]) {
+        color = colors[i - 1];
+        found = true;
+      } else {
+        i++;
+      }
+    }
+    return color ? color : "lightgrey";
+  }
+
+  // Get data for geojson maps
+  // getData(pconData).then((res) => {
+  let vals = pconData.map((d) => d.salary).sort((a, b) => a - b);
+  let len = vals.length;
+  let breaks = [
+    vals[0],
+    vals[Math.floor(len * 0.2)],
+    vals[Math.floor(len * 0.4)],
+    vals[Math.floor(len * 0.6)],
+    vals[Math.floor(len * 0.8)],
+    vals[len - 1],
+  ];
+  let dataWithColor = pconData.map((d) => {
+    return { ...d, color: getColor(d.salary, breaks, fillColor) };
+  });
+
+  //Joining the data to the GeoJSON
+  let obj2Map = dataWithColor.reduce((map, item) => {
+    map[item.LAD23CD] = item; // Use 'LAD23CD' as the key for the second map
+    return map;
+  }, {});
+
+  let obj1Map = states.features.reduce((map, item) => {
+    map[item.properties.LAD23CD] = item; // Use 'LAD23CD' from properties as the key for the first map
+    return map;
+  }, {});
+
+  // Merge both datasets
+  let merged = {
+    type: "FeatureCollection",
+    features: states.features.map((item1) => {
+      // Get the matching item from obj2Map based on the LAD23CD
+      const match = obj2Map[item1.properties.LAD23CD];
+
+      // If a match exists, merge the 'salary' and 'color' into the 'properties' of item1
+      if (match) {
+        return {
+          ...item1, // Keep all properties of the feature
+          properties: {
+            ...item1.properties, // Keep the existing properties (like LAD23CD, etc.)
+            salary: match.salary, // Add salary from the match
+            color: match.color, // Add color from the match
+          },
+        };
+      }
+
+      // If no match, just return the feature as is
+      return item1;
+    }),
+    crs: { properties: { name: "EPSG:4326" }, type: "name" },
+  };
+  $inspect(merged);
 </script>
 
 <div class="grid w-full max-w-md items-center gap-y-2 self-start">
@@ -78,16 +147,19 @@
   center={[-2.5879, 51.4545]}
   zoom={9}
 >
-  <GeoJSON id="states" data={states} promoteId="LAD23NM">
+  <GeoJSON id="states" data={merged} promoteId="LAD23NM">
     {#if showFill}
       <FillLayer
         paint={{
-          "fill-color": hoverStateFilter(fillColor[0], colors[0].hoverBgColor),
+          // "fill-color": hoverStateFilter(fillColor[0], colors[0].hoverBgColor),
+          "fill-color": ["get", "color"],
           "fill-opacity": 0.5,
         }}
         {filter}
         beforeLayerType="symbol"
         manageHoverState
+        onclick={(e) => console.log(e.features[0])}
+        id="LAD23NM"
       />
     {/if}
     {#if showBorder}

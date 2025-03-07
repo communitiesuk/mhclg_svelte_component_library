@@ -103,7 +103,7 @@
       {
         name: "inverse",
         category: "Display Options",
-        isProp: true,
+        isProp: false,
         inputType: "checkbox",
         value: "false",
       },

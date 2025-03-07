@@ -55,17 +55,6 @@
       document.body?.classList.contains("govuk-frontend-supported") ?? false;
   });
 
-  // Create reactive state for CSS classes
-  let cssClasses = $state("govuk-breadcrumbs");
-
-  // Update CSS classes when props change
-  $effect(() => {
-    let classes = "govuk-breadcrumbs";
-    if (collapseOnMobile) classes += " govuk-breadcrumbs--collapse-on-mobile";
-    if (inverse) classes += " govuk-breadcrumbs--inverse";
-    cssClasses = classes;
-  });
-
   // State variable to hold the current breadcrumb items
   let breadcrumbItems = $state<BreadcrumbItem[]>([]);
 
@@ -193,7 +182,12 @@
   }
 </script>
 
-<nav class={cssClasses} aria-label={ariaLabel}>
+<nav
+  class="govuk-breadcrumbs
+    {collapseOnMobile ? 'govuk-breadcrumbs--collapse-on-mobile' : ''} 
+    {inverse ? 'govuk-breadcrumbs--inverse' : ''}"
+  aria-label={ariaLabel}
+>
   <ol class="govuk-breadcrumbs__list">
     {#each breadcrumbItems as item}
       <li class="govuk-breadcrumbs__list-item">

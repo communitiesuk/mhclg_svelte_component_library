@@ -1,6 +1,7 @@
 <script lang="ts">
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
-  import '../app.css';
+  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import BreadcrumbsWrapper from "$lib/components/layout/BreadcrumbsWrapper.svelte";
+  import "../app.css";
   let { children, data } = $props();
 
   //$inspect(data);
@@ -20,6 +21,10 @@
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
   </a>
+
+  <div class="g-top-level-container mb-6">
+    <BreadcrumbsWrapper />
+  </div>
 
   {@render children()}
 </div>

@@ -162,7 +162,7 @@
       <div class="flex flex-col gap-4">
         <div class="app-example-wrapper">
           <div
-            class="app-example__frame app-example__frame--resizable app-example__frame--s p-6"
+            class="app-example__frame app-example__frame--resizable app-example__frame--xs p-6"
           >
             <Breadcrumbs {...parametersObject}></Breadcrumbs>
           </div>
@@ -188,7 +188,7 @@
 
     <div class="app-example-wrapper">
       <div
-        class="app-example__frame app-example__frame--resizable app-example__frame--s p-6"
+        class="app-example__frame app-example__frame--resizable app-example__frame--xs p-6"
       >
         <Breadcrumbs />
       </div>
@@ -209,7 +209,7 @@
 
     <div class="app-example-wrapper">
       <div
-        class="app-example__frame app-example__frame--resizable app-example__frame--s p-6"
+        class="app-example__frame app-example__frame--resizable app-example__frame--xs p-6"
       >
         <Breadcrumbs
           items={[
@@ -240,7 +240,7 @@
 
     <div class="app-example-wrapper">
       <div
-        class="app-example__frame app-example__frame--resizable app-example__frame--s p-6"
+        class="app-example__frame app-example__frame--resizable app-example__frame--xs p-6"
       >
         <div class="bg-gray-800 p-4">
           <Breadcrumbs

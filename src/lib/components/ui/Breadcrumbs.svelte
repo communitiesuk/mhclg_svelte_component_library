@@ -55,17 +55,21 @@
       document.body?.classList.contains("govuk-frontend-supported") ?? false;
   });
 
-  // Generate the CSS classes
-  let cssClasses = $derived(() => {
+  // Create reactive state for CSS classes
+  let cssClasses = $state("govuk-breadcrumbs");
+
+  // Update CSS classes when props change
+  $effect(() => {
     let classes = "govuk-breadcrumbs";
     if (collapseOnMobile) classes += " govuk-breadcrumbs--collapse-on-mobile";
     if (inverse) classes += " govuk-breadcrumbs--inverse";
-    return classes;
+    cssClasses = classes;
   });
 
-  // Generate breadcrumb items automatically if not provided
+  // State variable to hold the current breadcrumb items
   let breadcrumbItems = $state<BreadcrumbItem[]>([]);
 
+  // Effect to update breadcrumb items when dependencies change
   $effect(() => {
     breadcrumbItems = items || generateBreadcrumbItems($page, routeModules);
   });
@@ -191,7 +195,7 @@
 
 <nav class={cssClasses} aria-label={ariaLabel}>
   <ol class="govuk-breadcrumbs__list">
-    {#each breadcrumbItems as item, i}
+    {#each breadcrumbItems as item}
       <li class="govuk-breadcrumbs__list-item">
         <a class="govuk-breadcrumbs__link" href={item.href}>{item.text}</a>
       </li>

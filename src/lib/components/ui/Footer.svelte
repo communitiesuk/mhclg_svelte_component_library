@@ -1,0 +1,115 @@
+<script>
+  let {
+    sections = [],
+    inlineLinks = [],
+    metaCustomContent = "",
+    containerWidth = "govuk-width-container",
+    showLicence = true,
+    showCopyright = true,
+  } = $props();
+
+  const crownLogoPath =
+    "M421.5 142.8V.1l-50.7 32.3v161.1h112.4v-50.7zm-122.3-9.6A47.12 47.12 0 0 1 221 97.8c0-26 21.1-47.1 47.1-47.1 16.7 0 31.4 8.7 39.7 21.8l42.7-27.2A97.63 97.63 0 0 0 268.1 0c-36.5 0-68.3 20.1-85.1 49.7A98 98 0 0 0 97.8 0C43.9 0 0 43.9 0 97.8s43.9 97.8 97.8 97.8c36.5 0 68.3-20.1 85.1-49.7a97.76 97.76 0 0 0 149.6 25.4l19.4 22.2h3v-87.8h-80l24.3 27.5zM97.8 145c-26 0-47.1-21.1-47.1-47.1s21.1-47.1 47.1-47.1 47.2 21 47.2 47S123.8 145 97.8 145";
+</script>
+
+<footer class="govuk-footer">
+  <div class={containerWidth}>
+    {#if sections.length > 0}
+      <div class="govuk-footer__navigation">
+        {#each sections as section}
+          <div
+            class="govuk-footer__section {section.columns === 2
+              ? 'govuk-grid-column-two-thirds'
+              : 'govuk-grid-column-one-third'}"
+          >
+            <h2 class="govuk-footer__heading govuk-heading-m">
+              {section.title}
+            </h2>
+            <ul
+              class="govuk-footer__list {section.columns === 2
+                ? 'govuk-footer__list--columns-2'
+                : ''}"
+            >
+              {#each section.items as item}
+                <li class="govuk-footer__list-item">
+                  <a
+                    class="govuk-footer__link"
+                    href={item.href}
+                    lang={item.lang}
+                    hreflang={item.hrefLang}
+                  >
+                    {item.label}
+                  </a>
+                </li>
+              {/each}
+            </ul>
+          </div>
+        {/each}
+      </div>
+      <hr class="govuk-footer__section-break" />
+    {/if}
+
+    <div class="govuk-footer__meta">
+      <div class="govuk-footer__meta-item govuk-footer__meta-item--grow">
+        {#if inlineLinks.length > 0}
+          <h2 class="govuk-visually-hidden">Support links</h2>
+          <ul class="govuk-footer__inline-list">
+            {#each inlineLinks as link}
+              <li class="govuk-footer__inline-list-item">
+                <a
+                  class="govuk-footer__link"
+                  href={link.href}
+                  lang={link.lang}
+                  hreflang={link.hrefLang}
+                >
+                  {link.label}
+                </a>
+              </li>
+            {/each}
+          </ul>
+        {/if}
+
+        {#if metaCustomContent}
+          <div class="govuk-footer__meta-custom">
+            {@html metaCustomContent}
+          </div>
+        {/if}
+
+        {#if showLicence}
+          <svg
+            aria-hidden="true"
+            focusable="false"
+            class="govuk-footer__licence-logo"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 483.2 195.7"
+            height="17"
+            width="41"
+          >
+            <path fill="currentColor" d={crownLogoPath}></path>
+          </svg>
+          <span class="govuk-footer__licence-description">
+            All content is available under the
+            <a
+              class="govuk-footer__link"
+              href="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+              rel="license"
+            >
+              Open Government Licence v3.0
+            </a>, except where otherwise stated
+          </span>
+        {/if}
+      </div>
+
+      {#if showCopyright}
+        <div class="govuk-footer__meta-item">
+          <a
+            class="govuk-footer__link govuk-footer__copyright-logo"
+            href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/"
+          >
+            © Crown copyright
+          </a>
+        </div>
+      {/if}
+    </div>
+  </div>
+</footer>

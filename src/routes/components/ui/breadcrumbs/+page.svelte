@@ -98,14 +98,14 @@
         category: "Display Options",
         isProp: true,
         inputType: "checkbox",
-        value: "false",
+        value: true,
       },
       {
         name: "inverse",
         category: "Display Options",
-        isProp: false,
+        isProp: true,
         inputType: "checkbox",
-        value: "false",
+        value: false,
       },
       {
         name: "ariaLabel",

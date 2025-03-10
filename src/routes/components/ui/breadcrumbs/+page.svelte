@@ -224,7 +224,7 @@
     <h6>Collapsed on Mobile with Inverse Colors</h6>
     <CodeBlock
       code={`
-<div class="bg-gray-800 p-4">
+<div class="bg-[#1d70b8] p-4">
   <Breadcrumbs
     items={[
       { text: "Home", href: "/" },
@@ -242,7 +242,7 @@
       <div
         class="app-example__frame app-example__frame--resizable app-example__frame--xs p-6"
       >
-        <div class="bg-gray-800 p-4">
+        <div class="bg-[#1d70b8] p-4">
           <Breadcrumbs
             items={[
               { text: "Home", href: "/" },

@@ -1,9 +1,38 @@
 <script>
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
+  import { foldersLookup } from "$lib/config.js";
+  import ComponentDetailsUpdate from "$lib/package-wrapping/ComponentDetailsUpdate.svelte";
   import LoadArrayOfComponents from "./local-lib/LoadArrayOfComponents.svelte";
 
-
   let { data } = $props();
+
+  const wrappersComponentsObject = import.meta.glob(
+    "./../wrappers/*/*.svelte",
+    {
+      eager: true,
+    },
+  );
+
+  const wrappersComponentsArray = Object.keys(wrappersComponentsObject).map(
+    (el) => {
+      const splitPath = el.split("/");
+
+      return {
+        component: wrappersComponentsObject[el],
+        name: splitPath[splitPath.length - 1].replace("Wrapper.svelte", ""),
+        folder: splitPath[splitPath.length - 2],
+      };
+    },
+  );
+
+  const wrappersPaths = Object.keys(wrappersComponentsObject);
+  const wrappersFolders = wrappersPaths.map((el) => {
+    const splitPath = el.split("/");
+    return splitPath[splitPath.length - 2];
+  });
+
+  console.log(wrappersComponentsArray);
 
   /**
    * && 		Description of the code, how it works and what it does.
@@ -47,14 +76,29 @@ TODO
         and test out the component's parameters and see example use cases.
       </p>
 
-      {#each data.componentsSubFolders as subFolder}
+      {#each [...new Set(wrappersComponentsArray.map((el) => el.folder))] as folder}
+        <h5 class="underline underline-offset-4 mt-10 mb-8">
+          {textStringConversion(
+            foldersLookup[folder] ?? folder,
+            "title-first-word",
+          )}
+        </h5>
+        {@const wrappersArray = wrappersComponentsArray.filter(
+          (el) => el.folder === folder,
+        )}
+        {#each wrappersArray as wrapper}
+          <ComponentDetailsUpdate {wrapper}></ComponentDetailsUpdate>
+        {/each}
+      {/each}
+
+      <!-- {#each data.componentsSubFolders as subFolder}
         {#if subFolder.subFolders.length > 0}
           <h5 class="underline underline-offset-4 mt-10 mb-8">
             {subFolder.label}
           </h5>
           <LoadArrayOfComponents {subFolder}></LoadArrayOfComponents>
         {/if}
-      {/each}
+      {/each} -->
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
     <div>
@@ -64,8 +108,8 @@ TODO
         practice combining components.
       </p>
       <p>All our playground examples are listed below.</p>
-      <LoadArrayOfComponents subFolder={data.playgroundFolders}
-      ></LoadArrayOfComponents>
+      <!-- <LoadArrayOfComponents subFolder={data.playgroundFolders}
+      ></LoadArrayOfComponents> -->
     </div>
     <DividerLine margin="1rem 0rem"></DividerLine>
   </div>

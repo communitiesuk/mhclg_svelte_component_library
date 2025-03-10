@@ -1,18 +1,21 @@
 <script lang="ts">
-  import type { Snippet } from 'svelte'
+  import type { Snippet } from "svelte";
 
-  // Props
+  import { onMount } from "svelte";
+  import { SvelteSet } from "svelte/reactivity";
+
   let {
     sections = [],
-    hideAllSections = 'Hide all sections',
-    hideSection = 'Hide',
-    hideSectionAriaLabel = 'Hide this section',
-    showAllSections = 'Show all sections',
-    showSection = 'Show',
-    showSectionAriaLabel = 'Show this section',
+    hideAllSections = "Hide all sections",
+    hideSection = "Hide",
+    hideSectionAriaLabel = "Hide this section",
+    showAllSections = "Show all sections",
+    showSection = "Show",
+    showSectionAriaLabel = "Show this section",
     allSectionToggle = true,
     minSectionsAllSectionToggle = 2,
     rememberIsExpandedState = true,
+    headingLevel = "h4",
   }: {
     sections: {
       heading: string;
@@ -30,88 +33,92 @@
     allSectionToggle?: boolean;
     minSectionsAllSectionToggle?: number;
     rememberIsExpandedState?: boolean;
+    headingLevel?: string;
   } = $props();
 
+  //Attempt to ensure that ids are unique by attaching extra characters
+  let uniqueSections = $derived(
+    sections.map((section) => {
+      return {
+        ...section,
+        uniqueid:
+          section.id +
+          section.heading.slice(1, 3) +
+          (section?.summary?.slice(0, 2) ?? ""),
+      };
+    }),
+  );
 
-  // State and derived stores
-  let expandedSections = $state(new Set<string>());
+  let expandedSections = $derived(
+    new SvelteSet(
+      uniqueSections
+        .filter((section) => section.expanded)
+        .map((section) => section.uniqueid),
+    ),
+  );
+
   let allExpanded = $derived(expandedSections.size === sections.length);
+
+  let ariaLiveValue: "polite" | "off" | "assertive" | null | undefined =
+    $state("polite");
 
   // Event handlers
 
-  function toggleSection(id: string) {
-    // Create a new reference to trigger Svelte 5 reactivity
-    const updatedExpandedSections = new Set(expandedSections);
-    if (updatedExpandedSections.has(id)) {
-      updatedExpandedSections.delete(id);
+  function toggleSection(uniqueid: string) {
+    if (expandedSections.has(uniqueid)) {
+      expandedSections.delete(uniqueid);
     } else {
-      updatedExpandedSections.add(id);
+      expandedSections.add(uniqueid);
     }
-    // Reassign so Svelte treats this as a new value
-    expandedSections = updatedExpandedSections;
+    //Announce the contents change when an accoridion section is expanded
+    ariaLiveValue = "polite";
   }
 
   function toggleAll() {
-    // Create a new reference to trigger Svelte 5 reactivity
-    const updatedExpandedSections = new Set(expandedSections);
-    if (allExpanded) {
-      updatedExpandedSections.clear();
+    if (!allExpanded) {
+      uniqueSections.forEach((section) =>
+        expandedSections.add(section.uniqueid),
+      );
     } else {
-      sections.forEach(section => updatedExpandedSections.add(section.id));
+      expandedSections.clear();
     }
-    // Reassign so Svelte treats this as a new value
-    expandedSections = updatedExpandedSections;
+    //Don't announce all of the changes when we open all sections - this gets noisy and the content isn't associated with the label
+    ariaLiveValue = "off";
   }
-
-  // Browser storage
-  import { browser } from '$app/environment';
-  import { onMount } from 'svelte';
 
   // Only use session storage logic if rememberIsExpandedState is true
   onMount(() => {
-    if (browser && rememberIsExpandedState) {
-      const updatedExpandedSections = new Set(expandedSections);
-      sections.forEach((section) => {
+    if (rememberIsExpandedState) {
+      uniqueSections.forEach((section) => {
         // If the section is explicitly expanded, respect that.
         // Otherwise, try to restore from session storage.
         if (section.expanded) {
-          updatedExpandedSections.add(section.id);
+          expandedSections.add(section.uniqueid);
         } else {
-          try {
-            const stored = sessionStorage.getItem(section.id);
-            if (stored === 'true') {
-              updatedExpandedSections.add(section.id);
-            }
-          } catch (e) {
-            // Handle storage errors gracefully (e.g. private mode)
+          const stored = sessionStorage.getItem(section.uniqueid);
+          if (stored === "true") {
+            expandedSections.add(section.uniqueid);
           }
         }
       });
-      expandedSections = updatedExpandedSections; // triggers reactivity
     } else {
       // If rememberIsExpandedState is false, just respect the initial `section.expanded` values
-      const updatedExpandedSections = new Set(expandedSections);
-      sections.forEach((section) => {
+      uniqueSections.forEach((section) => {
         if (section.expanded) {
-          updatedExpandedSections.add(section.id);
+          expandedSections.add(section.uniqueid);
         }
       });
-      expandedSections = updatedExpandedSections;
     }
   });
 
-  // Effect to update sessionStorage when sections change
+  // Effect to update sessionStorage when uniqueSections change
   $effect(() => {
-    if (browser && rememberIsExpandedState) {
-      sections.forEach((section) => {
-        try {
-          sessionStorage.setItem(
-            section.id,
-            expandedSections.has(section.id).toString()
-          );
-        } catch (e) {
-          // Handle storage errors gracefully
-        }
+    if (rememberIsExpandedState) {
+      uniqueSections.forEach((section) => {
+        sessionStorage.setItem(
+          section.uniqueid,
+          expandedSections.has(section.uniqueid).toString(),
+        );
       });
     }
   });
@@ -123,8 +130,9 @@
   id="accordion-default"
 >
   <div
-  class="govuk-accordion__controls"
-  hidden={!allSectionToggle || sections.length < minSectionsAllSectionToggle}
+    class="govuk-accordion__controls"
+    hidden={!allSectionToggle ||
+      uniqueSections.length < minSectionsAllSectionToggle}
   >
     <button
       type="button"
@@ -142,66 +150,93 @@
     </button>
   </div>
 
-  {#each sections as section}
-    {@const isExpanded = expandedSections.has(section.id)}
+  {#snippet headerContent(section, isExpanded)}
+    <button
+      type="button"
+      aria-controls="{section.uniqueid}-content"
+      id="{section.uniqueid}-button"
+      class="govuk-accordion__section-button"
+      aria-expanded={isExpanded}
+      onclick={() => toggleSection(section.uniqueid)}
+      aria-label="{section.heading}, {section.summary
+        ? section.summary + ','
+        : ''} {isExpanded ? hideSectionAriaLabel : showSectionAriaLabel}"
+    >
+      <span class="govuk-accordion__section-heading-text">
+        <span class="govuk-accordion__section-heading-text-focus"
+          >{section.heading}</span
+        >
+      </span>
+
+      {#if section.summary}
+        <span
+          class="govuk-visually-hidden govuk-accordion__section-heading-divider"
+          >,
+        </span>
+        <span class="govuk-accordion__section-summary govuk-body">
+          <span class="govuk-accordion__section-summary-focus"
+            >{section.summary}</span
+          >
+        </span>
+      {/if}
+
+      <span class="govuk-accordion__section-toggle" data-nosnippet>
+        <span class="govuk-accordion__section-toggle-focus">
+          <span
+            class="govuk-accordion-nav__chevron"
+            class:govuk-accordion-nav__chevron--down={!isExpanded}
+          ></span>
+          <span class="govuk-accordion__section-toggle-text">
+            {isExpanded ? hideSection : showSection}
+          </span>
+        </span>
+      </span>
+    </button>
+  {/snippet}
+
+  {#each uniqueSections as section}
+    {@const isExpanded = expandedSections.has(section.uniqueid)}
     <div
       class="govuk-accordion__section"
       class:govuk-accordion__section--expanded={isExpanded}
     >
       <div class="govuk-accordion__section-header">
-        <h2 class="govuk-accordion__section-heading">
-          <button
-            type="button"
-            aria-controls="{section.id}-content"
-            class="govuk-accordion__section-button"
-            aria-expanded={isExpanded}
-            onclick={() => toggleSection(section.id)}
-            aria-label="{section.heading}, {isExpanded
-              ? hideSectionAriaLabel
-              : showSectionAriaLabel}"
-          >
-            <span class="govuk-accordion__section-heading-text">
-              <span class="govuk-accordion__section-heading-text-focus"
-                >{section.heading}</span
-              >
-            </span>
-
-            {#if section.summary}
-              <span
-                class="govuk-visually-hidden govuk-accordion__section-heading-divider"
-                >,
-              </span>
-              <span class="govuk-accordion__section-summary govuk-body">
-                <span class="govuk-accordion__section-summary-focus"
-                  >{section.summary}</span
-                >
-              </span>
-            {/if}
-
-            <span class="govuk-accordion__section-toggle" data-nosnippet>
-              <span class="govuk-accordion__section-toggle-focus">
-                <span
-                  class="govuk-accordion-nav__chevron"
-                  class:govuk-accordion-nav__chevron--down={!isExpanded}
-                ></span>
-                <span class="govuk-accordion__section-toggle-text">
-                  {isExpanded ? hideSection : showSection}
-                </span>
-              </span>
-            </span>
-          </button>
-        </h2>
+        {#if headingLevel.toLowerCase() == "h2"}
+          <h2 class="govuk-accordion__section-heading">
+            {@render headerContent(section, isExpanded)}
+          </h2>
+        {:else if headingLevel.toLowerCase() == "h3"}
+          <h3 class="govuk-accordion__section-heading">
+            {@render headerContent(section, isExpanded)}
+          </h3>
+        {:else if headingLevel.toLowerCase() == "h4"}
+          <h4 class="govuk-accordion__section-heading">
+            {@render headerContent(section, isExpanded)}
+          </h4>
+        {:else if headingLevel.toLowerCase() == "h5"}
+          <h5 class="govuk-accordion__section-heading">
+            {@render headerContent(section, isExpanded)}
+          </h5>
+        {:else if headingLevel.toLowerCase() == "h6"}
+          <h6 class="govuk-accordion__section-heading">
+            {@render headerContent(section, isExpanded)}
+          </h6>
+        {/if}
       </div>
       <div
-        id="{section.id}-content"
+        id="{section.uniqueid}-content"
         class="govuk-accordion__section-content"
-        aria-labelledby="{section.id}-heading"
+        aria-live={ariaLiveValue}
         hidden={!isExpanded}
+        role={uniqueSections.length < 6 ? "region" : ""}
+        aria-labelledby={uniqueSections.length < 6
+          ? section.uniqueid + "-button"
+          : ""}
       >
-        {#if typeof section.content === 'string'}
-        <p class="govuk-body">{section.content}</p>
+        {#if typeof section.content === "string"}
+          <p class="govuk-body">{section.content}</p>
         {:else}
-        {@render section.content()}
+          {@render section.content()}
         {/if}
       </div>
     </div>

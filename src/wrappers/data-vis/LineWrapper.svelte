@@ -414,6 +414,22 @@
       visible: { name: "includeMarkers", value: true },
     },
     {
+      name: "includeLabels",
+      category: "labels",
+      isProp: true,
+      inputType: "checkbox",
+      value: true,
+      visible: { name: "includeMarkers", value: true },
+    },
+    {
+      name: "labelText",
+      category: "labels",
+      isProp: true,
+      inputType: "input",
+      value: "txt",
+      visible: { name: "includeMarkers", value: true },
+    },
+    {
       name: "opacity",
       category: "overallStyling",
       isProp: true,

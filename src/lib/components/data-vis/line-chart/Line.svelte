@@ -9,7 +9,6 @@
     pathFillColor = "none",
     pathStrokeDashArray = "none",
     includeMarkers = false,
-    markerLabels = true,
     markerShape = "circle",
     markerRadius = 5,
     markerFill = "#b312a0",
@@ -28,6 +27,8 @@
     // onMouseEnterMarker,
     // onMouseLeaveMarker,
     onMouseMoveMarker,
+    includeLabels,
+    labelText,
   } = $props();
 
   let hoveredMarker = $state();
@@ -94,10 +95,9 @@
             stroke-width={markerStrokeWidth}
           ></polygon>
         {/if}
-        {#if markerLabels}
+        {#if includeLabels}
           {#if i == hoveredMarker}
-            <ValueLabel {marker} textContent={[marker.y, marker.x]}
-            ></ValueLabel>
+            <ValueLabel {marker} textContent={[marker[labelText], ""]}></ValueLabel>
           {/if}
         {/if}
       </g>

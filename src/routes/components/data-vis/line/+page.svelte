@@ -378,6 +378,19 @@
         inputType: 'checkbox',
       },
       {
+        name: 'includeLabels',
+        category: 'labels',
+        isProp: true,
+        inputType: 'checkbox',
+      },
+      {
+        name: 'labelText',
+        category: 'labels',
+        isProp: true,
+        inputType: 'input',
+        value: 'txt'
+      },
+      {
         name: 'markerShape',
         category: 'markers',
         isProp: true,

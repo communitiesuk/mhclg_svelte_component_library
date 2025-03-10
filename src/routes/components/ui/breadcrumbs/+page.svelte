@@ -81,7 +81,7 @@
         name: "items",
         category: "Content",
         isProp: true,
-        inputType: "textArea",
+        inputType: "javascript",
         value: JSON.stringify(
           [
             { text: "Home", href: "/" },
@@ -175,7 +175,7 @@
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
     <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
-    <h6>Basic Breadcrumbs</h6>
+    <h6>Basic Automatically Generated Breadcrumbs</h6>
     <CodeBlock
       code={`
 <script>
@@ -194,7 +194,7 @@
       </div>
     </div>
 
-    <h6>Custom Breadcrumbs Items</h6>
+    <h6>Custom Specified Breadcrumbs Items</h6>
     <CodeBlock
       code={`
 <Breadcrumbs

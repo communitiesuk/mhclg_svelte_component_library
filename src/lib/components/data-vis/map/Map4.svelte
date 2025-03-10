@@ -6,7 +6,7 @@
   import topo from "./topo.json";
   import pconData from "./salary-pcon10.json";
 
-  $inspect(topo);
+  // $inspect(topo);
 
   //Stolen from ons svelte-maps
   const colors = {
@@ -110,11 +110,11 @@
     crs: { properties: { name: "EPSG:4326" }, type: "name" },
   };
 
-  $inspect(obj2Map, obj1Map, merged);
+  // $inspect(obj2Map, obj1Map, merged);
 
   let map = $state();
   let mapContainer = $state();
-  $inspect(mapContainer, merged);
+  // $inspect(mapContainer, merged);
 
   config.apiKey = "kVCqOKEzaCneaDROeFHC";
 
@@ -138,45 +138,48 @@
 
       // The feature-state dependent fill-opacity expression will render the hover effect
       // when a feature's hover state is set to true.
-      map.addLayer({
-        id: "state-fills",
-        type: "fill",
-        source: "states",
-        layout: {},
-        paint: {
-          "fill-color": ["get", "color"],
-          //Or use a step function to do the processing:
-          // [
-          //   "step",
-          //   ["get", "salary"], // Use "DENSITY" property for color mapping
-          //   "#FFEDA0",
-          //   10,
-          //   "#FED976",
-          //   20,
-          //   "#FEB24C",
-          //   50,
-          //   "#FD8D3C",
-          //   100,
-          //   "#FC4E2A",
-          //   200,
-          //   "#E31A1C",
-          //   500,
-          //   "#BD0026",
-          //   1000,
-          //   "#800026",
-          // ],
-          "fill-opacity": [
-            "case",
-            ["boolean", ["feature-state", "hover"], false],
-            1,
-            0.8,
-          ],
-          "fill-outline-color": "rgba(255, 255, 255, 0)",
+      map.addLayer(
+        {
+          id: "state-fills",
+          type: "fill",
+          source: "states",
+          layout: {},
+          paint: {
+            "fill-color": ["get", "color"],
+            //Or use a step function to do the processing:
+            // [
+            //   "step",
+            //   ["get", "salary"], // Use "DENSITY" property for color mapping
+            //   "#FFEDA0",
+            //   10,
+            //   "#FED976",
+            //   20,
+            //   "#FEB24C",
+            //   50,
+            //   "#FD8D3C",
+            //   100,
+            //   "#FC4E2A",
+            //   200,
+            //   "#E31A1C",
+            //   500,
+            //   "#BD0026",
+            //   1000,
+            //   "#800026",
+            // ],
+            "fill-opacity": [
+              "case",
+              ["boolean", ["feature-state", "hover"], false],
+              1,
+              0.5,
+            ],
+            "fill-outline-color": "rgba(255, 255, 255, 0)",
+          },
         },
-      });
+        "Water", //The ID of the layer before which this layer will be added (I got the ID from map.style and looking at _layers)
+      );
     });
   });
-
+  $inspect(map.style);
   //   onDestroy(() => {
   //     map.remove();
   //   });

@@ -40,7 +40,7 @@
       );
     }
 
-    console.log(map?.getLayersOrder());
+    // console.log(map?.getLayersOrder());
   });
 
   let filterStates = $state(false);
@@ -84,7 +84,10 @@
     {#if showBorder}
       <LineLayer
         layout={{ "line-cap": "round", "line-join": "round" }}
-        paint={{ "line-color": borderColor, "line-width": 3 }}
+        paint={{
+          "line-color": hoverStateFilter(borderColor, "orange"), // Neat svelte-maplibre method for setting the colour based on whether the area is hovered
+          "line-width": 3,
+        }}
         beforeLayerType="symbol"
       />
     {/if}

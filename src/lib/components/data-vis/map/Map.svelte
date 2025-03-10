@@ -8,6 +8,7 @@
   class="map"
   standardControls
   style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+  cooperativeGestures
 />
 
 <style>

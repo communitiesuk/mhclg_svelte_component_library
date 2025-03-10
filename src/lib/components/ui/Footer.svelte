@@ -1,4 +1,5 @@
-<script>
+<script lang="ts">
+
   // Define component props with default values
   // sections: array of footer navigation sections
   // inlineLinks: array of inline footer links
@@ -6,14 +7,37 @@
   // containerWidth: width class for the container
   // showLicence: toggle for OGL license display
   // showCopyright: toggle for crown copyright display
+
+  // Define types for component props
+  interface FooterItem {
+    href: string;
+    label: string;
+    lang?: string;
+    hrefLang?: string;
+  }
+
+  interface FooterSection {
+    title: string;
+    columns?: number;
+    items: FooterItem[];
+  }
+
+  // Define component props with types and default values
   let {
-    sections = [],
-    inlineLinks = [],
+    sections = [] as FooterSection[],
+    inlineLinks = [] as FooterItem[],
     metaCustomContent = "",
     containerWidth = "govuk-width-container",
     showLicence = true,
     showCopyright = true,
-  } = $props();
+  } = $props<{
+    sections?: FooterSection[];
+    inlineLinks?: FooterItem[];
+    metaCustomContent?: string;
+    containerWidth?: string;
+    showLicence?: boolean;
+    showCopyright?: boolean;
+  }>();
 
   // SVG path data for the crown logo used in the license section
   const crownLogoPath =

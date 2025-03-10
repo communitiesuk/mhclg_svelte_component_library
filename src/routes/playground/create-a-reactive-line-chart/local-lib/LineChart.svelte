@@ -36,9 +36,7 @@
   let yearsMinMax = $derived([Math.min(...allYears), Math.max(...allYears)]);
 
   let xFunction = $derived(
-    scaleLinear()
-      .domain(yearsMinMax)
-      .range([0 + 50, chartWidth - 50]),
+    scaleLinear().domain(yearsMinMax).range([0, chartWidth]),
   );
 
   let allValues = $derived(flatData.map((el) => el.y));

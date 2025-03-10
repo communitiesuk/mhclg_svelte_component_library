@@ -9,8 +9,8 @@
 <g transform="translate({chartWidth},{0})">
   <text
     dominant-baseline="central"
-    text-anchor="end"
-    x={70}
+    text-anchor="start"
+    x={15}
     y={yFunction(dataArray[0].y)}>{dataArray[0].areaCode}</text
   >
 </g>

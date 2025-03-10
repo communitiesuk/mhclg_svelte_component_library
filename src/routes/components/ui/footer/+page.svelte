@@ -107,7 +107,7 @@
         isProp: true,
         inputType: "input",
         value:
-          'Built by the &lt;a href="#" class="govuk-footer__link">Government Digital Service&lt;/a>',
+          'Built by the <a href="#" class="govuk-footer__link">Government Digital Service</a>',
       },
       {
         name: "containerWidth",
@@ -399,8 +399,8 @@
       </div>
     </div>
 
-    <!-- Example 5: With Welsh Language Support -->
-    <h3 class="govuk-heading-m">With Welsh Language Support</h3>
+    <!-- Example 5: With Language Attributes (Welsh Example) -->
+    <h3 class="govuk-heading-m">With Language Attributes (Welsh Example)</h3>
     <CodeBlock
       code={`<script>
   import Footer from "$lib/components/ui/Footer.svelte";
@@ -411,8 +411,8 @@
     { 
       href: "/welsh", 
       label: "Rhestr o Wasanaethau Cymraeg",
-      lang: "cy",
-      hrefLang: "cy"
+      lang: "cy",        // ISO 639-1 Welsh language code
+      hrefLang: "cy"     // Indicates linked document is in Welsh
     }
   ];
 </script>

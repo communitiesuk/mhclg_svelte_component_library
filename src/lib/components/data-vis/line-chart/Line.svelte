@@ -34,13 +34,15 @@
   let hoveredMarker = $state();
 
   function makeList(inputValue) {
-    let items = inputValue.split(",").map((item) => item.trim());
+    let items = inputValue.split("\\n").map((item) => item.trim());
     return items;
   }
 
   function parseInput(marker, inputValue) {
     let items = makeList(inputValue);
-    let mappedItems = items.map((item) => marker[item] ?? item);
+    let mappedItems = items.map((item) =>
+      item.replace(/\{(\w+)\}/g, (_, key) => marker[key] ?? `{${key}}`),
+    );
     return mappedItems;
   }
 

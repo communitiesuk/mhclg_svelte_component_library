@@ -33,9 +33,15 @@
 
   let hoveredMarker = $state();
 
-  function parseInput(inputValue) {
+  function makeList(inputValue) {
     let items = inputValue.split(",").map((item) => item.trim());
     return items;
+  }
+
+  function parseInput(marker, inputValue) {
+    let items = makeList(inputValue);
+    let mappedItems = items.map((item) => marker[item] ?? item);
+    return mappedItems;
   }
 
   function onMouseEnterMarker(i) {
@@ -102,7 +108,7 @@
         {/if}
         {#if includeLabels}
           {#if i == hoveredMarker}
-            <ValueLabel {marker} textContent={parseInput(labelText)}
+            <ValueLabel {marker} textContent={parseInput(marker, labelText)}
             ></ValueLabel>
           {/if}
         {/if}

@@ -7,6 +7,7 @@
   let lineSpacing = $state(20);
   let verticalPadding = $state(8);
   let horizontalPadding = $derived(verticalPadding * 2);
+  $inspect(textContent);
 </script>
 
 <svg width="300" height="300">

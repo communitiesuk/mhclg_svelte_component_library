@@ -34,10 +34,8 @@
   let hoveredMarker = $state();
 
   function parseInput(inputValue) {
-    let items = inputValue
-      .split(",")
-      .map((item) => item.trim())
-    return items
+    let items = inputValue.split(",").map((item) => item.trim());
+    return items;
   }
 
   function onMouseEnterMarker(i) {

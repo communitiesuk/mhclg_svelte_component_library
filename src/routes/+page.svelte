@@ -71,9 +71,9 @@ TODO
     <div>
       <h4 class="mb-6">Introduction</h4>
       <p>
-        This library has been developed by members of the MHCLG's Data Tools
-        team to house components for use in the organisation's public facing
-        products.
+        This library has been developed by members of the MHCLG's Digital,
+        Design and Development team to house components for use in the
+        organisation's digital products.
       </p>
 
       <p>

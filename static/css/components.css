@@ -40,7 +40,8 @@
   [data-role="component-container"] {
     @apply grid place-items-center;
   }
-  [data-role="component-container-centered"] {
-    @apply bg-[#f8f8f8] px-0 py-5;
-  }
+}
+
+[role="tabpanel"] {
+  @apply my-2 mx-0 p-0;
 }

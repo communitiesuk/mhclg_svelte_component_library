@@ -4,7 +4,7 @@
   import { browser } from "$app/environment";
   import { page } from "$app/state";
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
-  import CheckBox from "$lib/components/ui/CheckBox.svelte";
+  import CheckBox from "$lib/components/ui/Checkbox.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";

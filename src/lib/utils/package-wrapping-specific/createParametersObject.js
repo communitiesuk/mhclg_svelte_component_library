@@ -1,7 +1,7 @@
 export function createParametersObject(
   parametersSourceArray,
   parametersValuesArray,
-  derivedObject = {}
+  derivedObject = {},
 ) {
   // Start with a copy of derivedObject
   // so that we can overwrite or add properties.
@@ -23,13 +23,13 @@ export function createParametersObject(
 
     // 2. Determine value from `valuesArray` or from `handlerFunction` if event
     let newValue =
-      inputType === 'event' ? handlerFunction : parametersValuesArray[index];
+      inputType === "event" ? handlerFunction : parametersValuesArray[index];
 
     // Parse string as a function if inputType is "function"
-    if (inputType === 'function') {
+    if (inputType === "function") {
       try {
         newValue = new Function(`return (${parametersValuesArray[index]})`)();
-      } catch(e) {
+      } catch (e) {
         // Fallback in case of parsing error
         newValue = undefined;
       }

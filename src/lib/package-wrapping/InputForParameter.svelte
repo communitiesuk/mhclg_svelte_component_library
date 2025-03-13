@@ -1,5 +1,4 @@
 <script>
-  import { onMount } from "svelte";
   import loader from "@monaco-editor/loader";
   import Pill from "$lib/components/content/Pill.svelte";
   import CodeBlock from "$lib/components/content/CodeBlock.svelte";
@@ -180,19 +179,27 @@
   {@render parameterName(source.name, propPillObject)}
 {/if}
 
-{#if "label" in source}
-  <p class="my-2 mx-0 p-0 text-sm text-black">{source.label}</p>
-  {#if source.exampleCode}
-    <p
-      class="mt-4 mb-0 mx-0 p-0 break-words text-sm rounded-md"
-      style="color: #ba029b"
-    >
-      <CodeBlock
-        code={source.exampleCode}
-        language="svelte"
-        size="xs"
-        includeHeader={false}
-      />
+{#if source.label}
+  <div
+    class="my-2 mx-0 p-2 text-sm text-slate-600 rounded-lg bg-white border border-solid border-slate-600"
+  >
+    <p class="underline underline-offset-4 p-0 m-0">Desc:</p>
+    <p class="p-0 m-0">
+      {source.label}
     </p>
-  {/if}
+  </div>
+{/if}
+
+{#if source.exampleCode}
+  <p
+    class="mt-4 mb-0 mx-0 p-0 break-words text-sm rounded-md"
+    style="color: #ba029b"
+  >
+    <CodeBlock
+      code={source.exampleCode}
+      language="svelte"
+      size="xs"
+      includeHeader={false}
+    />
+  </p>
 {/if}

@@ -83,6 +83,7 @@
   import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import CodeBlock from "$lib/components/content/CodeBlock.svelte";
+  import ComponentDemo from "$lib/package-wrapping/ComponentDemo.svelte";
 
   import { browser } from "$app/environment";
   import Checkbox from "$lib/components/ui/Checkbox.svelte";
@@ -95,8 +96,14 @@
   import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { getValueFromParametersArray } from "$lib/utils/data-transformations/getValueFromParametersArray.js";
+  import { createBindableParametersValuesArray } from "$lib/utils/package-wrapping-specific/createBindableParametersValuesArray.js";
 
   let { data } = $props();
+
+  /**
+   * CUSTOMISETHIS  Choose how many columns to split prop/parameter groups into on desktop. Note that this will automatically get reduced to 2 and then 1 column on narrow screen widths.
+   */
+  let numberOfPropColumnsOnDesktop = 3;
 
   /**
    * DONOTTOUCH *
@@ -144,103 +151,108 @@
    * ?      This input is rendered as html, so you can use <br> for line breaks and &emsp; for tabs.
    */
 
-  let parametersSourceArray = addIndexAndInitalValue([
-    {
-      name: "legend",
-      category: "Content",
-      isProp: true,
-      inputType: "input",
-      value: "How would you like to be contacted?",
-    },
-    {
-      name: "hint",
-      category: "Content",
-      isProp: true,
-      inputType: "input",
-      value: "Select all that apply",
-    },
-    {
-      name: "selectedValues",
-      category: "Content",
-      isProp: true,
-      isBindable: true,
-      inputType: "input",
-      value: "[]",
-    },
-    {
-      name: "name",
-      category: "Form",
-      isProp: true,
-      inputType: "input",
-      value: "contact-preferences",
-    },
-    {
-      name: "options",
-      category: "Content",
-      isProp: true,
-      inputType: "javascript",
-      value: JSON.stringify(
-        [
-          {
-            value: "email",
-            label: "Email",
-            hint: "We'll send updates to your inbox",
-          },
-          {
-            value: "sms",
-            label: "Text message",
-            hint: "UK mobile numbers only",
-          },
-          {
-            value: "phone",
-            label: "Phone call",
-            hint: "We'll call during business hours",
-          },
-          {
-            value: "none",
-            label: "Do not contact me",
-            exclusive: true,
-          },
-        ],
-        null,
-        2,
-      ),
-    },
-    {
-      name: "error",
-      category: "Validation",
-      isProp: true,
-      inputType: "input",
-      value: "",
-    },
-    {
-      name: "isPageHeading",
-      category: "UI Options",
-      isProp: true,
-      inputType: "checkbox",
-      value: "false",
-    },
-    {
-      name: "small",
-      category: "UI Options",
-      isProp: true,
-      inputType: "checkbox",
-      value: "false",
-    },
-    {
-      name: "legendSize",
-      category: "UI Options",
-      isProp: true,
-      inputType: "dropdown",
-      options: ["l", "m", "s"],
-      value: "l",
-    },
-    {
-      name: "validate",
-      category: "Validation",
-      isProp: true,
-      inputType: "function",
-      value: `function validateContactPreferences(values) {
+  let selectedValues = $state([]);
+
+  $inspect(selectedValues);
+
+  let parametersSourceArray = $derived(
+    addIndexAndInitalValue([
+      {
+        name: "legend",
+        category: "Content",
+        isProp: true,
+        inputType: "input",
+        value: "How would you like to be contacted?",
+      },
+      {
+        name: "hint",
+        category: "Content",
+        isProp: true,
+        inputType: "input",
+        value: "Select all that apply",
+      },
+      {
+        name: "selectedValues",
+        category: "Content",
+        isProp: true,
+        isBindable: true,
+        inputType: "binded",
+        value: selectedValues,
+      },
+      {
+        name: "name",
+        category: "Form",
+        isProp: true,
+        inputType: "input",
+        value: "contact-preferences",
+      },
+      {
+        name: "options",
+        category: "Content",
+        isProp: true,
+        inputType: "javascript",
+        value: JSON.stringify(
+          [
+            {
+              value: "email",
+              label: "Email",
+              hint: "We'll send updates to your inbox",
+            },
+            {
+              value: "sms",
+              label: "Text message",
+              hint: "UK mobile numbers only",
+            },
+            {
+              value: "phone",
+              label: "Phone call",
+              hint: "We'll call during business hours",
+            },
+            {
+              value: "none",
+              label: "Do not contact me",
+              exclusive: true,
+            },
+          ],
+          null,
+          2,
+        ),
+      },
+      {
+        name: "error",
+        category: "Validation",
+        isProp: true,
+        inputType: "input",
+        value: "",
+      },
+      {
+        name: "isPageHeading",
+        category: "UI Options",
+        isProp: true,
+        inputType: "checkbox",
+        value: "false",
+      },
+      {
+        name: "small",
+        category: "UI Options",
+        isProp: true,
+        inputType: "checkbox",
+        value: "false",
+      },
+      {
+        name: "legendSize",
+        category: "UI Options",
+        isProp: true,
+        inputType: "dropdown",
+        options: ["l", "m", "s"],
+        value: "l",
+      },
+      {
+        name: "validate",
+        category: "Validation",
+        isProp: true,
+        inputType: "function",
+        value: `function validateContactPreferences(values) {
   if (values.length === 0) {
     return "Please select at least one contact method";
   }
@@ -256,22 +268,31 @@
   }
   return undefined;
 }`,
-    },
-  ]).map((el) => ({
-    ...el,
-    handlerFunction:
-      el.inputType === "event"
-        ? (el.handlerFunction ??
-          function (event) {
-            defineDefaultEventHandler(
-              event,
-              parametersSourceArray,
-              parametersValuesArray,
-              el.name,
-            );
-          })
-        : null,
-  }));
+      },
+      {
+        name: "test",
+        category: "UI Options",
+        isProp: true,
+        inputType: "input",
+        value: "l",
+        rows: 5,
+      },
+    ]).map((el) => ({
+      ...el,
+      handlerFunction:
+        el.inputType === "event"
+          ? (el.handlerFunction ??
+            function (event) {
+              defineDefaultEventHandler(
+                event,
+                parametersSourceArray,
+                parametersValuesArray,
+                el.name,
+              );
+            })
+          : null,
+    })),
+  );
 
   /**
    * DONOTTOUCH *
@@ -279,8 +300,14 @@
    * &&     This array is then used to track the values associated with each parameter as they are modified by the user using form inputs.
    */
   let parametersValuesArray = $state(
-    parametersSourceArray.map((el) => el.value), //&& Something
+    parametersSourceArray.map((el) => el.value),
   );
+
+  let bindingsParametersValuesArray = $derived(
+    parametersSourceArray.map((el) => el.value),
+  );
+
+  $inspect(bindingsParametersValuesArray);
 
   /**
    * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
@@ -299,25 +326,15 @@
     ),
   );
 
-  let selectedValues = $derived(
-    JSON.parse(
-      getValueFromParametersArray(
-        parametersSourceArray,
-        parametersValuesArray,
-        "selectedValues",
-      ),
-    ),
-  );
-
-  $inspect(typeof selectedValues);
-
   /**
    * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
    * && 		Here you can add additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
    * &&     Note that these parameters STILL NEED TO BE LISTED in the source array (with a null input type and null value).
    * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
    */
-  let derivedParametersObject = $derived({ options, selectedValues });
+  let derivedParametersObject = $derived({ options });
+
+  $inspect(derivedParametersObject);
 
   /**
    * DONOTTOUCH *
@@ -342,8 +359,6 @@
    *  CUSTOMISETHIS Add any additional JS specific to the component wrapper here
    *
    */
-
-  $inspect(selectedValues);
 </script>
 
 <!--
@@ -384,38 +399,54 @@ DONOTTOUCH  *
   {parametersSourceArray}
   {parametersVisibleArray}
   bind:parametersValuesArray
+  {numberOfPropColumnsOnDesktop}
 ></ParametersSection>
 
-<div data-role="demo-section" class="px-5">
+<!-- <div data-role="demo-section" class="px-5">
   <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
 
-  <!--
+
     DONOTTOUCH  *
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
-    -->
-  <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
-</div>
 
-<div data-role="component-container">
+  <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
+</div> -->
+
+<!-- <div data-role="component-container">
   <div
     data-role="component-container-centered"
     style="width: {demoScreenWidth}px;"
   >
-    <!--
+
     CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
-    -->
+
     <div class="flex flex-col gap-4">
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--l p-6"
-        >
+        <div class="p-6">
           <Checkbox {...parametersObject} />
         </div>
       </div>
     </div>
   </div>
-</div>
+</div> -->
+
+{#snippet Component()}
+  <div class="flex flex-col gap-4">
+    <div class="p-6">
+      <Checkbox {...parametersObject} bind:selectedValues />
+    </div>
+  </div>
+{/snippet}
+
+<ComponentDemo
+  {Component}
+  {parametersSourceArray}
+  {parametersVisibleArray}
+  {bindingsParametersValuesArray}
+  bind:parametersValuesArray
+  bind:demoScreenWidth
+></ComponentDemo>
 
 <!--
     DONOTTOUCH  *

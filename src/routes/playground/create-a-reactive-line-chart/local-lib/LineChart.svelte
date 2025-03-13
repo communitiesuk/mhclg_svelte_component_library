@@ -6,6 +6,7 @@
   import { scaleLinear } from "d3-scale";
   import { curveLinear, line } from "d3-shape";
   import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
+  import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
 
   let { data } = $props();
 
@@ -102,46 +103,14 @@
         </g>
 
         <g data-role="lines-group">
-          {#each data.lines as line, i}
-            <Line
-              {lineFunction}
-              dataArray={line.data}
-              pathStrokeColor="black"
-              pathStrokeWidth="1"
-              opacity="0.15"
-              dataId={line.areaCode}
-              onMouseMove={() => {
-                selectedAreaCode = line.areaCode;
-              }}
-            ></Line>
-          {/each}
-          <g>
-            <Line
-              {lineFunction}
-              dataArray={data.lines.find(
-                (el) => el.areaCode === selectedAreaCode,
-              ).data}
-              pathStrokeColor="red"
-              pathStrokeWidth="5"
-              opacity="1"
-              includeMarkers={true}
-              markerRadius="8"
-              markerStroke="red"
-              markerFill="white"
-              {xFunction}
-              {yFunction}
-            ></Line>
-            <CategoryLabel
-              {chartWidth}
-              {lineFunction}
-              dataArray={data.lines.find(
-                (el) => el.areaCode === selectedAreaCode,
-              ).data}
-              {xFunction}
-              {yFunction}
-              text="hello"
-            ></CategoryLabel>
-          </g>
+          <Lines
+            {data}
+            {lineFunction}
+            {selectedAreaCode}
+            {chartWidth}
+            {xFunction}
+            {yFunction}
+          ></Lines>
         </g>
       </g>
     {/if}

@@ -430,6 +430,22 @@
       visible: { name: "includeMarkers", value: true },
     },
     {
+      name: "labelColor",
+      category: "labels",
+      isProp: true,
+      inputType: "input",
+      value: "#aaaaaa",
+      visible: [{ name: "includeLabels", value: true }],
+    },
+    {
+      name: "labelTextColor",
+      category: "labels",
+      isProp: true,
+      inputType: "input",
+      value: "#000000",
+      visible: [{ name: "includeLabels", value: true }],
+    },
+    {
       name: "opacity",
       category: "overallStyling",
       isProp: true,

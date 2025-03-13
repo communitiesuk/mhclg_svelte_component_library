@@ -29,6 +29,8 @@
     onMouseMoveMarker,
     includeLabels,
     labelText,
+    labelColor,
+    labelTextColor,
   } = $props();
 
   let hoveredMarker = $state();
@@ -110,7 +112,11 @@
         {/if}
         {#if includeLabels}
           {#if i == hoveredMarker}
-            <ValueLabel {marker} textContent={parseInput(marker, labelText)}
+            <ValueLabel
+              {marker}
+              {labelColor}
+              {labelTextColor}
+              textContent={parseInput(marker, labelText)}
             ></ValueLabel>
           {/if}
         {/if}

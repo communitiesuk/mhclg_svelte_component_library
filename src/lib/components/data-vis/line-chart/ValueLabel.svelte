@@ -1,7 +1,7 @@
 <script>
   import { text } from "@sveltejs/kit";
 
-  let { marker, textContent } = $props();
+  let { marker, labelColor, labelTextColor, textContent } = $props();
 
   let textDimensions = $state();
   let lineSpacing = $state(20);
@@ -16,14 +16,14 @@
       height={textDimensions.height + verticalPadding}
       rx="5"
       ry="5"
-      fill="dimgrey"
+      fill={labelColor}
       width={textDimensions.width + horizontalPadding}
     ></rect>
   {/if}
   <text
     text-anchor="start"
     font-size="16"
-    fill="black"
+    fill={labelTextColor}
     bind:contentRect={textDimensions}
   >
     {#each textContent as line, i}

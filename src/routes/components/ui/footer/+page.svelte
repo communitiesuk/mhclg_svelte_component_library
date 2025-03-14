@@ -57,6 +57,7 @@
   let parametersSourceArray =
     homepage ??
     addIndexAndInitalValue([
+      // Content category
       {
         name: "sections",
         category: "Content",
@@ -109,6 +110,8 @@
         value:
           'Built by the <a href="#" class="govuk-footer__link">Government Digital Service</a>',
       },
+
+      // UI Options category
       {
         name: "containerWidth",
         category: "UI Options",
@@ -116,6 +119,7 @@
         inputType: "input",
         value: "govuk-width-container",
       },
+      // License-related UI options
       {
         name: "showLicence",
         category: "UI Options",
@@ -123,6 +127,7 @@
         inputType: "checkbox",
         value: true,
       },
+      // Copyright-related UI options
       {
         name: "showCopyright",
         category: "UI Options",
@@ -131,18 +136,67 @@
         value: true,
       },
       {
+        name: "copyrightText",
+        category: "UI Options",
+        isProp: true,
+        inputType: "input",
+        value: "© Crown copyright",
+      },
+      {
         name: "copyrightLogoUrl",
         category: "UI Options",
         isProp: true,
         inputType: "input",
         value: "/assets/images/govuk-crest.svg",
       },
+
+      // Advanced Customisation category
+      // License-related advanced options
       {
-        name: "copyrightText",
-        category: "UI Options",
+        name: "licenceTextBefore",
+        category: "Advanced Customisation",
         isProp: true,
         inputType: "input",
-        value: "© Crown copyright",
+        value: "All content is available under the ",
+      },
+      {
+        name: "licenceLinkText",
+        category: "Advanced Customisation",
+        isProp: true,
+        inputType: "input",
+        value: "Open Government Licence v3.0",
+      },
+      {
+        name: "licenceTextAfter",
+        category: "Advanced Customisation",
+        isProp: true,
+        inputType: "input",
+        value: ", except where otherwise stated",
+      },
+      {
+        name: "licenceHref",
+        category: "Advanced Customisation",
+        isProp: true,
+        inputType: "input",
+        value:
+          "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+      },
+      {
+        name: "crownSvgPath",
+        category: "Advanced Customisation",
+        isProp: true,
+        inputType: "input",
+        value:
+          "M421.5 142.8V.1l-50.7 32.3v161.1h112.4v-50.7zm-122.3-9.6A47.12 47.12 0 0 1 221 97.8c0-26 21.1-47.1 47.1-47.1 16.7 0 31.4 8.7 39.7 21.8l42.7-27.2A97.63 97.63 0 0 0 268.1 0c-36.5 0-68.3 20.1-85.1 49.7A98 98 0 0 0 97.8 0C43.9 0 0 43.9 0 97.8s43.9 97.8 97.8 97.8c36.5 0 68.3-20.1 85.1-49.7a97.76 97.76 0 0 0 149.6 25.4l19.4 22.2h3v-87.8h-80l24.3 27.5zM97.8 145c-26 0-47.1-21.1-47.1-47.1s21.1-47.1 47.1-47.1 47.2 21 47.2 47S123.8 145 97.8 145",
+      },
+      // Copyright-related advanced options
+      {
+        name: "copyrightHref",
+        category: "Advanced Customisation",
+        isProp: true,
+        inputType: "input",
+        value:
+          "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
       },
     ]);
 
@@ -374,6 +428,12 @@
   showCopyright={true}
   copyrightLogoUrl="/assets/images/govuk-crest.svg"
   copyrightText="© Crown copyright"
+  copyrightHref="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/"
+  licenceTextBefore="All content is available under the "
+  licenceLinkText="Open Government Licence v3.0"
+  licenceTextAfter=", except where otherwise stated"
+  licenceHref="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+  crownSvgPath="M421.5 142.8V.1l-50.7 32.3v161.1h112.4v-50.7zm-122.3-9.6A47.12 47.12 0 0 1 221 97.8c0-26 21.1-47.1 47.1-47.1 16.7 0 31.4 8.7 39.7 21.8l42.7-27.2A97.63 97.63 0 0 0 268.1 0c-36.5 0-68.3 20.1-85.1 49.7A98 98 0 0 0 97.8 0C43.9 0 0 43.9 0 97.8s43.9 97.8 97.8 97.8c36.5 0 68.3-20.1 85.1-49.7a97.76 97.76 0 0 0 149.6 25.4l19.4 22.2h3v-87.8h-80l24.3 27.5zM97.8 145c-26 0-47.1-21.1-47.1-47.1s21.1-47.1 47.1-47.1 47.2 21 47.2 47S123.8 145 97.8 145"
 />`}
       language="svelte"
     />
@@ -413,6 +473,12 @@
           showCopyright={true}
           copyrightLogoUrl="/assets/images/govuk-crest.svg"
           copyrightText="© Crown copyright"
+          copyrightHref="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/"
+          licenceTextBefore="All content is available under the "
+          licenceLinkText="Open Government Licence v3.0"
+          licenceTextAfter=", except where otherwise stated"
+          licenceHref="https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/"
+          crownSvgPath="M421.5 142.8V.1l-50.7 32.3v161.1h112.4v-50.7zm-122.3-9.6A47.12 47.12 0 0 1 221 97.8c0-26 21.1-47.1 47.1-47.1 16.7 0 31.4 8.7 39.7 21.8l42.7-27.2A97.63 97.63 0 0 0 268.1 0c-36.5 0-68.3 20.1-85.1 49.7A98 98 0 0 0 97.8 0C43.9 0 0 43.9 0 97.8s43.9 97.8 97.8 97.8c36.5 0 68.3-20.1 85.1-49.7a97.76 97.76 0 0 0 149.6 25.4l19.4 22.2h3v-87.8h-80l24.3 27.5zM97.8 145c-26 0-47.1-21.1-47.1-47.1s21.1-47.1 47.1-47.1 47.2 21 47.2 47S123.8 145 97.8 145"
         />
       </div>
     </div>
@@ -537,6 +603,49 @@
           copyrightLogoUrl="/assets/images/favicon.svg"
           copyrightText="© Your Organisation 2024"
           metaCustomContent="Combined customisation example"
+        />
+      </div>
+    </div>
+
+    <!-- Example 9: Fully Customised Footer -->
+    <h3 class="govuk-heading-m">Fully Customised Footer</h3>
+    <p class="govuk-body">
+      You can customise all aspects of the footer, including the licence text,
+      URLs, and SVG paths:
+    </p>
+    <CodeBlock
+      code={`<script>
+  import Footer from "$lib/components/ui/Footer.svelte";
+</script>
+
+<!-- Fully customised footer with all customisable props -->
+<Footer 
+  copyrightLogoUrl="/path/to/your/logo.svg"
+  copyrightText="© Your Organization 2024" 
+  copyrightHref="https://your-org.com/copyright"
+  licenceTextBefore="All content is available under the "
+  licenceLinkText="Custom Licence v1.0"
+  licenceTextAfter=", except where otherwise noted"
+  licenceHref="https://your-org.com/licence"
+  crownSvgPath="M405 125V5l-100 65v160h200v-105zm-200-15c-20-20-45-30-75-30-55 0-100 45-100 100s45 100 100 100c55 0 95-40 95-85 0-30-15-45-35-60l90-60c-15-40-50-65-90-65-70 0-120 55-120 110-60 0-110 50-110 110 0 65 50 115 110 115 60 0 120-45 120-110 60 0 130 35 165 90l55-40v-180H240l45 45z" 
+/>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <Footer
+          copyrightLogoUrl="/assets/images/favicon.svg"
+          copyrightText="© Your Organisation 2024"
+          copyrightHref="https://example.org/copyright"
+          licenceTextBefore="All content is available under the "
+          licenceLinkText="Custom Licence v1.0"
+          licenceTextAfter=", except where otherwise noted"
+          licenceHref="https://example.org/licence"
+          crownSvgPath="M405 125V5l-100 65v160h200v-105zm-200-15c-20-20-45-30-75-30-55 0-100 45-100 100s45 100 100 100c55 0 95-40 95-85 0-30-15-45-35-60l90-60c-15-40-50-65-90-65-70 0-120 55-120 110-60 0-110 50-110 110 0 65 50 115 110 115 60 0 120-45 120-110 60 0 130 35 165 90l55-40v-180H240l45 45z"
+          metaCustomContent="Fully customised footer example"
         />
       </div>
     </div>

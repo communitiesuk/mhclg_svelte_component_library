@@ -71,12 +71,7 @@ Use the component with or without navigation items based on your needs. -->
 
     mql.addEventListener("change", handleViewportChange);
 
-    if (!navigationElement) {
-      throw new Error("Navigation element not found");
-    }
-    if (!buttonElement && hasNavigation) {
-      throw new Error("Menu button not found");
-    }
+
 
     return () => {
       mql.removeEventListener("change", handleViewportChange);

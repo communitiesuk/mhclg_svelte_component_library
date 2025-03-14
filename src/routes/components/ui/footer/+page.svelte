@@ -130,6 +130,13 @@
         inputType: "checkbox",
         value: true,
       },
+      {
+        name: "copyrightLogoUrl",
+        category: "UI Options",
+        isProp: true,
+        inputType: "input",
+        value: "/assets/images/govuk-crest.svg",
+      },
     ]);
 
   let parametersValuesArray = $state(
@@ -436,6 +443,33 @@
               hrefLang: "cy",
             },
           ]}
+        />
+      </div>
+    </div>
+
+    <!-- Example 6: Custom Crown Copyright Logo -->
+    <h3 class="govuk-heading-m">Custom Crown Copyright Logo</h3>
+    <p class="govuk-body">
+      You can customize the Crown Copyright logo by providing a different image
+      URL:
+    </p>
+    <CodeBlock
+      code={`<script>
+  import Footer from "$lib/components/ui/Footer.svelte";
+</script>
+
+<!-- Using a custom logo image for the crown copyright section -->
+<Footer copyrightLogoUrl="/path/to/your/custom-crest.svg" />`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <Footer
+          copyrightLogoUrl="/assets/images/favicon.svg"
+          metaCustomContent="This example shows a custom crown copyright logo"
         />
       </div>
     </div>

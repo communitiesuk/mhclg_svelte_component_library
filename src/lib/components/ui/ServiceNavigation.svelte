@@ -28,7 +28,7 @@ Use the component with or without navigation items based on your needs. -->
   let isDesktopView = $state(true); // Default to desktop view until we can check
   let tabletBreakpoint = $state("");
 
-  // References to DOM elements (using $state to satisfy svelte linting)
+  // References to DOM elements
   let navigationElement = $state<HTMLElement | null>(null);
   let buttonElement = $state<HTMLButtonElement | null>(null);
 

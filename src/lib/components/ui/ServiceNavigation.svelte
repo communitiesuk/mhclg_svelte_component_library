@@ -22,87 +22,70 @@ Use the component with or without navigation items based on your needs. -->
     navigationItems?: NavigationItem[];
   }>();
 
-  // Derive whether we have navigation items
+  // Reactive state declarations
   let hasNavigation = $derived(navigationItems && navigationItems.length > 0);
-
-  // State for menu toggle
-  let menuIsOpen = false;
-  let isDesktopView = true; // Default to desktop view until we can check
-
-  // Get the tablet breakpoint value
+  let menuIsOpen = $state(false);
+  let isDesktopView = $state(true); // Default to desktop view until we can check
   let tabletBreakpoint = $state("");
-  let navigationElement: HTMLElement;
-  let buttonElement: HTMLButtonElement;
+
+  // References to DOM elements (using $state to satisfy svelte linting)
+  let navigationElement = $state<HTMLElement | null>(null);
+  let buttonElement = $state<HTMLButtonElement | null>(null);
+
+  // Derived values for UI state
+  let isMenuVisible = $derived(isDesktopView || menuIsOpen);
+  let isButtonHidden = $derived(isDesktopView);
 
   onMount(() => {
-    if (browser) {
-      // Get the breakpoint from CSS custom property
-      const property = "--govuk-frontend-breakpoint-tablet";
-      tabletBreakpoint = window
-        .getComputedStyle(document.documentElement)
-        .getPropertyValue(property)
-        .trim();
+    if (!browser) return;
 
-      if (!tabletBreakpoint) {
-        // Fallback if the property is not found
-        console.warn(
-          "CSS custom property (--govuk-frontend-breakpoint-tablet) not found, using fallback",
-        );
-        tabletBreakpoint = "768px";
-      }
+    // Get the breakpoint from CSS custom property
+    const property = "--govuk-frontend-breakpoint-tablet";
+    const value = window
+      .getComputedStyle(document.documentElement)
+      .getPropertyValue(property)
+      .trim();
 
-      // Initialize media query
-      const mql = window.matchMedia(`(min-width: ${tabletBreakpoint})`);
+    tabletBreakpoint = value || "768px";
 
-      // Set initial state
-      isDesktopView = mql.matches;
-
-      // Update UI based on initial viewport
-      updateUI();
-
-      // Set up event listener for viewport changes
-      const handleViewportChange = (e: MediaQueryListEvent) => {
-        isDesktopView = e.matches;
-        if (isDesktopView) {
-          // Reset menu state when switching to desktop
-          menuIsOpen = false;
-        }
-        updateUI();
-      };
-
-      mql.addEventListener("change", handleViewportChange);
-
-      return () => {
-        mql.removeEventListener("change", handleViewportChange);
-      };
+    if (!value) {
+      console.warn(
+        "CSS custom property (--govuk-frontend-breakpoint-tablet) not found, using fallback",
+      );
     }
+
+    // Initialize media query
+    const mql = window.matchMedia(`(min-width: ${tabletBreakpoint})`);
+
+    // Set initial state
+    isDesktopView = mql.matches;
+
+    // Set up event listener for viewport changes
+    const handleViewportChange = (e: MediaQueryListEvent) => {
+      isDesktopView = e.matches;
+      if (isDesktopView) {
+        // Reset menu state when switching to desktop
+        menuIsOpen = false;
+      }
+    };
+
+    mql.addEventListener("change", handleViewportChange);
+
+    if (!navigationElement) {
+      throw new Error("Navigation element not found");
+    }
+    if (!buttonElement && hasNavigation) {
+      throw new Error("Menu button not found");
+    }
+
+    return () => {
+      mql.removeEventListener("change", handleViewportChange);
+    };
   });
 
   // Handle menu button click
   function toggleMenu() {
     menuIsOpen = !menuIsOpen;
-    updateUI();
-  }
-
-  // Update UI based on current state
-  function updateUI() {
-    if (!browser || !navigationElement || !buttonElement) return;
-
-    if (isDesktopView) {
-      // Desktop view: show menu, hide button
-      navigationElement.removeAttribute("hidden");
-      buttonElement.setAttribute("hidden", "");
-    } else {
-      // Mobile view: toggle menu based on menuIsOpen state
-      buttonElement.removeAttribute("hidden");
-      buttonElement.setAttribute("aria-expanded", menuIsOpen.toString());
-
-      if (menuIsOpen) {
-        navigationElement.removeAttribute("hidden");
-      } else {
-        navigationElement.setAttribute("hidden", "");
-      }
-    }
   }
 </script>
 
@@ -128,7 +111,7 @@ Use the component with or without navigation items based on your needs. -->
             aria-expanded={menuIsOpen}
             onclick={toggleMenu}
             bind:this={buttonElement}
-            hidden
+            hidden={isButtonHidden}
           >
             Menu
           </button>
@@ -136,6 +119,7 @@ Use the component with or without navigation items based on your needs. -->
             class="govuk-service-navigation__list"
             id="navigation"
             bind:this={navigationElement}
+            hidden={!isMenuVisible}
           >
             {#each navigationItems as item}
               <li

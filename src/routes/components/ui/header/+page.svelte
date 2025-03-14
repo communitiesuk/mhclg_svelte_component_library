@@ -20,7 +20,7 @@
     description: [
       {
         content:
-          "A header component that provides site branding and navigation.",
+          "A header component that provides GOV.UK branding and identity.",
       },
       {
         content:
@@ -31,11 +31,15 @@
     context: [
       {
         content:
-          "Use the header component to display your service name, GOV.UK branding, and navigation links if needed.",
+          "The GOV.UK header shows users that they are on GOV.UK and which service they are using.",
       },
       {
         content:
-          "The header can be configured to display with or without a full-width bottom border.",
+          "This component provides the default GOV.UK header which should only show the GOV.UK logo and any GOV.UK-wide links and tools to help users. Do not add the menu of GOV.UK topic links to your service's GOV.UK header.",
+      },
+      {
+        content:
+          "The header can be configured with a full-width bottom border for use with the Service Navigation component.",
       },
     ],
     childComponents: undefined,

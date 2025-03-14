@@ -1,5 +1,4 @@
 <script lang="ts">
-
   // Define component props with default values
   // sections: array of footer navigation sections
   // inlineLinks: array of inline footer links
@@ -7,6 +6,7 @@
   // containerWidth: width class for the container
   // showLicence: toggle for OGL license display
   // showCopyright: toggle for crown copyright display
+  // copyrightLogoUrl: URL for the crown copyright logo background image (overrides the default CSS background-image)
 
   // Define types for component props
   interface FooterItem {
@@ -30,6 +30,7 @@
     containerWidth = "govuk-width-container",
     showLicence = true,
     showCopyright = true,
+    copyrightLogoUrl = "/assets/images/govuk-crest.svg",
   } = $props<{
     sections?: FooterSection[];
     inlineLinks?: FooterItem[];
@@ -37,6 +38,7 @@
     containerWidth?: string;
     showLicence?: boolean;
     showCopyright?: boolean;
+    copyrightLogoUrl?: string;
   }>();
 
   // SVG path data for the crown logo used in the license section
@@ -145,6 +147,7 @@
           <a
             class="govuk-footer__link govuk-footer__copyright-logo"
             href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/"
+            style="background-image: url({copyrightLogoUrl});"
           >
             © Crown copyright
           </a>

@@ -137,6 +137,13 @@
         inputType: "input",
         value: "/assets/images/govuk-crest.svg",
       },
+      {
+        name: "copyrightText",
+        category: "UI Options",
+        isProp: true,
+        inputType: "input",
+        value: "© Crown copyright",
+      },
     ]);
 
   let parametersValuesArray = $state(
@@ -365,6 +372,8 @@
   {metaCustomContent}
   showLicence={true}
   showCopyright={true}
+  copyrightLogoUrl="/assets/images/govuk-crest.svg"
+  copyrightText="© Crown copyright"
 />`}
       language="svelte"
     />
@@ -402,6 +411,8 @@
           metaCustomContent={'Built by the <a href="#" class="govuk-footer__link">Government Digital Service</a>'}
           showLicence={true}
           showCopyright={true}
+          copyrightLogoUrl="/assets/images/govuk-crest.svg"
+          copyrightText="© Crown copyright"
         />
       </div>
     </div>
@@ -450,7 +461,7 @@
     <!-- Example 6: Custom Crown Copyright Logo -->
     <h3 class="govuk-heading-m">Custom Crown Copyright Logo</h3>
     <p class="govuk-body">
-      You can customize the Crown Copyright logo by providing a different image
+      You can customise the Crown Copyright logo by providing a different image
       URL:
     </p>
     <CodeBlock
@@ -470,6 +481,62 @@
         <Footer
           copyrightLogoUrl="/assets/images/favicon.svg"
           metaCustomContent="This example shows a custom crown copyright logo"
+        />
+      </div>
+    </div>
+
+    <!-- Example 7: Custom Copyright Text -->
+    <h3 class="govuk-heading-m">Custom Copyright Text</h3>
+    <p class="govuk-body">
+      You can also customise the copyright text displayed in the footer:
+    </p>
+    <CodeBlock
+      code={`<script>
+  import Footer from "$lib/components/ui/Footer.svelte";
+</script>
+
+<!-- Using custom copyright text -->
+<Footer copyrightText="© Your Organization 2024" />`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <Footer
+          copyrightText="© Your Organization 2024"
+          metaCustomContent="This example shows custom copyright text"
+        />
+      </div>
+    </div>
+
+    <!-- Example 8: Combined Customisations -->
+    <h3 class="govuk-heading-m">Combined Customisations</h3>
+    <p class="govuk-body">
+      You can combine multiple customisations to fully personalise the footer:
+    </p>
+    <CodeBlock
+      code={`<script>
+  import Footer from "$lib/components/ui/Footer.svelte";
+</script>
+
+<!-- Using both custom logo and text -->
+<Footer 
+  copyrightLogoUrl="/path/to/your/organization-logo.svg"
+  copyrightText="© Your Organization 2024"
+/>`}
+      language="svelte"
+    />
+
+    <div class="app-example-wrapper">
+      <div
+        class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
+      >
+        <Footer
+          copyrightLogoUrl="/assets/images/favicon.svg"
+          copyrightText="© Your Organisation 2024"
+          metaCustomContent="Combined customisation example"
         />
       </div>
     </div>

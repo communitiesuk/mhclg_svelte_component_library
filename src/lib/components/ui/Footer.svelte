@@ -7,6 +7,7 @@
   // showLicence: toggle for OGL license display
   // showCopyright: toggle for crown copyright display
   // copyrightLogoUrl: URL for the crown copyright logo background image (overrides the default CSS background-image)
+  // copyrightText: Text to display for the crown copyright notice
 
   // Define types for component props
   interface FooterItem {
@@ -31,6 +32,7 @@
     showLicence = true,
     showCopyright = true,
     copyrightLogoUrl = "/assets/images/govuk-crest.svg",
+    copyrightText = "© Crown copyright",
   } = $props<{
     sections?: FooterSection[];
     inlineLinks?: FooterItem[];
@@ -39,6 +41,7 @@
     showLicence?: boolean;
     showCopyright?: boolean;
     copyrightLogoUrl?: string;
+    copyrightText?: string;
   }>();
 
   // SVG path data for the crown logo used in the license section
@@ -149,7 +152,7 @@
             href="https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/"
             style="background-image: url({copyrightLogoUrl});"
           >
-            © Crown copyright
+            {copyrightText}
           </a>
         </div>
       {/if}

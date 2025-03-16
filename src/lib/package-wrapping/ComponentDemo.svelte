@@ -32,15 +32,6 @@
     categoriesOverlayOpenArray.findIndex((el) => el),
   );
 
-  let selectedCategoryParameters = $derived(
-    parametersSourceArray.filter(
-      (el) =>
-        el.category === parameterCategories[selectedCategory]?.name &&
-        (el.inputType || "label" in el) &&
-        parametersVisibleArray[el.index],
-    ),
-  );
-
   let sideBarOpen = $state(true);
   let overlayOpen = $state(false);
 
@@ -141,11 +132,11 @@
         {#if overlayOpen && selectedCategory > -1}
           <div
             data-role="overlay-container"
-            class="absolute z-[2] p-1 m-0"
+            class="absolute z-[2] p-0 m-0 overflow-scroll"
             style="width: {componentWidth +
               2}px; min-width: 640px; height: {componentHeight}px;"
           >
-            <div class="m-3 flex flex-row justify-between">
+            <div class="p-5 flex flex-row justify-between bg-white">
               <h6 class="underline underline-offset-4">
                 {parameterCategories.find((el, i) => i === selectedCategory)
                   .name}
@@ -167,21 +158,27 @@
               <div data-role="item" class="font-bold">Parameter</div>
               <div data-role="item" class="font-bold">Value</div>
               <div data-role="item" class="font-bold">Description</div>
-              {#each selectedCategoryParameters as parameter}
-                <div class="col-span-full">
-                  <DividerLine></DividerLine>
-                </div>
-                <div data-role="item">{parameter.name}</div>
-                <div data-role="item">
-                  <InputForParameterUpdated
-                    {parameter}
-                    bind:value={parametersValuesArray[parameter.index]}
-                    boundedValue={bindingsParametersValuesArray[
-                      parameter.index
-                    ]}
-                  ></InputForParameterUpdated>
-                </div>
-                <div data-role="item">Description text something something</div>
+              {#each parametersSourceArray as parameter}
+                {#if parameter.category === parameterCategories[selectedCategory]?.name && parametersVisibleArray[parameter.index]}
+                  <div class="col-span-full">
+                    <DividerLine></DividerLine>
+                  </div>
+                  <div data-role="item" class="m-1">
+                    {parameter.name}
+                  </div>
+                  <div data-role="item">
+                    <InputForParameterUpdated
+                      {parameter}
+                      bind:value={parametersValuesArray[parameter.index]}
+                      boundedValue={bindingsParametersValuesArray[
+                        parameter.index
+                      ]}
+                    ></InputForParameterUpdated>
+                  </div>
+                  <div data-role="item">
+                    Description text something something
+                  </div>
+                {/if}
               {/each}
             </div>
           </div>
@@ -237,13 +234,12 @@
     display: grid;
     grid-template-columns: auto auto 1fr;
     gap: 20px;
-    width: 100%;
   }
 
   [data-role="item"] {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     color: #6b7280;
   }
 </style>

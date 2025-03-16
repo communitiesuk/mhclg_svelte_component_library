@@ -153,8 +153,6 @@
 
   let selectedValues = $state([]);
 
-  $inspect(selectedValues);
-
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
@@ -175,8 +173,8 @@
         name: "selectedValues",
         category: "Content",
         isProp: true,
-        isBindable: true,
-        inputType: "binded",
+        isBinded: true,
+        inputType: "code",
         value: selectedValues,
       },
       {
@@ -190,33 +188,29 @@
         name: "options",
         category: "Content",
         isProp: true,
-        inputType: "javascript",
-        value: JSON.stringify(
-          [
-            {
-              value: "email",
-              label: "Email",
-              hint: "We'll send updates to your inbox",
-            },
-            {
-              value: "sms",
-              label: "Text message",
-              hint: "UK mobile numbers only",
-            },
-            {
-              value: "phone",
-              label: "Phone call",
-              hint: "We'll call during business hours",
-            },
-            {
-              value: "none",
-              label: "Do not contact me",
-              exclusive: true,
-            },
-          ],
-          null,
-          2,
-        ),
+        inputType: "code",
+        value: [
+          {
+            value: "email",
+            label: "Email",
+            hint: "We'll send updates to your inbox",
+          },
+          {
+            value: "sms",
+            label: "Text message",
+            hint: "UK mobile numbers only",
+          },
+          {
+            value: "phone",
+            label: "Phone call",
+            hint: "We'll call during business hours",
+          },
+          {
+            value: "none",
+            label: "Do not contact me",
+            exclusive: true,
+          },
+        ],
       },
       {
         name: "error",
@@ -230,14 +224,14 @@
         category: "UI Options",
         isProp: true,
         inputType: "checkbox",
-        value: "false",
+        value: false,
       },
       {
         name: "small",
         category: "UI Options",
         isProp: true,
         inputType: "checkbox",
-        value: "false",
+        value: false,
       },
       {
         name: "legendSize",
@@ -251,31 +245,31 @@
         name: "validate",
         category: "Validation",
         isProp: true,
-        inputType: "function",
-        value: `function validateContactPreferences(values) {
-  if (values.length === 0) {
-    return "Please select at least one contact method";
-  }
-  if (values.includes("none") && values.length > 1) {
-    return "You cannot select other options when opting out of all communications";
-  }
-  if (
-    values.includes("email") &&
-    !values.includes("sms") &&
-    !values.includes("none")
-  ) {
-    return "Please select SMS as a backup digital contact method when using email";
-  }
-  return undefined;
-}`,
+        inputType: "code",
+        value: function (values) {
+          if (Object.is(values.length, 0)) {
+            return "Please select at least one contact method";
+          }
+          if (values.includes("none") && values.length > 1) {
+            return "You cannot select other options when opting out of all communications";
+          }
+          if (
+            values.includes("email") &&
+            !values.includes("sms") &&
+            !values.includes("none")
+          ) {
+            return "Please select SMS as a backup digital contact method when using email";
+          }
+          return undefined;
+        },
       },
       {
         name: "test",
-        category: "UI Options",
+        category: "Content",
         isProp: true,
-        inputType: "input",
-        value: "l",
-        rows: 5,
+        inputType: "code",
+        value: "<div>Hello world</div>",
+        rows: 1,
       },
     ]).map((el) => ({
       ...el,
@@ -299,15 +293,26 @@
    * && 		parametersValuesArray's initial values are simply take from the source array with a one-to-one mapping.
    * &&     This array is then used to track the values associated with each parameter as they are modified by the user using form inputs.
    */
+
+  $inspect(parametersSourceArray);
+
   let parametersValuesArray = $state(
-    parametersSourceArray.map((el) => el.value),
+    parametersSourceArray.map((el) =>
+      typeof el.value === "object"
+        ? JSON.stringify(el.value, null, 2)
+        : el.value,
+    ),
   );
+
+  $inspect(parametersValuesArray);
 
   let bindingsParametersValuesArray = $derived(
-    parametersSourceArray.map((el) => el.value),
+    parametersSourceArray.map((el) =>
+      typeof el.value === "object"
+        ? JSON.stringify(el.value, null, 2)
+        : el.value,
+    ),
   );
-
-  $inspect(bindingsParametersValuesArray);
 
   /**
    * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
@@ -316,15 +321,8 @@
    * &&     You must then also combine them into the derivedParametersObject below so that they are passed to the component.
    * &&     The getValueFromParametersArray function can be helpful for calculating based on the value of another parameter.
    */
-  let options = $derived(
-    JSON.parse(
-      getValueFromParametersArray(
-        parametersSourceArray,
-        parametersValuesArray,
-        "options",
-      ),
-    ),
-  );
+
+  let test = $derived(TestSnippet);
 
   /**
    * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
@@ -332,9 +330,7 @@
    * &&     Note that these parameters STILL NEED TO BE LISTED in the source array (with a null input type and null value).
    * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
    */
-  let derivedParametersObject = $derived({ options });
-
-  $inspect(derivedParametersObject);
+  let derivedParametersObject = $derived({ test });
 
   /**
    * DONOTTOUCH *
@@ -355,15 +351,26 @@
       derivedParametersObject,
     ),
   );
+
+  $inspect(parametersObject);
   /**
    *  CUSTOMISETHIS Add any additional JS specific to the component wrapper here
    *
    */
 </script>
 
+{#snippet TestSnippet()}
+  {@html getValueFromParametersArray(
+    parametersSourceArray,
+    parametersValuesArray,
+    "test",
+  )}
+{/snippet}
+
 <!--
   &&  WrapperNameAndStatus and WraaperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
   -->
+
 {#snippet WrapperNameAndStatus(name, folder, homepage)}
   <BaseNameAndStatus
     {name}
@@ -394,13 +401,13 @@ DONOTTOUCH  *
   DONOTTOUCH  *
   &&          Create input forms for each parameter based on the source array.
   -->
-<ParametersSection
+<!-- <ParametersSection
   details={{ name: pageName }}
   {parametersSourceArray}
   {parametersVisibleArray}
   bind:parametersValuesArray
   {numberOfPropColumnsOnDesktop}
-></ParametersSection>
+></ParametersSection> -->
 
 <!-- <div data-role="demo-section" class="px-5">
   <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
@@ -433,7 +440,7 @@ DONOTTOUCH  *
 
 {#snippet Component()}
   <div class="flex flex-col gap-4">
-    <div class="p-6">
+    <div class="px-6 py-14">
       <Checkbox {...parametersObject} bind:selectedValues />
     </div>
   </div>
@@ -457,7 +464,7 @@ DONOTTOUCH  *
     <h5 class="underline underline-offset-4 my-6">
       Examples of specific use cases
     </h5>
-    <Examples></Examples>
+    <!-- <Examples></Examples> -->
   </div>
 
   <div class="my-20">

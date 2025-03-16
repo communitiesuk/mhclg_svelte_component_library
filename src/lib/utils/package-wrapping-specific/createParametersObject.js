@@ -14,6 +14,7 @@ export function createParametersObject(
       isProp = true, // default to true if not provided
       inputType,
       handlerFunction,
+      value,
     } = param;
 
     // 1. If `isProp === false`, skip the parameter
@@ -23,17 +24,17 @@ export function createParametersObject(
 
     // 2. Determine value from `valuesArray` or from `handlerFunction` if event
     let newValue =
-      inputType === "event" ? handlerFunction : parametersValuesArray[index];
+      inputType === "event"
+        ? handlerFunction
+        : typeof value === "object" &&
+            typeof parametersValuesArray[index] === "string"
+          ? JSON.parse(parametersValuesArray[index])
+          : parametersValuesArray[index];
 
-    // Parse string as a function if inputType is "function"
-    if (inputType === "function") {
-      try {
-        newValue = new Function(`return (${parametersValuesArray[index]})`)();
-      } catch (e) {
-        // Fallback in case of parsing error
-        newValue = undefined;
-      }
-    }
+    console.log(name);
+    console.log(typeof value);
+    console.log(typeof parametersValuesArray[index]);
+    console.log("---");
 
     // 3. If there's a matching derived value for this parameter name,
     //    that should overwrite whatever we currently have:

@@ -38,6 +38,8 @@
     selectedValues?: string[];
   }>();
 
+  $inspect(validate, validate(["email"]));
+
   // Add support detection
   let isSupported = $state(false);
   // Check for browser support on mount

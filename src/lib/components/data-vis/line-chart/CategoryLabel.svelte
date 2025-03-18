@@ -2,7 +2,6 @@
   let { chartWidth, lineFunction, dataArray, xFunction, yFunction, text } =
     $props();
 
-  $inspect(dataArray);
   let path = $state(lineFunction(dataArray));
 </script>
 

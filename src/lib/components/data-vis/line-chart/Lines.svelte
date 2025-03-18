@@ -16,6 +16,17 @@
   let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
 </script>
 
+{#snippet categoryLabel(x)}
+  <CategoryLabel
+    {chartWidth}
+    {lineFunction}
+    dataArray={x}
+    {xFunction}
+    {yFunction}
+    text="hello"
+  ></CategoryLabel>
+{/snippet}
+
 {#if showAllData}
   {#each data.lines as line, i}
     {#if line.areaCode !== selectedAreaCode}
@@ -45,6 +56,11 @@
     {xFunction}
     {yFunction}
   ></Line>
+  <g>
+    {@render categoryLabel(
+      data.lines.find((el) => el.areaCode === selectedAreaCode).data,
+    )}
+  </g>
 {:else}
   {#each data.lines.slice(0, 5) as line, i}
     <Line
@@ -62,15 +78,6 @@
         selectedAreaCode = line.areaCode;
       }}
     ></Line>
+    {@render categoryLabel(line.data)}
   {/each}
 {/if}
-<g>
-  <CategoryLabel
-    {chartWidth}
-    {lineFunction}
-    dataArray={data.lines.find((el) => el.areaCode === selectedAreaCode).data}
-    {xFunction}
-    {yFunction}
-    text="hello"
-  ></CategoryLabel>
-</g>

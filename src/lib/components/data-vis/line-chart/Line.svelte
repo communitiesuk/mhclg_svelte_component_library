@@ -8,6 +8,8 @@
     pathStrokeWidth = 1,
     pathFillColor = "none",
     pathStrokeDashArray = "none",
+    areaFillColor,
+    includeArea = false,
     includeMarkers = false,
     markerShape = "circle",
     markerRadius = 5,
@@ -15,6 +17,7 @@
     markerStroke = "white",
     markerStrokeWidth = 3,
     lineFunction,
+    areaFunction,
     xFunction,
     yFunction,
     dataId,
@@ -65,6 +68,9 @@
   onmousemove={onMouseMove}
   {opacity}
 >
+  {#if includeArea}
+    <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
+  {/if}
   <path
     d={lineFunction(dataArray)}
     fill={pathFillColor}

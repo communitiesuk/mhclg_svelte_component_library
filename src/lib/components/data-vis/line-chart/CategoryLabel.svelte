@@ -1,11 +1,18 @@
 <script>
-  let { chartWidth, lineFunction, dataArray, xFunction, yFunction, text } =
-    $props();
+  let {
+    selectedLine = $bindable(),
+    chartWidth,
+    lineFunction,
+    dataArray,
+    xFunction,
+    yFunction,
+    text,
+  } = $props();
 
   let path = $state(lineFunction(dataArray));
 
-  function onClickLabel(i) {
-    console.log(i);
+  function onClickLabel(areaCode) {
+    selectedLine = areaCode;
   }
 </script>
 

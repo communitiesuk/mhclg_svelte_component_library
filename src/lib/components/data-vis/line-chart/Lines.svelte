@@ -13,11 +13,14 @@
 
   let showAllData = $state(false);
 
+  let selectedLine = $state();
+
   let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
 </script>
 
 {#snippet categoryLabel(dataArray)}
   <CategoryLabel
+    bind:selectedLine
     {chartWidth}
     {lineFunction}
     {dataArray}
@@ -66,9 +69,13 @@
     <Line
       {lineFunction}
       dataArray={line.data}
-      pathStrokeColor={colors[i]}
+      pathStrokeColor={!selectedLine
+        ? colors[i]
+        : selectedLine === line.areaCode
+          ? colors[i]
+          : "grey"}
       pathStrokeWidth="5"
-      opacity="1"
+      opacity={!selectedLine ? 1 : selectedLine === line.areaCode ? 1 : 0.5}
       includeMarkers={false}
       markerRadius="8"
       markerStroke="red"

@@ -1,5 +1,5 @@
 <!-- MOJ Internal Header component 
-This component provides a Ministry of Justice branded header for internal-facing services. -->
+This component provides a MHCLG branded header for internal-facing services. -->
 
 <script lang="ts">
   let {

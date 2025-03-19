@@ -13,6 +13,7 @@
 
   let isClicked = $state();
 
+  // should this be done with css class:active onmouseenter instead?
   function onClickLabel(areaCode) {
     selectedLine = areaCode;
     isClicked = areaCode;

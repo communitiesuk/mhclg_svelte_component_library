@@ -11,6 +11,7 @@ This component provides a MHCLG branded header for internal-facing services. -->
     signOutUrl = "#",
     headerBorder = "10px solid #00625E",
     verticalLineSvgColor = "#00625E",
+    backgroundColor = "#0b0c0c",
     showSignOut = false,
   } = $props<{
     organisationName?: string;
@@ -21,34 +22,40 @@ This component provides a MHCLG branded header for internal-facing services. -->
     signOutUrl?: string;
     headerBorder?: string;
     firstSvgColor?: string;
+    backgroundColor?: string;
     showSignOut?: boolean;
   }>();
 </script>
 
-<header class="moj-header" style:border-bottom={headerBorder}>
+<header
+  class="moj-header"
+  style:border-bottom={headerBorder}
+  style:background-color={backgroundColor}
+>
   <div class="moj-header__container">
     <div class="moj-header__logo">
-      <svg
-        aria-hidden="true"
-        focusable="false"
-        class="moj-header__logotype-crest"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 1 40"
-        style="margin: 0px;"
-        height="40"
-        width="15"
-      >
-        <path fill={verticalLineSvgColor} d="M1.7,0H0v40h1.7V0z"></path>
-      </svg>
-      <svg
-        aria-hidden="true"
-        focusable="false"
-        class="moj-header__logotype-crest"
-        xmlns="http://www.w3.org/2000/svg"
-        viewBox="0 0 40 40"
-        height="40"
-        width="40"
-      >
+      <div class="svg-wrapper">
+        <svg
+          aria-hidden="true"
+          focusable="false"
+          class="moj-header__logotype-crest"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 1 40"
+          style="margin: 0px;"
+          height="40"
+          width="15"
+        >
+          <path fill={verticalLineSvgColor} d="M1.7,0H0v40h1.7V0z"></path>
+        </svg>
+        <svg
+          aria-hidden="true"
+          focusable="false"
+          class="moj-header__logotype-crest"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 40 40"
+          height="40"
+          width="40"
+        >
         <path
           dx="10"
           fill="#ffffff"
@@ -175,7 +182,8 @@ This component provides a MHCLG branded header for internal-facing services. -->
           fill-rule="evenodd"
           d="M33.5541 33.895C33.5541 33.895 33.3772 34.9312 33.388 35.019L33.0866 34.963C33.0811 34.9705 33.2725 34.0537 33.3194 33.8558C33.2129 33.8315 33.0866 33.8427 32.9674 33.8894L32.9656 33.8857L33.0866 33.6261L33.9043 33.7774L33.962 34.0649C33.8916 33.9958 33.6714 33.9174 33.5541 33.895ZM32.8393 33.9529C32.8086 34.1919 32.7003 34.6792 32.7436 34.907L32.4403 34.8622C32.5739 34.5074 32.6642 33.9118 32.6425 33.5328L32.9458 33.5795C32.897 33.684 32.8609 33.8091 32.8393 33.9529ZM32.0324 34.7445C31.258 34.8939 31.258 33.5403 31.8808 33.3517C32.657 33.1836 32.6606 34.5578 32.0324 34.7445ZM31.3645 33.6766C31.3266 33.8297 31.2165 33.9342 31.0378 33.9921C31.1154 34.2572 31.1624 34.345 31.2941 34.6325L31.2923 34.64L31.0883 34.6064C31.045 34.5821 30.7887 34.2087 30.7111 34.007C30.666 34.1732 30.6208 34.3842 30.6389 34.5354L30.2923 34.4794C30.3555 34.3749 30.628 33.2733 30.6172 33.1575C30.9187 33.1967 31.4584 33.2527 31.3645 33.6766ZM29.8645 34.2964C29.6822 34.3636 29.4223 34.289 29.2327 34.2516L29.4872 32.9036C30.332 32.8457 30.684 33.9772 29.8645 34.2964ZM28.6641 34.1825C28.5703 34.162 28.0594 33.0884 28.0594 33.0884C28.0594 33.0884 27.9367 33.923 27.9042 33.9809L27.6731 33.9473L27.9367 32.6384L28.193 32.6739C28.1948 32.7075 28.5991 33.5925 28.5991 33.5925C28.5991 33.5925 28.7345 32.8756 28.7472 32.8121L28.9421 32.8681L28.6641 34.1825ZM27.6009 33.3367C27.3248 34.3039 26.2471 33.7755 26.5684 32.9129C26.841 31.9756 27.9204 32.4723 27.6009 33.3367ZM26.4746 32.2949C26.4294 32.3378 26.267 33.516 26.2778 33.6317L25.9709 33.5701C26.0269 33.4674 26.0991 32.6459 26.0991 32.6459L25.572 33.4917L25.2634 32.5376C25.2634 32.5376 25.1388 33.2228 25.1334 33.4432L24.8319 33.4002C24.9294 33.2397 25.1171 32.0279 25.1171 32.0279L25.4294 32.0876C25.4366 32.1511 25.6731 32.9745 25.6731 32.9745C25.6731 32.9745 26.0865 32.2557 26.1099 32.2183L26.4764 32.2893L26.4746 32.2949ZM34.0252 33.1276C33.6443 33.1276 33.2833 33.1202 33.1046 33.1052C31.0974 32.9036 29.11 32.3098 27.1081 31.9812C26.5305 31.886 26.0576 31.7982 25.6478 31.7982C24.7976 31.7982 24.2182 32.1791 23.5341 33.6896C23.2417 34.2628 24.22 34.8099 24.4348 34.8342C23.6316 34.1247 23.9114 33.9137 24.5449 33.9137C25.4222 33.9137 26.9746 34.3151 27.2778 34.3543C29.1136 34.6568 30.9692 35.2001 32.8339 35.4074C32.8988 35.413 32.962 35.4167 33.0216 35.4167C34.3934 35.4167 34.3267 33.8689 35.2707 33.0996C35.1028 33.1146 34.5469 33.1276 34.0252 33.1276Z"
         ></path>
-      </svg>
+        </svg>
+      </div>
 
       <a
         class="moj-header__link moj-header__link--organisation-name"
@@ -214,39 +222,67 @@ This component provides a MHCLG branded header for internal-facing services. -->
 </header>
 
 <style>
-  /* Disable any floats for these elements so flex can handle layout */
-  :global(.moj-header__logo) {
-    float: none !important;
+  /* 
+   * We need to maintain specific styles for the SVG wrapper
+   * while allowing the rest of the layout to work as designed in MOJ Frontend
+   */
+  .svg-wrapper {
+    display: inline-flex;
+    flex: 0 0 auto;
   }
 
-  @media (min-width: 48em) {
-    /* 1) Container uses flex, logo on left, nav on right */
+  /* 
+   * On mobile, we want the organization and service names to stack vertically
+   * These styles ensure that happens regardless of flex/float layout
+   */
+  @media (max-width: 48.0525em) {
+    :global(.moj-header__link--organisation-name),
+    :global(.moj-header__link--service-name) {
+      display: block;
+      width: 100%;
+    }
+  }
+
+  /* On desktop, override specific styles only as needed */
+  @media (min-width: 48.0625em) {
     :global(.moj-header__container) {
+      margin: 0px auto !important;
+      padding-left: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 0px auto !important;
     }
 
-    /* 2) Keep crest + org name + service name in a row */
+    /* Make the logo section use flexbox to keep items on the same line */
     :global(.moj-header__logo) {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
+      float: none !important;
+      max-width: 75%;
     }
 
-    /* Add margin only to logo text elements */
+    /* Add margin between items when they're in a row */
     :global(.moj-header__logo > a) {
       margin-left: 0.5rem;
     }
 
-    /* 3) Nav container and list alignment */
+    /* Service name specific styling */
+    :global(.moj-header__link--service-name) {
+      margin-left: 0.75rem;
+    }
+
+    /* Allow proper spacing for the nav elements */
     :global(.moj-header__content) {
-      display: flex;
-      align-items: center;
-      margin-left: auto; /* ensures it pushes to far right if needed */
       padding: 0px 0px 10px !important;
       margin-right: 30px;
+      float: none !important;
+      display: flex;
+      align-items: center;
+      margin-left: auto;
     }
+
+    /* Ensure the navigation list items display in a row */
     :global(.moj-header__navigation-list) {
       display: flex;
     }

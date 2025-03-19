@@ -57,69 +57,80 @@
   let parametersSourceArray =
     homepage ??
     addIndexAndInitalValue([
-      // UI Options category
+      // Content & Links
       {
         name: "organisationName",
-        category: "UI Options",
+        category: "Content",
         isProp: true,
         inputType: "input",
         value: "Organisation name",
       },
       {
         name: "serviceName",
-        category: "UI Options",
+        category: "Content",
         isProp: true,
         inputType: "input",
         value: "Service name",
       },
       {
         name: "homepageUrl",
-        category: "UI Options",
+        category: "Links",
         isProp: true,
         inputType: "input",
         value: "#",
       },
       {
         name: "serviceUrl",
-        category: "UI Options",
+        category: "Links",
         isProp: true,
         inputType: "input",
         value: "#",
       },
+
+      // Account Settings
       {
         name: "accountName",
-        category: "UI Options",
+        category: "Account",
         isProp: true,
         inputType: "input",
         value: "John Smith",
       },
       {
         name: "signOutUrl",
-        category: "UI Options",
+        category: "Account",
         isProp: true,
         inputType: "input",
         value: "#",
       },
       {
         name: "showSignOut",
-        category: "UI Options",
+        category: "Account",
         isProp: true,
         inputType: "checkbox",
         value: "false",
       },
+
+      // Styling Options
       {
         name: "headerBorder",
-        category: "UI Options",
+        category: "Styling",
         isProp: true,
         inputType: "input",
         value: "10px solid #00625E",
       },
       {
         name: "verticalLineSvgColor",
-        category: "UI Options",
+        category: "Styling",
         isProp: true,
         inputType: "input",
         value: "#00625E",
+      },
+      {
+        name: "backgroundColor",
+        category: "Styling",
+        isProp: true,
+        inputType: "input",
+        value: "#0b0c0c",
       },
     ]);
 
@@ -294,8 +305,11 @@
 </script>
 
 <InternalHeader 
-  headerBorder="10px solid #1d70b8"
-  verticalLineSvgColor="#1d70b8"
+  headerBorder="10px solid #942828"
+  verticalLineSvgColor="#942828"
+  backgroundColor="#808080"
+  organisationName="Civil Service"
+  serviceName="Internal Portal"
 />`}
       language="svelte"
     />
@@ -305,8 +319,11 @@
         class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
       >
         <InternalHeader
-          headerBorder="10px solid #1d70b8"
-          firstSvgColor="#1d70b8"
+          headerBorder="10px solid #942828"
+          verticalLineSvgColor="#942828"
+          backgroundColor="#808080"
+          organisationName="Civil Service"
+          serviceName="Internal Portal"
         />
       </div>
     </div>

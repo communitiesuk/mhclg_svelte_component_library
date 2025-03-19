@@ -50,6 +50,7 @@
 		"eslint-plugin-svelte": "^2.36.0",
 		"flowbite": "^2.5.2",
 		"flowbite-svelte": "^0.47.3",
+		"fs-extra": "^11.3.0",
 		"globals": "^15.0.0",
 		"mdsvex": "^0.11.2",
 		"prettier": "^3.3.2",
@@ -66,10 +67,12 @@
 		"vite": "^5.0.11"
 	},
 	"dependencies": {
+		"@ministryofjustice/frontend": "^4.0.1",
+		"@moduk/frontend": "^2.0.23",
 		"@monaco-editor/loader": "^1.4.0",
 		"csv-parser": "^3.0.0",
 		"d3": "^7.9.0",
-		"govuk-frontend": "^5.7.1",
+		"govuk-frontend": "^5.9.0",
 		"monaco-editor": "^0.52.2",
 		"npm": "^11.0.0",
 		"prism-svelte": "^0.5.0",

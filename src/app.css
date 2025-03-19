@@ -1,7 +1,9 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
-@import '/css/govuk-frontend.min.css';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+/* @import "/css/moduk.css"; */
+@import "/css/moj-frontend.min.css";
+@import "/css/govuk-frontend.min.css";
 :root {
   /* Font families */
   --sk-font-family-ui: "Fira Sans", -apple-system, sans-serif;
@@ -28,13 +30,12 @@
   --sk-bg-selection: #42b4ff4d;
 
   /* Borders and spacing */
-  --sk-border-radius: .4rem;
+  --sk-border-radius: 0.4rem;
   --sk-page-padding-side: 1.6rem;
 }
 
 /* Base styles */
 * {
- 
   scrollbar-width: thin;
   scrollbar-color: var(--sk-scrollbar) transparent;
 }
@@ -44,27 +45,27 @@
 }
 
 @font-face {
-  font-family: 'GDS Transport';
+  font-family: "GDS Transport";
   font-style: normal;
   font-weight: normal;
   src:
-    url('/fonts/light-94a07e06a1-v2.woff2') format('woff2'),
-    url('/fonts/light-f591b13f7d-v2.woff') format('woff');
+    url("/fonts/light-94a07e06a1-v2.woff2") format("woff2"),
+    url("/fonts/light-f591b13f7d-v2.woff") format("woff");
   font-display: fallback;
 }
 
 @font-face {
-  font-family: 'GDS Transport';
+  font-family: "GDS Transport";
   font-style: normal;
   font-weight: bold;
   src:
-    url('/fonts/bold-b542beb274-v2.woff2') format('woff2'),
-    url('/fonts/bold-affa96571d-v2.woff') format('woff');
+    url("/fonts/bold-b542beb274-v2.woff2") format("woff2"),
+    url("/fonts/bold-affa96571d-v2.woff") format("woff");
   font-display: fallback;
 }
 
 body {
-  font-family: 'GDS Transport';
+  font-family: "GDS Transport";
   font-size: 1.2rem;
   line-height: 1.5rem;
   color: #222222;
@@ -156,7 +157,8 @@ a {
   font-size: 16px;
   line-height: 1.25;
   border-top: 1px solid #b1b4b6;
-  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJUlEQVQoU2P88ePHfwY0wMHBwYguxjgUFKI7GsTH5m4M3w1ChQAZTSeO0/AZpgAAAABJRU5ErkJggg==") repeat;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJUlEQVQoU2P88ePHfwY0wMHBwYguxjgUFKI7GsTH5m4M3w1ChQAZTSeO0/AZpgAAAABJRU5ErkJggg==")
+    repeat;
 }
 
 .app-example--tabs {
@@ -227,37 +229,37 @@ a {
 
 /* Code block styles */
 .code-block {
-    background: var(--sk-bg-2);
-    border: 1px solid var(--sk-border);
-    border-radius: var(--sk-border-radius);
-    margin: calc(.5*var(--sk-line-height-body)) 0;
-    position: relative;
+  background: var(--sk-bg-2);
+  border: 1px solid var(--sk-border);
+  border-radius: var(--sk-border-radius);
+  margin: calc(0.5 * var(--sk-line-height-body)) 0;
+  position: relative;
 }
 
 .code-block pre {
-    box-sizing: border-box;
-    color: var(--shiki-color-text);
-    border-radius: var(--sk-border-radius);
-    width: 100%;
-    margin: 0;
-    padding: .7rem 1rem;
-    position: relative;
-    overflow-x: auto;
+  box-sizing: border-box;
+  color: var(--shiki-color-text);
+  border-radius: var(--sk-border-radius);
+  width: 100%;
+  margin: 0;
+  padding: 0.7rem 1rem;
+  position: relative;
+  overflow-x: auto;
 }
 
 .code-block pre code {
-    background: 0 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-    display: block;
-    top: 0;
+  background: 0 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: block;
+  top: 0;
 }
 
 @media (min-width: 767px) {
-    .code-block {
-        margin:var(--sk-line-height-body)0
-    }
+  .code-block {
+    margin: var(--sk-line-height-body) 0;
+  }
 }
 
 .code-block .controls {
@@ -267,8 +269,8 @@ a {
   box-sizing: border-box;
   justify-content: end;
   align-items: center;
-  gap: .5rem;
-  padding: .3rem .5rem;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem;
   display: flex;
   position: absolute;
   top: 0;
@@ -294,7 +296,7 @@ a {
   flex: 1;
   display: block;
   position: relative;
-  top: .1rem;
+  top: 0.1rem;
   overflow: hidden;
 }
 
@@ -319,7 +321,7 @@ a {
   background: 50%/1.6rem 1.6rem no-repeat;
   width: 100%;
   height: 100%;
-  transition: opacity .2s .6s;
+  transition: opacity 0.2s 0.6s;
   display: block;
   position: absolute;
   top: 0;

@@ -16,11 +16,11 @@
   let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
 </script>
 
-{#snippet categoryLabel(x)}
+{#snippet categoryLabel(dataArray)}
   <CategoryLabel
     {chartWidth}
     {lineFunction}
-    dataArray={x}
+    {dataArray}
     {xFunction}
     {yFunction}
     text="hello"
@@ -58,7 +58,7 @@
   ></Line>
   <g>
     {@render categoryLabel(
-      data.lines.find((el) => el.areaCode === selectedAreaCode).data,
+      data.lines.find((el) => el.areaCode === selectedAreaCode),
     )}
   </g>
 {:else}
@@ -78,6 +78,6 @@
         selectedAreaCode = line.areaCode;
       }}
     ></Line>
-    {@render categoryLabel(line.data)}
+    {@render categoryLabel(line)}
   {/each}
 {/if}

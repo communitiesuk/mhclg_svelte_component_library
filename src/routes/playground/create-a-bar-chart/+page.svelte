@@ -21,15 +21,21 @@
   let dataArray = $derived(
     data?.dataInFormatForBarChart
       .find((el) => el.x === selectedYear)
-      ?.bars.map((el, index) => ({
-        ...el,
-        label: data.areaCodeLookup[el.areaCode],
-        color:
-          data.areaCodeLookup[el.areaCode] === "North West Leicestershire"
-            ? "blue"
-            : null,
-        y: (index % 2 === 0 ? 1 : -1) * el.y,
-      }))
+      ?.bars.map((el, index) => {
+        let yValue = (index % 2 === 0 ? 1 : -1) * el.y;
+        if (isNaN(yValue)) {
+          yValue = 0; // or any other default value you prefer
+        }
+        return {
+          ...el,
+          label: data.areaCodeLookup[el.areaCode],
+          color:
+            data.areaCodeLookup[el.areaCode] === "North West Leicestershire"
+              ? "blue"
+              : null,
+          y: yValue,
+        };
+      })
       .sort((a, b) => b.label.length - a.label.length)
       .slice(0, numberOfBars),
   );

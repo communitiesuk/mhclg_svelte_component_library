@@ -10,6 +10,7 @@
   import TitleAndSubtitle from "./external/TitleAndSubtitle.svelte";
   import Row from "./Row.svelte";
   import { scaleLinear } from "d3-scale";
+  import * as d3 from "d3";
 
   let { dataArray } = $props();
 
@@ -64,19 +65,32 @@
 
   let rowHeight = $derived((chartHeight - 20) / dataArray.length);
 
-  function generateTicks(min, max, numTicks) {
-    const step = (max - min) / (numTicks - 1);
-    return Array.from({ length: numTicks }, (_, i) => {
-      const value = min + i * step;
-      return value < 0 ? Math.floor(value) : Math.ceil(value);
-    });
+  //Tick based on width
+  function generateTicks(data, numTicks) {
+    let minVal = Math.min(...data);
+    let maxVal = Math.max(...data);
+    let rangeVal = maxVal - minVal;
+
+    let roughStep = rangeVal / (numTicks - 1);
+    let normalizedSteps = [1, 2, 5, 10];
+
+    let stepPower = Math.pow(10, -Math.floor(Math.log10(roughStep)));
+    let normalizedStep = roughStep * stepPower;
+    let optimalStep =
+      normalizedSteps.find((step) => step >= normalizedStep) / stepPower;
+
+    let scaleMin = Math.floor(minVal / optimalStep) * optimalStep;
+    let scaleMax = Math.ceil(maxVal / optimalStep) * optimalStep;
+
+    let ticks = [];
+    for (let i = scaleMin; i <= scaleMax; i += optimalStep) {
+      ticks.push(i);
+    }
+
+    return ticks;
   }
 
-  let ticksArray = $derived(
-    generateTicks(Math.min(...allXValues) - 3, Math.max(...allXValues) + 3, 14),
-  );
-
-  $inspect(ticksArray);
+  let ticksArray = $derived(generateTicks(allXValues, 15));
 </script>
 
 <div class="mt-10">

@@ -1,5 +1,6 @@
 <script>
   let { ticksArray, chartWidth, yFunction } = $props();
+  $inspect(ticksArray);
 </script>
 
 {#each ticksArray as tick, i}

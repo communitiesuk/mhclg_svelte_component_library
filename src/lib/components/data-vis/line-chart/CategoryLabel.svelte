@@ -12,12 +12,11 @@
 
   let path = $state(lineFunction(dataArray));
 
-  let isClicked = $state();
-  let isHovered = $state();
-
   // should this be done with css class:active onmouseenter instead?
   function onClickLabel(areaCode) {
-    labelClicked = areaCode;
+    labelClicked === areaCode
+      ? ((labelClicked = null), (labelHovered = null))
+      : (labelClicked = areaCode);
   }
 
   function onMouseEnter(areaCode) {
@@ -25,7 +24,10 @@
   }
 
   function onMouseLeave(areaCode) {
-    isClicked !== areaCode ? (isHovered = null) : (isClicked = areaCode);
+    labelClicked === areaCode
+      ? (labelHovered = null)
+      : (labelHovered = areaCode);
+    labelHovered === areaCode ? (labelHovered = null) : (labelHovered = null);
   }
 </script>
 

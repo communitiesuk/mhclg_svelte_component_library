@@ -114,6 +114,8 @@
     crs: { properties: { name: "EPSG:4326" }, type: "name" },
   };
   $inspect(merged);
+  let hoveredArea = $state();
+  let hoveredAreaProperties = $state();
 </script>
 
 <div class="grid w-full max-w-md items-center gap-y-2 self-start">
@@ -126,7 +128,12 @@
   ><input type="checkbox" bind:checked={filterStates} /> Only show LAs starting with
   'B'</label
 >
-
+<p>{hoveredArea}</p>
+{#if hoveredAreaProperties}
+  {#each Object.entries(hoveredAreaProperties) as property}
+    <p>{property}</p>
+  {/each}
+{/if}
 <MapLibre
   bind:map
   bind:loaded
@@ -159,6 +166,10 @@
         beforeLayerType="symbol"
         manageHoverState
         onclick={(e) => console.log(e.features[0])}
+        onmousemove={(e) => {
+          hoveredArea = e.features[0].id;
+          hoveredAreaProperties = e.features[0].properties;
+        }}
         id="LAD23NM"
       />
     {/if}

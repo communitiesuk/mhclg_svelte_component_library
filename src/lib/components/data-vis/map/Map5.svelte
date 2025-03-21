@@ -47,6 +47,7 @@
   let filter: ExpressionSpecification | undefined = $derived(
     filterStates ? ["==", "B", ["slice", ["get", "LAD23NM"], 0, 1]] : undefined,
   );
+  let hoveredArea = $state();
 </script>
 
 <div class="grid w-full max-w-md items-center gap-y-2 self-start">
@@ -59,6 +60,7 @@
   ><input type="checkbox" bind:checked={filterStates} /> Only show LAs starting with
   'B'</label
 >
+<p>{hoveredArea}</p>
 
 <MapLibre
   bind:map
@@ -79,6 +81,42 @@
         {filter}
         beforeLayerType="symbol"
         manageHoverState
+        onclick={(e) => {
+          console.log(Object.entries(geojsonData)[1][1]);
+          let coordArray =
+            //Note this is very similar to using a GeoJSON - only change is it's [1][1] instead of [2][1]
+            Object.entries(geojsonData)[1][1].find(
+              (d) => d.properties.LAD23NM == e.features[0].id,
+            ).geometry.coordinates.length === 1
+              ? Object.entries(geojsonData)[1][1].find(
+                  (d) => d.properties.LAD23NM == e.features[0].id,
+                ).geometry.coordinates[0]
+              : //Do some extra processing to get the data in the right shape if the area has non-contiguous areas
+                Object.entries(geojsonData)[1][1]
+                  .find((d) => d.properties.LAD23NM == e.features[0].id)
+                  .geometry.coordinates.flat(2);
+          // console.log(coordArray);
+
+          let minValues = [
+            Math.min(...coordArray.map((d) => +d[0])),
+            Math.max(...coordArray.map((d) => +d[0])),
+          ];
+
+          let maxValues = [
+            Math.min(...coordArray.map((d) => +d[1])),
+            Math.max(...coordArray.map((d) => +d[1])),
+          ];
+          // console.log(minValues, maxValues);
+
+          map?.fitBounds([
+            [minValues[0], maxValues[0]],
+            [minValues[1], maxValues[1]],
+          ]);
+        }}
+        onmousemove={(e) => {
+          // console.log(e);
+          hoveredArea = e.features[0].id;
+        }}
       />
     {/if}
     {#if showBorder}

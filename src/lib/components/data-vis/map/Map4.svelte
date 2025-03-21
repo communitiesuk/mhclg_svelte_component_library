@@ -1,10 +1,12 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, onDestroy } from "svelte";
   import { Map, MapStyle, Marker, config } from "@maptiler/sdk";
   import "@maptiler/sdk/dist/maptiler-sdk.css";
   import states from "./lad2023.json";
   import topo from "./topo.json";
   import pconData from "./salary-pcon10.json";
+
+  let { apiKey } = $props();
 
   // $inspect(topo);
 
@@ -114,9 +116,11 @@
 
   let map = $state();
   let mapContainer = $state();
+  let hoveredStateId = $state();
+  let hoveredStateName = $state();
   // $inspect(mapContainer, merged);
 
-  config.apiKey = "kVCqOKEzaCneaDROeFHC";
+  config.apiKey = apiKey;
 
   onMount(() => {
     const initialState = { lng: -2.5879, lat: 51.4545, zoom: 9 };
@@ -128,7 +132,7 @@
       zoom: initialState.zoom,
     });
 
-    new Marker({ color: "#FF0000" }).setLngLat([139.7525, 35.6846]).addTo(map);
+    new Marker({ color: "#FF0000" }).setLngLat([-2.5879, 51.4545]).addTo(map);
 
     map.on("load", function () {
       map.addSource("states", {
@@ -145,31 +149,31 @@
           source: "states",
           layout: {},
           paint: {
-            "fill-color": ["get", "color"],
+            // "fill-color": ["get", "color"],
             //Or use a step function to do the processing:
-            // [
-            //   "step",
-            //   ["get", "salary"], // Use "DENSITY" property for color mapping
-            //   "#FFEDA0",
-            //   10,
-            //   "#FED976",
-            //   20,
-            //   "#FEB24C",
-            //   50,
-            //   "#FD8D3C",
-            //   100,
-            //   "#FC4E2A",
-            //   200,
-            //   "#E31A1C",
-            //   500,
-            //   "#BD0026",
-            //   1000,
-            //   "#800026",
-            // ],
+            "fill-color": [
+              "step",
+              ["get", "salary"], // Use "DENSITY" property for color mapping
+              "#FFEDA0",
+              100,
+              "#FED976",
+              200,
+              "#FEB24C",
+              500,
+              "#FD8D3C",
+              1000,
+              "#FC4E2A",
+              2000,
+              "#E31A1C",
+              3000,
+              "#BD0026",
+              7000,
+              "#800026",
+            ],
             "fill-opacity": [
               "case",
               ["boolean", ["feature-state", "hover"], false],
-              1,
+              0.8,
               0.5,
             ],
             "fill-outline-color": "rgba(255, 255, 255, 0)",
@@ -178,16 +182,88 @@
         "Water", //The ID of the layer before which this layer will be added (I got the ID from map.style and looking at _layers)
       );
     });
+
+    // When the user moves their mouse over the state-fill layer, we'll update the
+    // feature state for the feature under the mouse.
+    map.on("mousemove", "state-fills", function (e) {
+      console.log(e.features[0].properties.LAD23NM);
+      if (e.features.length > 0) {
+        if (hoveredStateId) {
+          map.setFeatureState(
+            { source: "states", id: hoveredStateId },
+            { hover: false },
+          );
+        }
+        hoveredStateName = e.features[0].properties.LAD23NM;
+        hoveredStateId = e.features[0].id;
+        map.setFeatureState(
+          { source: "states", id: hoveredStateId },
+          { hover: true },
+        );
+      }
+      // document.getElementById('pd').innerHTML = `<h3>${e.features[0].properties.STATE_NAME}</h3>
+      // <p><strong><em>${e.features[0].properties.DENSITY}</strong> people per square mile</em></p>`;
+    });
+
+    // When the mouse leaves the state-fill layer, update the feature state of the
+    // previously hovered feature.
+    map.on("mouseleave", "state-fills", function () {
+      if (hoveredStateId) {
+        map.setFeatureState(
+          { source: "states", id: hoveredStateId },
+          { hover: false },
+        );
+      }
+      hoveredStateId = null;
+      // document.getElementById('pd').innerHTML = `<p>Hover over a state!</p>`;
+    });
+
+    map.on("click", "state-fills", function (e) {
+      // console.log(Object.entries(merged)[1][1], e.features);
+      let coordArray =
+        Object.entries(merged)[1][1].find(
+          (d) => d.properties.LAD23NM == e.features[0].properties.LAD23NM,
+        ).geometry.coordinates.length === 1
+          ? Object.entries(merged)[1][1].find(
+              (d) => d.properties.LAD23NM == e.features[0].properties.LAD23NM,
+            ).geometry.coordinates[0]
+          : //Do some extra processing to get the data in the right shape if the area has non-contiguous areas
+            Object.entries(merged)[1][1]
+              .find(
+                (d) => d.properties.LAD23NM == e.features[0].properties.LAD23NM,
+              )
+              .geometry.coordinates.flat(2);
+      // console.log(coordArray);
+
+      let minValues = [
+        Math.min(...coordArray.map((d) => +d[0])),
+        Math.max(...coordArray.map((d) => +d[0])),
+      ];
+
+      let maxValues = [
+        Math.min(...coordArray.map((d) => +d[1])),
+        Math.max(...coordArray.map((d) => +d[1])),
+      ];
+      // console.log(minValues, maxValues);
+
+      map?.fitBounds([
+        [minValues[0], maxValues[0]],
+        [minValues[1], maxValues[1]],
+      ]);
+    });
   });
-  $inspect(map.style);
-  //   onDestroy(() => {
-  //     map.remove();
-  //   });
+  $inspect(map?.style);
+
+  onDestroy(() => {
+    map.remove();
+  });
 </script>
 
 <a href="https://docs.maptiler.com/svelte/"
   >From https://docs.maptiler.com/svelte/</a
 >
+
+<p>Hovered area: {hoveredStateName}</p>
 
 <div class="map-wrap">
   <div class="map" bind:this={mapContainer}></div>

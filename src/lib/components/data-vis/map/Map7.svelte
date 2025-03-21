@@ -10,6 +10,8 @@
   import { contrastingColor } from "./colors.js";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { ExpressionSpecification } from "maplibre-gl";
+  import { Search, Button } from "flowbite-svelte";
+  import { SearchOutline } from "flowbite-svelte-icons";
 
   let showBorder = $state(true);
   let showFill = $state(true);
@@ -45,19 +47,57 @@
     filterStates ? ["==", "B", ["slice", ["get", "LAD23NM"], 0, 1]] : undefined,
   );
   let hoveredArea = $state();
+  let searchValue = $state("");
+
+  const findArea = (e) => {
+    console.log(e.target[0].value);
+    e.preventDefault();
+    let coordArray =
+      Object.entries(states)[2][1].find((d) =>
+        d.properties.LAD23NM.toLowerCase().includes(searchValue.toLowerCase()),
+      ).geometry.coordinates.length === 1
+        ? Object.entries(states)[2][1].find((d) =>
+            d.properties.LAD23NM.toLowerCase().includes(
+              searchValue.toLowerCase(),
+            ),
+          ).geometry.coordinates[0]
+        : //Do some extra processing to get the data in the right shape if the area has non-contiguous areas
+          Object.entries(states)[2][1]
+            .find((d) =>
+              d.properties.LAD23NM.toLowerCase().includes(
+                searchValue.toLowerCase(),
+              ),
+            )
+            .geometry.coordinates.flat(2);
+    // console.log(coordArray);
+
+    let minValues = [
+      Math.min(...coordArray.map((d) => +d[0])),
+      Math.max(...coordArray.map((d) => +d[0])),
+    ];
+
+    let maxValues = [
+      Math.min(...coordArray.map((d) => +d[1])),
+      Math.max(...coordArray.map((d) => +d[1])),
+    ];
+    // console.log(minValues, maxValues);
+
+    map?.fitBounds([
+      [minValues[0], maxValues[0]],
+      [minValues[1], maxValues[1]],
+    ]);
+  };
 </script>
 
-<div class="grid w-full max-w-md items-center gap-y-2 self-start">
-  <label><input type="checkbox" bind:checked={showFill} /> Show fill</label>
-  <label><input type="color" bind:value={fillColor} /> Fill Color </label>
-  <label><input type="checkbox" bind:checked={showBorder} /> Show border</label>
-  <label><input type="color" bind:value={borderColor} /> Border Color </label>
-</div>
-<label
-  ><input type="checkbox" bind:checked={filterStates} /> Only show LAs starting with
-  'B'</label
->
-<p>{hoveredArea}</p>
+<form class="flex gap-2" onsubmit={findArea}>
+  <Search bind:value={searchValue} size="md" />
+  <Button type="submit" class="p-2.5!">
+    <SearchOutline class="w-6 h-6" />
+  </Button>
+</form>
+
+<p>Hovered area: {hoveredArea}</p>
+<p>Search value: {searchValue}</p>
 
 <MapLibre
   bind:map
@@ -79,6 +119,7 @@
         beforeLayerType="symbol"
         manageHoverState
         onclick={(e) => {
+          searchValue = e.features[0].id;
           let coordArray =
             Object.entries(states)[2][1].find(
               (d) => d.properties.LAD23NM == e.features[0].id,

@@ -1,6 +1,7 @@
 <script>
   let {
-    selectedLine = $bindable(),
+    labelClicked = $bindable(),
+    labelHovered = $bindable(),
     chartWidth,
     lineFunction,
     dataArray,
@@ -12,19 +13,19 @@
   let path = $state(lineFunction(dataArray));
 
   let isClicked = $state();
+  let isHovered = $state();
 
   // should this be done with css class:active onmouseenter instead?
   function onClickLabel(areaCode) {
-    selectedLine = areaCode;
-    isClicked = areaCode;
+    labelClicked = areaCode;
   }
 
   function onMouseEnter(areaCode) {
-    selectedLine = areaCode;
+    labelHovered = areaCode;
   }
 
   function onMouseLeave(areaCode) {
-    isClicked !== areaCode ? (selectedLine = null) : (selectedLine = areaCode);
+    isClicked !== areaCode ? (isHovered = null) : (isClicked = areaCode);
   }
 </script>
 

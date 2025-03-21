@@ -12,15 +12,17 @@
   } = $props();
 
   let showAllData = $state(false);
-
-  let selectedLine = $state();
+  let labelClicked = $state();
+  let labelHovered = $state();
+  let selectedLine = $derived([labelClicked, labelHovered]);
 
   let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
 </script>
 
 {#snippet categoryLabel(dataArray)}
   <CategoryLabel
-    bind:selectedLine
+    bind:labelClicked
+    bind:labelHovered
     {chartWidth}
     {lineFunction}
     {dataArray}
@@ -71,7 +73,7 @@
       dataArray={line.data}
       pathStrokeColor={!selectedLine
         ? colors[i]
-        : selectedLine === line.areaCode
+        : selectedLine.includes(line.areaCode)
           ? colors[i]
           : "grey"}
       pathStrokeWidth="5"

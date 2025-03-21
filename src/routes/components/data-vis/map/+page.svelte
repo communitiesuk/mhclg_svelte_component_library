@@ -1,5 +1,6 @@
 <script>
   import Map from "$lib/components/data-vis/map/Map.svelte";
+  import Map10 from "$lib/components/data-vis/map/Map10.svelte";
   import Map2 from "$lib/components/data-vis/map/Map2.svelte";
   import Map3 from "$lib/components/data-vis/map/Map3.svelte";
   import Map4 from "$lib/components/data-vis/map/Map4.svelte";
@@ -7,6 +8,7 @@
   import Map6 from "$lib/components/data-vis/map/Map6.svelte";
   import Map7 from "$lib/components/data-vis/map/Map7.svelte";
   import Map8 from "$lib/components/data-vis/map/Map8.svelte";
+  import Map9 from "$lib/components/data-vis/map/Map9.svelte";
   let { data } = $props();
   $inspect(data);
 </script>
@@ -50,3 +52,9 @@
 
 <h2>8. Ordnance Survey base map</h2>
 <Map8 apiKey={data.PRIVATE_OS_API_KEY} />
+
+<h2>9. Adding custom child elements to svelte-maplibre</h2>
+<Map9 />
+
+<h2>10. With legend</h2>
+<Map10 />

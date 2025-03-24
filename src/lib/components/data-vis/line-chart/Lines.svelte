@@ -68,25 +68,47 @@
   </g>
 {:else}
   {#each data.lines.slice(0, 5) as line, i}
-    <Line
-      {lineFunction}
-      dataArray={line.data}
-      pathStrokeColor={!selectedLine
-        ? colors[i]
-        : selectedLine.includes(line.areaCode)
+    {#if !selectedLine.includes(line.areaCode)}
+      <Line
+        {lineFunction}
+        dataArray={line.data}
+        pathStrokeColor={!selectedLine
           ? colors[i]
-          : "grey"}
-      pathStrokeWidth="5"
-      opacity={!selectedLine ? 1 : selectedLine === line.areaCode ? 1 : 0.5}
-      includeMarkers={false}
-      markerRadius="8"
-      markerStroke="red"
-      markerFill="white"
-      dataId={line.areaCode}
-      onMouseMove={() => {
-        selectedAreaCode = line.areaCode;
-      }}
-    ></Line>
+          : selectedLine.includes(line.areaCode)
+            ? colors[i]
+            : "grey"}
+        pathStrokeWidth="5"
+        opacity={!selectedLine ? 1 : selectedLine === line.areaCode ? 1 : 0.5}
+        includeMarkers={false}
+        markerRadius="8"
+        markerStroke="red"
+        markerFill="white"
+        dataId={line.areaCode}
+        onMouseMove={() => {
+          selectedAreaCode = line.areaCode;
+        }}
+      ></Line>
+    {:else}
+      <Line
+        {lineFunction}
+        dataArray={line.data}
+        pathStrokeColor={!selectedLine
+          ? colors[i]
+          : selectedLine.includes(line.areaCode)
+            ? colors[i]
+            : "grey"}
+        pathStrokeWidth="5"
+        opacity={!selectedLine ? 1 : selectedLine === line.areaCode ? 1 : 1}
+        includeMarkers={false}
+        markerRadius="8"
+        markerStroke="red"
+        markerFill="white"
+        dataId={line.areaCode}
+        onMouseMove={() => {
+          selectedAreaCode = line.areaCode;
+        }}
+      ></Line>
+    {/if}
     {@render categoryLabel(line)}
   {/each}
 {/if}

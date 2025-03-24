@@ -3,19 +3,15 @@ export function createParametersObject(
   parametersValuesArray,
   derivedObject = {},
 ) {
+  let isValidJSONArray = parametersSourceArray.map((el) => true);
   // Start with a copy of derivedObject
   // so that we can overwrite or add properties.
   const result = { ...derivedObject };
 
   parametersSourceArray.forEach((param, index) => {
     // Destructure fields that give extra info about param type and therefore special handling needed
-    const {
-      name,
-      isProp = true, // default to true if not provided
-      inputType,
-      handlerFunction,
-      value,
-    } = param;
+    const { name, isProp, isEditable, inputType, handlerFunction, value } =
+      param;
 
     // 1. If `isProp === false`, skip the parameter
     if (!isProp) {
@@ -23,18 +19,34 @@ export function createParametersObject(
     }
 
     // 2. Determine value from `valuesArray` or from `handlerFunction` if event
-    let newValue =
-      inputType === "event"
-        ? handlerFunction
-        : typeof value === "object" &&
-            typeof parametersValuesArray[index] === "string"
-          ? JSON.parse(parametersValuesArray[index])
-          : parametersValuesArray[index];
 
-    console.log(name);
-    console.log(typeof value);
-    console.log(typeof parametersValuesArray[index]);
-    console.log("---");
+    let newValue;
+
+    let setValue = derivedObject[name] ?? value;
+
+    try {
+      newValue =
+        typeof setValue === "object" &&
+        setValue !== null &&
+        !Array.isArray(setValue) &&
+        "functionParams" in setValue &&
+        "functionBody" in setValue
+          ? new Function(
+              ...setValue.functionParams.map((el) =>
+                typeof el === "string" ? el : el[0],
+              ),
+              setValue.functionBody,
+            )
+          : inputType === "event"
+            ? handlerFunction
+            : typeof value === "object" &&
+                typeof parametersValuesArray[index] === "string"
+              ? JSON.parse(parametersValuesArray[index])
+              : parametersValuesArray[index];
+    } catch (error) {
+      newValue = parametersSourceArray[index].value;
+      isValidJSONArray[index] = false;
+    }
 
     // 3. If there's a matching derived value for this parameter name,
     //    that should overwrite whatever we currently have:
@@ -50,5 +62,5 @@ export function createParametersObject(
   //   - All isProp params from sourceArray
   //   - Potentially overwritten with derivedObject values
   //   - Event handlers if inputType === 'event'
-  return result;
+  return [result, isValidJSONArray];
 }

@@ -1,5 +1,5 @@
 <script>
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
 
   let { wrapper, homepage, wrapperType = null } = $props();
 

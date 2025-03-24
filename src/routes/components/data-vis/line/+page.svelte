@@ -2,7 +2,7 @@
   // @ts-nocheck
   import { page } from "$app/stores";
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";

@@ -1,5 +1,5 @@
 <script>
-  import Pill from "$lib/components/content/Pill.svelte";
+  import Pill from "$lib/package-wrapping/Pill.svelte";
 
   let { statusObject } = $props();
 </script>

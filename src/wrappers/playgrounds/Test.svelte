@@ -1,6 +1,6 @@
 <script module>
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import BaseNameAndStatus from "$lib/package-wrapping/BaseNameAndStatus.svelte";
   import BaseInformation from "$lib/package-wrapping/BaseInformation.svelte";
   export { WrapperNameAndStatus, WrapperInformation };

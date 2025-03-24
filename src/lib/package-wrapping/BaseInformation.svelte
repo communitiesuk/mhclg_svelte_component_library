@@ -1,5 +1,5 @@
 <script>
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
 
   let { homepage, detailsArray, connectedComponentsArray } = $props();
@@ -16,10 +16,10 @@
           {/if}
           <dd>
             {#each detail.arr as paragraph}
-              {#if paragraph.markdown}
-                <p>{@html paragraph.content}</p>
+              {#if detail.markdown}
+                <p>{@html paragraph}</p>
               {:else}
-                <p>{paragraph.content}</p>
+                <p>{paragraph}</p>
               {/if}
             {/each}
           </dd>
@@ -41,7 +41,7 @@
               <li>
                 <a
                   class="link-to-other-page"
-                  href="/components/{child.folder}/{textStringConversion(
+                  href="/components-update/{child.folder}/{textStringConversion(
                     child.name,
                     'kebab',
                   )}"

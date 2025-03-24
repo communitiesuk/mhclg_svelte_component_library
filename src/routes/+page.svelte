@@ -1,5 +1,5 @@
 <script>
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { foldersLookup } from "$lib/config.js";
   import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";

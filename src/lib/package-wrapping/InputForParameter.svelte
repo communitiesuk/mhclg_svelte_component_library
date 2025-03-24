@@ -1,7 +1,7 @@
 <script>
   import loader from "@monaco-editor/loader";
-  import Pill from "$lib/components/content/Pill.svelte";
-  import CodeBlock from "$lib/components/content/CodeBlock.svelte";
+  import Pill from "$lib/package-wrapping/Pill.svelte";
+  import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import { propPillLookup } from "$lib/config.js";
   import {
     Checkbox,

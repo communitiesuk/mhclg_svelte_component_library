@@ -1,6 +1,6 @@
 <script>
-  import Pill from "$lib/components/content/Pill.svelte";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import Pill from "$lib/package-wrapping/Pill.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import { propPillLookup } from "$lib/config.js";
   import {
     Accordion,

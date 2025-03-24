@@ -1,6 +1,7 @@
 <script>
-  import Accordion from "$lib/components/ui/Accordion.svelte";
-  import CodeBlock from "$lib/components/content/CodeBlock.svelte";
+  import { AccordionItem, Accordion } from "flowbite-svelte";
+
+  import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
   import Checkbox from "$lib/components/ui/Checkbox.svelte";
@@ -109,7 +110,7 @@
 
 <!-- Example 1: Basic Usage -->
 {#snippet Example1()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockOne} language="svelte" />
 
@@ -134,7 +135,7 @@
 
 <!-- Example 2: With Hint -->
 {#snippet Example2()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockTwo} language="svelte" />
 
@@ -167,7 +168,7 @@
 
 <!-- Example 3: With Validation -->
 {#snippet Example3()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockThree} language="svelte" />
 
@@ -196,7 +197,7 @@
 
 <!-- Example 4: Exclusive Option -->
 {#snippet Example4()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockFour} language="svelte" />
 
@@ -225,7 +226,7 @@
 
 <!-- Example 5: Conditional Content -->
 {#snippet Example5()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockFive} language="svelte" />
 
@@ -262,7 +263,7 @@
 
 <!-- Example 6: Small Variation -->
 {#snippet Example6()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockSix} language="svelte" />
 
@@ -286,7 +287,7 @@
 {/snippet}
 
 {#snippet Example7()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockSeven} language="svelte" />
 
@@ -311,7 +312,7 @@
 
 <!-- Example 8: Legend Size -->
 {#snippet Example8()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockEight} language="svelte" />
       <div class="app-example-wrapper">
@@ -335,7 +336,7 @@
 {/snippet}
 
 {#snippet Example9()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockNine} language="svelte" />
 
@@ -388,7 +389,7 @@
 {/snippet}
 
 {#snippet Example10()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockTen} language="svelte" />
 
@@ -453,7 +454,7 @@
 {/snippet}
 
 {#snippet Example11()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockEleven} language="svelte" />
 
@@ -473,7 +474,7 @@
 {/snippet}
 
 {#snippet Example12()}
-  <div class="bg-slate-100 py-1">
+  <div class="bg-orange-50 py-5">
     <div class="mx-4">
       <CodeBlock code={codeBlocks.codeBlockTwelve} language="svelte" />
 
@@ -520,7 +521,19 @@
   </div>
 {/snippet}
 
-<div>
-  <Accordion sections={accordionSnippetSections} allSectionToggle={false}
-  ></Accordion>
+<div class="my-20">
+  <h5 class="underline underline-offset-4 my-6">
+    Examples of specific use cases
+  </h5>
+  <Accordion
+    activeClass="text-[#EA580C] focus:ring-2 focus:ring-[#EA580C]"
+    inactiveClass="text-gray-500 dark:text-gray-400 hover:bg-slate-100"
+  >
+    {#each accordionSnippetSections as section}
+      <AccordionItem>
+        <span slot="header" class="text-lg">{section.heading}</span>
+        {@render section.content()}
+      </AccordionItem>
+    {/each}
+  </Accordion>
 </div>

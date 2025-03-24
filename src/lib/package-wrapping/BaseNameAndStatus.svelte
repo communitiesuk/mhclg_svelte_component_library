@@ -1,5 +1,5 @@
 <script>
-  import Pill from "$lib/components/content/Pill.svelte";
+  import Pill from "$lib/package-wrapping/Pill.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { componentStatusProgressBackgroundColorLookup } from "$lib/config.js";
 

@@ -1,9 +1,9 @@
 <script>
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
 
   let addComponentInstructions = [
     {
-      label: 'Create .svelte file',
+      label: "Create .svelte file",
       description: [
         "Add a new .svelte file within the most relevant subfolder in <code class='xxx'>lib/components</code>folder.",
       ],

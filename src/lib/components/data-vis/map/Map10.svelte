@@ -119,7 +119,10 @@
   let hoveredArea = $state();
   let hoveredAreaProperties = $state();
   let parentDiv = $state();
-  let canvasWidth = $derived(parentDiv?.clientWidth);
+  //It looks like we can't use the mapContainer binding that's available within svelte-maplibre as it doesn't track state changes for the container's properties
+  let canvasWidth = $derived(parentDiv?.offsetWidth);
+  let divWidth = $state();
+  $inspect({ canvasWidth, divWidth });
 </script>
 
 <!-- <div class="grid w-full max-w-md items-center gap-y-2 self-start">
@@ -132,64 +135,65 @@
   ><input type="checkbox" bind:checked={filterStates} /> Only show LAs starting with
   'B'</label
 > -->
-<p>{hoveredArea}</p>
-<!-- {#if hoveredAreaProperties}
-  {#each Object.entries(hoveredAreaProperties) as property}
-    <p>{property}</p>
-  {/each}
-{/if} -->
-<MapLibre
-  bind:map
-  bind:loaded
-  bind:mapContainer={parentDiv}
-  style={{
-    // Can be a json style definition or a url
-    version: 8,
-    sources: {},
-    layers: [
-      {
-        id: "background",
-        type: "background",
-        paint: { "background-color": "lightgrey" },
-      },
-    ],
-  }}
-  class="map"
-  standardControls
-  center={[-2.5879, 51.4545]}
-  zoom={9}
->
-  <GeoJSON id="states" data={merged} promoteId="LAD23NM">
-    {#if showFill}
-      <FillLayer
-        paint={{
-          // "fill-color": hoverStateFilter(fillColor[0], colors[0].hoverBgColor),
-          "fill-color": ["get", "color"],
-          "fill-opacity": 0.5,
-        }}
-        {filter}
-        beforeLayerType="symbol"
-        manageHoverState
-        onclick={(e) => console.log(e.features[0])}
-        onmousemove={(e) => {
-          hoveredArea = e.features[0].id;
-          hoveredAreaProperties = e.features[0].properties;
-        }}
-        id="LAD23NM"
+
+<div bind:offsetWidth={divWidth}>
+  <MapLibre
+    bind:map
+    bind:loaded
+    bind:mapContainer={parentDiv}
+    style={{
+      // Can be a json style definition or a url
+      version: 8,
+      sources: {},
+      layers: [
+        {
+          id: "background",
+          type: "background",
+          paint: { "background-color": "lightgrey" },
+        },
+      ],
+    }}
+    class="map"
+    standardControls
+    center={[-2.5879, 51.4545]}
+    zoom={9}
+  >
+    <GeoJSON id="states" data={merged} promoteId="LAD23NM">
+      {#if showFill}
+        <FillLayer
+          paint={{
+            // "fill-color": hoverStateFilter(fillColor[0], colors[0].hoverBgColor),
+            "fill-color": ["get", "color"],
+            "fill-opacity": 0.5,
+          }}
+          {filter}
+          beforeLayerType="symbol"
+          manageHoverState
+          onclick={(e) => console.log(e.features[0])}
+          onmousemove={(e) => {
+            hoveredArea = e.features[0].id;
+            hoveredAreaProperties = e.features[0].properties;
+          }}
+          id="LAD23NM"
+        />
+      {/if}
+      {#if showBorder}
+        <LineLayer
+          layout={{ "line-cap": "round", "line-join": "round" }}
+          paint={{ "line-color": borderColor, "line-width": 3 }}
+          beforeLayerType="symbol"
+        />
+      {/if}
+    </GeoJSON>
+    {#key canvasWidth}
+      <MapLegend
+        {fillColor}
+        canvasWidth={0.7 * divWidth}
+        {hoveredAreaProperties}
       />
-    {/if}
-    {#if showBorder}
-      <LineLayer
-        layout={{ "line-cap": "round", "line-join": "round" }}
-        paint={{ "line-color": borderColor, "line-width": 3 }}
-        beforeLayerType="symbol"
-      />
-    {/if}
-  </GeoJSON>
-  {#key canvasWidth}
-    <MapLegend {fillColor} {canvasWidth} />
-  {/key}
-</MapLibre>
+    {/key}
+  </MapLibre>
+</div>
 
 <style>
   :global(.map) {

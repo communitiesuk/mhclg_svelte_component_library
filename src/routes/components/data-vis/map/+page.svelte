@@ -57,4 +57,9 @@
 <Map9 />
 
 <h2>10. With legend</h2>
+<p>Some basic responsiveness to screen size</p>
+<p>May need to engage with work on ticks/axes and scale functions</p>
+<p>Also need to integrate with work on breaks</p>
 <Map10 />
+
+<h2>11. Breaks</h2>

@@ -5,22 +5,34 @@
   import { onMount } from "svelte";
 
   let {
-    parameter,
-    value = $bindable(),
-    boundedValue,
     demoScreenWidth,
+    statedValue = $bindable(),
+    derivedValue,
+    parameter,
   } = $props();
 
-  let editorContainer = $state();
-
-  let monacoEditor;
-
-  let showMonacoEditor = $derived(
-    typeof parameter.value === "object" && parameter.isEditable,
+  let useStatedValue = $derived(statedValue != null);
+  let useRadio = $derived(parameter.inputType === "radio");
+  let useDropdown = $derived(
+    parameter.inputType === "dropdown" || "options" in parameter,
+  );
+  let useTextarea = $derived(
+    typeof (useStatedValue ? statedValue : derivedValue) === "string" &&
+      typeof parameter.value === "string",
+  );
+  let useNumberInput = $derived(typeof statedValue === "number");
+  let useCheckbox = $derived(typeof statedValue === "boolean");
+  let useMonacoEditor = $derived(
+    useStatedValue &&
+      !useRadio &&
+      !useDropdown &&
+      !useTextarea &&
+      !useNumberInput &&
+      !useCheckbox,
   );
 
   let monacoEditorContainerWidth = $derived(
-    showMonacoEditor
+    useMonacoEditor
       ? demoScreenWidth < 1024
         ? 350
         : demoScreenWidth < 1280
@@ -30,7 +42,7 @@
   );
 
   let monacoEditorContainerHeight = $derived(
-    showMonacoEditor && monacoEditorContainerWidth
+    useMonacoEditor && monacoEditorContainerWidth
       ? 40 +
           20 *
             JSON.stringify(parameter.value, null, 2)
@@ -46,13 +58,16 @@
       : null,
   );
 
+  let editorContainer = $state();
+  let monacoEditor;
+
   onMount(async () => {
-    if (showMonacoEditor) {
+    if (useMonacoEditor) {
       // Load the Monaco editor library
       const monaco = await loader.init();
 
       monacoEditor = monaco.editor.create(editorContainer, {
-        value: value, // Initial editor content bound to the component's value prop
+        value: statedValue.objectAsString, // Initial editor content bound to the component's value prop
         language: "javascript",
         theme: "vs-light",
         minimap: { enabled: false },
@@ -73,7 +88,12 @@
 
       // Establish two-way data binding between editor content and component's value prop
       monacoEditor.onDidChangeModelContent(() => {
-        value = monacoEditor.getValue();
+        //statedValue.objectAsString = monacoEditor.getValue();
+        //statedValue.workingObject = JSON.parse(statedValue.objectAsString);
+        statedValue = {
+          objectAsString: monacoEditor.getValue(),
+          workingObject: JSON.parse(monacoEditor.getValue()),
+        };
       });
 
       // Cleanup: Dispose Monaco editor instance on component destruction
@@ -82,122 +102,68 @@
       };
     }
   });
-
-  $inspect(parameter.name, value, boundedValue);
 </script>
 
-{#if parameter.isEditable}
-  {#if showMonacoEditor}
-    <div
-      bind:this={editorContainer}
-      class="py-2 px-1 m-0 border-solid border-[2px] rounded-md focus-within:ring-orange-500 focus-within:border-orange-500"
-      style="height: {monacoEditorContainerHeight}px; width: {monacoEditorContainerWidth}px;"
-    ></div>
-  {:else if parameter.inputType === "checkbox"}
-    <div class="p-2 h-full">
-      <Checkbox bind:checked={value} color="orange"></Checkbox>
-    </div>
-  {:else if parameter.inputType === "dropdown"}
-    <Select
-      size="sm"
-      class="text-base m-0 px-2 py-1"
-      items={parameter.options.map((el) => ({ name: el, value: el }))}
-      bind:value
-    />
-  {:else if parameter.inputType === "radio"}
+{#if useStatedValue}
+  {#if useRadio}
     <div class="flex flex-col gap-2">
       {#each parameter.options as option, i}
-        <Radio value={option} bind:group={value}>
+        <Radio value={option} bind:group={statedValue}>
           <span class="text-sm">
             {option}
           </span>
         </Radio>
       {/each}
     </div>
-  {:else if parameter.inputType === "input"}
+  {:else if useDropdown}
+    <Select
+      size="sm"
+      class="text-base m-0 py-1 pr-8"
+      items={parameter.options.map((el) => ({ name: el, value: el }))}
+      bind:value={statedValue}
+    />
+  {:else if useTextarea}
     <Textarea
       unWrappedClass="m-0 px-2 py-1 focus:ring-orange-500 focus:border-orange-500"
       id="textarea-id"
-      bind:value
+      bind:value={statedValue}
       rows={parameter.rows ?? 1}
     />
-  {:else if parameter.inputType === "numberInput"}
+  {:else if useNumberInput}
     <Input let:props>
       <input
         type="number"
         {...props}
-        step={parameter?.step}
-        min={parameter?.min}
-        max={parameter?.max}
-        bind:value
+        step={parameter.step}
+        min={parameter.min}
+        max={parameter.max}
+        bind:value={statedValue}
       />
     </Input>
+  {:else if useCheckbox}
+    <div class="p-2 h-full">
+      <Checkbox bind:checked={statedValue} color="orange"></Checkbox>
+    </div>
+  {:else if useMonacoEditor}
+    <div
+      bind:this={editorContainer}
+      class="py-2 px-1 m-0 border-solid border-[2px] rounded-md focus-within:ring-orange-500 focus-within:border-orange-500"
+      style="height: {monacoEditorContainerHeight}px; width: {monacoEditorContainerWidth}px;"
+    ></div>
   {/if}
 {:else}
-  {#key boundedValue}
+  {#key derivedValue}
     <CodeBlock
-      code={boundedValue}
+      code={typeof derivedValue === "object" &&
+      "workingFunction" in derivedValue &&
+      "functionAsString" in derivedValue
+        ? derivedValue.functionAsString.replace(/getValue\("([^"]+)"\)/g, "$1")
+        : typeof derivedValue === "object"
+          ? derivedValue.objectAsString
+          : derivedValue}
       language="javascript"
       size="sm"
       includeHeader={false}
     ></CodeBlock>
   {/key}
 {/if}
-
-<!-- {#if showMonacoEditor}
-  <div
-    bind:this={editorContainer}
-    class="py-2 px-1 m-0 border-solid border-[2px] rounded-md focus-within:ring-orange-500 focus-within:border-orange-500"
-    style="height: {monacoEditorContainerHeight}px; width: {monacoEditorContainerWidth}px;"
-  ></div>
-{:else if parameter.inputType === "code"}
-  <div bind:clientHeight={codeBlockHeight} bind:clientWidth={codeBlockWidth}>
-    <CodeBlock
-      code={codeBlockType === "function"
-        ? "function " + codeBlockValue.toString().slice(5)
-        : codeBlockValue}
-      language="javascript"
-      size="sm"
-      includeHeader={false}
-    ></CodeBlock>
-  </div>
-{:else if parameter.inputType === "checkbox"}
-  <div class="p-2 h-full">
-    <Checkbox bind:checked={value} color="orange"></Checkbox>
-  </div>
-{:else if parameter.inputType === "dropdown"}
-  <Select
-    size="sm"
-    class="text-base m-0 px-2 py-1"
-    items={parameter.options.map((el) => ({ name: el, value: el }))}
-    bind:value
-  />
-{:else if parameter.inputType === "radio"}
-  <div class="flex flex-col gap-2">
-    {#each parameter.options as option, i}
-      <Radio value={option} bind:group={value}>
-        <span class="text-sm">
-          {option}
-        </span>
-      </Radio>
-    {/each}
-  </div>
-{:else if parameter.inputType === "input"}
-  <Textarea
-    unWrappedClass="m-0 px-2 py-1 focus:ring-orange-500 focus:border-orange-500"
-    id="textarea-id"
-    bind:value
-    rows={parameter.rows ?? 1}
-  />
-{:else if parameter.inputType === "numberInput"}
-  <Input let:props>
-    <input
-      type="number"
-      {...props}
-      step={parameter?.step}
-      min={parameter?.min}
-      max={parameter?.max}
-      bind:value
-    />
-  </Input>
-{/if} -->

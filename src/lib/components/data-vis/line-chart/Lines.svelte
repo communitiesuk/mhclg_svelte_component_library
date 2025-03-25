@@ -9,10 +9,10 @@
     chartWidth,
     xFunction,
     yFunction,
+    labelClicked = $bindable(),
   } = $props();
 
   let showAllData = $state(false);
-  let labelClicked = $state();
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
 
@@ -21,6 +21,7 @@
 
 {#snippet categoryLabel(dataArray)}
   <CategoryLabel
+    id={`label-${dataArray.areaCode}`}
     bind:labelClicked
     bind:labelHovered
     {chartWidth}

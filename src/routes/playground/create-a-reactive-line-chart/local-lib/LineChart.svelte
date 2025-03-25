@@ -55,7 +55,14 @@
       .curve(curveLinear),
   );
 
+  let labelClicked = $state();
   let selectedAreaCode = $state("E07000223");
+
+  function handleClickOutside(event) {
+    if (labelClicked && !event.target.closest('[id^="label"]')) {
+      labelClicked = null;
+    }
+  }
 </script>
 
 <h3>Example Usage</h3>
@@ -84,6 +91,7 @@
 
 <div bind:clientWidth={svgWidth}>
   <svg
+    onclick={handleClickOutside}
     width={svgWidth ?? 400}
     height={svgHeight}
     style="background-color: #f5f5f5"
@@ -110,6 +118,7 @@
             {chartWidth}
             {xFunction}
             {yFunction}
+            bind:labelClicked
           ></Lines>
         </g>
       </g>

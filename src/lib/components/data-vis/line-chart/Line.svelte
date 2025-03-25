@@ -50,6 +50,7 @@
     );
     return mappedItems;
   }
+  
 
   function onMouseEnterMarker(i) {
     hoveredMarker = i;

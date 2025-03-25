@@ -1,5 +1,6 @@
 <script>
   let {
+    id,
     labelClicked = $bindable(),
     labelHovered = $bindable(),
     chartWidth,
@@ -9,8 +10,6 @@
     yFunction,
     text,
   } = $props();
-
-  let path = $state(lineFunction(dataArray));
 
   // should this be done with css class:active onmouseenter instead?
   function onClickLabel(areaCode) {
@@ -32,12 +31,14 @@
 </script>
 
 <g
+  {id}
   transform="translate({chartWidth},{0})"
   onclick={() => onClickLabel(dataArray.areaCode)}
   onmouseenter={() => onMouseEnter(dataArray.areaCode)}
   onmouseleave={() => onMouseLeave(dataArray.areaCode)}
 >
   <text
+    {id}
     dominant-baseline="central"
     text-anchor="start"
     x={15}

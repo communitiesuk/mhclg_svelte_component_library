@@ -1,6 +1,8 @@
 <script>
   import Line from "./Line.svelte";
   import CategoryLabel from "./CategoryLabel.svelte";
+  import labelplacer from "labelplacer";
+  import { onMount } from "svelte";
 
   let {
     data,
@@ -12,9 +14,26 @@
     labelClicked = $bindable(),
   } = $props();
 
+  let data2 = $state();
+  $inspect(data2);
+  let bounds = $state([200, 200]);
+
   let showAllData = $state(false);
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
+
+  const transformed = data.lines.slice(0, 15).map((item) => {
+    const lastY = item.data[0].y;
+    return { areaCode: item.areaCode, lastY };
+  });
+  onMount(() => {
+    data2 = labelplacer(
+      transformed,
+      bounds,
+      (d) => d.lastY,
+      (d) => 20,
+    );
+  });
 
   let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
 </script>
@@ -68,7 +87,7 @@
     )}
   </g>
 {:else}
-  {#each data.lines.slice(0, 5) as line}
+  {#each data.lines.slice(0, 15) as line, i}
     {#if !selectedLine.includes(line.areaCode)}
       <Line
         {lineFunction}
@@ -91,7 +110,7 @@
     {/if}
   {/each}
 
-  {#each data.lines.slice(0, 5) as line}
+  {#each data.lines.slice(0, 15) as line, i}
     {#if selectedLine.includes(line.areaCode)}
       <Line
         {lineFunction}
@@ -112,3 +131,7 @@
     {/if}
   {/each}
 {/if}
+{#each data.lines.slice(0, 15) as line, i}
+  {#if data2 && data2[i]}
+    <text y={data2[i].y}>{data2[i].y}</text>
+  {/if}{/each}

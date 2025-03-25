@@ -8,7 +8,7 @@
     dataArray,
     xFunction,
     yFunction,
-    text,
+    newY,
   } = $props();
 
   // should this be done with css class:active onmouseenter instead?
@@ -37,11 +37,7 @@
   onmouseenter={() => onMouseEnter(dataArray.areaCode)}
   onmouseleave={() => onMouseLeave(dataArray.areaCode)}
 >
-  <text
-    {id}
-    dominant-baseline="central"
-    text-anchor="start"
-    x={15}
-    y={yFunction(dataArray.data[0].y)}>{dataArray.data[0].areaCode}</text
+  <text {id} dominant-baseline="central" text-anchor="start" x={15} y={newY}>
+    {dataArray.data[0].areaCode}</text
   >
 </g>

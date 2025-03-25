@@ -38,7 +38,7 @@
   let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
 </script>
 
-{#snippet categoryLabel(dataArray)}
+{#snippet categoryLabel(dataArray, newY)}
   <CategoryLabel
     id={`label-${dataArray.areaCode}`}
     bind:labelClicked
@@ -48,7 +48,7 @@
     {dataArray}
     {xFunction}
     {yFunction}
-    text="hello"
+    {newY}
   ></CategoryLabel>
 {/snippet}
 
@@ -106,7 +106,6 @@
           selectedAreaCode = line.areaCode;
         }}
       ></Line>
-      {@render categoryLabel(line)}
     {/if}
   {/each}
 
@@ -127,11 +126,10 @@
           selectedAreaCode = line.areaCode;
         }}
       ></Line>
-      {@render categoryLabel(line)}
     {/if}
   {/each}
 {/if}
 {#each data.lines.slice(0, 15) as line, i}
   {#if data2 && data2[i]}
-    <text y={data2[i].y}>{data2[i].y}</text>
+    {@render categoryLabel(line, data2[i].y)}
   {/if}{/each}

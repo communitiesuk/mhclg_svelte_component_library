@@ -2,6 +2,7 @@
   import Map from "$lib/components/data-vis/map/Map.svelte";
   import Map10 from "$lib/components/data-vis/map/Map10.svelte";
   import Map11 from "$lib/components/data-vis/map/Map11.svelte";
+  import Map12 from "$lib/components/data-vis/map/Map12.svelte";
   import Map2 from "$lib/components/data-vis/map/Map2.svelte";
   import Map3 from "$lib/components/data-vis/map/Map3.svelte";
   import Map4 from "$lib/components/data-vis/map/Map4.svelte";
@@ -74,3 +75,6 @@
   >
 </p>
 <Map11 />
+
+<h2>12. Mapbox (old)</h2>
+<Map12 />

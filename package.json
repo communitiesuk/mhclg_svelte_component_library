@@ -73,6 +73,7 @@
     "flowbite-svelte-icons": "^2.0.3",
     "govuk-frontend": "^5.7.1",
     "leaflet": "^1.9.4",
+    "mapbox-gl": "^1.13.3",
     "maplibre-gl": "^5.2.0",
     "monaco-editor": "^0.52.2",
     "node": "^18.20.6",

@@ -14,7 +14,7 @@
   let showAllData = $state(false);
   let labelClicked = $state();
   let labelHovered = $state();
-  let selectedLine = $derived([labelClicked, labelHovered]);
+  let selectedLine = $derived([labelHovered, labelClicked]);
 
   let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
 </script>
@@ -67,18 +67,16 @@
     )}
   </g>
 {:else}
-  {#each data.lines.slice(0, 5) as line, i}
+  {#each data.lines.slice(0, 5) as line}
     {#if !selectedLine.includes(line.areaCode)}
       <Line
         {lineFunction}
         dataArray={line.data}
         pathStrokeColor={!selectedLine
-          ? colors[i]
-          : selectedLine.includes(line.areaCode)
-            ? colors[i]
-            : "grey"}
+          ? colors[data.lines.indexOf(line)]
+          : "grey"}
         pathStrokeWidth="5"
-        opacity={!selectedLine ? 1 : selectedLine === line.areaCode ? 1 : 0.5}
+        opacity={!selectedLine ? 1 : 0.5}
         includeMarkers={false}
         markerRadius="8"
         markerStroke="red"
@@ -88,17 +86,18 @@
           selectedAreaCode = line.areaCode;
         }}
       ></Line>
-    {:else}
+      {@render categoryLabel(line)}
+    {/if}
+  {/each}
+
+  {#each data.lines.slice(0, 5) as line}
+    {#if selectedLine.includes(line.areaCode)}
       <Line
         {lineFunction}
         dataArray={line.data}
-        pathStrokeColor={!selectedLine
-          ? colors[i]
-          : selectedLine.includes(line.areaCode)
-            ? colors[i]
-            : "grey"}
+        pathStrokeColor={colors[data.lines.indexOf(line)]}
         pathStrokeWidth="5"
-        opacity={!selectedLine ? 1 : selectedLine === line.areaCode ? 1 : 1}
+        opacity={1}
         includeMarkers={false}
         markerRadius="8"
         markerStroke="red"
@@ -108,7 +107,7 @@
           selectedAreaCode = line.areaCode;
         }}
       ></Line>
+      {@render categoryLabel(line)}
     {/if}
-    {@render categoryLabel(line)}
   {/each}
 {/if}

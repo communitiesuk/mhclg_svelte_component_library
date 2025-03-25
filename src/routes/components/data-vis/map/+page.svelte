@@ -1,6 +1,7 @@
 <script>
   import Map from "$lib/components/data-vis/map/Map.svelte";
   import Map10 from "$lib/components/data-vis/map/Map10.svelte";
+  import Map11 from "$lib/components/data-vis/map/Map11.svelte";
   import Map2 from "$lib/components/data-vis/map/Map2.svelte";
   import Map3 from "$lib/components/data-vis/map/Map3.svelte";
   import Map4 from "$lib/components/data-vis/map/Map4.svelte";
@@ -59,7 +60,17 @@
 <h2>10. With legend</h2>
 <p>Some basic responsiveness to screen size</p>
 <p>May need to engage with work on ticks/axes and scale functions</p>
-<p>Also need to integrate with work on breaks</p>
+<p>
+  Also need to integrate with work on breaks - currently equal sized bars -
+  might be good to scale based on size of bins
+</p>
 <Map10 />
 
 <h2>11. Breaks</h2>
+<p>
+  Implemented with bespoke code, but could also be done using <a
+    href="https://maplibre.org/maplibre-style-spec/expressions/#step"
+    target="_blank">maplibre's step function.</a
+  >
+</p>
+<Map11 />

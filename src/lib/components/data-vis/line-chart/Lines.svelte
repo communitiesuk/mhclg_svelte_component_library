@@ -16,7 +16,7 @@
 
   let data2 = $state();
   $inspect(data2);
-  let bounds = $state([200, 200]);
+  let bounds = $state([0, 500]);
 
   let showAllData = $state(false);
   let labelHovered = $state();
@@ -30,7 +30,7 @@
     data2 = labelplacer(
       transformed,
       bounds,
-      (d) => d.lastY,
+      (d) => yFunction(d.lastY),
       (d) => 20,
     );
   });

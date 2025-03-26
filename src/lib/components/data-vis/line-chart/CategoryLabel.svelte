@@ -28,6 +28,11 @@
       : (labelHovered = areaCode);
     labelHovered === areaCode ? (labelHovered = null) : (labelHovered = null);
   }
+
+  let areaCode = $state(dataArray.areaCode);
+
+  let oldY = $state(yFunction(dataArray.data[0].y));
+  $inspect({ oldY, newY, areaCode, labelClicked });
 </script>
 
 <g
@@ -37,8 +42,9 @@
   onmouseenter={() => onMouseEnter(dataArray.areaCode)}
   onmouseleave={() => onMouseLeave(dataArray.areaCode)}
 >
-  <path d="M0,${newY} L10,${newY}" stroke="black" stroke-width="1"></path>
+  <!-- <path d="M 0, {oldY}  H 10  V {newY}  H 20" stroke="black" stroke-width="1"
+  ></path> -->
   <text {id} dominant-baseline="central" text-anchor="start" x={15} y={newY}>
-    {dataArray.data[0].areaCode}</text
+    {areaCode}</text
   >
 </g>

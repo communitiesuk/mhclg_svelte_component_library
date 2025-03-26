@@ -30,6 +30,10 @@
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
 
+  let numbers = $derived(
+    Array.from({ length: 10 }, (_, index) => (chartHeight / 10) * (index + 1)),
+  );
+
   let flatData = $derived(data.lines.map((el) => el.data).flat());
 
   let allYears = $derived(flatData.map((el) => el.x));
@@ -122,6 +126,9 @@
           ></Lines>
         </g>
       </g>
+      {#each numbers as number}
+        <text x="0" y={number}>{number}</text>
+      {/each}
     {/if}
   </svg>
 </div>

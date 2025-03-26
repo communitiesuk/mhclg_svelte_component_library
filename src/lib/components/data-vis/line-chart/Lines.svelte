@@ -26,6 +26,7 @@
     const lastY = item.data[0].y;
     return { areaCode: item.areaCode, lastY };
   });
+
   onMount(() => {
     data2 = labelplacer(
       transformed,

@@ -42,9 +42,13 @@
   onmouseenter={() => onMouseEnter(dataArray.areaCode)}
   onmouseleave={() => onMouseLeave(dataArray.areaCode)}
 >
-  <!-- <path d="M 0, {oldY}  H 10  V {newY}  H 20" stroke="black" stroke-width="1"
-  ></path> -->
-  <text {id} dominant-baseline="central" text-anchor="start" x={15} y={newY}>
+  <path
+    d="M 0, {oldY}  H 10  V {newY}  H 20"
+    fill="none"
+    stroke="black"
+    stroke-width="1"
+  ></path>
+  <text {id} dominant-baseline="central" text-anchor="start" x={20} y={newY}>
     {areaCode}</text
   >
 </g>

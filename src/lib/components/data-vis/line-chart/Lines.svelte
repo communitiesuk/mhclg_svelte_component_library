@@ -3,6 +3,7 @@
   import CategoryLabel from "./CategoryLabel.svelte";
   import labelplacer from "labelplacer";
   import { onMount } from "svelte";
+  import { derived } from "svelte/store";
 
   let {
     data,
@@ -14,7 +15,7 @@
     labelClicked = $bindable(),
   } = $props();
 
-  let bounds = $state([0, 500]);
+  let bounds = $state([0, 600]);
 
   let showAllData = $state(false);
   let labelHovered = $state();
@@ -29,19 +30,23 @@
     }),
   );
 
-  let labelsPlaced = $derived(
-    labelplacer(
+  let labelsPlaced = $state();
+
+  onMount(() => {
+    labelsPlaced = labelplacer(
       transformed,
       bounds,
       (d) => d.lastY,
       (d) => 20,
-    ),
-  );
+    );
+  });
+
+  $inspect(labelsPlaced);
 
   let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
 </script>
 
-{#snippet categoryLabelSnippet(labelClickedProp, dataArray, newY)}
+{#snippet categoryLabelSnippet(dataArray, newY)}
   <CategoryLabel
     id={`label-${dataArray.areaCode}`}
     bind:labelClicked
@@ -90,7 +95,7 @@
     )}
   </g>
 {:else}
-  {#each data.lines.slice(0, 15) as line, i}
+  {#each subset as line, i}
     <Line
       {lineFunction}
       dataArray={line.data}
@@ -108,8 +113,11 @@
         selectedAreaCode = line.areaCode;
       }}
     ></Line>
-    {#if transformed}
-      {@render categoryLabelSnippet(line, labelsPlaced[i].y)}
+    {#if labelsPlaced}
+      {@render categoryLabelSnippet(
+        line,
+        labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
+      )}
     {/if}
     {#if selectedLine.includes(line.areaCode)}
       <Line

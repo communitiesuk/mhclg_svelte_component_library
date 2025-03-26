@@ -19,7 +19,7 @@ body {
 }
 
 p {
-  margin: 1.5rem 0px;
+  margin: 1rem 0px;
   padding: 0px;
 }
 
@@ -63,4 +63,12 @@ a {
   color: #1d70b8;
   text-decoration: underline;
   text-underline-offset: 4px;
+}
+
+code {
+  font-size: 0.9rem;
+  margin: 0px 2px;
+  padding: 2px 4px;
+  color: #27272a;
+  background-color: #f1f5f9;
 }

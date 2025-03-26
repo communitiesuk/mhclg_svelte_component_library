@@ -21,14 +21,14 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "Baseline completed",
+    progress: "To be developed",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
         visibleOnHompepage: false,
       },
       {
-        obj: { Reviewed: true, Tested: false },
+        obj: { Reviewed: false, Tested: false },
         visibleOnHomepage: false,
       },
     ],
@@ -41,14 +41,12 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = [
-    "A checkbox component that allows users to select one or more options from a list.",
-    'Based on the <a href="https://design-system.service.gov.uk/components/checkboxes/" target="_blank" rel="noopener noreferrer">GOV.UK Design System checkbox component</a> pattern.',
-  ];
+  let descriptionArray = ["This is the template wrapper page."];
 
   let contextArray = [
-    "Use the checkbox component when you need to let users select one or more options from a list.",
-    "You can also use checkboxes to toggle a single option on or off.",
+    "This page can be copied and then edited when a new component needs to be created.",
+    "The script <code>create-component-and-wrapper-pages</code> can be used to duplicate, move and rename the template wrapper and component pages.",
+    "More information on setting up a wrapper page for a new component is provided in the user guide.",
   ];
 
   let detailsArray = [
@@ -96,8 +94,8 @@
   import { kebabToPascalCase } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { getValueFromParametersArray } from "$lib/utils/data-transformations/getValueFromParametersArray.js";
 
-  import Checkbox from "$lib/components/ui/Checkbox.svelte";
-  import Examples from "./checkbox/Examples.svelte";
+  import Template from "$lib/package-wrapping/Template.svelte";
+  import Examples from "./examples/Examples.svelte";
 
   let { data } = $props();
 
@@ -119,7 +117,7 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let selectedValues = $state([]);
+  let bindedProp = $state(0);
 
   /**
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -155,108 +153,156 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "legend",
-        category: "Content",
-        value: "How would you like to be contacted?",
+        name: "textProp",
+        category: "Input props",
+        value: `This string is being passed to the ${pageName}.svelte component.`,
+        description: {
+          markdown: true,
+          arr: [
+            `Passes a string to the <code>${pageName}.svelte</code> component.`,
+            `This input will be used if <code>inputType === "textArea"</code> or if there is no inputType property and value is a number.`,
+            `An additional <code>rows</code> field can be used to extend the size of the textArea input for longer strings. In this example, rows = 3.`,
+          ],
+        },
+        rows: 5,
       },
       {
-        name: "hint",
-        category: "Content",
-        value: "Select all that apply",
+        name: "numberProp",
+        category: "Input props",
+        value: 100,
+        description: {
+          markdown: true,
+          arr: [
+            `This input will be used if <code>inputType === "number"</code> or if there is no inputType property and value is a number.`,
+            `Additional fields 'min', 'max' and 'step' can be used to customise the input. In this example, <code>step = 10</code>,<code>min = 0</code> and <code>max = 100</code>.`,
+          ],
+        },
+        step: 10,
+        min: 0,
+        max: 120,
       },
       {
-        name: "selectedValues",
-        category: "Content",
-        isEditable: false,
-        value: selectedValues,
+        name: "checkboxProp",
+        category: "Input props",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
+            `This input will be used if <code>inputType === "checkbox"</code> or if there is no inputType property and value is a boolean.`,
+          ],
+        },
       },
       {
-        name: "name",
-        category: "Form",
-        value: "contact-preferences",
+        name: "dropdownProp",
+        category: "Input props",
+        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
+        description: {
+          markdown: true,
+          arr: [
+            `This input will be used if <code>inputType === "dropdown"</code> or if there is no inputType property and there is an options property.`,
+            `The options property needs to provide an array of options. If there is no value field, the initial value is taken from the first element of the options array.`,
+          ],
+        },
+        step: 10,
+        min: 0,
+        max: 120,
       },
       {
-        name: "options",
-        category: "Content",
+        name: "radioProp",
+        category: "Input props",
+        inputType: "radio",
+        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
+        description: {
+          markdown: true,
+          arr: [
+            `This input will be used if <code>inputType === "radio"</code>.`,
+            `The options property needs to provide an array of options. If there is no value property, the initial value is taken from the first element of the options array.`,
+          ],
+        },
+        step: 10,
+        min: 0,
+        max: 120,
+      },
+      {
+        name: "jsObjectProp",
+        category: "Input props",
         value: [
           {
-            value: "email",
-            label: "Email",
-            hint: "We'll send updates to your inbox",
+            name: "Pikachu",
+            type: "Electric",
           },
           {
-            value: "sms",
-            label: "Text message",
-            hint: "UK mobile numbers only",
+            name: "Charmander",
+            type: "Fire",
           },
           {
-            value: "phone",
-            label: "Phone call",
-            hint: "We'll call during business hours",
+            name: "Squirtle",
+            type: "Water",
           },
           {
-            value: "none",
-            label: "Do not contact me",
-            exclusive: true,
+            name: "Bulbasaur",
+            type: "Grass",
           },
         ],
+        description: {
+          markdown: true,
+          arr: [
+            `This input will be used if the initial value is an javascript object (e.g. an object literal or an array).`,
+            `The object can be directly edited. If any edits create an invalid object, a 'Toast' notification will alert the user. Until the object is fixed, the prop will instead use its initial value.`,
+          ],
+        },
+        rows: 5,
       },
       {
-        name: "error",
-        category: "Validation",
-        value: "",
+        name: "bindedProp",
+        category: "Derived props",
+        isEditable: false,
+        value: bindedProp,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop utilises Svelte's <code>bind:</code> directive, so that it can be defined outside the <code>${pageName}.svelte</code> component and then updated within it.`,
+            `Clicking on the button will increase the value of the prop by 1.`,
+            `To work with the demo, binded props need to be defined separately and then referenced to set the value of the binded prop element (e.g. <code>let bindedProp = $state(0);</code>, <code>...value: bindedProp</code>).`,
+            `To work with the demo, binded props must also be passed to the component using <code>bind:</code> (whereas all other props are automatically passed as part of <code>parametersObject</code>).`,
+          ],
+        },
       },
       {
-        name: "isPageHeading",
-        category: "UI Options",
-        value: false,
-      },
-      {
-        name: "small",
-        category: "UI Options",
-        value: false,
-      },
-      {
-        name: "legendSize",
-        category: "UI Options",
-        options: ["l", "m", "s"],
-      },
-      {
-        name: "validate",
-        category: "Validation",
+        name: "functionProp",
+        category: "Derived props",
         isEditable: false,
         value: {
           workingFunction: function (values) {
-            if (values.length === 0) {
-              return "Please select at least one contact method";
-            }
-            if (values.includes("none") && values.length > 1) {
-              return "You cannot select other options when opting out of all communications";
-            }
-            if (
-              values.includes("email") &&
-              !values.includes("sms") &&
-              !values.includes("none")
-            ) {
-              return "Please select SMS as a backup digital contact method when using email";
-            }
-            return undefined;
+            console.log("hello there");
           },
           functionAsString: `function (values) {
-if (values.length === 0) {
-    return "Please select at least one contact method";
-}
-
-if (values.includes("none") && values.length > 1) {
-    return "You cannot select other options when opting out of all communications";
-}
-            
-if (values.includes("email") && !values.includes("sms") && !values.includes("none")) {
-      return "Please select SMS as a backup digital contact method when using email";
-}
-            
-return undefined;
+    console.log("hello there");
 }`,
+        },
+
+        description: {
+          markdown: true,
+          arr: [
+            `To include a function prop, set the value to be an object with two keys - <code>workingFunction</code> and <code>functionAsString</code>.`,
+            `<code>workingFunction</code> should provide the actual function that is passed to the component.`,
+            `<code>functionAsString</code> is what will be shown in UI (i.e. the value to the left of this text). Users are encouraged to wrap their workingFunction code in quotes and copy to functionAsString, so that the two properties match.`,
+          ],
+        },
+      },
+      {
+        name: "derivedFromOtherProps",
+        category: "Input props",
+        isEditable: false,
+        value: {},
+        description: {
+          markdown: true,
+          arr: [
+            `Sometimes you will want to define a prop based on other props.`,
+            `A good example of this is the Line components lineFunction, which uses props xFunction and yFunction.`,
+            `To do this, you need to set the variable as XXX.`,
+          ],
         },
       },
     ]).map((el) => ({
@@ -420,11 +466,7 @@ DONOTTOUCH  *
  -->
 
 {#snippet Component()}
-  <div class="flex flex-col gap-4">
-    <div class="px-6 py-14">
-      <Checkbox {...parametersObject} bind:selectedValues />
-    </div>
-  </div>
+  <Template {parametersObject} bind:bindedProp></Template>
 {/snippet}
 
 <ComponentDemo

@@ -1,16 +1,21 @@
 <script>
   import Pill from "$lib/package-wrapping/Pill.svelte";
-  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
+  import {
+    textStringConversion,
+    pascalToKebabCase,
+  } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { componentStatusProgressBackgroundColorLookup } from "$lib/config.js";
 
   let { homepage, statusObject, folder, name, parentFolder } = $props();
+
+  $inspect(name, textStringConversion(name, "kebab"));
 </script>
 
 <div class="flex flex-row items-center gap-4">
   {#if homepage}
     <a
       class="link-to-other-page"
-      href={`/${parentFolder}${folder ? "/" + folder : ""}/${textStringConversion(name, "kebab")}`}
+      href={`/${parentFolder}${folder ? "/" + folder : ""}/${pascalToKebabCase(name)}`}
     >
       <h6>{name}</h6>
     </a>

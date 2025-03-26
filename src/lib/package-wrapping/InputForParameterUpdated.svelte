@@ -67,7 +67,7 @@
       const monaco = await loader.init();
 
       monacoEditor = monaco.editor.create(editorContainer, {
-        value: statedValue.objectAsString, // Initial editor content bound to the component's value prop
+        value: statedValue, // Initial editor content bound to the component's value prop
         language: "javascript",
         theme: "vs-light",
         minimap: { enabled: false },
@@ -88,12 +88,7 @@
 
       // Establish two-way data binding between editor content and component's value prop
       monacoEditor.onDidChangeModelContent(() => {
-        //statedValue.objectAsString = monacoEditor.getValue();
-        //statedValue.workingObject = JSON.parse(statedValue.objectAsString);
-        statedValue = {
-          objectAsString: monacoEditor.getValue(),
-          workingObject: JSON.parse(monacoEditor.getValue()),
-        };
+        statedValue = monacoEditor.getValue();
       });
 
       // Cleanup: Dispose Monaco editor instance on component destruction
@@ -154,12 +149,14 @@
 {:else}
   {#key derivedValue}
     <CodeBlock
-      code={typeof derivedValue === "object" &&
-      "workingFunction" in derivedValue &&
-      "functionAsString" in derivedValue
-        ? derivedValue.functionAsString.replace(/getValue\("([^"]+)"\)/g, "$1")
-        : typeof derivedValue === "object"
-          ? derivedValue.objectAsString
+      code={typeof derivedValue != "object"
+        ? derivedValue.toString()
+        : "workingFunction" in derivedValue &&
+            "functionAsString" in derivedValue
+          ? derivedValue.functionAsString.replace(
+              /getValue\("([^"]+)"\)/g,
+              "$1",
+            )
           : derivedValue}
       language="javascript"
       size="sm"

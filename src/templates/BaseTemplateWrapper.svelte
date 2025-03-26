@@ -153,13 +153,11 @@
       {
         name: "textProp",
         category: "Input props",
-        value: `This string is being passed to the ${pageName}.svelte component.`,
+        value: `This is a string input - edit me and see it reflected in the component.`,
         description: {
           markdown: true,
           arr: [
-            `Passes a string to the <code>${pageName}.svelte</code> component.`,
-            `This input will be used if <code>inputType === "textArea"</code> or if there is no inputType property and value is a number.`,
-            `An additional <code>rows</code> field can be used to extend the size of the textArea input for longer strings. In this example, rows = 3.`,
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
           ],
         },
         rows: 5,
@@ -167,17 +165,14 @@
       {
         name: "numberProp",
         category: "Input props",
-        value: 100,
+        value: 42,
         description: {
           markdown: true,
           arr: [
-            `This input will be used if <code>inputType === "number"</code> or if there is no inputType property and value is a number.`,
-            `Additional fields 'min', 'max' and 'step' can be used to customise the input. In this example, <code>step = 10</code>,<code>min = 0</code> and <code>max = 100</code>.`,
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
           ],
         },
-        step: 10,
-        min: 0,
-        max: 120,
+        rows: 5,
       },
       {
         name: "checkboxProp",
@@ -186,8 +181,7 @@
         description: {
           markdown: true,
           arr: [
-            `Passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
-            `This input will be used if <code>inputType === "checkbox"</code> or if there is no inputType property and value is a boolean.`,
+            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
           ],
         },
       },
@@ -198,13 +192,9 @@
         description: {
           markdown: true,
           arr: [
-            `This input will be used if <code>inputType === "dropdown"</code> or if there is no inputType property and there is an options property.`,
-            `The options property needs to provide an array of options. If there is no value field, the initial value is taken from the first element of the options array.`,
+            `This prop passes the selected <code>option</code> to the component as a string.`,
           ],
         },
-        step: 10,
-        min: 0,
-        max: 120,
       },
       {
         name: "radioProp",
@@ -214,13 +204,9 @@
         description: {
           markdown: true,
           arr: [
-            `This input will be used if <code>inputType === "radio"</code>.`,
-            `The options property needs to provide an array of options. If there is no value property, the initial value is taken from the first element of the options array.`,
+            `This prop passes the selected <code>option</code> to the component as a string.`,
           ],
         },
-        step: 10,
-        min: 0,
-        max: 120,
       },
       {
         name: "jsObjectProp",
@@ -246,30 +232,16 @@
         description: {
           markdown: true,
           arr: [
-            `This input will be used if the initial value is an javascript object (e.g. an object literal or an array).`,
-            `The object can be directly edited. If any edits create an invalid object, a 'Toast' notification will alert the user. Until the object is fixed, the prop will instead use its initial value.`,
+            `This prop passes the selected a JS object to the component.`,
+            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
           ],
         },
         rows: 5,
       },
-      {
-        name: "bindedProp",
-        category: "Derived props",
-        isEditable: false,
-        value: bindedProp,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop utilises Svelte's <code>bind:</code> directive, so that it can be defined outside the <code>${pageName}.svelte</code> component and then updated within it.`,
-            `Clicking on the button will increase the value of the prop by 1.`,
-            `To work with the demo, binded props need to be defined separately and then referenced to set the value of the binded prop element (e.g. <code>let bindedProp = $state(0);</code>, <code>...value: bindedProp</code>).`,
-            `To work with the demo, binded props must also be passed to the component using <code>bind:</code> (whereas all other props are automatically passed as part of <code>parametersObject</code>).`,
-          ],
-        },
-      },
+
       {
         name: "functionProp",
-        category: "Derived props",
+        category: "Fixed props",
         isEditable: false,
         value: {
           workingFunction: function (values) {
@@ -283,23 +255,11 @@
         description: {
           markdown: true,
           arr: [
-            `To include a function prop, set the value to be an object with two keys - <code>workingFunction</code> and <code>functionAsString</code>.`,
-            `<code>workingFunction</code> should provide the actual function that is passed to the component.`,
-            `<code>functionAsString</code> is what will be shown in UI (i.e. the value to the left of this text). Users are encouraged to wrap their workingFunction code in quotes and copy to functionAsString, so that the two properties match.`,
-          ],
-        },
-      },
-      {
-        name: "derivedFromOtherProps",
-        category: "Input props",
-        isEditable: false,
-        value: {},
-        description: {
-          markdown: true,
-          arr: [
-            `Sometimes you will want to define a prop based on other props.`,
-            `A good example of this is the Line components lineFunction, which uses props xFunction and yFunction.`,
-            `To do this, you need to set the variable as XXX.`,
+            `This prop passes a function to the ${pageName} component. `,
+            `It works a bit differently to other props, with the value being set to an object with two properties: <code>functionAsString</code> and <code>workingFunction</code>.`,
+            ,
+            `The value shown on the left is just example code based on the <code>functionAsString</code> property.`,
+            `The function actually passed to the component is separate, and is based on the <code>workingFunction</code> property.`,
           ],
         },
       },

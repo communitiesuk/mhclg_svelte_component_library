@@ -13,9 +13,10 @@
     xFunction,
     yFunction,
     labelClicked = $bindable(),
+    chartHeight,
   } = $props();
 
-  let bounds = $state([0, 600]);
+  let bounds = $state([0, chartHeight]);
 
   let showAllData = $state(false);
   let labelHovered = $state();

@@ -99,9 +99,7 @@
     <Line
       {lineFunction}
       dataArray={line.data}
-      pathStrokeColor={!selectedLine
-        ? colors[data.lines.indexOf(line)]
-        : "grey"}
+      pathStrokeColor={colors[i]}
       pathStrokeWidth="5"
       opacity={!selectedLine ? 1 : 0.5}
       includeMarkers={false}
@@ -123,7 +121,7 @@
       <Line
         {lineFunction}
         dataArray={line.data}
-        pathStrokeColor={colors[data.lines.indexOf(line)]}
+        pathStrokeColor={colors[i]}
         pathStrokeWidth="5"
         opacity={1}
         includeMarkers={false}

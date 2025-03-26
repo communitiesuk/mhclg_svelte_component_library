@@ -14,32 +14,34 @@
     labelClicked = $bindable(),
   } = $props();
 
-  let data2 = $state();
-  $inspect(data2);
   let bounds = $state([0, 500]);
 
   let showAllData = $state(false);
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
 
-  const transformed = data.lines.slice(0, 15).map((item) => {
-    const lastY = item.data[0].y;
-    return { areaCode: item.areaCode, lastY };
-  });
+  let subset = $state(data.lines.slice(0, 15));
 
-  onMount(() => {
-    data2 = labelplacer(
+  let transformed = $derived(
+    subset.map((item) => {
+      let lastY = yFunction(item.data[0].y);
+      return { areaCode: item.areaCode, lastY };
+    }),
+  );
+
+  let labelsPlaced = $derived(
+    labelplacer(
       transformed,
       bounds,
-      (d) => yFunction(d.lastY),
+      (d) => d.lastY,
       (d) => 20,
-    );
-  });
+    ),
+  );
 
   let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
 </script>
 
-{#snippet categoryLabel(dataArray, newY)}
+{#snippet categoryLabelSnippet(labelClickedProp, dataArray, newY)}
   <CategoryLabel
     id={`label-${dataArray.areaCode}`}
     bind:labelClicked
@@ -83,34 +85,32 @@
     {yFunction}
   ></Line>
   <g>
-    {@render categoryLabel(
+    {@render categoryLabelSnippet(
       data.lines.find((el) => el.areaCode === selectedAreaCode),
     )}
   </g>
 {:else}
   {#each data.lines.slice(0, 15) as line, i}
-    {#if !selectedLine.includes(line.areaCode)}
-      <Line
-        {lineFunction}
-        dataArray={line.data}
-        pathStrokeColor={!selectedLine
-          ? colors[data.lines.indexOf(line)]
-          : "grey"}
-        pathStrokeWidth="5"
-        opacity={!selectedLine ? 1 : 0.5}
-        includeMarkers={false}
-        markerRadius="8"
-        markerStroke="red"
-        markerFill="white"
-        dataId={line.areaCode}
-        onMouseMove={() => {
-          selectedAreaCode = line.areaCode;
-        }}
-      ></Line>
+    <Line
+      {lineFunction}
+      dataArray={line.data}
+      pathStrokeColor={!selectedLine
+        ? colors[data.lines.indexOf(line)]
+        : "grey"}
+      pathStrokeWidth="5"
+      opacity={!selectedLine ? 1 : 0.5}
+      includeMarkers={false}
+      markerRadius="8"
+      markerStroke="red"
+      markerFill="white"
+      dataId={line.areaCode}
+      onMouseMove={() => {
+        selectedAreaCode = line.areaCode;
+      }}
+    ></Line>
+    {#if transformed}
+      {@render categoryLabelSnippet(line, labelsPlaced[i].y)}
     {/if}
-  {/each}
-
-  {#each data.lines.slice(0, 15) as line, i}
     {#if selectedLine.includes(line.areaCode)}
       <Line
         {lineFunction}
@@ -130,7 +130,3 @@
     {/if}
   {/each}
 {/if}
-{#each data.lines.slice(0, 15) as line, i}
-  {#if data2 && data2[i]}
-    {@render categoryLabel(line, data2[i].y)}
-  {/if}{/each}

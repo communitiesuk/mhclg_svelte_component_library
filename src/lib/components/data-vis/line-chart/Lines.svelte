@@ -21,8 +21,9 @@
   let showAllData = $state(false);
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
+  let nLines = $state(5);
 
-  let subset = $state(data.lines.slice(0, 15));
+  let subset = $state(data.lines.slice(0, nLines));
 
   let transformed = $derived(
     subset.map((item) => {
@@ -69,7 +70,7 @@
         dataArray={line.data}
         pathStrokeColor="black"
         pathStrokeWidth="1"
-        opacity="0.15"
+        opacity={0.15}
         dataId={line.areaCode}
         onMouseMove={() => {
           selectedAreaCode = line.areaCode;
@@ -102,7 +103,7 @@
       dataArray={line.data}
       pathStrokeColor={colors[i]}
       pathStrokeWidth="5"
-      opacity={!selectedLine ? 1 : 0.5}
+      opacity={!labelClicked && !labelHovered ? 1 : 0.2}
       includeMarkers={false}
       markerRadius="8"
       markerStroke="red"

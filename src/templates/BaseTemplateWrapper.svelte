@@ -44,7 +44,7 @@
   let descriptionArray = ["Explain here what the component does."];
 
   let contextArray = [
-    "Explain here the different contexts in which the component is used ",
+    "Explain here the different contexts in which the component should be used.",
   ];
 
   let detailsArray = [
@@ -115,7 +115,6 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let bindedProp = $state(0);
 
   /**
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -244,14 +243,14 @@
         category: "Fixed props",
         isEditable: false,
         value: {
-          workingFunction: function (values) {
-            console.log("hello there");
+          workingFunction: function (data) {
+            console.log(data);
           },
-          functionAsString: `function (values) {
-    console.log("hello there");
-}`,
+          functionAsString: `//applied to each of the circle svg elements 
+function (data) {
+  console.log(data);
+},`,
         },
-
         description: {
           markdown: true,
           arr: [
@@ -377,6 +376,75 @@
   ></BaseInformation>
 {/snippet}
 
+{#snippet FixedPropsExplanation()}
+  <DividerLine></DividerLine>
+  <p>
+    Two more advanced prop types are not demoed here but are described below:
+  </p>
+  <div class="grid grid-cols-[auto_1fr] gap-8">
+    <div class="font-bold">bounded props</div>
+    <div>
+      <p class="mt-0 mb-8">
+        We can use Svelte's <code>bind:</code> directive to allow an update to a
+        prop within the component to flow upwards to its parent (in this case the
+        Wrapper component).
+      </p>
+      <p class="mt-8 mb-8">
+        For this to work with a wrapper page the variable must be declared
+        separately to the <code>parametersSourceArray</code> (e.g.
+        <code>let boundedProp = $state([])</code>) and passed to the component
+        as an individual bounded prop (e.g.
+        <code
+          >&lt;Template&gt; &lbrace;...parametersSourceArray&rbrace;
+          bind:boundedProp &lt;/Template&gt;</code
+        >).
+      </p>
+      <p class="mt-8 mb-8">
+        If you wish to see updates reflected in the UI, the prop can also be
+        assigned as the value of an entry in <code>parametersSourceArray</code>
+        (e.g.
+        <code
+          >&lbrace; name: "boundedProp", isEditable: false, value:
+          boundedProp&rbrace;</code
+        >).
+      </p>
+      <p class="mt-8 mb-0">
+        A simple example using a bounded prop can be viewed <a
+          href="./bounded-prop-example">here.</a
+        >
+      </p>
+    </div>
+
+    <div class="col-span-full">
+      <DividerLine></DividerLine>
+    </div>
+
+    <div class="font-bold">derived props</div>
+    <div>
+      <p class="mt-0 mb-8">
+        In some cases, you will want a prop to be derived from another prop
+        (e.g. <a href="/components-update/data-vis/line">the Line component</a>
+        has a <code>lineFunction</code> prop, which is a function utilising the
+        <code>xFunction</code>
+        and <code>yFunction</code> props.)
+      </p>
+      <p class="mt-8 mb-8">
+        Therefore, prop values can be assigned based <code
+          >parametersSourceArray</code
+        >
+        is defined. The <code>getValue()</code> function can be used to grab the
+        reactive value of any props which have already been defined (e.g.
+        <code></code>).
+      </p>
+      <p class="mt-8 mb-0">
+        A simple example using a bounded prop can be viewed <a
+          href="./derived-prop-example">here.</a
+        >
+      </p>
+    </div>
+  </div>
+{/snippet}
+
 <!--
 DONOTTOUCH  *
 &&          Renders toast notifications if any of the parameters values are invalid JSON.
@@ -424,11 +492,12 @@ DONOTTOUCH  *
  -->
 
 {#snippet Component()}
-  <Template {parametersObject} bind:bindedProp></Template>
+  <Template {...parametersObject}></Template>
 {/snippet}
 
 <ComponentDemo
   {Component}
+  {FixedPropsExplanation}
   bind:demoScreenWidth
   {parametersSourceArray}
   bind:statedParametersValuesArray

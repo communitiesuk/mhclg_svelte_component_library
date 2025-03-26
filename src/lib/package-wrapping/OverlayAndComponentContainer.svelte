@@ -5,6 +5,7 @@
 
   let {
     Component,
+    FixedPropsExplanation,
     demoScreenWidth,
     parametersSourceArray,
     statedParametersValuesArray = $bindable(),
@@ -102,6 +103,11 @@
             </div>
           {/if}
         {/each}
+        {#if FixedPropsExplanation && parameterCategories[selectedCategory].name === "Fixed props"}
+          <div data-role="item" class="col-span-full">
+            {@render FixedPropsExplanation()}
+          </div>
+        {/if}
       </div>
     </div>
   {/if}

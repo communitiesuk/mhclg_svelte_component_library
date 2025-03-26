@@ -109,6 +109,8 @@
 
   let { data } = $props();
 
+  $inspect(Line);
+
   /**
    * DONOTTOUCH *
    * ? 		uses the page url to identify the name of the component and the folder it belongs to (folder is only used by snippets exported to the homepage to link back to this page).
@@ -395,21 +397,21 @@
         min: 0,
         max: 1,
       },
-    ]).map((el) => ({
-      ...el,
-      handlerFunction:
-        el.inputType === "event"
-          ? (el.handlerFunction ??
-            function (event) {
-              defineDefaultEventHandler(
-                event,
-                parametersSourceArray,
-                parametersValuesArray,
-                el.name,
-              );
-            })
-          : null,
-    })),
+      {
+        name: "onClick",
+        category: "lineEvents",
+        isEditable: false,
+        value: {
+          workingFunction: function (event, dataArray) {
+            console.log("---onClick---", event, dataArray);
+          },
+          functionAsString: `function (event, dataArray) {
+
+  console.log("---onClick---", event, dataArray);
+},`,
+        },
+      },
+    ]),
   );
 
   /**
@@ -588,7 +590,7 @@
 
 <!--
   &&  WrapperNameAndStatus and WraaperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
-  -->
+-->
 
 {#snippet WrapperNameAndStatus(name, folder, homepage)}
   <BaseNameAndStatus
@@ -650,6 +652,10 @@ DONOTTOUCH  *
     CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
  -->
+
+<div class="fixed bottom-0 right-0 mr-5 mb-5">
+  <Toast dismissable={true}>Bottom right positioning.</Toast>
+</div>
 
 {#snippet Component()}
   <div>

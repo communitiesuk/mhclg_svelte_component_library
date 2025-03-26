@@ -277,9 +277,10 @@
           workingFunction: function (values) {
             console.log("hello there");
           },
-          functionAsString: `function (values) {
-    console.log("hello there");
-}`,
+          functionAsString: `//applied to each of the circle svg elements 
+function (data) {
+console.log(data);
+},`,
         },
 
         description: {
@@ -305,21 +306,7 @@
           ],
         },
       },
-    ]).map((el) => ({
-      ...el,
-      handlerFunction:
-        el.inputType === "event"
-          ? (el.handlerFunction ??
-            function (event) {
-              defineDefaultEventHandler(
-                event,
-                parametersSourceArray,
-                parametersValuesArray,
-                el.name,
-              );
-            })
-          : null,
-    })),
+    ]),
   );
 
   /**

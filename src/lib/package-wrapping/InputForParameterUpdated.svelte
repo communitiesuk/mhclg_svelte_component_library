@@ -163,4 +163,7 @@
       includeHeader={false}
     ></CodeBlock>
   {/key}
+  {#if typeof derivedValue === "object" && derivedValue.hasOwnProperty("counter")}
+    {derivedValue.counter}
+  {/if}
 {/if}

@@ -259,21 +259,7 @@ return undefined;
 }`,
         },
       },
-    ]).map((el) => ({
-      ...el,
-      handlerFunction:
-        el.inputType === "event"
-          ? (el.handlerFunction ??
-            function (event) {
-              defineDefaultEventHandler(
-                event,
-                parametersSourceArray,
-                parametersValuesArray,
-                el.name,
-              );
-            })
-          : null,
-    })),
+    ]),
   );
 
   /**

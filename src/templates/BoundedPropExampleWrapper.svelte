@@ -21,7 +21,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "In progress",
+    progress: "To be developed",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -36,18 +36,15 @@
 
   /**
    * CUSTOMISETHIS  Update detailsArray to provide description of what this component does and when it should be used.
-   * &&   By default the detailsArray includes description and context. The description is intended to explain what the component does, the context is intended to explain when the component will be used (e.g. what is it's parent component likely to be, what components will it be used in combination with).
+   * &&   By default the detailsArray includes description and context. The description is intended to explain what the component does, the context is intended to explain when the component will be used.
    * ?  Within each array, an object has an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content (e.g. this can be used for including links to other pages).
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = [
-    "This component takes an array of data, two scale functions and a line function and renders an svg path element (and optional markers at each data point)",
-  ];
+  let descriptionArray = ["Explain here what the component does."];
 
   let contextArray = [
-    "Used within svg elements as part of the creation of data visualisations - most notably by the <a href='/components/data-vis/line/'>Lines</a> component.",
-    "The Lines component renders a collection of lines as a group allowing all lines to update based on user interactions with a single line (e.g. reduce opacity of other lines when user hovers). Even individual lines should normally be created using the Lines component.",
+    "Explain here the different contexts in which the component should be used.",
   ];
 
   let detailsArray = [
@@ -95,17 +92,8 @@
   import { kebabToPascalCase } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { getValueFromParametersArray } from "$lib/utils/data-transformations/getValueFromParametersArray.js";
 
-  import Line from "$lib/components/data-vis/line-chart/Line.svelte";
-  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
-  import {
-    curveBasis,
-    curveCardinal,
-    curveLinear,
-    curveLinearClosed,
-    curveMonotoneX,
-    curveStep,
-    line,
-  } from "d3-shape";
+  import Template from "$lib/package-wrapping/Template.svelte";
+  import Examples from "./examples/Examples.svelte";
 
   let { data } = $props();
 
@@ -127,7 +115,7 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let selectedValues = $state([]);
+  let bindedProp = $state(0);
 
   /**
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -163,237 +151,117 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "svgHeight",
-        category: "dimensions",
-        isProp: false,
-        value: 500,
-      },
-      {
-        name: "paddingTop",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingRight",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingBottom",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingLeft",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "dataSource",
-        category: "data",
-        isProp: false,
-        inputType: "radio",
-        options: ["from base data", "custom"],
-      },
-      {
-        name: "metric",
-        category: "data",
-        isProp: false,
-        options: data.metrics,
-        visible: { name: "dataSource", value: "from base data" },
-      },
-      {
-        name: "area",
-        category: "data",
-        isProp: false,
-        options: data.areas,
-        visible: { name: "dataSource", value: "from base data" },
-      },
-      {
-        name: "customDataArray",
-        category: "data",
-        isProp: false,
-        visible: { name: "dataSource", value: "custom" },
-        value: data.dataInFormatForLineChart[0].lines[0].data.map((el) => ({
-          x: el.x,
-          y: el.y,
-        })),
-      },
-      {
-        name: "derivedDataArray",
-        category: "data",
-        isProp: false,
-        isEditable: false,
-        visible: { name: "dataSource", value: "from base data" },
-        value: {},
+        name: "textProp",
+        category: "Input props",
+        value: `This is a string input - edit me and see it reflected in the component.`,
         description: {
           markdown: true,
           arr: [
-            "Calculated here based on the selected metric and area.",
-            "Passed to the Line component as <span class='font-bold'>dataArray</span> when dataSource is set to <span class='italic'>'from base data'</span>.",
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "numberProp",
+        category: "Input props",
+        value: 42,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "checkboxProp",
+        category: "Input props",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
           ],
         },
       },
       {
-        name: "dataArray",
-        category: "data",
-        isProp: true,
-        isEditable: false,
-        visible: false,
-        value: {},
-      },
-
-      {
-        name: "xDomainLowerBound",
-        category: "xScale",
-        isProp: false,
-        value: Math.min(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.x),
-        ),
+        name: "dropdownProp",
+        category: "Input props",
+        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes the selected <code>option</code> to the component as a string.`,
+          ],
+        },
       },
       {
-        name: "xDomainUpperBound",
-        category: "xScale",
-        isProp: false,
-        value: Math.max(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.x),
-        ),
+        name: "radioProp",
+        category: "Input props",
+        inputType: "radio",
+        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes the selected <code>option</code> to the component as a string.`,
+          ],
+        },
       },
       {
-        name: "xScaleType",
-        category: "xScale",
-        isProp: false,
-        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
-      },
-      {
-        name: "xFunction",
-        category: "xScale",
-        isEditable: false,
-      },
-      {
-        name: "yDomainLowerBound",
-        category: "yScale",
-        isProp: false,
-        value: Math.min(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.y),
-        ),
-      },
-      {
-        name: "yDomainUpperBound",
-        category: "yScale",
-        isProp: false,
-        value: Math.max(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.y),
-        ),
-      },
-      {
-        name: "yScaleType",
-        category: "yScale",
-        isProp: false,
-        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
-      },
-      {
-        name: "yFunction",
-        category: "yScale",
-        isEditable: false,
-      },
-      {
-        name: "curveFunction",
-        category: "lineFunction",
-        isProp: false,
-        options: [
-          "curveLinear",
-          "curveLinearClosed",
-          "curveCardinal",
-          "curveBasis",
-          "curveStep",
-          "curveMonotoneX",
+        name: "jsObjectProp",
+        category: "Input props",
+        value: [
+          {
+            name: "Pikachu",
+            type: "Electric",
+          },
+          {
+            name: "Charmander",
+            type: "Fire",
+          },
+          {
+            name: "Squirtle",
+            type: "Water",
+          },
+          {
+            name: "Bulbasaur",
+            type: "Grass",
+          },
         ],
-      },
-      {
-        name: "lineFunction",
-        category: "lineFunction",
-        isEditable: false,
-      },
-      {
-        name: "pathStrokeColor",
-        category: "path",
-        value: "#b312a0",
-      },
-      {
-        name: "pathStrokeWidth",
-        category: "path",
-        value: 3,
-      },
-      {
-        name: "pathFillColor",
-        category: "path",
-        value: "none",
-      },
-      {
-        name: "pathStrokeDashArray",
-        category: "path",
-        value: "none",
-      },
-      {
-        name: "includeMarkers",
-        category: "markers",
-        value: false,
-      },
-      {
-        name: "markerShape",
-        category: "markers",
-        options: ["circle", "square", "diamond", "triangle"],
-        visible: [{ name: "includeMarkers", value: true }],
-      },
-      {
-        name: "markerRadius",
-        category: "markers",
-        value: 5,
-        visible: { name: "includeMarkers", value: true },
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes the selected a JS object to the component.`,
+            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
+          ],
+        },
+        rows: 5,
       },
 
       {
-        name: "markerFill",
-        category: "markers",
-        value: "#b312a0",
-        visible: { name: "includeMarkers", value: true },
-      },
-      {
-        name: "markerStroke",
-        category: "markers",
-        value: "white",
-        visible: { name: "includeMarkers", value: true },
-      },
-      {
-        name: "markerStrokeWidth",
-        category: "markers",
-        value: 1,
-        visible: { name: "includeMarkers", value: true },
-      },
-      {
-        name: "opacity",
-        category: "overallStyling",
-        value: 1,
-        step: 0.1,
-        min: 0,
-        max: 1,
+        name: "functionProp",
+        category: "Fixed props",
+        isEditable: false,
+        value: {
+          workingFunction: function (data) {
+            console.log(data);
+          },
+          functionAsString: `//applied to each of the circle svg elements 
+function (data) {
+  console.log(data);
+},`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a function to the ${pageName} component. `,
+            `It works a bit differently to other props, with the value being set to an object with two properties: <code>functionAsString</code> and <code>workingFunction</code>.`,
+            ,
+            `The value shown on the left is just example code based on the <code>functionAsString</code> property.`,
+            `The function actually passed to the component is separate, and is based on the <code>workingFunction</code> property.`,
+          ],
+        },
       },
     ]).map((el) => ({
       ...el,
@@ -452,109 +320,13 @@
    * &&     The getValueFromParametersArray function can be helpful for calculating based on the value of another parameter.
    */
 
-  let derivedDataArray = $derived(
-    data.dataInFormatForLineChart
-      .find((el) => el.metric === getValue("metric"))
-      .lines.find((el) => el.areaCode === getValue("area")).data,
-  );
-
-  let dataArray = $derived(
-    getValue("dataSource") === "from base data"
-      ? derivedDataArray
-      : JSON.parse(getValue("customDataArray")),
-  );
-
-  let xFunction = $derived({
-    workingFunction: function (number) {
-      return {
-        "scaleLinear()": scaleLinear(),
-        "scaleLog()": scaleLog(),
-        "scaleTime()": scaleTime(),
-      }[getValue("xScaleType")]
-        .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
-        .range([
-          0,
-          demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
-        ])(number);
-    },
-    functionAsString: `function (number) {
-  return getValue("xScaleType")
-    .domain([
-      getValue("xDomainLowerBound"), 
-      getValue("xDomainUpperBound")
-    ])
-    .range([
-      0,
-      demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight")
-    ])(number);
-};`,
-  });
-
-  let yFunction = $derived({
-    workingFunction: function (number) {
-      return {
-        "scaleLinear()": scaleLinear(),
-        "scaleLog()": scaleLog(),
-        "scaleTime()": scaleTime(),
-      }[getValue("yScaleType")]
-        .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
-        .range([
-          getValue("svgHeight") -
-            getValue("paddingTop") -
-            getValue("paddingBottom"),
-          0,
-        ])(number);
-    },
-    functionAsString: `function (number) {
-  return getValue("yScaleType")
-    .domain([
-      getValue("yDomainLowerBound"), 
-      getValue("yDomainUpperBound")
-    ])
-    .range([
-      getValue("svgHeight") - getValue("paddingTop") - getValue("paddingBottom"), 
-      0
-    ])(number);
-};`,
-  });
-
-  let lineFunction = $derived({
-    workingFunction: function (dataArray) {
-      return line()
-        .x((d) => xFunction.workingFunction(d.x))
-        .y((d) => yFunction.workingFunction(d.y))
-        .curve(
-          {
-            curveLinear: curveLinear,
-            curveLinearClosed: curveLinearClosed,
-            curveCardinal: curveCardinal,
-            curveBasis: curveBasis,
-            curveStep: curveStep,
-            curveMonotoneX: curveMonotoneX,
-          }[getValue("curveFunction")],
-        )(dataArray);
-    },
-    functionAsString: `function (dataArray) {
-  return line()
-    .x((d) => xFunction(d.x))
-    .y((d) => yFunction(d.y))
-    .curve(getValue("curveFunction"))(dataArray);
-};`,
-  });
-
   /**
    * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
    * && 		Here you can add additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
    * &&     Note that these parameters still need to be listed in the source array (with a null input type and null value).
    * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
    */
-  let derivedParametersObject = $derived({
-    derivedDataArray,
-    dataArray,
-    xFunction,
-    yFunction,
-    lineFunction,
-  });
+  let derivedParametersObject = $derived({});
 
   /**
    * DONOTTOUCH *
@@ -605,6 +377,51 @@
   ></BaseInformation>
 {/snippet}
 
+{#snippet FixedPropsExplanation()}
+  <DividerLine></DividerLine>
+  <p>
+    Two more advanced prop types are not demoed here but are described below:
+  </p>
+  <div class="grid grid-cols-[auto_1fr] gap-8">
+    <div class="font-bold">bounded props</div>
+    <div>
+      <p class="mt-0 mb-8">
+        We can use Svelte's <code>bind:</code> directive to allow an update to a
+        prop within the component to flow upwards to its parent (in this case the
+        Wrapper component).
+      </p>
+      <p class="mt-8 mb-8">
+        For this to work with a wrapper page the variable must be declared
+        separately to the <code>parametersSourceArray</code> (e.g.
+        <code>let boundedProp = $state([])</code>) and passed to the component
+        as an individual bounded prop (e.g.
+        <code
+          >&lt;Template&gt; &lbrace;parametersSourceArray&rbrace;
+          bind:boundedProp &lt;/Template&gt;</code
+        >).
+      </p>
+      <p class="mt-8 mb-8">
+        If you wish to see updates reflected in the UI, the prop can also be
+        assigned as the value of an entry in <code>parametersSourceArray</code>
+        (e.g.
+        <code
+          >&lbrace; name: "boundedProp", isEditable: false, value:
+          boundedProp&rbrace;</code
+        >).
+      </p>
+      <p class="mt-8 mb-0">
+        A simple example using a bounded prop can be viewed <a
+          href="./bounded-prop-example">here.</a
+        >
+      </p>
+    </div>
+
+    <div class="col-span-full">
+      <DividerLine></DividerLine>
+    </div>
+  </div>
+{/snippet}
+
 <!--
 DONOTTOUCH  *
 &&          Renders toast notifications if any of the parameters values are invalid JSON.
@@ -652,21 +469,12 @@ DONOTTOUCH  *
  -->
 
 {#snippet Component()}
-  <div>
-    <svg width={demoScreenWidth} height={getValue("svgHeight")}>
-      <g
-        transform="translate({getValue('paddingLeft')},{getValue(
-          'paddingTop',
-        )})"
-      >
-        <Line {...parametersObject}></Line>
-      </g>
-    </svg>
-  </div>
+  <Template {parametersObject} bind:bindedProp></Template>
 {/snippet}
 
 <ComponentDemo
   {Component}
+  {FixedPropsExplanation}
   bind:demoScreenWidth
   {parametersSourceArray}
   bind:statedParametersValuesArray
@@ -679,6 +487,8 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
     -->
 <div data-role="examples-section" class="px-5">
+  <Examples></Examples>
+
   <div class="my-20">
     <h5 class="underline underline-offset-4 my-6">
       Examples from the playground

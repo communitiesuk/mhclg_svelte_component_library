@@ -15,7 +15,9 @@ export function createParametersObject(
         ? typeof param.value === "object"
           ? JSON.parse(paramValue)
           : paramValue
-        : paramValue.workingFunction;
+        : param.hasOwnProperty("propFunction")
+          ? param.propFunction
+          : paramValue.workingFunction;
 
     parametersObject[param.name] = paramValueWithWorkingFunctionsAndObjects;
   });

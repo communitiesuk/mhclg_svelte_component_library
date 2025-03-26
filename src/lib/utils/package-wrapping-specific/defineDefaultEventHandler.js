@@ -2,11 +2,11 @@ export function defineDefaultEventHandler(
   event,
   parametersSourceArray,
   parametersValuesArray,
-  name
+  name,
 ) {
   parametersValuesArray[
     parametersSourceArray.findIndex((el) => el.name === name)
-  ][0] += 1;
+  ][0].counter += 1;
 
   parametersValuesArray[
     parametersSourceArray.findIndex((el) => el.name === name)

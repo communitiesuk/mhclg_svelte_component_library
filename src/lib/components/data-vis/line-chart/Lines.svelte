@@ -21,7 +21,7 @@
   let showAllData = $state(false);
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
-  let nLines = $state(5);
+  let nLines = $state(2);
 
   let subset = $state(data.lines.slice(0, nLines));
 
@@ -67,6 +67,8 @@
     {#if line.areaCode !== selectedAreaCode}
       <Line
         {lineFunction}
+        {xFunction}
+        {yFunction}
         dataArray={line.data}
         pathStrokeColor="black"
         pathStrokeWidth="1"
@@ -100,6 +102,8 @@
   {#each subset as line, i}
     <Line
       {lineFunction}
+      {xFunction}
+      {yFunction}
       dataArray={line.data}
       pathStrokeColor={colors[i]}
       pathStrokeWidth="5"
@@ -122,6 +126,8 @@
     {#if selectedLine.includes(line.areaCode)}
       <Line
         {lineFunction}
+        {xFunction}
+        {yFunction}
         dataArray={line.data}
         pathStrokeColor={colors[i]}
         pathStrokeWidth="5"

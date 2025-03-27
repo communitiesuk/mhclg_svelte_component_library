@@ -19,6 +19,7 @@
     lineFunction,
     areaFunction,
     xFunction,
+    lineEnding = null,
     yFunction,
     dataId,
     markersDataId,
@@ -50,7 +51,6 @@
     );
     return mappedItems;
   }
-  
 
   function onMouseEnterMarker(i) {
     hoveredMarker = i;
@@ -79,6 +79,17 @@
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
   ></path>
+  {#if lineEnding}
+    <g
+      transform="translate({xFunction(dataArray[0].x)},{yFunction(
+        dataArray[0].y,
+      )})"
+    >
+      {#if lineEnding === "circle"}
+        <circle r="7" fill={pathStrokeColor}></circle>
+      {/if}
+    </g>
+  {/if}
 
   {#if includeMarkers}
     {#each dataArray as marker, i}

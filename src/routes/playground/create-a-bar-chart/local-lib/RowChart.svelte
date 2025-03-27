@@ -59,40 +59,15 @@
 
   let rowHeight = $derived((chartHeight - 20) / dataArray.length);
 
-  //Tick based on width
-  function generateTicks(data, numTicks) {
-    let minVal = Math.min(...data);
-    let maxVal = Math.max(...data);
-    let rangeVal = maxVal - minVal;
-
-    let roughStep = rangeVal / (numTicks - 1);
-    let normalizedSteps = [1, 2, 5, 10];
-
-    let stepPower = Math.pow(10, -Math.floor(Math.log10(roughStep)));
-    let normalizedStep = roughStep * stepPower;
-    let optimalStep =
-      normalizedSteps.find((step) => step >= normalizedStep) / stepPower;
-
-    let scaleMin = Math.floor(minVal / optimalStep) * optimalStep;
-    let scaleMax = Math.ceil(maxVal / optimalStep) * optimalStep;
-
-    let ticks = [];
-    for (let i = scaleMin; i <= scaleMax; i += optimalStep) {
-      ticks.push(i);
-    }
-
-    return ticks;
-  }
-
-  let ticksArray = $derived(generateTicks(allXValues, numberOfTicks));
+  let ticksArray = $state();
 
   let yFunction = $derived(
-    scaleLinear()
-      .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
-      .range([0, chartWidth]),
+    ticksArray != null
+      ? scaleLinear()
+          .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
+          .range([0, chartWidth])
+      : null,
   );
-
-  $inspect(ticksArray);
 </script>
 
 <div class="mt-10">
@@ -106,19 +81,30 @@
     >
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
-          <Axes {chartHeight} {chartWidth} {yFunction}></Axes>
-          <Ticks {ticksArray} {chartWidth} {yFunction}></Ticks>
-          {#each dataArray as row, i}
-            <g transform="translate({0},{rowHeight * (i + 0.5) + 10})">
-              <Row
-                {row}
-                {yFunction}
-                {rowHeight}
-                {chartWidth}
-                bind:requiredSpaceForLabel={requiredSpaceForLabelsArray[i]}
-              ></Row>
-            </g>
-          {/each}
+          {#if yFunction}<Axes {chartHeight} {chartWidth} {yFunction}></Axes>
+          {/if}
+          {#key numberOfTicks}
+            <Ticks
+              bind:ticksArray
+              {chartWidth}
+              {yFunction}
+              {allXValues}
+              {numberOfTicks}
+            ></Ticks>
+          {/key}
+          {#if yFunction}
+            {#each dataArray as row, i}
+              <g transform="translate({0},{rowHeight * (i + 0.5) + 10})">
+                <Row
+                  {row}
+                  {yFunction}
+                  {rowHeight}
+                  {chartWidth}
+                  bind:requiredSpaceForLabel={requiredSpaceForLabelsArray[i]}
+                ></Row>
+              </g>
+            {/each}
+          {/if}
         </g>
       {/if}
     </svg>

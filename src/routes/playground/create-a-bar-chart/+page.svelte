@@ -112,6 +112,12 @@
             />
           </Input>
         </div>
+        <p>
+          To see how these persist across pages <a
+            href="./create-a-reactive-line-chart?{urlParamsString}"
+            >go to the line chart example.</a
+          >
+        </p>
         <div class="row-chart-container">
           <RowChart {dataArray}></RowChart>
         </div>

@@ -2,15 +2,15 @@
   let {
     dataArray,
     opacity = 1,
-    pathStrokeColor = '#b312a0',
+    pathStrokeColor = "#b312a0",
     pathStrokeWidth = 1,
-    pathFillColor = 'none',
-    pathStrokeDashArray = 'none',
+    pathFillColor = "none",
+    pathStrokeDashArray = "none",
     includeMarkers = false,
-    markerShape = 'circle',
+    markerShape = "circle",
     markerRadius = 5,
-    markerFill = '#b312a0',
-    markerStroke = 'white',
+    markerFill = "#b312a0",
+    markerStroke = "white",
     markerStrokeWidth = 3,
     lineFunction,
     xFunction,
@@ -25,7 +25,9 @@
     onMouseEnterMarker,
     onMouseLeaveMarker,
     onMouseMoveMarker,
+    selectedYear,
   } = $props();
+  $inspect(selectedYear);
 </script>
 
 <g
@@ -47,21 +49,21 @@
   {#if includeMarkers}
     {#each dataArray as marker, i}
       <g
-        data-id={markersDataId + '-' + i}
+        data-id={markersDataId + "-" + i}
         onclick={onClickMarker}
         onmouseenter={onMouseEnterMarker}
         onmouseleave={onMouseLeaveMarker}
         onmousemove={onMouseMoveMarker}
         transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
       >
-        {#if markerShape === 'circle'}
+        {#if markerShape === "circle"}
           <circle
             r={markerRadius}
             stroke={markerStroke}
             fill={markerFill}
-            stroke-width={markerStrokeWidth}
+            stroke-width={marker.x == selectedYear ? "10px" : markerStrokeWidth}
           ></circle>
-        {:else if ['square', 'diamond'].includes(markerShape)}
+        {:else if ["square", "diamond"].includes(markerShape)}
           <rect
             transform="rotate({markerShape === 'diamond' ? 45 : 0})"
             x={-markerRadius}
@@ -72,7 +74,7 @@
             fill={markerFill}
             stroke-width={markerStrokeWidth}
           ></rect>
-        {:else if markerShape === 'triangle'}
+        {:else if markerShape === "triangle"}
           <polygon
             points="0,{-markerRadius * 2} {markerRadius *
               1.733},{markerRadius} {-markerRadius * 1.733},{markerRadius}"

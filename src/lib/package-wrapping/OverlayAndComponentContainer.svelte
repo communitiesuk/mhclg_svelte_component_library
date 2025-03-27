@@ -5,7 +5,6 @@
 
   let {
     Component,
-    FixedPropsExplanation,
     demoScreenWidth,
     parametersSourceArray,
     statedParametersValuesArray = $bindable(),
@@ -22,13 +21,89 @@
   let componentHeight = $state();
 </script>
 
+{#snippet FixedPropsExplanation()}
+  <DividerLine></DividerLine>
+  <p class="my-10">
+    Two more advanced prop types are not demoed here but are described below:
+  </p>
+  <div class="grid grid-cols-[auto_1fr] gap-8">
+    <div>bounded props</div>
+    <div>
+      <p class="mt-0 mb-8">
+        We can use Svelte's <code>bind:</code> directive to allow an update to a
+        prop within the component to flow upwards to its parent (in this case the
+        Wrapper component).
+      </p>
+      <p class="mt-8 mb-8">
+        For this to work with a wrapper page the variable must be declared
+        separately to the <code>parametersSourceArray</code> (e.g.
+        <code>let boundedProp = $state([])</code>) and passed to the component
+        as an individual bounded prop (e.g.
+        <code
+          >&lt;Template&gt; &lbrace;...parametersSourceArray&rbrace;
+          bind:boundedProp &lt;/Template&gt;</code
+        >).
+      </p>
+      <p class="mt-8 mb-8">
+        If you wish to see updates reflected in the UI, the prop can also be
+        assigned as the value of an entry in <code>parametersSourceArray</code>
+        (e.g.
+        <code
+          >&lbrace; name: "boundedProp", isEditable: false, value:
+          boundedProp&rbrace;</code
+        >).
+      </p>
+      <p class="mt-8 mb-0">
+        A simple example using a bounded prop can be viewed <a
+          href="./bounded-prop-example">here.</a
+        >
+      </p>
+    </div>
+
+    <div class="col-span-full">
+      <DividerLine></DividerLine>
+    </div>
+
+    <div>derived props</div>
+    <div>
+      <p class="mt-0 mb-8">
+        In some cases, you will want a prop to be derived from another prop
+        (e.g. a chart component might have a <code>primaryAreaName</code> prop,
+        and a <code>title</code> prop derived from that
+        <code>primaryAreaName</code>).
+      </p>
+      <p class="mt-8 mb-8">
+        Therefore, prop values can be assigned after <code
+          >parametersSourceArray</code
+        >
+        is defined. The <code>getValue()</code> function can be used to grab the
+        reactive value of any prop within <code>parametersSourceArray</code>.
+      </p>
+      <p class="mt-8 mb-8">
+        (e.g.
+        <code
+          >let chartTitle = $derived(`Recycling rates have increased in
+          $&lbrace;getValue('primaryAreaName')&rbrace; since 2015`)</code
+        >
+        ).
+      </p>
+      <p class="mt-8 mb-0">
+        The <a href="./components-update/data-vis/line">Line component</a> is an
+        example of wrapper utilising derived props. <code>xFunction</code>,<code
+          >yFunction</code
+        >
+        and <code>lineFunction</code> are all defined based on other props.
+      </p>
+    </div>
+  </div>
+{/snippet}
+
 <div data-role="component-and-overlay-container">
   {#if overlayOpen && selectedCategory > -1}
     <div
       data-role="overlay-container"
-      class="absolute z-[2] p-0 m-0 overflow-scroll"
-      style="width: {componentWidth +
-        2}px; min-width: 768px; height: {componentHeight}px;"
+      class="absolute z-[2] p-0 my-0 ml-0 mr-20 overflow-scroll"
+      style="min-width: {componentWidth + 2}px; height: {componentHeight}px;"
     >
       <div class="p-5 flex flex-row justify-between bg-white">
         <h6 class="underline underline-offset-4">
@@ -104,7 +179,7 @@
           {/if}
         {/each}
         {#if FixedPropsExplanation && parameterCategories[selectedCategory].name === "Fixed props"}
-          <div data-role="item" class="col-span-full">
+          <div class="col-span-full text-[#6b7280]">
             {@render FixedPropsExplanation()}
           </div>
         {/if}

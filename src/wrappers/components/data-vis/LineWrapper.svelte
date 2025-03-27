@@ -109,8 +109,6 @@
 
   let { data } = $props();
 
-  $inspect(Line);
-
   /**
    * DONOTTOUCH *
    * ? 		uses the page url to identify the name of the component and the folder it belongs to (folder is only used by snippets exported to the homepage to link back to this page).

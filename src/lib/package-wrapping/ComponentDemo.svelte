@@ -4,7 +4,6 @@
 
   let {
     Component,
-    FixedPropsExplanation = null,
     demoScreenWidth = $bindable(),
     parametersSourceArray,
     statedParametersValuesArray = $bindable(),
@@ -58,7 +57,6 @@
 
       <OverlayAndComponentContainer
         {Component}
-        {FixedPropsExplanation}
         {demoScreenWidth}
         {parametersSourceArray}
         bind:statedParametersValuesArray

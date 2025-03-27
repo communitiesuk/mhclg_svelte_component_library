@@ -94,6 +94,7 @@
 
   import Template from "$lib/package-wrapping/Template.svelte";
   import Examples from "./examples/Examples.svelte";
+  import { list } from "postcss";
 
   let { data } = $props();
 
@@ -152,19 +153,19 @@
       {
         name: "textProp",
         category: "Input props",
-        value: `This is a string input - edit me and see it reflected in the component.`,
+        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
         description: {
           markdown: true,
           arr: [
             `This prop passes a text string to the <code>${pageName}</code> component.`,
           ],
         },
-        rows: 5,
+        rows: 2,
       },
       {
         name: "numberProp",
         category: "Input props",
-        value: 42,
+        value: 9,
         description: {
           markdown: true,
           arr: [
@@ -214,18 +215,22 @@
           {
             name: "Pikachu",
             type: "Electric",
+            color: "#fde047",
           },
           {
             name: "Charmander",
             type: "Fire",
+            color: "#fca5a5",
           },
           {
             name: "Squirtle",
             type: "Water",
+            color: "#93c5fd",
           },
           {
             name: "Bulbasaur",
             type: "Grass",
+            color: "#86efac",
           },
         ],
         description: {
@@ -243,13 +248,24 @@
         category: "Fixed props",
         isEditable: false,
         value: {
-          workingFunction: function (data) {
-            console.log(data);
+          workingFunction: function (event, pokemon) {
+            let listOfProperties = Object.entries(pokemon)
+              .filter(([key, value]) => key != "color")
+              .map(([key, value]) => key + " = " + "'" + value + "'")
+              .join(" and ");
+
+            window.alert(
+              "The pokemon card you clicked on has " + listOfProperties + ".",
+            );
           },
-          functionAsString: `//applied to each of the circle svg elements 
-function (data) {
-  console.log(data);
-},`,
+          functionAsString: `function (event, pokemon) {
+  let listOfProperties = Object.entries(pokemon)
+      .filter(([key, value]) => key != "color")
+      .map(([key, value]) => key + " = " + "'" + value + "'")
+      .join(" and ");
+
+      console.log("The pokemon card you clicked on has " + listOfProperties + ".");
+}`,
         },
         description: {
           markdown: true,
@@ -262,22 +278,36 @@ function (data) {
           ],
         },
       },
-    ]).map((el) => ({
-      ...el,
-      handlerFunction:
-        el.inputType === "event"
-          ? (el.handlerFunction ??
-            function (event) {
-              defineDefaultEventHandler(
-                event,
-                parametersSourceArray,
-                parametersValuesArray,
-                el.name,
-              );
-            })
-          : null,
-    })),
+    ]),
   );
+
+  let arr = [
+    {
+      counter: 0,
+      increment: function () {
+        this.counter += 1;
+      },
+    },
+  ];
+
+  // Access the object in the array and call its increment method
+  arr[0].increment();
+  console.log(arr[0].counter); // Output: 1
+
+  // Call the increment method again
+  arr[0].increment();
+  console.log(arr[0].counter); // Output: 2
+
+  let x = {
+    func: arr[0].increment,
+  };
+
+  let obj = {
+    func: arr[0].increment.bind(arr[0]),
+  };
+
+  obj.func();
+  console.log(arr[0].counter); // Output: 1
 
   /**
    * DONOTTOUCH *
@@ -376,103 +406,10 @@ function (data) {
   ></BaseInformation>
 {/snippet}
 
-{#snippet FixedPropsExplanation()}
-  <DividerLine></DividerLine>
-  <p>
-    Two more advanced prop types are not demoed here but are described below:
-  </p>
-  <div class="grid grid-cols-[auto_1fr] gap-8">
-    <div class="font-bold">bounded props</div>
-    <div>
-      <p class="mt-0 mb-8">
-        We can use Svelte's <code>bind:</code> directive to allow an update to a
-        prop within the component to flow upwards to its parent (in this case the
-        Wrapper component).
-      </p>
-      <p class="mt-8 mb-8">
-        For this to work with a wrapper page the variable must be declared
-        separately to the <code>parametersSourceArray</code> (e.g.
-        <code>let boundedProp = $state([])</code>) and passed to the component
-        as an individual bounded prop (e.g.
-        <code
-          >&lt;Template&gt; &lbrace;...parametersSourceArray&rbrace;
-          bind:boundedProp &lt;/Template&gt;</code
-        >).
-      </p>
-      <p class="mt-8 mb-8">
-        If you wish to see updates reflected in the UI, the prop can also be
-        assigned as the value of an entry in <code>parametersSourceArray</code>
-        (e.g.
-        <code
-          >&lbrace; name: "boundedProp", isEditable: false, value:
-          boundedProp&rbrace;</code
-        >).
-      </p>
-      <p class="mt-8 mb-0">
-        A simple example using a bounded prop can be viewed <a
-          href="./bounded-prop-example">here.</a
-        >
-      </p>
-    </div>
-
-    <div class="col-span-full">
-      <DividerLine></DividerLine>
-    </div>
-
-    <div class="font-bold">derived props</div>
-    <div>
-      <p class="mt-0 mb-8">
-        In some cases, you will want a prop to be derived from another prop
-        (e.g. <a href="/components-update/data-vis/line">the Line component</a>
-        has a <code>lineFunction</code> prop, which is a function utilising the
-        <code>xFunction</code>
-        and <code>yFunction</code> props.)
-      </p>
-      <p class="mt-8 mb-8">
-        Therefore, prop values can be assigned based <code
-          >parametersSourceArray</code
-        >
-        is defined. The <code>getValue()</code> function can be used to grab the
-        reactive value of any props which have already been defined (e.g.
-        <code></code>).
-      </p>
-      <p class="mt-8 mb-0">
-        A simple example using a bounded prop can be viewed <a
-          href="./derived-prop-example">here.</a
-        >
-      </p>
-    </div>
-  </div>
-{/snippet}
-
 <!--
 DONOTTOUCH  *
 &&          Renders toast notifications if any of the parameters values are invalid JSON.
 -->
-<!-- <div class="fixed top-0 z-[9999] w-full">
-  {#each isValidJSONArray as check, index}
-    {#if !check}
-      <div class="flex flex-row justify-center">
-        <Toast
-          color="red"
-          dismissable={false}
-          divClass="w-full max-w-2xl p-4 text-gray-500 bg-white shadow dark:text-gray-400 dark:bg-gray-800 gap-3 border-[2px] border-red-500"
-        >
-          <svelte:fragment slot="icon">
-            <ExclamationCircleSolid class="w-5 h-5" />
-            <span class="sr-only">Warning icon</span>
-          </svelte:fragment>
-          The input for the
-          <span class="font-bold text-red-500"
-            >{parametersSourceArray[index].name}</span
-          >
-          prop is invalid. Until this is resolved, the {pageName} component will
-          default to using the initial input value instead.
-        </Toast>
-      </div>
-    {/if}
-  {/each}
-</div> -->
 
 <!--
 DONOTTOUCH  *
@@ -497,7 +434,6 @@ DONOTTOUCH  *
 
 <ComponentDemo
   {Component}
-  {FixedPropsExplanation}
   bind:demoScreenWidth
   {parametersSourceArray}
   bind:statedParametersValuesArray
@@ -511,10 +447,4 @@ DONOTTOUCH  *
     -->
 <div data-role="examples-section" class="px-5">
   <Examples></Examples>
-
-  <div class="my-20">
-    <h5 class="underline underline-offset-4 my-6">
-      Examples from the playground
-    </h5>
-  </div>
 </div>

@@ -13,7 +13,7 @@
     requiredSpaceForLabel = textDimObject?.width;
   });
 
-  $inspect(requiredSpaceForLabel);
+  // $inspect(requiredSpaceForLabel);
 </script>
 
 <g transform="translate(-{labelXOffset},7)">

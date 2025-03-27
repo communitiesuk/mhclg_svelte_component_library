@@ -1,26 +1,43 @@
 <script>
-  import { page } from "$app/stores";
+  //@ts-nocheck
+  import { page } from "$app/state";
   import PlaygroundDetails from "$lib/package-wrapping/PlaygroundDetails.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { Input, Radio } from "flowbite-svelte";
   import { details } from "./details.js";
   import RowChart from "./local-lib/RowChart.svelte";
+  import { goto } from "$app/navigation";
 
   let { data, homepage = false, folders } = $props();
 
-  let pageInfo = $page?.route.id.split("/");
+  let pageInfo = page?.route.id.split("/");
+  $inspect(page.url?.searchParams);
 
+  let urlParams = $state({});
+  let urlParamsString = $derived(
+    Object.entries(urlParams)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&"),
+  );
+  // $inspect(urlParams["selectedYear"], urlParamsString);
+
+  let stateTracker = $state(page.url.searchParams);
+  for (const p of stateTracker) {
+    // console.log(p);
+    urlParams[p[0]] = p[1];
+  }
   details.name = textStringConversion(
     folders ? folders[folders.length - 1] : pageInfo[pageInfo.length - 1],
     "title-first-word",
   );
 
-  let selectedYear = $state(data?.years[0]);
-  let numberOfBars = $state(10);
+  let selectedYear = $state(urlParams["selectedYear"] ?? data?.years[0]);
+  let numberOfBars = $state(urlParams["numberOfBars"] ?? 10);
 
   let dataArray = $derived(
     data?.dataInFormatForBarChart
-      .find((el) => el.x === selectedYear)
+      //Had to remove type checking (===) for ?? to work above
+      .find((el) => el.x == selectedYear)
       ?.bars.map((el, index) => ({
         ...el,
         label: data.areaCodeLookup[el.areaCode],
@@ -33,6 +50,14 @@
       .sort((a, b) => b.label.length - a.label.length)
       .slice(0, numberOfBars),
   );
+
+  function updateUrlParams(value) {
+    urlParams[Object.keys(value)] = Object.values(value)[0];
+    goto("?" + urlParamsString, {
+      keepFocus: true,
+      noScroll: true,
+    });
+  }
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -45,13 +70,32 @@
         <div class="radio-container">
           <p class="my-2 mx-0 p-0 text-sm">Selected year:</p>
           <div class="flex flex-row flex-wrap gap-2">
-            {#each data.years as option, i}
-              <Radio value={option} bind:group={selectedYear}>
+            {#if selectedYear}
+              {#each data.years as option, i}
+                <!-- <Radio
+                value={option}
+                bind:group={selectedYear}
+                on:click={() => updateUrlParams({ selectedYear })}
+              >
                 <span class="text-base font-normal">
                   {option}
                 </span>
-              </Radio>
-            {/each}
+              </Radio> -->
+                <Input let:props>
+                  <input
+                    type="radio"
+                    {...props}
+                    value={option}
+                    id="radio-{option}"
+                    class=""
+                    bind:group={selectedYear}
+                    checked={option == selectedYear}
+                    onclick={updateUrlParams({ selectedYear })}
+                  />
+                  <label for="radio-{option}">{option}</label>
+                </Input>
+              {/each}
+            {/if}
           </div>
         </div>
         <div class="mt-5">
@@ -64,6 +108,7 @@
               min={2}
               max={100}
               bind:value={numberOfBars}
+              onsubmit={updateUrlParams({ numberOfBars })}
             />
           </Input>
         </div>
@@ -82,5 +127,9 @@
     display: flex;
     flex-direction: column;
     gap: 40px;
+  }
+
+  input[type="radio"]:checked {
+    border: 10px solid black;
   }
 </style>

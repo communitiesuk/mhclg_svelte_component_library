@@ -6,7 +6,7 @@
 
 <g data-role="x-axis">
   <text
-    transform="translate({chartWidth / 2}, -20)"
+    transform="translate({chartWidth / 2}, -30)"
     text-anchor="middle"
     font-size="16"
     fill="black"

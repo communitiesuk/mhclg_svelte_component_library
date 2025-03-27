@@ -11,7 +11,6 @@
   if (isNaN(row.y)) {
     row.y = 0; // or any default value you prefer
   }
-  $inspect(row.y);
 </script>
 
 {#snippet rowValueLabel(color, textAnchor, x)}

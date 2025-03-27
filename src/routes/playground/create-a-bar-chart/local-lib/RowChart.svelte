@@ -12,7 +12,7 @@
   import { scaleLinear } from "d3-scale";
   import * as d3 from "d3";
 
-  let { dataArray } = $props();
+  let { dataArray, numberOfTicks } = $props();
 
   let svgWidth = $state(),
     svgHeight = 500;
@@ -31,7 +31,7 @@
   );
 
   let totalMargin = $derived({
-    top: 40,
+    top: 50,
     right: 50,
     bottom: 20,
     left: requiredSpaceForLabels + 15,
@@ -56,12 +56,6 @@
   );*/
 
   let allXValues = $derived(dataArray.map((el) => el.y));
-
-  let yFunction = $derived(
-    scaleLinear()
-      .domain([Math.min(...allXValues), Math.max(...allXValues)])
-      .range([0, chartWidth]),
-  );
 
   let rowHeight = $derived((chartHeight - 20) / dataArray.length);
 
@@ -90,7 +84,15 @@
     return ticks;
   }
 
-  let ticksArray = $derived(generateTicks(allXValues, 15));
+  let ticksArray = $derived(generateTicks(allXValues, numberOfTicks));
+
+  let yFunction = $derived(
+    scaleLinear()
+      .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
+      .range([0, chartWidth]),
+  );
+
+  $inspect(ticksArray);
 </script>
 
 <div class="mt-10">

@@ -18,6 +18,8 @@
   let selectedYear = $state(data?.years[0]);
   let numberOfBars = $state(10);
 
+  let numberOfTicks = $state(5);
+
   let dataArray = $derived(
     data?.dataInFormatForBarChart
       .find((el) => el.x === selectedYear)
@@ -73,8 +75,19 @@
             />
           </Input>
         </div>
+        <div class="mt-5">
+          <p class="my-2 mx-0 p-0 text-sm">Number of ticks:</p>
+          <Input let:props>
+            <input
+              type="number"
+              {...props}
+              step={1}
+              bind:value={numberOfTicks}
+            />
+          </Input>
+        </div>
         <div class="row-chart-container">
-          <RowChart {dataArray}></RowChart>
+          <RowChart {dataArray} {numberOfTicks}></RowChart>
         </div>
       </div>
     </div>

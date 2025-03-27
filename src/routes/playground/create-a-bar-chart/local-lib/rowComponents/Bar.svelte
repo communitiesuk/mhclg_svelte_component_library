@@ -1,6 +1,5 @@
 <script>
   let { row, yFunction, rowHeight } = $props();
-  $inspect(row);
 </script>
 
 {#if isNaN(row.y)}

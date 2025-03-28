@@ -21,7 +21,7 @@
   let showAllData = $state(false);
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
-  let nLines = $state(2);
+  let nLines = $state(7);
 
   let subset = $state(data.lines.slice(0, nLines));
 

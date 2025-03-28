@@ -19,7 +19,7 @@
     lineFunction,
     areaFunction,
     xFunction,
-    lineEnding = null,
+    lineEnding = "circle",
     yFunction,
     dataId,
     markersDataId,
@@ -63,14 +63,25 @@
 
 <defs>
   <marker
-    id="arrowhead"
+    id={`arrow-${pathStrokeColor}`}
     markerWidth="6"
     markerHeight="4"
     refX="4"
     refY="2"
     orient="auto-start-reverse"
   >
-    <polygon points="0 0, 6 2, 0 4" fill={pathStrokeColor}></polygon>
+    <polygon points="0 0, 6 2, 0 4" style="fill: {pathStrokeColor}"></polygon>
+  </marker>
+
+  <marker
+    id={`circle-${pathStrokeColor}`}
+    markerWidth="14"
+    markerHeight="14"
+    refX="7"
+    refY="7"
+    orient="auto"
+  >
+    <circle cx="7" cy="7" r="1.5" style="fill: {pathStrokeColor}"></circle>
   </marker>
 </defs>
 
@@ -91,19 +102,12 @@
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
-    marker-start="url(#arrowhead)"
+    marker-start={lineEnding === "arrow"
+      ? `url(#arrow-${pathStrokeColor})`
+      : lineEnding === "circle"
+        ? `url(#circle-${pathStrokeColor})`
+        : null}
   ></path>
-  {#if lineEnding}
-    <g
-      transform="translate({xFunction(dataArray[0].x)},{yFunction(
-        dataArray[0].y,
-      )})"
-    >
-      {#if lineEnding === "circle"}
-        <circle r="7" fill={pathStrokeColor}></circle>
-      {/if}
-    </g>
-  {/if}
 
   {#if includeMarkers}
     {#each dataArray as marker, i}

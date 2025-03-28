@@ -37,7 +37,7 @@
 
 <g
   {id}
-  transform="translate({chartWidth},{0})"
+  transform="translate({chartWidth + 8},{0})"
   onclick={() => onClickLabel(dataArray.areaCode)}
   onmouseenter={() => onMouseEnter(dataArray.areaCode)}
   onmouseleave={() => onMouseLeave(dataArray.areaCode)}

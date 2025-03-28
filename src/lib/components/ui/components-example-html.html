@@ -1,0 +1,344 @@
+<!-- 1. Header (Desktop Navigation) -->
+
+<header class="govuk-header app-header">
+    <div class="govuk-header__container app-width-container app-header__container">
+      <div class="govuk-header__logo app-header__logo">
+        <a href="/" class="govuk-header__link govuk-header__link--homepage">
+          <span class="govuk-header__logotype">
+            <span class="govuk-header__logotype-text">DWP</span>
+          </span>
+          <span class="govuk-header__product-name">Design System</span>
+        </a>
+      </div>
+      <div class="app-header-mobile-nav-toggler-wrapper">
+        <button
+          id="app-mobile-nav-toggler"
+          class="govuk-button app-header-mobile-nav-toggler js-app-mobile-nav-toggler"
+          aria-controls="app-mobile-nav"
+          aria-expanded="false"
+        >
+          Menu
+        </button>
+      </div>
+    </div>
+  </header>
+  
+  <nav
+    class="app-navigation govuk-clearfix"
+    aria-label="main"
+    role="navigation"
+  >
+    <ul class="app-navigation__list app-width-container">
+  
+      <li class="app-navigation__list-item">
+        <a
+          class="govuk-link govuk-link--no-visited-state app-navigation__link"
+          href="/get-started"
+          data-topnav="Get started"
+        >
+          Get started
+        </a>
+      </li>
+  
+      <!-- Notice the current page is ‘Components’ so it has 'app-navigation__list-item--current' and aria-current="page" -->
+      <li class="app-navigation__list-item app-navigation__list-item--current">
+        <a
+          class="govuk-link govuk-link--no-visited-state app-navigation__link"
+          href="/components"
+          data-topnav="Components"
+          aria-current="page"
+        >
+          Components
+        </a>
+      </li>
+  
+      <li class="app-navigation__list-item">
+        <a
+          class="govuk-link govuk-link--no-visited-state app-navigation__link"
+          href="/patterns"
+          data-topnav="Patterns"
+        >
+          Patterns
+        </a>
+      </li>
+  
+      <li class="app-navigation__list-item">
+        <a
+          class="govuk-link govuk-link--no-visited-state app-navigation__link"
+          href="/community"
+          data-topnav="Community"
+        >
+          Community
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+<!-- 2. Mobile Navigation -->
+<nav
+  id="app-mobile-nav"
+  class="app-mobile-nav js-app-mobile-nav"
+  aria-label="main"
+  role="navigation"
+  aria-hidden="true"
+>
+  <ul class="app-mobile-nav__list">
+
+    <!-- ‘Get started’ section -->
+    <li>
+      <div class="app-mobile-nav-subnav-toggler">
+        <a
+          class="govuk-link govuk-link--no-visited-state app-mobile-nav-subnav-toggler__link js-mobile-nav-subnav-toggler"
+          href="/get-started"
+          id="js-mobile-nav-subnav-toggler-1"
+        >
+          Get started
+        </a>
+      </div>
+      <ul
+        class="app-mobile-nav__list app-mobile-nav__subnav js-app-mobile-nav-subnav"
+        aria-label="Get started"
+      >
+        <li class="app-mobile-nav__subnav-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+            href="/get-started"
+          >
+            Get started overview
+          </a>
+        </li>
+        <li class="app-mobile-nav__subnav-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+            href="/get-started/accessibility-testing"
+          >
+            Accessibility testing
+          </a>
+        </li>
+        <li class="app-mobile-nav__subnav-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+            href="/get-started/npm"
+          >
+            Install DWP Frontend
+          </a>
+        </li>
+      </ul>
+    </li>
+
+    <!-- ‘Components’ section (expanded and marked as current) -->
+    <li>
+      <div class="app-mobile-nav-subnav-toggler app-mobile-nav__subnav-toggler--active">
+        <a
+          class="govuk-link govuk-link--no-visited-state app-mobile-nav-subnav-toggler__link js-mobile-nav-subnav-toggler"
+          href="/components"
+          id="js-mobile-nav-subnav-toggler-2"
+        >
+          Components
+        </a>
+      </div>
+      <ul
+        class="app-mobile-nav__list app-mobile-nav__subnav js-app-mobile-nav-subnav app-mobile-nav__subnav--active"
+        aria-label="Components"
+      >
+        <li class="app-mobile-nav__subnav-item app-mobile-nav__subnav-item--current">
+          <a
+            class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+            href="/components"
+          >
+            Components overview
+          </a>
+        </li>
+        <li>
+          <ul class="app-mobile-nav__list">
+            <li class="app-mobile-nav__subnav-item">
+              <a
+                class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+                href="/components/external-service-footer"
+              >
+                External service footer
+              </a>
+            </li>
+            <li class="app-mobile-nav__subnav-item">
+              <a
+                class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+                href="/components/header-navigation"
+              >
+                Header navigation
+              </a>
+            </li>
+            <!-- etc. for every listed DWP component -->
+          </ul>
+        </li>
+      </ul>
+    </li>
+
+    <!-- ‘Patterns’ section -->
+    <li>
+      <div class="app-mobile-nav-subnav-toggler">
+        <a
+          class="govuk-link govuk-link--no-visited-state app-mobile-nav-subnav-toggler__link js-mobile-nav-subnav-toggler"
+          href="/patterns"
+          id="js-mobile-nav-subnav-toggler-3"
+        >
+          Patterns
+        </a>
+      </div>
+      <ul
+        class="app-mobile-nav__list app-mobile-nav__subnav js-app-mobile-nav-subnav"
+        aria-label="Patterns"
+      >
+        <li class="app-mobile-nav__subnav-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+            href="/patterns"
+          >
+            Patterns overview
+          </a>
+        </li>
+        <li>
+          <h2 class="app-mobile-nav__theme">Help users to...</h2>
+          <ul class="app-mobile-nav__list">
+            <li class="app-mobile-nav__subnav-item">
+              <a
+                class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+                href="/patterns/add-another-thing"
+              >
+                Add another thing
+              </a>
+            </li>
+            <!-- ... more patterns in "Help users to..." group ... -->
+          </ul>
+        </li>
+        <li>
+          <h2 class="app-mobile-nav__theme">Pages</h2>
+          <ul class="app-mobile-nav__list">
+            <li class="app-mobile-nav__subnav-item">
+              <a
+                class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+                href="/patterns/cookies-page/"
+              >
+                Cookies page
+              </a>
+            </li>
+            <!-- ... etc. ... -->
+          </ul>
+        </li>
+      </ul>
+    </li>
+
+    <!-- ‘Community’ section -->
+    <li>
+      <div class="app-mobile-nav-subnav-toggler">
+        <a
+          class="govuk-link govuk-link--no-visited-state app-mobile-nav-subnav-toggler__link js-mobile-nav-subnav-toggler"
+          href="/community"
+          id="js-mobile-nav-subnav-toggler-4"
+        >
+          Community
+        </a>
+      </div>
+      <ul
+        class="app-mobile-nav__list app-mobile-nav__subnav js-app-mobile-nav-subnav"
+        aria-label="Community"
+      >
+        <li class="app-mobile-nav__subnav-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+            href="/community"
+          >
+            Community overview
+          </a>
+        </li>
+        <li class="app-mobile-nav__subnav-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+            href="/community/latest-updates"
+          >
+            Latest updates
+          </a>
+        </li>
+        <!-- ... other Community links ... -->
+      </ul>
+    </li>
+
+    <!-- ‘About this website’ section -->
+    <li>
+      <div class="app-mobile-nav-subnav-toggler">
+        <a
+          class="govuk-link govuk-link--no-visited-state app-mobile-nav-subnav-toggler__link js-mobile-nav-subnav-toggler"
+          href=""
+          id="js-mobile-nav-subnav-toggler-5"
+        >
+          About this website
+        </a>
+      </div>
+      <ul
+        class="app-mobile-nav__list app-mobile-nav__subnav js-app-mobile-nav-subnav"
+        aria-label="About this website"
+      >
+        <li class="app-mobile-nav__subnav-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+            href="/about-this-website/accessibility"
+          >
+            Accessibility statement
+          </a>
+        </li>
+        <li class="app-mobile-nav__subnav-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
+            href="/about-this-website/cookie-details"
+          >
+            Cookies
+          </a>
+        </li>
+        <!-- ... etc. ... -->
+      </ul>
+    </li>
+  </ul>
+</nav>
+
+<!-- 3. Sidebar Navigation (Section Subnav)
+
+Under the header and within the .app-pane__body, there is an extra side navigation (.app-subnav) specifically for the pages within the Components section: -->
+
+<div class="app-pane__subnav">
+    <nav
+      class="app-subnav"
+      aria-labelledby="app-subnav-heading"
+      role="navigation"
+    >
+      <h2 class="govuk-visually-hidden" id="app-subnav-heading">
+        Pages in this section
+      </h2>
+      <ul class="app-subnav__section">
+  
+        <li class="app-subnav__section-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
+            href="/components/external-service-footer"
+          >
+            External service footer
+          </a>
+        </li>
+        <li class="app-subnav__section-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
+            href="/components/header-navigation"
+          >
+            Header navigation
+          </a>
+        </li>
+        <!-- etc. for each individual component in this Components section -->
+        <li class="app-subnav__section-item">
+          <a
+            class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
+            href="/components/timeline"
+          >
+            Timeline
+          </a>
+        </li>
+      </ul>
+    </nav>
+  </div>

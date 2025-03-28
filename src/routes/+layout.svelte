@@ -2,44 +2,188 @@
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import Breadcrumbs from "$lib/components/ui/Breadcrumbs.svelte";
   import Footer from "$lib/components/ui/Footer.svelte";
-  import Header from "$lib/components/ui/Header.svelte";
-  import InternalHeader from "$lib/components/ui/InternalHeader.svelte";
-  import ServiceNavigation from "$lib/components/ui/ServiceNavigation.svelte";
+  import HeaderNav from "$lib/components/ui/HeaderNav.svelte";
+  import MobileNav from "$lib/components/ui/MobileNav.svelte";
+  import SideNav from "$lib/components/ui/SideNav.svelte";
   import "../app.css";
   let { children, data } = $props();
 
-  // Navigation items for the ServiceNavigation component
-  const navigationItems = $state([
-    { href: "/", label: "Home", isActive: false },
-  ]);
+  // Current section for navigation
+  let currentSection = $state("Home");
 
-  // Set active navigation item based on the current path
+  // Mobile navigation state
+  let isMobileNavOpen = $state(false);
+
+  // Current page for side navigation
+  let currentPage = $state("");
+
+  // Top navigation items
+  const navigationItems = [
+    { text: "Home", href: "/", current: true },
+    { text: "Components", href: "/components" },
+    { text: "Patterns", href: "/patterns" },
+    { text: "Community", href: "/community" },
+  ];
+
+  // Mobile navigation sections
+  const mobileNavSections = [
+    {
+      title: "Home",
+      href: "/",
+      current: true,
+      items: [
+        { text: "Overview", href: "/" },
+        { text: "Getting started", href: "/getting-started" },
+      ],
+    },
+    {
+      title: "Components",
+      href: "/components",
+      items: [
+        { text: "Buttons", href: "/components/buttons" },
+        { text: "Forms", href: "/components/forms" },
+        { text: "Navigation", href: "/components/navigation" },
+      ],
+    },
+    {
+      title: "Patterns",
+      href: "/patterns",
+      items: [
+        {
+          title: "Common patterns",
+          items: [
+            { text: "Forms", href: "/patterns/forms" },
+            { text: "Tables", href: "/patterns/tables" },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Community",
+      href: "/community",
+      items: [
+        { text: "Updates", href: "/community/updates" },
+        { text: "Contributing", href: "/community/contributing" },
+      ],
+    },
+  ];
+
+  // Side navigation items for components page
+  const componentNavItems = [
+    { text: "Buttons", href: "/components/buttons" },
+    { text: "Forms", href: "/components/forms" },
+    { text: "Navigation", href: "/components/navigation" },
+  ];
+
+  // Handle toggle mobile nav event
+  function handleToggleMobileNav(event: CustomEvent<boolean>) {
+    isMobileNavOpen = event.detail;
+  }
+
+  // Update current section based on route
   $effect(() => {
     if (typeof window === "undefined") return;
 
-    // Update the active state based on current path
+    // Add js-enabled class to body
+    document.body.classList.add("js-enabled");
+
+    // Get current path
     const path = window.location.pathname;
+
+    // Set current section based on path
+    if (path.startsWith("/components")) {
+      currentSection = "Components";
+    } else if (path.startsWith("/patterns")) {
+      currentSection = "Patterns";
+    } else if (path.startsWith("/community")) {
+      currentSection = "Community";
+    } else {
+      currentSection = "Home";
+    }
+
+    // Update navigation items
     navigationItems.forEach((item) => {
-      item.isActive = path.startsWith(item.href);
+      item.current = item.text === currentSection;
     });
+
+    // Update mobile sections
+    mobileNavSections.forEach((section) => {
+      section.current = section.title === currentSection;
+    });
+  });
+
+  $effect(() => {
+    if (typeof window === "undefined") return;
+    // Set current page based on path
+    currentPage = window.location.pathname.split("/").pop() || "";
   });
 </script>
 
 <div class="min-h-screen flex flex-col">
   <div class="flex-grow">
-    <InternalHeader homepageUrl="/" organisationName="MHCLG Digital Design & Development Team" />
-    <ServiceNavigation
-      serviceName="Svelte Component Library"
-      serviceUrl="/"
+    <!-- Header with top navigation -->
+    <HeaderNav
+      productName="Svelte Component Library"
+      logoText="DWP"
       {navigationItems}
+      {currentSection}
+      on:toggleMobileNav={handleToggleMobileNav}
     />
 
-    <div class="g-top-level-container mb-6">
-      <Breadcrumbs collapseOnMobile={true} />
-    </div>
+    <!-- Mobile navigation -->
+    <MobileNav
+      isOpen={isMobileNavOpen}
+      sections={mobileNavSections}
+      {currentSection}
+    />
 
-    {@render children()}
+    <div class="app-pane__body govuk-width-container">
+      <div class="g-top-level-container mb-6">
+        <Breadcrumbs collapseOnMobile={true} />
+      </div>
+
+      <div class="app-pane__flex">
+        <!-- Side navigation - only show on components, patterns, or community pages -->
+        {#if currentSection === "Components"}
+          <SideNav
+            title="Components"
+            items={componentNavItems}
+            currentItem={currentPage}
+          />
+        {/if}
+
+        <!-- Main content area -->
+        <div class="app-pane__content">
+          {@render children()}
+        </div>
+      </div>
+    </div>
   </div>
 
   <Footer />
 </div>
+
+<style>
+  /* Add styles to support the app-pane layout */
+  .app-pane__body {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .app-pane__flex {
+    display: flex;
+    flex-direction: column;
+  }
+
+  @media (min-width: 40.0625em) {
+    .app-pane__flex {
+      flex-direction: row;
+    }
+
+    .app-pane__content {
+      flex: 1;
+      padding-left: 30px;
+    }
+  }
+</style>

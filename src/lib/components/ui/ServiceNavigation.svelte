@@ -71,8 +71,6 @@ Use the component with or without navigation items based on your needs. -->
 
     mql.addEventListener("change", handleViewportChange);
 
-
-
     return () => {
       mql.removeEventListener("change", handleViewportChange);
     };

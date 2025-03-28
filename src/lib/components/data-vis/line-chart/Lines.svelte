@@ -39,7 +39,7 @@
       transformed,
       bounds,
       (d) => d.lastY,
-      (d) => 20,
+      (d) => 20 * Math.ceil(d.areaCode.length / 15),
     );
   });
 

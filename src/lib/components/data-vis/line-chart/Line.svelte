@@ -61,6 +61,19 @@
   }
 </script>
 
+<defs>
+  <marker
+    id="arrowhead"
+    markerWidth="6"
+    markerHeight="4"
+    refX="4"
+    refY="2"
+    orient="auto-start-reverse"
+  >
+    <polygon points="0 0, 6 2, 0 4" fill={pathStrokeColor}></polygon>
+  </marker>
+</defs>
+
 <g
   data-id={dataId}
   onclick={onClick}
@@ -78,6 +91,7 @@
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
+    marker-start="url(#arrowhead)"
   ></path>
   {#if lineEnding}
     <g

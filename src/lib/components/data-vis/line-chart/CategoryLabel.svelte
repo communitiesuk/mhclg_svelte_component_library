@@ -32,7 +32,6 @@
   let areaCode = $state(dataArray.areaCode);
 
   let oldY = $state(yFunction(dataArray.data[0].y));
-  $inspect({ oldY, newY, areaCode, labelClicked });
 </script>
 
 <g

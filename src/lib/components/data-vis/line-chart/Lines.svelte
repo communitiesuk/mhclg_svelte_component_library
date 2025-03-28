@@ -14,11 +14,12 @@
     yFunction,
     labelClicked = $bindable(),
     chartHeight,
+    colors,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
 
-  let showAllData = $state(true);
+  let showAllData = $state(false);
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
   let nLines = $state(7);
@@ -44,8 +45,6 @@
   });
 
   $inspect(labelsPlaced);
-
-  let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
 </script>
 
 {#snippet categoryLabelSnippet(dataArray, newY)}

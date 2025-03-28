@@ -58,6 +58,8 @@
   let labelClicked = $state();
   let selectedAreaCode = $state("E07000223");
 
+  let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
+
   function handleClickOutside(event) {
     if (labelClicked && !event.target.closest('[id^="label"]')) {
       labelClicked = null;
@@ -120,6 +122,7 @@
             {yFunction}
             bind:labelClicked
             {chartHeight}
+            {colors}
           ></Lines>
         </g>
       </g>

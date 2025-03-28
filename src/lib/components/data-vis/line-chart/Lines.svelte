@@ -18,7 +18,7 @@
 
   let bounds = $state([0, chartHeight]);
 
-  let showAllData = $state(false);
+  let showAllData = $state(true);
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
   let nLines = $state(7);
@@ -78,12 +78,16 @@
           selectedAreaCode = line.areaCode;
         }}
       ></Line>
+    {:else}
+      <g>
+        {@render categoryLabelSnippet(line, yFunction(line.data[0].y))}
+      </g>
     {/if}
   {/each}
   <Line
     {lineFunction}
     dataArray={data.lines.find((el) => el.areaCode === selectedAreaCode).data}
-    pathStrokeColor="red"
+    pathStrokeColor={colors[0]}
     pathStrokeWidth="5"
     opacity="1"
     includeMarkers={true}
@@ -93,11 +97,6 @@
     {xFunction}
     {yFunction}
   ></Line>
-  <g>
-    {@render categoryLabelSnippet(
-      data.lines.find((el) => el.areaCode === selectedAreaCode),
-    )}
-  </g>
 {:else}
   {#each subset as line, i}
     <Line

@@ -96,11 +96,11 @@
   >
     {#if svgWidth}
       <g transform="translate({totalMargin.left},{totalMargin.top})">
-        <g data-role="x-axis">
+        <g data-role="y-axis">
           <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
           ></path>
         </g>
-        <g data-role="y-axis">
+        <g data-role="x-axis">
           <path
             d="M0 {chartHeight} l{chartWidth} 0"
             stroke="black"

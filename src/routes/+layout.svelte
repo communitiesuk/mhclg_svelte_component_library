@@ -2,6 +2,7 @@
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import Breadcrumbs from "$lib/components/ui/Breadcrumbs.svelte";
   import Footer from "$lib/components/ui/Footer.svelte";
+  import InternalHeader from "$lib/components/ui/InternalHeader.svelte";
   import HeaderNav from "$lib/components/ui/HeaderNav.svelte";
   import MobileNav from "$lib/components/ui/MobileNav.svelte";
   import SideNav from "$lib/components/ui/SideNav.svelte";
@@ -121,9 +122,12 @@
 
 <div class="min-h-screen flex flex-col">
   <div class="flex-grow">
+
+    <InternalHeader homepageUrl="/" organisationName="MHCLG Digital Design & Development Team" />
+
     <!-- Navigation with logo and mobile menu -->
     <HeaderNav
-      serviceName="Service name"
+      serviceName="Svelte Component Library"
       {navigationItems}
       {currentSection}
       on:toggleMobileNav={handleToggleMobileNav}

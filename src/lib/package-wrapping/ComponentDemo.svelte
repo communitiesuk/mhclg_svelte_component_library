@@ -9,6 +9,7 @@
     statedParametersValuesArray = $bindable(),
     derivedParametersValuesArray,
     parametersVisibleArray,
+    parametersParsingErrorsObject,
   } = $props();
 
   let parameterCategories = $derived(
@@ -36,6 +37,7 @@
   let overlayOpen = $state(false);
 
   let componentOpacity = $state(0.1);
+  $inspect(componentOpacity);
 </script>
 
 <div
@@ -52,7 +54,7 @@
         {selectedCategory}
         bind:sideBarOpen
         bind:overlayOpen
-        {componentOpacity}
+        bind:componentOpacity
       ></SidebarContainer>
 
       <OverlayAndComponentContainer
@@ -62,8 +64,9 @@
         bind:statedParametersValuesArray
         {derivedParametersValuesArray}
         {parametersVisibleArray}
+        {parametersParsingErrorsObject}
         {parameterCategories}
-        {categoriesOverlayOpenArray}
+        bind:categoriesOverlayOpenArray
         {selectedCategory}
         bind:overlayOpen
         {componentOpacity}

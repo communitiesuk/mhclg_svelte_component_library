@@ -4,23 +4,26 @@ export function createParametersObject(
   derivedParametersValuesArray,
 ) {
   let parametersObject = {};
+  let parametersParsingErrorsArray = [];
 
   parametersSourceArray.forEach((param, index) => {
-    let paramValue = param.isEditable
-      ? statedParametersValuesArray[param.index]
-      : derivedParametersValuesArray[param.index];
+    try {
+      let paramValue = param.isEditable
+        ? statedParametersValuesArray[param.index]
+        : derivedParametersValuesArray[param.index];
 
-    let paramValueWithWorkingFunctionsAndObjects =
-      typeof paramValue != "object"
-        ? typeof param.value === "object"
-          ? JSON.parse(paramValue)
-          : paramValue
-        : param.hasOwnProperty("propFunction")
-          ? param.propFunction
-          : paramValue.workingFunction;
+      let paramValueWithWorkingFunctionsAndObjects =
+        typeof param.value === "function"
+          ? paramValue.bind(parametersSourceArray[index])
+          : typeof param.value === "object"
+            ? JSON.parse(paramValue)
+            : paramValue;
 
-    parametersObject[param.name] = paramValueWithWorkingFunctionsAndObjects;
+      parametersObject[param.name] = paramValueWithWorkingFunctionsAndObjects;
+    } catch (error) {
+      parametersParsingErrorsArray.push(param.name);
+    }
   });
 
-  return parametersObject;
+  return [parametersObject, parametersParsingErrorsArray];
 }

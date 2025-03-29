@@ -12,7 +12,7 @@
     selectedCategory,
     sideBarOpen = $bindable(),
     overlayOpen = $bindable(),
-    componentOpacity,
+    componentOpacity = $bindable(),
   } = $props();
 </script>
 

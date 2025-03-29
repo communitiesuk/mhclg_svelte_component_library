@@ -146,24 +146,61 @@
       style="height: {monacoEditorContainerHeight}px; width: {monacoEditorContainerWidth}px;"
     ></div>
   {/if}
-{:else}
-  {#key derivedValue}
-    <CodeBlock
-      code={typeof derivedValue != "object"
-        ? derivedValue.toString()
-        : "workingFunction" in derivedValue &&
-            "functionAsString" in derivedValue
-          ? derivedValue.functionAsString.replace(
+{:else if parameter.hasOwnProperty("functionElements") && parameter.functionElements != null}
+  <div class="flex flex-col gap-4">
+    {#if parameter.functionElements.hasOwnProperty("counter") || (parameter.functionElements.hasOwnProperty("dataset") && parameter.functionElements.hasOwnProperty("dataset") != null)}
+      <div
+        data-role="function-counter-and-data-container"
+        class="py-1 px-3 bg-slate-100 rounded"
+      >
+        {#if parameter.functionElements.hasOwnProperty("counter")}
+          <p>
+            This function has been called <span class="font-bold"
+              >{parameter.functionElements.counter}
+              time{parameter.functionElements.counter === 1 ? "" : "s"}.</span
+            >
+          </p>
+          {#if parameter.functionElements.hasOwnProperty("dataset")}
+            {#each Object.keys(parameter.functionElements.dataset) as key}
+              {#if parameter.functionElements.dataset[key] != null}
+                <p>
+                  When it was last called, its target's data-{key} was
+                  <span class="font-bold"
+                    >{parameter.functionElements.dataset[key]}</span
+                  >.
+                </p>
+              {/if}
+            {/each}
+          {/if}
+        {/if}
+      </div>
+    {/if}
+    {#if parameter.functionElements.hasOwnProperty("functionAsString")}
+      <CodeBlock
+        code={typeof derivedValue === "function"
+          ? parameter.functionElements.functionAsString.replace(
               /getValue\("([^"]+)"\)/g,
               "$1",
             )
-          : derivedValue}
-      language="javascript"
-      size="sm"
-      includeHeader={false}
-    ></CodeBlock>
-  {/key}
-  {#if typeof derivedValue === "object" && derivedValue.hasOwnProperty("counter")}
-    {derivedValue.counter}
-  {/if}
+          : typeof derivedValue === "object"
+            ? derivedValue
+            : derivedValue.toString()}
+        language="javascript"
+        size="sm"
+        includeHeader={false}
+      ></CodeBlock>
+    {/if}
+  </div>
 {/if}
+
+<style>
+  [data-role="function-counter-and-data-container"] p:first-of-type {
+    padding-top: 0px;
+    margin-top: 0px;
+  }
+
+  [data-role="function-counter-and-data-container"] p:last-of-type {
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+  }
+</style>

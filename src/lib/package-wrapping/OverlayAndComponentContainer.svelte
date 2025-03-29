@@ -10,8 +10,9 @@
     statedParametersValuesArray = $bindable(),
     derivedParametersValuesArray,
     parametersVisibleArray,
+    parametersParsingErrorsObject,
     parameterCategories,
-    categoriesOverlayOpenArray,
+    categoriesOverlayOpenArray = $bindable(),
     selectedCategory,
     overlayOpen = $bindable(),
     componentOpacity,
@@ -24,9 +25,29 @@
 {#snippet FixedPropsExplanation()}
   <DividerLine></DividerLine>
   <p class="my-10">
-    Two more advanced prop types are not demoed here but are described below:
+    There are three more advanced prop types which are not demoed here but are
+    described below:
   </p>
   <div class="grid grid-cols-[auto_1fr] gap-8">
+    <div>Snippet props</div>
+    <div>
+      <p class="mt-0 mb-8">
+        Svelte snippets can also be passed as props. Snippets have <code
+          >typeof === 'function'</code
+        >, so they are treated the same way as function props (e.g. the example
+        code is based on <code>functionElements.functionAsString</code>).
+      </p>
+      <p class="mb-0 mt-8">
+        A simple example using a snippet prop can be viewed <a
+          href="./snippet-prop-example">here.</a
+        >
+      </p>
+    </div>
+
+    <div class="col-span-full">
+      <DividerLine></DividerLine>
+    </div>
+
     <div>bounded props</div>
     <div>
       <p class="mt-0 mb-8">
@@ -89,11 +110,14 @@
       </p>
       <p class="mt-8 mb-0">
         The <a href="./components-update/data-vis/line">Line component</a> is an
-        example of wrapper utilising derived props. <code>xFunction</code>,<code
-          >yFunction</code
-        >
+        example of a wrapper utilising derived props.
+        <code>xFunction</code>,<code>yFunction</code>
         and <code>lineFunction</code> are all defined based on other props.
       </p>
+    </div>
+
+    <div class="col-span-full">
+      <DividerLine></DividerLine>
     </div>
   </div>
 {/snippet}
@@ -103,9 +127,11 @@
     <div
       data-role="overlay-container"
       class="absolute z-[2] p-0 my-0 ml-0 mr-20 overflow-scroll"
-      style="min-width: {componentWidth + 2}px; height: {componentHeight}px;"
+      style="min-width: {componentWidth +
+        2}px; height: {componentHeight}px; opacity: {1.1 -
+        2 * componentOpacity}"
     >
-      <div class="p-5 flex flex-row justify-between bg-white">
+      <div class="p-5 flex flex-row justify-between bg-white sticky top-0">
         <h6 class="underline underline-offset-4">
           {parameterCategories.find((el, i) => i === selectedCategory)?.name}
         </h6>
@@ -186,6 +212,7 @@
       </div>
     </div>
   {/if}
+
   <div
     data-role="component-container-centered"
     class="px-0 py-5 rounded-md {overlayOpen
@@ -201,7 +228,11 @@
       bind:clientWidth={componentWidth}
       bind:clientHeight={componentHeight}
     >
-      {@render Component()}
+      {#if !Object.values(parametersParsingErrorsObject).includes(true)}
+        {@render Component()}
+      {:else}
+        <h6 class="px-5">Component not rendered due to invalid prop value.</h6>
+      {/if}
     </div>
   </div>
 </div>

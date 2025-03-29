@@ -1,6 +1,4 @@
 <script>
-  import { propPillLookup } from "$lib/config.js";
-
   let {
     textProp,
     numberProp,
@@ -9,6 +7,7 @@
     radioProp,
     jsObjectProp,
     functionProp,
+    SnippetProp,
   } = $props();
 </script>
 
@@ -62,6 +61,7 @@
     <div class="grid grid-cols-2 gap-4 mt-6 cursor-pointer">
       {#each jsObjectProp as pokemon}
         <button
+          data-id={pokemon.name}
           data-role="pokemon-card"
           class="rounded p-2 grid grid-cols-[auto_1fr] gap-2"
           style="background-color: {pokemon.color};"

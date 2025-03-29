@@ -81,7 +81,7 @@
   import ComponentDemo from "$lib/package-wrapping/ComponentDemo.svelte";
 
   import { Toast } from "flowbite-svelte";
-  import { ExclamationCircleSolid } from "flowbite-svelte-icons";
+  import { CheckCircleSolid, CloseCircleSolid } from "flowbite-svelte-icons";
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
@@ -240,74 +240,49 @@
             `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
           ],
         },
-        rows: 5,
       },
-
       {
         name: "functionProp",
         category: "Fixed props",
         isEditable: false,
-        value: {
-          workingFunction: function (event, pokemon) {
-            let listOfProperties = Object.entries(pokemon)
-              .filter(([key, value]) => key != "color")
-              .map(([key, value]) => key + " = " + "'" + value + "'")
-              .join(" and ");
+        value: function (event, pokemon) {
+          window.alert(
+            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
+          );
 
-            window.alert(
-              "The pokemon card you clicked on has " + listOfProperties + ".",
-            );
-          },
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { role: null, id: null },
+          counter: 0,
           functionAsString: `function (event, pokemon) {
-  let listOfProperties = Object.entries(pokemon)
-      .filter(([key, value]) => key != "color")
-      .map(([key, value]) => key + " = " + "'" + value + "'")
-      .join(" and ");
+window.alert(
+  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
+);
 
-      console.log("The pokemon card you clicked on has " + listOfProperties + ".");
+this.functionElements.counter += 1;
+Object.keys(this.functionElements.dataset).forEach((el) => {
+  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+});
 }`,
         },
         description: {
           markdown: true,
           arr: [
-            `This prop passes a function to the ${pageName} component. `,
-            `It works a bit differently to other props, with the value being set to an object with two properties: <code>functionAsString</code> and <code>workingFunction</code>.`,
+            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
+            `Firstly, it is not editable via the UI.`,
+            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
             ,
-            `The value shown on the left is just example code based on the <code>functionAsString</code> property.`,
-            `The function actually passed to the component is separate, and is based on the <code>workingFunction</code> property.`,
+            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
+            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
           ],
         },
       },
     ]),
   );
-
-  let arr = [
-    {
-      counter: 0,
-      increment: function () {
-        this.counter += 1;
-      },
-    },
-  ];
-
-  // Access the object in the array and call its increment method
-  arr[0].increment();
-  console.log(arr[0].counter); // Output: 1
-
-  // Call the increment method again
-  arr[0].increment();
-  console.log(arr[0].counter); // Output: 2
-
-  let x = {
-    func: arr[0].increment,
-  };
-
-  let obj = {
-    func: arr[0].increment.bind(arr[0]),
-  };
-
-  obj.func();
-  console.log(arr[0].counter); // Output: 1
 
   /**
    * DONOTTOUCH *
@@ -323,8 +298,7 @@
       let value = derivedParametersObject[el.name] ?? el.value;
 
       return el.isEditable === isEditableBoolean && value != null
-        ? typeof value === "object" &&
-          !("workingFunction" in value && "functionAsString" in value)
+        ? typeof value === "object"
           ? JSON.stringify(value, null, 2)
           : value
         : null;
@@ -378,13 +352,32 @@
    * && 		parametersObject takes the props to be passed to the component and converts them into a (parameterName: parameterValue) pattern
    * &&     isValidJSONArray tracks whether any of the values set in the parameters UI are invalid.
    */
-  let parametersObject = $derived(
+
+  let [parametersObject, parametersParsingErrorsArray] = $derived(
     createParametersObject(
       parametersSourceArray,
       statedParametersValuesArray,
       derivedParametersValuesArray,
     ),
   );
+
+  let parametersParsingErrorsObject = $state({});
+
+  $effect(() => {
+    parametersParsingErrorsArray.forEach((el) => {
+      parametersParsingErrorsObject[el] = true;
+    });
+
+    Object.keys(parametersParsingErrorsObject).forEach((el) => {
+      if (!parametersParsingErrorsArray.includes(el)) {
+        parametersParsingErrorsObject[el] = false;
+      }
+    });
+  });
+
+  $inspect(parametersParsingErrorsObject);
+
+  //navigator.clipboard.writeText(JSON.stringify(parametersObject, 0, 2));
 </script>
 
 <!--
@@ -432,6 +425,44 @@ DONOTTOUCH  *
   <Template {...parametersObject}></Template>
 {/snippet}
 
+{#key parametersParsingErrorsArray}
+  <div class="fixed bottom-0 right-0 mr-5 mb-5 z-[3]">
+    {#each Object.keys(parametersParsingErrorsObject) as key}
+      {#if parametersParsingErrorsObject[key]}
+        <Toast
+          divClass="w-100 p-4 text-gray-500 bg-white shadow gap-5"
+          color="red"
+          dismissable={true}
+          on:close={() =>
+            parametersParsingErrorsArray.filter((el) => el != key)}
+        >
+          <svelte:fragment slot="icon">
+            <CloseCircleSolid class="w-5 h-5" />
+            <span class="sr-only">Error icon</span>
+          </svelte:fragment>
+
+          Error: The <code>{key}</code> prop is not a valid JSON object.</Toast
+        >
+      {:else}
+        <Toast
+          divClass="w-100 p-4 text-gray-500 bg-white shadow gap-5"
+          color="green"
+          dismissable={true}
+          on:close={() =>
+            parametersParsingErrorsArray.filter((el) => el != key)}
+        >
+          <svelte:fragment slot="icon">
+            <CheckCircleSolid class="w-5 h-5" />
+            <span class="sr-only">Check icon</span>
+          </svelte:fragment>
+
+          Resolved: The <code>{key}</code> prop is valid JSON.</Toast
+        >
+      {/if}
+    {/each}
+  </div>
+{/key}
+
 <ComponentDemo
   {Component}
   bind:demoScreenWidth
@@ -439,6 +470,7 @@ DONOTTOUCH  *
   bind:statedParametersValuesArray
   {derivedParametersValuesArray}
   {parametersVisibleArray}
+  {parametersParsingErrorsObject}
 ></ComponentDemo>
 
 <!--

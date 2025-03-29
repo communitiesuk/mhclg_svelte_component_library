@@ -67,90 +67,75 @@
   class="app-mobile-nav js-app-mobile-nav {isOpen
     ? 'app-mobile-nav--active'
     : ''}"
-  aria-label="main"
+  aria-label="mobile navigation"
   role="navigation"
   aria-hidden={!isOpen}
 >
-  <ul class="app-mobile-nav__list">
-    {#each sections as section}
-      <li>
-        <div
-          class="app-mobile-nav-subnav-toggler {isCurrent(section)
-            ? 'app-mobile-nav__subnav-toggler--active'
-            : ''}"
-        >
-          <a
-            class="govuk-link govuk-link--no-visited-state app-mobile-nav-subnav-toggler__link js-mobile-nav-subnav-toggler"
-            href={section.href}
-            id="js-mobile-nav-subnav-toggler-{section.title}"
-            on:click|preventDefault={() => toggleSection(section.title)}
-          >
-            {section.title}
-          </a>
-        </div>
-        <ul
-          class="app-mobile-nav__list app-mobile-nav__subnav js-app-mobile-nav-subnav {isSectionExpanded(
-            section.title,
-          )
-            ? 'app-mobile-nav__subnav--active'
-            : ''}"
-          aria-label={section.title}
-        >
-          <li
-            class="app-mobile-nav__subnav-item {isCurrent(section)
-              ? 'app-mobile-nav__subnav-item--current'
-              : ''}"
-          >
+  <div class="app-mobile-nav__wrapper">
+    <ul class="app-mobile-nav__list">
+      {#each sections as section}
+        <li class="app-mobile-nav__section">
+          <div class="app-mobile-nav__section-header">
             <a
-              class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
               href={section.href}
+              class="app-mobile-nav__section-link {section.current
+                ? 'app-mobile-nav__section-link--current'
+                : ''}"
+              on:click|preventDefault={() => toggleSection(section.title)}
             >
-              {section.title} overview
+              {section.title}
             </a>
-          </li>
+          </div>
 
-          {#each section.items as item}
-            {#if "title" in item && "items" in item && Array.isArray(item.items)}
-              <!-- Grouped items with title -->
-              <li>
-                <h2 class="app-mobile-nav__theme">{item.title}</h2>
-                <ul class="app-mobile-nav__list">
-                  {#each item.items as subItem}
-                    <li
-                      class="app-mobile-nav__subnav-item {isCurrent(subItem)
-                        ? 'app-mobile-nav__subnav-item--current'
-                        : ''}"
-                    >
-                      <a
-                        class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
-                        href={subItem.href}
-                      >
-                        {subItem.text}
-                      </a>
-                    </li>
-                  {/each}
-                </ul>
-              </li>
-            {:else if "href" in item && "text" in item}
-              <!-- Single navigation item -->
-              <li
-                class="app-mobile-nav__subnav-item {isCurrent(item)
-                  ? 'app-mobile-nav__subnav-item--current'
-                  : ''}"
-              >
-                <a
-                  class="govuk-link govuk-link--no-visited-state app-mobile-nav__link"
-                  href={item.href}
-                >
-                  {item.text}
-                </a>
-              </li>
-            {/if}
-          {/each}
-        </ul>
-      </li>
-    {/each}
-  </ul>
+          <ul
+            class="app-mobile-nav__list app-mobile-nav__section-items {isSectionExpanded(
+              section.title,
+            )
+              ? 'app-mobile-nav__section-items--active'
+              : ''}"
+            aria-label={section.title}
+          >
+            {#each section.items as item}
+              {#if "title" in item && "items" in item && Array.isArray(item.items)}
+                <!-- Grouped items with title -->
+                <li class="app-mobile-nav__group">
+                  {#if item.title}
+                    <h2 class="app-mobile-nav__group-title">{item.title}</h2>
+                  {/if}
+                  <ul class="app-mobile-nav__list">
+                    {#each item.items as subItem}
+                      <li>
+                        <a
+                          class="app-mobile-nav__link {isCurrent(subItem)
+                            ? 'app-mobile-nav__link--current'
+                            : ''}"
+                          href={subItem.href}
+                        >
+                          {subItem.text}
+                        </a>
+                      </li>
+                    {/each}
+                  </ul>
+                </li>
+              {:else if "href" in item && "text" in item}
+                <!-- Single navigation item -->
+                <li>
+                  <a
+                    class="app-mobile-nav__link {isCurrent(item)
+                      ? 'app-mobile-nav__link--current'
+                      : ''}"
+                    href={item.href}
+                  >
+                    {item.text}
+                  </a>
+                </li>
+              {/if}
+            {/each}
+          </ul>
+        </li>
+      {/each}
+    </ul>
+  </div>
 </nav>
 
 <style>
@@ -170,18 +155,8 @@
     }
   }
 
-  @media (max-width: 40.0525em) {
-    .app-mobile-nav {
-      display: block;
-    }
-
-    :global(.js-enabled) .app-mobile-nav {
-      display: none;
-    }
-
-    :global(.js-enabled) .app-mobile-nav--active {
-      display: block;
-    }
+  .app-mobile-nav__wrapper {
+    padding: 0;
   }
 
   .app-mobile-nav__list {
@@ -190,79 +165,57 @@
     list-style: none;
   }
 
-  .app-mobile-nav-subnav-toggler {
-    position: relative;
-    padding: 16px 20px 17px 20px;
-    background-color: #f3f2f1;
-  }
-
-  .app-mobile-nav-subnav-toggler__link {
-    font-weight: 700;
-    font-size: 19px;
-    font-size: 1.1875rem;
-  }
-
-  .app-mobile-nav-subnav-toggler__link:not(:focus):hover {
-    color: #513184;
-  }
-
-  .app-mobile-nav-subnav-toggler__link,
-  .app-mobile-nav__link {
-    text-decoration: none;
-  }
-
-  .app-mobile-nav-subnav-toggler__link:after,
-  .app-mobile-nav__link:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
-
-  .app-mobile-nav__subnav {
-    display: none;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    border-top: 1px solid #f3f2f1;
+  .app-mobile-nav__section {
     border-bottom: 1px solid #f3f2f1;
   }
 
-  .app-mobile-nav__subnav--active {
+  .app-mobile-nav__section-header {
+    display: block;
+    background-color: #f3f2f1;
+    font-weight: 700;
+  }
+
+  .app-mobile-nav__section-link {
+    display: block;
+    padding: 15px;
+    text-decoration: none;
+    color: #1d70b8;
+    font-weight: 700;
+  }
+
+  .app-mobile-nav__section-link--current {
+    border-left: 4px solid #1d70b8;
+    padding-left: 11px;
+  }
+
+  .app-mobile-nav__section-items {
+    display: none;
+    background-color: #fff;
+  }
+
+  .app-mobile-nav__section-items--active {
     display: block;
   }
 
-  .app-mobile-nav__section-item {
-    position: relative;
-  }
-
-  .app-mobile-nav__subnav-item {
+  .app-mobile-nav__link {
     display: block;
-    position: relative;
-    padding: 12px 20px;
+    padding: 15px;
+    text-decoration: none;
+    color: #1d70b8;
   }
 
-  .app-mobile-nav__subnav-item--current {
-    padding-left: 16px;
-    border-left: 4px solid #4c2c92;
+  .app-mobile-nav__link--current {
+    border-left: 4px solid #1d70b8;
+    padding-left: 11px;
+    background-color: #f3f2f1;
   }
 
-  .app-mobile-nav__theme {
-    font-family: Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+  .app-mobile-nav__group-title {
     margin: 0;
-    padding: 20px 20px 5px 20px;
+    padding: 15px 15px 5px 15px;
     color: #505a5f;
     font-size: 19px;
-    font-size: 1.1875rem;
     font-weight: normal;
-  }
-
-  @media print {
-    .app-mobile-nav__theme {
-      font-family: sans-serif;
-    }
+    font-family: Helvetica, Arial, sans-serif;
   }
 </style>

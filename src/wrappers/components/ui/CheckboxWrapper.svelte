@@ -405,7 +405,7 @@ DONOTTOUCH  *
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
  -->
 
-{#snippet Component()}
+<!-- {#snippet Component()}
   <div class="flex flex-col gap-4">
     <div class="px-6 py-14">
       <Checkbox {...parametersObject} bind:selectedValues />
@@ -420,7 +420,7 @@ DONOTTOUCH  *
   bind:statedParametersValuesArray
   {derivedParametersValuesArray}
   {parametersVisibleArray}
-></ComponentDemo>
+></ComponentDemo> -->
 
 <!--
     DONOTTOUCH  *

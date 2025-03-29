@@ -527,7 +527,7 @@
   </h5>
   <Accordion
     activeClass="text-[#EA580C] focus:ring-2 focus:ring-[#EA580C]"
-    inactiveClass="text-gray-500 dark:text-gray-400 hover:bg-slate-100"
+    inactiveClass="hover:bg-slate-100"
   >
     {#each accordionSnippetSections as section}
       <AccordionItem>

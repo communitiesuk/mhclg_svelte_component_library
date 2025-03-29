@@ -245,6 +245,7 @@
         name: "functionProp",
         category: "Fixed props",
         isEditable: false,
+        isRequired: true,
         value: function (event, pokemon) {
           window.alert(
             `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
@@ -375,7 +376,17 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
     });
   });
 
-  $inspect(parametersParsingErrorsObject);
+  let copyParametersToClipboardObject = $derived(
+    Object.fromEntries(
+      Object.entries(parametersObject).map(([key, value]) => [
+        key,
+        typeof value === "function"
+          ? parametersSourceArray.find((el) => el.name === key)
+              ?.functionElements?.functionAsString
+          : value,
+      ]),
+    ),
+  );
 
   //navigator.clipboard.writeText(JSON.stringify(parametersObject, 0, 2));
 </script>
@@ -471,6 +482,7 @@ DONOTTOUCH  *
   {derivedParametersValuesArray}
   {parametersVisibleArray}
   {parametersParsingErrorsObject}
+  {copyParametersToClipboardObject}
 ></ComponentDemo>
 
 <!--

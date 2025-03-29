@@ -1,4 +1,5 @@
 <script>
+  import { Tooltip } from "flowbite-svelte";
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import DoubleChevronButton from "$lib/icons/DoubleChevronButton.svelte";
   import InputForParameterUpdated from "$lib/package-wrapping/InputForParameterUpdated.svelte";
@@ -115,10 +116,6 @@
         and <code>lineFunction</code> are all defined based on other props.
       </p>
     </div>
-
-    <div class="col-span-full">
-      <DividerLine></DividerLine>
-    </div>
   </div>
 {/snippet}
 
@@ -167,6 +164,83 @@
               class="m-1 hyphens-auto break-words"
             >
               {parameter.name}
+              <div class="flex flex-row gap-0.5">
+                {#each [{ check: parameter.isProp, color: "#ba029b", yAdj: 0, label: "p" }, { check: parameter.isRequired, color: "#00695c", yAdj: 0.75, label: "r" }, { check: parameter.isBinded, color: "#1B4079", yAdj: 1.25, label: "b" }] as pill}
+                  {#if pill.check}
+                    <svg width="20px" height="20px">
+                      <circle
+                        cx="10"
+                        cy="10"
+                        r="9"
+                        stroke={pill.color}
+                        fill={pill.color}
+                        fill-opacity="0.05"
+                        stroke-width="2px"
+                      >
+                      </circle>
+                      <text
+                        text-anchor="middle"
+                        x="10"
+                        y={12.5 + pill.yAdj}
+                        font-size="12px"
+                        stroke={pill.color}
+                        fill={pill.color}
+                        stroke-width="0.5px">{pill.label}</text
+                      >
+                    </svg>
+                    <Tooltip type="light" placement="right" class="max-w-60">
+                      {#if pill.label === "p"}
+                        <div
+                          class="flex flex-col gap-2"
+                          style="color: {pill.color}"
+                        >
+                          <p class="m-0 p-0">
+                            This parameter is a <span class="font-bold"
+                              >prop.</span
+                            >
+                          </p>
+
+                          <p class="m-0 p-0">
+                            This means that the value is passed directly to the
+                            component.
+                          </p>
+                        </div>
+                      {:else if pill.label === "r"}
+                        <div
+                          class="flex flex-col gap-2"
+                          style="color: {pill.color}"
+                        >
+                          <p class="m-0 p-0">
+                            This prop is <span class="font-bold">required.</span
+                            >
+                          </p>
+
+                          <p class="m-0 p-0">
+                            This means that the component will not render
+                            properly if this prop is <code>undefined</code>.
+                          </p>
+                        </div>
+                      {:else if pill.label === "b"}
+                        <div
+                          class="flex flex-col gap-2"
+                          style="color: {pill.color}"
+                        >
+                          <p class="m-0 p-0">
+                            This parameter is <span class="font-bold"
+                              >binded.</span
+                            >
+                          </p>
+
+                          <p class="m-0 p-0">
+                            This means updates to the prop made within the
+                            component are tracked by the parent.
+                          </p>
+                        </div>
+                      {/if}
+                    </Tooltip>
+                  {/if}
+                {/each}
+              </div>
             </div>
             <div
               data-role="item"
@@ -288,5 +362,9 @@
 
   [data-width="col2Lg"] {
     max-width: 550px;
+  }
+
+  svg {
+    overflow: visible;
   }
 </style>

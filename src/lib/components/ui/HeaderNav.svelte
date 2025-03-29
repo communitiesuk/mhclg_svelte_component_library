@@ -10,15 +10,13 @@
 
   // Component props
   let {
-    productName = "Design System",
+    serviceName = "Service name",
     homeHref = "/",
-    logoText = "DWP",
     navigationItems = [],
     currentSection = $bindable(""),
   } = $props<{
-    productName?: string;
+    serviceName?: string;
     homeHref?: string;
-    logoText?: string;
     navigationItems: NavigationItem[];
     currentSection?: string;
   }>();
@@ -52,56 +50,47 @@
   });
 </script>
 
-<header class="govuk-header app-header">
-  <div
-    class="govuk-header__container app-width-container app-header__container"
-  >
-    <div class="govuk-header__logo app-header__logo">
-      <a
-        href={homeHref}
-        class="govuk-header__link govuk-header__link--homepage"
-      >
-        <span class="govuk-header__logotype">
-          <span class="govuk-header__logotype-text">{logoText}</span>
-        </span>
-        <span class="govuk-header__product-name">{productName}</span>
-      </a>
-    </div>
-    <div class="app-header-mobile-nav-toggler-wrapper">
-      <button
-        id="app-mobile-nav-toggler"
-        class="govuk-button app-header-mobile-nav-toggler {mobileNavOpen
-          ? 'app-header-mobile-nav-toggler--active'
-          : ''}"
-        aria-controls="app-mobile-nav"
-        aria-expanded={mobileNavOpen}
-        on:click={toggleMobileNav}
-      >
-        Menu
-      </button>
-    </div>
-  </div>
-</header>
-
 <nav class="app-navigation govuk-clearfix" aria-label="main" role="navigation">
-  <ul class="app-navigation__list app-width-container">
-    {#each navigationItems as item}
-      <li
-        class="app-navigation__list-item {item.current
-          ? 'app-navigation__list-item--current'
-          : ''}"
-      >
-        <a
-          class="govuk-link govuk-link--no-visited-state app-navigation__link"
-          href={item.href}
-          data-topnav={item.text}
-          aria-current={item.current ? "page" : undefined}
-        >
-          {item.text}
+  <div class="app-width-container">
+    <div class="app-navigation__header">
+      <div class="app-navigation__service-name">
+        <a href={homeHref} class="app-navigation__service-link">
+          {serviceName}
         </a>
-      </li>
-    {/each}
-  </ul>
+      </div>
+      <div class="app-mobile-nav-toggler-wrapper">
+        <button
+          id="app-mobile-nav-toggler"
+          class="app-mobile-nav-toggler {mobileNavOpen
+            ? 'app-mobile-nav-toggler--active'
+            : ''}"
+          aria-controls="app-mobile-nav"
+          aria-expanded={mobileNavOpen}
+          on:click={toggleMobileNav}
+        >
+          Menu
+        </button>
+      </div>
+    </div>
+    <ul class="app-navigation__list">
+      {#each navigationItems as item}
+        <li
+          class="app-navigation__list-item {item.current
+            ? 'app-navigation__list-item--current'
+            : ''}"
+        >
+          <a
+            class="govuk-link govuk-link--no-visited-state app-navigation__link"
+            href={item.href}
+            data-topnav={item.text}
+            aria-current={item.current ? "page" : undefined}
+          >
+            {item.text}
+          </a>
+        </li>
+      {/each}
+    </ul>
+  </div>
 </nav>
 
 <style>
@@ -110,12 +99,32 @@
     font-family: Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-weight: bold;
+    font-weight: 400;
     font-size: 1rem;
     line-height: 1.25;
     box-sizing: border-box;
     width: 100%;
     background-color: #f8f8f8;
+  }
+
+  .app-navigation__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: #f8f8f8;
+    border-top: 10px solid #1d70b8;
+    border-bottom: 1px solid #b1b4b6;
+  }
+
+  .app-navigation__service-name {
+    font-weight: 700;
+    font-size: 1.125rem;
+  }
+
+  .app-navigation__service-link {
+    text-decoration: none;
+    color: #0b0c0c;
   }
 
   @media print {
@@ -139,7 +148,7 @@
   }
 
   @media (max-width: 40.0525em) {
-    .app-navigation {
+    .app-navigation__list {
       display: none;
     }
   }
@@ -191,53 +200,24 @@
     text-decoration: none;
   }
 
-  /* Header styles */
-  .app-header {
-    border-bottom: 10px solid #00625e;
-  }
-
-  .app-header__container {
-    margin-bottom: 0;
-    border-bottom: 0;
-  }
-
-  .app-header__logo {
-    display: inline;
-    float: left;
-  }
-
-  @media (min-width: 40.0625em) {
-    .app-header__logo {
-      width: 100%;
-      display: block;
-    }
-  }
-
-  .app-header-mobile-nav-toggler-wrapper {
-    margin-top: -10px;
+  /* Mobile toggle button */
+  .app-mobile-nav-toggler-wrapper {
     display: block;
-    float: right;
   }
 
-  .app-header-mobile-nav-toggler {
-    display: none;
-    min-height: 40px;
-    margin-top: 10px;
-    margin-bottom: 10px;
-    padding-right: 5px;
-    padding-left: 5px;
-    border: 1px solid #505a5f;
-    color: #000;
-    background-color: #fff;
-    box-shadow: none;
+  .app-mobile-nav-toggler {
+    display: inline-block;
+    padding: 0;
+    border: 0;
+    background-color: transparent;
+    color: #1d70b8;
+    cursor: pointer;
     font-size: 1rem;
+    font-weight: 700;
+    font-family: Helvetica, Arial, sans-serif;
   }
 
-  .app-header-mobile-nav-toggler:hover {
-    background-color: #f3f2f1;
-  }
-
-  .app-header-mobile-nav-toggler::after {
+  .app-mobile-nav-toggler::after {
     content: "";
     display: inline-block;
     width: 0;
@@ -247,17 +227,18 @@
     border-top-color: currentColor;
     border-width: 5px 5px 0 5px;
     margin-left: 5px;
+    vertical-align: middle;
   }
 
-  .app-header-mobile-nav-toggler--active::after {
+  .app-mobile-nav-toggler--active::after {
     border-width: 0 5px 5px 5px;
     border-top-color: transparent;
     border-bottom-color: currentColor;
   }
 
-  @media (max-width: 40.0525em) {
-    .app-header-mobile-nav-toggler {
-      display: inline;
+  @media (min-width: 40.0625em) {
+    .app-mobile-nav-toggler {
+      display: none;
     }
   }
 </style>

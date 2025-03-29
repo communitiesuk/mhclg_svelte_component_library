@@ -157,6 +157,7 @@
   .app-mobile-nav {
     display: none;
     border-bottom: 1px solid #b1b4b6;
+    background-color: #f8f8f8;
   }
 
   .app-mobile-nav--active {

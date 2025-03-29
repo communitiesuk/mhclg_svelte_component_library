@@ -121,10 +121,9 @@
 
 <div class="min-h-screen flex flex-col">
   <div class="flex-grow">
-    <!-- Header with top navigation -->
+    <!-- Navigation with logo and mobile menu -->
     <HeaderNav
-      productName="Svelte Component Library"
-      logoText="DWP"
+      serviceName="Service name"
       {navigationItems}
       {currentSection}
       on:toggleMobileNav={handleToggleMobileNav}

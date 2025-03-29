@@ -141,18 +141,20 @@
         <Breadcrumbs collapseOnMobile={true} />
       </div>
 
-      <div class="app-pane__flex">
+      <div class="app-split-pane">
         <!-- Side navigation - only show on components, patterns, or community pages -->
         {#if currentSection === "Components"}
-          <SideNav
-            title="Components"
-            items={componentNavItems}
-            currentItem={currentPage}
-          />
+          <div class="app-split-pane__nav">
+            <SideNav
+              title="Components"
+              items={componentNavItems}
+              currentItem={currentPage}
+            />
+          </div>
         {/if}
 
         <!-- Main content area -->
-        <div class="app-pane__content">
+        <div class="app-split-pane__content app-content">
           {@render children()}
         </div>
       </div>
@@ -170,19 +172,50 @@
     width: 100%;
   }
 
-  .app-pane__flex {
-    display: flex;
-    flex-direction: column;
+  /* Split pane layout */
+  @media (min-width: 40.0625em) {
+    .app-split-pane {
+      display: flex;
+      position: relative;
+      min-height: 0;
+      overflow: inherit;
+    }
+  }
+
+  @media (min-width: 1160px) {
+    .app-split-pane {
+      width: 100%;
+    }
+  }
+
+  .app-split-pane__nav {
+    display: none;
   }
 
   @media (min-width: 40.0625em) {
-    .app-pane__flex {
-      flex-direction: row;
+    .app-split-pane__nav {
+      display: block;
+      width: 210px;
+      flex: 0 0 auto;
     }
+  }
 
-    .app-pane__content {
-      flex: 1;
-      padding-left: 30px;
+  @media (min-width: 48.0625em) {
+    .app-split-pane__nav {
+      width: 260px;
     }
+  }
+
+  @media (min-width: 40.0625em) {
+    .app-split-pane__content {
+      display: flex;
+      min-width: 0;
+      flex: 1 1 100%;
+      flex-direction: column;
+    }
+  }
+
+  .app-content {
+    padding: 15px 0 20px;
   }
 </style>

@@ -22,7 +22,7 @@ TODO
 <>		
 -->
 
-<div class="g-top-level-container">
+<!-- <div class="g-top-level-container"> -->
   <div class="flex flex-col gap-6">
     <div>
       <h4 class="mb-6">Introduction</h4>
@@ -69,7 +69,7 @@ TODO
     </div>
     <DividerLine margin="1rem 0rem"></DividerLine>
   </div>
-</div>
+<!-- </div> -->
 
 <style>
   /**

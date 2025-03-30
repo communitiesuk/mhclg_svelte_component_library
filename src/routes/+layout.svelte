@@ -122,8 +122,10 @@
 
 <div class="min-h-screen flex flex-col">
   <div class="flex-grow">
-
-    <InternalHeader homepageUrl="/" organisationName="MHCLG Digital Design & Development Team" />
+    <InternalHeader
+      homepageUrl="/"
+      organisationName="MHCLG Digital Design & Development Team"
+    />
 
     <!-- Navigation with logo and mobile menu -->
     <HeaderNav
@@ -141,9 +143,9 @@
     />
 
     <div class="app-pane__body govuk-width-container">
-      <div class="g-top-level-container mb-6">
+      <!-- <div class="g-top-level-container mb-6">
         <Breadcrumbs collapseOnMobile={true} />
-      </div>
+      </div> -->
 
       <div class="app-split-pane">
         <!-- Side navigation - only show on components, patterns, or community pages -->

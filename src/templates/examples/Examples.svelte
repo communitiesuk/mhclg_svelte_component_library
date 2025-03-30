@@ -40,6 +40,7 @@
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
   <div class="p-5 bg-white">
     <Template
+      componentNameProp="Example 1"
       checkboxProp={true}
       dropdownProp="Dragonfruit"
       jsObjectProp={[

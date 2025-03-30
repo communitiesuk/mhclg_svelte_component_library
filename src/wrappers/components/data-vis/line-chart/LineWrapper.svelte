@@ -4,11 +4,16 @@
   export { WrapperNameAndStatus, WrapperInformation };
 
   /**
+   * !  More documentation is provided on the component library's user guide page.
+   */
+
+  /**
+   * ! STEP 1 - Adding component metadata
    * CUSTOMISETHIS  Update the status for this component.
-   * && 	statusObject.progress determines which pill is shown against the component's name, based
+   * && 	statusObject.progress determines which pill is shown against the component's name.
    * ?  progress must be one of:
    * ?  1. 'To be developed' - This is the inital status, when the component files have been generated but the work to actually build out the code for the component has not started.
-  // Your new line of code here
+   * ?  2. 'In progress' - This is the status while the component is being built. This lets developers know that the full fuctionality of the component has not been completed and that it may change in the future.
    * ?  3. 'Baseline completed' - This means the core functionality of the component has been completed and it is ready for use. However, small changes to the component may still occur in the future.
    * ?  4. 'In use' - This means the component is completed and being using in products. Therefore, developers need to be mindful of its existing uses when making any changes.
    * &&   statusObject.statusRow determines the sets of ticks/crosses shown below the component name.
@@ -36,7 +41,7 @@
 
   /**
    * CUSTOMISETHIS  Update detailsArray to provide description of what this component does and when it should be used.
-   * &&   By default the detailsArray includes description and context. The description is intended to explain what the component does, the context is intended to explain when the component will be used (e.g. what is it's parent component likely to be, what components will it be used in combination with).
+   * &&   By default the detailsArray includes description and context. The description is intended to explain what the component does, the context is intended to explain when the component will be used.
    * ?  Within each array, an object has an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content (e.g. this can be used for including links to other pages).
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
@@ -77,23 +82,17 @@
   import { browser } from "$app/environment";
 
   import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
-  import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
-  import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
-  import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
-  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
+  import ParsingErrorToastsContainer from "$lib/package-wrapping/ParsingErrorToastsContainer.svelte";
   import ComponentDemo from "$lib/package-wrapping/ComponentDemo.svelte";
 
-  import { Toast } from "flowbite-svelte";
-  import { CheckCircleSolid, CloseCircleSolid } from "flowbite-svelte-icons";
-
-  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
-
+  import { kebabToPascalCase } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { addIndexAndInitalValue } from "$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js";
   import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
   import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
   import { createBindableParametersValuesArray } from "$lib/utils/package-wrapping-specific/createBindableParametersValuesArray.js";
-  import { kebabToPascalCase } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { getValueFromParametersArray } from "$lib/utils/data-transformations/getValueFromParametersArray.js";
+
+  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
   import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
@@ -123,41 +122,49 @@
   let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
 
   /**
+   * ! Step 2 - Adding binded props
    * CUSTOMISETHIS  Define any binded props
-   * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state rune. They can then be added to the parameterSourceArray below.
+   * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
 
   /**
+   * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
-   * && 		parametersSourceArray is where you define any props for the component whose initial value does not depend on other parameters. It can also be used for defining any parameters which are not passed to the component, but are used in the calculation of another parameter (An example would be a Line component's xFunction, which is calculated based on a scale, an xDomain and a graphWidth). Each prop is represented by a single object within the array.
-   * ? 		  name - Required. Name of the parameter which is passed to the component. The name can also be referenced in the calculation of parameters which depend on this value. Names must be unique.
+   * && 		parametersSourceArray is where you define any props for the component. All props should be listed in the parametersSourceArray.
+   * &&     Initial values should be provided for all props which either (i) are binded, or (ii) can be modified using the demo UI.
+   * &&     Values should also be provided for functions and svelte snippets - which cannot be modified by the user to prevent security issues.
+   * &&     Some props may be derived from other props. These should still be listed in the parametersSourceArray, but their value should be left empty. Their value can then be defined further down the page.
+   * ?      For each prop, the following fields are available:
+   * ? 		  <name> (required, must be unique) -  Name of the parameter which is passed to the component. The name can also be referenced in the calculation of derived parameters which depend on this value.
+   * ?      <category> - (required) - Used for separating parameters into different groups.
    *
-   * ?      category - Required. Used purely for separating parameters into different accordion groups.
+   * ?      <isBinded> - (optional, default = false) - Should be set to true, if the prop is utilising the bind:directive. Note that for bind to work, the prop must also be defined in step 1 using the $state() rune and passed to the component separately as bindable (e.g. bind:thisProp).
    *
-   * ?      isProp - Options, defaults to true. Is a boolean - true means it will actually be passed to the commponent, false means it will not (and will instead be used just for calculating other parameters).
    *
-   * ?      isBinded - Optional, treated as false by default. If isBinded is set to true - then the parameter value will not be editable via the parameters UI, but will be displayed so users can see how it updates as they interact with the component. Note that the prop must also explicitly be passed to the component as bindable (e.g. bind:thisComponent)
+   * ?      <options> - (required for $state() props which can be modified using dropwdown or radio inputs). <options> should contain an array of strings. If <value> is null or absent, the initial value will be taken from the first entry in the options array.
+   * ?      <value> - (Should be null or absent for derived props. For all others props it's required, unless there is an options field). Used to set the initial value of the prop.
    *
-   * ?      inputType - Required. This can be a form input (available options are 'code', 'event', 'input', 'checkbox', 'dropdown' and 'radio'.
-   * ?      The inputType should be set to 'code' if the parameter is a function (non-editable in the UI to prevent code injection), or object.
+   * ?      <propType> - (optional) - Has two use cases:
+   * ?      (i) set to 'fixed' to prevent users editing the value.
+   * ?      (i) set to 'radio' to have options selectable via the radio input (uses dropdown by default).
    *
-   * ?      When inputType is set to 'event', the user cannot change the value of this prop, but a tracker will be shown in the parameter UI to indicate when the event handler is called.
+   * ?      <visible> - (optional, default = true). Hides prop in the UI if certain conditions are not met. Specify an object with a name - the parameter that you want to check against and a value - the value that the named parameters need to equal for this input to be visible.
+   * ?      The Line component provides an example of the <visible> field in action, showing and hiding props based on <includeMarkers>
+   * ?      If you want the form to be visible only if multiple conditions are met, you can provide an array of conditional objects instead.
    *
-   * ?      All other input types provide the user with a form input which allows them to edit the value via the parameter UI and see how the component updates.
+   * ?      <rows> - (optional, default = 1, only use with $state() where typeof value === "string"). Sets the numbers of rows used by the textArea input.
    *
-   * ?      value - not required if inputType === 'event', otherwise optional. Used to set the default initial value for the parameter. Note that certain inputTypes don't require a value. If value is undefined, dropdowns and radios will calculate it as the first element in their options array. If value is undefined, checkbox will set it to false.
+   * ?      <functionElements> - (optional, only used where typeof value === "function") - <functionElements> can have three optional properties:
+   * ?      (i) 'functionAsString': Should be set as a string copy of the function itself. Used to display the function in the demo UI.
+   * ?      (ii) 'counter': For use with event handler functions. Should be set to 0. Then putting 'this.functionElements.counter += 1;' in the function body will cause the counter to update each time the function is triggered.
+   * ?      (iii) 'dataset': For use with event handler fuctions. Should be an object - then putting 'Object.keys(this.functionElements.dataset).forEach((el) => { this.functionElements.dataset[el] = event.currentTarget.dataset[el]; });' in the function body will cause the object to update each time the function is triggered.
    *
-   * ?      options - required for ['dropdown', 'radio'].includes(inputType), redundant otherwise. Provides an array representing the options that can the parameter can be set to via the parameters UI.
+   * ?      <description> - (optional, but strongly encouraged). Describes what the parameter does and best practice uses for it. The description can be a string, an object with a markdown field (true or false) and arr field, or a svelte snippet.
    *
-   * ?      visible - optional. Some props are irrelevant unless another prop is set to a particular value (e.g. in a Line component, markerRadius is irrelevant if includeMarkers is false). The visible key allows you to dynamically hide a props' input forms. You can do this by specifying an object with name - the parameter that you want to check against, and value - the value that the named parameter needs to be equal to for this input form to be visible. (e.g. for markerRadius we would use {name: includeMarkers, value: true}).
-   * ?      If you want the form to be visible only if multiple conditions are met, you can provide an array of condition objects instead.
+   * ?      <isProp> - (optional, default = true) - Should be set to false for paramters which are not actually passed to the component.
+   * ?      <isRequired> - (optional, default = false) - Should be set to true for any props which the component will not functionally properly without (e.g. props with no default value, props which will cause erros if undefined).
    *
-   * ?      handlerFunction - optional. Redundant unless inputType === 'event'. You can provide a function that will run when the specified event occurs. A default function is provided if handlerFunction is set to undefined - using the default handlerFunction is recommended.
-   *
-   * ?      description - optional, but encouraged unless the parameter's function is self-explanatory. Describes what the parameter does and best practice uses for it. The description can be a string, an object with a markdown (true or false) and arr keys, or a svelte snippet.
-   *
-   * ?      rows - optional. Redundant unless inputType === 'input'. In this case, a textArea input form will contain the parameter value, and the size of the textArea is based on the rows key. If there is no rows key then by default the textArea has 1 row.
    */
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
@@ -272,7 +279,6 @@
       {
         name: "xFunction",
         category: "xScale",
-        isEditable: false,
       },
       {
         name: "yDomainLowerBound",
@@ -305,7 +311,6 @@
       {
         name: "yFunction",
         category: "yScale",
-        isEditable: false,
       },
       {
         name: "curveFunction",
@@ -323,7 +328,6 @@
       {
         name: "lineFunction",
         category: "lineFunction",
-        isEditable: false,
       },
       {
         name: "pathStrokeColor",
@@ -390,18 +394,133 @@
         max: 1,
       },
       {
+        name: "dataId",
+        category: "lineEvents",
+        value: "line-1",
+      },
+      {
         name: "onClick",
         category: "lineEvents",
-        isEditable: false,
         value: function (event, dataArray) {
-          console.log("---onClick---", event, dataArray);
+          console.log(this.name + " triggered", dataArray);
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
         },
         functionElements: {
-          dataset: { role: null, id: null },
+          dataset: { id: null },
           counter: 0,
-          functionAsString: `function (event, dataArray) {
-console.log("---onClick---", event, dataArray);
-},`,
+        },
+      },
+      {
+        name: "onMouseEnter",
+        category: "lineEvents",
+        value: function (event, dataArray) {
+          console.log(this.name + " triggered", dataArray);
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseLeave",
+        category: "lineEvents",
+        value: function (event, dataArray) {
+          console.log(this.name + " triggered", dataArray);
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseMove",
+        category: "lineEvents",
+        value: function (event, dataArray) {
+          console.log(this.name + " triggered", dataArray);
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "markersDataId",
+        category: "markerEvents",
+        value: "markers-group-1",
+      },
+      {
+        name: "onClickMarker",
+        category: "markerEvents",
+        value: function (event, marker) {
+          console.log(this.name + " triggered", marker);
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseEnterMarker",
+        category: "markerEvents",
+        value: function (event, marker) {
+          console.log(this.name + " triggered", marker);
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseLeaveMarker",
+        category: "markerEvents",
+        value: function (event, marker) {
+          console.log(this.name + " triggered", marker);
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseMoveMarker",
+        category: "markerEvents",
+        value: function (event, marker) {
+          console.log(this.name + " triggered", marker);
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
         },
       },
     ]),
@@ -409,11 +528,8 @@ console.log("---onClick---", event, dataArray);
 
   /**
    * DONOTTOUCH *
-   * && 		parametersValuesArray's initial values are simply take from the source array with a one-to-one mapping.
-   * &&     This array is then used to track the values associated with each parameter as they are modified by the user using form inputs.
+   * && 		Defining functions. generateValuesArray is used to create our arrays which track the $state() and $derived() props. getValue can used to access a reactive value from the $state() based on the prop name.
    */
-  $inspect(parametersSourceArray);
-
   let generateValuesArray = function (
     parametersSourceArray,
     isEditableBoolean,
@@ -430,15 +546,19 @@ console.log("---onClick---", event, dataArray);
     });
   };
 
-  let statedParametersValuesArray = $state(
-    generateValuesArray(parametersSourceArray, true, {}),
-  );
-
   let getValue = function (fieldName) {
     return statedParametersValuesArray[
       parametersSourceArray?.findIndex((el) => el.name === fieldName)
     ];
   };
+
+  /**
+   * DONOTTOUCH *
+   * && 		statedParametersValuesArray tracks the values of $state() props as they are modified by the user using the demo UI.
+   */
+  let statedParametersValuesArray = $state(
+    generateValuesArray(parametersSourceArray, true, {}),
+  );
 
   /**
    * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
@@ -504,12 +624,6 @@ console.log("---onClick---", event, dataArray);
       )(dataArray);
   });
 
-  /**
-   * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
-   * && 		Here you can add additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
-   * &&     Note that these parameters still need to be listed in the source array (with a null input type and null value).
-   * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
-   */
   let derivedParametersObject = $derived({
     derivedDataArray,
     dataArray,
@@ -520,7 +634,7 @@ console.log("---onClick---", event, dataArray);
 
   /**
    * DONOTTOUCH *
-   * && 		bindingsParametersValuesArray's mimics parametersValuesArray but is derived, meaning it can be used to track updates within the component to bounded props..
+   * &&     derivedParametersValuesArray tracks the values of $derived() and fixed props.
    */
   let derivedParametersValuesArray = $derived(
     generateValuesArray(parametersSourceArray, false, derivedParametersObject),
@@ -528,7 +642,7 @@ console.log("---onClick---", event, dataArray);
 
   /**
    * DONOTTOUCH *
-   * && 		parametersValuesArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible or not in the UI.
+   * && 		parametersValuesArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
    */
   let parametersVisibleArray = $derived(
     trackVisibleParameters(parametersSourceArray, statedParametersValuesArray),
@@ -537,7 +651,8 @@ console.log("---onClick---", event, dataArray);
   /**
    * DONOTTOUCH *
    * && 		parametersObject takes the props to be passed to the component and converts them into a (parameterName: parameterValue) pattern
-   * &&     isValidJSONArray tracks whether any of the values set in the parameters UI are invalid.
+   * &&     parametersParsingErrorsArray tracks any errors due to attempting to use JSON.parse() on strings which do not convert to valid JavaScript objects.
+   * &&     $effect() is then use to update parametersParsingErrorsObject, which tracks when errors and fixes occur.
    */
   let [parametersObject, parametersParsingErrorsArray] = $derived(
     createParametersObject(
@@ -560,6 +675,11 @@ console.log("---onClick---", event, dataArray);
       }
     });
   });
+
+  /**
+   * DONOTTOUCH *
+   * && 		copyParametersToClipboard simply takes the set of props being passed to the component, and replaces any function with their functionAsString property. This is necessary because actual functions cannot be written to parsed into a string, and therefore can't be copied to the clipboard.
+   */
 
   let copyParametersToClipboardObject = $derived(
     Object.fromEntries(
@@ -594,66 +714,10 @@ console.log("---onClick---", event, dataArray);
   ></BaseInformation>
 {/snippet}
 
-<!--
-DONOTTOUCH  *
-&&          Renders toast notifications if any of the parameters values are invalid JSON.
--->
-
-<!--
-DONOTTOUCH  *
-&&          Uses snippets to render metadata for the component.
--->
-<WrapperDetailsUpdate
-  wrapper={{
-    component: { WrapperInformation, WrapperNameAndStatus },
-    name: pageName,
-  }}
-  homepage={false}
-></WrapperDetailsUpdate>
-
-{#key parametersParsingErrorsArray}
-  <div class="fixed bottom-0 right-0 mr-5 mb-5 z-[3]">
-    {#each Object.keys(parametersParsingErrorsObject) as key}
-      {#if parametersParsingErrorsObject[key]}
-        <Toast
-          divClass="w-100 p-4 text-gray-500 bg-white shadow gap-5"
-          color="red"
-          dismissable={true}
-          on:close={() =>
-            parametersParsingErrorsArray.filter((el) => el != key)}
-        >
-          <svelte:fragment slot="icon">
-            <CloseCircleSolid class="w-5 h-5" />
-            <span class="sr-only">Error icon</span>
-          </svelte:fragment>
-
-          Error: The <code>{key}</code> prop is not a valid JSON object.</Toast
-        >
-      {:else}
-        <Toast
-          divClass="w-100 p-4 text-gray-500 bg-white shadow gap-5"
-          color="green"
-          dismissable={true}
-          on:close={() =>
-            parametersParsingErrorsArray.filter((el) => el != key)}
-        >
-          <svelte:fragment slot="icon">
-            <CheckCircleSolid class="w-5 h-5" />
-            <span class="sr-only">Check icon</span>
-          </svelte:fragment>
-
-          Resolved: The <code>{key}</code> prop is valid JSON.</Toast
-        >
-      {/if}
-    {/each}
-  </div>
-{/key}
-
 <!-- 
-    CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
-    &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
+  !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
+  CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
-
 {#snippet Component()}
   <div>
     <svg width={demoScreenWidth} height={getValue("svgHeight")}>
@@ -668,6 +732,33 @@ DONOTTOUCH  *
   </div>
 {/snippet}
 
+<!--
+DONOTTOUCH  *
+&&          Uses snippets to render metadata for the component.
+-->
+<WrapperDetailsUpdate
+  wrapper={{
+    component: { WrapperInformation, WrapperNameAndStatus },
+    name: pageName,
+  }}
+  homepage={false}
+></WrapperDetailsUpdate>
+
+<!-- 
+  DONOTTOUCH  *
+  &&          Renders toast components based on tracking parsing errors and fixes.
+ -->
+<ParsingErrorToastsContainer
+  {parametersParsingErrorsArray}
+  {parametersParsingErrorsObject}
+  onCloseFunction={(key) =>
+    parametersParsingErrorsArray.filter((el) => el != key)}
+></ParsingErrorToastsContainer>
+
+<!--
+    DONOTTOUCH  *
+    &&          Renders the demo UI and the component itself.
+-->
 <ComponentDemo
   {Component}
   bind:demoScreenWidth
@@ -682,5 +773,5 @@ DONOTTOUCH  *
 <!--
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
-    -->
+-->
 <div data-role="examples-section" class="px-5"></div>

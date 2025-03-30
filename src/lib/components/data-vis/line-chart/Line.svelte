@@ -31,9 +31,9 @@
 <g
   data-id={dataId}
   onclick={(event) => onClick(event, dataArray)}
-  onmouseenter={onMouseEnter}
-  onmouseleave={onMouseLeave}
-  onmousemove={onMouseMove}
+  onmouseenter={(event) => onMouseEnter(event, dataArray)}
+  onmouseleave={(event) => onMouseLeave(event, dataArray)}
+  onmousemove={(event) => onMouseMove(event, dataArray)}
   {opacity}
 >
   <path
@@ -48,10 +48,10 @@
     {#each dataArray as marker, i}
       <g
         data-id={markersDataId + "-" + i}
-        onclick={onClickMarker}
-        onmouseenter={onMouseEnterMarker}
-        onmouseleave={onMouseLeaveMarker}
-        onmousemove={onMouseMoveMarker}
+        onclick={(event) => onClickMarker(event, marker)}
+        onmouseenter={(event) => onMouseEnterMarker(event, marker)}
+        onmouseleave={(event) => onMouseLeaveMarker(event, marker)}
+        onmousemove={(event) => onMouseMove(event, marker)}
         transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
       >
         {#if markerShape === "circle"}

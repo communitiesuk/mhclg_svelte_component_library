@@ -6,16 +6,17 @@
   } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { componentStatusProgressBackgroundColorLookup } from "$lib/config.js";
 
-  let { homepage, statusObject, folder, name, parentFolder } = $props();
+  let { homepage, statusObject, folder, subFolder, name, parentFolder } =
+    $props();
 
-  $inspect(name, textStringConversion(name, "kebab"));
+  $inspect(name, folder, subFolder);
 </script>
 
-<div class="flex flex-row items-center gap-4">
+<div class="flex flex-row items-center gap-4 {homepage ? '' : 'mb-6'}">
   {#if homepage}
     <a
       class="link-to-other-page"
-      href={`/${parentFolder}${folder ? "/" + folder : ""}/${pascalToKebabCase(name)}`}
+      href={`/${parentFolder}${(folder ? "/" + folder : "") + (subFolder ? "/" + subFolder : "")}/${pascalToKebabCase(name)}`}
     >
       <h6>{name}</h6>
     </a>
@@ -37,7 +38,7 @@
 {#if statusObject?.statusRows && statusObject?.statusRows.length > 0 && statusObject?.statusRows
     .map((el) => Object.keys(el.obj))
     .flat().length > 0}
-  <div class="flex flex-col gap-2 mt-4 mb-2">
+  <div class="flex flex-col gap-2">
     {#each statusObject.statusRows as row}
       {#if !homepage || row.visibleOnHomepage}
         <div class="flex flex-row gap-2">

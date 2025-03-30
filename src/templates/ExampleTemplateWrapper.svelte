@@ -94,7 +94,7 @@
   import { kebabToPascalCase } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { getValueFromParametersArray } from "$lib/utils/data-transformations/getValueFromParametersArray.js";
 
-  import Template from "$lib/package-wrapping/Template.svelte";
+  import Template from "$lib/package-wrapping/templates/Template.svelte";
   import Examples from "./examples/Examples.svelte";
 
   let { data } = $props();

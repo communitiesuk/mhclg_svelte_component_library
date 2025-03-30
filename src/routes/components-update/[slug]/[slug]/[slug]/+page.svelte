@@ -10,8 +10,8 @@
    * &&   Note that these variables are reactive so that if the user navigates directly to another component, the slugArray will update and so the current wrapper svelte file will be swapped for the new one.
    */
   let slugArray = $derived(page?.url.pathname.split("/").filter(Boolean));
-  console.log(slugArray);
-  let folder = $derived(slugArray[slugArray.length - 2]);
+  let folder = $derived(slugArray[slugArray.length - 3]);
+  let subFolder = $derived(slugArray[slugArray.length - 2]);
   let wrapper = $derived(
     kebabToPascalCase(
       slugArray[slugArray.length - 1][0].toUpperCase() +
@@ -31,7 +31,7 @@
     (async () => {
       try {
         const module = await import(
-          `/src/wrappers/components/${folder}/${wrapper}Wrapper.svelte`
+          `/src/wrappers/components/${folder}/${subFolder}/${wrapper}Wrapper.svelte`
         );
         Component = module.default;
       } catch (error) {

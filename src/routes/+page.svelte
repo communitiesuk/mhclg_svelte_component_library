@@ -7,7 +7,10 @@
   let { data } = $props();
 
   const wrappersComponentsObject = import.meta.glob(
-    "./../wrappers/components/*/*.svelte",
+    [
+      "./../wrappers/components/*/*Wrapper.svelte",
+      "./../wrappers/components/*/*/*Wrapper.svelte",
+    ],
     {
       eager: true,
     },
@@ -17,10 +20,13 @@
     (el) => {
       const splitPath = el.split("/");
 
+      console.log(splitPath);
+
       return {
         component: wrappersComponentsObject[el],
         name: splitPath[splitPath.length - 1].replace("Wrapper.svelte", ""),
-        folder: splitPath[splitPath.length - 2],
+        folder: splitPath[3],
+        subFolder: splitPath.length === 6 ? splitPath[4] : null,
       };
     },
   );
@@ -101,13 +107,25 @@ TODO
         {@const wrappersArray = wrappersComponentsArray.filter(
           (el) => el.folder === folder,
         )}
-        {#each wrappersArray as wrapper}
-          <WrapperDetailsUpdate
-            {wrapper}
-            homepage="true"
-            wrapperType="component"
-          ></WrapperDetailsUpdate>
-        {/each}
+        <div class="flex flex-col gap-8">
+          {#each [...new Set(wrappersArray.map((el) => el.subFolder))] as subFolder, index}
+            {#if index != 0}<DividerLine></DividerLine>{/if}
+            <div>
+              {#if subFolder != null}
+                <h6 class="mb-3 p-0">{subFolder}</h6>
+              {/if}
+              <div class="flex flex-col gap-8">
+                {#each wrappersArray.filter((el) => el.subFolder === subFolder) as wrapper}
+                  <WrapperDetailsUpdate
+                    {wrapper}
+                    homepage="true"
+                    wrapperType="component"
+                  ></WrapperDetailsUpdate>
+                {/each}
+              </div>
+            </div>
+          {/each}
+        </div>
       {/each}
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>

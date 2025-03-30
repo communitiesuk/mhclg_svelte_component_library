@@ -8,7 +8,7 @@
    * && 	statusObject.progress determines which pill is shown against the component's name, based
    * ?  progress must be one of:
    * ?  1. 'To be developed' - This is the inital status, when the component files have been generated but the work to actually build out the code for the component has not started.
-   * ?  2. 'In progress' - This is the status while the component is being built. This lets developers know that the full fuctionality of the component has not been completed and that it may change in the future.
+  // Your new line of code here
    * ?  3. 'Baseline completed' - This means the core functionality of the component has been completed and it is ready for use. However, small changes to the component may still occur in the future.
    * ?  4. 'In use' - This means the component is completed and being using in products. Therefore, developers need to be mindful of its existing uses when making any changes.
    * &&   statusObject.statusRow determines the sets of ticks/crosses shown below the component name.
@@ -94,6 +94,7 @@
 
   import Template from "$lib/package-wrapping/templates/Template.svelte";
   import Examples from "./examples/Examples.svelte";
+  import { list } from "postcss";
 
   let { data } = $props();
 
@@ -394,11 +395,10 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
   &&  WrapperNameAndStatus and WraaperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
   -->
 
-{#snippet WrapperNameAndStatus(name, folder, subFolder, homepage)}
+{#snippet WrapperNameAndStatus(name, folder, homepage)}
   <BaseNameAndStatus
     {name}
     {folder}
-    {subFolder}
     {homepage}
     {statusObject}
     parentFolder="components-update"

@@ -590,10 +590,11 @@
   &&  WrapperNameAndStatus and WraaperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
 -->
 
-{#snippet WrapperNameAndStatus(name, folder, homepage)}
+{#snippet WrapperNameAndStatus(name, folder, subFolder, homepage)}
   <BaseNameAndStatus
     {name}
     {folder}
+    {subFolder}
     {homepage}
     {statusObject}
     parentFolder="components-update"

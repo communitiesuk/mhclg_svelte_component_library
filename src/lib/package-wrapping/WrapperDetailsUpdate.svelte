@@ -22,12 +22,16 @@
       {@render wrapper.component.WrapperNameAndStatus(
         wrapper.name,
         wrapper.folder,
+        wrapper.subFolder,
         homepage,
       )}
     {/if}
   </div>
 
-  <div data-role="component-information-container" class="flex flex-col gap-4">
+  <div
+    data-role="component-information-container"
+    class="flex flex-col gap-4 mt-2"
+  >
     {#if wrapper.component.WrapperInformation}
       {@render wrapper.component.WrapperInformation(homepage)}
     {/if}

@@ -1,7 +1,13 @@
 export function addIndexAndInitalValue(array) {
   return array.map((el, i) => ({
     ...el,
-    isEditable: el.isEditable ?? true,
+    isEditable:
+      (el.value == null && el.options == null) ||
+      typeof el.value === "function" ||
+      el.isBinded ||
+      el.propType === "fixed"
+        ? false
+        : true,
     isProp: el.isProp ?? true,
     value:
       el.value ??

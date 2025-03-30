@@ -13,7 +13,7 @@ export function createParametersObject(
         : derivedParametersValuesArray[param.index];
 
       let paramValueWithWorkingFunctionsAndObjects =
-        typeof param.value === "function"
+        typeof paramValue === "function"
           ? paramValue.bind(parametersSourceArray[index])
           : typeof param.value === "object"
             ? JSON.parse(paramValue)

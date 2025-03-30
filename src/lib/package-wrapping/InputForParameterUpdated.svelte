@@ -11,8 +11,10 @@
     parameter,
   } = $props();
 
-  let useStatedValue = $derived(statedValue != null);
-  let useRadio = $derived(parameter.inputType === "radio");
+  $inspect(parameter.name, parameter, statedValue, derivedValue);
+
+  let useStatedValue = $derived(derivedValue == null);
+  let useRadio = $derived(parameter.propType === "radio");
   let useDropdown = $derived(
     parameter.inputType === "dropdown" || "options" in parameter,
   );
@@ -20,7 +22,10 @@
     typeof (useStatedValue ? statedValue : derivedValue) === "string" &&
       typeof parameter.value === "string",
   );
-  let useNumberInput = $derived(typeof statedValue === "number");
+  let useNumberInput = $derived(
+    typeof statedValue === "number" ||
+      (statedValue === null && typeof parameter.value === "number"),
+  );
   let useCheckbox = $derived(typeof statedValue === "boolean");
   let useMonacoEditor = $derived(
     useStatedValue &&
@@ -97,6 +102,17 @@
       };
     }
   });
+
+  $inspect(
+    statedValue,
+    parameter.name,
+    typeof parameter.value,
+    typeof statedValue === "number",
+    statedValue === null,
+    typeof parameter.value === "number",
+    typeof statedValue === "number" ||
+      (statedValue === null && typeof parameter.value === "number"),
+  );
 </script>
 
 {#if useStatedValue}
@@ -146,9 +162,9 @@
       style="height: {monacoEditorContainerHeight}px; width: {monacoEditorContainerWidth}px;"
     ></div>
   {/if}
-{:else if parameter.hasOwnProperty("functionElements") && parameter.functionElements != null}
+{:else}
   <div class="flex flex-col gap-4">
-    {#if parameter.functionElements.hasOwnProperty("counter") || (parameter.functionElements.hasOwnProperty("dataset") && parameter.functionElements.hasOwnProperty("dataset") != null)}
+    {#if parameter.hasOwnProperty("functionElements") && parameter.functionElements != null && (parameter.functionElements.hasOwnProperty("counter") || (parameter.functionElements.hasOwnProperty("dataset") && parameter.functionElements.hasOwnProperty("dataset") != null))}
       <div
         data-role="function-counter-and-data-container"
         class="py-1 px-3 bg-slate-100 rounded"
@@ -175,7 +191,7 @@
         {/if}
       </div>
     {/if}
-    {#if parameter.functionElements.hasOwnProperty("functionAsString")}
+    {#if (parameter.hasOwnProperty("functionElements") && parameter.functionElements != null && parameter.functionElements.hasOwnProperty("functionAsString")) || parameter?.propType === "fixed"}
       <CodeBlock
         code={typeof derivedValue === "function"
           ? parameter.functionElements.functionAsString.replace(

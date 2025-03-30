@@ -129,7 +129,7 @@ TODO
       {/each}
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
-    <div>
+    <!-- <div>
       <h4 class="mb-6 mt-10">Playground</h4>
       <p>
         The playground is a sandbox space where developers can test code and
@@ -140,10 +140,9 @@ TODO
         <WrapperDetailsUpdate {wrapper} homepage="true" wrapperType="playground"
         ></WrapperDetailsUpdate>
       {/each}
-      <!-- <LoadArrayOfComponents subFolder={data.playgroundFolders}
-      ></LoadArrayOfComponents> -->
+      
     </div>
-    <DividerLine margin="1rem 0rem"></DividerLine>
+    <DividerLine margin="1rem 0rem"></DividerLine> -->
   </div>
 </div>
 

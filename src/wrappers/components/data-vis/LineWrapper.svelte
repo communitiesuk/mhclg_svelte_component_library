@@ -8,7 +8,7 @@
    * && 	statusObject.progress determines which pill is shown against the component's name, based
    * ?  progress must be one of:
    * ?  1. 'To be developed' - This is the inital status, when the component files have been generated but the work to actually build out the code for the component has not started.
-   * ?  2. 'In progress' - This is the status while the component is being built. This lets developers know that the full fuctionality of the component has not been completed and that it may change in the future.
+  // Your new line of code here
    * ?  3. 'Baseline completed' - This means the core functionality of the component has been completed and it is ready for use. However, small changes to the component may still occur in the future.
    * ?  4. 'In use' - This means the component is completed and being using in products. Therefore, developers need to be mindful of its existing uses when making any changes.
    * &&   statusObject.statusRow determines the sets of ticks/crosses shown below the component name.
@@ -84,7 +84,7 @@
   import ComponentDemo from "$lib/package-wrapping/ComponentDemo.svelte";
 
   import { Toast } from "flowbite-svelte";
-  import { ExclamationCircleSolid } from "flowbite-svelte-icons";
+  import { CheckCircleSolid, CloseCircleSolid } from "flowbite-svelte-icons";
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
@@ -127,7 +127,6 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let selectedValues = $state([]);
 
   /**
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -196,7 +195,7 @@
         name: "dataSource",
         category: "data",
         isProp: false,
-        inputType: "radio",
+        propType: "radio",
         options: ["from base data", "custom"],
       },
       {
@@ -227,9 +226,8 @@
         name: "derivedDataArray",
         category: "data",
         isProp: false,
-        isEditable: false,
         visible: { name: "dataSource", value: "from base data" },
-        value: {},
+        propType: "fixed",
         description: {
           markdown: true,
           arr: [
@@ -241,12 +239,8 @@
       {
         name: "dataArray",
         category: "data",
-        isProp: true,
-        isEditable: false,
         visible: false,
-        value: {},
       },
-
       {
         name: "xDomainLowerBound",
         category: "xScale",
@@ -399,13 +393,14 @@
         name: "onClick",
         category: "lineEvents",
         isEditable: false,
-        value: {
-          workingFunction: function (event, dataArray) {
-            console.log("---onClick---", event, dataArray);
-          },
+        value: function (event, dataArray) {
+          console.log("---onClick---", event, dataArray);
+        },
+        functionElements: {
+          dataset: { role: null, id: null },
+          counter: 0,
           functionAsString: `function (event, dataArray) {
-
-  console.log("---onClick---", event, dataArray);
+console.log("---onClick---", event, dataArray);
 },`,
         },
       },
@@ -417,6 +412,8 @@
    * && 		parametersValuesArray's initial values are simply take from the source array with a one-to-one mapping.
    * &&     This array is then used to track the values associated with each parameter as they are modified by the user using form inputs.
    */
+  $inspect(parametersSourceArray);
+
   let generateValuesArray = function (
     parametersSourceArray,
     isEditableBoolean,
@@ -426,8 +423,7 @@
       let value = derivedParametersObject[el.name] ?? el.value;
 
       return el.isEditable === isEditableBoolean && value != null
-        ? typeof value === "object" &&
-          !("workingFunction" in value && "functionAsString" in value)
+        ? typeof value === "object"
           ? JSON.stringify(value, null, 2)
           : value
         : null;
@@ -464,82 +460,48 @@
       : JSON.parse(getValue("customDataArray")),
   );
 
-  let xFunction = $derived({
-    workingFunction: function (number) {
-      return {
-        "scaleLinear()": scaleLinear(),
-        "scaleLog()": scaleLog(),
-        "scaleTime()": scaleTime(),
-      }[getValue("xScaleType")]
-        .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
-        .range([
-          0,
-          demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
-        ])(number);
-    },
-    functionAsString: `function (number) {
-  return getValue("xScaleType")
-    .domain([
-      getValue("xDomainLowerBound"), 
-      getValue("xDomainUpperBound")
-    ])
-    .range([
-      0,
-      demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight")
-    ])(number);
-};`,
+  let xFunction = $derived(function (number) {
+    return {
+      "scaleLinear()": scaleLinear(),
+      "scaleLog()": scaleLog(),
+      "scaleTime()": scaleTime(),
+    }[getValue("xScaleType")]
+      .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
+      .range([
+        0,
+        demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
+      ])(number);
   });
 
-  let yFunction = $derived({
-    workingFunction: function (number) {
-      return {
-        "scaleLinear()": scaleLinear(),
-        "scaleLog()": scaleLog(),
-        "scaleTime()": scaleTime(),
-      }[getValue("yScaleType")]
-        .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
-        .range([
-          getValue("svgHeight") -
-            getValue("paddingTop") -
-            getValue("paddingBottom"),
-          0,
-        ])(number);
-    },
-    functionAsString: `function (number) {
-  return getValue("yScaleType")
-    .domain([
-      getValue("yDomainLowerBound"), 
-      getValue("yDomainUpperBound")
-    ])
-    .range([
-      getValue("svgHeight") - getValue("paddingTop") - getValue("paddingBottom"), 
-      0
-    ])(number);
-};`,
+  let yFunction = $derived(function (number) {
+    return {
+      "scaleLinear()": scaleLinear(),
+      "scaleLog()": scaleLog(),
+      "scaleTime()": scaleTime(),
+    }[getValue("yScaleType")]
+      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
+      .range([
+        getValue("svgHeight") -
+          getValue("paddingTop") -
+          getValue("paddingBottom"),
+        0,
+      ])(number);
   });
 
-  let lineFunction = $derived({
-    workingFunction: function (dataArray) {
-      return line()
-        .x((d) => xFunction.workingFunction(d.x))
-        .y((d) => yFunction.workingFunction(d.y))
-        .curve(
-          {
-            curveLinear: curveLinear,
-            curveLinearClosed: curveLinearClosed,
-            curveCardinal: curveCardinal,
-            curveBasis: curveBasis,
-            curveStep: curveStep,
-            curveMonotoneX: curveMonotoneX,
-          }[getValue("curveFunction")],
-        )(dataArray);
-    },
-    functionAsString: `function (dataArray) {
-  return line()
-    .x((d) => xFunction(d.x))
-    .y((d) => yFunction(d.y))
-    .curve(getValue("curveFunction"))(dataArray);
-};`,
+  let lineFunction = $derived(function (dataArray) {
+    return line()
+      .x((d) => xFunction(d.x))
+      .y((d) => yFunction(d.y))
+      .curve(
+        {
+          curveLinear: curveLinear,
+          curveLinearClosed: curveLinearClosed,
+          curveCardinal: curveCardinal,
+          curveBasis: curveBasis,
+          curveStep: curveStep,
+          curveMonotoneX: curveMonotoneX,
+        }[getValue("curveFunction")],
+      )(dataArray);
   });
 
   /**
@@ -577,11 +539,37 @@
    * && 		parametersObject takes the props to be passed to the component and converts them into a (parameterName: parameterValue) pattern
    * &&     isValidJSONArray tracks whether any of the values set in the parameters UI are invalid.
    */
-  let parametersObject = $derived(
+  let [parametersObject, parametersParsingErrorsArray] = $derived(
     createParametersObject(
       parametersSourceArray,
       statedParametersValuesArray,
       derivedParametersValuesArray,
+    ),
+  );
+
+  let parametersParsingErrorsObject = $state({});
+
+  $effect(() => {
+    parametersParsingErrorsArray.forEach((el) => {
+      parametersParsingErrorsObject[el] = true;
+    });
+
+    Object.keys(parametersParsingErrorsObject).forEach((el) => {
+      if (!parametersParsingErrorsArray.includes(el)) {
+        parametersParsingErrorsObject[el] = false;
+      }
+    });
+  });
+
+  let copyParametersToClipboardObject = $derived(
+    Object.fromEntries(
+      Object.entries(parametersObject).map(([key, value]) => [
+        key,
+        typeof value === "function"
+          ? parametersSourceArray.find((el) => el.name === key)
+              ?.functionElements?.functionAsString
+          : value,
+      ]),
     ),
   );
 </script>
@@ -610,30 +598,6 @@
 DONOTTOUCH  *
 &&          Renders toast notifications if any of the parameters values are invalid JSON.
 -->
-<!-- <div class="fixed top-0 z-[9999] w-full">
-  {#each isValidJSONArray as check, index}
-    {#if !check}
-      <div class="flex flex-row justify-center">
-        <Toast
-          color="red"
-          dismissable={false}
-          divClass="w-full max-w-2xl p-4 text-gray-500 bg-white shadow dark:text-gray-400 dark:bg-gray-800 gap-3 border-[2px] border-red-500"
-        >
-          <svelte:fragment slot="icon">
-            <ExclamationCircleSolid class="w-5 h-5" />
-            <span class="sr-only">Warning icon</span>
-          </svelte:fragment>
-          The input for the
-          <span class="font-bold text-red-500"
-            >{parametersSourceArray[index].name}</span
-          >
-          prop is invalid. Until this is resolved, the {pageName} component will
-          default to using the initial input value instead.
-        </Toast>
-      </div>
-    {/if}
-  {/each}
-</div> -->
 
 <!--
 DONOTTOUCH  *
@@ -647,14 +611,48 @@ DONOTTOUCH  *
   homepage={false}
 ></WrapperDetailsUpdate>
 
+{#key parametersParsingErrorsArray}
+  <div class="fixed bottom-0 right-0 mr-5 mb-5 z-[3]">
+    {#each Object.keys(parametersParsingErrorsObject) as key}
+      {#if parametersParsingErrorsObject[key]}
+        <Toast
+          divClass="w-100 p-4 text-gray-500 bg-white shadow gap-5"
+          color="red"
+          dismissable={true}
+          on:close={() =>
+            parametersParsingErrorsArray.filter((el) => el != key)}
+        >
+          <svelte:fragment slot="icon">
+            <CloseCircleSolid class="w-5 h-5" />
+            <span class="sr-only">Error icon</span>
+          </svelte:fragment>
+
+          Error: The <code>{key}</code> prop is not a valid JSON object.</Toast
+        >
+      {:else}
+        <Toast
+          divClass="w-100 p-4 text-gray-500 bg-white shadow gap-5"
+          color="green"
+          dismissable={true}
+          on:close={() =>
+            parametersParsingErrorsArray.filter((el) => el != key)}
+        >
+          <svelte:fragment slot="icon">
+            <CheckCircleSolid class="w-5 h-5" />
+            <span class="sr-only">Check icon</span>
+          </svelte:fragment>
+
+          Resolved: The <code>{key}</code> prop is valid JSON.</Toast
+        >
+      {/if}
+    {/each}
+  </div>
+{/key}
+
 <!-- 
     CUSTOMISETHIS  Create a context in which your component is commonly used, then call your component.
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
  -->
-
-<div class="fixed bottom-0 right-0 mr-5 mb-5">
-  <Toast dismissable={true}>Bottom right positioning.</Toast>
-</div>
 
 {#snippet Component()}
   <div>
@@ -677,16 +675,12 @@ DONOTTOUCH  *
   bind:statedParametersValuesArray
   {derivedParametersValuesArray}
   {parametersVisibleArray}
+  {parametersParsingErrorsObject}
+  {copyParametersToClipboardObject}
 ></ComponentDemo>
 
 <!--
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
     -->
-<div data-role="examples-section" class="px-5">
-  <div class="my-20">
-    <h5 class="underline underline-offset-4 my-6">
-      Examples from the playground
-    </h5>
-  </div>
-</div>
+<div data-role="examples-section" class="px-5"></div>

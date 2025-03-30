@@ -1,5 +1,6 @@
 <script>
   let {
+    componentNameProp = undefined,
     textProp = undefined,
     numberProp = undefined,
     checkboxProp = false,
@@ -17,7 +18,7 @@
 {/snippet}
 
 <div class="p-4">
-  <h4>Template component</h4>
+  <h4>{componentNameProp} component</h4>
 
   {#each [{ name: "textProp", prop: textProp }, { name: "numberProp", prop: numberProp }] as output}
     {#if output.prop != undefined}

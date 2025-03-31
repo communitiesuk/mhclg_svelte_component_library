@@ -279,6 +279,20 @@
       {
         name: "xFunction",
         category: "xScale",
+        functionElements: {
+          functionAsString: `function (number) {
+  return {
+    "scaleLinear()": scaleLinear(),
+    "scaleLog()": scaleLog(),
+    "scaleTime()": scaleTime(),
+  }[getValue("xScaleType")]
+    .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
+    .range([
+      0,
+      demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
+    ])(number);
+});`,
+        },
       },
       {
         name: "yDomainLowerBound",
@@ -311,6 +325,22 @@
       {
         name: "yFunction",
         category: "yScale",
+        functionElements: {
+          functionAsString: `function (number) {
+    return {
+      "scaleLinear()": scaleLinear(),
+      "scaleLog()": scaleLog(),
+      "scaleTime()": scaleTime(),
+    }[getValue("yScaleType")]
+      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
+      .range([
+        getValue("svgHeight") -
+          getValue("paddingTop") -
+          getValue("paddingBottom"),
+        0,
+      ])(number);
+  });`,
+        },
       },
       {
         name: "curveFunction",
@@ -328,6 +358,23 @@
       {
         name: "lineFunction",
         category: "lineFunction",
+        functionElements: {
+          functionAsString: `function (dataArray) {
+    return line()
+      .x((d) => xFunction(d.x))
+      .y((d) => yFunction(d.y))
+      .curve(
+        {
+          curveLinear: curveLinear,
+          curveLinearClosed: curveLinearClosed,
+          curveCardinal: curveCardinal,
+          curveBasis: curveBasis,
+          curveStep: curveStep,
+          curveMonotoneX: curveMonotoneX,
+        }[getValue("curveFunction")],
+      )(dataArray);
+  });`,
+        },
       },
       {
         name: "pathStrokeColor",

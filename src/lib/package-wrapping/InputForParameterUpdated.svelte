@@ -11,8 +11,6 @@
     parameter,
   } = $props();
 
-  $inspect(parameter.name, parameter, statedValue, derivedValue);
-
   let useStatedValue = $derived(derivedValue == null);
   let useRadio = $derived(
     parameter.isEditable && parameter.propType === "radio",
@@ -109,17 +107,6 @@
       };
     }
   });
-
-  $inspect(
-    statedValue,
-    parameter.name,
-    typeof parameter.value,
-    typeof statedValue === "number",
-    statedValue === null,
-    typeof parameter.value === "number",
-    typeof statedValue === "number" ||
-      (statedValue === null && typeof parameter.value === "number"),
-  );
 </script>
 
 {#if useStatedValue}
@@ -198,10 +185,10 @@
         {/if}
       </div>
     {/if}
-    {#if (parameter.hasOwnProperty("functionElements") && parameter.functionElements != null && parameter.functionElements.hasOwnProperty("functionAsString")) || parameter?.propType === "fixed" || !parameter?.isEditable}
+    {#if (parameter.hasOwnProperty("functionElements") && parameter.functionElements != null && parameter.functionElements.hasOwnProperty("functionAsString") && parameter.functionElements.functionAsString != null) || (parameter?.propType === "fixed" && !parameter.hasOwnProperty("functionElements")) || (!parameter?.isEditable && !parameter.hasOwnProperty("functionElements"))}
       <CodeBlock
         code={typeof derivedValue === "function"
-          ? parameter.functionElements.functionAsString.replace(
+          ? parameter.functionElements?.functionAsString.replace(
               /getValue\("([^"]+)"\)/g,
               "$1",
             )

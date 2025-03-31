@@ -34,6 +34,7 @@
               type="number"
               {...props}
               step={1}
+              min={1}
               bind:value={numberOfTicks}
             />
           </Input>

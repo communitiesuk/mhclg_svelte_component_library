@@ -40,9 +40,9 @@
 
 {#if axisFunction}
   {#each ticksArray as tick}
-    <g transform="translate(0, {axisFunction(tick)})">
-      <path d="M0 0 l0 -8" stroke="black" stroke-width="2px"></path>
-      {#if orentation == "y"}
+    {#if orentation == "y left"}
+      <g transform="translate(0, {axisFunction(tick)})">
+        <path d="M0 0 l0 -8" stroke="black" stroke-width="2px"></path>
         <text
           transform="translate(-10, 0)"
           font-size="14"
@@ -50,15 +50,18 @@
           fill="black"
           >{tick}
         </text>
-      {:else if orentation == "x top"}
+      </g>
+    {:else if orentation == "x top"}
+      <g transform="translate({axisFunction(tick)},0)">
+        <path d="M0 0 l0 -8" stroke="black" stroke-width="2px"></path>
         <text
-          transform="translate(0,10)"
+          transform="translate(0,-10)"
           font-size="14"
           text-anchor="middle"
           fill="black"
           >{tick}
         </text>
-      {/if}
-    </g>
+      </g>
+    {/if}
   {/each}
 {/if}

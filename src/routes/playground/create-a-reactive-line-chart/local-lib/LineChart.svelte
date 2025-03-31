@@ -107,7 +107,7 @@
               axisFunction={yFunction}
               values={allValues}
               {numberOfTicks}
-              orentation={"y"}
+              orentation={"y left"}
             ></Ticks>
           {/key}
         </g>

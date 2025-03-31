@@ -47,7 +47,17 @@
     stroke="black"
     stroke-width="1"
   ></path>
-  <text {id} dominant-baseline="central" text-anchor="start" x={20} y={newY}>
-    {areaCode}</text
+  <text
+    {id}
+    opacity={(labelHovered || labelClicked) &&
+    ![labelHovered, labelClicked].includes(areaCode)
+      ? 0.3
+      : 1}
+    dominant-baseline="central"
+    text-anchor="start"
+    x={20}
+    y={newY}
   >
+    {areaCode}
+  </text>
 </g>

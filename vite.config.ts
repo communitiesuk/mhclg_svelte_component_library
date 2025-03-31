@@ -22,7 +22,6 @@ export default defineConfig({
   resolve: {
     alias: {
       $routes: "/src/routes",
-      "maplibre-gl": "maplibre-gl/dist/maplibre-gl.js",
     },
   },
 });

@@ -9,8 +9,6 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
     "noImplicitAny": false
   }
 }

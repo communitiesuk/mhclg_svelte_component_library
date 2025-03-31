@@ -52,7 +52,7 @@
   });
 
   onDestroy(() => {
-    map.remove();
+    map?.remove();
   });
 
   function updateData() {

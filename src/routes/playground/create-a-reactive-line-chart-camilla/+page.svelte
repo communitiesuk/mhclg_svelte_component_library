@@ -7,7 +7,7 @@
   import Radio from "./local-lib/Radio.svelte";
   import { Input } from "flowbite-svelte";
 
-  let../create-a-reactive-line-chart/$types.js { data, homepage = false, folders } = $props();
+  let { data, homepage = false, folders } = $props();
 
   let pageInfo = $page?.route.id.split("/");
 

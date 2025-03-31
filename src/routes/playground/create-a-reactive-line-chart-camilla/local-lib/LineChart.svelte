@@ -108,7 +108,7 @@
               axisFunction={xFunction}
               values={yearsMinMax}
               {numberOfTicks}
-              orentation={{ axis: "x", position: "top" }}
+              orientation={{ axis: "x", position: "top" }}
             ></Ticks>
           {/key}
         </g>
@@ -125,7 +125,7 @@
               axisFunction={yFunction}
               values={allValues}
               {numberOfTicks}
-              orentation={{ axis: "y", position: "left" }}
+              orientation={{ axis: "y", position: "left" }}
             ></Ticks>
           {/key}
         </g>

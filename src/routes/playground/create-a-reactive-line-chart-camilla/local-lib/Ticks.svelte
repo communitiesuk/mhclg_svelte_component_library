@@ -7,7 +7,7 @@
     axisFunction,
     values,
     numberOfTicks,
-    orentation,
+    orientation,
   } = $props();
 
   $inspect(ticksArray);
@@ -44,18 +44,18 @@
   {#each ticksArray as tick}
     <g
       transform="translate(
-      {orentation.axis === 'x' ? axisFunction(tick) : 0}, 
-      {orentation.axis === 'y' ? axisFunction(tick) : 0})"
+      {orientation.axis === 'x' ? axisFunction(tick) : 0}, 
+      {orientation.axis === 'y' ? axisFunction(tick) : 0})"
     >
       <path
-        d={orentation.axis === "y" ? "M0 0 l-8 0" : "M0 0 l0 -8"}
+        d={orientation.axis === "y" ? "M0 0 l-8 0" : "M0 0 l0 -8"}
         stroke="black"
         stroke-width="2px"
       ></path>
       <text
-        transform="translate({orentation.axis === 'x'
+        transform="translate({orientation.axis === 'x'
           ? -10
-          : 0}, {orentation.axis === 'y' ? -10 : 0})"
+          : 0}, {orientation.axis === 'y' ? -10 : 0})"
         font-size="19"
         text-anchor={orientation.axis === "x"
           ? "middle"

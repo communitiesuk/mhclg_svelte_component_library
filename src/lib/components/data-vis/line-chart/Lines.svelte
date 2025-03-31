@@ -18,11 +18,10 @@
   } = $props();
 
   let bounds = $state([0, chartHeight]);
+  let nLines = $state(7);
 
-  let showAllData = $state(false);
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
-  let nLines = $state(7);
 
   let subset = $state(data.lines.slice(0, nLines));
 
@@ -43,7 +42,6 @@
       (d) => 20 * Math.ceil(d.areaCode.length / 15),
     );
   });
-
 </script>
 
 {#snippet categoryLabelSnippet(dataArray, newY)}
@@ -60,8 +58,8 @@
   ></CategoryLabel>
 {/snippet}
 
-{#if showAllData}
-  {#each data.lines as line, i}
+{#if nLines > 25}
+  {#each subset as line, i}
     {#if line.areaCode !== selectedAreaCode}
       <Line
         {lineFunction}
@@ -90,7 +88,7 @@
     opacity="1"
     includeMarkers={true}
     markerRadius="8"
-    markerStroke="red"
+    markerStroke={colors[0]}
     markerFill="white"
     {xFunction}
     {yFunction}
@@ -107,7 +105,7 @@
       opacity={!labelClicked && !labelHovered ? 1 : 0.2}
       includeMarkers={false}
       markerRadius="8"
-      markerStroke="red"
+      markerStroke={colors[i]}
       markerFill="white"
       dataId={line.areaCode}
       onMouseMove={() => {
@@ -131,7 +129,7 @@
         opacity={1}
         includeMarkers={false}
         markerRadius="8"
-        markerStroke="red"
+        markerStroke={colors[i]}
         markerFill="white"
         dataId={line.areaCode}
         onMouseMove={() => {

@@ -22,6 +22,7 @@
 
 <h2>2. Svelte-maplibre package with GeoJSON</h2>
 <p>With click an area to zoom, and hover an area to see it's name</p>
+<p>Using stylesheet, and basemap from ONS</p>
 <Map2 />
 
 <h2>3. With more colours</h2>

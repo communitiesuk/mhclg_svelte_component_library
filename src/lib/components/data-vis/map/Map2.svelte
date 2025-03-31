@@ -62,7 +62,7 @@
 <MapLibre
   bind:map
   bind:loaded
-  style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+  style="https://raw.githubusercontent.com/ONSvisual/svelte-maps/main/dist/data/style-ons-light.json"
   class="map"
   standardControls
   center={[-2.5879, 51.4545]}

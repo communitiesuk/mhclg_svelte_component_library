@@ -71,7 +71,7 @@
 
   // Get data for geojson maps
   let len = vals.length;
-  let equalbreaks = [
+  let quintilesBreaks = [
     vals[0],
     vals[Math.floor(len * 0.2)],
     vals[Math.floor(len * 0.4)],
@@ -92,7 +92,7 @@
         ...d,
         color: getColor(
           d.salary,
-          breaksChoice == "equal" ? equalbreaks : jenksbreaks,
+          breaksChoice == "quintiles" ? quintilesBreaks : jenksbreaks,
           fillColor,
         ),
       };
@@ -152,8 +152,9 @@
   <label for="breaks">Select breaks method</label><select
     id="breaks"
     bind:value={breaksChoice}
-    ><option value="equal">Equal</option><option value="jenks">Jenks</option
-    ></select
+    ><option value="quintile"
+      >Quintile (split the data into five equally sized groups)</option
+    ><option value="jenks">Jenks</option></select
   >
 </div>
 <!-- <label

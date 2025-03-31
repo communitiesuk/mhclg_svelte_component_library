@@ -1,0 +1,1672 @@
+[
+  {
+    "LAD23CD": "E06000001",
+    "Area Name": "Hartlepool",
+    "salary": 384
+  },
+  {
+    "LAD23CD": "E06000002",
+    "Area Name": "Middlesbrough",
+    "salary": 460
+  },
+  {
+    "LAD23CD": "E06000003",
+    "Area Name": "Redcar and Cleveland",
+    "salary": 425
+  },
+  {
+    "LAD23CD": "E06000004",
+    "Area Name": "Stockton-on-Tees",
+    "salary": 498
+  },
+  {
+    "LAD23CD": "E06000005",
+    "Area Name": "Darlington",
+    "salary": 442
+  },
+  {
+    "LAD23CD": "E06000006",
+    "Area Name": "Halton",
+    "salary": 498
+  },
+  {
+    "LAD23CD": "E06000007",
+    "Area Name": "Warrington",
+    "salary": 615
+  },
+  {
+    "LAD23CD": "E06000008",
+    "Area Name": "Blackburn with Darwen",
+    "salary": 483
+  },
+  {
+    "LAD23CD": "E06000009",
+    "Area Name": "Blackpool",
+    "salary": 447
+  },
+  {
+    "LAD23CD": "E06000010",
+    "Area Name": "Kingston upon Hull, City of",
+    "salary": 451
+  },
+  {
+    "LAD23CD": "E06000011",
+    "Area Name": "East Riding of Yorkshire",
+    "salary": 466
+  },
+  {
+    "LAD23CD": "E06000012",
+    "Area Name": "North East Lincolnshire",
+    "salary": 407
+  },
+  {
+    "LAD23CD": "E06000013",
+    "Area Name": "North Lincolnshire",
+    "salary": 433
+  },
+  {
+    "LAD23CD": "E06000014",
+    "Area Name": "York",
+    "salary": 804
+  },
+  {
+    "LAD23CD": "E06000015",
+    "Area Name": "Derby",
+    "salary": 570
+  },
+  {
+    "LAD23CD": "E06000016",
+    "Area Name": "Leicester",
+    "salary": 676
+  },
+  {
+    "LAD23CD": "E06000017",
+    "Area Name": "Rutland",
+    "salary": 618
+  },
+  {
+    "LAD23CD": "E06000018",
+    "Area Name": "Nottingham",
+    "salary": 685
+  },
+  {
+    "LAD23CD": "E06000019",
+    "Area Name": "Herefordshire, County of",
+    "salary": 561
+  },
+  {
+    "LAD23CD": "E06000020",
+    "Area Name": "Telford and Wrekin",
+    "salary": 537
+  },
+  {
+    "LAD23CD": "E06000021",
+    "Area Name": "Stoke-on-Trent",
+    "salary": 465
+  },
+  {
+    "LAD23CD": "E06000022",
+    "Area Name": "Bath and North East Somerset",
+    "salary": 1071
+  },
+  {
+    "LAD23CD": "E06000023",
+    "Area Name": "Bristol, City of",
+    "salary": 1131
+  },
+  {
+    "LAD23CD": "E06000024",
+    "Area Name": "North Somerset",
+    "salary": 771
+  },
+  {
+    "LAD23CD": "E06000025",
+    "Area Name": "South Gloucestershire",
+    "salary": 931
+  },
+  {
+    "LAD23CD": "E06000026",
+    "Area Name": "Plymouth",
+    "salary": 648
+  },
+  {
+    "LAD23CD": "E06000027",
+    "Area Name": "Torbay",
+    "salary": 573
+  },
+  {
+    "LAD23CD": "E06000030",
+    "Area Name": "Swindon",
+    "salary": 768
+  },
+  {
+    "LAD23CD": "E06000031",
+    "Area Name": "Peterborough",
+    "salary": 654
+  },
+  {
+    "LAD23CD": "E06000032",
+    "Area Name": "Luton",
+    "salary": 857
+  },
+  {
+    "LAD23CD": "E06000033",
+    "Area Name": "Southend-on-Sea",
+    "salary": 799
+  },
+  {
+    "LAD23CD": "E06000034",
+    "Area Name": "Thurrock",
+    "salary": 848
+  },
+  {
+    "LAD23CD": "E06000035",
+    "Area Name": "Medway",
+    "salary": 841
+  },
+  {
+    "LAD23CD": "E06000036",
+    "Area Name": "Bracknell Forest",
+    "salary": 1008
+  },
+  {
+    "LAD23CD": "E06000037",
+    "Area Name": "West Berkshire",
+    "salary": 858
+  },
+  {
+    "LAD23CD": "E06000038",
+    "Area Name": "Reading",
+    "salary": 1076
+  },
+  {
+    "LAD23CD": "E06000039",
+    "Area Name": "Slough",
+    "salary": 1092
+  },
+  {
+    "LAD23CD": "E06000040",
+    "Area Name": "Windsor and Maidenhead",
+    "salary": 1192
+  },
+  {
+    "LAD23CD": "E06000041",
+    "Area Name": "Wokingham",
+    "salary": 1004
+  },
+  {
+    "LAD23CD": "E06000042",
+    "Area Name": "Milton Keynes",
+    "salary": 927
+  },
+  {
+    "LAD23CD": "E06000043",
+    "Area Name": "Brighton and Hove",
+    "salary": 1164
+  },
+  {
+    "LAD23CD": "E06000044",
+    "Area Name": "Portsmouth",
+    "salary": 859
+  },
+  {
+    "LAD23CD": "E06000045",
+    "Area Name": "Southampton",
+    "salary": 828
+  },
+  {
+    "LAD23CD": "E06000046",
+    "Area Name": "Isle of Wight",
+    "salary": 592
+  },
+  {
+    "LAD23CD": "E06000047",
+    "Area Name": "County Durham",
+    "salary": 409
+  },
+  {
+    "LAD23CD": "E06000049",
+    "Area Name": "Cheshire East",
+    "salary": 628
+  },
+  {
+    "LAD23CD": "E06000050",
+    "Area Name": "Cheshire West and Chester",
+    "salary": 653
+  },
+  {
+    "LAD23CD": "E06000051",
+    "Area Name": "Shropshire",
+    "salary": 566
+  },
+  {
+    "LAD23CD": "E06000052",
+    "Area Name": "Cornwall",
+    "salary": 644
+  },
+  {
+    "LAD23CD": "E06000054",
+    "Area Name": "Wiltshire",
+    "salary": 677
+  },
+  {
+    "LAD23CD": "E06000055",
+    "Area Name": "Bedford",
+    "salary": 741
+  },
+  {
+    "LAD23CD": "E06000056",
+    "Area Name": "Central Bedfordshire",
+    "salary": 800
+  },
+  {
+    "LAD23CD": "E06000057",
+    "Area Name": "Northumberland",
+    "salary": 440
+  },
+  {
+    "LAD23CD": "E06000058",
+    "Area Name": "Bournemouth, Christchurch and Poole",
+    "salary": 873
+  },
+  {
+    "LAD23CD": "E06000059",
+    "Area Name": "Dorset",
+    "salary": 689
+  },
+  {
+    "LAD23CD": "E06000060",
+    "Area Name": "Buckinghamshire",
+    "salary": 973
+  },
+  {
+    "LAD23CD": "E06000061",
+    "Area Name": "North Northamptonshire",
+    "salary": 606
+  },
+  {
+    "LAD23CD": "E06000062",
+    "Area Name": "West Northamptonshire",
+    "salary": 699
+  },
+  {
+    "LAD23CD": "E06000063",
+    "Area Name": "Cumberland",
+    "salary": 450
+  },
+  {
+    "LAD23CD": "E06000064",
+    "Area Name": "Westmorland and Furness",
+    "salary": 543
+  },
+  {
+    "LAD23CD": "E06000065",
+    "Area Name": "North Yorkshire",
+    "salary": 562
+  },
+  {
+    "LAD23CD": "E06000066",
+    "Area Name": "Somerset",
+    "salary": 640
+  },
+  {
+    "LAD23CD": "E07000008",
+    "Area Name": "Cambridge",
+    "salary": 1216
+  },
+  {
+    "LAD23CD": "E07000009",
+    "Area Name": "East Cambridgeshire",
+    "salary": 708
+  },
+  {
+    "LAD23CD": "E07000010",
+    "Area Name": "Fenland",
+    "salary": 586
+  },
+  {
+    "LAD23CD": "E07000011",
+    "Area Name": "Huntingdonshire",
+    "salary": 698
+  },
+  {
+    "LAD23CD": "E07000012",
+    "Area Name": "South Cambridgeshire",
+    "salary": 946
+  },
+  {
+    "LAD23CD": "E07000032",
+    "Area Name": "Amber Valley",
+    "salary": 541
+  },
+  {
+    "LAD23CD": "E07000033",
+    "Area Name": "Bolsover",
+    "salary": 447
+  },
+  {
+    "LAD23CD": "E07000034",
+    "Area Name": "Chesterfield",
+    "salary": 501
+  },
+  {
+    "LAD23CD": "E07000035",
+    "Area Name": "Derbyshire Dales",
+    "salary": 552
+  },
+  {
+    "LAD23CD": "E07000036",
+    "Area Name": "Erewash",
+    "salary": 566
+  },
+  {
+    "LAD23CD": "E07000037",
+    "Area Name": "High Peak",
+    "salary": 580
+  },
+  {
+    "LAD23CD": "E07000038",
+    "Area Name": "North East Derbyshire",
+    "salary": 518
+  },
+  {
+    "LAD23CD": "E07000039",
+    "Area Name": "South Derbyshire",
+    "salary": 568
+  },
+  {
+    "LAD23CD": "E07000040",
+    "Area Name": "East Devon",
+    "salary": 624
+  },
+  {
+    "LAD23CD": "E07000041",
+    "Area Name": "Exeter",
+    "salary": 871
+  },
+  {
+    "LAD23CD": "E07000042",
+    "Area Name": "Mid Devon",
+    "salary": 614
+  },
+  {
+    "LAD23CD": "E07000043",
+    "Area Name": "North Devon",
+    "salary": 562
+  },
+  {
+    "LAD23CD": "E07000044",
+    "Area Name": "South Hams",
+    "salary": 688
+  },
+  {
+    "LAD23CD": "E07000045",
+    "Area Name": "Teignbridge",
+    "salary": 607
+  },
+  {
+    "LAD23CD": "E07000046",
+    "Area Name": "Torridge",
+    "salary": 534
+  },
+  {
+    "LAD23CD": "E07000047",
+    "Area Name": "West Devon",
+    "salary": 578
+  },
+  {
+    "LAD23CD": "E07000061",
+    "Area Name": "Eastbourne",
+    "salary": 790
+  },
+  {
+    "LAD23CD": "E07000062",
+    "Area Name": "Hastings",
+    "salary": 665
+  },
+  {
+    "LAD23CD": "E07000063",
+    "Area Name": "Lewes",
+    "salary": 849
+  },
+  {
+    "LAD23CD": "E07000064",
+    "Area Name": "Rother",
+    "salary": 785
+  },
+  {
+    "LAD23CD": "E07000065",
+    "Area Name": "Wealden",
+    "salary": 866
+  },
+  {
+    "LAD23CD": "E07000066",
+    "Area Name": "Basildon",
+    "salary": 894
+  },
+  {
+    "LAD23CD": "E07000067",
+    "Area Name": "Braintree",
+    "salary": 808
+  },
+  {
+    "LAD23CD": "E07000068",
+    "Area Name": "Brentwood",
+    "salary": 1088
+  },
+  {
+    "LAD23CD": "E07000069",
+    "Area Name": "Castle Point",
+    "salary": 860
+  },
+  {
+    "LAD23CD": "E07000070",
+    "Area Name": "Chelmsford",
+    "salary": 968
+  },
+  {
+    "LAD23CD": "E07000071",
+    "Area Name": "Colchester",
+    "salary": 775
+  },
+  {
+    "LAD23CD": "E07000072",
+    "Area Name": "Epping Forest",
+    "salary": 1111
+  },
+  {
+    "LAD23CD": "E07000073",
+    "Area Name": "Harlow",
+    "salary": 927
+  },
+  {
+    "LAD23CD": "E07000074",
+    "Area Name": "Maldon",
+    "salary": 734
+  },
+  {
+    "LAD23CD": "E07000075",
+    "Area Name": "Rochford",
+    "salary": 816
+  },
+  {
+    "LAD23CD": "E07000076",
+    "Area Name": "Tendring",
+    "salary": 690
+  },
+  {
+    "LAD23CD": "E07000077",
+    "Area Name": "Uttlesford",
+    "salary": 872
+  },
+  {
+    "LAD23CD": "E07000078",
+    "Area Name": "Cheltenham",
+    "salary": 819
+  },
+  {
+    "LAD23CD": "E07000079",
+    "Area Name": "Cotswold",
+    "salary": 792
+  },
+  {
+    "LAD23CD": "E07000080",
+    "Area Name": "Forest of Dean",
+    "salary": 562
+  },
+  {
+    "LAD23CD": "E07000081",
+    "Area Name": "Gloucester",
+    "salary": 666
+  },
+  {
+    "LAD23CD": "E07000082",
+    "Area Name": "Stroud",
+    "salary": 677
+  },
+  {
+    "LAD23CD": "E07000083",
+    "Area Name": "Tewkesbury",
+    "salary": 645
+  },
+  {
+    "LAD23CD": "E07000084",
+    "Area Name": "Basingstoke and Deane",
+    "salary": 886
+  },
+  {
+    "LAD23CD": "E07000085",
+    "Area Name": "East Hampshire",
+    "salary": 862
+  },
+  {
+    "LAD23CD": "E07000086",
+    "Area Name": "Eastleigh",
+    "salary": 810
+  },
+  {
+    "LAD23CD": "E07000087",
+    "Area Name": "Fareham",
+    "salary": 806
+  },
+  {
+    "LAD23CD": "E07000088",
+    "Area Name": "Gosport",
+    "salary": 743
+  },
+  {
+    "LAD23CD": "E07000089",
+    "Area Name": "Hart",
+    "salary": 968
+  },
+  {
+    "LAD23CD": "E07000090",
+    "Area Name": "Havant",
+    "salary": 803
+  },
+  {
+    "LAD23CD": "E07000091",
+    "Area Name": "New Forest",
+    "salary": 825
+  },
+  {
+    "LAD23CD": "E07000092",
+    "Area Name": "Rushmoor",
+    "salary": 891
+  },
+  {
+    "LAD23CD": "E07000093",
+    "Area Name": "Test Valley",
+    "salary": 795
+  },
+  {
+    "LAD23CD": "E07000094",
+    "Area Name": "Winchester",
+    "salary": 947
+  },
+  {
+    "LAD23CD": "E07000095",
+    "Area Name": "Broxbourne",
+    "salary": 1016
+  },
+  {
+    "LAD23CD": "E07000096",
+    "Area Name": "Dacorum",
+    "salary": 1030
+  },
+  {
+    "LAD23CD": "E07000098",
+    "Area Name": "Hertsmere",
+    "salary": 1173
+  },
+  {
+    "LAD23CD": "E07000099",
+    "Area Name": "North Hertfordshire",
+    "salary": 946
+  },
+  {
+    "LAD23CD": "E07000102",
+    "Area Name": "Three Rivers",
+    "salary": 1205
+  },
+  {
+    "LAD23CD": "E07000103",
+    "Area Name": "Watford",
+    "salary": 1187
+  },
+  {
+    "LAD23CD": "E07000105",
+    "Area Name": "Ashford",
+    "salary": 832
+  },
+  {
+    "LAD23CD": "E07000106",
+    "Area Name": "Canterbury",
+    "salary": 800
+  },
+  {
+    "LAD23CD": "E07000107",
+    "Area Name": "Dartford",
+    "salary": 1018
+  },
+  {
+    "LAD23CD": "E07000108",
+    "Area Name": "Dover",
+    "salary": 632
+  },
+  {
+    "LAD23CD": "E07000109",
+    "Area Name": "Gravesham",
+    "salary": 828
+  },
+  {
+    "LAD23CD": "E07000110",
+    "Area Name": "Maidstone",
+    "salary": 851
+  },
+  {
+    "LAD23CD": "E07000111",
+    "Area Name": "Sevenoaks",
+    "salary": 1177
+  },
+  {
+    "LAD23CD": "E07000112",
+    "Area Name": "Folkestone and Hythe",
+    "salary": 709
+  },
+  {
+    "LAD23CD": "E07000113",
+    "Area Name": "Swale",
+    "salary": 734
+  },
+  {
+    "LAD23CD": "E07000114",
+    "Area Name": "Thanet",
+    "salary": 706
+  },
+  {
+    "LAD23CD": "E07000115",
+    "Area Name": "Tonbridge and Malling",
+    "salary": 961
+  },
+  {
+    "LAD23CD": "E07000116",
+    "Area Name": "Tunbridge Wells",
+    "salary": 958
+  },
+  {
+    "LAD23CD": "E07000117",
+    "Area Name": "Burnley",
+    "salary": 431
+  },
+  {
+    "LAD23CD": "E07000118",
+    "Area Name": "Chorley",
+    "salary": 537
+  },
+  {
+    "LAD23CD": "E07000119",
+    "Area Name": "Fylde",
+    "salary": 550
+  },
+  {
+    "LAD23CD": "E07000120",
+    "Area Name": "Hyndburn",
+    "salary": 448
+  },
+  {
+    "LAD23CD": "E07000121",
+    "Area Name": "Lancaster",
+    "salary": 544
+  },
+  {
+    "LAD23CD": "E07000122",
+    "Area Name": "Pendle",
+    "salary": 443
+  },
+  {
+    "LAD23CD": "E07000123",
+    "Area Name": "Preston",
+    "salary": 523
+  },
+  {
+    "LAD23CD": "E07000124",
+    "Area Name": "Ribble Valley",
+    "salary": 559
+  },
+  {
+    "LAD23CD": "E07000125",
+    "Area Name": "Rossendale",
+    "salary": 529
+  },
+  {
+    "LAD23CD": "E07000126",
+    "Area Name": "South Ribble",
+    "salary": 515
+  },
+  {
+    "LAD23CD": "E07000127",
+    "Area Name": "West Lancashire",
+    "salary": 512
+  },
+  {
+    "LAD23CD": "E07000128",
+    "Area Name": "Wyre",
+    "salary": 474
+  },
+  {
+    "LAD23CD": "E07000129",
+    "Area Name": "Blaby",
+    "salary": 645
+  },
+  {
+    "LAD23CD": "E07000130",
+    "Area Name": "Charnwood",
+    "salary": 613
+  },
+  {
+    "LAD23CD": "E07000131",
+    "Area Name": "Harborough",
+    "salary": 681
+  },
+  {
+    "LAD23CD": "E07000132",
+    "Area Name": "Hinckley and Bosworth",
+    "salary": 606
+  },
+  {
+    "LAD23CD": "E07000133",
+    "Area Name": "Melton",
+    "salary": 497
+  },
+  {
+    "LAD23CD": "E07000134",
+    "Area Name": "North West Leicestershire",
+    "salary": 561
+  },
+  {
+    "LAD23CD": "E07000135",
+    "Area Name": "Oadby and Wigston",
+    "salary": 669
+  },
+  {
+    "LAD23CD": "E07000136",
+    "Area Name": "Boston",
+    "salary": 574
+  },
+  {
+    "LAD23CD": "E07000137",
+    "Area Name": "East Lindsey",
+    "salary": 482
+  },
+  {
+    "LAD23CD": "E07000138",
+    "Area Name": "Lincoln",
+    "salary": 611
+  },
+  {
+    "LAD23CD": "E07000139",
+    "Area Name": "North Kesteven",
+    "salary": 531
+  },
+  {
+    "LAD23CD": "E07000140",
+    "Area Name": "South Holland",
+    "salary": 551
+  },
+  {
+    "LAD23CD": "E07000141",
+    "Area Name": "South Kesteven",
+    "salary": 563
+  },
+  {
+    "LAD23CD": "E07000142",
+    "Area Name": "West Lindsey",
+    "salary": 471
+  },
+  {
+    "LAD23CD": "E07000143",
+    "Area Name": "Breckland",
+    "salary": 609
+  },
+  {
+    "LAD23CD": "E07000144",
+    "Area Name": "Broadland",
+    "salary": 637
+  },
+  {
+    "LAD23CD": "E07000145",
+    "Area Name": "Great Yarmouth",
+    "salary": 537
+  },
+  {
+    "LAD23CD": "E07000146",
+    "Area Name": "King's Lynn and West Norfolk",
+    "salary": 605
+  },
+  {
+    "LAD23CD": "E07000147",
+    "Area Name": "North Norfolk",
+    "salary": 574
+  },
+  {
+    "LAD23CD": "E07000148",
+    "Area Name": "Norwich",
+    "salary": 743
+  },
+  {
+    "LAD23CD": "E07000149",
+    "Area Name": "South Norfolk",
+    "salary": 646
+  },
+  {
+    "LAD23CD": "E07000170",
+    "Area Name": "Ashfield",
+    "salary": 516
+  },
+  {
+    "LAD23CD": "E07000171",
+    "Area Name": "Bassetlaw",
+    "salary": 453
+  },
+  {
+    "LAD23CD": "E07000172",
+    "Area Name": "Broxtowe",
+    "salary": 619
+  },
+  {
+    "LAD23CD": "E07000173",
+    "Area Name": "Gedling",
+    "salary": 587
+  },
+  {
+    "LAD23CD": "E07000174",
+    "Area Name": "Mansfield",
+    "salary": 507
+  },
+  {
+    "LAD23CD": "E07000175",
+    "Area Name": "Newark and Sherwood",
+    "salary": 518
+  },
+  {
+    "LAD23CD": "E07000176",
+    "Area Name": "Rushcliffe",
+    "salary": 668
+  },
+  {
+    "LAD23CD": "E07000177",
+    "Area Name": "Cherwell",
+    "salary": 905
+  },
+  {
+    "LAD23CD": "E07000178",
+    "Area Name": "Oxford",
+    "salary": 1232
+  },
+  {
+    "LAD23CD": "E07000179",
+    "Area Name": "South Oxfordshire",
+    "salary": 1009
+  },
+  {
+    "LAD23CD": "E07000180",
+    "Area Name": "Vale of White Horse",
+    "salary": 935
+  },
+  {
+    "LAD23CD": "E07000181",
+    "Area Name": "West Oxfordshire",
+    "salary": 932
+  },
+  {
+    "LAD23CD": "E07000192",
+    "Area Name": "Cannock Chase",
+    "salary": 535
+  },
+  {
+    "LAD23CD": "E07000193",
+    "Area Name": "East Staffordshire",
+    "salary": 567
+  },
+  {
+    "LAD23CD": "E07000194",
+    "Area Name": "Lichfield",
+    "salary": 662
+  },
+  {
+    "LAD23CD": "E07000195",
+    "Area Name": "Newcastle-under-Lyme",
+    "salary": 517
+  },
+  {
+    "LAD23CD": "E07000196",
+    "Area Name": "South Staffordshire",
+    "salary": 616
+  },
+  {
+    "LAD23CD": "E07000197",
+    "Area Name": "Stafford",
+    "salary": 576
+  },
+  {
+    "LAD23CD": "E07000198",
+    "Area Name": "Staffordshire Moorlands",
+    "salary": 466
+  },
+  {
+    "LAD23CD": "E07000199",
+    "Area Name": "Tamworth",
+    "salary": 647
+  },
+  {
+    "LAD23CD": "E07000200",
+    "Area Name": "Babergh",
+    "salary": 681
+  },
+  {
+    "LAD23CD": "E07000202",
+    "Area Name": "Ipswich",
+    "salary": 697
+  },
+  {
+    "LAD23CD": "E07000203",
+    "Area Name": "Mid Suffolk",
+    "salary": 648
+  },
+  {
+    "LAD23CD": "E07000207",
+    "Area Name": "Elmbridge",
+    "salary": 1242
+  },
+  {
+    "LAD23CD": "E07000208",
+    "Area Name": "Epsom and Ewell",
+    "salary": 1161
+  },
+  {
+    "LAD23CD": "E07000209",
+    "Area Name": "Guildford",
+    "salary": 1096
+  },
+  {
+    "LAD23CD": "E07000210",
+    "Area Name": "Mole Valley",
+    "salary": 1082
+  },
+  {
+    "LAD23CD": "E07000211",
+    "Area Name": "Reigate and Banstead",
+    "salary": 1083
+  },
+  {
+    "LAD23CD": "E07000212",
+    "Area Name": "Runnymede",
+    "salary": 1112
+  },
+  {
+    "LAD23CD": "E07000213",
+    "Area Name": "Spelthorne",
+    "salary": 1151
+  },
+  {
+    "LAD23CD": "E07000214",
+    "Area Name": "Surrey Heath",
+    "salary": 1003
+  },
+  {
+    "LAD23CD": "E07000215",
+    "Area Name": "Tandridge",
+    "salary": 1063
+  },
+  {
+    "LAD23CD": "E07000216",
+    "Area Name": "Waverley",
+    "salary": 1054
+  },
+  {
+    "LAD23CD": "E07000217",
+    "Area Name": "Woking",
+    "salary": 1132
+  },
+  {
+    "LAD23CD": "E07000218",
+    "Area Name": "North Warwickshire",
+    "salary": 657
+  },
+  {
+    "LAD23CD": "E07000219",
+    "Area Name": "Nuneaton and Bedworth",
+    "salary": 586
+  },
+  {
+    "LAD23CD": "E07000220",
+    "Area Name": "Rugby",
+    "salary": 685
+  },
+  {
+    "LAD23CD": "E07000221",
+    "Area Name": "Stratford-on-Avon",
+    "salary": 748
+  },
+  {
+    "LAD23CD": "E07000222",
+    "Area Name": "Warwick",
+    "salary": 849
+  },
+  {
+    "LAD23CD": "E07000223",
+    "Area Name": "Adur",
+    "salary": 942
+  },
+  {
+    "LAD23CD": "E07000224",
+    "Area Name": "Arun",
+    "salary": 794
+  },
+  {
+    "LAD23CD": "E07000225",
+    "Area Name": "Chichester",
+    "salary": 890
+  },
+  {
+    "LAD23CD": "E07000226",
+    "Area Name": "Crawley",
+    "salary": 1000
+  },
+  {
+    "LAD23CD": "E07000227",
+    "Area Name": "Horsham",
+    "salary": 954
+  },
+  {
+    "LAD23CD": "E07000228",
+    "Area Name": "Mid Sussex",
+    "salary": 951
+  },
+  {
+    "LAD23CD": "E07000229",
+    "Area Name": "Worthing",
+    "salary": 869
+  },
+  {
+    "LAD23CD": "E07000234",
+    "Area Name": "Bromsgrove",
+    "salary": 681
+  },
+  {
+    "LAD23CD": "E07000235",
+    "Area Name": "Malvern Hills",
+    "salary": 631
+  },
+  {
+    "LAD23CD": "E07000236",
+    "Area Name": "Redditch",
+    "salary": 620
+  },
+  {
+    "LAD23CD": "E07000237",
+    "Area Name": "Worcester",
+    "salary": 652
+  },
+  {
+    "LAD23CD": "E07000238",
+    "Area Name": "Wychavon",
+    "salary": 630
+  },
+  {
+    "LAD23CD": "E07000239",
+    "Area Name": "Wyre Forest",
+    "salary": 555
+  },
+  {
+    "LAD23CD": "E07000240",
+    "Area Name": "St Albans",
+    "salary": 1204
+  },
+  {
+    "LAD23CD": "E07000241",
+    "Area Name": "Welwyn Hatfield",
+    "salary": 961
+  },
+  {
+    "LAD23CD": "E07000242",
+    "Area Name": "East Hertfordshire",
+    "salary": 986
+  },
+  {
+    "LAD23CD": "E07000243",
+    "Area Name": "Stevenage",
+    "salary": 950
+  },
+  {
+    "LAD23CD": "E07000244",
+    "Area Name": "East Suffolk",
+    "salary": 551
+  },
+  {
+    "LAD23CD": "E07000245",
+    "Area Name": "West Suffolk",
+    "salary": 754
+  },
+  {
+    "LAD23CD": "E08000001",
+    "Area Name": "Bolton",
+    "salary": 576
+  },
+  {
+    "LAD23CD": "E08000002",
+    "Area Name": "Bury",
+    "salary": 636
+  },
+  {
+    "LAD23CD": "E08000003",
+    "Area Name": "Manchester",
+    "salary": 949
+  },
+  {
+    "LAD23CD": "E08000004",
+    "Area Name": "Oldham",
+    "salary": 600
+  },
+  {
+    "LAD23CD": "E08000005",
+    "Area Name": "Rochdale",
+    "salary": 537
+  },
+  {
+    "LAD23CD": "E08000006",
+    "Area Name": "Salford",
+    "salary": 834
+  },
+  {
+    "LAD23CD": "E08000007",
+    "Area Name": "Stockport",
+    "salary": 742
+  },
+  {
+    "LAD23CD": "E08000008",
+    "Area Name": "Tameside",
+    "salary": 613
+  },
+  {
+    "LAD23CD": "E08000009",
+    "Area Name": "Trafford",
+    "salary": 901
+  },
+  {
+    "LAD23CD": "E08000010",
+    "Area Name": "Wigan",
+    "salary": 488
+  },
+  {
+    "LAD23CD": "E08000011",
+    "Area Name": "Knowsley",
+    "salary": 538
+  },
+  {
+    "LAD23CD": "E08000012",
+    "Area Name": "Liverpool",
+    "salary": 618
+  },
+  {
+    "LAD23CD": "E08000013",
+    "Area Name": "St. Helens",
+    "salary": 536
+  },
+  {
+    "LAD23CD": "E08000014",
+    "Area Name": "Sefton",
+    "salary": 568
+  },
+  {
+    "LAD23CD": "E08000015",
+    "Area Name": "Wirral",
+    "salary": 510
+  },
+  {
+    "LAD23CD": "E08000016",
+    "Area Name": "Barnsley",
+    "salary": 459
+  },
+  {
+    "LAD23CD": "E08000017",
+    "Area Name": "Doncaster",
+    "salary": 453
+  },
+  {
+    "LAD23CD": "E08000018",
+    "Area Name": "Rotherham",
+    "salary": 451
+  },
+  {
+    "LAD23CD": "E08000019",
+    "Area Name": "Sheffield",
+    "salary": 644
+  },
+  {
+    "LAD23CD": "E08000021",
+    "Area Name": "Newcastle upon Tyne",
+    "salary": 685
+  },
+  {
+    "LAD23CD": "E08000022",
+    "Area Name": "North Tyneside",
+    "salary": 528
+  },
+  {
+    "LAD23CD": "E08000023",
+    "Area Name": "South Tyneside",
+    "salary": 458
+  },
+  {
+    "LAD23CD": "E08000024",
+    "Area Name": "Sunderland",
+    "salary": 486
+  },
+  {
+    "LAD23CD": "E08000025",
+    "Area Name": "Birmingham",
+    "salary": 784
+  },
+  {
+    "LAD23CD": "E08000026",
+    "Area Name": "Coventry",
+    "salary": 726
+  },
+  {
+    "LAD23CD": "E08000027",
+    "Area Name": "Dudley",
+    "salary": 549
+  },
+  {
+    "LAD23CD": "E08000028",
+    "Area Name": "Sandwell",
+    "salary": 598
+  },
+  {
+    "LAD23CD": "E08000029",
+    "Area Name": "Solihull",
+    "salary": 830
+  },
+  {
+    "LAD23CD": "E08000030",
+    "Area Name": "Walsall",
+    "salary": 586
+  },
+  {
+    "LAD23CD": "E08000031",
+    "Area Name": "Wolverhampton",
+    "salary": 588
+  },
+  {
+    "LAD23CD": "E08000032",
+    "Area Name": "Bradford",
+    "salary": 512
+  },
+  {
+    "LAD23CD": "E08000033",
+    "Area Name": "Calderdale",
+    "salary": 503
+  },
+  {
+    "LAD23CD": "E08000034",
+    "Area Name": "Kirklees",
+    "salary": 510
+  },
+  {
+    "LAD23CD": "E08000035",
+    "Area Name": "Leeds",
+    "salary": 742
+  },
+  {
+    "LAD23CD": "E08000036",
+    "Area Name": "Wakefield",
+    "salary": 531
+  },
+  {
+    "LAD23CD": "E08000037",
+    "Area Name": "Gateshead",
+    "salary": 539
+  },
+  {
+    "LAD23CD": "E09000002",
+    "Area Name": "Barking and Dagenham",
+    "salary": 1234
+  },
+  {
+    "LAD23CD": "E09000003",
+    "Area Name": "Barnet",
+    "salary": 1381
+  },
+  {
+    "LAD23CD": "E09000004",
+    "Area Name": "Bexley",
+    "salary": 1124
+  },
+  {
+    "LAD23CD": "E09000005",
+    "Area Name": "Brent",
+    "salary": 1652
+  },
+  {
+    "LAD23CD": "E09000006",
+    "Area Name": "Bromley",
+    "salary": 1238
+  },
+  {
+    "LAD23CD": "E09000007",
+    "Area Name": "Camden",
+    "salary": 2057
+  },
+  {
+    "LAD23CD": "E09000008",
+    "Area Name": "Croydon",
+    "salary": 1183
+  },
+  {
+    "LAD23CD": "E09000009",
+    "Area Name": "Ealing",
+    "salary": 1548
+  },
+  {
+    "LAD23CD": "E09000010",
+    "Area Name": "Enfield",
+    "salary": 1293
+  },
+  {
+    "LAD23CD": "E09000011",
+    "Area Name": "Greenwich",
+    "salary": 1452
+  },
+  {
+    "LAD23CD": "E09000012",
+    "Area Name": "Hackney",
+    "salary": 1866
+  },
+  {
+    "LAD23CD": "E09000013",
+    "Area Name": "Hammersmith and Fulham",
+    "salary": 1920
+  },
+  {
+    "LAD23CD": "E09000014",
+    "Area Name": "Haringey",
+    "salary": 1552
+  },
+  {
+    "LAD23CD": "E09000015",
+    "Area Name": "Harrow",
+    "salary": 1325
+  },
+  {
+    "LAD23CD": "E09000016",
+    "Area Name": "Havering",
+    "salary": 1125
+  },
+  {
+    "LAD23CD": "E09000017",
+    "Area Name": "Hillingdon",
+    "salary": 1198
+  },
+  {
+    "LAD23CD": "E09000018",
+    "Area Name": "Hounslow",
+    "salary": 1517
+  },
+  {
+    "LAD23CD": "E09000019",
+    "Area Name": "Islington",
+    "salary": 2012
+  },
+  {
+    "LAD23CD": "E09000020",
+    "Area Name": "Kensington and Chelsea",
+    "salary": 2559
+  },
+  {
+    "LAD23CD": "E09000021",
+    "Area Name": "Kingston upon Thames",
+    "salary": 1311
+  },
+  {
+    "LAD23CD": "E09000022",
+    "Area Name": "Lambeth",
+    "salary": 1725
+  },
+  {
+    "LAD23CD": "E09000023",
+    "Area Name": "Lewisham",
+    "salary": 1385
+  },
+  {
+    "LAD23CD": "E09000024",
+    "Area Name": "Merton",
+    "salary": 1520
+  },
+  {
+    "LAD23CD": "E09000025",
+    "Area Name": "Newham",
+    "salary": 1476
+  },
+  {
+    "LAD23CD": "E09000026",
+    "Area Name": "Redbridge",
+    "salary": 1290
+  },
+  {
+    "LAD23CD": "E09000027",
+    "Area Name": "Richmond upon Thames",
+    "salary": 1578
+  },
+  {
+    "LAD23CD": "E09000028",
+    "Area Name": "Southwark",
+    "salary": 1757
+  },
+  {
+    "LAD23CD": "E09000029",
+    "Area Name": "Sutton",
+    "salary": 1188
+  },
+  {
+    "LAD23CD": "E09000030",
+    "Area Name": "Tower Hamlets",
+    "salary": 1896
+  },
+  {
+    "LAD23CD": "E09000031",
+    "Area Name": "Waltham Forest",
+    "salary": 1344
+  },
+  {
+    "LAD23CD": "E09000032",
+    "Area Name": "Wandsworth",
+    "salary": 1811
+  },
+  {
+    "LAD23CD": "E09000033",
+    "Area Name": "Westminster",
+    "salary": 2613
+  },
+  {
+    "LAD23CD": "S33000001",
+    "Area Name": "Aberdeen and Shire",
+    "salary": 585
+  },
+  {
+    "LAD23CD": "S33000002",
+    "Area Name": "Argyll and Bute",
+    "salary": 548
+  },
+  {
+    "LAD23CD": "S33000003",
+    "Area Name": "Ayrshires",
+    "salary": 435
+  },
+  {
+    "LAD23CD": "S33000004",
+    "Area Name": "Dumfries and Galloway",
+    "salary": 389
+  },
+  {
+    "LAD23CD": "S33000005",
+    "Area Name": "Dundee and Angus",
+    "salary": 566
+  },
+  {
+    "LAD23CD": "S33000006",
+    "Area Name": "East Dunbartonshire",
+    "salary": 676
+  },
+  {
+    "LAD23CD": "S33000007",
+    "Area Name": "Fife",
+    "salary": 532
+  },
+  {
+    "LAD23CD": "S33000008",
+    "Area Name": "Forth Valley",
+    "salary": 578
+  },
+  {
+    "LAD23CD": "S33000009",
+    "Area Name": "Greater Glasgow",
+    "salary": 784
+  },
+  {
+    "LAD23CD": "S33000010",
+    "Area Name": "Highland and Islands",
+    "salary": 496
+  },
+  {
+    "LAD23CD": "S33000011",
+    "Area Name": "Lothian",
+    "salary": 1014
+  },
+  {
+    "LAD23CD": "S33000012",
+    "Area Name": "North Lanarkshire",
+    "salary": 489
+  },
+  {
+    "LAD23CD": "S33000013",
+    "Area Name": "Perth and Kinross",
+    "salary": 506
+  },
+  {
+    "LAD23CD": "S33000014",
+    "Area Name": "Renfrewshire/Inverclyde",
+    "salary": 499
+  },
+  {
+    "LAD23CD": "S33000015",
+    "Area Name": "Scottish Borders",
+    "salary": 441
+  },
+  {
+    "LAD23CD": "S33000016",
+    "Area Name": "South Lanarkshire",
+    "salary": 519
+  },
+  {
+    "LAD23CD": "S33000017",
+    "Area Name": "West Dunbartonshire",
+    "salary": 527
+  },
+  {
+    "LAD23CD": "S33000018",
+    "Area Name": "West Lothian",
+    "salary": 552
+  },
+  {
+    "LAD23CD": "W06000001",
+    "Area Name": "Isle of Anglesey",
+    "salary": 526
+  },
+  {
+    "LAD23CD": "W06000002",
+    "Area Name": "Gwynedd",
+    "salary": 537
+  },
+  {
+    "LAD23CD": "W06000003",
+    "Area Name": "Conwy",
+    "salary": 561
+  },
+  {
+    "LAD23CD": "W06000004",
+    "Area Name": "Denbighshire",
+    "salary": 497
+  },
+  {
+    "LAD23CD": "W06000005",
+    "Area Name": "Flintshire",
+    "salary": 542
+  },
+  {
+    "LAD23CD": "W06000006",
+    "Area Name": "Wrexham",
+    "salary": 561
+  },
+  {
+    "LAD23CD": "W06000008",
+    "Area Name": "Ceredigion",
+    "salary": 525
+  },
+  {
+    "LAD23CD": "W06000009",
+    "Area Name": "Pembrokeshire",
+    "salary": 477
+  },
+  {
+    "LAD23CD": "W06000010",
+    "Area Name": "Carmarthenshire",
+    "salary": 460
+  },
+  {
+    "LAD23CD": "W06000011",
+    "Area Name": "Swansea",
+    "salary": 630
+  },
+  {
+    "LAD23CD": "W06000012",
+    "Area Name": "Neath Port Talbot",
+    "salary": 439
+  },
+  {
+    "LAD23CD": "W06000013",
+    "Area Name": "Bridgend",
+    "salary": 504
+  },
+  {
+    "LAD23CD": "W06000014",
+    "Area Name": "Vale of Glamorgan",
+    "salary": 671
+  },
+  {
+    "LAD23CD": "W06000015",
+    "Area Name": "Cardiff",
+    "salary": 841
+  },
+  {
+    "LAD23CD": "W06000016",
+    "Area Name": "Rhondda Cynon Taf",
+    "salary": 480
+  },
+  {
+    "LAD23CD": "W06000018",
+    "Area Name": "Caerphilly",
+    "salary": 503
+  },
+  {
+    "LAD23CD": "W06000019",
+    "Area Name": "Blaenau Gwent",
+    "salary": 461
+  },
+  {
+    "LAD23CD": "W06000020",
+    "Area Name": "Torfaen",
+    "salary": 587
+  },
+  {
+    "LAD23CD": "W06000021",
+    "Area Name": "Monmouthshire",
+    "salary": 696
+  },
+  {
+    "LAD23CD": "W06000022",
+    "Area Name": "Newport",
+    "salary": 654
+  },
+  {
+    "LAD23CD": "W06000023",
+    "Area Name": "Powys",
+    "salary": 414
+  },
+  {
+    "LAD23CD": "W06000024",
+    "Area Name": "Merthyr Tydfil",
+    "salary": 535
+  }
+]

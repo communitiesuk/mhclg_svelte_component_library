@@ -204,7 +204,7 @@
       trackVisibleParameters(parametersSourceArray, parametersValuesArray),
   );
 
-  //$inspect(parametersValuesArray);
+  $inspect(parametersValuesArray);
 
   let parametersObject = $derived(
     homepage ??

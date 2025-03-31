@@ -34,11 +34,8 @@
   let selectedYear = $state(urlParams["selectedYear"] ?? data?.years[0]);
   let numberOfBars = $state(urlParams["numberOfBars"] ?? 10);
 
-  let numberOfTicks = $state(5);
-
   let dataArray = $derived(
     data?.dataInFormatForBarChart
-<<<<<<<< HEAD:src/routes/playground/create-a-bar-chart-using-url/+page.svelte
       //Had to remove type checking (===) for ?? to work above
       .find((el) => el.x == selectedYear)
       ?.bars.map((el, index) => ({
@@ -50,24 +47,6 @@
             : null,
         y: (index % 2 === 0 ? 1 : -1) * el.y,
       }))
-========
-      .find((el) => el.x === selectedYear)
-      ?.bars.map((el, index) => {
-        let yValue = (index % 2 === 0 ? 1 : -1) * el.y;
-        if (isNaN(yValue)) {
-          yValue = 0; // or any other default value you prefer
-        }
-        return {
-          ...el,
-          label: data.areaCodeLookup[el.areaCode],
-          color:
-            data.areaCodeLookup[el.areaCode] === "North West Leicestershire"
-              ? "blue"
-              : null,
-          y: yValue,
-        };
-      })
->>>>>>>> ticks_camila_andrew_pc:src/routes/playground/create-a-bar-chart-camilla/+page.svelte
       .sort((a, b) => b.label.length - a.label.length)
       .slice(0, numberOfBars),
   );
@@ -133,28 +112,14 @@
             />
           </Input>
         </div>
-<<<<<<<< HEAD:src/routes/playground/create-a-bar-chart-using-url/+page.svelte
         <p>
           To see how these persist across pages <a
             href="./create-a-reactive-line-chart?{urlParamsString}"
             >go to the line chart example.</a
           >
         </p>
-========
-        <div class="mt-5">
-          <p class="my-2 mx-0 p-0 text-sm">Number of ticks:</p>
-          <Input let:props>
-            <input
-              type="number"
-              {...props}
-              step={1}
-              bind:value={numberOfTicks}
-            />
-          </Input>
-        </div>
->>>>>>>> ticks_camila_andrew_pc:src/routes/playground/create-a-bar-chart-camilla/+page.svelte
         <div class="row-chart-container">
-          <RowChart {dataArray} {numberOfTicks}></RowChart>
+          <RowChart {dataArray}></RowChart>
         </div>
       </div>
     </div>

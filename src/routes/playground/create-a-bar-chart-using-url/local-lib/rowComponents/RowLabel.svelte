@@ -12,11 +12,8 @@
   $effect(() => {
     requiredSpaceForLabel = textDimObject?.width;
   });
-<<<<<<<< HEAD:src/routes/playground/create-a-bar-chart-using-url/local-lib/rowComponents/RowLabel.svelte
 
   // $inspect(requiredSpaceForLabel);
-========
->>>>>>>> ticks_camila_andrew_pc:src/routes/playground/create-a-bar-chart-camilla/local-lib/rowComponents/RowLabel.svelte
 </script>
 
 <g transform="translate(-{labelXOffset},7)">

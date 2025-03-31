@@ -6,11 +6,6 @@
     labelsInside = false,
     edgeOfChartThreshold = 40,
   } = $props();
-
-  // Check if row.y is NaN and handle it
-  if (isNaN(row.y)) {
-    row.y = 0; // or any default value you prefer
-  }
 </script>
 
 {#snippet rowValueLabel(color, textAnchor, x)}

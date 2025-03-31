@@ -14,6 +14,7 @@
 
   let { dataArray, numberOfTicks } = $props();
 
+  $inspect(numberOfTicks);
   let svgWidth = $state(),
     svgHeight = 500;
 
@@ -81,7 +82,8 @@
     >
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
-          {#if yFunction}<Axes {chartHeight} {chartWidth} {yFunction}></Axes>
+          {#if yFunction}
+            <Axes {chartHeight} {chartWidth} {yFunction}></Axes>
           {/if}
           {#key numberOfTicks}
             <Ticks

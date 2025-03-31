@@ -1,28 +1,27 @@
-import { sveltekit } from "@sveltejs/kit/vite";
-import { defineConfig } from "vite";
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig } from 'vite';
 
 export default defineConfig({
-  plugins: [
-    sveltekit(),
-    {
-      name: "inject-filepath",
+	plugins: [sveltekit(),
+		{
+      name: 'inject-filepath',
       transform(code, id) {
-        if (id.endsWith(".svelte")) {
-          return code.replace("__FILE_PATH__", JSON.stringify(id));
+        if (id.endsWith('.svelte')) {
+          return code.replace('__FILE_PATH__', JSON.stringify(id));
         }
         return code;
-      },
-    },
-  ],
-  server: {
-    fs: {
-      allow: ["node_modules/govuk-frontend"],
-    },
-  },
-  resolve: {
-    alias: {
-      $routes: "/src/routes",
-      "maplibre-gl": "maplibre-gl/dist/maplibre-gl.js",
-    },
-  },
+      }
+    }
+	],
+	server: {
+		fs: {
+			allow: ['node_modules/govuk-frontend']
+		}
+	},
+	resolve: {
+		alias: {
+			$routes: '/src/routes'
+		}
+	}
 });
+

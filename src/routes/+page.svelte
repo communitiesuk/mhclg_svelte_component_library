@@ -110,9 +110,11 @@ TODO
         <div class="flex flex-col gap-8">
           {#each [...new Set(wrappersArray.map((el) => el.subFolder))] as subFolder, index}
             {#if index != 0}<DividerLine></DividerLine>{/if}
-            <div>
+            <div class={subFolder != null ? "mx-4" : ""}>
               {#if subFolder != null}
-                <h6 class="mb-3 p-0">{subFolder}</h6>
+                <h6 class="mb-3 p-0 underline underline-offset-4">
+                  {subFolder}
+                </h6>
               {/if}
               <div class="flex flex-col gap-8">
                 {#each wrappersArray.filter((el) => el.subFolder === subFolder) as wrapper}

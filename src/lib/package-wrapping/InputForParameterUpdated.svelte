@@ -14,21 +14,28 @@
   $inspect(parameter.name, parameter, statedValue, derivedValue);
 
   let useStatedValue = $derived(derivedValue == null);
-  let useRadio = $derived(parameter.propType === "radio");
+  let useRadio = $derived(
+    parameter.isEditable && parameter.propType === "radio",
+  );
   let useDropdown = $derived(
-    parameter.inputType === "dropdown" || "options" in parameter,
+    (parameter.isEditable && parameter.inputType === "dropdown") ||
+      "options" in parameter,
   );
   let useTextarea = $derived(
-    typeof (useStatedValue ? statedValue : derivedValue) === "string" &&
+    parameter.isEditable &&
+      typeof (useStatedValue ? statedValue : derivedValue) === "string" &&
       typeof parameter.value === "string",
   );
   let useNumberInput = $derived(
-    typeof statedValue === "number" ||
+    (parameter.isEditable && typeof statedValue === "number") ||
       (statedValue === null && typeof parameter.value === "number"),
   );
-  let useCheckbox = $derived(typeof statedValue === "boolean");
+  let useCheckbox = $derived(
+    parameter.isEditable && typeof statedValue === "boolean",
+  );
   let useMonacoEditor = $derived(
-    useStatedValue &&
+    parameter.isEditable &&
+      useStatedValue &&
       !useRadio &&
       !useDropdown &&
       !useTextarea &&
@@ -191,7 +198,7 @@
         {/if}
       </div>
     {/if}
-    {#if (parameter.hasOwnProperty("functionElements") && parameter.functionElements != null && parameter.functionElements.hasOwnProperty("functionAsString")) || parameter?.propType === "fixed"}
+    {#if (parameter.hasOwnProperty("functionElements") && parameter.functionElements != null && parameter.functionElements.hasOwnProperty("functionAsString")) || parameter?.propType === "fixed" || !parameter?.isEditable}
       <CodeBlock
         code={typeof derivedValue === "function"
           ? parameter.functionElements.functionAsString.replace(

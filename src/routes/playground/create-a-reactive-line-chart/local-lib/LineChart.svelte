@@ -1,11 +1,11 @@
 <script>
   // @ts-nocheck
-  import Line from '$lib/components/data-vis/line-chart/Line.svelte';
-  import { scaleLinear } from 'd3-scale';
-  import { curveLinear, line } from 'd3-shape';
-  import { highlight } from '$lib/utils/syntax-highlighting/shikiHighlight';
+  import Line from "$lib/components/data-vis/line-chart/Line.svelte";
+  import { scaleLinear } from "d3-scale";
+  import { curveLinear, line } from "d3-shape";
+  import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
 
-  let { data } = $props();
+  let { data, selectedYear } = $props();
 
   $inspect(data);
 
@@ -34,7 +34,7 @@
   let yearsMinMax = $derived([Math.min(...allYears), Math.max(...allYears)]);
 
   let xFunction = $derived(
-    scaleLinear().domain(yearsMinMax).range([0, chartWidth])
+    scaleLinear().domain(yearsMinMax).range([0, chartWidth]),
   );
 
   let allValues = $derived(flatData.map((el) => el.y));
@@ -42,21 +42,22 @@
   let valuesMinMax = $derived([Math.min(...allValues), Math.max(...allValues)]);
 
   let yFunction = $derived(
-    scaleLinear().domain(valuesMinMax).range([chartHeight, 0])
+    scaleLinear().domain(valuesMinMax).range([chartHeight, 0]),
   );
 
   let lineFunction = $derived(
     line()
       .x((d) => xFunction(d.x))
       .y((d) => yFunction(d.y))
-      .curve(curveLinear)
+      .curve(curveLinear),
   );
 
-  let selectedAreaCode = $state('E07000223');
+  let selectedAreaCode = $state("E07000223");
 </script>
 
 <h3>Example Usage</h3>
-<pre><code use:highlight>{`
+<pre><code use:highlight
+    >{`
 <script>
   import LineChart from './LineChart.svelte';
   
@@ -75,7 +76,8 @@
 <\/script>
 
 <LineChart {data} />
-`}</code></pre>
+`}</code
+  ></pre>
 
 <div bind:clientWidth={svgWidth}>
   <svg
@@ -101,6 +103,7 @@
           {#each data.lines as line, i}
             <Line
               {lineFunction}
+              {selectedYear}
               dataArray={line.data}
               pathStrokeColor="black"
               pathStrokeWidth="1"
@@ -113,6 +116,7 @@
           {/each}
           <Line
             {lineFunction}
+            {selectedYear}
             dataArray={data.lines.find((el) => el.areaCode === selectedAreaCode)
               .data}
             pathStrokeColor="red"

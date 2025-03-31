@@ -12,13 +12,13 @@
 
   let { dataArray } = $props();
 
-  $inspect(dataArray);
+  // $inspect(dataArray);
 
   let svgWidth = $state(),
     svgHeight = 500;
 
   let requiredSpaceForLabelsArray = $state(new Array(dataArray.length));
-  $inspect(requiredSpaceForLabelsArray);
+  // $inspect(requiredSpaceForLabelsArray);
 
   let filteredRequiredSpaceForLabelsArray = $derived(
     requiredSpaceForLabelsArray.filter((el) => el !== undefined),

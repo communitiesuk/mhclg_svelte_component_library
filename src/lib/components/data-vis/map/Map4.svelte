@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
   import { onMount, onDestroy } from "svelte";
   import { Map, MapStyle, Marker, config } from "@maptiler/sdk";
   import "@maptiler/sdk/dist/maptiler-sdk.css";
@@ -296,4 +296,4 @@
     width: 100%;
     height: 100%;
   }
-</style>
+</style> -->

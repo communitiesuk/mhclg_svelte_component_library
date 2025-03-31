@@ -36,6 +36,7 @@
   GeoJSON layer
 </p>
 <p>Also including click and hover interactions</p>
+<p>To load the map uncomment the code in Map4.svelte</p>
 <Map4 apiKey={data.PRIVATE_MAPTILER_API_KEY} />
 
 <h2>5. TopoJson with svelte-maplibre</h2>
@@ -47,6 +48,7 @@
   Note: doesn't work with server-side rendering - had to switch that off to
   render this example, which may make this an unusable option
 </p>
+<p>To load the map uncomment the code in Map6.svelte</p>
 <Map6 />
 
 <h2>7. Flowbite area search, with svelte-maplibre</h2>

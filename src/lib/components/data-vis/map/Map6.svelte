@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
   import { Map, TileLayer, Marker, Popup } from "sveaflet";
 </script>
 
@@ -12,4 +12,4 @@
     <TileLayer url={"https://tile.openstreetmap.org/{z}/{x}/{y}.png"} />
     <Marker latLng={[51.505, -0.09]} />
   </Map>
-</div>
+</div> -->

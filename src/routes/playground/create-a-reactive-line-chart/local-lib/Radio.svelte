@@ -10,11 +10,11 @@
       <input
         bind:group={value}
         type="radio"
-        id={option.toLowerCase().replaceAll(' ', '_')}
+        id={option.toLowerCase().replaceAll(" ", "_")}
         name="metric-selection"
         value={option}
       />
-      <label for={option.toLowerCase().replaceAll(' ', '_')}>{option}</label>
+      <label for={option.toLowerCase().replaceAll(" ", "_")}>{option}</label>
     </div>
   {/each}
 </div>

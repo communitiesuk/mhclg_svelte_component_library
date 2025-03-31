@@ -6,31 +6,31 @@ export let details = {
   description: [
     {
       content:
-        'This page was created as a sandbox environment for developers starting to gain experience building component.',
+        "This page was created as a sandbox environment for developers starting to gain experience building component.",
     },
     {
       content:
-        'Since this was one of the first test projects we worked on, before we were building rigorously tested components, some of the code may not follow best practice guidelines.',
+        "Since this was one of the first test projects we worked on, before we were building rigorously tested components, some of the code may not follow best practice guidelines.",
     },
   ],
   steps: [
-    { label: 'Manipulate data', complete: true },
-    { label: 'Create radio button components', complete: true },
+    { label: "Manipulate data", complete: true },
+    { label: "Create radio button components", complete: true },
     {
       label:
-        'Add on-click functionalilty to radio buttons, that reactively filters for the data we want to visualise',
+        "Add on-click functionalilty to radio buttons, that reactively filters for the data we want to visualise",
       complete: true,
     },
     {
-      label: 'Create scale and line functions for our line chart',
+      label: "Create scale and line functions for our line chart",
       complete: false,
     },
     {
-      label: 'Plot lines, with labels and basic hover functionality',
+      label: "Plot lines, with labels and basic hover functionality",
       complete: false,
     },
     {
-      label: 'Create x and y axes',
+      label: "Create x and y axes",
       complete: false,
     },
   ],

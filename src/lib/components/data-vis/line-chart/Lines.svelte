@@ -18,12 +18,14 @@
   } = $props();
 
   let bounds = $state([0, chartHeight]);
-  let nLines = $state(7);
+  let showAllData = $state(false);
+  let keyLines = $state([selectedAreaCode, "E07000026", "E07000032"]);
+  let nLines = $derived(keyLines.length);
 
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
 
-  let subset = $state(data.lines.slice(0, nLines));
+  let subset = $derived(showAllData ? data.lines : data.lines.slice(0, nLines));
 
   let transformed = $derived(
     subset.map((item) => {
@@ -58,23 +60,22 @@
   ></CategoryLabel>
 {/snippet}
 
-{#if nLines > 25}
+{#if showAllData === true}
   {#each subset as line, i}
-    {#if line.areaCode !== selectedAreaCode}
-      <Line
-        {lineFunction}
-        {xFunction}
-        {yFunction}
-        dataArray={line.data}
-        pathStrokeColor="black"
-        pathStrokeWidth="1"
-        opacity={0.15}
-        dataId={line.areaCode}
-        onMouseMove={() => {
-          selectedAreaCode = line.areaCode;
-        }}
-      ></Line>
-    {:else}
+    <Line
+      {lineFunction}
+      {xFunction}
+      {yFunction}
+      dataArray={line.data}
+      pathStrokeColor="black"
+      pathStrokeWidth="1"
+      opacity={0.15}
+      dataId={line.areaCode}
+      onMouseMove={() => {
+        selectedAreaCode = line.areaCode;
+      }}
+    ></Line>
+    {#if line.areaCode === selectedAreaCode}
       <g>
         {@render categoryLabelSnippet(line, yFunction(line.data[0].y))}
       </g>

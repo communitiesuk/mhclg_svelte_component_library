@@ -479,12 +479,12 @@
       label: "Email",
       conditional: {
         id: "email-settings",
-        content: \`
+        content: '
           <div class="govuk-form-group">
             <label class="govuk-label" for="email">Email Address</label>
             <input class="govuk-input" id="email" name="email" type="email">
           </div>
-        \`
+        '
       }
     },
     { value: "sms", label: "SMS" }
@@ -665,12 +665,12 @@
       label: "Option 1",
       conditional: {
         id: "option1-details",
-        content: \`
+        content: '
           <div class="govuk-form-group">
             <label class="govuk-label" for="option1-detail">Details for Option 1</label>
             <input class="govuk-input" id="option1-detail" name="option1-detail" type="text">
           </div>
-        \`
+        '
       }
     },
     {
@@ -678,12 +678,12 @@
       label: "Option 2",
       conditional: {
         id: "option2-details",
-        content: \`
+        content: '
           <div class="govuk-form-group">
             <label class="govuk-label" for="option2-detail">Details for Option 2</label>
             <input class="govuk-input" id="option2-detail" name="option2-detail" type="text">
           </div>
-        \`
+        '
       }
     }
   ];

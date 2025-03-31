@@ -1,5 +1,6 @@
 <script>
-  import { Map } from "mapbox-gl";
+  import pkg from "mapbox-gl";
+  const { Map } = pkg;
   import "mapbox-gl/dist/mapbox-gl.css";
   import { onMount, onDestroy } from "svelte";
 

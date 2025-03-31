@@ -463,12 +463,12 @@
       label: "Email",
       conditional: {
         id: "email-settings",
-        content: '
+        content: \`
           <div class="govuk-form-group">
             <label class="govuk-label" for="email">Email</label>
             <input class="govuk-input" id="email" name="email" type="email">
           </div>
-        '
+        \`
       }
     },
     {
@@ -476,12 +476,12 @@
       label: "SMS",
       conditional: {
         id: "sms-settings",
-        content: '
+        content: \`
           <div class="govuk-form-group">
             <label class="govuk-label" for="phone">Phone Number</label>
             <input class="govuk-input" id="phone" name="phone" type="tel">
           </div>
-        '
+        \`
       }
     }
   ];

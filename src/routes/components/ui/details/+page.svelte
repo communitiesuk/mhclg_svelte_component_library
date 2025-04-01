@@ -7,7 +7,7 @@
   import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
   import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { page } from "$app/stores";
 

@@ -35,7 +35,6 @@
   </Accordion>
 </div>
 
-<!-- Example 1: Basic Usage -->
 {#snippet Example1()}
   <div class="p-5 bg-white">
     <Template

@@ -218,7 +218,7 @@ const askQuestion = (query) => {
       return;
     }
 
-    if (includesExamples) {
+    if (includesExamples.toLowerCase() === "yes") {
       if (fs.existsSync(targetExamplesFilePath)) {
         console.log(
           `Script aborted. ERROR: ${targetExamplesFilePath} already exists.`,
@@ -241,7 +241,7 @@ const askQuestion = (query) => {
     fs.copyFileSync(templateFilePath, targetTemplateFilePath);
     console.log(`New wrapper file created at ${targetTemplateFilePath}.`);
 
-    if (includesExamples) {
+    if (includesExamples.toLowerCase() === "yes") {
       fs.copyFileSync(examplesFilePath, targetExamplesFilePath);
       console.log(
         `New examples svelte file created at ${targetExamplesFilePath}.`,

@@ -13,7 +13,6 @@
     "format": "prettier --write .",
     "generate-data": "tsx scripts/generateJSONData.cjs",
     "copy-govuk-assets": "node scripts/copy-govuk-assets.js",
-    "create-component-and-wrapper-pages": "node scripts/create-component-and-wrapper-pages.js",
     "prepare": "npm run copy-govuk-assets"
   },
   "files": [
@@ -67,17 +66,24 @@
     "vite": "^5.0.11"
   },
   "dependencies": {
+    "@maptiler/sdk": "^3.0.1",
     "@monaco-editor/loader": "^1.4.0",
-    "@stdlib/function-to-string": "^0.2.2",
     "csv-parser": "^3.0.0",
     "d3": "^7.9.0",
     "flowbite-svelte-icons": "^2.0.3",
     "govuk-frontend": "^5.7.1",
+    "labelplacer": "^0.0.0",
+    "leaflet": "^1.9.4",
+    "mapbox-gl": "^1.13.3",
+    "maplibre-gl": "^5.2.0",
     "monaco-editor": "^0.52.2",
     "node": "^18.20.6",
     "npm": "^11.0.0",
     "prism-svelte": "^0.5.0",
     "prismjs": "^1.29.0",
-    "svelte-preprocess": "^6.0.3"
+    "sveaflet": "^0.1.4",
+    "svelte-maplibre": "^1.0.0-next.12",
+    "svelte-preprocess": "^6.0.3",
+    "topojson-client": "^3.1.0"
   }
 }

@@ -371,7 +371,6 @@
               value: "none",
               label: "I do not wish to receive updates",
               exclusive: true,
-              exclusive: true,
             },
           ]}
         />

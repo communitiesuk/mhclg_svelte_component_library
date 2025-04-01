@@ -2,7 +2,7 @@
   // @ts-nocheck
   import { page } from "$app/stores";
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
-  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
+  import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
@@ -26,6 +26,7 @@
     curveMonotoneX,
     curveStep,
     line,
+    area,
   } from "d3-shape";
 
   let { data, homepage = undefined, folders } = $props();
@@ -156,6 +157,14 @@
    * ?      This input is rendered as html, so you can use <br> for line breaks and &emsp; for tabs.
    */
 
+  let curveFunctions = {
+    curveLinear: curveLinear,
+    curveLinearClosed: curveLinearClosed,
+    curveCardinal: curveCardinal,
+    curveBasis: curveBasis,
+    curveStep: curveStep,
+    curveMonotoneX: curveMonotoneX,
+  };
   let parametersSourceArray =
     homepage ??
     addIndexAndInitalValue([
@@ -344,6 +353,20 @@
           "line()<br>&emsp;&emsp;.x((d) => xFunction(d.x))<br>&emsp;&emsp;.y((d) => yFunction(d.y))<br>&emsp;&emsp;.curve(curveLinear)",
       },
       {
+        name: "includeArea",
+        category: "area",
+        isProp: true,
+        inputType: "checkbox",
+      },
+      {
+        name: "areaFillColor",
+        category: "area",
+        isProp: true,
+        inputType: "input",
+        value: "#dddddd",
+        visible: [{ name: "includeArea", value: true }],
+      },
+      {
         name: "pathStrokeColor",
         category: "path",
         isProp: true,
@@ -376,6 +399,36 @@
         category: "markers",
         isProp: true,
         inputType: "checkbox",
+      },
+      {
+        name: "includeLabels",
+        category: "labels",
+        isProp: true,
+        inputType: "checkbox",
+      },
+      {
+        name: "labelText",
+        category: "labels",
+        isProp: true,
+        inputType: "input",
+        value: "txt",
+        visible: [{ name: "includeLabels", value: true }],
+      },
+      {
+        name: "labelColor",
+        category: "labels",
+        isProp: true,
+        inputType: "input",
+        value: "#aaaaaa",
+        visible: [{ name: "includeLabels", value: true }],
+      },
+      {
+        name: "labelTextColor",
+        category: "labels",
+        isProp: true,
+        inputType: "input",
+        value: "#000000",
+        visible: [{ name: "includeLabels", value: true }],
       },
       {
         name: "markerShape",
@@ -614,14 +667,24 @@
         .x((d) => xFunction(d.x))
         .y((d) => yFunction(d.y))
         .curve(
-          {
-            curveLinear: curveLinear,
-            curveLinearClosed: curveLinearClosed,
-            curveCardinal: curveCardinal,
-            curveBasis: curveBasis,
-            curveStep: curveStep,
-            curveMonotoneX: curveMonotoneX,
-          }[
+          curveFunctions[
+            getValueFromParametersArray(
+              parametersSourceArray,
+              parametersValuesArray,
+              "curve",
+            )
+          ],
+        ),
+  );
+
+  let areaFunction = $derived(
+    homepage ??
+      area()
+        .y0((d) => yFunction(0))
+        .x((d) => xFunction(d.x))
+        .y1((d) => yFunction(d.y))
+        .curve(
+          curveFunctions[
             getValueFromParametersArray(
               parametersSourceArray,
               parametersValuesArray,
@@ -673,7 +736,7 @@
    * &&     We recommend defining the values of these parameters above and just referencing them in this object. If you prefer to define them in-line, you can do so using the (parameterName : parameterValue) pattern.
    */
   let derivedParametersObject = $derived(
-    homepage ?? { xFunction, yFunction, lineFunction, dataArray },
+    homepage ?? { xFunction, yFunction, lineFunction, areaFunction, dataArray },
   );
 
   /**

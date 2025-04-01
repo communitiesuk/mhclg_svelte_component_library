@@ -1,4 +1,6 @@
 <script>
+  import ValueLabel from "./ValueLabel.svelte";
+
   let {
     dataArray,
     opacity = 1,
@@ -6,6 +8,8 @@
     pathStrokeWidth = 1,
     pathFillColor = "none",
     pathStrokeDashArray = "none",
+    areaFillColor,
+    includeArea = false,
     includeMarkers = false,
     markerShape = "circle",
     markerRadius = 5,
@@ -13,7 +17,9 @@
     markerStroke = "white",
     markerStrokeWidth = 3,
     lineFunction,
+    areaFunction,
     xFunction,
+    lineEnding = "circle",
     yFunction,
     dataId,
     markersDataId,
@@ -22,11 +28,62 @@
     onMouseLeave,
     onMouseMove,
     onClickMarker,
-    onMouseEnterMarker,
-    onMouseLeaveMarker,
+    // onMouseEnterMarker,
+    // onMouseLeaveMarker,
     onMouseMoveMarker,
+    includeLabels,
+    labelText,
+    labelColor,
+    labelTextColor,
   } = $props();
+
+  let hoveredMarker = $state();
+
+  function makeList(inputValue) {
+    let items = inputValue.split("\\n").map((item) => item.trim());
+    return items;
+  }
+
+  function parseInput(marker, inputValue) {
+    let items = makeList(inputValue);
+    let mappedItems = items.map((item) =>
+      item.replace(/\{(\w+)\}/g, (_, key) => marker[key] ?? `{${key}}`),
+    );
+    return mappedItems;
+  }
+
+  function onMouseEnterMarker(i) {
+    hoveredMarker = i;
+  }
+
+  function onMouseLeaveMarker(i) {
+    hoveredMarker = null;
+  }
 </script>
+
+<defs>
+  <marker
+    id={`arrow-${pathStrokeColor}`}
+    markerWidth="6"
+    markerHeight="4"
+    refX="4"
+    refY="2"
+    orient="auto-start-reverse"
+  >
+    <polygon points="0 0, 6 2, 0 4" style="fill: {pathStrokeColor}"></polygon>
+  </marker>
+
+  <marker
+    id={`circle-${pathStrokeColor}`}
+    markerWidth="14"
+    markerHeight="14"
+    refX="7"
+    refY="7"
+    orient="auto"
+  >
+    <circle cx="7" cy="7" r="1.5" style="fill: {pathStrokeColor}"></circle>
+  </marker>
+</defs>
 
 <g
   data-id={dataId}
@@ -36,12 +93,20 @@
   onmousemove={(event) => onMouseMove(event, dataArray)}
   {opacity}
 >
+  {#if includeArea}
+    <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
+  {/if}
   <path
     d={lineFunction(dataArray)}
     fill={pathFillColor}
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
+    marker-start={lineEnding === "arrow"
+      ? `url(#arrow-${pathStrokeColor})`
+      : lineEnding === "circle"
+        ? `url(#circle-${pathStrokeColor})`
+        : null}
   ></path>
 
   {#if includeMarkers}
@@ -80,6 +145,16 @@
             fill={markerFill}
             stroke-width={markerStrokeWidth}
           ></polygon>
+        {/if}
+        {#if includeLabels}
+          {#if i == hoveredMarker}
+            <ValueLabel
+              {marker}
+              {labelColor}
+              {labelTextColor}
+              textContent={parseInput(marker, labelText)}
+            ></ValueLabel>
+          {/if}
         {/if}
       </g>
     {/each}

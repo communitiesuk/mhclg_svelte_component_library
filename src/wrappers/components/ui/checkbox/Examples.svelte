@@ -112,12 +112,8 @@
 {#snippet Example1()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockOne} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Select your options"
             name="basic-options"
@@ -129,6 +125,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockOne} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -137,12 +134,8 @@
 {#snippet Example2()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockTwo} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Choose your subscriptions"
             hint="Select all that apply"
@@ -162,6 +155,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockTwo} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -170,12 +164,8 @@
 {#snippet Example3()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockThree} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Terms and Conditions"
             name="terms"
@@ -191,6 +181,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockThree} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -199,12 +190,8 @@
 {#snippet Example4()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockFour} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Notification Preferences"
             name="notifications"
@@ -220,6 +207,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockFour} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -228,12 +216,8 @@
 {#snippet Example5()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockFive} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Contact Methods"
             name="contact-methods"
@@ -257,6 +241,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockFive} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -265,12 +250,8 @@
 {#snippet Example6()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockSix} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Select items"
             name="select-items"
@@ -282,6 +263,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockSix} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -289,12 +271,8 @@
 {#snippet Example7()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockSeven} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Main Preferences"
             name="main-preferences"
@@ -306,6 +284,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockSeven} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -314,11 +293,8 @@
 {#snippet Example8()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockEight} language="svelte" />
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Priority Levels"
             name="priority-levels"
@@ -331,6 +307,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockEight} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -338,12 +315,8 @@
 {#snippet Example9()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockNine} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Multiple Options"
             name="multiple-options"
@@ -384,6 +357,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockNine} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -391,12 +365,8 @@
 {#snippet Example10()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockTen} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Dynamic Options"
             name="dynamic-options"
@@ -408,6 +378,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockTen} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -456,12 +427,8 @@
 {#snippet Example11()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockEleven} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-        >
+        <div class="p-6 bg-white">
           <Checkbox
             legend="Contact Methods"
             name="contact-methods-snippets"
@@ -469,6 +436,7 @@
           />
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockEleven} language="svelte" />
     </div>
   </div>
 {/snippet}
@@ -476,13 +444,8 @@
 {#snippet Example12()}
   <div class="bg-orange-50 py-5">
     <div class="mx-4">
-      <CodeBlock code={codeBlocks.codeBlockTwelve} language="svelte" />
-
       <div class="app-example-wrapper">
-        <div
-          class="app-example__frame app-example__frame--resizable app-example__frame--m p-6"
-          style="height: auto;"
-        >
+        <div class="p-6 bg-white" style="height: auto;">
           <div class="govuk-form-group">
             <label class="govuk-label" for="select-input">
               Select options from dropdown
@@ -517,6 +480,7 @@
           </p>
         </div>
       </div>
+      <CodeBlock code={codeBlocks.codeBlockTwelve} language="svelte" />
     </div>
   </div>
 {/snippet}

@@ -26,14 +26,14 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "Baseline completed",
     statusRows: [
       {
-        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
+        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },
         visibleOnHompepage: false,
       },
       {
-        obj: { Reviewed: false, Tested: false },
+        obj: { Reviewed: true, Tested: false },
         visibleOnHomepage: false,
       },
     ],
@@ -46,10 +46,14 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "An expandable and collapsible section component that allows users to show and hide content.",
+    'Based on the <a href="https://design-system.service.gov.uk/components/accordion/" target="_blank" rel="noopener noreferrer">GOV.UK Design System accordion component</a> pattern.',
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Use the accordion component to let users show and hide sections of related content on a page.",
+    "Only use an accordion if there is evidence it is helpful for users.",
   ];
 
   let detailsArray = [
@@ -91,8 +95,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Template from "$lib/package-wrapping/templates/Template.svelte";
-  import Examples from "./examples/Examples.svelte";
+  import Accordion from "$lib/components/ui/Accordion.svelte";
+  import Examples from "./accordion/Examples.svelte";
 
   let { data } = $props();
 
@@ -157,142 +161,80 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 2,
-      },
-      {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
-          ],
-        },
-      },
-      {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "jsObjectProp",
-        category: "Input props",
+        name: "sections",
+        category: "Content",
         value: [
           {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
+            id: "1",
+            heading: "Writing well for the web",
+            summary: "Learn about writing content for your website",
+            content: "This is the content for Writing well for the web.",
+            expanded: true,
           },
           {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
+            id: "2",
+            heading: "Writing well for specialists",
+            summary: "Guidance for writing technical content",
+            content: "This is the content for Writing well for specialists.",
+            expanded: false,
           },
           {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
+            id: "3",
+            heading: "Know your audience",
+            summary: "Understanding who your users are",
+            content: "This is the content for Know your audience.",
           },
         ],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
-          ],
-        },
       },
       {
-        name: "functionProp",
-        category: "Fixed props",
-
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
-        functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
-        },
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
-          ],
-        },
+        name: "headingLevel",
+        category: "Content",
+        value: "h4",
+      },
+      {
+        name: "hideAllSections",
+        category: "UI Toggle Labels",
+        value: "Hide all sections",
+      },
+      {
+        name: "hideSection",
+        category: "UI Toggle Labels",
+        value: "Hide",
+      },
+      {
+        name: "hideSectionAriaLabel",
+        category: "UI Toggle Labels",
+        value: "Hide this section",
+      },
+      {
+        name: "showAllSections",
+        category: "UI Toggle Labels",
+        value: "Show all sections",
+      },
+      {
+        name: "showSection",
+        category: "UI Toggle Labels",
+        value: "Show",
+      },
+      {
+        name: "showSectionAriaLabel",
+        category: "UI Toggle Labels",
+        value: "Show this section",
+      },
+      {
+        name: "allSectionToggle",
+        category: "Accordion Toggle Options",
+        value: true,
+      },
+      {
+        name: "minSectionsAllSectionToggle",
+        category: "Accordion Toggle Options",
+        value: 2,
+      },
+      {
+        name: "rememberIsExpandedState",
+        category: "Accordion Toggle Options",
+        value: true,
       },
     ]),
   );
@@ -343,7 +285,6 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
    *  &&    You must then also combine them into the derivedParametersObject below so that they are passed to the component.
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
-
   let derivedParametersObject = $derived({});
 
   /**
@@ -410,8 +351,8 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
 </script>
 
 <!--
-&&  WrapperNameAndStatus and WrapperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
-  -->
+  &&  WrapperNameAndStatus and WrapperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
+    -->
 
 {#snippet WrapperNameAndStatus(name, folder, subFolder, homepage)}
   <BaseNameAndStatus
@@ -430,17 +371,19 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
 {/snippet}
 
 <!-- 
-  !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
-  CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
- -->
+    !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
+    CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
+   -->
 {#snippet Component()}
-  <Template {...parametersObject}></Template>
+  <div class="px-5">
+    <Accordion {...parametersObject}></Accordion>
+  </div>
 {/snippet}
 
 <!--
-DONOTTOUCH  *
-&&          Uses snippets to render metadata for the component.
--->
+  DONOTTOUCH  *
+  &&          Uses snippets to render metadata for the component.
+  -->
 <WrapperDetailsUpdate
   wrapper={{
     component: { WrapperInformation, WrapperNameAndStatus },
@@ -450,9 +393,9 @@ DONOTTOUCH  *
 ></WrapperDetailsUpdate>
 
 <!-- 
-  DONOTTOUCH  *
-  &&          Renders toast components based on tracking parsing errors and fixes.
- -->
+    DONOTTOUCH  *
+    &&          Renders toast components based on tracking parsing errors and fixes.
+   -->
 <ParsingErrorToastsContainer
   {parametersParsingErrorsArray}
   {parametersParsingErrorsObject}
@@ -461,9 +404,9 @@ DONOTTOUCH  *
 ></ParsingErrorToastsContainer>
 
 <!--
-    DONOTTOUCH  *
-    &&          Renders the demo UI and the component itself.
--->
+      DONOTTOUCH  *
+      &&          Renders the demo UI and the component itself.
+  -->
 <ComponentDemo
   {Component}
   bind:demoScreenWidth
@@ -476,9 +419,9 @@ DONOTTOUCH  *
 ></ComponentDemo>
 
 <!--
-    DONOTTOUCH  *
-    &&          Creates a list of examples where the component is used (if any examples exist).
--->
+      DONOTTOUCH  *
+      &&          Creates a list of examples where the component is used (if any examples exist).
+  -->
 <div data-role="examples-section" class="px-5">
   <Examples></Examples>
 </div>

@@ -124,9 +124,10 @@
     <div
       data-role="overlay-container"
       class="absolute z-[2] p-0 my-0 ml-0 mr-20 overflow-scroll"
-      style="min-width: {componentWidth +
-        2}px; height: {componentHeight}px; opacity: {1.1 -
-        2 * componentOpacity}"
+      style="min-width: {Math.max(
+        768,
+        componentWidth + 2,
+      )}px; height: {componentHeight}px; opacity: {1.1 - 2 * componentOpacity}"
     >
       <div class="p-5 flex flex-row justify-between bg-white sticky top-0">
         <h6 class="underline underline-offset-4">
@@ -341,15 +342,15 @@
     padding-bottom: 0px;
   }
   [data-width="col1Sm"] {
-    max-width: 125px;
+    max-width: 150px;
   }
 
   [data-width="col1Md"] {
-    max-width: 175px;
+    max-width: 225px;
   }
 
   [data-width="col1Lg"] {
-    max-width: 225px;
+    max-width: 300px;
   }
 
   [data-width="col2Sm"] {

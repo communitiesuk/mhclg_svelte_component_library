@@ -91,8 +91,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Template from "$lib/package-wrapping/templates/Template.svelte";
-  import Examples from "./examples/Examples.svelte";
+import Button from "$lib/components/ui/Button.svelte";
+
 
   let { data } = $props();
 
@@ -434,7 +434,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <Template {...parametersObject}></Template>
+<Button {...parametersObject}></Button>
 {/snippet}
 
 <!--
@@ -480,5 +480,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div data-role="examples-section" class="px-5">
-  <Examples></Examples>
+
 </div>

@@ -17,18 +17,20 @@
     colors,
   } = $props();
 
+  let hoveredLine = $state();
+  $inspect(hoveredLine);
   let bounds = $state([0, chartHeight]);
-  let showAllData = $state(false);
-  let keyLines = $state([selectedAreaCode, "E07000026", "E07000032"]);
-  let nLines = $derived(keyLines.length);
+  let showAllData = $state(true);
+  const keyLines = $state([selectedAreaCode, "E07000026", "E07000032"]);
+  let keyLinesSubset = $derived(
+    data.lines.filter((el) => keyLines.includes(el.areaCode)).map((el) => el),
+  );
 
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
 
-  let subset = $derived(showAllData ? data.lines : data.lines.slice(0, nLines));
-
   let transformed = $derived(
-    subset.map((item) => {
+    keyLinesSubset.map((item) => {
       let lastY = yFunction(item.data[0].y);
       return { areaCode: item.areaCode, lastY };
     }),
@@ -60,8 +62,8 @@
   ></CategoryLabel>
 {/snippet}
 
-{#if showAllData === true}
-  {#each subset as line, i}
+{#if showAllData}
+  {#each data.lines as line, i}
     <Line
       {lineFunction}
       {xFunction}
@@ -71,31 +73,77 @@
       pathStrokeWidth="1"
       opacity={0.15}
       dataId={line.areaCode}
-      onMouseMove={() => {
-        selectedAreaCode = line.areaCode;
+      onMouseEnter={function (event, dataArray, dataId) {
+        hoveredLine = dataId;
+      }}
+      onMouseMove={function (event, dataArray, dataId) {
+        hoveredLine = dataId;
+      }}
+      onMouseLeave={function (event, dataArray, dataId) {
+        hoveredLine = null;
       }}
     ></Line>
-    {#if line.areaCode === selectedAreaCode}
+    {#if line.areaCode === hoveredLine}
       <g>
         {@render categoryLabelSnippet(line, yFunction(line.data[0].y))}
       </g>
     {/if}
   {/each}
+  {#if hoveredLine}
+    <Line
+      {lineFunction}
+      dataArray={hoveredLine
+        ? data.lines.find((el) => el.areaCode === hoveredLine).data
+        : data.lines.find((el) => el.areaCode === selectedAreaCode).data}
+      pathStrokeColor={colors[3]}
+      pathStrokeWidth="5"
+      opacity="1"
+      includeMarkers={false}
+      {xFunction}
+      {yFunction}
+      onMouseEnter={function (event, dataArray, dataId) {
+        hoveredLine = dataId;
+      }}
+      onMouseMove={function (event, dataArray, dataId) {
+        hoveredLine = dataId;
+      }}
+      onMouseLeave={function (event, dataArray, dataId) {
+        hoveredLine = null;
+      }}
+    ></Line>
+  {/if}
+{/if}
+{#each keyLinesSubset as line, i}
   <Line
     {lineFunction}
-    dataArray={data.lines.find((el) => el.areaCode === selectedAreaCode).data}
-    pathStrokeColor={colors[0]}
-    pathStrokeWidth="5"
-    opacity="1"
-    includeMarkers={true}
-    markerRadius="8"
-    markerStroke={colors[0]}
-    markerFill="white"
     {xFunction}
     {yFunction}
+    dataArray={line.data}
+    pathStrokeColor={colors[i]}
+    pathStrokeWidth="5"
+    opacity={!labelClicked && !labelHovered ? 1 : 0.2}
+    includeMarkers={false}
+    markerRadius="8"
+    markerStroke={colors[i]}
+    markerFill="white"
+    dataId={line.areaCode}
+    onMouseEnter={function (event, dataArray, dataId) {
+      hoveredLine = dataId;
+    }}
+    onMouseMove={function (event, dataArray, dataId) {
+      hoveredLine = dataId;
+    }}
+    onMouseLeave={function (event, dataArray, dataId) {
+      hoveredLine = null;
+    }}
   ></Line>
-{:else}
-  {#each subset as line, i}
+  <!-- {#if labelsPlaced}
+    {@render categoryLabelSnippet(
+      line,
+      labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
+    )}
+  {/if}
+  {#if selectedLine.includes(line.areaCode)}
     <Line
       {lineFunction}
       {xFunction}
@@ -103,40 +151,15 @@
       dataArray={line.data}
       pathStrokeColor={colors[i]}
       pathStrokeWidth="5"
-      opacity={!labelClicked && !labelHovered ? 1 : 0.2}
+      opacity={1}
       includeMarkers={false}
       markerRadius="8"
       markerStroke={colors[i]}
       markerFill="white"
       dataId={line.areaCode}
-      onMouseMove={() => {
-        selectedAreaCode = line.areaCode;
-      }}
+      onMouseEnter={function (event, dataArray, dataId) {}}
+      onMouseMove={function (event, dataArray, dataId) {}}
+      onMouseLeave={function (event, dataArray, dataId) {}}
     ></Line>
-    {#if labelsPlaced}
-      {@render categoryLabelSnippet(
-        line,
-        labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
-      )}
-    {/if}
-    {#if selectedLine.includes(line.areaCode)}
-      <Line
-        {lineFunction}
-        {xFunction}
-        {yFunction}
-        dataArray={line.data}
-        pathStrokeColor={colors[i]}
-        pathStrokeWidth="5"
-        opacity={1}
-        includeMarkers={false}
-        markerRadius="8"
-        markerStroke={colors[i]}
-        markerFill="white"
-        dataId={line.areaCode}
-        onMouseMove={() => {
-          selectedAreaCode = line.areaCode;
-        }}
-      ></Line>
-    {/if}
-  {/each}
-{/if}
+  {/if} -->
+{/each}

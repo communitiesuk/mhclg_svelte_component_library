@@ -35,6 +35,7 @@
     labelText,
     labelColor,
     labelTextColor,
+    hoveredLine,
   } = $props();
 
   let hoveredMarker = $state();
@@ -88,9 +89,9 @@
 <g
   data-id={dataId}
   onclick={(event) => onClick(event, dataArray)}
-  onmouseenter={(event) => onMouseEnter(event, dataArray)}
-  onmouseleave={(event) => onMouseLeave(event, dataArray)}
-  onmousemove={(event) => onMouseMove(event, dataArray)}
+  onmouseenter={(event) => onMouseEnter(event, dataArray, dataId)}
+  onmouseleave={(event) => onMouseLeave(event, dataArray, dataId)}
+  onmousemove={(event) => onMouseMove(event, dataArray, dataId)}
   {opacity}
 >
   {#if includeArea}

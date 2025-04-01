@@ -218,7 +218,7 @@ const askQuestion = (query) => {
       return;
     }
 
-    if (includesExamples) {
+    if (includesExamples.toLowerCase() === "yes") {
       if (fs.existsSync(targetExamplesFilePath)) {
         console.log(
           `Script aborted. ERROR: ${targetExamplesFilePath} already exists.`,

@@ -4,13 +4,23 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-  import Template from "$lib/package-wrapping/templates/Template.svelte";
+  import Breadcrumbs from "$lib/components/layout/Breadcrumbs.svelte";
 
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
+      heading: "1. Basic Automatically Generated Breadcrumbs",
       content: Example1,
+    },
+    {
+      id: "2",
+      heading: "2. Custom Specified Breadcrumbs Items",
+      content: Example2,
+    },
+    {
+      id: "3",
+      heading: "3. Collapsed on Mobile with Inverse Colors",
+      content: Example3,
     },
   ];
 </script>
@@ -37,32 +47,35 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    <Breadcrumbs />
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example2()}
+  <div class="p-5 bg-white">
+    <Breadcrumbs
+      items={[
+        { text: "Home", href: "/" },
+        { text: "Products", href: "/products" },
+        { text: "Category", href: "/products/category" },
+      ]}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example3()}
+  <div class="p-5 bg-black">
+    <Breadcrumbs
+      items={[
+        { text: "Home", href: "/" },
+        { text: "Services", href: "/services" },
+        { text: "Support", href: "/services/support" },
+      ]}
+      collapseOnMobile={true}
+      inverse={true}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
 {/snippet}

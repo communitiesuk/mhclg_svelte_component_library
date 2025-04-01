@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "In progress",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -46,10 +46,14 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "A navigation component that helps users understand where they are in a website's hierarchy.",
+    'Based on the <a href="https://design-system.service.gov.uk/components/breadcrumbs/" target="_blank" rel="noopener noreferrer">GOV.UK Design System breadcrumbs component</a> pattern.',
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Use the breadcrumbs component to help users understand where they are in the website's hierarchy and navigate back to higher levels.",
+    "The component automatically generates breadcrumbs based on the current route, but can also accept custom items.",
   ];
 
   let detailsArray = [
@@ -74,7 +78,6 @@
 </script>
 
 <script>
-  //@ts-nocheck
   import { page } from "$app/state";
   import { browser } from "$app/environment";
 
@@ -91,8 +94,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-import Breadcrumbs from "$lib/components/layout/Breadcrumbs.svelte";
-import Examples from "./breadcrumbs/Examples.svelte";
+  import Breadcrumbs from "$lib/components/layout/Breadcrumbs.svelte";
+  import Examples from "./breadcrumbs/Examples.svelte";
 
   let { data } = $props();
 
@@ -157,142 +160,29 @@ import Examples from "./breadcrumbs/Examples.svelte";
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 2,
-      },
-      {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
-          ],
-        },
-      },
-      {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "jsObjectProp",
-        category: "Input props",
+        name: "items",
+        category: "Content",
         value: [
-          {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
-          },
-          {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
-          },
-          {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
-          },
+          { text: "Home", href: "/" },
+          { text: "Components", href: "/components" },
+          { text: "UI Components", href: "/components/ui" },
+          { text: "Breadcrumbs", href: "/components/ui/breadcrumbs" },
         ],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
-          ],
-        },
       },
       {
-        name: "functionProp",
-        category: "Fixed props",
-
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
-        functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
-        },
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
-          ],
-        },
+        name: "collapseOnMobile",
+        category: "Display Options",
+        value: true,
+      },
+      {
+        name: "inverse",
+        category: "Display Options",
+        value: false,
+      },
+      {
+        name: "ariaLabel",
+        category: "Accessibility",
+        value: "Breadcrumb",
       },
     ]),
   );
@@ -434,7 +324,9 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-<Breadcrumbs {...parametersObject}></Breadcrumbs>
+  <div class="p-5 {getValue('inverse') ? 'bg-black' : ''}">
+    <Breadcrumbs {...parametersObject}></Breadcrumbs>
+  </div>
 {/snippet}
 
 <!--

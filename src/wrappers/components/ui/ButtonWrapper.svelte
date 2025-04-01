@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "In progress",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -46,10 +46,15 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "Enables the user to carry out some action by clicking on it, e.g. Sign in or Save and continue",
+    'Based on the <a href="https://design-system.service.gov.uk/components/button/" target="_blank" rel="noopener noreferrer">GOV.UK Design System button component</a> pattern.',
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "The text in the button should accurately describe the action, e.g. 'Accept and claim a tax refund'",
+    "It will often be a stand alone component on a webpage. It normally won't have a parent component. It will never have a child component.",
+    "Use a default button for the main call to action on a page. Avoid using multiple default buttons on a single page. Having more than one main call to action reduces their impact, and makes it harder for users to know what to do next.",
   ];
 
   let detailsArray = [
@@ -63,7 +68,7 @@
       label: "Context",
       arr: contextArray,
       visibleOnHomepage: false,
-      markdown: true,
+      markdown: false,
     },
   ];
 
@@ -91,8 +96,7 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-import Button from "$lib/components/ui/Button.svelte";
-
+  import Button from "$lib/components/ui/Button.svelte";
 
   let { data } = $props();
 
@@ -157,142 +161,14 @@ import Button from "$lib/components/ui/Button.svelte";
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
+        name: "textContent",
+        category: "content",
+        value: "Click me",
       },
       {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 2,
-      },
-      {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
-          ],
-        },
-      },
-      {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "jsObjectProp",
-        category: "Input props",
-        value: [
-          {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
-          },
-          {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
-          },
-          {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
-          },
-        ],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
-          ],
-        },
-      },
-      {
-        name: "functionProp",
-        category: "Fixed props",
-
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
-        functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
-        },
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
-          ],
-        },
+        name: "buttonType",
+        category: "content",
+        options: ["default", "secondary"],
       },
     ]),
   );
@@ -434,7 +310,9 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-<Button {...parametersObject}></Button>
+  <div class="p-5">
+    <Button {...parametersObject}></Button>
+  </div>
 {/snippet}
 
 <!--
@@ -479,6 +357,4 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div data-role="examples-section" class="px-5">
-
-</div>
+<div data-role="examples-section" class="px-5"></div>

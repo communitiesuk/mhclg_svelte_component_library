@@ -1,18 +1,17 @@
 <script>
   // @ts-nocheck
+  import CategoryLabel from "$lib/components/data-vis/line-chart/CategoryLabel.svelte";
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
+
   import { scaleLinear } from "d3-scale";
   import { curveLinear, line } from "d3-shape";
   import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
+  import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
 
-  let { data, selectedYear } = $props();
-
-  $inspect(data);
+  let { data } = $props();
 
   let svgWidth = $state(),
     svgHeight = 600;
-
-  $inspect(data);
 
   /*let staticMargin = { top: 10, right: 20, bottom: 20, left: 10 };
   let dynamicMargin = $derived({ top: 0, right: 0, bottom: 0, left: 0 });
@@ -22,7 +21,7 @@
     bottom: staticMargin.bottom + dynamicMargin.bottom,
     left: staticMargin.left + dynamicMargin.left,
   });*/
-  let totalMargin = { top: 20, right: 50, bottom: 40, left: 50 };
+  let totalMargin = { top: 20, right: 150, bottom: 40, left: 50 };
 
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
@@ -52,7 +51,16 @@
       .curve(curveLinear),
   );
 
+  let labelClicked = $state();
   let selectedAreaCode = $state("E07000223");
+
+  let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
+
+  function handleClickOutside(event) {
+    if (labelClicked && !event.target.closest('[id^="label"]')) {
+      labelClicked = null;
+    }
+  }
 </script>
 
 <h3>Example Usage</h3>
@@ -81,17 +89,18 @@
 
 <div bind:clientWidth={svgWidth}>
   <svg
+    onclick={handleClickOutside}
     width={svgWidth ?? 400}
     height={svgHeight}
     style="background-color: #f5f5f5"
   >
     {#if svgWidth}
       <g transform="translate({totalMargin.left},{totalMargin.top})">
-        <g data-role="x-axis">
+        <g data-role="y-axis">
           <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
           ></path>
         </g>
-        <g data-role="y-axis">
+        <g data-role="x-axis">
           <path
             d="M0 {chartHeight} l{chartWidth} 0"
             stroke="black"
@@ -100,35 +109,17 @@
         </g>
 
         <g data-role="lines-group">
-          {#each data.lines as line, i}
-            <Line
-              {lineFunction}
-              {selectedYear}
-              dataArray={line.data}
-              pathStrokeColor="black"
-              pathStrokeWidth="1"
-              opacity="0.15"
-              dataId={line.areaCode}
-              onMouseMove={() => {
-                selectedAreaCode = line.areaCode;
-              }}
-            ></Line>
-          {/each}
-          <Line
+          <Lines
+            {data}
             {lineFunction}
-            {selectedYear}
-            dataArray={data.lines.find((el) => el.areaCode === selectedAreaCode)
-              .data}
-            pathStrokeColor="red"
-            pathStrokeWidth="5"
-            opacity="1"
-            includeMarkers={true}
-            markerRadius="8"
-            markerStroke="red"
-            markerFill="white"
+            {selectedAreaCode}
+            {chartWidth}
             {xFunction}
             {yFunction}
-          ></Line>
+            bind:labelClicked
+            {chartHeight}
+            {colors}
+          ></Lines>
         </g>
       </g>
     {/if}

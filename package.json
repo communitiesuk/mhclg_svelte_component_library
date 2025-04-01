@@ -13,7 +13,8 @@
     "format": "prettier --write .",
     "generate-data": "tsx scripts/generateJSONData.cjs",
     "copy-govuk-assets": "node scripts/copy-govuk-assets.js",
-    "prepare": "npm run copy-govuk-assets"
+    "prepare": "npm run copy-govuk-assets",
+    "create-component-and-wrapper-pages": "node scripts/create-component-and-wrapper-pages.js"
   },
   "files": [
     "dist",

@@ -72,14 +72,28 @@
         : 0},{orientation.axis === 'y' ? axisFunction(tick) : 0})"
     >
       <path
-        d={orientation.axis === "y" ? "M0 0 l-8 0" : "M0 0 l0 -8"}
+        d={orientation.axis === "y" ? "M0 0 l-8 0" : "M0 0 l0 8"}
+        transform="translate({orientation.axis === 'x' &&
+        orientation.position === 'bottom'
+          ? 0
+          : orientation.axis === 'x' && orientation.position === 'top'
+            ? 0
+            : 0}, {orientation.axis === 'x' && orientation.position === 'bottom'
+          ? -10
+          : orientation.axis === 'x' && orientation.position === 'top'
+            ? 0
+            : 0})"
         stroke="black"
         stroke-width="2px"
       ></path>
       <text
         transform="translate({orientation.axis === 'x'
-          ? -10
-          : 0}, {orientation.axis === 'y' ? -10 : 0})"
+          ? 0
+          : -10}, {orientation.axis === 'x' && orientation.position === 'bottom'
+          ? 20
+          : orientation.axis === 'x' && orientation.position === 'top'
+            ? -10
+            : 0})"
         font-size="19"
         text-anchor={orientation.axis === "x"
           ? "middle"

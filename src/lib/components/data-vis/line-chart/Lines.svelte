@@ -36,7 +36,7 @@
   );
 
   $inspect(
-    ...Object.keys(defaultLineParams).reduce((acc, key) => {
+    Object.keys(defaultLineParams).reduce((acc, key) => {
       acc[key] = defaultLineParams[key];
       return acc;
     }, {}),
@@ -129,6 +129,10 @@
   {/if}
 {/if}
 {#each primaryLinesDataArray as line, i}
+  {@const lineParams = Object.keys(defaultLineParams).reduce((acc, key) => {
+    acc[key] = line.hasOwnProperty(key) ? line.key : defaultLineParams[key];
+    return acc;
+  }, {})}
   <Line
     {lineFunction}
     {xFunction}
@@ -151,6 +155,7 @@
     onMouseLeave={function (event, dataArray, dataId) {
       hoveredLine = null;
     }}
+    {...lineParams}
   ></Line>
   {#if labelsPlaced && !hoveredLine}
     {@render categoryLabelSnippet(

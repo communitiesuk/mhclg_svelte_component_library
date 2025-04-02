@@ -7,10 +7,9 @@
   import { LineLayer } from "svelte-maplibre";
   // import { mapClasses } from '../styles.js';
   import states from "./lad2023.json";
-  import { contrastingColor } from "./colors.js";
+  import { contrastingColor } from "./colors";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { ExpressionSpecification } from "maplibre-gl";
-  import Tooltip from "./Tooltip.svelte";
 
   let showBorder = $state(true);
   let showFill = $state(true);
@@ -46,58 +45,24 @@
     filterStates ? ["==", "B", ["slice", ["get", "LAD23NM"], 0, 1]] : undefined,
   );
   let hoveredArea = $state();
-  let searchValue = $state("");
-
-  const findArea = (e) => {
-    console.log(e.target[0].value);
-    e.preventDefault();
-    let coordArray =
-      Object.entries(states)[2][1].find((d) =>
-        d.properties.LAD23NM.toLowerCase().includes(searchValue.toLowerCase()),
-      ).geometry.coordinates.length === 1
-        ? Object.entries(states)[2][1].find((d) =>
-            d.properties.LAD23NM.toLowerCase().includes(
-              searchValue.toLowerCase(),
-            ),
-          ).geometry.coordinates[0]
-        : //Do some extra processing to get the data in the right shape if the area has non-contiguous areas
-          Object.entries(states)[2][1]
-            .find((d) =>
-              d.properties.LAD23NM.toLowerCase().includes(
-                searchValue.toLowerCase(),
-              ),
-            )
-            .geometry.coordinates.flat(2);
-    // console.log(coordArray);
-
-    let minValues = [
-      Math.min(...coordArray.map((d) => +d[0])),
-      Math.max(...coordArray.map((d) => +d[0])),
-    ];
-
-    let maxValues = [
-      Math.min(...coordArray.map((d) => +d[1])),
-      Math.max(...coordArray.map((d) => +d[1])),
-    ];
-    // console.log(minValues, maxValues);
-
-    map?.fitBounds([
-      [minValues[0], maxValues[0]],
-      [minValues[1], maxValues[1]],
-    ]);
-  };
-
-  let currentMousePosition = $state();
-  $inspect(currentMousePosition);
 </script>
 
-<p>Hovered area: {hoveredArea}</p>
-<p>Search value: {searchValue}</p>
+<div class="grid w-full max-w-md items-center gap-y-2 self-start">
+  <label><input type="checkbox" bind:checked={showFill} /> Show fill</label>
+  <label><input type="color" bind:value={fillColor} /> Fill Color </label>
+  <label><input type="checkbox" bind:checked={showBorder} /> Show border</label>
+  <label><input type="color" bind:value={borderColor} /> Border Color </label>
+</div>
+<label
+  ><input type="checkbox" bind:checked={filterStates} /> Only show LAs starting with
+  'B'</label
+>
+<p>{hoveredArea}</p>
 
 <MapLibre
   bind:map
   bind:loaded
-  style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+  style="https://raw.githubusercontent.com/ONSvisual/svelte-maps/main/dist/data/style-ons-light.json"
   class="map"
   standardControls
   center={[-2.5879, 51.4545]}
@@ -114,7 +79,6 @@
         beforeLayerType="symbol"
         manageHoverState
         onclick={(e) => {
-          searchValue = e.features[0].id;
           let coordArray =
             Object.entries(states)[2][1].find(
               (d) => d.properties.LAD23NM == e.features[0].id,
@@ -146,7 +110,6 @@
         }}
         onmousemove={(e) => {
           console.log(e);
-          currentMousePosition = e.event.point;
           hoveredArea = e.features[0].id;
         }}
       />
@@ -159,7 +122,6 @@
       />
     {/if}
   </GeoJSON>
-  <Tooltip {currentMousePosition} {hoveredArea} />
 </MapLibre>
 
 <style>

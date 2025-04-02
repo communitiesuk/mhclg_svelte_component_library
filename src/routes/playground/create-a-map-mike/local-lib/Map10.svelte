@@ -8,7 +8,7 @@
   // import { mapClasses } from '../styles.js';
   import states from "./lad2023.json";
   import pconData from "./salary-pcon10.json";
-  import { contrastingColor } from "./colors.js";
+  import { contrastingColor } from "./colors";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { ExpressionSpecification } from "maplibre-gl";
   import MapLegend from "./MapLegend.svelte";

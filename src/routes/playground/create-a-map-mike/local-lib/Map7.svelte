@@ -7,7 +7,7 @@
   import { LineLayer } from "svelte-maplibre";
   // import { mapClasses } from '../styles.js';
   import states from "./lad2023.json";
-  import { contrastingColor } from "./colors.js";
+  import { contrastingColor } from "./colors";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { ExpressionSpecification } from "maplibre-gl";
   import { Search, Button } from "flowbite-svelte";

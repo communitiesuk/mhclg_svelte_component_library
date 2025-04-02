@@ -9,47 +9,47 @@
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - Basic Usage",
+      heading: "1. Basic Usage",
       content: Example1,
     },
     {
       id: "2",
-      heading: "2. Example 2 - With Inline Links",
+      heading: "2. With Inline Links",
       content: Example2,
     },
     {
       id: "3",
-      heading: "3. Example 3 - With Navigation Sections",
+      heading: "3. With Navigation Sections",
       content: Example3,
     },
     {
       id: "4",
-      heading: "4. Example 4 - Full Featured Footer",
+      heading: "4. Full Featured Footer",
       content: Example4,
     },
     {
       id: "5",
-      heading: "5. Example 5 - With Language Attributes (Welsh Example)",
+      heading: "5. With Language Attributes (Welsh Example)",
       content: Example5,
     },
     {
       id: "6",
-      heading: "6. Example 6 - Custom Crown Copyright Logo",
+      heading: "6. Custom Crown Copyright Logo",
       content: Example6,
     },
     {
       id: "7",
-      heading: "7. Example 7 - Custom Copyright Text",
+      heading: "7. Custom Copyright Text",
       content: Example7,
     },
     {
       id: "8",
-      heading: "8. Example 8 - Combined Customisations",
+      heading: "8. Combined Customisations",
       content: Example8,
     },
     {
       id: "9",
-      heading: "9. Example 9 - Fully Customised Footer",
+      heading: "9. Fully Customised Footer",
       content: Example9,
     },
   ];

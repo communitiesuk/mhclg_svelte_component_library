@@ -35,13 +35,6 @@
     }),
   );
 
-  $inspect(
-    Object.keys(defaultLineParams).reduce((acc, key) => {
-      acc[key] = defaultLineParams[key];
-      return acc;
-    }, {}),
-  );
-
   let labelsPlaced = $state();
 
   onMount(() => {
@@ -130,7 +123,10 @@
 {/if}
 {#each primaryLinesDataArray as line, i}
   {@const lineParams = Object.keys(defaultLineParams).reduce((acc, key) => {
-    acc[key] = line.hasOwnProperty(key) ? line.key : defaultLineParams[key];
+    acc[key] =
+      line.hasOwnProperty(key) && line[key] != null
+        ? line[key]
+        : defaultLineParams[key];
     return acc;
   }, {})}
   <Line
@@ -139,7 +135,6 @@
     {yFunction}
     dataArray={line.data}
     pathStrokeColor={colors[i]}
-    pathStrokeWidth="5"
     opacity={!labelClicked && !labelHovered && !hoveredLine ? 1 : 0.2}
     includeMarkers={false}
     markerRadius="8"

@@ -69,10 +69,11 @@
       ...el,
       primary: keyLines.includes(el.areaCode),
       includeMarkers: !keyLines.includes(el.areaCode),
+      pathStrokeWidth: keyLines.includes(el.areaCode) ? 10 : null,
     })),
   );
 
-  let defaultLineParams = { includeMarkers: true };
+  let defaultLineParams = { includeMarkers: true, pathStrokeWidth: 1 };
   $inspect(dataArray);
 
   let showAllData = true;

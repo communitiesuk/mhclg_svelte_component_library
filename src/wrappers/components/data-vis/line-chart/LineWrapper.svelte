@@ -379,7 +379,7 @@
       {
         name: "pathStrokeColor",
         category: "path",
-        value: "#b312a0",
+        value: "grey",
       },
       {
         name: "pathStrokeWidth",
@@ -435,7 +435,7 @@
       {
         name: "opacity",
         category: "overallStyling",
-        value: 1,
+        value: 0.15,
         step: 0.1,
         min: 0,
         max: 1,

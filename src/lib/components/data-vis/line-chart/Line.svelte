@@ -3,23 +3,23 @@
 
   let {
     dataArray,
-    opacity = 1,
-    pathStrokeColor = "#b312a0",
-    pathStrokeWidth = 1,
+    opacity = 0.15,
+    pathStrokeColor = "grey",
+    pathStrokeWidth = 3,
     pathFillColor = "none",
     pathStrokeDashArray = "none",
-    areaFillColor,
+    areaFillColor = "none",
     includeArea = false,
     includeMarkers = false,
     markerShape = "circle",
     markerRadius = 5,
-    markerFill = "#b312a0",
+    markerFill = "grey",
     markerStroke = "white",
     markerStrokeWidth = 3,
     lineFunction,
     areaFunction,
     xFunction,
-    lineEnding = "circle",
+    lineEnding = null,
     yFunction,
     dataId,
     markersDataId,
@@ -35,7 +35,6 @@
     labelText,
     labelColor,
     labelTextColor,
-    hoveredLine,
   } = $props();
 
   let hoveredMarker = $state();

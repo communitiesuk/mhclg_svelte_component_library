@@ -21,7 +21,6 @@
   } = $props();
 
   let hoveredLine = $state();
-  $inspect(dataArray);
   let bounds = $state([0, chartHeight]);
   let primaryLinesDataArray = dataArray.filter((el) => el.primary);
 

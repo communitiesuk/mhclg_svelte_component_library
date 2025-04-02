@@ -17,6 +17,11 @@
   let areaCode = $state(dataArray.areaCode);
 
   let oldY = $state(yFunction(dataArray.data[0].y));
+
+  let opacity=$derived((labelHovered || labelClicked) &&
+    ![labelHovered, labelClicked].includes(areaCode)
+      ? 0.3
+      : 1)
 </script>
 
 <g
@@ -31,13 +36,11 @@
     fill="none"
     stroke="black"
     stroke-width="1"
+    {opacity}
   ></path>
   <text
     {id}
-    opacity={(labelHovered || labelClicked) &&
-    ![labelHovered, labelClicked].includes(areaCode)
-      ? 0.3
-      : 1}
+    {opacity}
     dominant-baseline="central"
     text-anchor="start"
     x={20}

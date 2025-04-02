@@ -188,8 +188,10 @@ const askQuestion = (query) => {
         "Examples.svelte",
       );
 
-      if (!fs.existsSync(targetExamplesFolderPath)) {
-        fs.mkdirSync(targetExamplesFolderPath, { recursive: true });
+      if (includesExamples.toLowerCase() === "yes") {
+        if (!fs.existsSync(targetExamplesFolderPath)) {
+          fs.mkdirSync(targetExamplesFolderPath, { recursive: true });
+        }
       }
 
       ////////////////////////

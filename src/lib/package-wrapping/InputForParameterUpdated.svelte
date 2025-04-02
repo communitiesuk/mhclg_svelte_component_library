@@ -107,6 +107,8 @@
       };
     }
   });
+
+  $inspect(derivedValue, parameter.name);
 </script>
 
 {#if useStatedValue}
@@ -186,19 +188,23 @@
       </div>
     {/if}
     {#if (parameter.hasOwnProperty("functionElements") && parameter.functionElements != null && parameter.functionElements.hasOwnProperty("functionAsString") && parameter.functionElements.functionAsString != null) || (parameter?.propType === "fixed" && !parameter.hasOwnProperty("functionElements")) || (!parameter?.isEditable && !parameter.hasOwnProperty("functionElements"))}
-      <CodeBlock
-        code={typeof derivedValue === "function"
-          ? parameter.functionElements?.functionAsString.replace(
-              /getValue\("([^"]+)"\)/g,
-              "$1",
-            )
-          : typeof derivedValue === "object"
-            ? derivedValue
-            : derivedValue.toString()}
-        language="javascript"
-        size="sm"
-        includeHeader={false}
-      ></CodeBlock>
+      <div class="overflow-scroll" style="max-height: 768px;">
+        {#key derivedValue}
+          <CodeBlock
+            code={typeof derivedValue === "function"
+              ? parameter.functionElements?.functionAsString.replace(
+                  /getValue\("([^"]+)"\)/g,
+                  "$1",
+                )
+              : typeof derivedValue === "object"
+                ? derivedValue
+                : derivedValue.toString()}
+            language="javascript"
+            size="sm"
+            includeHeader={false}
+          ></CodeBlock>
+        {/key}
+      </div>
     {/if}
   </div>
 {/if}

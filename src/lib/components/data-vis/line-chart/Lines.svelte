@@ -6,7 +6,7 @@
   import { derived } from "svelte/store";
 
   let {
-    data,
+    dataObject,
     lineFunction,
     selectedAreaCode,
     chartWidth,
@@ -23,7 +23,9 @@
   let showAllData = $state(true);
   const keyLines = $state([selectedAreaCode, "E07000026", "E07000032"]);
   let keyLinesSubset = $derived(
-    data.lines.filter((el) => keyLines.includes(el.areaCode)).map((el) => el),
+    dataObject.lines
+      .filter((el) => keyLines.includes(el.areaCode))
+      .map((el) => el),
   );
 
   let labelHovered = $state();
@@ -63,7 +65,7 @@
 {/snippet}
 
 {#if showAllData}
-  {#each data.lines as line, i}
+  {#each dataObject.lines as line, i}
     <Line
       {lineFunction}
       {xFunction}
@@ -93,8 +95,8 @@
     <Line
       {lineFunction}
       dataArray={hoveredLine
-        ? data.lines.find((el) => el.areaCode === hoveredLine).data
-        : data.lines.find((el) => el.areaCode === selectedAreaCode).data}
+        ? dataObject.lines.find((el) => el.areaCode === hoveredLine).data
+        : dataObject.lines.find((el) => el.areaCode === selectedAreaCode).data}
       pathStrokeColor={colors[3]}
       pathStrokeWidth="5"
       opacity="1"

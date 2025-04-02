@@ -271,6 +271,12 @@ const askQuestion = (query) => {
         'import Examples from "./examples/Examples.svelte";',
         `import Examples from "./${pascalToKebabCase(fileName)}/Examples.svelte";`,
       );
+
+      modifyFile(
+        targetExamplesFilePath,
+        'import Template from "$lib/package-wrapping/templates/Template.svelte";',
+        `import ${fileName} from "$lib/components/${folderName + (subfolderName === "" ? "" : "/" + subfolderName)}/${fileName}.svelte";`,
+      );
     } else {
       modifyFile(
         targetTemplateFilePath,

@@ -1,6 +1,4 @@
 <script>
-  import { text } from "@sveltejs/kit";
-
   let { marker, labelColor, labelTextColor, textContent } = $props();
 
   let textDimensions = $state();

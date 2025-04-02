@@ -4,6 +4,7 @@
   let {
     ticksArray = $bindable(),
     chartWidth,
+    chartHeight,
     axisFunction,
     values,
     numberOfTicks,
@@ -42,10 +43,33 @@
 
 {#if axisFunction != null && ticksArray != null}
   {#each ticksArray as tick}
-    <g
+    <!-- <g
       transform="translate(
       {orientation.axis === 'x' ? axisFunction(tick) : 0}, 
       {orientation.axis === 'y' ? axisFunction(tick) : 0})"
+    > -->
+    <!-- <g
+      transform="translate(
+  {orientation.axis === 'x'
+        ? orientation.position === 'left'
+          ? axisFunction(tick)
+          : orientation.position === 'right'
+            ? axisFunction(tick)
+            : 0
+        : 0}, 
+  {orientation.axis === 'y'
+        ? orientation.position === 'top'
+          ? axisFunction(tick)
+          : orientation.position === 'bottom'
+            ? axisFunction(tick)
+            : 0
+        : 0}
+)"
+    > -->
+    <g
+      transform="translate({orientation.axis === 'x'
+        ? axisFunction(tick)
+        : 0},{orientation.axis === 'y' ? axisFunction(tick) : 0})"
     >
       <path
         d={orientation.axis === "y" ? "M0 0 l-8 0" : "M0 0 l0 -8"}

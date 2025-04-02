@@ -361,6 +361,16 @@
         value: "E07000223",
       },
       {
+        name: "showAllData",
+        category: "specifyingLines",
+        value: true,
+      },
+      {
+        name: "additionalKeyLines",
+        category: "specifyingLines",
+        value: ["E07000222", "E07000224"],
+      },
+      {
         name: "colors",
         category: "specifyingLines",
         value: ["red", "blue", "green", "orange", "purple", "cyan"],

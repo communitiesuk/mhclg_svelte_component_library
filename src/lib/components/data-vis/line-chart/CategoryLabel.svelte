@@ -9,14 +9,8 @@
     xFunction,
     yFunction,
     newY,
+    onClick,
   } = $props();
-
-  // should this be done with css class:active onmouseenter instead?
-  function onClickLabel(areaCode) {
-    labelClicked === areaCode
-      ? ((labelClicked = null), (labelHovered = null))
-      : (labelClicked = areaCode);
-  }
 
   function onMouseEnter(areaCode) {
     labelHovered = areaCode;
@@ -37,7 +31,7 @@
 <g
   {id}
   transform="translate({chartWidth + 8},{0})"
-  onclick={() => onClickLabel(dataArray.areaCode)}
+  onclick={() => onClick(dataArray.areaCode)}
   onmouseenter={() => onMouseEnter(dataArray.areaCode)}
   onmouseleave={() => onMouseLeave(dataArray.areaCode)}
 >

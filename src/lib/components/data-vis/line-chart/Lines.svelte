@@ -15,13 +15,14 @@
     labelClicked = $bindable(),
     chartHeight,
     colors,
+    additionalKeyLines,
+    showAllData,
   } = $props();
 
   let hoveredLine = $state();
   $inspect(hoveredLine);
   let bounds = $state([0, chartHeight]);
-  let showAllData = $state(true);
-  const keyLines = $state([selectedAreaCode, "E07000026", "E07000032"]);
+  let keyLines = $state([...additionalKeyLines, selectedAreaCode]);
   let keyLinesSubset = $derived(
     dataObject.lines
       .filter((el) => keyLines.includes(el.areaCode))
@@ -61,6 +62,11 @@
     {xFunction}
     {yFunction}
     {newY}
+    onClick={function (areaCode) {
+      labelClicked === areaCode
+        ? ((labelClicked = null), (labelHovered = null))
+        : (labelClicked = areaCode);
+    }}
   ></CategoryLabel>
 {/snippet}
 
@@ -73,7 +79,7 @@
       dataArray={line.data}
       pathStrokeColor="black"
       pathStrokeWidth="1"
-      opacity={0.15}
+      opacity={hoveredLine ? 0.05 : 0.15}
       dataId={line.areaCode}
       onMouseEnter={function (event, dataArray, dataId) {
         hoveredLine = dataId;
@@ -103,15 +109,9 @@
       includeMarkers={false}
       {xFunction}
       {yFunction}
-      onMouseEnter={function (event, dataArray, dataId) {
-        hoveredLine = dataId;
-      }}
-      onMouseMove={function (event, dataArray, dataId) {
-        hoveredLine = dataId;
-      }}
-      onMouseLeave={function (event, dataArray, dataId) {
-        hoveredLine = null;
-      }}
+      onMouseEnter={function (event, dataArray, dataId) {}}
+      onMouseMove={function (event, dataArray, dataId) {}}
+      onMouseLeave={function (event, dataArray, dataId) {}}
     ></Line>
   {/if}
 {/if}
@@ -123,7 +123,7 @@
     dataArray={line.data}
     pathStrokeColor={colors[i]}
     pathStrokeWidth="5"
-    opacity={!labelClicked && !labelHovered ? 1 : 0.2}
+    opacity={!labelClicked && !labelHovered && !hoveredLine ? 1 : 0.2}
     includeMarkers={false}
     markerRadius="8"
     markerStroke={colors[i]}
@@ -139,7 +139,7 @@
       hoveredLine = null;
     }}
   ></Line>
-  <!-- {#if labelsPlaced}
+  {#if labelsPlaced && !hoveredLine}
     {@render categoryLabelSnippet(
       line,
       labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
@@ -163,5 +163,5 @@
       onMouseMove={function (event, dataArray, dataId) {}}
       onMouseLeave={function (event, dataArray, dataId) {}}
     ></Line>
-  {/if} -->
+  {/if}
 {/each}

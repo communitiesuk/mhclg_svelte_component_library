@@ -98,6 +98,13 @@
   {/if}
   <path
     d={lineFunction(dataArray)}
+    fill="none"
+    stroke="transparent"
+    stroke-width="20"
+    pointer-events="stroke"
+  ></path>
+  <path
+    d={lineFunction(dataArray)}
     fill={pathFillColor}
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}

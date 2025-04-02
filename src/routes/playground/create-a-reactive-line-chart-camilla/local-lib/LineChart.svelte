@@ -5,6 +5,7 @@
   import { curveLinear, line } from "d3-shape";
   import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
   import Ticks from "./Ticks.svelte";
+  import Axis from "./Axis.svelte";
 
   let { data, numberOfTicks } = $props();
 
@@ -50,9 +51,11 @@
 
   let yFunction = $derived(
     valuesMinMax != null
-      ? scaleLinear().domain(valuesMinMax).range([chartHeight, 0])
+      ? scaleLinear().domain(valuesMinMax).range([0, -chartHeight])
       : null,
   );
+
+  $inspect(yFunction ? yFunction(40) : null);
 
   let lineFunction = $derived(
     valuesMinMax != null
@@ -98,21 +101,27 @@
   >
     {#if svgWidth}
       <g transform="translate({totalMargin.left},{totalMargin.top})">
-        <g data-role="x-axis">
-          <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
-          ></path>
-          {#key numberOfTicks}
-            <Ticks
-              bind:ticksArray={ticksXArray}
-              {chartWidth}
-              axisFunction={xFunction}
-              values={yearsMinMax}
-              {numberOfTicks}
-              orientation={{ axis: "x", position: "top" }}
-            ></Ticks>
-          {/key}
-        </g>
-        <g data-role="y-axis">
+        <Axis
+          {chartHeight}
+          {chartWidth}
+          {numberOfTicks}
+          axisFunction={xFunction}
+          values={yearsMinMax}
+          bind:ticksArray={ticksXArray}
+          orientation={{ axis: "x", position: "bottom" }}
+        ></Axis>
+
+        <Axis
+          {chartHeight}
+          {chartWidth}
+          {numberOfTicks}
+          axisFunction={yFunction}
+          values={allValues}
+          bind:ticksArray={ticksYArray}
+          orientation={{ axis: "y", position: "left" }}
+        ></Axis>
+
+        <!-- <g data-role="y-axis">
           <path
             d="M0 {chartHeight} l{chartWidth} 0"
             stroke="black"
@@ -122,13 +131,14 @@
             <Ticks
               bind:ticksArray={ticksYArray}
               {chartWidth}
+              {chartHeight}
               axisFunction={yFunction}
               values={allValues}
               {numberOfTicks}
-              orientation={{ axis: "y", position: "left" }}
+              orientation={{ axis: "y", position: "right" }}
             ></Ticks>
           {/key}
-        </g>
+        </g> -->
 
         {#if lineFunction != null}
           <g data-role="lines-group">

@@ -61,6 +61,18 @@
       labelClicked = null;
     }
   }
+
+  let keyLines = ["E07000223", "E07000224"];
+
+  let dataArray = $derived(
+    data.lines.map((el) => ({
+      ...el,
+      primary: keyLines.includes(el.areaCode),
+    })),
+  );
+
+  let defaultLineParams = $state();
+  $inspect(dataArray);
 </script>
 
 <h3>Example Usage</h3>
@@ -110,7 +122,7 @@
 
         <g data-role="lines-group">
           <Lines
-            {data}
+            {dataArray}
             {lineFunction}
             {selectedAreaCode}
             {chartWidth}

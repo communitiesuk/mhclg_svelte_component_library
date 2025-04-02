@@ -6,7 +6,7 @@
   import { derived } from "svelte/store";
 
   let {
-    dataObject,
+    dataArray,
     lineFunction,
     selectedAreaCode,
     chartWidth,
@@ -20,20 +20,15 @@
   } = $props();
 
   let hoveredLine = $state();
-  $inspect(hoveredLine);
+  $inspect(dataArray);
   let bounds = $state([0, chartHeight]);
-  let keyLines = $state([...additionalKeyLines, selectedAreaCode]);
-  let keyLinesSubset = $derived(
-    dataObject.lines
-      .filter((el) => keyLines.includes(el.areaCode))
-      .map((el) => el),
-  );
+  let primaryLinesDataArray = dataArray.filter((el) => el.primary);
 
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
 
   let transformed = $derived(
-    keyLinesSubset.map((item) => {
+    primaryLinesDataArray.map((item) => {
       let lastY = yFunction(item.data[0].y);
       return { areaCode: item.areaCode, lastY };
     }),
@@ -80,7 +75,7 @@
 {/snippet}
 
 {#if showAllData}
-  {#each dataObject.lines as line, i}
+  {#each dataArray as line, i}
     <Line
       {lineFunction}
       {xFunction}
@@ -110,8 +105,8 @@
     <Line
       {lineFunction}
       dataArray={hoveredLine
-        ? dataObject.lines.find((el) => el.areaCode === hoveredLine).data
-        : dataObject.lines.find((el) => el.areaCode === selectedAreaCode).data}
+        ? dataArray.find((el) => el.areaCode === hoveredLine).data
+        : dataArray.find((el) => el.areaCode === selectedAreaCode).data}
       pathStrokeColor={colors[3]}
       pathStrokeWidth="5"
       opacity="1"
@@ -124,7 +119,7 @@
     ></Line>
   {/if}
 {/if}
-{#each keyLinesSubset as line, i}
+{#each primaryLinesDataArray as line, i}
   <Line
     {lineFunction}
     {xFunction}

@@ -224,7 +224,7 @@
         options: data.metrics,
       },
       {
-        name: "dataObject",
+        name: "dataArray",
         category: "data",
       },
       {
@@ -338,7 +338,7 @@
         name: "lineFunction",
         category: "lineFunction",
         functionElements: {
-          functionAsString: `function (dataObject) {
+          functionAsString: `function (dataArray) {
     return line()
       .x((d) => xFunction(d.x))
       .y((d) => yFunction(d.y))
@@ -431,10 +431,9 @@
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
 
-  let dataObject = $derived(
-    data.dataInFormatForLineChart.find(
-      (el) => el.metric === getValue("metric"),
-    ),
+  let dataArray = $derived(
+    data.dataInFormatForLineChart.find((el) => el.metric === getValue("metric"))
+      .lines,
   );
 
   let chartHeight = $derived(
@@ -491,7 +490,7 @@
   });
 
   let derivedParametersObject = $derived({
-    dataObject,
+    dataArray,
     chartHeight,
     chartWidth,
     xFunction,

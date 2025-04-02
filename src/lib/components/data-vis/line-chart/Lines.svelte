@@ -17,6 +17,7 @@
     colors,
     additionalKeyLines,
     showAllData,
+    defaultLineParams,
   } = $props();
 
   let hoveredLine = $state();
@@ -32,6 +33,13 @@
       let lastY = yFunction(item.data[0].y);
       return { areaCode: item.areaCode, lastY };
     }),
+  );
+
+  $inspect(
+    ...Object.keys(defaultLineParams).reduce((acc, key) => {
+      acc[key] = defaultLineParams[key];
+      return acc;
+    }, {}),
   );
 
   let labelsPlaced = $state();
@@ -85,6 +93,7 @@
       pathStrokeWidth="1"
       opacity={hoveredLine ? 0.05 : 0.15}
       dataId={line.areaCode}
+      {...defaultLineParams}
       onMouseEnter={function (event, dataArray, dataId) {
         hoveredLine = dataId;
       }}

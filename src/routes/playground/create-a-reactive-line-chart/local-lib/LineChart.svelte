@@ -68,11 +68,14 @@
     data.lines.map((el) => ({
       ...el,
       primary: keyLines.includes(el.areaCode),
+      includeMarkers: !keyLines.includes(el.areaCode),
     })),
   );
 
-  let defaultLineParams = $state();
+  let defaultLineParams = { includeMarkers: true };
   $inspect(dataArray);
+
+  let showAllData = true;
 </script>
 
 <h3>Example Usage</h3>
@@ -131,6 +134,8 @@
             bind:labelClicked
             {chartHeight}
             {colors}
+            {defaultLineParams}
+            {showAllData}
           ></Lines>
         </g>
       </g>

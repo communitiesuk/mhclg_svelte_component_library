@@ -67,6 +67,15 @@
         ? ((labelClicked = null), (labelHovered = null))
         : (labelClicked = areaCode);
     }}
+    onMouseEnter={function onMouseEnter(areaCode) {
+      labelHovered = areaCode;
+    }}
+    onMouseLeave={function onMouseLeave(areaCode) {
+      labelClicked === areaCode
+        ? (labelHovered = null)
+        : (labelHovered = areaCode);
+      labelHovered === areaCode ? (labelHovered = null) : (labelHovered = null);
+    }}
   ></CategoryLabel>
 {/snippet}
 

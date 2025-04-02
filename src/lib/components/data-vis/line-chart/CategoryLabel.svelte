@@ -10,18 +10,9 @@
     yFunction,
     newY,
     onClick,
+    onMouseEnter,
+    onMouseLeave,
   } = $props();
-
-  function onMouseEnter(areaCode) {
-    labelHovered = areaCode;
-  }
-
-  function onMouseLeave(areaCode) {
-    labelClicked === areaCode
-      ? (labelHovered = null)
-      : (labelHovered = areaCode);
-    labelHovered === areaCode ? (labelHovered = null) : (labelHovered = null);
-  }
 
   let areaCode = $state(dataArray.areaCode);
 

@@ -236,7 +236,7 @@
   ></ParametersSection>
 
   <div data-role="demo-section">
-    <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+    <h5 id="component-demo" class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
     <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
   </div>
 
@@ -259,7 +259,7 @@
 
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-    <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
+    <h5 id="examples" class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Accordion with snippet-based content</h6>
     <CodeBlock

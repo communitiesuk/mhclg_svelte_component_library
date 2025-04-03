@@ -110,7 +110,9 @@
   />
 
   <div data-role="demo-section">
-    <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+    <h5 id="component-demo" class="mb-6 mt-12 underline underline-offset-4">
+      Component Demo
+    </h5>
     <ScreenSizeRadio bind:demoScreenWidth />
   </div>
 
@@ -133,7 +135,9 @@
 
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px" />
-    <h5 class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
+    <h5 id="examples" class="mb-6 mt-12 underline underline-offset-4">
+      Examples
+    </h5>
 
     <!-- Example 1: Basic Usage -->
     <h3 class="govuk-heading-m">Basic Usage</h3>

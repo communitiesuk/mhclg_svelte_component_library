@@ -259,7 +259,31 @@
   function getNavGroupsForSection(section: string): SideNavGroup[] {
     switch (section) {
       case "Components":
-        return componentNavGroups;
+        // For Components section, add sub-navigation items with hash links to documentation sections
+        return componentNavGroups.map((group) => {
+          return {
+            ...group,
+            items: group.items.map((item) => {
+              // Get base path without any hash
+              const basePath = item.href.split("#")[0];
+
+              return {
+                ...item,
+                // Add documentation section links based on the actual page structure
+                subItems: [
+                  { text: "Description", href: `${basePath}#description` },
+                  { text: "Context", href: `${basePath}#context` },
+                  { text: "Parameters", href: `${basePath}#parameters` },
+                  {
+                    text: "Component Demo",
+                    href: `${basePath}#component-demo`,
+                  },
+                  { text: "Examples", href: `${basePath}#examples` },
+                ],
+              };
+            }),
+          };
+        });
       case "Patterns":
         return patternNavGroups;
       case "Community":

@@ -1,11 +1,13 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { page } from "$app/stores";
 
   // Define the navigation item type
   export type SideNavItem = {
     text: string;
     href: string;
     current?: boolean;
+    subItems?: { text: string; href: string }[];
   };
 
   export type SideNavGroup = {
@@ -19,31 +21,50 @@
     items = [],
     groups = [],
     currentItem = $bindable(""),
+    activeItemBackgroundColor = $bindable("transparent"),
   } = $props<{
     title?: string;
     items?: SideNavItem[];
     groups?: SideNavGroup[];
     currentItem?: string;
+    activeItemBackgroundColor?: string;
   }>();
 
-  // Mark current item based on currentItem prop
+  // Handle URL path to determine current active item
   $effect(() => {
-    if (currentItem) {
-      // Update current property on items
-      items = items.map((item) => ({
-        ...item,
-        current: item.text === currentItem || item.href === currentItem,
-      }));
+    const path = $page?.url?.pathname || "";
 
-      // Update current property on grouped items
-      groups = groups.map((group) => ({
-        ...group,
-        items: group.items.map((item) => ({
+    // Check if currentItem is set or derive from URL path
+    const activeItem = currentItem || path.split("/").pop() || "";
+
+    // Update current property on items
+    items = items.map((item) => {
+      // Check if the current URL path includes this item's path
+      const isActive =
+        item.href === path ||
+        path.includes(item.href) ||
+        item.text.toLowerCase() === activeItem.toLowerCase();
+      return {
+        ...item,
+        current: isActive,
+      };
+    });
+
+    // Update current property on grouped items
+    groups = groups.map((group) => ({
+      ...group,
+      items: group.items.map((item) => {
+        // Check if the current URL path includes this item's path
+        const isActive =
+          item.href === path ||
+          path.includes(item.href) ||
+          item.text.toLowerCase() === activeItem.toLowerCase();
+        return {
           ...item,
-          current: item.text === currentItem || item.href === currentItem,
-        })),
-      }));
-    }
+          current: isActive,
+        };
+      }),
+    }));
   });
 </script>
 
@@ -63,15 +84,34 @@
         {#each items as item}
           <li
             class="app-subnav__section-item {item.current
-              ? 'app-subnav__section-item--current'
+              ? 'app-subnav__section-item--current app-subnav__section-item--bold app-subnav__section-item--top'
               : ''}"
+            style={item.current
+              ? `background-color: ${activeItemBackgroundColor};`
+              : ""}
           >
             <a
               class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
               href={item.href}
+              aria-current={item.current ? "location" : undefined}
             >
               {item.text}
             </a>
+
+            {#if item.current && item.subItems && item.subItems.length > 0}
+              <ul class="app-subnav__section app-subnav__section--nested">
+                {#each item.subItems as subItem}
+                  <li class="app-subnav__section-item">
+                    <a
+                      class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
+                      href={subItem.href}
+                    >
+                      {subItem.text}
+                    </a>
+                  </li>
+                {/each}
+              </ul>
+            {/if}
           </li>
         {/each}
       </ul>
@@ -82,23 +122,38 @@
       {#if group.title}
         <h3 class="app-subnav__theme">{group.title}</h3>
       {/if}
-      <ul
-        class="app-subnav__section {group.title
-          ? 'app-subnav__section--nested'
-          : ''}"
-      >
+      <ul class="app-subnav__section">
         {#each group.items as item}
           <li
             class="app-subnav__section-item {item.current
-              ? 'app-subnav__section-item--current'
+              ? 'app-subnav__section-item--current app-subnav__section-item--bold app-subnav__section-item--top'
               : ''}"
+            style={item.current
+              ? `background-color: ${activeItemBackgroundColor};`
+              : ""}
           >
             <a
               class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
               href={item.href}
+              aria-current={item.current ? "location" : undefined}
             >
               {item.text}
             </a>
+
+            {#if item.current && item.subItems && item.subItems.length > 0}
+              <ul class="app-subnav__section app-subnav__section--nested">
+                {#each item.subItems as subItem}
+                  <li class="app-subnav__section-item">
+                    <a
+                      class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
+                      href={subItem.href}
+                    >
+                      {subItem.text}
+                    </a>
+                  </li>
+                {/each}
+              </ul>
+            {/if}
           </li>
         {/each}
       </ul>
@@ -175,7 +230,7 @@
   }
 
   .app-subnav__link:not(:focus):hover {
-    color: #513184;
+    color: #1a65a6;
   }
 
   .app-subnav__section-item {
@@ -188,34 +243,15 @@
   .app-subnav__section-item--current {
     margin-left: -19px;
     padding-left: 15px;
-    border-left: 4px solid #4c2c92;
+    border-left: 4px solid #1a65a6;
     background-color: #f8f8f8;
-  }
-
-  .app-subnav__section-item--current .app-subnav__link {
-    font-weight: bold;
-  }
-
-  .app-subnav__section-item--top .app-subnav__link {
-    position: relative;
-    z-index: 2;
-  }
-
-  .app-subnav__section-item--top:after {
-    content: "";
-    display: block;
-    padding-left: 15px;
-    border-left: 4px solid #4c2c92;
-    background-color: #f8f8f8;
-    position: absolute;
-    top: 0;
-    left: -19px;
-    width: 100%;
-    height: 35px;
   }
 
   .app-subnav__section-item--bold .app-subnav__link {
     font-weight: bold;
+  }
+
+  .app-subnav__section-item--top .app-subnav__link {
     position: relative;
     z-index: 2;
   }
@@ -226,6 +262,7 @@
     padding-left: 20px;
   }
 
+  /* Only apply dash/hyphen to nested items */
   .app-subnav__section--nested .app-subnav__section-item::before {
     margin-left: -20px;
     color: #505a5f;

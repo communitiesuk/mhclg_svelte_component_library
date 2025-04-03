@@ -153,10 +153,7 @@
       title: "Home",
       href: "/",
       current: true,
-      items: [
-        { text: "Overview", href: "/" },
-        { text: "Getting started", href: "/getting-started" },
-      ],
+      items: [{ text: "Overview", href: "/" }],
     },
     {
       title: "Components",

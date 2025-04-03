@@ -129,9 +129,9 @@
       <DividerLine margin="1rem 0rem"></DividerLine>
     </a>
   </div>
-
-  <Footer />
 </div>
+
+{@render children()}
 
 <style>
   /* Add styles to support the app-pane layout */

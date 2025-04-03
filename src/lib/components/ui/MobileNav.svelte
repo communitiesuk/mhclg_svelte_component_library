@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, createEventDispatcher } from "svelte";
 
   // Types for navigation items
   export type SubNavItem = {
@@ -23,13 +23,18 @@
 
   // Component props
   let {
-    isOpen = $bindable(false),
+    isOpen = false, // Use isOpen directly, no binding
     sections = [],
     currentSection = "",
   } = $props<{
     isOpen?: boolean;
     sections: NavSection[];
     currentSection?: string;
+  }>();
+
+  // Set up event dispatcher
+  const dispatch = createEventDispatcher<{
+    navigate: string; // Only need navigate event
   }>();
 
   // Track which sections are expanded
@@ -46,6 +51,9 @@
       sections.forEach((section) => {
         if (section.title === currentSection) {
           expandedSections[section.title] = true;
+        } else {
+          // Ensure other sections are collapsed when the current section changes
+          expandedSections[section.title] = false;
         }
       });
     }
@@ -59,6 +67,14 @@
   // Check if a section or item is the current one
   function isCurrent(item: { title?: string; current?: boolean }): boolean {
     return !!item.current || item.title === currentSection;
+  }
+
+  // When a navigation happens, dispatch event
+  function handleNavigate(href: string, event: MouseEvent) {
+    // Only handle clicks if not prevented already (e.g. by router)
+    if (!event.defaultPrevented) {
+      dispatch("navigate", href);
+    }
   }
 </script>
 
@@ -110,6 +126,7 @@
                             ? 'app-mobile-nav__link--current'
                             : ''}"
                           href={subItem.href}
+                          on:click={(e) => handleNavigate(subItem.href, e)}
                         >
                           {subItem.text}
                         </a>
@@ -125,6 +142,7 @@
                       ? 'app-mobile-nav__link--current'
                       : ''}"
                     href={item.href}
+                    on:click={(e) => handleNavigate(item.href, e)}
                   >
                     {item.text}
                   </a>

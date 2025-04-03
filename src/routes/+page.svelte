@@ -2,7 +2,6 @@
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import LoadArrayOfComponents from "./local-lib/LoadArrayOfComponents.svelte";
 
-
   let { data } = $props();
 
   /**
@@ -22,54 +21,45 @@ TODO
 <>		
 -->
 
-<!-- <div class="g-top-level-container"> -->
-  <div class="flex flex-col gap-6">
-    <div>
-      <h4 class="mb-6">Introduction</h4>
-      <p>
-        This library has been developed by members of the MHCLG's Data Tools
-        team to house components for use in the organisation's public facing
-        products.
-      </p>
+<div class="flex flex-col gap-6">
+  <div>
+    <h1 class="govuk-heading-xl mb-6">Introduction</h1>
+    <p class="govuk-body">
+      This library has been developed by members of the MHCLG's Data Tools team
+      to house components for use in the organisation's public facing products.
+    </p>
 
-      <p>
-        Check out our <a href="/user-guide">user guide</a> for guidance on how to
-        build components for this library.
-      </p>
-      <DividerLine margin="1rem 0rem"></DividerLine>
-    </div>
-
-    <div>
-      <h4 class="mb-6">Components</h4>
-      <p>The components available in this library are listed below.</p>
-      <p>
-        Click on a link to visit a component's wrapper page, where you can view
-        and test out the component's parameters and see example use cases.
-      </p>
-
-      {#each data.componentsSubFolders as subFolder}
-        {#if subFolder.subFolders.length > 0}
-          <h5 class="underline underline-offset-4 mt-10 mb-8">
-            {subFolder.label}
-          </h5>
-          <LoadArrayOfComponents {subFolder}></LoadArrayOfComponents>
-        {/if}
-      {/each}
-      <DividerLine margin="1rem 0rem"></DividerLine>
-    </div>
-    <div>
-      <h4 class="mb-6 mt-10">Playground</h4>
-      <p>
-        The playground is a sandbox space where developers can test code and
-        practice combining components.
-      </p>
-      <p>All our playground examples are listed below.</p>
-      <LoadArrayOfComponents subFolder={data.playgroundFolders}
-      ></LoadArrayOfComponents>
-    </div>
+    <p class="govuk-body">
+      Check out our <a href="/user-guide" class="govuk-link">user guide</a> for guidance
+      on how to build components for this library.
+    </p>
     <DividerLine margin="1rem 0rem"></DividerLine>
   </div>
-<!-- </div> -->
+
+  <div>
+    <h2 class="govuk-heading-l mb-6 mt-10">Components</h2>
+    <p class="govuk-body">
+      Browse our <a href="/components" class="govuk-link">component library</a> to
+      see all the available components.
+    </p>
+    <p class="govuk-body">
+      Each component page shows documentation, parameters, and usage examples.
+    </p>
+    <DividerLine margin="1rem 0rem"></DividerLine>
+  </div>
+
+  <div>
+    <h2 class="govuk-heading-l mb-6 mt-10">Playground</h2>
+    <p class="govuk-body">
+      The playground is a sandbox space where developers can test code and
+      practice combining components.
+    </p>
+    <p class="govuk-body">All our playground examples are listed below.</p>
+    <LoadArrayOfComponents subFolder={data.playgroundFolders}
+    ></LoadArrayOfComponents>
+  </div>
+  <DividerLine margin="1rem 0rem"></DividerLine>
+</div>
 
 <style>
   /**

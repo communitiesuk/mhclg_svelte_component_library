@@ -14,29 +14,24 @@
     homeHref = "/",
     navigationItems = [],
     currentSection = $bindable(""),
+    mobileNavIsOpen = false, // Receive open state from parent
   } = $props<{
     serviceName?: string;
     homeHref?: string;
     navigationItems: NavigationItem[];
     currentSection?: string;
+    mobileNavIsOpen?: boolean; // Prop to receive state
   }>();
 
-  // Track mobile nav state
-  let mobileNavOpen = $state(false);
-
-  // Toggle mobile navigation
-  function toggleMobileNav() {
-    mobileNavOpen = !mobileNavOpen;
-  }
-
-  // Emit custom event for mobile nav toggle
+  // Dispatcher for toggle event
   const dispatch = createEventDispatcher<{
-    toggleMobileNav: boolean;
+    toggle: void;
   }>();
 
-  $effect(() => {
-    dispatch("toggleMobileNav", mobileNavOpen);
-  });
+  // Function to request toggle
+  function requestToggle() {
+    dispatch("toggle");
+  }
 
   // Check whether current section is set
   $effect(() => {
@@ -84,8 +79,8 @@
         type="button"
         class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
         aria-controls="app-mobile-nav"
-        aria-expanded={mobileNavOpen}
-        on:click={toggleMobileNav}
+        aria-expanded={mobileNavIsOpen}
+        on:click={requestToggle}
       >
         Menu
       </button>

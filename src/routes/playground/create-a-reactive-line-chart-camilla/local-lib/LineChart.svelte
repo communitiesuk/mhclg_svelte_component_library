@@ -108,7 +108,7 @@
           axisFunction={xFunction}
           values={yearsMinMax}
           bind:ticksArray={ticksXArray}
-          orientation={{ axis: "x", position: "bottom" }}
+          orientation={{ axis: "x", position: "top" }}
         ></Axis>
 
         <Axis

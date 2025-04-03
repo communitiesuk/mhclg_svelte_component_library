@@ -44,33 +44,49 @@
 {#if axisFunction != null && ticksArray != null}
   {#each ticksArray as tick}
     <g
-      transform="translate({orientation.axis === 'x'
-        ? axisFunction(tick)
-        : 0},{orientation.axis === 'y' ? axisFunction(tick) : 0})"
+      transform={`translate(${orientation.axis === "x" ? axisFunction(tick) : 0},${orientation.axis === "y" ? axisFunction(tick) : 0})`}
     >
       <path
         d={orientation.axis === "y" ? "M0 0 l-8 0" : "M0 0 l0 8"}
-        transform="translate({orientation.axis === 'x' &&
-        orientation.position === 'bottom'
-          ? 0
-          : orientation.axis === 'x' && orientation.position === 'top'
+        transform={`translate(${
+          orientation.axis === "x" && orientation.position === "bottom"
             ? 0
-            : 0}, {orientation.axis === 'x' && orientation.position === 'bottom'
-          ? -10
-          : orientation.axis === 'x' && orientation.position === 'top'
-            ? 0
-            : 0})"
+            : orientation.axis === "x" && orientation.position === "top"
+              ? 0
+              : orientation.axis === "y" && orientation.position === "right"
+                ? 8
+                : 0
+        }, ${
+          orientation.axis === "x" && orientation.position === "bottom"
+            ? -8
+            : orientation.axis === "x" && orientation.position === "top"
+              ? -8
+              : orientation.axis === "y" && orientation.position === "left"
+                ? 0
+                : 0
+        })`}
         stroke="black"
         stroke-width="2px"
       ></path>
+
       <text
-        transform="translate({orientation.axis === 'x'
-          ? 0
-          : -10}, {orientation.axis === 'x' && orientation.position === 'bottom'
-          ? 20
-          : orientation.axis === 'x' && orientation.position === 'top'
-            ? -10
-            : 0})"
+        transform={`translate(${
+          orientation.axis === "x" && orientation.position === "bottom"
+            ? 0
+            : orientation.axis === "x" && orientation.position === "top"
+              ? 0
+              : orientation.axis === "y" && orientation.position === "right"
+                ? 10
+                : -10
+        }, ${
+          orientation.axis === "x" && orientation.position === "bottom"
+            ? 20
+            : orientation.axis === "x" && orientation.position === "top"
+              ? -8
+              : orientation.axis === "y" && orientation.position === "left"
+                ? 5
+                : 4
+        })`}
         font-size="19"
         text-anchor={orientation.axis === "x"
           ? "middle"
@@ -78,7 +94,8 @@
             ? "end"
             : "start"}
         fill="black"
-        >{tick}
+      >
+        {tick}
       </text>
     </g>
   {/each}

@@ -2,14 +2,71 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@import "/css/moj-frontend.min.css";
 @import "/css/govuk-frontend.min.css";
-@import "/css/govuk-additional.css";
-@import "/css/code-block.css";
-@import "/css/fonts.css";
 
 @import "/css/base.css";
 @import "/css/components.css";
 @import "/css/utilities.css";
+:root {
+  /* Font families */
+  --sk-font-family-ui: "Fira Sans", -apple-system, sans-serif;
+  --sk-font-family-body: "GDS Transport", Georgia, serif;
+  --sk-font-family-heading: "DM Serif Display", Georgia, serif;
+  --sk-font-family-mono: "Fira Mono", monospace;
+
+  /* Font sizes and line heights */
+  --sk-font-size-body: 1.8rem;
+  --sk-line-height-body: calc(1.5 * var(--sk-font-size-body));
+
+  /* Colors */
+  --sk-fg-1: #141414;
+  --sk-fg-2: #262626;
+  --sk-fg-3: #666;
+  --sk-fg-4: gray;
+  --sk-fg-accent: #d43008;
+  --sk-bg-1: #fff;
+  --sk-bg-2: #fdfdfd;
+  --sk-bg-3: #fafafa;
+  --sk-bg-4: #f2f2f2;
+  --sk-border: #ebebeb;
+  --sk-scrollbar: #0000004d;
+  --sk-bg-selection: #42b4ff4d;
+
+  /* Borders and spacing */
+  --sk-border-radius: 0.4rem;
+  --sk-page-padding-side: 1.6rem;
+}
+
+/* Base styles */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--sk-scrollbar) transparent;
+}
+
+::selection {
+  background: var(--sk-bg-selection);
+}
+
+@font-face {
+  font-family: "GDS Transport";
+  font-style: normal;
+  font-weight: normal;
+  src:
+    url("/fonts/light-94a07e06a1-v2.woff2") format("woff2"),
+    url("/fonts/light-f591b13f7d-v2.woff") format("woff");
+  font-display: fallback;
+}
+
+@font-face {
+  font-family: "GDS Transport";
+  font-style: normal;
+  font-weight: bold;
+  src:
+    url("/fonts/bold-b542beb274-v2.woff2") format("woff2"),
+    url("/fonts/bold-affa96571d-v2.woff") format("woff");
+  font-display: fallback;
+}
 
 body {
   font-family: "GDS Transport";
@@ -65,10 +122,231 @@ a {
   text-underline-offset: 4px;
 }
 
-code {
-  font-size: 0.9rem;
-  margin: 0px 2px;
-  padding: 2px 4px;
-  color: #27272a;
-  background-color: #f1f5f9;
+@layer components {
+  .g-top-level-container {
+    @apply w-full lg:w-3/4 max-w-3xl mx-auto my-10 px-5;
+  }
+}
+
+/* GDS Example frame styles */
+.app-example-wrapper {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  border: 1px solid #b1b4b6;
+  border-top-width: 1px;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+  border-top-style: solid;
+  border-right-style: solid;
+  border-bottom-style: solid;
+  border-left-style: solid;
+  border-top-color: rgb(177, 180, 182);
+  border-right-color: rgb(177, 180, 182);
+  border-bottom-color: rgb(177, 180, 182);
+  border-left-color: rgb(177, 180, 182);
+  border-image-source: initial;
+  border-image-slice: initial;
+  border-image-width: initial;
+  border-image-outset: initial;
+  border-image-repeat: initial;
+  /* border-top: 0; */
+  border-top-width: 1px;
+  /* border-top-style: initial;
+  border-top-color: initial; */
+}
+
+.app-example {
+  position: relative;
+  font-size: 16px;
+  line-height: 1.25;
+  border-top: 1px solid #b1b4b6;
+  background: url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAoAAAAKCAYAAACNMs+9AAAAJUlEQVQoU2P88ePHfwY0wMHBwYguxjgUFKI7GsTH5m4M3w1ChQAZTSeO0/AZpgAAAABJRU5ErkJggg==")
+    repeat;
+}
+
+.app-example--tabs {
+  margin-bottom: 0;
+}
+
+.app-example__toolbar {
+  padding: 10px;
+  border-bottom: 1px solid #b1b4b6;
+  background: #ffffff;
+}
+
+.app-example__frame {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  border: 0;
+  border-right: 1px solid #b1b4b6;
+  background: #ffffff;
+}
+
+/* Frame sizes */
+.app-example__frame,
+.app-example__frame--xs {
+  height: 150px;
+}
+
+.app-example__frame--s {
+  height: 250px;
+}
+
+.app-example__frame--m {
+  height: 350px;
+}
+
+.app-example__frame--l {
+  height: 450px;
+}
+
+.app-example__frame--xl {
+  height: 650px;
+}
+
+.app-example__frame--resizable {
+  min-width: 230px;
+  min-height: 50px;
+  overflow: auto;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (min-width: 40.0625em) {
+  .app-example__frame--resizable {
+    resize: both;
+  }
+}
+
+.app-example__code {
+  position: relative;
+}
+
+/* Responsive margin utilities */
+@media (min-width: 40.0625em) {
+  .app-example-wrapper {
+    margin-top: 40px;
+    margin-bottom: 40px;
+  }
+}
+
+/* Code block styles */
+.code-block {
+  background: var(--sk-bg-2);
+  border: 1px solid var(--sk-border);
+  border-radius: var(--sk-border-radius);
+  margin: calc(0.5 * var(--sk-line-height-body)) 0;
+  position: relative;
+}
+
+.code-block pre {
+  box-sizing: border-box;
+  color: var(--shiki-color-text);
+  border-radius: var(--sk-border-radius);
+  width: 100%;
+  margin: 0;
+  padding: 0.7rem 1rem;
+  position: relative;
+  overflow-x: auto;
+}
+
+.code-block pre code {
+  background: 0 0;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  display: block;
+  top: 0;
+}
+
+@media (min-width: 767px) {
+  .code-block {
+    margin: var(--sk-line-height-body) 0;
+  }
+}
+
+.code-block .controls {
+  --height: 3.6rem;
+  height: var(--height);
+  z-index: 2;
+  box-sizing: border-box;
+  justify-content: end;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.3rem 0.5rem;
+  display: flex;
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
+.code-block .controls:has(.filename) {
+  background: var(--sk-bg-3);
+  padding-left: 1rem;
+  position: relative;
+}
+
+.code-block .controls:not(:has(.filename)) {
+  background: inherit;
+}
+
+.code-block .controls .filename {
+  content: attr(data-file);
+  font: var(--sk-font-ui-small);
+  color: var(--sk-fg-3);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  display: block;
+  position: relative;
+  top: 0.1rem;
+  overflow: hidden;
+}
+
+.code-block .controls .filename:after {
+  content: attr(data-ext);
+}
+
+.controls .copy-to-clipboard {
+  height: calc(var(--height) - 1rem);
+  aspect-ratio: 1;
+  border-radius: var(--sk-border-radius);
+  position: relative;
+}
+
+.code-block .controls .copy-to-clipboard[disabled] {
+  opacity: 1;
+}
+
+.code-block .controls .copy-to-clipboard:before,
+.code-block .controls .copy-to-clipboard:after {
+  content: "";
+  background: 50%/1.6rem 1.6rem no-repeat;
+  width: 100%;
+  height: 100%;
+  transition: opacity 0.2s 0.6s;
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.code-block .controls .copy-to-clipboard:before {
+  background-image: url("data:image/svg+xml,%3csvg%20xmlns='http://www.w3.org/2000/svg'%20viewBox='0%200%2024%2024'%3e%3crect%20width='11.2'%20height='14'%20x='7.9'%20y='3'%20rx='1.5'%20ry='1.5'%20style='fill:none;stroke:%23000000e0;stroke-miterlimit:10;stroke-width:1.5px'/%3e%3cpath%20d='M4%207v12.5c0%20.8.7%201.5%201.5%201.5h10'%20style='fill:none;stroke:%23000000e0;stroke-miterlimit:10;stroke-width:1.5px;stroke-linecap:round'/%3e%3c/svg%3e");
+}
+
+.code-block .controls .copy-to-clipboard:after {
+  opacity: 0;
+  background-image: url("data:image/svg+xml,%3csvg%20height='24'%20viewBox='0%200%2024%2024'%20width='24'%20xmlns='http://www.w3.org/2000/svg'%3e%3cpath%20d='m21%207-12%2012-5.5-5.5%201.41-1.41%204.09%204.08%2010.59-10.58z'%20fill='%23000000e0'/%3e%3c/svg%3e");
+}
+
+.code-block .controls .copy-to-clipboard:active:before {
+  opacity: 0;
+  transition: none;
+}
+
+.code-block .controls .copy-to-clipboard:active:after {
+  opacity: 1;
+  transition: none;
 }

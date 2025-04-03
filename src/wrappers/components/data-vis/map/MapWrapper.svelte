@@ -46,7 +46,7 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = ["Map for visualising geographic data."];
 
   let contextArray = [
     "Explain here the different contexts in which the component should be used.",
@@ -153,7 +153,59 @@
    * ?      <isRequired> - (optional, default = false) - Should be set to true for any props which the component will not functionally properly without (e.g. props with no default value, props which will cause erros if undefined).
    *
    */
-  let parametersSourceArray = $derived(addIndexAndInitalValue([]));
+  let parametersSourceArray = $derived(
+    addIndexAndInitalValue([
+      {
+        name: "data",
+        category: "data",
+      },
+      {
+        name: "cooperativeGestures",
+        isProp: true,
+        description:
+          "Make it harder for users to accidentally interact with the map, recommended",
+        value: true,
+        category: "UI",
+      },
+      {
+        name: "showBorder",
+        isProp: true,
+        description: "Show the borders between areas",
+        value: true,
+        category: "Styling",
+      },
+      {
+        name: "tooltip",
+        isProp: true,
+        description: "Show a tooltip when hovering over an area",
+        category: "UI",
+        value: true,
+      },
+      {
+        name: "clickToZoom",
+        isProp: true,
+        description: "Zoom to an area when a user clicks it",
+        category: "UI",
+        value: true,
+      },
+      {
+        name: "geoType",
+        isProp: true,
+        category: "data",
+        value: "ltla",
+        options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
+      },
+      {
+        name: "year",
+        isProp: true,
+        category: "data",
+        value: 2024,
+        options: [
+          2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
+        ],
+      },
+    ]),
+  );
 
   /**
    * DONOTTOUCH *

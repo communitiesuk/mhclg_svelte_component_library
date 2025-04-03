@@ -47,14 +47,13 @@
    *
    */
   let descriptionArray = [
-    "A service navigation component that provides service name and navigation options.",
-    'Based on the <a href="https://design-system.service.gov.uk/components/service-navigation/" target="_blank" rel="noopener noreferrer">GOV.UK Design System service navigation component</a> pattern.',
+    "A side navigation component that provides an accessible way to navigate between different sections of a website.",
+    'Based on the <a href="https://design-system.dwp.gov.uk/components/side-navigation/" target="_blank" rel="noopener noreferrer">DWP Design System side navigation component</a> pattern.',
   ];
 
   let contextArray = [
-    "Use the Service navigation component to show your service name and give users access to links relevant to your service.",
-    "The Service navigation component should be used together with a header component that has full-width border enabled.",
-    "This component can be displayed with a service name only, or with both a service name and navigation links.",
+    "Use the side navigation component to help users navigate through a section of content that has multiple related pages.",
+    "Side navigation works well for websites with a hierarchical structure or multiple levels of navigation.",
   ];
 
   let detailsArray = [
@@ -68,19 +67,14 @@
       label: "Context",
       arr: contextArray,
       visibleOnHomepage: false,
-      markdown: false,
+      markdown: true,
     },
   ];
 
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [
-    {
-      label: "Connected components",
-      arr: [{ name: "Header", folder: "layout" }],
-    },
-  ];
+  let connectedComponentsArray = [];
 </script>
 
 <script>
@@ -101,8 +95,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import ServiceNavigation from "$lib/components/layout/ServiceNavigation.svelte";
-  import Examples from "./service-navigation/Examples.svelte";
+  import SideNavigation from "$lib/components/layout/SideNavigation.svelte";
+  import Examples from "./side-navigation/Examples.svelte";
 
   let { data } = $props();
 
@@ -166,25 +160,72 @@
    */
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
-      // Content category
       {
-        name: "serviceName",
-        category: "Content",
-        value: "Service name",
-      },
-      {
-        name: "serviceUrl",
-        category: "Content",
-        value: "#",
-      },
-      {
-        name: "navigationItems",
+        name: "items",
         category: "Content",
         value: [
-          { href: "#navigation1", label: "Navigation item 1" },
-          { href: "#navigation2", label: "Navigation item 2", isActive: true },
-          { href: "#navigation3", label: "Navigation item 3" },
+          {
+            id: "nav-1",
+            text: "Home",
+            href: "/home",
+          },
+          {
+            id: "nav-2",
+            text: "Services",
+            href: "/services",
+            subItems: [
+              {
+                id: "subnav-1",
+                text: "Service A",
+                href: "/services/a",
+              },
+              {
+                id: "subnav-2",
+                text: "Service B",
+                href: "/services/b",
+              },
+              {
+                id: "subnav-3",
+                text: "Service C",
+                href: "/services/c",
+              },
+            ],
+          },
+          {
+            id: "nav-3",
+            text: "Support",
+            href: "/support",
+          },
+          {
+            id: "nav-4",
+            text: "Contact",
+            href: "/contact",
+          },
         ],
+      },
+      {
+        name: "ariaLabel",
+        category: "Accessibility",
+        value: "Side",
+      },
+      {
+        name: "selectedItem",
+        category: "Content",
+        value: "/services",
+      },
+      {
+        name: "selectedSubItem",
+        category: "Content",
+        value: "/services/c",
+      },
+      {
+        name: "mobile",
+        category: "UI Options",
+        value: {
+          disabled: false,
+          showButtonText: "Show navigation",
+          hideButtonText: "Hide navigation",
+        },
       },
     ]),
   );
@@ -326,7 +367,9 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <ServiceNavigation {...parametersObject}></ServiceNavigation>
+  <div class="mx-10 w-64">
+    <SideNavigation {...parametersObject}></SideNavigation>
+  </div>
 {/snippet}
 
 <!--

@@ -2,7 +2,7 @@
   // @ts-nocheck
   import { page } from "$app/stores";
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
-  import SideNavigation from "$lib/components/ui/SideNavigation.svelte";
+  import SideNavigation from "$lib/components/layout/SideNavigation.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";

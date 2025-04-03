@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
-  import Header from "$lib/components/ui/Header.svelte";
+  import Header from "$lib/components/layout/Header.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";

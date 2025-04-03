@@ -46,14 +46,10 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = [
-    "A footer component that provides navigation, meta information, and licensing details.",
-    'Based on the <a href="https://design-system.service.gov.uk/components/footer/" target="_blank" rel="noopener noreferrer">GOV.UK Design System footer component</a> pattern.',
-  ];
+  let descriptionArray = ["Explain here what the component does."];
 
   let contextArray = [
-    "Use the footer component to help users navigate your service and find meta information.",
-    "The footer can be configured to show different levels of navigation, from a simple copyright notice to a full navigation menu.",
+    "Explain here the different contexts in which the component should be used.",
   ];
 
   let detailsArray = [
@@ -67,14 +63,16 @@
       label: "Context",
       arr: contextArray,
       visibleOnHomepage: false,
-      markdown: false,
+      markdown: true,
     },
   ];
 
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [];
+  let connectedComponentsArray = [
+    { label: "Child components", arr: [{ name: "Ticks", folder: "data-vis" }] },
+  ];
 </script>
 
 <script>
@@ -95,8 +93,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Footer from "$lib/components/layout/Footer.svelte";
-  import Examples from "./footer/Examples.svelte";
+  import Axis from "$lib/components/data-vis/axis/Axis.svelte";
+  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
 
   let { data } = $props();
 
@@ -119,6 +117,7 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
+  let ticksArray = $state();
 
   /**
    * ! Step 3 - Add your props
@@ -161,108 +160,105 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "sections",
-        category: "Content",
-        value: [
-          {
-            title: "Services and information",
-            columns: 2,
-            items: [
-              { href: "#", label: "Benefits" },
-              { href: "#", label: "Births, deaths, marriages and care" },
-              { href: "#", label: "Business and self-employed" },
-            ],
-          },
-          {
-            title: "Departments and policy",
-            items: [
-              { href: "#", label: "How government works" },
-              { href: "#", label: "Departments" },
-              { href: "#", label: "Worldwide" },
-            ],
-          },
-        ],
+        name: "ticksArray",
+        category: "data",
+        isBinded: true,
       },
       {
-        name: "inlineLinks",
-        category: "Content",
-        value: [
-          { href: "#", label: "Help" },
-          { href: "#", label: "Cookies" },
-          { href: "#", label: "Contact" },
-        ],
+        name: "values",
+        category: "data",
+        value: [0, 100],
       },
       {
-        name: "metaCustomContent",
-        category: "Content",
-        value:
-          'Built by the <a href="#" class="govuk-footer__link">Government Digital Service</a>',
-      },
-
-      // UI Options category
-      {
-        name: "containerWidth",
-        category: "UI Options",
-        value: "govuk-width-container",
-      },
-      // License-related UI options
-      {
-        name: "showLicence",
-        category: "UI Options",
-        value: true,
-      },
-      // Copyright-related UI options
-      {
-        name: "showCopyright",
-        category: "UI Options",
-        value: true,
+        name: "svgHeight",
+        category: "dimensions",
+        isProp: false,
+        value: 500,
       },
       {
-        name: "copyrightText",
-        category: "UI Options",
-        value: "© Crown copyright",
+        name: "paddingTop",
+        category: "dimensions",
+        isProp: false,
+        value: 100,
       },
       {
-        name: "copyrightLogoUrl",
-        category: "UI Options",
-        value: "/assets/images/govuk-crest.svg",
-      },
-
-      // Advanced Customisation category
-      // License-related advanced options
-      {
-        name: "licenceTextBefore",
-        category: "Advanced Customisation",
-        value: "All content is available under the ",
+        name: "paddingRight",
+        category: "dimensions",
+        isProp: false,
+        value: 100,
       },
       {
-        name: "licenceLinkText",
-        category: "Advanced Customisation",
-        value: "Open Government Licence v3.0",
+        name: "paddingBottom",
+        category: "dimensions",
+        isProp: false,
+        value: 100,
       },
       {
-        name: "licenceTextAfter",
-        category: "Advanced Customisation",
-        value: ", except where otherwise stated",
+        name: "paddingLeft",
+        category: "dimensions",
+        isProp: false,
+        value: 100,
       },
       {
-        name: "licenceHref",
-        category: "Advanced Customisation",
-        value:
-          "https://www.nationalarchives.gov.uk/doc/open-government-licence/version/3/",
+        name: "chartWidth",
+        category: "dimensions",
       },
       {
-        name: "crownSvgPath",
-        category: "Advanced Customisation",
-        value:
-          "M421.5 142.8V.1l-50.7 32.3v161.1h112.4v-50.7zm-122.3-9.6A47.12 47.12 0 0 1 221 97.8c0-26 21.1-47.1 47.1-47.1 16.7 0 31.4 8.7 39.7 21.8l42.7-27.2A97.63 97.63 0 0 0 268.1 0c-36.5 0-68.3 20.1-85.1 49.7A98 98 0 0 0 97.8 0C43.9 0 0 43.9 0 97.8s43.9 97.8 97.8 97.8c36.5 0 68.3-20.1 85.1-49.7a97.76 97.76 0 0 0 149.6 25.4l19.4 22.2h3v-87.8h-80l24.3 27.5zM97.8 145c-26 0-47.1-21.1-47.1-47.1s21.1-47.1 47.1-47.1 47.2 21 47.2 47S123.8 145 97.8 145",
+        name: "chartHeight",
+        category: "dimensions",
       },
-      // Copyright-related advanced options
       {
-        name: "copyrightHref",
-        category: "Advanced Customisation",
-        value:
-          "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
+        name: "xScaleType",
+        category: "axisFunctions",
+        isProp: false,
+        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
+      },
+      {
+        name: "xFunction",
+        category: "axisFunctions",
+        isProp: false,
+      },
+      {
+        name: "yScaleType",
+        category: "axisFunctions",
+        isProp: false,
+        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
+      },
+      {
+        name: "yFunction",
+        category: "axisFunctions",
+        isProp: false,
+      },
+      {
+        name: "axisFunction",
+        category: "axisFunctions",
+        description: {
+          markdown: true,
+          arr: [
+            "Uses <code>xFunction</code> if <code>orientation.axis === x</code> and uses <code>yFunction</code> if <code>orientation.axis === y</code>.",
+          ],
+        },
+      },
+      {
+        name: "numberOfTicks",
+        category: "customisations",
+        value: 5,
+      },
+      {
+        name: "orientationAxis",
+        category: "customisations",
+        isProp: false,
+        options: ["x", "y"],
+      },
+      {
+        name: "orientationPosition",
+        category: "customisations",
+        isProp: false,
+        options: ["top", "bottom", "left", "right"],
+      },
+      {
+        name: "orientation",
+        category: "customisations",
       },
     ]),
   );
@@ -314,7 +310,59 @@
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
 
-  let derivedParametersObject = $derived({});
+  let chartWidth = $derived(
+    demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
+  );
+
+  let chartHeight = $derived(
+    getValue("svgHeight") - getValue("paddingTop") - getValue("paddingBottom"),
+  );
+
+  $inspect(ticksArray);
+
+  let xFunction = $derived(function (number) {
+    return {
+      "scaleLinear()": scaleLinear(),
+      "scaleLog()": scaleLog(),
+      "scaleTime()": scaleTime(),
+    }[getValue("xScaleType")]
+      .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
+      .range([
+        0,
+        demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
+      ])(number);
+  });
+
+  let yFunction = $derived(function (number) {
+    return {
+      "scaleLinear()": scaleLinear(),
+      "scaleLog()": scaleLog(),
+      "scaleTime()": scaleTime(),
+    }[getValue("yScaleType")]
+      .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
+      .range([
+        getValue("svgHeight") -
+          getValue("paddingTop") -
+          getValue("paddingBottom"),
+        0,
+      ])(number);
+  });
+
+  let orientation = $derived({
+    axis: getValue("orientationAxis"),
+    position: getValue("orientationPosition"),
+  });
+
+  let axisFunction = $derived(
+    orientation?.axis === "x" ? xFunction : yFunction,
+  );
+
+  let derivedParametersObject = $derived({
+    chartWidth,
+    chartHeight,
+    orientation,
+    axisFunction,
+  });
 
   /**
    * DONOTTOUCH *
@@ -404,7 +452,19 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <Footer {...parametersObject}></Footer>
+  <div>
+    <svg width={demoScreenWidth} height={getValue("svgHeight")}>
+      <g
+        transform="translate({getValue('paddingLeft')},{getValue(
+          'paddingTop',
+        )})"
+      >
+        {#key parametersObject}
+          <Axis {...parametersObject} bind:ticksArray></Axis>
+        {/key}
+      </g>
+    </svg>
+  </div>
 {/snippet}
 
 <!--
@@ -449,6 +509,4 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div data-role="examples-section" class="px-5">
-  <Examples></Examples>
-</div>
+<div data-role="examples-section" class="px-5"></div>

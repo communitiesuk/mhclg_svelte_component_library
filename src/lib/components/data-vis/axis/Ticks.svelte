@@ -41,7 +41,7 @@
   ticksArray = generateTicks(values, numberOfTicks);
 </script>
 
-{#if axisFunction != null && ticksArray != null}
+{#if axisFunction != null && ticksArray != null && orientation.hasOwnProperty("axis") && orientation.hasOwnProperty("position")}
   {#each ticksArray as tick}
     <g
       transform="translate({orientation.axis === 'x'

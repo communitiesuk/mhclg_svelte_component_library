@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount } from "svelte";
 
   // Types for navigation items
   export type SubNavItem = {
@@ -82,7 +82,6 @@
     ? 'app-mobile-nav--active'
     : ''}"
   aria-label="mobile navigation"
-  role="navigation"
   aria-hidden={!isOpen}
 >
   <div class="app-mobile-nav__wrapper">

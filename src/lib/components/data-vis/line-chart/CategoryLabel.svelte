@@ -14,14 +14,16 @@
     onMouseLeave,
   } = $props();
 
-  let areaCode = $state(dataArray.areaCode);
+  let areaCode = $derived(dataArray.areaCode);
 
-  let oldY = $state(yFunction(dataArray.data[0].y));
+  let oldY = $derived(yFunction(dataArray.data[0].y));
 
-  let opacity=$derived((labelHovered || labelClicked) &&
-    ![labelHovered, labelClicked].includes(areaCode)
+  let opacity = $derived(
+    (labelHovered || labelClicked) &&
+      ![labelHovered, labelClicked].includes(areaCode)
       ? 0.3
-      : 1)
+      : 1,
+  );
 </script>
 
 <g
@@ -46,6 +48,6 @@
     x={20}
     y={newY}
   >
-    {areaCode}
+    {dataArray.name}
   </text>
 </g>

@@ -22,7 +22,7 @@
 
   let hoveredLine = $state();
   let bounds = $state([0, chartHeight]);
-  let primaryLinesDataArray = dataArray.filter((el) => el.primary);
+  let primaryLinesDataArray = $derived(dataArray.filter((el) => el.primary));
 
   let labelHovered = $state();
   let selectedLine = $derived([labelHovered, labelClicked]);
@@ -34,16 +34,14 @@
     }),
   );
 
-  let labelsPlaced = $state();
-
-  onMount(() => {
-    labelsPlaced = labelplacer(
+  let labelsPlaced = $derived(
+    labelplacer(
       transformed,
       bounds,
       (d) => d.lastY,
       (d) => 20 * Math.ceil(d.areaCode.length / 15),
-    );
-  });
+    ),
+  );
 </script>
 
 {#snippet categoryLabelSnippet(dataArray, newY)}
@@ -136,7 +134,6 @@
     pathStrokeColor={colors[i]}
     opacity={!labelClicked && !labelHovered && !hoveredLine ? 1 : 0.2}
     includeMarkers={false}
-    markerRadius="8"
     markerStroke={colors[i]}
     markerFill="white"
     dataId={line.areaCode}
@@ -164,10 +161,8 @@
       {yFunction}
       dataArray={line.data}
       pathStrokeColor={colors[i]}
-      pathStrokeWidth="5"
       opacity={1}
       includeMarkers={false}
-      markerRadius="8"
       markerStroke={colors[i]}
       markerFill="white"
       dataId={line.areaCode}

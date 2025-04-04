@@ -23,13 +23,15 @@
 
   // Component props
   let {
-    isOpen = $bindable(false),
+    isOpen = false, // Use isOpen directly, no binding
     sections = [],
     currentSection = "",
+    onNavigate, // Add onNavigate prop
   } = $props<{
     isOpen?: boolean;
     sections: NavSection[];
     currentSection?: string;
+    onNavigate: (href: string) => void; // Define prop type
   }>();
 
   // Track which sections are expanded
@@ -39,13 +41,16 @@
   function toggleSection(sectionTitle: string) {
     expandedSections[sectionTitle] = !expandedSections[sectionTitle];
   }
-
-  // Initialize expanded sections based on current section
+  
+  // Initialise expanded sections based on current section
   $effect(() => {
     if (currentSection) {
       sections.forEach((section) => {
         if (section.title === currentSection) {
           expandedSections[section.title] = true;
+        } else {
+          // Ensure other sections are collapsed when the current section changes
+          expandedSections[section.title] = false;
         }
       });
     }
@@ -60,6 +65,15 @@
   function isCurrent(item: { title?: string; current?: boolean }): boolean {
     return !!item.current || item.title === currentSection;
   }
+
+  // When a navigation happens, dispatch event - MODIFIED
+  function handleNavigate(href: string, event: MouseEvent) {
+    // Only handle clicks if not prevented already (e.g. by router)
+    if (!event.defaultPrevented) {
+      // dispatch("navigate", href); // Remove dispatch
+      onNavigate(href); // Call the prop instead
+    }
+  }
 </script>
 
 <nav
@@ -68,7 +82,6 @@
     ? 'app-mobile-nav--active'
     : ''}"
   aria-label="mobile navigation"
-  role="navigation"
   aria-hidden={!isOpen}
 >
   <div class="app-mobile-nav__wrapper">
@@ -81,7 +94,10 @@
               class="app-mobile-nav__section-link {section.current
                 ? 'app-mobile-nav__section-link--current'
                 : ''}"
-              on:click|preventDefault={() => toggleSection(section.title)}
+              onclick={(event) => {
+                event.preventDefault(); // Call preventDefault explicitly
+                toggleSection(section.title);
+              }}
             >
               {section.title}
             </a>
@@ -110,6 +126,7 @@
                             ? 'app-mobile-nav__link--current'
                             : ''}"
                           href={subItem.href}
+                          onclick={(e) => handleNavigate(subItem.href, e)}
                         >
                           {subItem.text}
                         </a>
@@ -125,6 +142,7 @@
                       ? 'app-mobile-nav__link--current'
                       : ''}"
                     href={item.href}
+                    onclick={(e) => handleNavigate(item.href, e)}
                   >
                     {item.text}
                   </a>

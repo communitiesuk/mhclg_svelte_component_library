@@ -72,6 +72,7 @@ TODO
 <>		
 -->
 
+
 <div class="g-top-level-container">
   <div class="flex flex-col gap-6">
     <div>
@@ -82,20 +83,13 @@ TODO
         organisation's digital products.
       </p>
 
-      <p>
-        Check out our <a href="/user-guide">user guide</a> for guidance on how to
-        build components for this library.
-      </p>
-      <DividerLine margin="1rem 0rem"></DividerLine>
-    </div>
+    <p class="govuk-body">
+      Check out our <a href="/user-guide" class="govuk-link">user guide</a> for guidance
+      on how to build components for this library.
+    </p>
+    <DividerLine margin="1rem 0rem"></DividerLine>
+  </div>
 
-    <div>
-      <h4 class="mb-6">Components</h4>
-      <p>The components available in this library are listed below.</p>
-      <p>
-        Click on a link to visit a component's wrapper page, where you can view
-        and test out the component's parameters and see example use cases.
-      </p>
 
       {#each [...new Set(wrappersComponentsArray.map((el) => el.folder))] as folder}
         <h5 class="underline underline-offset-4 mt-10 mb-8">
@@ -146,6 +140,18 @@ TODO
     </div>
     <DividerLine margin="1rem 0rem"></DividerLine> -->
   </div>
+
+  <div>
+    <h2 class="govuk-heading-l mb-6 mt-10">Playground</h2>
+    <p class="govuk-body">
+      The playground is a sandbox space where developers can test code and
+      practice combining components.
+    </p>
+    <p class="govuk-body">All our playground examples are listed below.</p>
+    <LoadArrayOfComponents subFolder={data.playgroundFolders}
+    ></LoadArrayOfComponents>
+  </div>
+  <DividerLine margin="1rem 0rem"></DividerLine>
 </div>
 
 <style>

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount } from "svelte";
 
   // Define navigation item type
   export type NavigationItem = {
@@ -14,29 +14,16 @@
     homeHref = "/",
     navigationItems = [],
     currentSection = $bindable(""),
+    mobileNavIsOpen = false, // Receive open state from parent
+    onToggle, // Callback function prop
   } = $props<{
     serviceName?: string;
     homeHref?: string;
     navigationItems: NavigationItem[];
     currentSection?: string;
+    mobileNavIsOpen?: boolean; // Prop to receive state
+    onToggle: () => void; // Callback function prop
   }>();
-
-  // Track mobile nav state
-  let mobileNavOpen = $state(false);
-
-  // Toggle mobile navigation
-  function toggleMobileNav() {
-    mobileNavOpen = !mobileNavOpen;
-  }
-
-  // Emit custom event for mobile nav toggle
-  const dispatch = createEventDispatcher<{
-    toggleMobileNav: boolean;
-  }>();
-
-  $effect(() => {
-    dispatch("toggleMobileNav", mobileNavOpen);
-  });
 
   // Check whether current section is set
   $effect(() => {
@@ -50,7 +37,7 @@
   });
 </script>
 
-<header class="govuk-service-navigation" aria-label="main" role="navigation">
+<nav class="govuk-service-navigation" aria-label="main">
   <div class="govuk-width-container">
     <div class="govuk-service-navigation__container">
       <span class="govuk-service-navigation__service-name">
@@ -84,14 +71,14 @@
         type="button"
         class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
         aria-controls="app-mobile-nav"
-        aria-expanded={mobileNavOpen}
-        on:click={toggleMobileNav}
+        aria-expanded={mobileNavIsOpen}
+        onclick={onToggle}
       >
         Menu
       </button>
     </div>
   </div>
-</header>
+</nav>
 
 <style>
   /* Only add styles that are not covered by the govuk CSS */

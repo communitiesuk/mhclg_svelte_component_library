@@ -56,7 +56,7 @@
 
 <div data-role="parameters-section" class="mx-auto px-5">
   <div bind:clientWidth={parametersSectionWidth}>
-    <h5 class="mb-6 underline underline-offset-4">Parameters</h5>
+    <h5 id="parameters" class="mb-6 underline underline-offset-4">Parameters</h5>
     <div class="flex flex-row gap-8">
       <div class="flex flex-row gap-8 pr-4">
         <p class="m-0 p-0 font-bold">Key</p>

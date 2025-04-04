@@ -53,7 +53,7 @@
     {#each ["description", "context"] as detail}
       {@const detailData = details[detail]}
       {#if detailData?.length > 0}
-        <dt>{textStringConversion(detail, "title-first-word")}:</dt>
+        <dt id={detail}>{textStringConversion(detail, "title-first-word")}:</dt>
         <dd>
           {#each detailData as paragraph}
             {#if paragraph.markdown}

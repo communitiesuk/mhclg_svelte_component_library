@@ -42,7 +42,16 @@
      * &&     context - An array of paragraphs of text explaining when the component will be used (e.g. what is it's parent component likely to be, what components will it be used in combination with) - used within ComponentDetails
      * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
      */
-    context: undefined,
+    context: [
+      {
+        content:
+          "Use pills to highlight status information, categories, or metadata within a user interface.",
+      },
+      {
+        content:
+          "Commonly used in headers, tables, lists, or alongside form elements to provide visual indicators or contextual information.",
+      },
+    ],
     /**
      * &&     childComponents - Optional detail, can be used by developers to link to components which this component relies upon.
      * ?     'name' and 'folder' must match the routes folder structure (see documentation above for 'name' and 'folder' above for available options)
@@ -62,6 +71,7 @@
    * DONOTTOUCH *
    * && 		details.name and details.folder are added based on a) the folders prop if on the homepage, b) the $page store if on the actual wrapper page.
    */
+
   let pageInfo = page?.route.id.split("/");
 
   details.name = textStringConversion(
@@ -207,7 +217,9 @@ DONOTTOUCH  *
   ></ParametersSection>
 
   <div data-role="demo-section">
-    <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+    <h5 id="component-demo" class="mb-6 mt-12 underline underline-offset-4">
+      Component Demo
+    </h5>
     <!--
     DONOTTOUCH  *
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
@@ -238,7 +250,7 @@ DONOTTOUCH  *
     -->
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-    <h5 class="underline underline-offset-4">Examples</h5>
+    <h5 id="examples" class="underline underline-offset-4">Examples</h5>
   </div>
 {/if}
 

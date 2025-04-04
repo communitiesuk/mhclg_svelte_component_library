@@ -272,7 +272,7 @@
   />
 
   <div data-role="demo-section">
-    <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+    <h5 id="component-demo" class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
     <ScreenSizeRadio bind:demoScreenWidth></ScreenSizeRadio>
   </div>
   {#if browser}
@@ -659,7 +659,6 @@
           </p>
         </div>
       </div>
-
       <!-- ...additional examples as needed... -->
     </div>
   {/if}

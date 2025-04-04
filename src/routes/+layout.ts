@@ -1,5 +1,6 @@
-import { base } from '$app/paths';
-import type { LayoutLoad } from './$types';
+import { base } from "$app/paths";
+import type { LayoutLoad } from "./$types.js";
+import type { ComponentItem } from "./+layout.server.js";
 
 export const load: LayoutLoad = async (event) => {
   const testData = await (
@@ -10,11 +11,19 @@ export const load: LayoutLoad = async (event) => {
     await event.fetch(`${base}/data/svgFontDimensions.json`)
   ).json();
 
+  // Get server-loaded component data
+  const {
+    componentDirectories,
+    uiComponents,
+    componentSections,
+    componentTree,
+  } = event.data;
+
   let metrics = [
     ...new Set(
       testData.flatMetricData.map((d) => {
         return d.metric;
-      })
+      }),
     ),
   ];
 
@@ -27,7 +36,7 @@ export const load: LayoutLoad = async (event) => {
     lines: areas.map((area) => ({
       areaCode: area,
       data: testData.flatMetricData.filter(
-        (el) => el.areaCode === area && el.metric === metric
+        (el) => el.areaCode === area && el.metric === metric,
       ),
     })),
   }));
@@ -37,7 +46,7 @@ export const load: LayoutLoad = async (event) => {
     bars: areas.map((area) => ({
       areaCode: area,
       y: testData.flatMetricData
-        .filter((el) => el.metric === 'Household waste recycling rate')
+        .filter((el) => el.metric === "Household waste recycling rate")
         .find((el) => el.areaCode === area && el.x === year)?.y,
     })),
   }));
@@ -50,5 +59,9 @@ export const load: LayoutLoad = async (event) => {
     dataInFormatForBarChart,
     areaCodeLookup: testData.areaCodeLookup,
     svgFontDimensions,
+    componentSections,
+    componentDirectories,
+    uiComponents,
+    componentTree,
   };
 };

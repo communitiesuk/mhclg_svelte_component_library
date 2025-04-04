@@ -28,12 +28,30 @@
      * &&     description - An array of paragraphs of text explaining what the component does, used within ComponentDetails
      * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
      */
-    description: undefined,
+    description: [
+      {
+        content:
+          "A horizontal divider line component that visually separates content sections.",
+      },
+      {
+        content:
+          "The divider can be customised with different colors, thicknesses, and margins to fit various design needs.",
+      },
+    ],
     /**
      * &&     context - An array of paragraphs of text explaining when the component will be used (e.g. what is it's parent component likely to be, what components will it be used in combination with) - used within ComponentDetails
      * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
      */
-    context: undefined,
+    context: [
+      {
+        content:
+          "Use divider lines to create visual separation between different sections of content.",
+      },
+      {
+        content:
+          "Particularly useful in forms, long content pages, or anywhere that needs clear visual boundaries between content areas.",
+      },
+    ],
     /**
      * &&     childComponents - Optional detail, can be used by developers to link to components which this component relies upon.
      * ?     'name' and 'folder' must match the routes folder structure (see documentation above for 'name' and 'folder' above for available options)
@@ -167,7 +185,9 @@ DONOTTOUCH  *
   ></ParametersSection>
 
   <div data-role="demo-section">
-    <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+    <h5 id="component-demo" class="mb-6 mt-12 underline underline-offset-4">
+      Component Demo
+    </h5>
     <!--
     DONOTTOUCH  *
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
@@ -206,7 +226,7 @@ DONOTTOUCH  *
     -->
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-    <h5 class="underline underline-offset-4">Examples</h5>
+    <h5 id="examples" class="underline underline-offset-4">Examples</h5>
   </div>
 {/if}
 

@@ -193,8 +193,7 @@
   }
 
   // Handle navigation request from mobile menu
-  function handleMobileNavigation(event: CustomEvent<string>) {
-    const href = event.detail;
+  function handleMobileNavigation(href: string) {
     isMobileNavOpen = false; // Close the menu
     if (typeof window !== "undefined") {
       goto(href); // Navigate
@@ -320,7 +319,7 @@
       isOpen={isMobileNavOpen}
       sections={mobileNavSections}
       {currentSection}
-      on:navigate={handleMobileNavigation}
+      onNavigate={handleMobileNavigation}
     />
 
     <div class="app-pane__body govuk-width-container">

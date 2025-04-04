@@ -26,15 +26,12 @@
     isOpen = false, // Use isOpen directly, no binding
     sections = [],
     currentSection = "",
+    onNavigate, // Add onNavigate prop
   } = $props<{
     isOpen?: boolean;
     sections: NavSection[];
     currentSection?: string;
-  }>();
-
-  // Set up event dispatcher
-  const dispatch = createEventDispatcher<{
-    navigate: string; // Only need navigate event
+    onNavigate: (href: string) => void; // Define prop type
   }>();
 
   // Track which sections are expanded
@@ -69,11 +66,12 @@
     return !!item.current || item.title === currentSection;
   }
 
-  // When a navigation happens, dispatch event
+  // When a navigation happens, dispatch event - MODIFIED
   function handleNavigate(href: string, event: MouseEvent) {
     // Only handle clicks if not prevented already (e.g. by router)
     if (!event.defaultPrevented) {
-      dispatch("navigate", href);
+      // dispatch("navigate", href); // Remove dispatch
+      onNavigate(href); // Call the prop instead
     }
   }
 </script>
@@ -97,7 +95,10 @@
               class="app-mobile-nav__section-link {section.current
                 ? 'app-mobile-nav__section-link--current'
                 : ''}"
-              on:click|preventDefault={() => toggleSection(section.title)}
+              onclick={(event) => {
+                event.preventDefault(); // Call preventDefault explicitly
+                toggleSection(section.title);
+              }}
             >
               {section.title}
             </a>
@@ -126,7 +127,7 @@
                             ? 'app-mobile-nav__link--current'
                             : ''}"
                           href={subItem.href}
-                          on:click={(e) => handleNavigate(subItem.href, e)}
+                          onclick={(e) => handleNavigate(subItem.href, e)}
                         >
                           {subItem.text}
                         </a>
@@ -142,7 +143,7 @@
                       ? 'app-mobile-nav__link--current'
                       : ''}"
                     href={item.href}
-                    on:click={(e) => handleNavigate(item.href, e)}
+                    onclick={(e) => handleNavigate(item.href, e)}
                   >
                     {item.text}
                   </a>

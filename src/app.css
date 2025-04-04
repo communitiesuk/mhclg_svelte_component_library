@@ -2,72 +2,14 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-@import "/css/moj-frontend.min.css";
 @import "/css/govuk-frontend.min.css";
+@import "/css/govuk-additional.css";
+@import "/css/code-block.css";
+@import "/css/fonts.css";
 
 @import "/css/base.css";
 @import "/css/components.css";
 @import "/css/utilities.css";
-
-:root {
-  /* Font families */
-  --sk-font-family-ui: "Fira Sans", -apple-system, sans-serif;
-  --sk-font-family-body: "GDS Transport", Georgia, serif;
-  --sk-font-family-heading: "DM Serif Display", Georgia, serif;
-  --sk-font-family-mono: "Fira Mono", monospace;
-
-  /* Font sizes and line heights */
-  --sk-font-size-body: 1.8rem;
-  --sk-line-height-body: calc(1.5 * var(--sk-font-size-body));
-
-  /* Colors */
-  --sk-fg-1: #141414;
-  --sk-fg-2: #262626;
-  --sk-fg-3: #666;
-  --sk-fg-4: gray;
-  --sk-fg-accent: #d43008;
-  --sk-bg-1: #fff;
-  --sk-bg-2: #fdfdfd;
-  --sk-bg-3: #fafafa;
-  --sk-bg-4: #f2f2f2;
-  --sk-border: #ebebeb;
-  --sk-scrollbar: #0000004d;
-  --sk-bg-selection: #42b4ff4d;
-
-  /* Borders and spacing */
-  --sk-border-radius: 0.4rem;
-  --sk-page-padding-side: 1.6rem;
-}
-
-/* Base styles */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: var(--sk-scrollbar) transparent;
-}
-
-::selection {
-  background: var(--sk-bg-selection);
-}
-
-@font-face {
-  font-family: "GDS Transport";
-  font-style: normal;
-  font-weight: normal;
-  src:
-    url("/fonts/light-94a07e06a1-v2.woff2") format("woff2"),
-    url("/fonts/light-f591b13f7d-v2.woff") format("woff");
-  font-display: fallback;
-}
-
-@font-face {
-  font-family: "GDS Transport";
-  font-style: normal;
-  font-weight: bold;
-  src:
-    url("/fonts/bold-b542beb274-v2.woff2") format("woff2"),
-    url("/fonts/bold-affa96571d-v2.woff") format("woff");
-  font-display: fallback;
-}
 
 body {
   font-family: "GDS Transport";
@@ -129,10 +71,4 @@ code {
   padding: 2px 4px;
   color: #27272a;
   background-color: #f1f5f9;
-}
-
-@layer components {
-  .g-top-level-container {
-    @apply w-full lg:w-3/4 max-w-3xl mx-auto my-10 px-5;
-  }
 }

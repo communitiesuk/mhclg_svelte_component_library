@@ -249,12 +249,14 @@
         category: "customisations",
         isProp: false,
         options: ["x", "y"],
+        propType: "radio",
       },
       {
         name: "orientationPosition",
         category: "customisations",
         isProp: false,
         options: ["top", "bottom", "left", "right"],
+        propType: "radio",
       },
       {
         name: "orientation",
@@ -317,8 +319,6 @@
   let chartHeight = $derived(
     getValue("svgHeight") - getValue("paddingTop") - getValue("paddingBottom"),
   );
-
-  $inspect(ticksArray);
 
   let xFunction = $derived(function (number) {
     return {

@@ -16,13 +16,13 @@
   data-role="{orientation.axis}-axis"
   transform="translate({orientation.position != 'right'
     ? 0
-    : chartWidth},{orientation.position != 'top' ? chartHeight : 0})"
+    : chartWidth},{orientation.position === 'bottom' ? chartHeight : 0})"
 >
   <line
     x1="0"
     y1="0"
     x2={orientation.axis === "x" ? chartWidth : 0}
-    y2={orientation.axis === "y" ? -chartHeight : 0}
+    y2={orientation.axis === "y" ? chartHeight : 0}
     stroke="black"
     stroke-width="2px"
   ></line>

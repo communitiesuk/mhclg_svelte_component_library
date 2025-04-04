@@ -249,12 +249,14 @@
         category: "customisations",
         isProp: false,
         options: ["x", "y"],
+        propType: "radio",
       },
       {
         name: "orientationPosition",
         category: "customisations",
         isProp: false,
         options: ["top", "bottom", "left", "right"],
+        propType: "radio",
       },
       {
         name: "orientation",
@@ -318,8 +320,6 @@
     getValue("svgHeight") - getValue("paddingTop") - getValue("paddingBottom"),
   );
 
-  $inspect(ticksArray);
-
   let xFunction = $derived(function (number) {
     return {
       "scaleLinear()": scaleLinear(),
@@ -370,8 +370,6 @@
   let derivedParametersValuesArray = $derived(
     generateValuesArray(parametersSourceArray, false, derivedParametersObject),
   );
-
-  $inspect(getValue("numberOfTicks"));
 
   /**
    * DONOTTOUCH *

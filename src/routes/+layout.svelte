@@ -312,7 +312,7 @@
       {navigationItems}
       {currentSection}
       mobileNavIsOpen={isMobileNavOpen}
-      on:toggle={handleToggleMobileNav}
+      onToggle={handleToggleMobileNav}
     />
 
     <!-- Mobile navigation -->

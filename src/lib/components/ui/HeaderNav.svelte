@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, createEventDispatcher } from "svelte";
+  import { onMount } from "svelte";
 
   // Define navigation item type
   export type NavigationItem = {
@@ -15,23 +15,15 @@
     navigationItems = [],
     currentSection = $bindable(""),
     mobileNavIsOpen = false, // Receive open state from parent
+    onToggle, // Callback function prop
   } = $props<{
     serviceName?: string;
     homeHref?: string;
     navigationItems: NavigationItem[];
     currentSection?: string;
     mobileNavIsOpen?: boolean; // Prop to receive state
+    onToggle: () => void; // Callback function prop
   }>();
-
-  // Dispatcher for toggle event
-  const dispatch = createEventDispatcher<{
-    toggle: void;
-  }>();
-
-  // Function to request toggle
-  function requestToggle() {
-    dispatch("toggle");
-  }
 
   // Check whether current section is set
   $effect(() => {
@@ -80,7 +72,7 @@
         class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
         aria-controls="app-mobile-nav"
         aria-expanded={mobileNavIsOpen}
-        on:click={requestToggle}
+        onclick={onToggle}
       >
         Menu
       </button>

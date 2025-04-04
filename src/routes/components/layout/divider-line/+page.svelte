@@ -1,8 +1,8 @@
 <script>
   // @ts-nocheck
   import { page } from "$app/stores";
-  import Pill from "$lib/components/content/Pill.svelte";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import Pill from "$lib/package-wrapping/Pill.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";

@@ -1,53 +1,29 @@
 export function createParametersObject(
   parametersSourceArray,
-  parametersValuesArray,
-  derivedObject = {}
+  statedParametersValuesArray,
+  derivedParametersValuesArray,
 ) {
-  // Start with a copy of derivedObject
-  // so that we can overwrite or add properties.
-  const result = { ...derivedObject };
+  let parametersObject = {};
+  let parametersParsingErrorsArray = [];
 
   parametersSourceArray.forEach((param, index) => {
-    // Destructure fields that give extra info about param type and therefore special handling needed
-    const {
-      name,
-      isProp = true, // default to true if not provided
-      inputType,
-      handlerFunction,
-    } = param;
+    try {
+      let paramValue = param.isEditable
+        ? statedParametersValuesArray[param.index]
+        : derivedParametersValuesArray[param.index];
 
-    // 1. If `isProp === false`, skip the parameter
-    if (!isProp) {
-      return; // skip adding it to the final result
+      let paramValueWithWorkingFunctionsAndObjects =
+        typeof paramValue === "function"
+          ? paramValue.bind(parametersSourceArray[index])
+          : typeof param.value === "object"
+            ? JSON.parse(paramValue)
+            : paramValue;
+
+      parametersObject[param.name] = paramValueWithWorkingFunctionsAndObjects;
+    } catch (error) {
+      parametersParsingErrorsArray.push(param.name);
     }
-
-    // 2. Determine value from `valuesArray` or from `handlerFunction` if event
-    let newValue =
-      inputType === 'event' ? handlerFunction : parametersValuesArray[index];
-
-    // Parse string as a function if inputType is "function"
-    if (inputType === 'function') {
-      try {
-        newValue = new Function(`return (${parametersValuesArray[index]})`)();
-      } catch(e) {
-        // Fallback in case of parsing error
-        newValue = undefined;
-      }
-    }
-
-    // 3. If there's a matching derived value for this parameter name,
-    //    that should overwrite whatever we currently have:
-    if (Object.prototype.hasOwnProperty.call(derivedObject, name)) {
-      newValue = derivedObject[name];
-    }
-
-    // 4. Assign the final value to `result`
-    result[name] = newValue;
   });
 
-  // `result` now contains:
-  //   - All isProp params from sourceArray
-  //   - Potentially overwritten with derivedObject values
-  //   - Event handlers if inputType === 'event'
-  return result;
+  return [parametersObject, parametersParsingErrorsArray];
 }

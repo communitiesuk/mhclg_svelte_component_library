@@ -1,6 +1,6 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import InternalHeader from "$lib/components/ui/InternalHeader.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
@@ -11,7 +11,7 @@
   import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
   import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
-  import CodeBlock from "$lib/components/content/CodeBlock.svelte";
+  import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
 
   let { data, homepage = undefined, folders } = $props();
 

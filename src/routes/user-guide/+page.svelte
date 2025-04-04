@@ -1,9 +1,9 @@
 <script>
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
 
   let addComponentInstructions = [
     {
-      label: 'Create .svelte file',
+      label: "Create .svelte file",
       description: [
         "Add a new .svelte file within the most relevant subfolder in <code class='xxx'>lib/components</code>folder.",
       ],
@@ -12,29 +12,9 @@
 </script>
 
 <div class="g-top-level-container">
-  <h2>User guide</h2>
+  <h2>User guide coming soon...</h2>
 
-  <div class="mt-10 flex flex-col gap-20">
-    <div>
-      <h4>Adding a component</h4>
-
-      <div class="grid-container mt-6">
-        <div class="col1">1.</div>
-        <div class="col2">Create .svelte file</div>
-        <div class="col3">
-          Add a new .svelte file within the most relevant subfolder in <code
-            class="xxx">lib/components</code
-          >
-          folder.
-        </div>
-        <div class="col-span-full">
-          <DividerLine></DividerLine>
-        </div>
-      </div>
-    </div>
-
-    <h4>Best practice guidlines for building components</h4>
-  </div>
+  <div class="mt-10 flex flex-col gap-20"></div>
 </div>
 
 <style>

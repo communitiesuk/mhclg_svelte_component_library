@@ -1,8 +1,7 @@
-<script>
-  // @ts-nocheck
-  import { page } from "$app/stores";
-  import Pill from "$lib/components/content/Pill.svelte";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+<script lang="ts">
+  import { page } from "$app/state";
+  import Pill from "$lib/package-wrapping/Pill.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
@@ -72,7 +71,8 @@
    * DONOTTOUCH *
    * && 		details.name and details.folder are added based on a) the folders prop if on the homepage, b) the $page store if on the actual wrapper page.
    */
-  let pageInfo = $page?.route.id.split("/");
+
+  let pageInfo = page?.route.id.split("/");
 
   details.name = textStringConversion(
     folders ? folders[folders.length - 1] : pageInfo[pageInfo.length - 1],

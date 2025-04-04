@@ -1,84 +1,94 @@
 {
-	"name": "office-for-local-gov-svelte-component-library",
-	"version": "0.0.1",
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build && npm run package",
-		"preview": "vite preview",
-		"package": "svelte-kit sync && svelte-package && publint",
-		"prepublishOnly": "npm run package",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "eslint . && prettier --check .",
-		"format": "prettier --write .",
-		"generate-data": "tsx scripts/generateJSONData.cjs",
-		"copy-govuk-assets": "node scripts/copy-govuk-assets.js",
-		"prepare": "npm run copy-govuk-assets"
-	},
-	"files": [
-		"dist",
-		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
-	],
-	"sideEffects": [
-		"**/*.css"
-	],
-	"svelte": "./dist/index.js",
-	"types": "./dist/index.d.ts",
-	"type": "module",
-	"exports": {
-		".": {
-			"types": "./dist/index.d.ts",
-			"svelte": "./dist/index.js"
-		}
-	},
-	"peerDependencies": {
-		"svelte": "^5.0.0"
-	},
-	"devDependencies": {
-		"@sveltejs/adapter-auto": "^3.3.0",
-		"@sveltejs/kit": "^2.16.1",
-		"@sveltejs/package": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^4.0.0",
-		"@tailwindcss/aspect-ratio": "^0.4.2",
-		"@tailwindcss/forms": "^0.5.9",
-		"@tailwindcss/typography": "^0.5.15",
-		"@types/eslint": "^9.6.0",
-		"autoprefixer": "^10.4.20",
-		"eslint": "^9.7.0",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-svelte": "^2.36.0",
-		"flowbite": "^2.5.2",
-		"flowbite-svelte": "^0.47.3",
-		"fs-extra": "^11.3.0",
-		"globals": "^15.0.0",
-		"mdsvex": "^0.11.2",
-		"prettier": "^3.3.2",
-		"prettier-plugin-svelte": "^3.3.3",
-		"publint": "^0.2.0",
-		"shiki": "^1.27.2",
-		"svelte": "^5.19.1",
-		"svelte-check": "^4.0.0",
-		"sveltekit-autoimport": "^1.8.1",
-		"tailwindcss": "^3.4.9",
-		"tsx": "^4.19.2",
-		"typescript": "^5.0.0",
-		"typescript-eslint": "^8.0.0",
-		"vite": "^5.0.11"
-	},
-	"dependencies": {
-		"@dwp/dwp-frontend": "^3.3.0",
-		"@ministryofjustice/frontend": "^4.0.1",
-		"@moduk/frontend": "^2.0.23",
-		"@monaco-editor/loader": "^1.4.0",
-		"csv-parser": "^3.0.0",
-		"d3": "^7.9.0",
-		"govuk-frontend": "^5.9.0",
-		"node": "^18.20.6",
-		"monaco-editor": "^0.52.2",
-		"npm": "^11.0.0",
-		"prism-svelte": "^0.5.0",
-		"prismjs": "^1.29.0",
-		"svelte-preprocess": "^6.0.3"
-	}
+  "name": "office-for-local-gov-svelte-component-library",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build && npm run package",
+    "preview": "vite preview",
+    "package": "svelte-kit sync && svelte-package && publint",
+    "prepublishOnly": "npm run package",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "generate-data": "tsx scripts/generateJSONData.cjs",
+    "copy-govuk-assets": "node scripts/copy-govuk-assets.js",
+    "prepare": "npm run copy-govuk-assets",
+    "create-component-and-wrapper-pages": "node scripts/create-component-and-wrapper-pages.js"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*",
+    "!dist/**/*.spec.*"
+  ],
+  "sideEffects": [
+    "**/*.css"
+  ],
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js"
+    }
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0"
+  },
+  "devDependencies": {
+    "fs-extra": "^11.3.0",
+    "@sveltejs/adapter-auto": "^3.3.0",
+    "@sveltejs/kit": "^2.16.1",
+    "@sveltejs/package": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/forms": "^0.5.9",
+    "@tailwindcss/typography": "^0.5.15",
+    "@types/eslint": "^9.6.0",
+    "autoprefixer": "^10.4.20",
+    "eslint": "^9.7.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-svelte": "^2.36.0",
+    "flowbite": "^2.5.2",
+    "flowbite-svelte": "^0.47.3",
+    "globals": "^15.0.0",
+    "mdsvex": "^0.11.2",
+    "prettier": "^3.3.2",
+    "prettier-plugin-svelte": "^3.3.3",
+    "publint": "^0.2.0",
+    "shiki": "^1.27.2",
+    "svelte": "^5.19.1",
+    "svelte-check": "^4.0.0",
+    "sveltekit-autoimport": "^1.8.1",
+    "tailwindcss": "^3.4.9",
+    "tsx": "^4.19.2",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "^8.0.0",
+    "vite": "^5.0.11"
+  },
+  "dependencies": {
+    "@dwp/dwp-frontend": "^3.3.0",
+    "@ministryofjustice/frontend": "^4.0.1",
+    "@moduk/frontend": "^2.0.23",
+    "@maptiler/sdk": "^3.0.1",
+    "@monaco-editor/loader": "^1.4.0",
+    "csv-parser": "^3.0.0",
+    "d3": "^7.9.0",
+    "flowbite-svelte-icons": "^2.0.3",
+    "govuk-frontend": "^5.9.0",
+    "labelplacer": "^0.0.0",
+    "leaflet": "^1.9.4",
+    "mapbox-gl": "^1.13.3",
+    "maplibre-gl": "^5.2.0",
+    "monaco-editor": "^0.52.2",
+    "node": "^18.20.6",
+    "npm": "^11.0.0",
+    "prism-svelte": "^0.5.0",
+    "prismjs": "^1.29.0",
+    "sveaflet": "^0.1.4",
+    "svelte-maplibre": "^1.0.0-next.12",
+    "svelte-preprocess": "^6.0.3",
+    "topojson-client": "^3.1.0"
+  }
 }

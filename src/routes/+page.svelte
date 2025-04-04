@@ -1,14 +1,16 @@
 <script>
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { foldersLookup } from "$lib/config.js";
-  import ComponentDetailsUpdate from "$lib/package-wrapping/ComponentDetailsUpdate.svelte";
-  import LoadArrayOfComponents from "./local-lib/LoadArrayOfComponents.svelte";
+  import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
 
   let { data } = $props();
 
   const wrappersComponentsObject = import.meta.glob(
-    "./../wrappers/*/*.svelte",
+    [
+      "./../wrappers/components/*/*Wrapper.svelte",
+      "./../wrappers/components/*/*/*Wrapper.svelte",
+    ],
     {
       eager: true,
     },
@@ -18,10 +20,13 @@
     (el) => {
       const splitPath = el.split("/");
 
+      console.log(splitPath);
+
       return {
         component: wrappersComponentsObject[el],
         name: splitPath[splitPath.length - 1].replace("Wrapper.svelte", ""),
-        folder: splitPath[splitPath.length - 2],
+        folder: splitPath[3],
+        subFolder: splitPath.length === 6 ? splitPath[4] : null,
       };
     },
   );
@@ -32,7 +37,23 @@
     return splitPath[splitPath.length - 2];
   });
 
-  console.log(wrappersComponentsArray);
+  const wrappersPlaygroundsObject = import.meta.glob(
+    "./../wrappers/playgrounds/*.svelte",
+    {
+      eager: true,
+    },
+  );
+
+  const wrappersPlaygroundsArray = Object.keys(wrappersPlaygroundsObject).map(
+    (el) => {
+      const splitPath = el.split("/");
+
+      return {
+        component: wrappersPlaygroundsObject[el],
+        name: splitPath[splitPath.length - 1].replace(".svelte", ""),
+      };
+    },
+  );
 
   /**
    * && 		Description of the code, how it works and what it does.
@@ -51,13 +72,16 @@ TODO
 <>		
 -->
 
-<div class="flex flex-col gap-6">
-  <div>
-    <h1 class="govuk-heading-xl mb-6">Introduction</h1>
-    <p class="govuk-body">
-      This library has been developed by members of the MHCLG's Data Tools team
-      to house components for use in the organisation's public facing products.
-    </p>
+
+<div class="g-top-level-container">
+  <div class="flex flex-col gap-6">
+    <div>
+      <h4 class="mb-6">Introduction</h4>
+      <p>
+        This library has been developed by members of the MHCLG's Digital,
+        Design and Development team to house components for use in the
+        organisation's digital products.
+      </p>
 
     <p class="govuk-body">
       Check out our <a href="/user-guide" class="govuk-link">user guide</a> for guidance
@@ -77,33 +101,44 @@ TODO
         {@const wrappersArray = wrappersComponentsArray.filter(
           (el) => el.folder === folder,
         )}
-        {#each wrappersArray as wrapper}
-          <ComponentDetailsUpdate {wrapper}></ComponentDetailsUpdate>
-        {/each}
+        <div class="flex flex-col gap-8">
+          {#each [...new Set(wrappersArray.map((el) => el.subFolder))] as subFolder, index}
+            {#if index != 0}<DividerLine></DividerLine>{/if}
+            <div class={subFolder != null ? "mx-4" : ""}>
+              {#if subFolder != null}
+                <h6 class="mb-3 p-0 underline underline-offset-4">
+                  {subFolder}
+                </h6>
+              {/if}
+              <div class="flex flex-col gap-8">
+                {#each wrappersArray.filter((el) => el.subFolder === subFolder) as wrapper}
+                  <WrapperDetailsUpdate
+                    {wrapper}
+                    homepage="true"
+                    wrapperType="component"
+                  ></WrapperDetailsUpdate>
+                {/each}
+              </div>
+            </div>
+          {/each}
+        </div>
       {/each}
-
-      <!-- {#each data.componentsSubFolders as subFolder}
-        {#if subFolder.subFolders.length > 0}
-          <h5 class="underline underline-offset-4 mt-10 mb-8">
-            {subFolder.label}
-          </h5>
-          <LoadArrayOfComponents {subFolder}></LoadArrayOfComponents>
-        {/if}
-      {/each} -->
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
-    <div>
+    <!-- <div>
       <h4 class="mb-6 mt-10">Playground</h4>
       <p>
         The playground is a sandbox space where developers can test code and
         practice combining components.
       </p>
       <p>All our playground examples are listed below.</p>
-      <!-- <LoadArrayOfComponents subFolder={data.playgroundFolders}
-      ></LoadArrayOfComponents> -->
+      {#each wrappersPlaygroundsArray as wrapper}
+        <WrapperDetailsUpdate {wrapper} homepage="true" wrapperType="playground"
+        ></WrapperDetailsUpdate>
+      {/each}
+      
     </div>
-
-    <DividerLine margin="1rem 0rem"></DividerLine>
+    <DividerLine margin="1rem 0rem"></DividerLine> -->
   </div>
 
   <div>

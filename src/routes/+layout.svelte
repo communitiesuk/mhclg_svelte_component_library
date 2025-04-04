@@ -1,11 +1,11 @@
 <script lang="ts">
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import Breadcrumbs from "$lib/components/ui/Breadcrumbs.svelte";
   import Footer from "$lib/components/ui/Footer.svelte";
   import InternalHeader from "$lib/components/ui/InternalHeader.svelte";
   import HeaderNav from "$lib/components/ui/HeaderNav.svelte";
   import MobileNav from "$lib/components/ui/MobileNav.svelte";
   import SideNav from "$lib/components/ui/SideNav.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import "../app.css";
   import type { SideNavGroup } from "$lib/components/ui/SideNav.svelte";
   import { goto } from "$app/navigation";
@@ -19,6 +19,8 @@
   let currentSection = $state("Home"); // Default to Home
 
   // --- Central Mobile Navigation State ---
+
+  // Mobile navigation state
   let isMobileNavOpen = $state(false);
 
   // Current page for side navigation

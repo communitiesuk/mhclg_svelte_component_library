@@ -1,7 +1,7 @@
 <script lang="ts">
   import { page } from "$app/stores";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
-  import Breadcrumbs from "$lib/components/ui/Breadcrumbs.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
+  import Breadcrumbs from "$lib/components/layout/Breadcrumbs.svelte";
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
   import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
   import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
@@ -10,7 +10,7 @@
   import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
   import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
-  import CodeBlock from "$lib/components/content/CodeBlock.svelte";
+  import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
 
   interface PageProps {
     data: any;
@@ -173,6 +173,7 @@
 
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
+    
     <h5 id="examples" class="mb-6 mt-12 underline underline-offset-4">Examples</h5>
 
     <h6>Basic Automatically Generated Breadcrumbs</h6>

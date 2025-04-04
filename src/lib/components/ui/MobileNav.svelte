@@ -41,7 +41,7 @@
   function toggleSection(sectionTitle: string) {
     expandedSections[sectionTitle] = !expandedSections[sectionTitle];
   }
-
+  
   // Initialise expanded sections based on current section
   $effect(() => {
     if (currentSection) {

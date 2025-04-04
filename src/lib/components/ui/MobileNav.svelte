@@ -42,7 +42,7 @@
     expandedSections[sectionTitle] = !expandedSections[sectionTitle];
   }
 
-  // Initialize expanded sections based on current section
+  // Initialise expanded sections based on current section
   $effect(() => {
     if (currentSection) {
       sections.forEach((section) => {

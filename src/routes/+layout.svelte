@@ -330,13 +330,13 @@
       <div class="app-split-pane">
         <!-- Side navigation - show for Components, Patterns, or Community pages -->
         {#if currentSection !== "Home"}
-          <div class="app-split-pane__nav">
+          <aside class="app-split-pane__nav">
             <SideNav
               title={getSectionTitle(currentSection)}
               groups={getNavGroupsForSection(currentSection)}
               currentItem={currentPage}
             />
-          </div>
+          </aside>
         {/if}
 
         <!-- Main content area -->

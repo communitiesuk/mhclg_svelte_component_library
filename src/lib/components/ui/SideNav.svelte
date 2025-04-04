@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import { page } from "$app/stores";
 
   // Define the navigation item type
@@ -69,11 +68,7 @@
 </script>
 
 <div class="app-pane__subnav">
-  <nav
-    class="app-subnav"
-    aria-labelledby="app-subnav-heading"
-    role="navigation"
-  >
+  <nav class="app-subnav" aria-labelledby="app-subnav-heading">
     <h2 class="govuk-visually-hidden" id="app-subnav-heading">
       {title}
     </h2>

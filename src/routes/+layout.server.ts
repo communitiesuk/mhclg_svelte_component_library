@@ -1,6 +1,6 @@
 import { readdir, stat } from "fs/promises";
 import { resolve, join } from "path";
-import type { LayoutServerLoad } from "./$types";
+import type { LayoutServerLoad } from "./$types.js";
 
 // Helper function to format directory name into display name
 function formatDirName(dirName: string): string {

@@ -1,13 +1,14 @@
 <script>
-  import { defaultScreenWidthBreakpoints } from '$lib/config.js';
-  import { svgWidthCategoryToRowLabelPermutationsLookup } from '../local-config.js';
-  import { calculateLabelSplitsAndSpace } from '../local-utils/calculateLabelSplitsAndSpace.js';
-  import { categoriseContainerWidth } from '../local-utils/categoriseContainerWidth.js';
-  import Axes from './external/Axes.svelte';
-  import Legend from './external/Legend.svelte';
-  import Source from './external/Source.svelte';
-  import TitleAndSubtitle from './external/TitleAndSubtitle.svelte';
-  import Row from './Row.svelte';
+  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
+  import { svgWidthCategoryToRowLabelPermutationsLookup } from "../local-config.js";
+  import { calculateLabelSplitsAndSpace } from "../local-utils/calculateLabelSplitsAndSpace.js";
+  import { categoriseContainerWidth } from "../local-utils/categoriseContainerWidth.js";
+  import Axes from "./external/Axes.svelte";
+  import Legend from "./external/Legend.svelte";
+  import Source from "./external/Source.svelte";
+  import TitleAndSubtitle from "./external/TitleAndSubtitle.svelte";
+  import Row from "./Row.svelte";
+  import { scaleLinear } from "d3-scale";
 
   let { dataArray } = $props();
 
@@ -16,12 +17,30 @@
   let svgWidth = $state(),
     svgHeight = 500;
 
-  let totalMargin = { top: 40, right: 50, bottom: 20, left: 250 };
+  let requiredSpaceForLabelsArray = $state(new Array(dataArray.length));
+  $inspect(requiredSpaceForLabelsArray);
+
+  let filteredRequiredSpaceForLabelsArray = $derived(
+    requiredSpaceForLabelsArray.filter((el) => el !== undefined),
+  );
+
+  let requiredSpaceForLabels = $derived(
+    filteredRequiredSpaceForLabelsArray.length > 0
+      ? Math.max(...filteredRequiredSpaceForLabelsArray)
+      : 100,
+  );
+
+  let totalMargin = $derived({
+    top: 40,
+    right: 50,
+    bottom: 20,
+    left: requiredSpaceForLabels + 15,
+  });
 
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
 
-  let svgWidthCategory = $derived(
+  /*let svgWidthCategory = $derived(
     svgWidth ??
       categoriseContainerWidth(defaultScreenWidthBreakpoints, svgWidth)
   );
@@ -34,9 +53,17 @@
         svgWidthCategoryToRowLabelPermutationsLookup[svgWidthCategory],
         dataArray
       )
+  );*/
+
+  let allXValues = $derived(dataArray.map((el) => el.y));
+
+  let yFunction = $derived(
+    scaleLinear()
+      .domain([Math.min(...allXValues), Math.max(...allXValues)])
+      .range([0, chartWidth]),
   );
 
-  $inspect(dataArrayWithSplitLabels);
+  let rowHeight = $derived((chartHeight - 20) / dataArray.length);
 </script>
 
 <div class="mt-10">
@@ -50,11 +77,17 @@
     >
       {#if svgWidth}
         <g transform="translate({totalMargin.left},{totalMargin.top})">
-          <Axes {chartHeight} {chartWidth}></Axes>
+          <Axes {chartHeight} {chartWidth} {yFunction}></Axes>
 
           {#each dataArray as row, i}
-            <g transform="translate({0},{0})">
-              <Row {row}></Row>
+            <g transform="translate({0},{rowHeight * (i + 0.5) + 10})">
+              <Row
+                {row}
+                {yFunction}
+                {rowHeight}
+                {chartWidth}
+                bind:requiredSpaceForLabel={requiredSpaceForLabelsArray[i]}
+              ></Row>
             </g>
           {/each}
         </g>

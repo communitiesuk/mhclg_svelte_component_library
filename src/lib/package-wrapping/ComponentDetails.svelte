@@ -41,8 +41,8 @@
       <Pill
         size={homepage ? "small" : "medium"}
         textContent={textStringConversion(details.status, "title-first-word")}
-        bgColor={componentStausLookup[details.status].bgColor}
-        textColor={componentStausLookup[details.status].color}
+        bgColor={"black"}
+        textColor={"white"}
       ></Pill>
     {/if}
   </div>

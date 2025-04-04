@@ -111,6 +111,13 @@
         ),
       },
       {
+        name: "headingLevel",
+        category: "Content",
+        isProp: true,
+        inputType: "input",
+        value: "h4",
+      },
+      {
         name: "hideAllSections",
         category: "UI Toggle Labels",
         isProp: true,
@@ -222,6 +229,18 @@
       path += " L " + dArray[i].x * 10 + " " + (200 - dArray[i].y * 4);
     }
     return path;
+  }
+
+  function copyHighlightedCode(event) {
+    const block = event.currentTarget.closest(".code-block");
+    if (!block) return;
+
+    const codeElement = block.querySelector("code");
+    if (!codeElement) return;
+
+    // Get text content while preserving new lines
+    const text = codeElement.innerText || codeElement.textContent;
+    navigator.clipboard.writeText(text);
   }
 </script>
 

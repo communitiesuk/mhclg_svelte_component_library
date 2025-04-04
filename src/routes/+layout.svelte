@@ -12,6 +12,7 @@
   import { page } from "$app/stores";
   import { onMount } from "svelte";
 
+
   let { children, data } = $props();
 
   // Current section for navigation

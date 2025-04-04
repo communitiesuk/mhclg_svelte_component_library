@@ -99,6 +99,9 @@
                   <li class="app-subnav__section-item">
                     <a
                       class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
+                      class:app-subnav__link--bold={subItem.href.split(
+                        "#",
+                      )[1] === $page.url.hash.substring(1)}
                       href={subItem.href}
                     >
                       {subItem.text}
@@ -141,6 +144,9 @@
                   <li class="app-subnav__section-item">
                     <a
                       class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
+                      class:app-subnav__link--bold={subItem.href.split(
+                        "#",
+                      )[1] === $page.url.hash.substring(1)}
                       href={subItem.href}
                     >
                       {subItem.text}

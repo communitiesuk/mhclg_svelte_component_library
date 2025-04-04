@@ -72,7 +72,6 @@ TODO
 <>		
 -->
 
-
 <div class="g-top-level-container">
   <div class="flex flex-col gap-6">
     <div>
@@ -83,48 +82,47 @@ TODO
         organisation's digital products.
       </p>
 
-    <p class="govuk-body">
-      Check out our <a href="/user-guide" class="govuk-link">user guide</a> for guidance
-      on how to build components for this library.
-    </p>
-    <DividerLine margin="1rem 0rem"></DividerLine>
-  </div>
-
-
-      {#each [...new Set(wrappersComponentsArray.map((el) => el.folder))] as folder}
-        <h5 class="underline underline-offset-4 mt-10 mb-8">
-          {textStringConversion(
-            foldersLookup[folder] ?? folder,
-            "title-first-word",
-          )}
-        </h5>
-        {@const wrappersArray = wrappersComponentsArray.filter(
-          (el) => el.folder === folder,
-        )}
-        <div class="flex flex-col gap-8">
-          {#each [...new Set(wrappersArray.map((el) => el.subFolder))] as subFolder, index}
-            {#if index != 0}<DividerLine></DividerLine>{/if}
-            <div class={subFolder != null ? "mx-4" : ""}>
-              {#if subFolder != null}
-                <h6 class="mb-3 p-0 underline underline-offset-4">
-                  {subFolder}
-                </h6>
-              {/if}
-              <div class="flex flex-col gap-8">
-                {#each wrappersArray.filter((el) => el.subFolder === subFolder) as wrapper}
-                  <WrapperDetailsUpdate
-                    {wrapper}
-                    homepage="true"
-                    wrapperType="component"
-                  ></WrapperDetailsUpdate>
-                {/each}
-              </div>
-            </div>
-          {/each}
-        </div>
-      {/each}
+      <p class="govuk-body">
+        Check out our <a href="/user-guide" class="govuk-link">user guide</a> for
+        guidance on how to build components for this library.
+      </p>
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
+
+    {#each [...new Set(wrappersComponentsArray.map((el) => el.folder))] as folder}
+      <h5 class="underline underline-offset-4 mt-10 mb-8">
+        {textStringConversion(
+          foldersLookup[folder] ?? folder,
+          "title-first-word",
+        )}
+      </h5>
+      {@const wrappersArray = wrappersComponentsArray.filter(
+        (el) => el.folder === folder,
+      )}
+      <div class="flex flex-col gap-8">
+        {#each [...new Set(wrappersArray.map((el) => el.subFolder))] as subFolder, index}
+          {#if index != 0}<DividerLine></DividerLine>{/if}
+          <div class={subFolder != null ? "mx-4" : ""}>
+            {#if subFolder != null}
+              <h6 class="mb-3 p-0 underline underline-offset-4">
+                {subFolder}
+              </h6>
+            {/if}
+            <div class="flex flex-col gap-8">
+              {#each wrappersArray.filter((el) => el.subFolder === subFolder) as wrapper}
+                <WrapperDetailsUpdate
+                  {wrapper}
+                  homepage="true"
+                  wrapperType="component"
+                ></WrapperDetailsUpdate>
+              {/each}
+            </div>
+          </div>
+        {/each}
+      </div>
+    {/each}
+    <DividerLine margin="1rem 0rem"></DividerLine>
+
     <!-- <div>
       <h4 class="mb-6 mt-10">Playground</h4>
       <p>
@@ -139,19 +137,17 @@ TODO
       
     </div>
     <DividerLine margin="1rem 0rem"></DividerLine> -->
-  </div>
 
-  <div>
-    <h2 class="govuk-heading-l mb-6 mt-10">Playground</h2>
-    <p class="govuk-body">
-      The playground is a sandbox space where developers can test code and
-      practice combining components.
-    </p>
-    <p class="govuk-body">All our playground examples are listed below.</p>
-    <LoadArrayOfComponents subFolder={data.playgroundFolders}
-    ></LoadArrayOfComponents>
+    <div>
+      <h2 class="govuk-heading-l mb-6 mt-10">Playground</h2>
+      <p class="govuk-body">
+        The playground is a sandbox space where developers can test code and
+        practice combining components.
+      </p>
+      <p class="govuk-body">All our playground examples are listed below.</p>
+    </div>
+    <DividerLine margin="1rem 0rem"></DividerLine>
   </div>
-  <DividerLine margin="1rem 0rem"></DividerLine>
 </div>
 
 <style>

@@ -1,7 +1,6 @@
 <script>
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
   import LoadArrayOfComponents from "../local-lib/LoadArrayOfComponents.svelte";
-
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   let { data } = $props();
 
   /**

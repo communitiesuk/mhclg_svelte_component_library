@@ -37,7 +37,7 @@
   });
 </script>
 
-<header class="govuk-service-navigation" aria-label="main" role="navigation">
+<nav class="govuk-service-navigation" aria-label="main">
   <div class="govuk-width-container">
     <div class="govuk-service-navigation__container">
       <span class="govuk-service-navigation__service-name">
@@ -78,7 +78,7 @@
       </button>
     </div>
   </div>
-</header>
+</nav>
 
 <style>
   /* Only add styles that are not covered by the govuk CSS */

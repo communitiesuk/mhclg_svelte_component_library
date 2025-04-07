@@ -508,4 +508,4 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div data-role="examples-section" class="px-5"></div>
+<div id="examples" data-role="examples-section" class="px-5"></div>

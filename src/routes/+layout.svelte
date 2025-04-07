@@ -7,7 +7,11 @@
   import SideNav from "$lib/components/ui/SideNav.svelte";
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import "../app.css";
-  import type { SideNavGroup } from "$lib/components/ui/SideNav.svelte";
+  import type {
+    SideNavGroup,
+    SideNavItem,
+  } from "$lib/components/ui/SideNav.svelte";
+  import type { ComponentItem } from "./+layout.server";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import { onMount } from "svelte";
@@ -43,38 +47,11 @@
 
   // Helper function to create a proper URL from a component path
   function createComponentUrl(path: string): string {
-    // If the path already starts with 'components/', remove it
-    if (path.startsWith("components/")) {
-      return `/${path}`;
-    }
-    return `/components/${path}`;
+    // The path already contains the full route
+    return `/${path}`;
   }
 
-  // Create empty fallback arrays
   const fallbackNavGroups: SideNavGroup[] = [];
-
-  // Convert component tree to side nav groups
-  const componentNavGroups: SideNavGroup[] =
-    componentTree.length > 0
-      ? componentTree.map((category) => {
-          return {
-            title: category.name,
-            items: category.children
-              ? category.children.map((child) => ({
-                  text: child.name,
-                  href: createComponentUrl(child.path),
-                }))
-              : [
-                  {
-                    text: category.name,
-                    href: createComponentUrl(category.path),
-                  },
-                ],
-          };
-        })
-      : fallbackNavGroups;
-
-  console.log("Nav Groups:", componentNavGroups);
 
   // Create Pattern nav items based on the mobile nav structure
   const patternNavGroups: SideNavGroup[] = [
@@ -98,42 +75,81 @@
     },
   ];
 
+  // Helper to recursively extract actual component wrappers into a flat SideNavItem list
+  function mapComponentItemsToSideNavItems(
+    items: ComponentItem[],
+  ): SideNavItem[] {
+    let navItems: SideNavItem[] = [];
+    for (const item of items) {
+      if (item.hasWrapper) {
+        // If it's a wrapper, add it directly
+        navItems.push({
+          text: item.name,
+          href: `/${item.path}`,
+          subItems: undefined, // Explicitly no sub-items for direct wrappers here
+        });
+      }
+      // If it's a folder (hasWrapper is false or undefined) AND has children, process children
+      if (!item.hasWrapper && item.children && item.children.length > 0) {
+        // Recursively get nav items from children and add them to the list
+        navItems = navItems.concat(
+          mapComponentItemsToSideNavItems(item.children),
+        );
+      }
+    }
+    return navItems;
+  }
+
+  // Convert component tree to side nav groups using the helper
+  const componentNavGroups: SideNavGroup[] =
+    componentTree.length > 0
+      ? componentTree.map((category) => {
+          return {
+            title: category.name,
+            items:
+              category.children && category.children.length > 0 // Check if children exist
+                ? mapComponentItemsToSideNavItems(category.children)
+                : [],
+          };
+        })
+      : fallbackNavGroups;
+
   // Create flattened items for the mobile navigation
   function createMobileItems(tree: any[]) {
     const result: any[] = [];
 
     tree.forEach((category) => {
+      const categoryEntry: any = { title: category.name, items: [] };
+
       if (category.children && category.children.length > 0) {
-        // Category with children
-        const nestedItems = category.children.map((child) => {
-          if (child.children && child.children.length > 0) {
-            // Child with its own children (grandchildren)
-            return {
-              title: child.name,
-              items: child.children.map((grandchild) => ({
-                text: grandchild.name,
-                href: createComponentUrl(grandchild.path),
-              })),
-            };
-          } else {
-            // Simple child
-            return {
+        category.children.forEach((child) => {
+          if (child.hasWrapper) {
+            // Direct component under category
+            categoryEntry.items.push({
               text: child.name,
-              href: createComponentUrl(child.path),
+              href: `/${child.path}`,
+            });
+          } else if (child.children && child.children.length > 0) {
+            // Sub-category with components
+            const subCategoryEntry = {
+              title: child.name,
+              items: child.children
+                .filter((grandchild) => grandchild.hasWrapper) // Only include actual components
+                .map((grandchild) => ({
+                  text: grandchild.name,
+                  href: `/${grandchild.path}`,
+                })),
             };
+            // Only add sub-category if it has items
+            if (subCategoryEntry.items.length > 0) {
+              categoryEntry.items.push(subCategoryEntry);
+            }
           }
         });
-
-        result.push({
-          title: category.name,
-          items: nestedItems,
-        });
-      } else {
-        // Simple category without children
-        result.push({
-          text: category.name,
-          href: createComponentUrl(category.path),
-        });
+      }
+      // Only add the category if it has items
+      if (categoryEntry.items.length > 0) {
+        result.push(categoryEntry);
       }
     });
 
@@ -260,31 +276,8 @@
   function getNavGroupsForSection(section: string): SideNavGroup[] {
     switch (section) {
       case "Components":
-        // For Components section, add sub-navigation items with hash links to documentation sections
-        return componentNavGroups.map((group) => {
-          return {
-            ...group,
-            items: group.items.map((item) => {
-              // Get base path without any hash
-              const basePath = item.href.split("#")[0];
-
-              return {
-                ...item,
-                // Add documentation section links based on the actual page structure
-                subItems: [
-                  { text: "Description", href: `${basePath}#description` },
-                  { text: "Context", href: `${basePath}#context` },
-                  { text: "Parameters", href: `${basePath}#parameters` },
-                  {
-                    text: "Component Demo",
-                    href: `${basePath}#component-demo`,
-                  },
-                  { text: "Examples", href: `${basePath}#examples` },
-                ],
-              };
-            }),
-          };
-        });
+        // Return the pre-processed componentNavGroups
+        return componentNavGroups;
       case "Patterns":
         return patternNavGroups;
       case "Community":

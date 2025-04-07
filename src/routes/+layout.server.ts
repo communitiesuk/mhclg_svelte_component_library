@@ -14,117 +14,142 @@ function formatDirName(dirName: string): string {
 // Interface for component items
 export interface ComponentItem {
   name: string;
-  path: string;
+  path: string; // This will be the route path (e.g., components-update/data-vis/map/map)
   children?: ComponentItem[];
-  hasPage?: boolean;
+  hasWrapper?: boolean;
 }
 
 // Helper function to recursively scan directories and build tree
-async function scanDir(
+async function scanWrapperDir(
   basePath: string,
-  relativePath: string = "",
+  relativePathSegments: string[] = [], // Use array for path segments
 ): Promise<ComponentItem[]> {
   try {
-    const fullPath = join(basePath, relativePath);
+    const currentRelativePath = join(...relativePathSegments);
+    const fullPath = join(basePath, currentRelativePath);
 
-    // Log what we're scanning
-    console.log(`Scanning dir: ${fullPath}`);
+    const stats = await stat(fullPath);
+    if (!stats.isDirectory()) return [];
 
-    // Check if directory exists
-    try {
-      const stats = await stat(fullPath);
-      if (!stats.isDirectory()) {
-        console.error(`Path is not a directory: ${fullPath}`);
-        return [];
-      }
-    } catch (err) {
-      console.error(`Error accessing directory ${fullPath}:`, err);
-      return [];
-    }
-
-    // Read directory contents
     const contents = await readdir(fullPath, { withFileTypes: true });
-    console.log(`Found ${contents.length} items in ${fullPath}`);
-
-    // Get directories and page files
-    const entries = contents.map((dirent) => ({
-      name: dirent.name,
-      isDirectory: dirent.isDirectory(),
-      isPage: dirent.name === "+page.svelte",
-    }));
-
-    // Filter directories only
-    const directories = entries
-      .filter((entry) => entry.isDirectory)
-      .map((entry) => entry.name);
-
-    console.log(`Found directories: ${directories.join(", ")}`);
-
-    // Check if this directory has a +page.svelte file
-    const hasPage = entries.some((entry) => entry.isPage);
-
-    // Process each directory
     const items: ComponentItem[] = [];
 
-    for (const dirName of directories) {
-      const dirPath = relativePath ? join(relativePath, dirName) : dirName;
-      const children = await scanDir(basePath, dirPath);
+    // Process subdirectories first
+    for (const dirent of contents) {
+      if (dirent.isDirectory()) {
+        const dirName = dirent.name;
+        const children = await scanWrapperDir(basePath, [
+          ...relativePathSegments,
+          dirName,
+        ]);
 
-      // Log the component we're adding
-      console.log(`Adding component: ${dirName} at path: ${dirPath}`);
-
-      items.push({
-        name: formatDirName(dirName),
-        path: dirPath,
-        children: children.length > 0 ? children : undefined,
-        hasPage: hasPage,
-      });
+        // If the subdirectory yields any items (wrappers or deeper categories)
+        if (children.length > 0) {
+          items.push({
+            name: formatDirName(dirName), // e.g., "Data Vis", "Line Chart"
+            // Placeholder path for category folder - might be updated if direct wrapper found
+            path: `components-update/${[...relativePathSegments, dirName].join("/")}`,
+            children: children,
+            // hasWrapper will be determined later
+          });
+        }
+      }
     }
+
+    // Process wrapper files at the current level
+    for (const dirent of contents) {
+      if (dirent.isFile() && dirent.name.endsWith("Wrapper.svelte")) {
+        const wrapperName = dirent.name.replace("Wrapper.svelte", ""); // e.g., 'Line', 'Lines', 'Map', 'Button'
+        // Convert PascalCase/camelCase name from file to kebab-case for URL
+        const wrapperKebabCase = wrapperName
+          .replace(/([a-z])([A-Z])/g, "$1-$2") // Add hyphen between lowercase and uppercase
+          .toLowerCase();
+
+        const routePath = `components-update/${[...relativePathSegments, wrapperKebabCase].join("/")}`;
+
+        // Does an item already exist for this (e.g., 'Map' category from folder)?
+        const existingItemIndex = items.findIndex(
+          (item) => item.name === wrapperName,
+        );
+
+        if (existingItemIndex !== -1) {
+          // Found a folder item matching the wrapper name, update it
+          items[existingItemIndex].path = routePath; // Give the folder item the correct wrapper path
+          items[existingItemIndex].hasWrapper = true;
+        } else {
+          // No matching folder item, add as a direct component item
+          items.push({
+            name: wrapperName, // Use the name from the file (PascalCase)
+            path: routePath,
+            hasWrapper: true,
+          });
+        }
+      }
+    }
+
+    // Assign hasWrapper=false to category folders that didn't get updated by a direct wrapper
+    for (const item of items) {
+      if (item.hasWrapper === undefined && item.children) {
+        item.hasWrapper = false; // Explicitly mark folders without direct wrappers
+      }
+    }
+
+    // Sort items: folders first, then wrappers alphabetically
+    items.sort((a, b) => {
+      const aIsFolder = !!a.children;
+      const bIsFolder = !!b.children;
+      if (aIsFolder && !bIsFolder) return -1;
+      if (!aIsFolder && bIsFolder) return 1;
+      return a.name.localeCompare(b.name);
+    });
 
     return items;
   } catch (error) {
-    console.error(`Error scanning directory ${relativePath}:`, error);
+    if (error instanceof Error && "code" in error && error.code === "ENOENT") {
+      // Directory not found is expected for empty branches, suppress warning
+      // console.warn(`Directory not found: ${join(basePath, join(...relativePathSegments))}`);
+    } else {
+      console.error(
+        `Error scanning directory ${join(...relativePathSegments)}:`,
+        error,
+      );
+    }
     return [];
   }
 }
 
-// Function to flatten a tree structure for side navigation
+// Function to flatten a tree structure (can be removed if not used elsewhere)
+/*
 function flattenComponentTree(
   items: ComponentItem[],
-  parentPath: string = "",
-): any[] {
+): any[] { 
   let flattened: any[] = [];
-
   for (const item of items) {
-    // Create the current item
-    const currentPath = parentPath
-      ? `${parentPath}/${item.path.split("/").pop()}`
-      : item.path;
-    flattened.push({
-      name: item.name,
-      path: currentPath,
-    });
-
-    // Add children if they exist
+     if (item.hasWrapper || (item.children && item.children.length > 0)) {
+         flattened.push({
+            name: item.name,
+            href: `/${item.path}`, 
+            isCategory: !!item.children && item.children.length > 0 && !item.hasWrapper,
+         });
+     }
     if (item.children && item.children.length > 0) {
       flattened = flattened.concat(
-        flattenComponentTree(item.children, currentPath),
+        flattenComponentTree(item.children)
       );
     }
   }
-
   return flattened;
 }
+*/
 
 export const load: LayoutServerLoad = async () => {
   try {
-    // Base path to the routes directory - use __dirname to get the current directory
-    const baseRoutesPath = resolve("src/routes");
-    console.log("Base routes path:", baseRoutesPath);
+    const baseWrappersPath = resolve("src/wrappers/components");
+    console.log("Base wrappers path:", baseWrappersPath);
 
-    // Scan component directories recursively
-    console.log("Scanning components...");
-    const componentTree = await scanDir(baseRoutesPath, "components");
+    console.log("Scanning component wrappers...");
+    // Initial call with empty segments array
+    const componentTree = await scanWrapperDir(baseWrappersPath, []);
     console.log(
       "Component tree result:",
       JSON.stringify(componentTree, null, 2),
@@ -139,18 +164,21 @@ export const load: LayoutServerLoad = async () => {
 
     // Extract UI components specifically (these are nested under the "ui" directory)
     const uiCategory = componentTree.find(
-      (category) => category.path === "components/ui",
+      // Find category by name, case-insensitive comparison might be safer
+      (category) => category.name.toLowerCase() === "ui",
     );
-    const uiComponents = uiCategory?.children || [];
+    // Ensure uiCategory exists and has children before accessing
+    const uiComponents =
+      uiCategory?.children?.filter((c) => c.hasWrapper) || []; // Filter to only actual components
 
-    // Flatten component tree for side navigation
-    const componentSections = flattenComponentTree(componentTree);
+    // Flattening might not be needed directly if Nav components handle the tree
+    // const componentSections = flattenComponentTree(componentTree);
 
     return {
-      componentDirectories,
-      uiComponents,
-      componentSections,
-      componentTree,
+      componentDirectories, // Keep for potential other uses
+      uiComponents, // Keep for potential other uses
+      // componentSections, // Remove flattened list if unused
+      componentTree, // Pass the raw tree to the layout
     };
   } catch (error) {
     console.error("Error in layout.server.ts load function:", error);
@@ -158,7 +186,7 @@ export const load: LayoutServerLoad = async () => {
     return {
       componentDirectories: [],
       uiComponents: [],
-      componentSections: [],
+      // componentSections: [],
       componentTree: [],
     };
   }

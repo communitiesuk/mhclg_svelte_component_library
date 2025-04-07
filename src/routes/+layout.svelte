@@ -12,7 +12,6 @@
   import { page } from "$app/stores";
   import { onMount } from "svelte";
 
-
   let { children, data } = $props();
 
   // Current section for navigation
@@ -406,5 +405,13 @@
 
   .app-content {
     padding: 15px 0 20px;
+  }
+
+  /* Override the govuk-width-container for the app-pane__body */
+  .app-pane__body.govuk-width-container {
+    max-width: 85%; /* Use more of the available width */
+    /* Ensure it remains centered if desired */
+    margin-left: auto;
+    margin-right: auto;
   }
 </style>

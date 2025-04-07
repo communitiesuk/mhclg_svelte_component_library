@@ -38,11 +38,11 @@
 
     // Update current property on items
     items = items.map((item) => {
-      // Check if the current URL path includes this item's path
+      // More precise path matching to avoid "line" matching in "lines"
       const isActive =
-        item.href === path ||
-        path.includes(item.href) ||
-        item.text.toLowerCase() === activeItem.toLowerCase();
+        item.href === path || // Exact path match
+        (path.endsWith("/" + activeItem) &&
+          item.text.toLowerCase() === activeItem.toLowerCase()); // Match by last URL segment and item text
       return {
         ...item,
         current: isActive,
@@ -53,11 +53,11 @@
     groups = groups.map((group) => ({
       ...group,
       items: group.items.map((item) => {
-        // Check if the current URL path includes this item's path
+        // More precise path matching to avoid "line" matching in "lines"
         const isActive =
-          item.href === path ||
-          path.includes(item.href) ||
-          item.text.toLowerCase() === activeItem.toLowerCase();
+          item.href === path || // Exact path match
+          (path.endsWith("/" + activeItem) &&
+            item.text.toLowerCase() === activeItem.toLowerCase()); // Match by last URL segment and item text
         return {
           ...item,
           current: isActive,

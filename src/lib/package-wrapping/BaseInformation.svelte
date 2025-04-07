@@ -10,7 +10,10 @@
   <div data-role="component-information-array-container">
     {#each detailsArray as detail}
       {#if detail.arr && detail.arr.length > 0 && (!homepage || detail.visibleOnHomepage)}
-        <div data-role="component-information-detail-grid-container">
+        <div
+          data-role="component-information-detail-grid-container"
+          id={detail.label.toLowerCase()}
+        >
           {#if detail.label}
             <dt>{detail.label}:</dt>
           {/if}

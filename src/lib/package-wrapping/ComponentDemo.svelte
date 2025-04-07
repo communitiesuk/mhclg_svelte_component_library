@@ -53,12 +53,14 @@
       style="max-width: {(overlayOpen ? 9999 : demoScreenWidth - 15) +
         (sideBarOpen ? 346 : 60)}px;"
     >
-      <h5 class="underline underline-offset-4">Component Demo</h5>
+      <h5 id="component-demo" class="underline underline-offset-4">
+        Component Demo
+      </h5>
       <div>
         <Button
           on:click={() => {
             navigator.clipboard.writeText(
-              JSON.stringify(copyParametersToClipboardObject, 0, 2),
+              JSON.stringify(copyParametersToClipboardObject, null, 2),
             );
           }}
           color="alternative"

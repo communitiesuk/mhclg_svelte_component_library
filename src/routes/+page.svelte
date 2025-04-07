@@ -6,37 +6,7 @@
 
   let { data } = $props();
 
-  const wrappersComponentsObject = import.meta.glob(
-    [
-      "./../wrappers/components/*/*Wrapper.svelte",
-      "./../wrappers/components/*/*/*Wrapper.svelte",
-    ],
-    {
-      eager: true,
-    },
-  );
-
-  const wrappersComponentsArray = Object.keys(wrappersComponentsObject).map(
-    (el) => {
-      const splitPath = el.split("/");
-
-      console.log(splitPath);
-
-      return {
-        component: wrappersComponentsObject[el],
-        name: splitPath[splitPath.length - 1].replace("Wrapper.svelte", ""),
-        folder: splitPath[3],
-        subFolder: splitPath.length === 6 ? splitPath[4] : null,
-      };
-    },
-  );
-
-  const wrappersPaths = Object.keys(wrappersComponentsObject);
-  const wrappersFolders = wrappersPaths.map((el) => {
-    const splitPath = el.split("/");
-    return splitPath[splitPath.length - 2];
-  });
-
+  // Keep only playground wrappers for the homepage
   const wrappersPlaygroundsObject = import.meta.glob(
     "./../wrappers/playgrounds/*.svelte",
     {
@@ -75,7 +45,7 @@ TODO
 <div class="g-top-level-container">
   <div class="flex flex-col gap-6">
     <div>
-      <h4 class="mb-6">Introduction</h4>
+      <h1 class="govuk-heading-xl mb-6">Introduction</h1>
       <p>
         This library has been developed by members of the MHCLG's Digital,
         Design and Development team to house components for use in the
@@ -89,54 +59,17 @@ TODO
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
 
-    {#each [...new Set(wrappersComponentsArray.map((el) => el.folder))] as folder}
-      <h5 class="underline underline-offset-4 mt-10 mb-8">
-        {textStringConversion(
-          foldersLookup[folder] ?? folder,
-          "title-first-word",
-        )}
-      </h5>
-      {@const wrappersArray = wrappersComponentsArray.filter(
-        (el) => el.folder === folder,
-      )}
-      <div class="flex flex-col gap-8">
-        {#each [...new Set(wrappersArray.map((el) => el.subFolder))] as subFolder, index}
-          {#if index != 0}<DividerLine></DividerLine>{/if}
-          <div class={subFolder != null ? "mx-4" : ""}>
-            {#if subFolder != null}
-              <h6 class="mb-3 p-0 underline underline-offset-4">
-                {subFolder}
-              </h6>
-            {/if}
-            <div class="flex flex-col gap-8">
-              {#each wrappersArray.filter((el) => el.subFolder === subFolder) as wrapper}
-                <WrapperDetailsUpdate
-                  {wrapper}
-                  homepage="true"
-                  wrapperType="component"
-                ></WrapperDetailsUpdate>
-              {/each}
-            </div>
-          </div>
-        {/each}
-      </div>
-    {/each}
-    <DividerLine margin="1rem 0rem"></DividerLine>
-
-    <!-- <div>
-      <h4 class="mb-6 mt-10">Playground</h4>
-      <p>
-        The playground is a sandbox space where developers can test code and
-        practice combining components.
+    <div>
+      <h2 class="govuk-heading-l mb-6 mt-10">Components</h2>
+      <p class="govuk-body">
+        Browse our collection of reusable UI components designed for consistency
+        and accessibility.
       </p>
-      <p>All our playground examples are listed below.</p>
-      {#each wrappersPlaygroundsArray as wrapper}
-        <WrapperDetailsUpdate {wrapper} homepage="true" wrapperType="playground"
-        ></WrapperDetailsUpdate>
-      {/each}
-      
+      <p class="govuk-body">
+        <a href="/components" class="govuk-link">View all components</a> in the library.
+      </p>
+      <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
-    <DividerLine margin="1rem 0rem"></DividerLine> -->
 
     <div>
       <h2 class="govuk-heading-l mb-6 mt-10">Playground</h2>

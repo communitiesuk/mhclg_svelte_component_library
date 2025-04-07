@@ -410,7 +410,7 @@
   /* Override the govuk-width-container for the app-pane__body */
   .app-pane__body.govuk-width-container {
     max-width: 85%; /* Use more of the available width */
-    /* Ensure it remains centered if desired */
+    /* Ensure it remains centered*/
     margin-left: auto;
     margin-right: auto;
   }

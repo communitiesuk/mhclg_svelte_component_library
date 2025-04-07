@@ -114,42 +114,33 @@
         })
       : fallbackNavGroups;
 
-  // Create flattened items for the mobile navigation
-  function createMobileItems(tree: any[]) {
-    const result: any[] = [];
+  // Create items for the mobile navigation
+  function createMobileItems(tree: ComponentItem[]) {
+    const result: (SideNavItem | { title: string; items: SideNavItem[] })[] =
+      [];
 
     tree.forEach((category) => {
-      const categoryEntry: any = { title: category.name, items: [] };
-
-      if (category.children && category.children.length > 0) {
-        category.children.forEach((child) => {
-          if (child.hasWrapper) {
-            // Direct component under category
-            categoryEntry.items.push({
-              text: child.name,
-              href: `/${child.path}`,
-            });
-          } else if (child.children && child.children.length > 0) {
-            // Sub-category with components
-            const subCategoryEntry = {
-              title: child.name,
-              items: child.children
-                .filter((grandchild) => grandchild.hasWrapper) // Only include actual components
-                .map((grandchild) => ({
-                  text: grandchild.name,
-                  href: `/${grandchild.path}`,
-                })),
-            };
-            // Only add sub-category if it has items
-            if (subCategoryEntry.items.length > 0) {
-              categoryEntry.items.push(subCategoryEntry);
-            }
-          }
+      // Check if the category itself is a direct link (hasWrapper)
+      if (category.hasWrapper) {
+        result.push({
+          text: category.name,
+          href: `/${category.path}`,
         });
       }
-      // Only add the category if it has items
-      if (categoryEntry.items.length > 0) {
-        result.push(categoryEntry);
+      // If the category has children, process them
+      else if (category.children && category.children.length > 0) {
+        // Use the existing helper to get a flat list of wrappers within this category
+        const flattenedItems = mapComponentItemsToSideNavItems(
+          category.children,
+        );
+
+        // If there are any actual components within this category, add it as a group
+        if (flattenedItems.length > 0) {
+          result.push({
+            title: category.name, // e.g., "Data Vis", "Layout"
+            items: flattenedItems, // The already flattened list of {text, href} items
+          });
+        }
       }
     });
 

@@ -18,7 +18,7 @@
   let fillColor = $state(["blue", "green", "yellow", "orange", "red"]);
   let borderColor = $state("#003300");
   let breaksChoice = $state("jenks");
-  $inspect(breaksChoice);
+  // $inspect(breaksChoice);
 
   let map: maplibregl.Map | undefined = $state();
   let loaded = $state(false);
@@ -31,7 +31,7 @@
   );
 
   let colors = $derived(fillColor.map((d) => contrastingColor(d)));
-  $inspect(colors);
+  // $inspect(colors);
   $effect(() => {
     for (let layer of textLayers) {
       //Hard coded to first color for testing
@@ -98,7 +98,7 @@
       };
     }),
   );
-  $inspect(breaksChoice, dataWithColor);
+  // $inspect(breaksChoice, dataWithColor);
 
   //Joining the data to the GeoJSON
   let obj2Map = $derived(
@@ -139,7 +139,7 @@
     }),
     crs: { properties: { name: "EPSG:4326" }, type: "name" },
   });
-  $inspect(merged);
+  // $inspect(merged);
   let hoveredArea = $state();
   let hoveredAreaProperties = $state();
 </script>
@@ -198,7 +198,6 @@
         {filter}
         beforeLayerType="symbol"
         manageHoverState
-        onclick={(e) => console.log(e.features[0])}
         onmousemove={(e) => {
           hoveredArea = e.features[0].id;
           hoveredAreaProperties = e.features[0].properties;

@@ -74,7 +74,7 @@
   );
 
   let defaultLineParams = { includeMarkers: true, pathStrokeWidth: 1 };
-  $inspect(dataArray);
+  // $inspect(dataArray);
 
   let showAllData = true;
 </script>

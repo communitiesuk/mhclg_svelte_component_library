@@ -1,11 +1,9 @@
 <script lang="ts">
-  import Breadcrumbs from "$lib/components/ui/Breadcrumbs.svelte";
   import Footer from "$lib/components/ui/Footer.svelte";
   import InternalHeader from "$lib/components/ui/InternalHeader.svelte";
   import HeaderNav from "$lib/components/ui/HeaderNav.svelte";
   import MobileNav from "$lib/components/ui/MobileNav.svelte";
   import SideNav from "$lib/components/ui/SideNav.svelte";
-  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import "../app.css";
   import type {
     SideNavGroup,
@@ -14,7 +12,6 @@
   import type { ComponentItem } from "./+layout.server";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
-  import { onMount } from "svelte";
 
   let { children, data } = $props();
 
@@ -38,20 +35,7 @@
   ]);
 
   // Get component data from server
-  const componentSections = data.componentSections || [];
-  const componentDirectories = data.componentDirectories || [];
-  const uiComponents = data.uiComponents || [];
-  const componentTree = data.componentTree || [];
-
-  console.log("Component Tree:", componentTree);
-
-  // Helper function to create a proper URL from a component path
-  function createComponentUrl(path: string): string {
-    // The path already contains the full route
-    return `/${path}`;
-  }
-
-  const fallbackNavGroups: SideNavGroup[] = [];
+  let componentTree = data.componentTree || [];
 
   // Create Pattern nav items based on the mobile nav structure
   const patternNavGroups: SideNavGroup[] = [
@@ -112,7 +96,7 @@
                 : [],
           };
         })
-      : fallbackNavGroups;
+      : [];
 
   // Create items for the mobile navigation
   function createMobileItems(tree: ComponentItem[]) {
@@ -221,7 +205,6 @@
   $effect(() => {
     // Get current path from the page store (reactive)
     const path = $page.url.pathname;
-    console.log("Current path changed:", path);
 
     // Reset all navigation items to not current
     for (let i = 0; i < navigationItems.length; i++) {
@@ -252,9 +235,6 @@
       navigationItems[0].current = true;
       mobileNavSections[0].current = true;
     }
-
-    console.log("Updated currentSection to:", currentSection);
-    console.log("Navigation items:", navigationItems);
   });
 
   $effect(() => {
@@ -340,10 +320,6 @@
     />
 
     <div class="app-pane__body govuk-width-container">
-      <!-- <div class="g-top-level-container mb-6">
-        <Breadcrumbs collapseOnMobile={true} />
-      </div> -->
-
       <div class="app-split-pane">
         <!-- Side navigation - show for Components, Patterns, or Community pages -->
         {#if currentSection !== "Home"}

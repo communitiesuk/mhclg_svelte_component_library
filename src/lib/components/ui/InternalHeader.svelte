@@ -202,7 +202,7 @@ This component provides a MHCLG branded header for internal-facing services. -->
             <li class="moj-header__navigation-item">
               <a
                 class="moj-header__navigation-link"
-                href="#"
+                href={"#"}
                 aria-current="page">{accountName}</a
               >
             </li>

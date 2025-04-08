@@ -9,7 +9,6 @@
   let { homepage, statusObject, folder, subFolder, name, parentFolder } =
     $props();
 
-  $inspect(name, folder, subFolder);
 </script>
 
 <div class="flex flex-row items-center gap-4 {homepage ? '' : 'mb-6'}">

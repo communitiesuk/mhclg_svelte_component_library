@@ -85,7 +85,6 @@
     ? 'dwp-side-navigation--mobile'
     : ''}"
   aria-label={ariaLabel}
-  role="navigation"
 >
   <ul class="dwp-side-navigation__list">
     {#each items as item}

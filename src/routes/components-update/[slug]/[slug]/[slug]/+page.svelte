@@ -19,7 +19,7 @@
     ),
   );
 
-  $inspect(wrapper);
+  // $inspect(wrapper);
 
   /**
    * &&   Imports the wrapper component, reports error if the URL does not correspond to a component.
@@ -31,6 +31,7 @@
     (async () => {
       try {
         const module = await import(
+          /* @vite-ignore */
           `/src/wrappers/components/${folder}/${subFolder}/${wrapper}Wrapper.svelte`
         );
         Component = module.default;
@@ -41,7 +42,7 @@
     })();
   });
 
-  $inspect(Component);
+  // $inspect(Component);
 </script>
 
 {#if Component}

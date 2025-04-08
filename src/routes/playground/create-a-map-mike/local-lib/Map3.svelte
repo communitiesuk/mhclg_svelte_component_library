@@ -16,7 +16,6 @@
   let showFill = $state(true);
   let fillColor = $state(["#006600", "#207093", "#123345", "red", "pink"]);
   let borderColor = $state("#003300");
-  $inspect(fillColor);
 
   let map: maplibregl.Map | undefined = $state();
   let loaded = $state(false);
@@ -29,7 +28,6 @@
   );
 
   let colors = $derived(fillColor.map((d) => contrastingColor(d)));
-  $inspect(colors);
   $effect(() => {
     for (let layer of textLayers) {
       //Hard coded to first color for testing
@@ -113,7 +111,6 @@
     }),
     crs: { properties: { name: "EPSG:4326" }, type: "name" },
   };
-  $inspect(merged);
   let hoveredArea = $state();
   let hoveredAreaProperties = $state();
 </script>
@@ -165,7 +162,6 @@
         {filter}
         beforeLayerType="symbol"
         manageHoverState
-        onclick={(e) => console.log(e.features[0])}
         onmousemove={(e) => {
           hoveredArea = e.features[0].id;
           hoveredAreaProperties = e.features[0].properties;

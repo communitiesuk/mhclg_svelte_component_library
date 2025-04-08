@@ -13,7 +13,6 @@ export function splitStringIntoRows(string, minWordLengthForSplitting) {
 
   //console.log(splitString1, splitString2, splitString3);
 
-  console.log(splitStringIntoNRows2(splitString1, 3));
 
   //let splitTest = splitStringIntoNRows2(string, arrayOfWordsOfLengthOverN, 2);
 
@@ -81,7 +80,6 @@ function splitStringIntoNRows2(string, numberToSplitTo) {
 function splitStringIntoNRows(string, n, splitLongestWords) {
   let output, combinations, optimalCombinations;
 
-  console.log(splitLongestWords);
 
   if (splitLongestWords) {
     for (var i = 1; i <= splitLongestWords; i++) {
@@ -91,7 +89,6 @@ function splitStringIntoNRows(string, n, splitLongestWords) {
 
   string = string.replace(/\s/g, '|$&');
 
-  console.log(string);
 
   const indexes = [];
   for (let i = 0; i < string.length; i++) {

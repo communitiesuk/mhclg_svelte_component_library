@@ -91,6 +91,9 @@
   onmouseenter={(event) => onMouseEnter(event, dataArray, dataId)}
   onmouseleave={(event) => onMouseLeave(event, dataArray, dataId)}
   onmousemove={(event) => onMouseMove(event, dataArray, dataId)}
+  role="button"
+  tabindex="0"
+  onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}
   {opacity}
 >
   {#if includeArea}
@@ -121,10 +124,13 @@
       <g
         data-id={markersDataId + "-" + i}
         onclick={(event) => onClickMarker(event, marker)}
-        onmouseenter={(event) => onMouseEnterMarker(event, marker)}
-        onmouseleave={(event) => onMouseLeaveMarker(event, marker)}
+        onmouseenter={(event) => onMouseEnterMarker(i)}
+        onmouseleave={(event) => onMouseLeaveMarker(i)}
         onmousemove={(event) => onMouseMove(event, marker)}
         transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
+        role="button"
+        tabindex="0"
+        onkeydown={(e) => e.key === "Enter" && onClickMarker(e, marker)}
       >
         {#if markerShape === "circle"}
           <circle

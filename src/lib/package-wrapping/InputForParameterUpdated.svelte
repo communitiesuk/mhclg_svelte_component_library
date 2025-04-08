@@ -108,7 +108,7 @@
     }
   });
 
-  $inspect(derivedValue, parameter.name);
+  // $inspect(derivedValue, parameter.name);
 </script>
 
 {#if useStatedValue}

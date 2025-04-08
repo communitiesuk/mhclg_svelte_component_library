@@ -25,7 +25,6 @@
   const geojsonData = $derived(
     topojson.feature(fullTopo, fullTopo.objects[geoType]),
   );
-  // $inspect(geojsonData);
 
   function filterGeo(geo, year) {
     let filtered = JSON.parse(JSON.stringify(geo));
@@ -47,7 +46,6 @@
   }
 
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
-  // $inspect(filteredGeoJsonData);
 
   // let showBorder = $state(true);
   let showFill = $state(true);
@@ -187,7 +185,6 @@
         beforeLayerType="symbol"
         manageHoverState
         onclick={(e) => {
-          // console.log(Object.entries(geojsonData)[1][1]);
           if (clickToZoom) {
             let coordArray =
               //Note this is very similar to using a GeoJSON - only change is it's [1][1] instead of [2][1]
@@ -201,7 +198,6 @@
                   Object.entries(geojsonData)[1][1]
                     .find((d) => d.properties.areanm == e.features[0].id)
                     .geometry.coordinates.flat(2);
-            // console.log(coordArray);
 
             let minValues = [
               Math.min(...coordArray.map((d) => +d[0])),
@@ -212,7 +208,6 @@
               Math.min(...coordArray.map((d) => +d[1])),
               Math.max(...coordArray.map((d) => +d[1])),
             ];
-            // console.log(minValues, maxValues);
 
             map?.fitBounds([
               [minValues[0], maxValues[0]],
@@ -221,7 +216,6 @@
           }
         }}
         onmousemove={(e) => {
-          // console.log(e);
           hoveredArea = e.features[0].id;
           currentMousePosition = e.event.point;
         }}

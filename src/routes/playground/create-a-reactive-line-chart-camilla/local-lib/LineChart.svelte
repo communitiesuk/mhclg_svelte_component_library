@@ -9,12 +9,12 @@
 
   let { data, numberOfTicks } = $props();
 
-  $inspect(data);
+  // $inspect(data);
 
   let svgWidth = $state(),
     svgHeight = 600;
 
-  $inspect(data);
+  // $inspect(data);
 
   /*let staticMargin = { top: 10, right: 20, bottom: 20, left: 10 };
   let dynamicMargin = $derived({ top: 0, right: 0, bottom: 0, left: 0 });
@@ -55,7 +55,7 @@
       : null,
   );
 
-  $inspect(yFunction ? yFunction(40) : null);
+  // $inspect(yFunction ? yFunction(40) : null);
 
   let lineFunction = $derived(
     valuesMinMax != null

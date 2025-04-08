@@ -11,7 +11,7 @@
     orientation,
   } = $props();
 
-  $inspect(ticksArray);
+  // $inspect(ticksArray);
 
   //TODO: Ticks based on width
   function generateTicks(data, numTicks) {

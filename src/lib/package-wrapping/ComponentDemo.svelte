@@ -40,7 +40,6 @@
   let overlayOpen = $state(false);
 
   let componentOpacity = $state(0.1);
-  $inspect(componentOpacity);
 </script>
 
 <div

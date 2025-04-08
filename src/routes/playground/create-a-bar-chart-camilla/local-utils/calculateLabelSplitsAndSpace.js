@@ -1,13 +1,11 @@
-import { splitStringIntoRows } from './splitStringIntoRows.js';
+import { splitStringIntoRows } from "./splitStringIntoRows.js";
 
 export function calculateLabelSplitsAndSpace(rowLabelPermutations, dataArray) {
-  console.log(rowLabelPermutations);
   let maxRows = Math.max(
-    ...rowLabelPermutations.map((el) => el.rows).filter((el) => el)
+    ...rowLabelPermutations.map((el) => el.rows).filter((el) => el),
   );
-  console.log(maxRows);
 
-  splitStringIntoRows('Bournemouth, Christchurch and Poole', 8, maxRows);
+  splitStringIntoRows("Bournemouth, Christchurch and Poole", 8, maxRows);
 
   /*rowLabelPermutations.forEach((el) => {
     dataArray.forEach((row) => {

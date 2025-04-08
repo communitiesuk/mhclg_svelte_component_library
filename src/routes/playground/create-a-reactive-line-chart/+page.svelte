@@ -24,12 +24,11 @@
   );
   let stateTracker = $state(page.url.searchParams);
   for (const p of stateTracker) {
-    console.log(p);
     urlParams[p[0]] = p[1];
   }
 
   let selectedYear = $derived(urlParams["selectedYear"]);
-  $inspect(selectedYear);
+  // $inspect(selectedYear);
   let selectedMetric = $state(data?.metrics[0]);
 </script>
 

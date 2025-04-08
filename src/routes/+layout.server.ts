@@ -107,7 +107,6 @@ async function scanWrapperDir(
   } catch (error) {
     if (error instanceof Error && "code" in error && error.code === "ENOENT") {
       // Directory not found is expected for empty branches, suppress warning
-      // console.warn(`Directory not found: ${join(basePath, join(...relativePathSegments))}`);
     } else {
       console.error(
         `Error scanning directory ${join(...relativePathSegments)}:`,
@@ -118,75 +117,21 @@ async function scanWrapperDir(
   }
 }
 
-// Function to flatten a tree structure (can be removed if not used elsewhere)
-/*
-function flattenComponentTree(
-  items: ComponentItem[],
-): any[] { 
-  let flattened: any[] = [];
-  for (const item of items) {
-     if (item.hasWrapper || (item.children && item.children.length > 0)) {
-         flattened.push({
-            name: item.name,
-            href: `/${item.path}`, 
-            isCategory: !!item.children && item.children.length > 0 && !item.hasWrapper,
-         });
-     }
-    if (item.children && item.children.length > 0) {
-      flattened = flattened.concat(
-        flattenComponentTree(item.children)
-      );
-    }
-  }
-  return flattened;
-}
-*/
-
 export const load: LayoutServerLoad = async () => {
   try {
     const baseWrappersPath = resolve("src/wrappers/components");
-    console.log("Base wrappers path:", baseWrappersPath);
-
-    console.log("Scanning component wrappers...");
-    // Initial call with empty segments array
     const componentTree = await scanWrapperDir(baseWrappersPath, []);
-    console.log(
-      "Component tree result:",
-      JSON.stringify(componentTree, null, 2),
-    );
 
-    // Extract the top-level directories (categories)
-    const componentDirectories = componentTree.map((item) => ({
-      name: item.name,
-      path: item.path,
-      children: item.children,
-    }));
-
-    // Extract UI components specifically (these are nested under the "ui" directory)
-    const uiCategory = componentTree.find(
-      // Find category by name, case-insensitive comparison might be safer
-      (category) => category.name.toLowerCase() === "ui",
-    );
-    // Ensure uiCategory exists and has children before accessing
-    const uiComponents =
-      uiCategory?.children?.filter((c) => c.hasWrapper) || []; // Filter to only actual components
 
     // Flattening might not be needed directly if Nav components handle the tree
     // const componentSections = flattenComponentTree(componentTree);
 
     return {
-      componentDirectories, // Keep for potential other uses
-      uiComponents, // Keep for potential other uses
-      // componentSections, // Remove flattened list if unused
-      componentTree, // Pass the raw tree to the layout
+      componentTree,
     };
   } catch (error) {
     console.error("Error in layout.server.ts load function:", error);
-    // Return empty data on error
     return {
-      componentDirectories: [],
-      uiComponents: [],
-      // componentSections: [],
       componentTree: [],
     };
   }

@@ -46,10 +46,12 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "This component takes in an array of numerical values, calcutales the distance betweens ticks, and the returns a svg of ticks with markers. This should be used with line and bar charts",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Used with axis to display numerical data. This component is part of the Axis conpoment. The ticks with in the axis are generated using a function.  The component can also take in postional data to indictate the postion of the ticks",
   ];
 
   let detailsArray = [

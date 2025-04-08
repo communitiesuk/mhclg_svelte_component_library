@@ -30,6 +30,7 @@
     (async () => {
       try {
         const module = await import(
+          /* @vite-ignore */
           `/src/wrappers/components/${folder}/${wrapper}Wrapper.svelte`
         );
         Component = module.default;

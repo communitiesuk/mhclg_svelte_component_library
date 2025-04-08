@@ -29,7 +29,10 @@
   $effect(() => {
     (async () => {
       try {
-        const module = await import(`/src/${folder}/${wrapper}Wrapper.svelte`);
+        const module = await import(
+          /* @vite-ignore */
+          `/src/${folder}/${wrapper}Wrapper.svelte`
+        );
         Component = module.default;
       } catch (error) {
         errorImportingComponent = true;

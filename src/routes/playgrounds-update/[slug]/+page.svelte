@@ -24,6 +24,7 @@
     (async () => {
       try {
         const module = await import(
+          /* @vite-ignore */
           `/src/wrappers/playgrounds/${wrapper}.svelte`
         );
         Component = module.default;

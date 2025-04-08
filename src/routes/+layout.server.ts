@@ -120,14 +120,8 @@ async function scanWrapperDir(
 export const load: LayoutServerLoad = async () => {
   try {
     const baseWrappersPath = resolve("src/wrappers/components");
-    console.log("Base wrappers path:", baseWrappersPath);
-
-    console.log("Scanning component wrappers...");
     const componentTree = await scanWrapperDir(baseWrappersPath, []);
-    console.log(
-      "Component tree result:",
-      JSON.stringify(componentTree, null, 2),
-    );
+
 
     // Flattening might not be needed directly if Nav components handle the tree
     // const componentSections = flattenComponentTree(componentTree);

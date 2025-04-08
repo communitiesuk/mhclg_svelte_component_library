@@ -1,6 +1,6 @@
 <script>
   let { fillColor, canvasWidth, hoveredAreaProperties } = $props();
-  $inspect(hoveredAreaProperties);
+  // $inspect(hoveredAreaProperties);
 
   let legendWidth = $derived(0.8 * canvasWidth);
 </script>

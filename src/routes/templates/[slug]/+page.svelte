@@ -38,7 +38,7 @@
     })();
   });
 
-  $inspect(Component);
+  // $inspect(Component);
 </script>
 
 {#if Component}

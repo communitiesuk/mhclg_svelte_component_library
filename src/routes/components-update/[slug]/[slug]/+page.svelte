@@ -10,7 +10,6 @@
    * &&   Note that these variables are reactive so that if the user navigates directly to another component, the slugArray will update and so the current wrapper svelte file will be swapped for the new one.
    */
   let slugArray = $derived(page?.url.pathname.split("/").filter(Boolean));
-  console.log(slugArray);
   let folder = $derived(slugArray[slugArray.length - 2]);
   let wrapper = $derived(
     kebabToPascalCase(
@@ -19,7 +18,7 @@
     ),
   );
 
-  $inspect(wrapper);
+  // $inspect(wrapper);
 
   /**
    * &&   Imports the wrapper component, reports error if the URL does not correspond to a component.
@@ -41,7 +40,7 @@
     })();
   });
 
-  $inspect(Component);
+  // $inspect(Component);
 </script>
 
 {#if Component}

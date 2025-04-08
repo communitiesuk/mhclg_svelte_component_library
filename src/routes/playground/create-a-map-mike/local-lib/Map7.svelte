@@ -48,7 +48,6 @@
   let searchValue = $state("");
 
   const findArea = (e) => {
-    console.log(e.target[0].value);
     e.preventDefault();
     let coordArray =
       Object.entries(states)[2][1].find((d) =>
@@ -148,7 +147,6 @@
           ]);
         }}
         onmousemove={(e) => {
-          console.log(e);
           hoveredArea = e.features[0].id;
         }}
       />

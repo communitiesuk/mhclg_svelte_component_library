@@ -78,16 +78,16 @@
     }
   }
 
-  $inspect(
-    primaryAreas,
-    data.dataInFormatForLineChart
-      .find((el) => el.metric === selectedMetric)
-      .lines.filter(
-        (el) =>
-          primaryAreas.includes(data.areaCodeLookup[el.areaCode]) &&
-          selectedIncludes.includes("primary"),
-      ),
-  );
+  // $inspect(
+  //   primaryAreas,
+  //   data.dataInFormatForLineChart
+  //     .find((el) => el.metric === selectedMetric)
+  //     .lines.filter(
+  //       (el) =>
+  //         primaryAreas.includes(data.areaCodeLookup[el.areaCode]) &&
+  //         selectedIncludes.includes("primary"),
+  //     ),
+  // );
 
   let dataArray = $derived(
     data.dataInFormatForLineChart
@@ -107,7 +107,7 @@
       })),
   );
 
-  $inspect(dataArray);
+  // $inspect(dataArray);
 
   let defaultLineParams = {
     includeMarkers: false,

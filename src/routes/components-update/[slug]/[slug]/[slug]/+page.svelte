@@ -19,7 +19,7 @@
     ),
   );
 
-  $inspect(wrapper);
+  // $inspect(wrapper);
 
   /**
    * &&   Imports the wrapper component, reports error if the URL does not correspond to a component.
@@ -41,7 +41,7 @@
     })();
   });
 
-  $inspect(Component);
+  // $inspect(Component);
 </script>
 
 {#if Component}

@@ -1,7 +1,6 @@
 import { splitStringIntoRows } from "./splitStringIntoRows.js";
 
 export function calculateLabelSplitsAndSpace(rowLabelPermutations, dataArray) {
-  console.log(rowLabelPermutations);
   let maxRows = Math.max(
     ...rowLabelPermutations.map((el) => el.rows).filter((el) => el),
   );

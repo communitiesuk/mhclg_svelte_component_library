@@ -198,7 +198,6 @@
         {filter}
         beforeLayerType="symbol"
         manageHoverState
-        onclick={(e) => console.log(e.features[0])}
         onmousemove={(e) => {
           hoveredArea = e.features[0].id;
           hoveredAreaProperties = e.features[0].properties;

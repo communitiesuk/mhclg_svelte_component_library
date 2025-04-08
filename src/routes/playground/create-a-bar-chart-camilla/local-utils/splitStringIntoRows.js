@@ -1,29 +1,27 @@
 export function splitStringIntoRows(
   string,
   minWordLengthForSplitting,
-  maxRows
+  maxRows,
 ) {
   let arrayOfWordsOfLengthOverN = getOrderedArrayOfWords(string).filter(
-    (el) => minWordLengthForSplitting <= el.length
+    (el) => minWordLengthForSplitting <= el.length,
   );
 
   let subsetsArray = generateAllSubsets(
     arrayOfWordsOfLengthOverN.length,
-    maxRows
+    maxRows,
   );
 
   let stringsArray = subsetsArray.map((el) =>
     addSymbolAtHalfway(
       arrayOfWordsOfLengthOverN.filter((elm, ind) => el.includes(ind + 1)),
-      string
-    )
+      string,
+    ),
   );
 
   let splitStringOptions = stringsArray.map((el) =>
-    splitStringAndCalculateWidth(el, maxRows)
+    splitStringAndCalculateWidth(el, maxRows),
   );
-
-  //console.log(generateAllSubsets(4, 6));
 }
 
 function generateAllSubsets(numberOfWords, maxRows) {
@@ -54,7 +52,7 @@ function generateAllSubsets(numberOfWords, maxRows) {
 
 function getOrderedArrayOfWords(string) {
   // Remove commas and split the string into words
-  const words = string.replace(/,/g, '').split(/\s+/);
+  const words = string.replace(/,/g, "").split(/\s+/);
 
   // Get unique words using a Set
   const uniqueWords = [...new Set(words)];
@@ -69,25 +67,23 @@ function addSymbolAtHalfway(wordsToSplit, string) {
   wordsToSplit.forEach((el) => {
     let index = string.indexOf(el) + Math.round(el.length / 2);
     string =
-      string.substring(0, index) + '~' + string.substring(index, string.length);
+      string.substring(0, index) + "~" + string.substring(index, string.length);
   });
 
   return string;
 }
 
 function splitStringAndCalculateWidth(string, maxRows) {
-  string = string.replace(/\s/g, '|$&');
-
-  console.log(string);
+  string = string.replace(/\s/g, "|$&");
 
   const indexes = [];
   for (let i = 0; i < string.length; i++) {
-    if (string[i] === '|') {
+    if (string[i] === "|") {
       indexes.push(i + 1);
     }
   }
   for (let i = 0; i < string.length; i++) {
-    if (string[i] === '~') {
+    if (string[i] === "~") {
       indexes.push(i + 1);
     }
   }

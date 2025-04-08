@@ -35,11 +35,7 @@
   ]);
 
   // Get component data from server
-  const componentTree = data.componentTree || [];
-
-  console.log("Component Tree:", componentTree);
-
-  const fallbackNavGroups: SideNavGroup[] = [];
+  let componentTree = data.componentTree || [];
 
   // Create Pattern nav items based on the mobile nav structure
   const patternNavGroups: SideNavGroup[] = [
@@ -100,7 +96,7 @@
                 : [],
           };
         })
-      : fallbackNavGroups;
+      : [];
 
   // Create items for the mobile navigation
   function createMobileItems(tree: ComponentItem[]) {
@@ -209,7 +205,6 @@
   $effect(() => {
     // Get current path from the page store (reactive)
     const path = $page.url.pathname;
-    console.log("Current path changed:", path);
 
     // Reset all navigation items to not current
     for (let i = 0; i < navigationItems.length; i++) {
@@ -240,9 +235,6 @@
       navigationItems[0].current = true;
       mobileNavSections[0].current = true;
     }
-
-    console.log("Updated currentSection to:", currentSection);
-    console.log("Navigation items:", navigationItems);
   });
 
   $effect(() => {

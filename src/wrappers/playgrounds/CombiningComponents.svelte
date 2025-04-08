@@ -11,8 +11,6 @@
 
   let { data } = $props();
 
-  $inspect(data);
-
   let urlParams = $state({});
   let urlParamsString = $derived(
     Object.entries(urlParams)
@@ -22,7 +20,6 @@
 
   let stateTracker = $state(page.url.searchParams);
   for (const p of stateTracker) {
-    // console.log(p);
     urlParams[p[0]] = p[1];
   }
 

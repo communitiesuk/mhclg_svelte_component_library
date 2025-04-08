@@ -274,12 +274,9 @@
         category: "Derived props",
         isEditable: false,
         value: {
-          workingFunction: function (values) {
-            console.log("hello there");
-          },
+          workingFunction: function (values) {},
           functionAsString: `//applied to each of the circle svg elements 
 function (data) {
-console.log(data);
 },`,
         },
 

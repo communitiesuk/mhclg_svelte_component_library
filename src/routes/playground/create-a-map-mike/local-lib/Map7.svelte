@@ -38,8 +38,6 @@
         colors.textOutlineColor,
       );
     }
-
-    console.log(map?.getLayersOrder());
   });
 
   let filterStates = $state(false);

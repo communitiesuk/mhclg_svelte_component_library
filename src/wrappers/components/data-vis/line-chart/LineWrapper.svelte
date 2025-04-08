@@ -449,7 +449,6 @@
         name: "onClick",
         category: "lineEvents",
         value: function (event, dataArray) {
-          console.log(this.name + " triggered", dataArray);
           this.functionElements.counter += 1;
           Object.keys(this.functionElements.dataset).forEach((el) => {
             this.functionElements.dataset[el] = event.currentTarget.dataset[el];
@@ -464,7 +463,6 @@
         name: "onMouseEnter",
         category: "lineEvents",
         value: function (event, dataArray) {
-          console.log(this.name + " triggered", dataArray);
           this.functionElements.counter += 1;
           Object.keys(this.functionElements.dataset).forEach((el) => {
             this.functionElements.dataset[el] = event.currentTarget.dataset[el];
@@ -479,7 +477,6 @@
         name: "onMouseLeave",
         category: "lineEvents",
         value: function (event, dataArray) {
-          console.log(this.name + " triggered", dataArray);
           this.functionElements.counter += 1;
           Object.keys(this.functionElements.dataset).forEach((el) => {
             this.functionElements.dataset[el] = event.currentTarget.dataset[el];
@@ -494,7 +491,6 @@
         name: "onMouseMove",
         category: "lineEvents",
         value: function (event, dataArray) {
-          console.log(this.name + " triggered", dataArray);
           this.functionElements.counter += 1;
           Object.keys(this.functionElements.dataset).forEach((el) => {
             this.functionElements.dataset[el] = event.currentTarget.dataset[el];
@@ -514,7 +510,6 @@
         name: "onClickMarker",
         category: "markerEvents",
         value: function (event, marker) {
-          console.log(this.name + " triggered", marker);
           this.functionElements.counter += 1;
           Object.keys(this.functionElements.dataset).forEach((el) => {
             this.functionElements.dataset[el] = event.currentTarget.dataset[el];
@@ -529,7 +524,6 @@
         name: "onMouseEnterMarker",
         category: "markerEvents",
         value: function (event, marker) {
-          console.log(this.name + " triggered", marker);
           this.functionElements.counter += 1;
           Object.keys(this.functionElements.dataset).forEach((el) => {
             this.functionElements.dataset[el] = event.currentTarget.dataset[el];
@@ -544,7 +538,6 @@
         name: "onMouseLeaveMarker",
         category: "markerEvents",
         value: function (event, marker) {
-          console.log(this.name + " triggered", marker);
           this.functionElements.counter += 1;
           Object.keys(this.functionElements.dataset).forEach((el) => {
             this.functionElements.dataset[el] = event.currentTarget.dataset[el];
@@ -559,7 +552,6 @@
         name: "onMouseMoveMarker",
         category: "markerEvents",
         value: function (event, marker) {
-          console.log(this.name + " triggered", marker);
           this.functionElements.counter += 1;
           Object.keys(this.functionElements.dataset).forEach((el) => {
             this.functionElements.dataset[el] = event.currentTarget.dataset[el];

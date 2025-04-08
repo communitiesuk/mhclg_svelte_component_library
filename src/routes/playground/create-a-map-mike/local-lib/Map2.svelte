@@ -36,8 +36,6 @@
         colors.textOutlineColor,
       );
     }
-
-    console.log(map?.getLayersOrder());
   });
 
   let filterStates = $state(false);
@@ -90,7 +88,6 @@
                 Object.entries(states)[2][1]
                   .find((d) => d.properties.LAD23NM == e.features[0].id)
                   .geometry.coordinates.flat(2);
-          // console.log(coordArray);
 
           let minValues = [
             Math.min(...coordArray.map((d) => +d[0])),
@@ -101,7 +98,6 @@
             Math.min(...coordArray.map((d) => +d[1])),
             Math.max(...coordArray.map((d) => +d[1])),
           ];
-          // console.log(minValues, maxValues);
 
           map?.fitBounds([
             [minValues[0], maxValues[0]],
@@ -109,7 +105,6 @@
           ]);
         }}
         onmousemove={(e) => {
-          console.log(e);
           hoveredArea = e.features[0].id;
         }}
       />

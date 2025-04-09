@@ -304,18 +304,6 @@
           ],
         },
       },
-      {
-        name: "responsive",
-        category: "UI Options",
-        value: true,
-        description: {
-          markdown: true,
-          arr: [
-            "When set to <code>true</code>, the tabs component will change its behavior on smaller screens.",
-            "On mobile devices, the tabs will be displayed in a stacked layout.",
-          ],
-        },
-      },
     ]),
   );
 

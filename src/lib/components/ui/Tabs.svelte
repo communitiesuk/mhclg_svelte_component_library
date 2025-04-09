@@ -15,12 +15,10 @@
     title = "Contents",
     tabs = [],
     idPrefix = "tab",
-    responsive = true,
   } = $props<{
     title?: string;
     tabs: TabItem[];
     idPrefix?: string;
-    responsive?: boolean;
   }>();
 
   // State
@@ -58,7 +56,7 @@
       }, 0);
     }
 
-    if (responsive && !isMobile) {
+    if (!isMobile) {
       // Update URL hash without scrolling
       const currentUrl = window.location.href;
       const hashIndex = currentUrl.indexOf("#");
@@ -145,7 +143,7 @@
     }
 
     // Setup responsive behavior
-    if (responsive && window) {
+    if (window) {
       const breakpoint = getBreakpoint();
       if (breakpoint) {
         tabletMql = window.matchMedia(`(min-width: ${breakpoint})`);

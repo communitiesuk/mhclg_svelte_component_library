@@ -24,4 +24,13 @@
 </details>
 
 <style>
+  /* Fix for details_summary class marker colors */
+  .govuk-details__summary::before {
+    border-color: currentColor transparent transparent transparent;
+    border-left-color: currentColor;
+  }
+
+  .govuk-details[open] > .govuk-details__summary::before {
+    border-top-color: currentColor;
+  }
 </style>

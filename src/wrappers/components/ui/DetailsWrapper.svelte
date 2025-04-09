@@ -319,8 +319,8 @@
 
 {#snippet detailsSnippet()}
   <div>
-    This is the details snippet. It can be used when you want more complex
-    markup than plain text such as <b>bold text</b>.
+    This is the snippet input. It can be used when you want more complex markup
+    than plain text such as <b>bold text</b>.
   </div>
 {/snippet}
 

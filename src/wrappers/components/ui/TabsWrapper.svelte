@@ -295,7 +295,7 @@
       },
       {
         name: "idPrefix",
-        category: "Technical",
+        category: "ARIA & DOM",
         value: "tab",
         description: {
           markdown: true,

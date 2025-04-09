@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "In progress",
+    progress: "To be developed",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -67,7 +67,7 @@
       label: "Context",
       arr: contextArray,
       visibleOnHomepage: false,
-      markdown: false,
+      markdown: true,
     },
   ];
 
@@ -95,7 +95,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Details from "$lib/components/ui/Details.svelte";
+  import DetailsTwo from "$lib/components/ui/Details.svelte";
+  import Examples from "./details/Examples.svelte";
 
   let { data } = $props();
 
@@ -160,15 +161,46 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "summaryText",
-        category: "content",
-        value: "Summary text",
+        name: "componentNameProp",
+        category: "Input props",
+        propType: "fixed",
+        value: pageName,
       },
       {
-        name: "detailedText",
-        category: "content",
-        value:
-          "This is information that only certain users need to see. It is hidden from view by default to make scanning the page easier for the majority of users who do not need to see it.",
+        name: "summaryText",
+        category: "Input props",
+        value: `Summary text`,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 2,
+      },
+      {
+        name: "detailsText",
+        category: "Input props",
+        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 2,
+      },
+      {
+        name: "detailsSnippet",
+        category: "Input props",
+        value: detailsSnippet,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a snippet to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 2,
       },
     ]),
   );
@@ -285,6 +317,13 @@
   );
 </script>
 
+{#snippet detailsSnippet()}
+  <div>
+    This is the details snippet. It can be used when you want more complex
+    markup than plain text such as <b>bold text</b>.
+  </div>
+{/snippet}
+
 <!--
 &&  WrapperNameAndStatus and WrapperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
   -->
@@ -310,9 +349,7 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-5">
-    <Details {...parametersObject}></Details>
-  </div>
+  <DetailsTwo {...parametersObject}></DetailsTwo>
 {/snippet}
 
 <!--
@@ -357,4 +394,6 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5"></div>
+<div id="examples" data-role="examples-section" class="px-5">
+  <Examples></Examples>
+</div>

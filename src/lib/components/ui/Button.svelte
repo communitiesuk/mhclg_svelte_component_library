@@ -1,5 +1,9 @@
 <script>
-  let { textContent, buttonType } = $props();
+  let {
+    textContent = undefined,
+    buttonType,
+    componentNameProp = undefined,
+  } = $props();
 
   let buttonClass = $derived(
     buttonType === "default"
@@ -10,6 +14,13 @@
   );
 </script>
 
-<button type="submit" class={buttonClass} data-module="govuk-button">
-  {textContent}
-</button>
+<div class="p-4">
+  <h4>{componentNameProp} component</h4>
+  <br />
+  <button type="submit" class={buttonClass} data-module="govuk-button">
+    {textContent}
+  </button>
+</div>
+
+<style>
+</style>

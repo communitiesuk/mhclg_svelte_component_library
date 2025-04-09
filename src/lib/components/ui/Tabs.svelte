@@ -84,7 +84,7 @@
 
   // Handle keyboard navigation
   function handleKeydown(event: KeyboardEvent, currentIndex: number) {
-    if (!isSupported || !isInitialized) return;
+    if (isMobile || !isSupported || !isInitialized) return;
 
     let newIndex = -1;
     if (event.key === "ArrowLeft" || event.key === "Left") {
@@ -104,13 +104,14 @@
 
   // Handle tab click
   function handleTabClick(event: MouseEvent, tabId: string) {
+    if (isMobile || !isSupported) return;
     event.preventDefault();
     selectTab(tabId);
   }
 
   // Handle hash change
   function handleHashChange() {
-    if (!isSupported || !isInitialized) return;
+    if (isMobile || !isSupported || !isInitialized) return;
 
     const hash = window.location.hash.substring(1);
     if (hash && tabs.some((tab) => tab.id === hash)) {
@@ -225,7 +226,7 @@
 
   <ul
     class="govuk-tabs__list"
-    role={isSupported ? "tablist" : null}
+    role={isSupported && !isMobile ? "tablist" : null}
     bind:this={tabsListElement}
   >
     {#each tabs as tab, index}
@@ -233,17 +234,17 @@
       {#key tab.id}
         <li
           class="govuk-tabs__list-item"
-          class:govuk-tabs__list-item--selected={isSelected}
-          role={isSupported ? "presentation" : null}
+          class:govuk-tabs__list-item--selected={isSelected && !isMobile}
+          role={isSupported && !isMobile ? "presentation" : null}
         >
           <a
             class="govuk-tabs__tab"
             href={"#" + tab.id}
-            id={isSupported ? `${idPrefix}_${tab.id}` : null}
-            role={isSupported ? "tab" : null}
-            aria-controls={isSupported ? tab.id : null}
-            aria-selected={isSupported ? isSelected : null}
-            tabindex={isSupported ? (isSelected ? 0 : -1) : null}
+            id={isSupported && !isMobile ? `${idPrefix}_${tab.id}` : null}
+            role={isSupported && !isMobile ? "tab" : null}
+            aria-controls={isSupported && !isMobile ? tab.id : null}
+            aria-selected={isSupported && !isMobile ? isSelected : null}
+            tabindex={isSupported && !isMobile ? (isSelected ? 0 : -1) : null}
             onclick={(e) => handleTabClick(e, tab.id)}
             onkeydown={(e) => handleKeydown(e, index)}
             use:registerTab={tab.id}
@@ -259,11 +260,13 @@
     {@const isSelected = selectedTabId === tab.id}
     <div
       class="govuk-tabs__panel"
-      class:govuk-tabs__panel--hidden={!isSelected && isSupported}
+      class:govuk-tabs__panel--hidden={!isSelected && isSupported && !isMobile}
       id={tab.id}
-      role={isSupported ? "tabpanel" : null}
-      aria-labelledby={isSupported ? `${idPrefix}_${tab.id}` : null}
-      hidden={!isSelected && isSupported}
+      role={isSupported && !isMobile ? "tabpanel" : null}
+      aria-labelledby={isSupported && !isMobile
+        ? `${idPrefix}_${tab.id}`
+        : null}
+      hidden={!isSelected && isSupported && !isMobile}
     >
       {#if typeof tab.content === "string"}
         {@html tab.content}

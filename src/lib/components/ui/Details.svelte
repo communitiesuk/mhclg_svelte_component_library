@@ -15,10 +15,12 @@
   <summary class="govuk-details__summary">
     <span class="govuk-details__summary-text">{summaryText}</span>
   </summary>
-  <div class="govuk-details__text">
-    <p>{detailsText}</p>
-    {@render detailsSnippet()}
-  </div>
+  {#if detailsText != undefined}
+    <div class="govuk-details__text"><p>{detailsText}</p></div>
+  {/if}
+  {#if detailsSnippet != undefined}
+    <div class="govuk-details__text">{@render detailsSnippet()}</div>
+  {/if}
 </details>
 
 <style>

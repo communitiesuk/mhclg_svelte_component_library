@@ -24,20 +24,39 @@
   }>();
 
   // State
-  let jsHiddenClass = "govuk-tabs__panel--hidden";
   let isInitialized = $state(false);
   let isSupported = $state(false);
   let isMobile = $state(false);
   let selectedTabId = $state<string | null>(null);
-  let tabsElement: HTMLDivElement;
+
+  // Reference to tab elements container
+  let tabsElementContainer: HTMLDivElement;
+  let tabsListElement: HTMLUListElement;
+  let tabRefs: Map<string, HTMLAnchorElement> = new Map();
 
   // Track media query for responsive behavior
   let tabletMql: MediaQueryList | null = null;
 
   // Handle tab selection
-  function selectTab(tabId: string) {
-    if (!isSupported || !isInitialized) return;
+  function selectTab(tabId: string, shouldFocus = false) {
+    // Don't select if not supported/initialized or already selected
+    if (!isSupported || !isInitialized || selectedTabId === tabId) return;
+
+    // Get references to current and next tabs
+    const currentTabId = selectedTabId;
+
+    // Update selected tab state
     selectedTabId = tabId;
+
+    if (shouldFocus && tabRefs.has(tabId)) {
+      // Focus the tab element after the state update
+      setTimeout(() => {
+        const tabElement = tabRefs.get(tabId);
+        if (tabElement) {
+          tabElement.focus();
+        }
+      }, 0);
+    }
 
     if (responsive && !isMobile) {
       // Update URL hash without scrolling
@@ -50,18 +69,36 @@
     }
   }
 
+  // Custom action to register tab elements
+  function registerTab(node: HTMLAnchorElement, tabId: string) {
+    // Register this tab element in our refs map
+    tabRefs.set(tabId, node);
+
+    // Return destroy function for cleanup
+    return {
+      destroy() {
+        tabRefs.delete(tabId);
+      },
+    };
+  }
+
   // Handle keyboard navigation
   function handleKeydown(event: KeyboardEvent, currentIndex: number) {
     if (!isSupported || !isInitialized) return;
 
+    let newIndex = -1;
     if (event.key === "ArrowLeft" || event.key === "Left") {
       event.preventDefault();
-      const newIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
-      selectTab(tabs[newIndex].id);
+      newIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
     } else if (event.key === "ArrowRight" || event.key === "Right") {
       event.preventDefault();
-      const newIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
-      selectTab(tabs[newIndex].id);
+      newIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+    }
+
+    if (newIndex !== -1) {
+      const targetTabId = tabs[newIndex].id;
+      // Pass true to ensure focus shifts to the new tab
+      selectTab(targetTabId, true);
     }
   }
 
@@ -77,7 +114,10 @@
 
     const hash = window.location.hash.substring(1);
     if (hash && tabs.some((tab) => tab.id === hash)) {
-      selectTab(hash);
+      // Only select if the hash corresponds to a *different* tab
+      if (selectedTabId !== hash) {
+        selectTab(hash, true); // Focus the tab when navigating via hash change
+      }
     }
   }
 
@@ -99,6 +139,7 @@
     }
 
     if (initialTab) {
+      // Set initial without triggering history update
       selectedTabId = initialTab.id;
     }
 
@@ -112,8 +153,7 @@
         if ("addEventListener" in tabletMql) {
           tabletMql.addEventListener("change", handleMediaChange);
         } else if (tabletMql) {
-          // For older browsers that use the deprecated approach
-          // @ts-ignore - Some older browsers still use this API
+          // @ts-ignore - Deprecated fallback
           tabletMql.addListener(handleMediaChange);
         }
       }
@@ -124,26 +164,32 @@
 
     isInitialized = true;
 
+    // Cleanup
     return () => {
       if (tabletMql) {
         if ("removeEventListener" in tabletMql) {
           tabletMql.removeEventListener("change", handleMediaChange);
         } else if (tabletMql) {
-          // @ts-ignore - Some older browsers still use this API
+          // @ts-ignore - Deprecated fallback
           tabletMql.removeListener(handleMediaChange);
         }
       }
       window.removeEventListener("hashchange", handleHashChange);
+
+      // Clear tab references
+      tabRefs.clear();
     };
   });
 
   // Handle media query changes
-  function handleMediaChange(event: MediaQueryListEvent) {
+  function handleMediaChange(event: MediaQueryListEvent | MediaQueryList) {
+    // Handle both modern and deprecated event/object types
     isMobile = !event.matches;
   }
 
   // Get breakpoint from CSS custom property
   function getBreakpoint(): string | null {
+    if (typeof window === "undefined") return null; // Guard for SSR
     const property = `--govuk-frontend-breakpoint-tablet`;
     const value = window
       .getComputedStyle(document.documentElement)
@@ -151,64 +197,73 @@
     return value ? value.trim() : null;
   }
 
-  // Derived values
-  $derived: {
-    // Ensure we have a selected tab at all times
+  // Effect for ensuring a valid selection
+  $effect(() => {
+    // Run this effect whenever isInitialized, selectedTabId, or tabs changes
     if (
       isInitialized &&
       (!selectedTabId || !tabs.some((tab) => tab.id === selectedTabId))
     ) {
-      selectedTabId = tabs[0]?.id ?? null;
+      // Check if tabs array is not empty before accessing index 0
+      if (tabs.length > 0) {
+        selectedTabId = tabs[0].id;
+      } else {
+        selectedTabId = null; // Handle the case where all tabs are removed
+      }
     }
-  }
-
-  function isTabSelected(tabId: string): boolean {
-    return selectedTabId === tabId;
-  }
+  });
 </script>
 
-<div class="govuk-tabs" data-module="govuk-tabs" bind:this={tabsElement}>
+<div
+  class="govuk-tabs"
+  data-module="govuk-tabs"
+  bind:this={tabsElementContainer}
+>
   <h2 class="govuk-tabs__title">
     {title}
   </h2>
 
-  <ul class="govuk-tabs__list" role={isSupported ? "tablist" : undefined}>
+  <ul
+    class="govuk-tabs__list"
+    role={isSupported ? "tablist" : null}
+    bind:this={tabsListElement}
+  >
     {#each tabs as tab, index}
-      <li
-        class="govuk-tabs__list-item{isTabSelected(tab.id)
-          ? ' govuk-tabs__list-item--selected'
-          : ''}"
-        role={isSupported ? "presentation" : undefined}
-      >
-        <a
-          class="govuk-tabs__tab"
-          href={"#" + tab.id}
-          id={isSupported ? `${idPrefix}_${tab.id}` : undefined}
-          role={isSupported ? "tab" : undefined}
-          aria-controls={isSupported ? tab.id : undefined}
-          aria-selected={isSupported
-            ? isTabSelected(tab.id)
-              ? "true"
-              : "false"
-            : null}
-          tabindex={isSupported ? (isTabSelected(tab.id) ? 0 : -1) : null}
-          on:click={(e) => handleTabClick(e, tab.id)}
-          on:keydown={(e) => handleKeydown(e, index)}
+      {@const isSelected = selectedTabId === tab.id}
+      {#key tab.id}
+        <li
+          class="govuk-tabs__list-item"
+          class:govuk-tabs__list-item--selected={isSelected}
+          role={isSupported ? "presentation" : null}
         >
-          {tab.label}
-        </a>
-      </li>
+          <a
+            class="govuk-tabs__tab"
+            href={"#" + tab.id}
+            id={isSupported ? `${idPrefix}_${tab.id}` : null}
+            role={isSupported ? "tab" : null}
+            aria-controls={isSupported ? tab.id : null}
+            aria-selected={isSupported ? isSelected : null}
+            tabindex={isSupported ? (isSelected ? 0 : -1) : null}
+            onclick={(e) => handleTabClick(e, tab.id)}
+            onkeydown={(e) => handleKeydown(e, index)}
+            use:registerTab={tab.id}
+          >
+            {tab.label}
+          </a>
+        </li>
+      {/key}
     {/each}
   </ul>
 
   {#each tabs as tab}
+    {@const isSelected = selectedTabId === tab.id}
     <div
-      class="govuk-tabs__panel{!isTabSelected(tab.id)
-        ? ' ' + jsHiddenClass
-        : ''}"
+      class="govuk-tabs__panel"
+      class:govuk-tabs__panel--hidden={!isSelected && isSupported}
       id={tab.id}
-      role={isSupported ? "tabpanel" : undefined}
-      aria-labelledby={isSupported ? `${idPrefix}_${tab.id}` : undefined}
+      role={isSupported ? "tabpanel" : null}
+      aria-labelledby={isSupported ? `${idPrefix}_${tab.id}` : null}
+      hidden={!isSelected && isSupported}
     >
       {#if typeof tab.content === "string"}
         {@html tab.content}
@@ -225,5 +280,10 @@
   /* Override components.css tab panel style adding top margin to tab panels */
   .govuk-tabs__panel[role="tabpanel"] {
     margin-top: 0;
+  }
+
+  /* Ensure hidden panels are truly hidden */
+  .govuk-tabs__panel--hidden {
+    display: none;
   }
 </style>

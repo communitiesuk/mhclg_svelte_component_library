@@ -21,13 +21,13 @@
     idPrefix?: string;
   }>();
 
-  // State
+  // Component state variables
   let isInitialized = $state(false);
   let isSupported = $state(false);
   let isMobile = $state(false);
   let selectedTabId = $state<string | null>(null);
 
-  // REMOVED UNUSED Reference to tab elements container
+  // DOM element references for programmatic focus
   let tabElements: { [key: string]: HTMLAnchorElement } = {};
 
   // Track media query for responsive behavior
@@ -55,7 +55,7 @@
     }
 
     if (!isMobile) {
-      // Update URL hash without scrolling
+      // Update URL hash in browser history without triggering navigation/scroll
       const currentUrl = window.location.href;
       const hashIndex = currentUrl.indexOf("#");
       const baseUrl =
@@ -67,6 +67,7 @@
 
   // Handle keyboard navigation
   function handleKeydown(event: KeyboardEvent, currentIndex: number) {
+    // Skip on mobile or when not properly initialized
     if (isMobile || !isSupported || !isInitialized) return;
 
     let newIndex = -1;
@@ -87,6 +88,7 @@
 
   // Handle tab click
   function handleTabClick(event: MouseEvent, tabId: string) {
+    // On mobile or without JS support, let default browser behavior happen
     if (isMobile || !isSupported) return;
     event.preventDefault();
     selectTab(tabId);
@@ -94,6 +96,7 @@
 
   // Handle hash change
   function handleHashChange() {
+    // Skip on mobile or when not properly initialized
     if (isMobile || !isSupported || !isInitialized) return;
 
     const hash = window.location.hash.substring(1);
@@ -183,9 +186,9 @@
     return value ? value.trim() : null;
   }
 
-  // Effect for ensuring a valid selection
+  // Effect to ensure valid tab selection
   $effect(() => {
-    // Run this effect whenever isInitialized, selectedTabId, or tabs changes
+    // When tabs change, ensure selected tab exists or default to first tab
     if (
       isInitialized &&
       (!selectedTabId || !tabs.some((tab) => tab.id === selectedTabId))

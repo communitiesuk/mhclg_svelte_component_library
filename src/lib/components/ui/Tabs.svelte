@@ -27,10 +27,8 @@
   let isMobile = $state(false);
   let selectedTabId = $state<string | null>(null);
 
-  // Reference to tab elements container
-  let tabsElementContainer: HTMLDivElement;
-  let tabsListElement: HTMLUListElement;
-  let tabRefs: Map<string, HTMLAnchorElement> = new Map();
+  // REMOVED UNUSED Reference to tab elements container
+  let tabElements: { [key: string]: HTMLAnchorElement } = {};
 
   // Track media query for responsive behavior
   let tabletMql: MediaQueryList | null = null;
@@ -46,10 +44,10 @@
     // Update selected tab state
     selectedTabId = tabId;
 
-    if (shouldFocus && tabRefs.has(tabId)) {
+    if (shouldFocus && tabElements[tabId]) {
       // Focus the tab element after the state update
       setTimeout(() => {
-        const tabElement = tabRefs.get(tabId);
+        const tabElement = tabElements[tabId];
         if (tabElement) {
           tabElement.focus();
         }
@@ -65,19 +63,6 @@
       const newUrl = `${baseUrl}#${tabId}`;
       window.history.replaceState(null, "", newUrl);
     }
-  }
-
-  // Custom action to register tab elements
-  function registerTab(node: HTMLAnchorElement, tabId: string) {
-    // Register this tab element in our refs map
-    tabRefs.set(tabId, node);
-
-    // Return destroy function for cleanup
-    return {
-      destroy() {
-        tabRefs.delete(tabId);
-      },
-    };
   }
 
   // Handle keyboard navigation
@@ -175,8 +160,10 @@
       }
       window.removeEventListener("hashchange", handleHashChange);
 
-      // Clear tab references
-      tabRefs.clear();
+      // Clear tab references by deleting keys
+      Object.keys(tabElements).forEach((key) => {
+        delete tabElements[key];
+      });
     };
   });
 
@@ -213,11 +200,7 @@
   });
 </script>
 
-<div
-  class="govuk-tabs"
-  data-module="govuk-tabs"
-  bind:this={tabsElementContainer}
->
+<div class="govuk-tabs" data-module="govuk-tabs">
   <h2 class="govuk-tabs__title">
     {title}
   </h2>
@@ -225,7 +208,6 @@
   <ul
     class="govuk-tabs__list"
     role={isSupported && !isMobile ? "tablist" : null}
-    bind:this={tabsListElement}
   >
     {#each tabs as tab, index}
       {@const isSelected = selectedTabId === tab.id}
@@ -245,7 +227,7 @@
             tabindex={isSupported && !isMobile ? (isSelected ? 0 : -1) : null}
             onclick={(e) => handleTabClick(e, tab.id)}
             onkeydown={(e) => handleKeydown(e, index)}
-            use:registerTab={tab.id}
+            bind:this={tabElements[tab.id]}
           >
             {tab.label}
           </a>

@@ -64,6 +64,15 @@
 
   let keyLines = ["E07000223", "E07000224"];
 
+  let dataArrayTest = $derived(
+    data.lines.map((el, i) => ({
+      ...el,
+      tiers:
+        areaCodeHover === el.areaCode ? ["hover", "secondary"] : ["secondary"],
+      includeMarkers: areaCode === "E07000223",
+    })),
+  );
+
   let dataArray = $derived(
     data.lines.map((el) => ({
       ...el,
@@ -73,11 +82,60 @@
     })),
   );
 
-  let defaultLineParams = { includeMarkers: true, pathStrokeWidth: 1 };
+  let lookupObj = {
+    EnglandMedian: "purple",
+  };
+
+  let colorPalette = {
+    base: ["blue", "green", "red"],
+  };
+
+  let defaultLineParams = {
+    otherTier: {},
+    secondary: {
+      "pointer-events": "none",
+    },
+    invisibles: {
+      listenForOnHoverEvents: true,
+      pathStrokeWidth: 10,
+      opacity: 0,
+    },
+    primary: {
+      halo: true,
+      includeMarkers: true,
+      pathStrokeWidth: areaCodeHover == null ? 10 : 1,
+      color: functionOfSomeKind(
+        data.lines
+          .filter((el) => el.tiers.includes("primary"))
+          .map((el) => el.areaCode),
+        lookupObj,
+        colorPalette["base"],
+      ),
+    },
+    hover: {},
+  };
+
+  let globalTierRules = {
+    primary: {
+      opacity: areaCodeHover == null ? 1 : 0.2,
+    },
+  };
   // $inspect(dataArray);
 
   let showAllData = true;
 </script>
+
+{#each Object.keys(defaultLineParams) as tier}
+  <p>
+    {tier}
+
+    {#each dataArrayTest
+      .filter((el) => el.tiers.includes(tier))
+      .map((el) => el.areaCode) as line}
+      {line}
+    {/each}
+  </p>
+{/each}
 
 <h3>Example Usage</h3>
 <pre><code use:highlight

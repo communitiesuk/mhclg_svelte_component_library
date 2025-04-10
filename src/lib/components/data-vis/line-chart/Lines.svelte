@@ -172,12 +172,13 @@
 
 {#each Object.keys(tieredDataObject) as tier}
   {#each tieredDataObject[tier] as line, i}
+    {console.log(defaultLineParams[tier].color)}
     <Line
       {lineFunction}
       {xFunction}
       {yFunction}
       dataArray={line.data}
-      pathStrokeColor="black"
+      pathStrokeColor={defaultLineParams[tier].color ?? "blue"}
       opacity={1}
       dataId={line.areaCode}
       onClick={function (event, dataArray, dataId) {

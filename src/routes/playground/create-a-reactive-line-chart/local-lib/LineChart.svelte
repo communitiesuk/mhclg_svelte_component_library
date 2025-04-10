@@ -74,7 +74,7 @@
           ? ["hover", "secondary"]
           : keyLines.includes(el.areaCode)
             ? ["primary"]
-            : ["secondary"],
+            : ["invisibles"],
       includeMarkers: selectedAreaCode === "E07000223",
     })),
   );

@@ -158,6 +158,8 @@
       {
         name: "data",
         category: "data",
+        value: data,
+        visible: false,
       },
       {
         name: "cooperativeGestures",
@@ -171,6 +173,13 @@
         name: "showBorder",
         isProp: true,
         description: "Show the borders between areas",
+        value: true,
+        category: "Styling",
+      },
+      {
+        name: "changeOpacityOnHover",
+        isProp: true,
+        description: "Make the hovered area more opaque",
         value: true,
         category: "Styling",
       },
@@ -191,6 +200,7 @@
       {
         name: "geoType",
         isProp: true,
+        description: "The geography level",
         category: "data",
         value: "ltla",
         options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
@@ -199,10 +209,28 @@
         name: "year",
         isProp: true,
         category: "data",
-        value: 2024,
-        options: [
-          2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024,
-        ],
+        value: 2022,
+        options: data.years,
+      },
+      {
+        name: "metric",
+        isProp: true,
+        category: "data",
+        options: data.metrics,
+      },
+      {
+        name: "center",
+        isProp: true,
+        category: "View",
+        value: [-2.5, 53],
+        description: "The initial centre of the map, in [lng, lat] form",
+      },
+      {
+        name: "zoom",
+        isProp: true,
+        category: "View",
+        value: 5,
+        description: "The initial zoom level",
       },
     ]),
   );

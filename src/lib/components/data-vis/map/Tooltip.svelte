@@ -1,13 +1,25 @@
 <script>
-  let { currentMousePosition, hoveredArea } = $props();
+  let { currentMousePosition, hoveredArea, hoveredAreaData, year, metric } =
+    $props();
+  let tooltipHeight = $state();
+  let tooltipWidth = $state();
+  // $inspect(tooltipHeight, tooltipWidth, currentMousePosition);
 </script>
 
-<div
-  class="tooltip"
-  style="top: {currentMousePosition?.y}px; left: {currentMousePosition?.x}px"
->
-  {hoveredArea}
-</div>
+{#if hoveredArea}
+  <div
+    class="tooltip"
+    style="top: {currentMousePosition?.y}px; left: {currentMousePosition?.x}px"
+    bind:clientHeight={tooltipHeight}
+    bind:clientWidth={tooltipWidth}
+  >
+    <p>{hoveredArea}</p>
+    <p class="detail">
+      {year}
+      {metric}: {isNaN(hoveredAreaData) ? "No data" : hoveredAreaData}
+    </p>
+  </div>
+{/if}
 
 <style>
   .tooltip {
@@ -19,7 +31,11 @@
     font-size: 24px;
     pointer-events: none;
     background-color: aliceblue;
-    padding: 10px;
+    padding: 5px;
     border-radius: 5px;
+  }
+  .detail {
+    font-weight: 400;
+    font-size: 16px;
   }
 </style>

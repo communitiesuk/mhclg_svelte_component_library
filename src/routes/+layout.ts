@@ -51,12 +51,46 @@ export const load: LayoutLoad = async (event) => {
     })),
   }));
 
+  let dataInFormatForMap = years
+    .map((year) => ({
+      year: year,
+      data: testData.flatMetricData
+        .filter((el) => el.x == year)
+        .map((d) => ({
+          areaCode: d.areaCode,
+          areaName: testData.areaCodeLookup[d.areaCode],
+          data: testData.flatMetricData
+            .filter((el) => el.x == year && el.areaCode == d.areaCode)
+            .reduce((acc, item) => {
+              acc[item.metric] = item.y;
+              return acc;
+            }, {}),
+        })),
+    }))
+    //Filtering out duplicates - probably could be done more efficiently
+    .map((d) => ({
+      year: d.year,
+      data: Object.values(
+        d.data.reduce((acc, current) => {
+          // Create a unique identifier for each area using areaCode and areaName
+          const key = `${current.areaCode}_${current.areaName}`;
+
+          // Only add the item if the key doesn't already exist in the accumulator
+          if (!acc[key]) {
+            acc[key] = current;
+          }
+          return acc;
+        }, {}),
+      ),
+    }));
+
   return {
     metrics,
     areas,
     years,
     dataInFormatForLineChart,
     dataInFormatForBarChart,
+    dataInFormatForMap,
     areaCodeLookup: testData.areaCodeLookup,
     svgFontDimensions,
     componentSections,

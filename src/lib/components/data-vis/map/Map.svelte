@@ -2,13 +2,10 @@
   //@ts-nocheck
   import type maplibregl from "maplibre-gl";
   import { MapLibre, GeoJSON, FillLayer, LineLayer } from "svelte-maplibre";
-  // import states from "./lad2023.json";
   import { contrastingColor } from "./colors.ts";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { ExpressionSpecification } from "maplibre-gl";
-  // import topo from "./topo.json";
   import fullTopo from "./fullTopo.json";
-  import pconData from "./salary-pcon10.json";
   import * as topojson from "topojson-client";
   import Tooltip from "./Tooltip.svelte";
 
@@ -20,7 +17,23 @@
     clickToZoom,
     geoType,
     year,
+    metric,
+    changeOpacityOnHover = true,
+    center = [-2.5, 53],
+    zoom = 5,
   } = $props();
+
+  let mapData = $derived(
+    data?.dataInFormatForMap.filter((d) => d.year == year)[0]?.data,
+  );
+
+  let filteredMapData = $derived(
+    mapData.map((el) => ({
+      areaCode: el.areaCode,
+      areaName: el.areaName,
+      metric: +el.data[metric],
+    })),
+  );
 
   const geojsonData = $derived(
     topojson.feature(fullTopo, fullTopo.objects[geoType]),
@@ -46,17 +59,10 @@
   }
 
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
+  $inspect(filteredGeoJsonData.features);
 
-  // let showBorder = $state(true);
-  let showFill = $state(true);
-  let fillColor = $state([
-    "#ffffcc",
-    "#a1dab4",
-    "#41b6c4",
-    "#2c7fb8",
-    "#253494",
-  ]);
-  let borderColor = $state("#003300");
+  let fillColor = ["#ffffcc", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"];
+  let borderColor = "#003300";
 
   let map: maplibregl.Map | undefined = $state();
   // $inspect(map?.cooperativeGestures);
@@ -104,29 +110,34 @@
     return color ? color : "lightgrey";
   }
 
-  // Get data for geojson maps
-  // getData(pconData).then((res) => {
-  let vals = pconData.map((d) => d.salary).sort((a, b) => a - b);
-  let len = vals.length;
-  let breaks = [
+  let vals = $derived(
+    filteredMapData.map((d) => d.metric).sort((a, b) => a - b),
+  );
+  let len = $derived(vals.length);
+  let breaks = $derived([
     vals[0],
     vals[Math.floor(len * 0.2)],
     vals[Math.floor(len * 0.4)],
     vals[Math.floor(len * 0.6)],
     vals[Math.floor(len * 0.8)],
     vals[len - 1],
-  ];
+  ]);
+  // $inspect(metric, breaks);
 
-  $effect(() => {});
-  let dataWithColor = pconData.map((d) => {
-    return { ...d, color: getColor(d.salary, breaks, fillColor) };
-  });
+  let dataWithColor = $derived(
+    filteredMapData.map((d) => {
+      return { ...d, color: getColor(d.metric, breaks, fillColor) };
+    }),
+  );
+  // $inspect(dataWithColor);
 
   //Joining the data to the GeoJSON
-  let obj2Map = dataWithColor.reduce((map, item) => {
-    map[item.LAD23CD] = item; // Use 'LAD23CD' as the key for the second map
-    return map;
-  }, {});
+  let obj2Map = $derived(
+    dataWithColor?.reduce((map, item) => {
+      map[item.areaCode] = item; // Use 'areaCode' as the key for the second map
+      return map;
+    }, {}),
+  );
 
   let obj1Map = $derived(
     filteredGeoJsonData.features.reduce((map, item) => {
@@ -139,16 +150,17 @@
   let merged = $derived({
     type: "FeatureCollection",
     features: filteredGeoJsonData.features.map((item1) => {
-      // Get the matching item from obj2Map based on the LAD23CD
+      // Get the matching item from obj2Map based on the areaCode
       const match = obj2Map[item1.properties.areacd];
+
       // If a match exists, merge the 'salary' and 'color' into the 'properties' of item1
       if (match) {
         return {
           ...item1, // Keep all properties of the feature
           properties: {
-            ...item1.properties, // Keep the existing properties (like LAD23CD, etc.)
-            salary: match.salary, // Add salary from the match
-            color: match.color, // Add color from the match
+            ...item1.properties, // Keep the existing properties (like areaCode, etc.)
+            metric: +match?.metric, // Add metric from the match
+            color: match?.color, // Add color from the match
           },
         };
       }
@@ -162,6 +174,7 @@
   // $inspect(merged);
 
   let hoveredArea = $state();
+  let hoveredAreaData = $state();
   let currentMousePosition = $state();
 </script>
 
@@ -171,33 +184,49 @@
   style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
   class="map"
   standardControls
-  center={[-2.5, 53]}
-  zoom={5}
+  {center}
+  {zoom}
 >
-  <GeoJSON id="states" data={merged} promoteId="areanm">
-    {#if showFill}
+  {#key merged}
+    <GeoJSON id="states" data={merged} promoteId="areanm">
+      <!-- {#if showFill} -->
       <FillLayer
         paint={{
           // "fill-color": hoverStateFilter(fillColor[0], colors[0].hoverBgColor),
-          "fill-color": ["get", "color"],
-          "fill-opacity": 0.5,
+          "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
+          ////Or use a step function to do the processing:
+          // "fill-color": [
+          //   "step",
+          //// 'coalesce' says what to do if the value is null or undefined
+          //   ["coalesce", ["get", "metric"], -1000],
+          //   "lightgrey",
+          //   1,
+          //   "pink",
+          //   8.4,
+          //   "green",
+          //   43.2,
+          //   "white",
+          //   49.5,
+          //   "blue",
+          //   61.6,
+          //   "yellow",
+          //// Use "metric" property for color mapping
+          // ],
+          // "fill-opacity": 0.5,
+
+          "fill-opacity": changeOpacityOnHover
+            ? ["case", ["boolean", ["feature-state", "hover"], false], 0.8, 0.5]
+            : 0.5,
         }}
         beforeLayerType="symbol"
         manageHoverState
         onclick={(e) => {
           if (clickToZoom) {
             let coordArray =
-              //Note this is very similar to using a GeoJSON - only change is it's [1][1] instead of [2][1]
-              Object.entries(geojsonData)[1][1].find(
-                (d) => d.properties.areanm == e.features[0].id,
-              ).geometry.coordinates.length === 1
-                ? Object.entries(geojsonData)[1][1].find(
-                    (d) => d.properties.areanm == e.features[0].id,
-                  ).geometry.coordinates[0]
+              e.features[0].geometry.coordinates.length === 1
+                ? e.features[0].geometry.coordinates[0]
                 : //Do some extra processing to get the data in the right shape if the area has non-contiguous areas
-                  Object.entries(geojsonData)[1][1]
-                    .find((d) => d.properties.areanm == e.features[0].id)
-                    .geometry.coordinates.flat(2);
+                  e.features[0].geometry.coordinates.flat(2);
 
             let minValues = [
               Math.min(...coordArray.map((d) => +d[0])),
@@ -216,25 +245,37 @@
           }
         }}
         onmousemove={(e) => {
+          // console.log(e.features[0].properties.metric);
           hoveredArea = e.features[0].id;
+          hoveredAreaData = e.features[0].properties.metric;
           currentMousePosition = e.event.point;
         }}
-      />
-    {/if}
-    {#if showBorder}
-      <LineLayer
-        layout={{ "line-cap": "round", "line-join": "round" }}
-        paint={{
-          "line-color": hoverStateFilter(borderColor, "orange"), // Neat svelte-maplibre method for setting the colour based on whether the area is hovered
-          "line-width": 1,
+        onmouseleave={(e) => {
+          (hoveredArea = null), (hoveredAreaData = null);
         }}
-        beforeLayerType="symbol"
+      />
+      <!-- {/if} -->
+      {#if showBorder}
+        <LineLayer
+          layout={{ "line-cap": "round", "line-join": "round" }}
+          paint={{
+            "line-color": hoverStateFilter(borderColor, "orange"), // Neat svelte-maplibre method for setting the colour based on whether the area is hovered - compare with the fill-opacity code above
+            "line-width": 1,
+          }}
+          beforeLayerType="symbol"
+        />
+      {/if}
+    </GeoJSON>
+    {#if tooltip}
+      <Tooltip
+        {currentMousePosition}
+        {hoveredArea}
+        {hoveredAreaData}
+        {year}
+        {metric}
       />
     {/if}
-  </GeoJSON>
-  {#if tooltip}
-    <Tooltip {currentMousePosition} {hoveredArea} />
-  {/if}
+  {/key}
 </MapLibre>
 
 <style>

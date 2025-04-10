@@ -47,21 +47,6 @@
   </Accordion>
 </div>
 
-{#snippet tab1Content()}
-  <h2 class="govuk-heading-l">First Tab Content</h2>
-  <p class="govuk-body">This is the content for the first tab.</p>
-{/snippet}
-
-{#snippet tab2Content()}
-  <h2 class="govuk-heading-l">Second Tab Content</h2>
-  <p class="govuk-body">This is the content for the second tab.</p>
-{/snippet}
-
-{#snippet tab3Content()}
-  <h2 class="govuk-heading-l">Third Tab Content</h2>
-  <p class="govuk-body">This is the content for the third tab.</p>
-{/snippet}
-
 {#snippet example1Tab1Content()}
   <h2 class="govuk-heading-l">First Tab Content</h2>
   <p class="govuk-body">This tab is not selected by default.</p>
@@ -70,7 +55,7 @@
 {#snippet example1Tab2Content()}
   <h2 class="govuk-heading-l">Second Tab Content</h2>
   <p class="govuk-body">
-    This tab is selected by default because it has selected=true.
+    This tab is now selected by default via the selectedTabId prop.
   </p>
 {/snippet}
 
@@ -198,6 +183,7 @@
   <div class="p-5 bg-white">
     <Tabs
       title="Pre-selected Tab Example"
+      selectedTabId={"example-tab-2"}
       tabs={[
         {
           id: "example-tab-1",
@@ -207,7 +193,6 @@
         {
           id: "example-tab-2",
           label: "Second Tab",
-          selected: true,
           content: example1Tab2Content,
         },
         {

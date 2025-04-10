@@ -158,6 +158,8 @@
    * ?      <isRequired> - (optional, default = false) - Should be set to true for any props which the component will not functionally properly without (e.g. props with no default value, props which will cause erros if undefined).
    *
    */
+  let currentTabId = $state("past-day");
+
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
@@ -172,13 +174,20 @@
         },
       },
       {
+        name: "selectedTabId",
+        category: "Content",
+        isBinded: true,
+        value: currentTabId,
+        description:
+          "The ID of the currently selected tab. Can be bound to control selection externally.",
+      },
+      {
         name: "tabs",
         category: "Content",
         value: [
           {
             id: "past-day",
             label: "Past day",
-            selected: true,
             content: `
               <h2 class="govuk-heading-l">Past day</h2>
               <table class="govuk-table">
@@ -281,7 +290,7 @@
             content: `
               <h2 class="govuk-heading-l">Past year</h2>
               <p class="govuk-body">There is no data for this year yet, check back later.</p>
-              `, // Note: Changed slightly from the GDS example to match the template, but includes heading.
+              `,
           },
         ],
         description: {
@@ -445,7 +454,7 @@
  -->
 {#snippet Component()}
   <div class="govuk-frontend-supported p-8">
-    <Tabs {...parametersObject}></Tabs>
+    <Tabs {...parametersObject} bind:selectedTabId={currentTabId}></Tabs>
   </div>
 {/snippet}
 

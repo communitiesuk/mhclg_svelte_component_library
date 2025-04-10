@@ -36,7 +36,7 @@ export const codeBlock2 = `
 
 {#snippet tab2Content()}
   <h2 class="govuk-heading-l">Second Tab Content</h2>
-  <p class="govuk-body">This tab is selected by default because it has selected=true.</p>
+  <p class="govuk-body">This tab is now selected by default via the selectedTabId prop.</p>
 {/snippet}
 
 {#snippet tab3Content()}
@@ -46,6 +46,7 @@ export const codeBlock2 = `
 
 <Tabs
   title="Pre-selected Tab Example"
+  selectedTabId={"example-tab-2"}
   tabs={[
     {
       id: "example-tab-1",
@@ -55,7 +56,6 @@ export const codeBlock2 = `
     {
       id: "example-tab-2",
       label: "Second Tab",
-      selected: true, // This tab will be selected by default
       content: tab2Content,
     },
     {

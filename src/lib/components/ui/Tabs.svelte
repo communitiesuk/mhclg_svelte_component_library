@@ -8,7 +8,6 @@
     id: string;
     label: string;
     content: string | typeof SvelteComponent | Snippet;
-    selected?: boolean;
   };
 
   // Component props
@@ -16,17 +15,18 @@
     title = "Contents",
     tabs = [],
     idPrefix = "tab",
+    selectedTabId = $bindable(),
   } = $props<{
     title?: string;
     tabs: TabItem[];
     idPrefix?: string;
+    selectedTabId?: string | null;
   }>();
 
   // Component state variables
   let isInitialized = $state(false);
   let isSupported = $state(false);
   let isMobile = $state(false);
-  let selectedTabId = $state<string | null>(null);
 
   // DOM element references for programmatic focus
   let tabElements: { [key: string]: HTMLAnchorElement } = {};
@@ -34,41 +34,38 @@
   // Track media query for responsive behavior
   let tabletMql: MediaQueryList | null = null;
 
-  // Handle tab selection
-  function selectTab(tabId: string, shouldFocus = false) {
-    // Don't select if not supported/initialized or already selected
+  // Handle tab selection - integrate focus and hash logic directly
+  function selectTab(tabId: string, shouldFocus = false): void {
+    // Skip if component isn't ready, or tab is already selected
     if (!isSupported || !isInitialized || selectedTabId === tabId) return;
 
-    // Get references to current and next tabs
-    const currentTabId = selectedTabId;
-
-    // Update selected tab state
+    // Update the core bindable state
     selectedTabId = tabId;
 
+    // Handle optional focus
     if (shouldFocus && tabElements[tabId]) {
-      // Focus the tab element after the state update
+      // Use setTimeout to defer focus until after Svelte updates the DOM (e.g., tabindex)
       setTimeout(() => {
         const tabElement = tabElements[tabId];
-        if (tabElement) {
-          tabElement.focus();
-        }
+        tabElement?.focus(); // Optional chaining for safety
       }, 0);
     }
 
+    // Update URL hash on non-mobile views
     if (!isMobile) {
-      // Update URL hash in browser history without triggering navigation/scroll
+      // Use history.replaceState to update the displayed URL hash without causing scroll/navigation.
       const currentUrl = window.location.href;
       const hashIndex = currentUrl.indexOf("#");
       const baseUrl =
         hashIndex !== -1 ? currentUrl.slice(0, hashIndex) : currentUrl;
       const newUrl = `${baseUrl}#${tabId}`;
-      replaceState(newUrl, {});
+      replaceState(newUrl, {}); // Use SvelteKit's function
     }
   }
 
   // Handle keyboard navigation
-  function handleKeydown(event: KeyboardEvent, currentIndex: number) {
-    // Skip on mobile or when not properly initialized
+  function handleKeydown(event: KeyboardEvent, currentIndex: number): void {
+    // Skip navigation on mobile or if component isn't ready
     if (isMobile || !isSupported || !isInitialized) return;
 
     // Initialize to null, indicating no valid navigation key pressed yet.
@@ -104,7 +101,7 @@
   }
 
   // Handle tab click
-  function handleTabClick(event: MouseEvent, tabId: string) {
+  function handleTabClick(event: MouseEvent, tabId: string): void {
     // On mobile or without JS support, let default browser behavior happen
     if (isMobile || !isSupported) return;
     event.preventDefault();
@@ -112,7 +109,7 @@
   }
 
   // Handle hash change
-  function handleHashChange() {
+  function handleHashChange(): void {
     // Skip on mobile or when not properly initialized
     if (isMobile || !isSupported || !isInitialized) return;
 
@@ -120,7 +117,8 @@
     if (hash && tabs.some((tab) => tab.id === hash)) {
       // Only select if the hash corresponds to a *different* tab
       if (selectedTabId !== hash) {
-        selectTab(hash, true); // Focus the tab when navigating via hash change
+        // Focus the tab when navigating via hash change
+        selectTab(hash, true);
       }
     }
   }
@@ -130,21 +128,21 @@
     isSupported =
       document.body?.classList.contains("govuk-frontend-supported") ?? false;
 
-    // Set initial selected tab
-    let initialTab = tabs.find((tab) => tab.selected) || tabs[0];
-
-    // Check URL hash for deep linking
+    // Check URL hash for deep linking AFTER initial prop value is set
     const hash = window.location.hash.substring(1);
     if (hash) {
       const tabFromHash = tabs.find((tab) => tab.id === hash);
-      if (tabFromHash) {
-        initialTab = tabFromHash;
+      if (tabFromHash && tabFromHash.id !== selectedTabId) {
+        // Update state if hash points to a valid, different tab
+        // Use selectTab to handle focus and potential URL update if needed
+        selectTab(tabFromHash.id, true);
       }
     }
 
-    if (initialTab) {
-      // Set initial without triggering history update
-      selectedTabId = initialTab.id;
+    // If after hash check, no tab is selected AND we have tabs, select the first one.
+    // This handles the case where the initial prop value was null/invalid and no valid hash was present.
+    if (!selectedTabId && tabs.length > 0) {
+      selectedTabId = tabs[0].id;
     }
 
     // Setup responsive behavior
@@ -156,7 +154,7 @@
 
         if ("addEventListener" in tabletMql) {
           tabletMql.addEventListener("change", handleMediaChange);
-        } else if (tabletMql) {
+        } else {
           // @ts-ignore - Deprecated fallback
           tabletMql.addListener(handleMediaChange);
         }
@@ -173,14 +171,14 @@
       if (tabletMql) {
         if ("removeEventListener" in tabletMql) {
           tabletMql.removeEventListener("change", handleMediaChange);
-        } else if (tabletMql) {
+        } else {
           // @ts-ignore - Deprecated fallback
           tabletMql.removeListener(handleMediaChange);
         }
       }
       window.removeEventListener("hashchange", handleHashChange);
 
-      // Clear tab references by deleting keys
+      // Clear tab element references to prevent memory leaks
       Object.keys(tabElements).forEach((key) => {
         delete tabElements[key];
       });
@@ -188,7 +186,9 @@
   });
 
   // Handle media query changes
-  function handleMediaChange(event: MediaQueryListEvent | MediaQueryList) {
+  function handleMediaChange(
+    event: MediaQueryListEvent | MediaQueryList,
+  ): void {
     // Handle both modern and deprecated event/object types
     isMobile = !event.matches;
   }
@@ -203,19 +203,20 @@
     return value ? value.trim() : null;
   }
 
-  // Effect to ensure valid tab selection
+  // Effect to ensure valid tab selection if tabs array changes externally
   $effect(() => {
-    // When tabs change, ensure selected tab exists or default to first tab
+    // Run this effect whenever isInitialized or tabs changes
+    // Check if the currently selected tab ID still exists in the updated tabs array
     if (
       isInitialized &&
-      (!selectedTabId || !tabs.some((tab) => tab.id === selectedTabId))
+      selectedTabId && // Only run if a tab is actually selected
+      !tabs.some((tab) => tab.id === selectedTabId)
     ) {
-      // Check if tabs array is not empty before accessing index 0
-      if (tabs.length > 0) {
-        selectedTabId = tabs[0].id;
-      } else {
-        selectedTabId = null; // Handle the case where all tabs are removed
-      }
+      // If selected tab ID is no longer valid, default to the first available tab
+      console.log(
+        `Effect: selectedTabId '${selectedTabId}' no longer valid. Resetting.`,
+      ); // Optional Debug
+      selectedTabId = tabs[0]?.id ?? null; // Use optional chaining and nullish coalescing
     }
   });
 </script>

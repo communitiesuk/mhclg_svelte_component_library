@@ -13,6 +13,7 @@
     chartWidth,
     xFunction,
     yFunction,
+    areaFunction,
     labelClicked = $bindable(),
     chartHeight,
     colors,
@@ -42,8 +43,6 @@
       (d) => 20 * Math.ceil(d.areaCode.length / 15),
     ),
   );
-
-  $inspect(labelsPlaced);
 </script>
 
 {#snippet categoryLabelSnippet(dataArray, newY)}
@@ -73,110 +72,14 @@
     }}
   ></CategoryLabel>
 {/snippet}
-<!-- 
-{#if showAllData}
-  {#each dataArray as line, i}
-    <Line
-      {lineFunction}
-      {xFunction}
-      {yFunction}
-      dataArray={line.data}
-      pathStrokeColor="black"
-      pathStrokeWidth="1"
-      opacity={hoveredLine ? 0.05 : 0.15}
-      dataId={line.areaCode}
-      {...defaultLineParams}
-      onMouseEnter={function (event, dataArray, dataId) {
-        hoveredLine = dataId;
-      }}
-      onMouseMove={function (event, dataArray, dataId) {
-        hoveredLine = dataId;
-      }}
-      onMouseLeave={function (event, dataArray, dataId) {
-        hoveredLine = null;
-      }}
-    ></Line>
-    {#if line.areaCode === hoveredLine}
-      <g>
-        {@render categoryLabelSnippet(line, yFunction(line.data[0].y))}
-      </g>
-    {/if}
-  {/each}
-  {#if hoveredLine}
-    <Line
-      {lineFunction}
-      dataArray={hoveredLine
-        ? dataArray.find((el) => el.areaCode === hoveredLine).data
-        : dataArray.find((el) => el.areaCode === selectedAreaCode).data}
-      pathStrokeColor={colors[3]}
-      pathStrokeWidth="5"
-      opacity="1"
-      includeMarkers={false}
-      {xFunction}
-      {yFunction}
-      onMouseEnter={function (event, dataArray, dataId) {}}
-      onMouseMove={function (event, dataArray, dataId) {}}
-      onMouseLeave={function (event, dataArray, dataId) {}}
-    ></Line>
-  {/if}
-{/if}
-{#each primaryLinesDataArray as line, i}
-  {@const lineParams = Object.keys(defaultLineParams).reduce((acc, key) => {
-    acc[key] =
-      line.hasOwnProperty(key) && line[key] != null
-        ? line[key]
-        : defaultLineParams[key];
-    return acc;
-  }, {})}
-  <Line
-    {lineFunction}
-    {xFunction}
-    {yFunction}
-    dataArray={line.data}
-    pathStrokeColor={colors[i]}
-    opacity={!labelClicked && !labelHovered && !hoveredLine ? 1 : 0.2}
-    includeMarkers={false}
-    markerStroke={colors[i]}
-    markerFill="white"
-    dataId={line.areaCode}
-    onMouseEnter={function (event, dataArray, dataId) {
-      hoveredLine = dataId;
-    }}
-    onMouseMove={function (event, dataArray, dataId) {
-      hoveredLine = dataId;
-    }}
-    onMouseLeave={function (event, dataArray, dataId) {
-      hoveredLine = null;
-    }}
-    {...lineParams}
-  ></Line>
-  
-  {#if selectedLine.includes(line.areaCode)}
-    <Line
-      {lineFunction}
-      {xFunction}
-      {yFunction}
-      dataArray={line.data}
-      pathStrokeColor={colors[i]}
-      opacity={1}
-      includeMarkers={false}
-      markerStroke={colors[i]}
-      markerFill="white"
-      dataId={line.areaCode}
-      onMouseEnter={function (event, dataArray, dataId) {}}
-      onMouseMove={function (event, dataArray, dataId) {}}
-      onMouseLeave={function (event, dataArray, dataId) {}}
-    ></Line>
-  {/if}
-{/each} -->
 
 {#each Object.keys(tieredDataObject) as tier}
   {#each tieredDataObject[tier] as line, i}
-    {console.log(defaultLineParams[tier].color)}
     <Line
       {lineFunction}
       {xFunction}
       {yFunction}
+      {areaFunction}
       dataArray={line.data}
       pathStrokeColor={defaultLineParams[tier].color ?? "blue"}
       opacity={1}
@@ -193,6 +96,7 @@
       onMouseLeave={function (event, dataArray, dataId) {
         hoveredLine = null;
       }}
+      {...defaultLineParams}
     ></Line>
     {#if labelsPlaced && tier === "primary"}
       {@render categoryLabelSnippet(

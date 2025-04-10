@@ -9,7 +9,7 @@
     pathFillColor = "none",
     pathStrokeDashArray = "none",
     areaFillColor = "none",
-    includeArea = false,
+    includeArea = true,
     includeMarkers = false,
     markerShape = "circle",
     markerRadius = 5,
@@ -17,9 +17,9 @@
     markerStroke = "white",
     markerStrokeWidth = 3,
     lineFunction,
-    // areaFunction,
     xFunction,
     lineEnding = null,
+    areaFunction,
     yFunction,
     dataId,
     // markersDataId,
@@ -96,9 +96,9 @@
   onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}
   {opacity}
 >
-  <!-- {#if includeArea}
+  {#if includeArea}
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
-  {/if} -->
+  {/if}
   <path
     d={lineFunction(dataArray)}
     fill="none"

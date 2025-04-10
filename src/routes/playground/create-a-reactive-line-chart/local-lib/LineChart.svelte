@@ -52,11 +52,25 @@
   );
 
   let areaCodeHover = $state();
-
   let labelClicked = $state();
   let selectedAreaCode = $state("E07000223");
 
-  let colors = ["red", "blue", "green", "orange", "purple", "cyan"];
+  let areaFunction = $derived(
+    homepage ??
+      area()
+        .y0((d) => yFunction(0))
+        .x((d) => xFunction(d.x))
+        .y1((d) => yFunction(d.y))
+        .curve(
+          curveFunctions[
+            getValueFromParametersArray(
+              parametersSourceArray,
+              parametersValuesArray,
+              "curve",
+            )
+          ],
+        ),
+  );
 
   function handleClickOutside(event) {
     if (labelClicked && !event.target.closest('[id^="label"]')) {
@@ -64,7 +78,7 @@
     }
   }
 
-  let keyLines = ["E07000223", "E07000224"];
+  let primaryLines = ["E07000223", "E07000224"];
 
   let dataArray = $derived(
     data.lines.map((el, i) => ({
@@ -72,7 +86,7 @@
       tiers:
         areaCodeHover === el.areaCode
           ? ["hover", "secondary"]
-          : keyLines.includes(el.areaCode)
+          : primaryLines.includes(el.areaCode)
             ? ["primary"]
             : ["invisibles"],
       includeMarkers: selectedAreaCode === "E07000223",
@@ -183,9 +197,10 @@
             {chartWidth}
             {xFunction}
             {yFunction}
+            {areaFunction}
             bind:labelClicked
             {chartHeight}
-            {colors}
+            {colorPalette}
             {defaultLineParams}
             {showAllData}
             {globalTierRules}

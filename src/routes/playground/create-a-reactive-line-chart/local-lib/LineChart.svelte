@@ -66,7 +66,7 @@
 
   let keyLines = ["E07000223", "E07000224"];
 
-  let dataArrayTest = $derived(
+  let dataArray = $derived(
     data.lines.map((el, i) => ({
       ...el,
       tiers:
@@ -75,14 +75,7 @@
     })),
   );
 
-  let dataArray = $derived(
-    data.lines.map((el) => ({
-      ...el,
-      primary: keyLines.includes(el.areaCode),
-      includeMarkers: !keyLines.includes(el.areaCode),
-      pathStrokeWidth: keyLines.includes(el.areaCode) ? 10 : null,
-    })),
-  );
+  $inspect({ dataArray });
 
   let lookupObj = {
     EnglandMedian: "purple",

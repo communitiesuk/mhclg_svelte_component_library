@@ -20,11 +20,16 @@
     globalTierRules,
   } = $props();
 
-  $inspect(dataArray);
-
-  let hoveredLine = $state("");
+  $inspect({ dataArray });
+  $inspect({ defaultLineParams });
+  let hoveredLine = $state(null);
   let bounds = $state([0, chartHeight]);
 
+  $inspect(
+    dataArray
+      .filter((el) => el.tiers.includes("secondary"))
+      .map((el) => el.areaCode),
+  );
   let labelHovered = $state();
   // let selectedLine = $derived([labelHovered, labelClicked]);
 
@@ -187,6 +192,18 @@
       pathStrokeColor={colors[i]}
       opacity={1}
       dataId={line.areaCode}
+      onClick={function (event, dataArray, dataId) {
+        hoveredLine = dataId;
+      }}
+      onMouseEnter={function (event, dataArray, dataId) {
+        hoveredLine = dataId;
+      }}
+      onMouseMove={function (event, dataArray, dataId) {
+        hoveredLine = dataId;
+      }}
+      onMouseLeave={function (event, dataArray, dataId) {
+        hoveredLine = null;
+      }}
     ></Line>
   {/each}
 {/each}

@@ -23,10 +23,10 @@
     yFunction,
     dataId,
     // markersDataId,
-    // onClick,
-    // onMouseEnter,
-    // onMouseLeave,
-    // onMouseMove,
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
+    onMouseMove,
     // onClickMarker,
     // onMouseEnterMarker,
     // onMouseLeaveMarker,
@@ -87,7 +87,7 @@
 
 <g
   data-id={dataId}
-  onclick={(event) => onClick(event, dataArray)}
+  onclick={(event) => onClick(event, dataArray, dataId)}
   onmouseenter={(event) => onMouseEnter(event, dataArray, dataId)}
   onmouseleave={(event) => onMouseLeave(event, dataArray, dataId)}
   onmousemove={(event) => onMouseMove(event, dataArray, dataId)}
@@ -96,9 +96,9 @@
   onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}
   {opacity}
 >
-  {#if includeArea}
+  <!-- {#if includeArea}
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
-  {/if}
+  {/if} -->
   <path
     d={lineFunction(dataArray)}
     fill="none"
@@ -119,7 +119,7 @@
         : null}
   ></path>
 
-  {#if includeMarkers}
+  <!-- {#if includeMarkers}
     {#each dataArray as marker, i}
       <g
         data-id={markersDataId + "-" + i}
@@ -171,7 +171,7 @@
         {/if}
       </g>
     {/each}
-  {/if}
+  {/if}-->
 </g>
 
 <!-- <path

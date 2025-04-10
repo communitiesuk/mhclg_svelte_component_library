@@ -75,8 +75,6 @@
     })),
   );
 
-  $inspect({ dataArray });
-
   let lookupObj = {
     EnglandMedian: "purple",
   };
@@ -109,6 +107,13 @@
     },
     hover: {},
   };
+
+  let tieredDataObject = $derived(
+    Object.keys(defaultLineParams).reduce((acc, key, index) => {
+      acc[key] = dataArray.filter((el) => el.tiers.includes(key));
+      return acc;
+    }, {}),
+  );
 
   let globalTierRules = {
     primary: {
@@ -167,7 +172,7 @@
 
         <g data-role="lines-group">
           <Lines
-            {dataArray}
+            {tieredDataObject}
             {lineFunction}
             {selectedAreaCode}
             {chartWidth}

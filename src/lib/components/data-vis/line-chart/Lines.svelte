@@ -6,7 +6,7 @@
   import { derived } from "svelte/store";
 
   let {
-    dataArray,
+    tieredDataObject,
     lineFunction,
     selectedAreaCode,
     chartWidth,
@@ -20,16 +20,9 @@
     globalTierRules,
   } = $props();
 
-  $inspect({ dataArray });
-  $inspect({ defaultLineParams });
   let hoveredLine = $state(null);
   let bounds = $state([0, chartHeight]);
 
-  $inspect(
-    dataArray
-      .filter((el) => el.tiers.includes("secondary"))
-      .map((el) => el.areaCode),
-  );
   let labelHovered = $state();
   // let selectedLine = $derived([labelHovered, labelClicked]);
 
@@ -180,10 +173,8 @@
   {/if}
 {/each} -->
 
-{#each defaultLineParams as tier}
-  {#each dataArray
-    .filter((el) => el.tiers.includes(tier))
-    .map((el) => el.areaCode) as line, i}
+{#each Object.keys(tieredDataObject) as tier}
+  {#each tieredDataObject[tier] as line, i}
     <Line
       {lineFunction}
       {xFunction}

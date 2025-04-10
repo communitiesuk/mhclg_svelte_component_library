@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { replaceState } from "$app/navigation";
   import type { SvelteComponent, Snippet } from "svelte";
 
   // Define Tab type
@@ -61,7 +62,7 @@
       const baseUrl =
         hashIndex !== -1 ? currentUrl.slice(0, hashIndex) : currentUrl;
       const newUrl = `${baseUrl}#${tabId}`;
-      window.history.replaceState(null, "", newUrl);
+      replaceState(newUrl, {});
     }
   }
 

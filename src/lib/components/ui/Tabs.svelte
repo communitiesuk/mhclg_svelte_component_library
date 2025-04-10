@@ -71,16 +71,32 @@
     // Skip on mobile or when not properly initialized
     if (isMobile || !isSupported || !isInitialized) return;
 
-    let newIndex = -1;
+    // Initialize to null, indicating no valid navigation key pressed yet.
+    // Will be updated to a valid index (0+) if ArrowLeft/Right is pressed.
+    let newIndex: number | null = null;
+    const numTabs = tabs.length;
+    if (numTabs === 0) return; // Cannot navigate an empty list
+
+    // Define indices and conditions for readability
+    const isFirstTab = currentIndex === 0;
+    const isLastTab = currentIndex === numTabs - 1;
+    const previousIndex = currentIndex - 1;
+    const nextIndex = currentIndex + 1;
+    const firstIndex = 0;
+    const lastIndex = numTabs - 1;
+
     if (event.key === "ArrowLeft" || event.key === "Left") {
       event.preventDefault();
-      newIndex = currentIndex > 0 ? currentIndex - 1 : tabs.length - 1;
+      // If it's the first tab, wrap to last, otherwise go to previous.
+      newIndex = isFirstTab ? lastIndex : previousIndex;
     } else if (event.key === "ArrowRight" || event.key === "Right") {
       event.preventDefault();
-      newIndex = currentIndex < tabs.length - 1 ? currentIndex + 1 : 0;
+      // If it's the last tab, wrap to first, otherwise go to next.
+      newIndex = isLastTab ? firstIndex : nextIndex;
     }
 
-    if (newIndex !== -1) {
+    // If a navigation key was pressed (newIndex is not null) and the index is valid
+    if (newIndex !== null && tabs[newIndex]) {
       const targetTabId = tabs[newIndex].id;
       // Pass true to ensure focus shifts to the new tab
       selectTab(targetTabId, true);

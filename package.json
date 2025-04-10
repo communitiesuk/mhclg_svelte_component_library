@@ -37,7 +37,6 @@
     "svelte": "^5.0.0"
   },
   "devDependencies": {
-    "fs-extra": "^11.3.0",
     "@sveltejs/adapter-auto": "^3.3.0",
     "@sveltejs/kit": "^2.16.1",
     "@sveltejs/package": "^2.0.0",
@@ -52,6 +51,7 @@
     "eslint-plugin-svelte": "^2.36.0",
     "flowbite": "^2.5.2",
     "flowbite-svelte": "^0.47.3",
+    "fs-extra": "^11.3.0",
     "globals": "^15.0.0",
     "mdsvex": "^0.11.2",
     "prettier": "^3.3.2",
@@ -69,12 +69,14 @@
   },
   "dependencies": {
     "@dwp/dwp-frontend": "^3.3.0",
+    "@maptiler/sdk": "^3.0.1",
     "@ministryofjustice/frontend": "^4.0.1",
     "@moduk/frontend": "^2.0.23",
-    "@maptiler/sdk": "^3.0.1",
     "@monaco-editor/loader": "^1.4.0",
+    "@types/dompurify": "^3.0.5",
     "csv-parser": "^3.0.0",
     "d3": "^7.9.0",
+    "dompurify": "^3.2.5",
     "flowbite-svelte-icons": "^2.0.3",
     "govuk-frontend": "^5.9.0",
     "labelplacer": "^0.0.0",

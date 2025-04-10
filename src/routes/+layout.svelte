@@ -12,6 +12,7 @@
   import type { ComponentItem } from "./+layout.server";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
+  import PhaseBanner from "$lib/components/layout/PhaseBanner.svelte";
 
   let { children, data } = $props();
 
@@ -317,6 +318,12 @@
       sections={mobileNavSections}
       {currentSection}
       onNavigate={handleMobileNavigation}
+    />
+
+    <!-- Add Phase Banner here -->
+    <PhaseBanner
+      tagText="Alpha"
+      linkHref="mailto:dataexplorerfeedback@communities.gov.uk"
     />
 
     <div class="app-pane__body govuk-width-container">

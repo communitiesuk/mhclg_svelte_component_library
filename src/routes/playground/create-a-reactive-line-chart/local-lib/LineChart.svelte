@@ -70,7 +70,11 @@
     data.lines.map((el, i) => ({
       ...el,
       tiers:
-        areaCodeHover === el.areaCode ? ["hover", "secondary"] : ["secondary"],
+        areaCodeHover === el.areaCode
+          ? ["hover", "secondary"]
+          : keyLines.includes(el.areaCode)
+            ? ["primary"]
+            : ["secondary"],
       includeMarkers: selectedAreaCode === "E07000223",
     })),
   );
@@ -97,7 +101,7 @@
       halo: true,
       includeMarkers: true,
       pathStrokeWidth: areaCodeHover == null ? 10 : 1,
-      color: "black", // functionOfSomeKind(
+      color: "red", // functionOfSomeKind(
       //data.lines
       // .filter((el) => el.tiers.includes("primary"))
       //.map((el) => el.areaCode),
@@ -173,6 +177,7 @@
         <g data-role="lines-group">
           <Lines
             {tieredDataObject}
+            {dataArray}
             {lineFunction}
             {selectedAreaCode}
             {chartWidth}

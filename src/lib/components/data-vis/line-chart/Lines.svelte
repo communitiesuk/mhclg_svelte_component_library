@@ -7,6 +7,7 @@
 
   let {
     tieredDataObject,
+    dataArray,
     lineFunction,
     selectedAreaCode,
     chartWidth,
@@ -24,26 +25,27 @@
   let bounds = $state([0, chartHeight]);
 
   let labelHovered = $state();
-  // let selectedLine = $derived([labelHovered, labelClicked]);
+  let selectedLine = $derived([labelHovered, labelClicked]);
 
-  // let transformed = $derived(
-  //   primaryLinesDataArray.map((item) => {
-  //     let lastY = yFunction(item.data[0].y);
-  //     return { areaCode: item.areaCode, lastY };
-  //   }),
-  // );
+  let transformed = $derived(
+    tieredDataObject["primary"].map((item) => {
+      let lastY = yFunction(item.data[0].y);
+      return { areaCode: item.areaCode, lastY };
+    }),
+  );
 
-  // let labelsPlaced = $derived(
-  //   labelplacer(
-  //     transformed,
-  //     bounds,
-  //     (d) => d.lastY,
-  //     (d) => 20 * Math.ceil(d.areaCode.length / 15),
-  //   ),
-  // );
+  let labelsPlaced = $derived(
+    labelplacer(
+      transformed,
+      bounds,
+      (d) => d.lastY,
+      (d) => 20 * Math.ceil(d.areaCode.length / 15),
+    ),
+  );
+
+  $inspect(labelsPlaced);
 </script>
 
-<!-- 
 {#snippet categoryLabelSnippet(dataArray, newY)}
   <CategoryLabel
     id={`label-${dataArray.areaCode}`}
@@ -71,7 +73,7 @@
     }}
   ></CategoryLabel>
 {/snippet}
-
+<!-- 
 {#if showAllData}
   {#each dataArray as line, i}
     <Line
@@ -148,12 +150,7 @@
     }}
     {...lineParams}
   ></Line>
-  {#if labelsPlaced && !hoveredLine}
-    {@render categoryLabelSnippet(
-      line,
-      labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
-    )}
-  {/if}
+  
   {#if selectedLine.includes(line.areaCode)}
     <Line
       {lineFunction}
@@ -180,7 +177,7 @@
       {xFunction}
       {yFunction}
       dataArray={line.data}
-      pathStrokeColor={colors[i]}
+      pathStrokeColor="black"
       opacity={1}
       dataId={line.areaCode}
       onClick={function (event, dataArray, dataId) {
@@ -196,5 +193,11 @@
         hoveredLine = null;
       }}
     ></Line>
+    {#if labelsPlaced && tier === "primary"}
+      {@render categoryLabelSnippet(
+        line,
+        labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
+      )}
+    {/if}
   {/each}
 {/each}

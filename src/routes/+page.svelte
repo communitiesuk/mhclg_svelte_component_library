@@ -1,8 +1,29 @@
 <script>
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
-  import LoadArrayOfComponents from './local-lib/LoadArrayOfComponents.svelte';
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
+  import { foldersLookup } from "$lib/config.js";
+  import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
 
   let { data } = $props();
+
+  // Keep only playground wrappers for the homepage
+  const wrappersPlaygroundsObject = import.meta.glob(
+    "./../wrappers/playgrounds/*.svelte",
+    {
+      eager: true,
+    },
+  );
+
+  const wrappersPlaygroundsArray = Object.keys(wrappersPlaygroundsObject).map(
+    (el) => {
+      const splitPath = el.split("/");
+
+      return {
+        component: wrappersPlaygroundsObject[el],
+        name: splitPath[splitPath.length - 1].replace(".svelte", ""),
+      };
+    },
+  );
 
   /**
    * && 		Description of the code, how it works and what it does.
@@ -20,50 +41,43 @@
 TODO		
 <>		
 -->
+
 <div class="g-top-level-container">
   <div class="flex flex-col gap-6">
     <div>
-      <h4 class="mb-6">Introduction</h4>
+      <h1 class="govuk-heading-xl mb-6">Introduction</h1>
       <p>
-        This library has been developed by members of the MHCLG's Data Tools
-        team to house components for use in the organisation's public facing
-        products.
+        This library has been developed by members of the MHCLG's Digital,
+        Design and Development team to house components for use in the
+        organisation's digital products.
       </p>
 
-      <p>
-        Check out our <a href="/user-guide">user guide</a> for guidance on how to
-        build components for this library.
+      <p class="govuk-body">
+        Check out our <a href="/user-guide" class="govuk-link">user guide</a> for
+        guidance on how to build components for this library.
       </p>
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
 
     <div>
-      <h4 class="mb-6">Components</h4>
-      <p>The components available in this library are listed below.</p>
-      <p>
-        Click on a link to visit a component's wrapper page, where you can view
-        and test out the component's parameters and see example use cases.
+      <h2 class="govuk-heading-l mb-6 mt-10">Components</h2>
+      <p class="govuk-body">
+        Browse our collection of reusable UI components designed for consistency
+        and accessibility.
       </p>
-
-      {#each data.componentsSubFolders as subFolder}
-        {#if subFolder.subFolders.length > 0}
-          <h5 class="underline underline-offset-4 mt-10 mb-8">
-            {subFolder.label}
-          </h5>
-          <LoadArrayOfComponents {subFolder}></LoadArrayOfComponents>
-        {/if}
-      {/each}
+      <p class="govuk-body">
+        <a href="/components" class="govuk-link">View all components</a> in the library.
+      </p>
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
+
     <div>
-      <h4 class="mb-6 mt-10">Playground</h4>
-      <p>
+      <h2 class="govuk-heading-l mb-6 mt-10">Playground</h2>
+      <p class="govuk-body">
         The playground is a sandbox space where developers can test code and
         practice combining components.
       </p>
-      <p>All our playground examples are listed below.</p>
-      <LoadArrayOfComponents subFolder={data.playgroundFolders}
-      ></LoadArrayOfComponents>
+      <p class="govuk-body">All our playground examples are listed below.</p>
     </div>
     <DividerLine margin="1rem 0rem"></DividerLine>
   </div>

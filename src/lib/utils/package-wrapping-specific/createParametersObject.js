@@ -1,41 +1,29 @@
 export function createParametersObject(
   parametersSourceArray,
-  parametersValuesArray,
-  derivedParametersObject
+  statedParametersValuesArray,
+  derivedParametersValuesArray,
 ) {
-  let derivedParametersArray = Object.keys(derivedParametersObject).map(
-    (el) => ({
-      name: el,
-      value: derivedParametersObject[el],
-    })
-  );
+  let parametersObject = {};
+  let parametersParsingErrorsArray = [];
 
-  let parametersObject = parametersSourceArray.reduce(
-    (acc, { isProp, name, inputType, handlerFunction }, index) => {
-      acc[name] = {
-        isProp: isProp,
-        value:
-          inputType === 'event'
-            ? handlerFunction
-            : parametersValuesArray[index],
-      };
-      return acc;
-    },
-    {}
-  );
+  parametersSourceArray.forEach((param, index) => {
+    try {
+      let paramValue = param.isEditable
+        ? statedParametersValuesArray[param.index]
+        : derivedParametersValuesArray[param.index];
 
-  return Object.fromEntries(
-    Object.entries(parametersObject)
-      .filter(([key, value]) => value.isProp)
-      .map((el) => {
-        let value = el[1].value;
+      let paramValueWithWorkingFunctionsAndObjects =
+        typeof paramValue === "function"
+          ? paramValue.bind(parametersSourceArray[index])
+          : typeof param.value === "object"
+            ? JSON.parse(paramValue)
+            : paramValue;
 
-        derivedParametersArray.forEach((elm) => {
-          if (el[0] === elm.name) {
-            value = elm.value;
-          }
-        });
-        return [el[0], value];
-      })
-  );
+      parametersObject[param.name] = paramValueWithWorkingFunctionsAndObjects;
+    } catch (error) {
+      parametersParsingErrorsArray.push(param.name);
+    }
+  });
+
+  return [parametersObject, parametersParsingErrorsArray];
 }

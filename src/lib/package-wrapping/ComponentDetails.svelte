@@ -1,10 +1,10 @@
 <script>
   // @ts-nocheck
-  import Pill from '$lib/components/content/Pill.svelte';
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
+  import Pill from "$lib/package-wrapping/Pill.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
 
-  import { componentStausLookup } from '$lib/config.js';
-  import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
+  import { componentStausLookup } from "$lib/config.js";
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
 
   let { homepage, details } = $props();
 </script>
@@ -39,10 +39,10 @@
     {/if}
     {#if details.status}
       <Pill
-        size={homepage ? 'small' : 'medium'}
-        textContent={textStringConversion(details.status, 'title-first-word')}
-        bgColor={componentStausLookup[details.status].bgColor}
-        textColor={componentStausLookup[details.status].color}
+        size={homepage ? "small" : "medium"}
+        textContent={textStringConversion(details.status, "title-first-word")}
+        bgColor={"black"}
+        textColor={"white"}
       ></Pill>
     {/if}
   </div>
@@ -50,10 +50,10 @@
   <DividerLine margin="0.2rem 0rem"></DividerLine>
 
   <dl data-role="details-grid-container" class="grid gap-y-4">
-    {#each ['description', 'context'] as detail}
+    {#each ["description", "context"] as detail}
       {@const detailData = details[detail]}
       {#if detailData?.length > 0}
-        <dt>{textStringConversion(detail, 'title-first-word')}:</dt>
+        <dt id={detail}>{textStringConversion(detail, "title-first-word")}:</dt>
         <dd>
           {#each detailData as paragraph}
             {#if paragraph.markdown}
@@ -75,7 +75,7 @@
         {#each details.childComponents as childComponent}
           {@render linkedNameOfComponent(
             childComponent.folder,
-            childComponent.name
+            childComponent.name,
           )}
         {/each}
       </dd>
@@ -111,7 +111,7 @@
 </div>
 
 <style>
-  [data-role='details-grid-container'] {
+  [data-role="details-grid-container"] {
     grid-template-columns: 180px auto;
   }
   dd p:first-of-type {

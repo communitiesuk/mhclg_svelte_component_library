@@ -1,16 +1,16 @@
 <script>
   // @ts-nocheck
-  import { page } from '$app/stores';
-  import Pill from '$lib/components/content/Pill.svelte';
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
-  import { defaultScreenWidthBreakpoints } from '$lib/config.js';
-  import ComponentDetails from '$lib/package-wrapping/ComponentDetails.svelte';
-  import ParametersSection from '$lib/package-wrapping/ParametersSection.svelte';
-  import ScreenSizeRadio from '$lib/package-wrapping/ScreenSizeRadio.svelte';
-  import { addIndexAndInitalValue } from '$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js';
-  import { createParametersObject } from '$lib/utils/package-wrapping-specific/createParametersObject.js';
-  import { trackVisibleParameters } from '$lib/utils/package-wrapping-specific/trackVisibleParameters.js';
-  import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
+  import { page } from "$app/stores";
+  import Pill from "$lib/package-wrapping/Pill.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
+  import { defaultScreenWidthBreakpoints } from "$lib/config.js";
+  import ComponentDetails from "$lib/package-wrapping/ComponentDetails.svelte";
+  import ParametersSection from "$lib/package-wrapping/ParametersSection.svelte";
+  import ScreenSizeRadio from "$lib/package-wrapping/ScreenSizeRadio.svelte";
+  import { addIndexAndInitalValue } from "$lib/utils/package-wrapping-specific/addIndexAndInitialValue.js";
+  import { createParametersObject } from "$lib/utils/package-wrapping-specific/createParametersObject.js";
+  import { trackVisibleParameters } from "$lib/utils/package-wrapping-specific/trackVisibleParameters.js";
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
 
   let { data, homepage = undefined, folders } = $props();
 
@@ -23,17 +23,35 @@
      * ?      Available statuses are:
      * ?      'to_be_developed', 'in_progress', 'complete_untested', 'complete_in_use', 'complete_accessible'
      */
-    status: 'in_progress',
+    status: "in_progress",
     /**
      * &&     description - An array of paragraphs of text explaining what the component does, used within ComponentDetails
      * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
      */
-    description: undefined,
+    description: [
+      {
+        content:
+          "A horizontal divider line component that visually separates content sections.",
+      },
+      {
+        content:
+          "The divider can be customised with different colors, thicknesses, and margins to fit various design needs.",
+      },
+    ],
     /**
      * &&     context - An array of paragraphs of text explaining when the component will be used (e.g. what is it's parent component likely to be, what components will it be used in combination with) - used within ComponentDetails
      * ?      For each paragraph there is an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content.
      */
-    context: undefined,
+    context: [
+      {
+        content:
+          "Use divider lines to create visual separation between different sections of content.",
+      },
+      {
+        content:
+          "Particularly useful in forms, long content pages, or anywhere that needs clear visual boundaries between content areas.",
+      },
+    ],
     /**
      * &&     childComponents - Optional detail, can be used by developers to link to components which this component relies upon.
      * ?     'name' and 'folder' must match the routes folder structure (see documentation above for 'name' and 'folder' above for available options)
@@ -53,11 +71,11 @@
    * DONOTTOUCH *
    * && 		details.name and details.folder are added based on a) the folders prop if on the homepage, b) the $page store if on the actual wrapper page.
    */
-  let pageInfo = $page?.route.id.split('/');
+  let pageInfo = $page?.route.id.split("/");
 
   details.name = textStringConversion(
     folders ? folders[folders.length - 1] : pageInfo[pageInfo.length - 1],
-    'title-first-word'
+    "title-first-word",
   );
   details.folder = folders
     ? folders[folders.length - 2]
@@ -106,7 +124,7 @@
    * &&     This array is then used to track the values associated with each parameter as they are modified by the user using form inputs.
    */
   let parametersValuesArray = $state(
-    homepage ?? parametersSourceArray.map((el) => el.value) //&& Something
+    homepage ?? parametersSourceArray.map((el) => el.value), //&& Something
   );
 
   /**
@@ -131,7 +149,7 @@
    */
   let parametersVisibleArray = $derived(
     homepage ??
-      trackVisibleParameters(parametersSourceArray, parametersValuesArray)
+      trackVisibleParameters(parametersSourceArray, parametersValuesArray),
   );
 
   /**
@@ -143,8 +161,8 @@
       createParametersObject(
         parametersSourceArray,
         parametersValuesArray,
-        derivedParametersObject
-      )
+        derivedParametersObject,
+      ),
   );
 </script>
 
@@ -167,7 +185,9 @@ DONOTTOUCH  *
   ></ParametersSection>
 
   <div data-role="demo-section">
-    <h5 class="mb-6 mt-12 underline underline-offset-4">Component Demo</h5>
+    <h5 id="component-demo" class="mb-6 mt-12 underline underline-offset-4">
+      Component Demo
+    </h5>
     <!--
     DONOTTOUCH  *
     &&          Renders the radio form, allowing the user to adjust the screen width. How this affects the component will depend on how it is coded below.
@@ -206,26 +226,26 @@ DONOTTOUCH  *
     -->
   <div class="mt-20" data-role="examples-section">
     <DividerLine margin="30px 0px 30px 0px"></DividerLine>
-    <h5 class="underline underline-offset-4">Examples</h5>
+    <h5 id="examples" class="underline underline-offset-4">Examples</h5>
   </div>
 {/if}
 
 <style>
-  [data-role='examples-section'] {
+  [data-role="examples-section"] {
     max-width: 1024px;
     margin: 0px auto;
   }
 
-  [data-role='demo-section'] {
+  [data-role="demo-section"] {
     max-width: 1024px;
     margin: 0px auto;
   }
 
-  [data-role='component-container'] {
+  [data-role="component-container"] {
     display: grid;
     place-items: center;
   }
-  [data-role='component-container-centered'] {
+  [data-role="component-container-centered"] {
     background-color: #f8f8f8;
     padding: 20px 0px;
   }

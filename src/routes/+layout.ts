@@ -1,16 +1,29 @@
-import { base } from '$app/paths';
-import type { LayoutLoad } from './$types';
+import { base } from "$app/paths";
+import type { LayoutLoad } from "./$types.js";
+import type { ComponentItem } from "./+layout.server.js";
 
 export const load: LayoutLoad = async (event) => {
   const testData = await (
     await event.fetch(`${base}/data/testData.json`)
   ).json();
 
+  const svgFontDimensions = await (
+    await event.fetch(`${base}/data/svgFontDimensions.json`)
+  ).json();
+
+  // Get server-loaded component data
+  const {
+    componentDirectories,
+    uiComponents,
+    componentSections,
+    componentTree,
+  } = event.data;
+
   let metrics = [
     ...new Set(
       testData.flatMetricData.map((d) => {
         return d.metric;
-      })
+      }),
     ),
   ];
 
@@ -23,7 +36,7 @@ export const load: LayoutLoad = async (event) => {
     lines: areas.map((area) => ({
       areaCode: area,
       data: testData.flatMetricData.filter(
-        (el) => el.areaCode === area && el.metric === metric
+        (el) => el.areaCode === area && el.metric === metric,
       ),
     })),
   }));
@@ -33,10 +46,43 @@ export const load: LayoutLoad = async (event) => {
     bars: areas.map((area) => ({
       areaCode: area,
       y: testData.flatMetricData
-        .filter((el) => el.metric === 'Household waste recycling rate')
+        .filter((el) => el.metric === "Household waste recycling rate")
         .find((el) => el.areaCode === area && el.x === year)?.y,
     })),
   }));
+
+  let dataInFormatForMap = years
+    .map((year) => ({
+      year: year,
+      data: testData.flatMetricData
+        .filter((el) => el.x == year)
+        .map((d) => ({
+          areaCode: d.areaCode,
+          areaName: testData.areaCodeLookup[d.areaCode],
+          data: testData.flatMetricData
+            .filter((el) => el.x == year && el.areaCode == d.areaCode)
+            .reduce((acc, item) => {
+              acc[item.metric] = item.y;
+              return acc;
+            }, {}),
+        })),
+    }))
+    //Filtering out duplicates - probably could be done more efficiently
+    .map((d) => ({
+      year: d.year,
+      data: Object.values(
+        d.data.reduce((acc, current) => {
+          // Create a unique identifier for each area using areaCode and areaName
+          const key = `${current.areaCode}_${current.areaName}`;
+
+          // Only add the item if the key doesn't already exist in the accumulator
+          if (!acc[key]) {
+            acc[key] = current;
+          }
+          return acc;
+        }, {}),
+      ),
+    }));
 
   return {
     metrics,
@@ -44,5 +90,12 @@ export const load: LayoutLoad = async (event) => {
     years,
     dataInFormatForLineChart,
     dataInFormatForBarChart,
+    dataInFormatForMap,
+    areaCodeLookup: testData.areaCodeLookup,
+    svgFontDimensions,
+    componentSections,
+    componentDirectories,
+    uiComponents,
+    componentTree,
   };
 };

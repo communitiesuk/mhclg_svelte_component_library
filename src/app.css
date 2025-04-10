@@ -1,15 +1,24 @@
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@import "/css/moj-frontend.min.css";
+@import "/css/govuk-frontend.min.css";
+@import "/css/govuk-additional.css";
+@import "/css/code-block.css";
+@import "/css/fonts.css";
+@import "/css/base.css";
+@import "/css/components.css";
 
 body {
+  font-family: "GDS Transport";
   font-size: 1.2rem;
   line-height: 1.5rem;
   color: #222222;
 }
 
 p {
-  margin: 1.5rem 0px;
+  margin: 1rem 0px;
   padding: 0px;
 }
 
@@ -44,19 +53,21 @@ h5 {
 }
 
 h6 {
-  font-size: 1.5em;
+  font-size: 1.35em;
   font-weight: 600;
   line-height: 1.2em;
 }
 
 a {
-  color: blue;
+  color: #1d70b8;
   text-decoration: underline;
   text-underline-offset: 4px;
 }
 
-@layer components {
-  .g-top-level-container {
-    @apply w-full lg:w-3/4 max-w-3xl mx-auto my-10 px-5;
-  }
+code {
+  font-size: 0.9rem;
+  margin: 0px 2px;
+  padding: 2px 4px;
+  color: #27272a;
+  background-color: #f1f5f9;
 }

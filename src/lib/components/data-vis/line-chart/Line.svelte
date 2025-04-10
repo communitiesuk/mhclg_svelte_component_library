@@ -1,19 +1,25 @@
 <script>
+  import ValueLabel from "./ValueLabel.svelte";
+
   let {
     dataArray,
-    opacity = 1,
-    pathStrokeColor = '#b312a0',
-    pathStrokeWidth = 1,
-    pathFillColor = 'none',
-    pathStrokeDashArray = 'none',
+    opacity = 0.15,
+    pathStrokeColor = "grey",
+    pathStrokeWidth = 3,
+    pathFillColor = "none",
+    pathStrokeDashArray = "none",
+    areaFillColor = "none",
+    includeArea = false,
     includeMarkers = false,
-    markerShape = 'circle',
+    markerShape = "circle",
     markerRadius = 5,
-    markerFill = '#b312a0',
-    markerStroke = 'white',
+    markerFill = "grey",
+    markerStroke = "white",
     markerStrokeWidth = 3,
     lineFunction,
+    areaFunction,
     xFunction,
+    lineEnding = null,
     yFunction,
     dataId,
     markersDataId,
@@ -22,46 +28,118 @@
     onMouseLeave,
     onMouseMove,
     onClickMarker,
-    onMouseEnterMarker,
-    onMouseLeaveMarker,
+    // onMouseEnterMarker,
+    // onMouseLeaveMarker,
     onMouseMoveMarker,
+    includeLabels,
+    labelText,
+    labelColor,
+    labelTextColor,
   } = $props();
+
+  let hoveredMarker = $state();
+
+  function makeList(inputValue) {
+    let items = inputValue.split("\\n").map((item) => item.trim());
+    return items;
+  }
+
+  function parseInput(marker, inputValue) {
+    let items = makeList(inputValue);
+    let mappedItems = items.map((item) =>
+      item.replace(/\{(\w+)\}/g, (_, key) => marker[key] ?? `{${key}}`),
+    );
+    return mappedItems;
+  }
+
+  function onMouseEnterMarker(i) {
+    hoveredMarker = i;
+  }
+
+  function onMouseLeaveMarker(i) {
+    hoveredMarker = null;
+  }
 </script>
+
+<defs>
+  <marker
+    id={`arrow-${pathStrokeColor}`}
+    markerWidth="6"
+    markerHeight="4"
+    refX="4"
+    refY="2"
+    orient="auto-start-reverse"
+  >
+    <polygon points="0 0, 6 2, 0 4" style="fill: {pathStrokeColor}"></polygon>
+  </marker>
+
+  <marker
+    id={`circle-${pathStrokeColor}`}
+    markerWidth="14"
+    markerHeight="14"
+    refX="7"
+    refY="7"
+    orient="auto"
+  >
+    <circle cx="7" cy="7" r="1.5" style="fill: {pathStrokeColor}"></circle>
+  </marker>
+</defs>
 
 <g
   data-id={dataId}
-  onclick={onClick}
-  onmouseenter={onMouseEnter}
-  onmouseleave={onMouseLeave}
-  onmousemove={onMouseMove}
+  onclick={(event) => onClick(event, dataArray)}
+  onmouseenter={(event) => onMouseEnter(event, dataArray, dataId)}
+  onmouseleave={(event) => onMouseLeave(event, dataArray, dataId)}
+  onmousemove={(event) => onMouseMove(event, dataArray, dataId)}
+  role="button"
+  tabindex="0"
+  onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}
   {opacity}
 >
+  {#if includeArea}
+    <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
+  {/if}
+  <path
+    d={lineFunction(dataArray)}
+    fill="none"
+    stroke="transparent"
+    stroke-width="20"
+    pointer-events="stroke"
+  ></path>
   <path
     d={lineFunction(dataArray)}
     fill={pathFillColor}
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
+    marker-start={lineEnding === "arrow"
+      ? `url(#arrow-${pathStrokeColor})`
+      : lineEnding === "circle"
+        ? `url(#circle-${pathStrokeColor})`
+        : null}
   ></path>
 
   {#if includeMarkers}
     {#each dataArray as marker, i}
       <g
-        data-id={markersDataId + '-' + i}
-        onclick={onClickMarker}
-        onmouseenter={onMouseEnterMarker}
-        onmouseleave={onMouseLeaveMarker}
-        onmousemove={onMouseMoveMarker}
+        data-id={markersDataId + "-" + i}
+        onclick={(event) => onClickMarker(event, marker)}
+        onmouseenter={(event) => onMouseEnterMarker(i)}
+        onmouseleave={(event) => onMouseLeaveMarker(i)}
+        onmousemove={(event) => onMouseMove(event, marker)}
         transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
+        role="button"
+        tabindex="0"
+        onkeydown={(e) => e.key === "Enter" && onClickMarker(e, marker)}
       >
-        {#if markerShape === 'circle'}
+        {#if markerShape === "circle"}
           <circle
             r={markerRadius}
             stroke={markerStroke}
             fill={markerFill}
             stroke-width={markerStrokeWidth}
           ></circle>
-        {:else if ['square', 'diamond'].includes(markerShape)}
+        {:else if ["square", "diamond"].includes(markerShape)}
           <rect
             transform="rotate({markerShape === 'diamond' ? 45 : 0})"
             x={-markerRadius}
@@ -72,7 +150,7 @@
             fill={markerFill}
             stroke-width={markerStrokeWidth}
           ></rect>
-        {:else if markerShape === 'triangle'}
+        {:else if markerShape === "triangle"}
           <polygon
             points="0,{-markerRadius * 2} {markerRadius *
               1.733},{markerRadius} {-markerRadius * 1.733},{markerRadius}"
@@ -80,6 +158,16 @@
             fill={markerFill}
             stroke-width={markerStrokeWidth}
           ></polygon>
+        {/if}
+        {#if includeLabels}
+          {#if i == hoveredMarker}
+            <ValueLabel
+              {marker}
+              {labelColor}
+              {labelTextColor}
+              textContent={parseInput(marker, labelText)}
+            ></ValueLabel>
+          {/if}
         {/if}
       </g>
     {/each}

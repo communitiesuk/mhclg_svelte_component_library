@@ -189,7 +189,6 @@
             id: "past-day",
             label: "Past day",
             content: `
-              <h2 class="govuk-heading-l">Past day</h2>
               <table class="govuk-table">
                 <thead class="govuk-table__head">
                   <tr class="govuk-table__row">
@@ -217,12 +216,12 @@
                 </tbody>
               </table>
             `,
+            contentIsHtml: true,
           },
           {
             id: "past-week",
             label: "Past week",
             content: `
-              <h2 class="govuk-heading-l">Past week</h2>
               <table class="govuk-table">
                 <thead class="govuk-table__head">
                   <tr class="govuk-table__row">
@@ -250,12 +249,12 @@
                 </tbody>
               </table>
             `,
+            contentIsHtml: true,
           },
           {
             id: "past-month",
             label: "Past month",
             content: `
-              <h2 class="govuk-heading-l">Past month</h2>
               <table class="govuk-table">
                 <thead class="govuk-table__head">
                   <tr class="govuk-table__row">
@@ -283,14 +282,12 @@
                 </tbody>
               </table>
             `,
+            contentIsHtml: true,
           },
           {
             id: "past-year",
             label: "Past year",
-            content: `
-              <h2 class="govuk-heading-l">Past year</h2>
-              <p class="govuk-body">There is no data for this year yet, check back later.</p>
-              `,
+            content: "There is no data for this year yet, check back later.",
           },
         ],
         description: {
@@ -298,7 +295,9 @@
           arr: [
             "An array of tab objects that define the tabs and their content.",
             "Each tab must have an <code>id</code>, <code>label</code>, and <code>content</code>.",
-            "The <code>content</code> can be a string (including HTML), a Svelte component, or a Svelte snippet.",
+            "The <code>content</code> can be a string, a Svelte component, or a Svelte snippet.",
+            "If passing a string containing HTML, you <b>must</b> also set <code>contentIsHtml: true</code> on the tab object for it to be rendered correctly; otherwise, strings will be wrapped in a <code>&lt;p&gt;</code> tag.",
+            "See the examples section below for demonstrations of passing svelte snippets",
           ],
         },
       },
@@ -310,6 +309,17 @@
           markdown: true,
           arr: [
             "A prefix used to generate unique IDs for the tabs. This is useful when you have multiple tab components on the same page.",
+          ],
+        },
+      },
+      {
+        name: "autoAddHeadings",
+        category: "UI Options",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            "Automatically adds an <code>h2</code> heading mirroring the tab label to the start of each tab panel content, following GDS guidance.",
           ],
         },
       },

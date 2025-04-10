@@ -30,17 +30,14 @@ export const codeBlock2 = `
 </script>
 
 {#snippet tab1Content()}
-  <h2 class="govuk-heading-l">First Tab Content</h2>
   <p class="govuk-body">This tab is not selected by default.</p>
 {/snippet}
 
 {#snippet tab2Content()}
-  <h2 class="govuk-heading-l">Second Tab Content</h2>
   <p class="govuk-body">This tab is now selected by default via the selectedTabId prop.</p>
 {/snippet}
 
 {#snippet tab3Content()}
-  <h2 class="govuk-heading-l">Third Tab Content</h2>
   <p class="govuk-body">This tab is not selected by default.</p>
 {/snippet}
 
@@ -74,7 +71,6 @@ export const codeBlock3 = `
 </script>
 
 {#snippet chartsTabContent()}
-  <h2 class="govuk-heading-l">Charts & Data</h2>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
       <table class="govuk-table">
@@ -111,7 +107,6 @@ export const codeBlock3 = `
 {/snippet}
 
 {#snippet formsTabContent()}
-  <h2 class="govuk-heading-l">Forms & Input</h2>
   <form class="govuk-form-group">
     <label class="govuk-label" for="example-input">Example input</label>
     <input
@@ -139,7 +134,6 @@ export const codeBlock3 = `
 {/snippet}
 
 {#snippet mediaTabContent()}
-  <h2 class="govuk-heading-l">Media Content</h2>
   <figure class="govuk-!-margin-bottom-6">
     <img src="https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d" alt="Person working on laptop with notebook and coffee" style="max-width: 100%; height: auto;">
     <figcaption class="govuk-body-s govuk-!-margin-top-2">Modern workspace with laptop and notebook</figcaption>

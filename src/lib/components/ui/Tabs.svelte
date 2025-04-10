@@ -8,6 +8,7 @@
     id: string;
     label: string;
     content: string | typeof SvelteComponent | Snippet;
+    contentIsHtml?: boolean;
   };
 
   // Component props
@@ -16,11 +17,13 @@
     tabs = [],
     idPrefix = "tab",
     selectedTabId = $bindable(),
+    autoAddHeadings = true,
   } = $props<{
     title?: string;
     tabs: TabItem[];
     idPrefix?: string;
     selectedTabId?: string | null;
+    autoAddHeadings?: boolean;
   }>();
 
   // Component state variables
@@ -270,11 +273,19 @@
         : null}
       hidden={!isSelected && isSupported && !isMobile}
     >
+      {#if autoAddHeadings}
+        <h2 class="govuk-heading-l">{tab.label}</h2>
+      {/if}
+
       {#if typeof tab.content === "string"}
-        {@html tab.content}
+        {#if tab.contentIsHtml}
+          {@html tab.content}
+        {:else}
+          <p class="govuk-body">{tab.content}</p>
+        {/if}
       {:else if tab.content satisfies Snippet}
         {@render tab.content()}
-      {:else}
+      {:else if tab.content}
         <svelte:component this={tab.content} />
       {/if}
     </div>

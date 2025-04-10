@@ -434,7 +434,9 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <Template {...parametersObject}></Template>
+  <div class="p-8">
+    <Template {...parametersObject}></Template>
+  </div>
 {/snippet}
 
 <!--

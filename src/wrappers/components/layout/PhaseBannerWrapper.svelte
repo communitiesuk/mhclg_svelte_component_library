@@ -342,7 +342,9 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <PhaseBanner {...parametersObject}></PhaseBanner>
+  <div class="p-8">
+    <PhaseBanner {...parametersObject}></PhaseBanner>
+  </div>
 {/snippet}
 
 <!--

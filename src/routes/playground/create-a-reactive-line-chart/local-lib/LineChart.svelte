@@ -51,6 +51,8 @@
       .curve(curveLinear),
   );
 
+  let areaCodeHover = $state();
+
   let labelClicked = $state();
   let selectedAreaCode = $state("E07000223");
 
@@ -69,7 +71,7 @@
       ...el,
       tiers:
         areaCodeHover === el.areaCode ? ["hover", "secondary"] : ["secondary"],
-      includeMarkers: areaCode === "E07000223",
+      includeMarkers: selectedAreaCode === "E07000223",
     })),
   );
 
@@ -104,13 +106,13 @@
       halo: true,
       includeMarkers: true,
       pathStrokeWidth: areaCodeHover == null ? 10 : 1,
-      color: functionOfSomeKind(
-        data.lines
-          .filter((el) => el.tiers.includes("primary"))
-          .map((el) => el.areaCode),
-        lookupObj,
-        colorPalette["base"],
-      ),
+      color: "black", // functionOfSomeKind(
+      //data.lines
+      // .filter((el) => el.tiers.includes("primary"))
+      //.map((el) => el.areaCode),
+      //lookupObj,
+      //colorPalette["base"],
+      //),
     },
     hover: {},
   };
@@ -124,18 +126,6 @@
 
   let showAllData = true;
 </script>
-
-{#each Object.keys(defaultLineParams) as tier}
-  <p>
-    {tier}
-
-    {#each dataArrayTest
-      .filter((el) => el.tiers.includes(tier))
-      .map((el) => el.areaCode) as line}
-      {line}
-    {/each}
-  </p>
-{/each}
 
 <h3>Example Usage</h3>
 <pre><code use:highlight
@@ -195,6 +185,7 @@
             {colors}
             {defaultLineParams}
             {showAllData}
+            {globalTierRules}
           ></Lines>
         </g>
       </g>

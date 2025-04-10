@@ -15,35 +15,37 @@
     labelClicked = $bindable(),
     chartHeight,
     colors,
-    additionalKeyLines,
     showAllData,
     defaultLineParams,
+    globalTierRules,
   } = $props();
 
-  let hoveredLine = $state();
+  $inspect(dataArray);
+
+  let hoveredLine = $state("");
   let bounds = $state([0, chartHeight]);
-  let primaryLinesDataArray = $derived(dataArray.filter((el) => el.primary));
 
   let labelHovered = $state();
-  let selectedLine = $derived([labelHovered, labelClicked]);
+  // let selectedLine = $derived([labelHovered, labelClicked]);
 
-  let transformed = $derived(
-    primaryLinesDataArray.map((item) => {
-      let lastY = yFunction(item.data[0].y);
-      return { areaCode: item.areaCode, lastY };
-    }),
-  );
+  // let transformed = $derived(
+  //   primaryLinesDataArray.map((item) => {
+  //     let lastY = yFunction(item.data[0].y);
+  //     return { areaCode: item.areaCode, lastY };
+  //   }),
+  // );
 
-  let labelsPlaced = $derived(
-    labelplacer(
-      transformed,
-      bounds,
-      (d) => d.lastY,
-      (d) => 20 * Math.ceil(d.areaCode.length / 15),
-    ),
-  );
+  // let labelsPlaced = $derived(
+  //   labelplacer(
+  //     transformed,
+  //     bounds,
+  //     (d) => d.lastY,
+  //     (d) => 20 * Math.ceil(d.areaCode.length / 15),
+  //   ),
+  // );
 </script>
 
+<!-- 
 {#snippet categoryLabelSnippet(dataArray, newY)}
   <CategoryLabel
     id={`label-${dataArray.areaCode}`}
@@ -171,4 +173,20 @@
       onMouseLeave={function (event, dataArray, dataId) {}}
     ></Line>
   {/if}
+{/each} -->
+
+{#each defaultLineParams as tier}
+  {#each dataArray
+    .filter((el) => el.tiers.includes(tier))
+    .map((el) => el.areaCode) as line, i}
+    <Line
+      {lineFunction}
+      {xFunction}
+      {yFunction}
+      dataArray={line.data}
+      pathStrokeColor={colors[i]}
+      opacity={1}
+      dataId={line.areaCode}
+    ></Line>
+  {/each}
 {/each}

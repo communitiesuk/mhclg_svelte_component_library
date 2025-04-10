@@ -220,6 +220,7 @@
           class:govuk-tabs__list-item--selected={isSelected && !isMobile}
           role={isSupported && !isMobile ? "presentation" : null}
         >
+          <!-- svelte-ignore binding_property_non_reactive -->
           <a
             class="govuk-tabs__tab"
             href={"#" + tab.id}

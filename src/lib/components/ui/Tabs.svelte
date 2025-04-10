@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { replaceState } from "$app/navigation";
   import type { SvelteComponent, Snippet } from "svelte";
+  import DOMPurify from "dompurify";
 
   // Define Tab type
   export type TabItem = {
@@ -279,7 +280,7 @@
 
       {#if typeof tab.content === "string"}
         {#if tab.contentIsHtml}
-          {@html tab.content}
+          {@html DOMPurify.sanitize(tab.content)}
         {:else}
           <p class="govuk-body">{tab.content}</p>
         {/if}

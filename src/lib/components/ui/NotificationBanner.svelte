@@ -33,6 +33,13 @@
   let displayRole = $derived(type === "outcome" ? "alert" : "region");
 </script>
 
+{#snippet Link()}
+  <!-- Snippet for rendering the optional link -->
+  {#if linkText && linkHref}
+    <a class="govuk-notification-banner__link" href={linkHref}> {linkText}</a>
+  {/if}
+{/snippet}
+
 <div
   class="govuk-notification-banner {type === 'outcome'
     ? 'govuk-notification-banner--success'
@@ -59,11 +66,7 @@
       >
         {additionalContentHeading}
         <!-- Render link inside heading if provided -->
-        {#if linkText && linkHref}
-          <a class="govuk-notification-banner__link" href={linkHref}>
-            {linkText}</a
-          >
-        {/if}
+        {@render Link()}
       </svelte:element>
       <!-- Render content prop (body or snippet) -->
       {#if typeof content === "string"}
@@ -77,11 +80,7 @@
       <p class="govuk-notification-banner__heading">
         {content}
         <!-- Render link inside p if provided -->
-        {#if linkText && linkHref}
-          <a class="govuk-notification-banner__link" href={linkHref}>
-            {linkText}</a
-          >
-        {/if}
+        {@render Link()}
       </p>
       <!-- Block 3: Runs if additionalContentHeading is NOT present AND content is a snippet -->
     {:else if content}

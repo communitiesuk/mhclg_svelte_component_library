@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "Baseline completed",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -46,10 +46,12 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "Displays a phase banner according to GDS design system guidance, typically used to indicate the status of a service (e.g., Alpha, Beta).",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Use at the top of a page, usually below the main header, to inform users about the service's development phase and provide a feedback link.",
   ];
 
   let detailsArray = [
@@ -91,8 +93,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Template from "$lib/package-wrapping/templates/Template.svelte";
-  import Examples from "./examples/Examples.svelte";
+  import PhaseBanner from "$lib/components/layout/PhaseBanner.svelte";
+  import Examples from "./phase-banner/Examples.svelte";
 
   let { data } = $props();
 
@@ -157,142 +159,48 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        name: "tagText",
+        category: "Content Props",
+        value: "Alpha",
         description: {
           markdown: true,
           arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
+            `Sets the text within the <code>&lt;strong&gt;</code> tag (e.g., Alpha, Beta).`,
+          ],
+        },
+        rows: 1,
+      },
+      {
+        name: "bannerText",
+        category: "Content Props",
+        value: "This is a new service. Help us improve it and ",
+        description: {
+          markdown: true,
+          arr: [
+            `Sets the main text content within the <code>&lt;span&gt;</code> tag, appearing before the link.`,
           ],
         },
         rows: 2,
       },
       {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
+        name: "linkText",
+        category: "Content Props",
+        value: "give your feedback by email",
         description: {
           markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
+          arr: [`Sets the text for the hyperlink within the banner.`],
         },
-        rows: 5,
+        rows: 1,
       },
       {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
+        name: "linkHref",
+        category: "Content Props",
+        value: "#",
         description: {
           markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
-          ],
+          arr: [`Sets the <code>href</code> attribute for the hyperlink.`],
         },
-      },
-      {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "jsObjectProp",
-        category: "Input props",
-        value: [
-          {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
-          },
-          {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
-          },
-          {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
-          },
-        ],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
-          ],
-        },
-      },
-      {
-        name: "functionProp",
-        category: "Fixed props",
-
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
-        functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
-        },
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
-          ],
-        },
+        rows: 1,
       },
     ]),
   );
@@ -435,7 +343,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
  -->
 {#snippet Component()}
   <div class="p-8">
-    <Template {...parametersObject}></Template>
+    <PhaseBanner {...parametersObject}></PhaseBanner>
   </div>
 {/snippet}
 

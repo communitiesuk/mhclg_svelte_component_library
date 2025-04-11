@@ -1,32 +1,33 @@
 export const codeBlock1 = `
 <script>
-
-  import Template from "$lib/package-wrapping/Template.svelte";
-
+  import InsetText from "$lib/components/content/InsetText.svelte";
 </script>
 
-<Template
-checkboxProp={true}
-dropdownProp="Dragonfruit"
-jsObjectProp={[
-  {
-    name: "Borussia Dortmund",
-    country: "Germany",
-    color: "#fdff7d",
-  },
-  { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-  {
-    name: "SSC Napoli",
-    country: "Italy",
-    color: "#69bfff",
-  },
-  {
-    name: "S.L. Benfica",
-    country: "Portugal",
-    color: "#ff8c96",
-  },
-]}
-functionProp={function (event, pokemon) {
-  window.alert("Example 1 functionProp has been triggered.");
-}}
-></Template>`;
+<!-- Default InsetText -->
+<InsetText />
+`;
+
+export const codeBlock2 = `
+<script>
+  import InsetText from "$lib/components/content/InsetText.svelte";
+</script>
+
+<!-- Custom String Content -->
+<InsetText
+  content="You will need your National Insurance number and proof of identity."
+/>
+`;
+
+export const codeBlock3 = `
+<script>
+  import InsetText from "$lib/components/content/InsetText.svelte";
+
+  // Snippet defined elsewhere or inline
+  {#snippet SnippetContent()}
+    You can <a href="#" class="govuk-link">get help with your application</a> if you need it.
+  {/snippet}
+</script>
+
+<!-- Content with Snippet -->
+<InsetText content={SnippetContent} />
+`;

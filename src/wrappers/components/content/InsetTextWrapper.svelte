@@ -169,6 +169,7 @@
           markdown: true,
           arr: [
             `The main content to display within the inset text area. This can be a string or a Svelte Snippet. Note: Snippets cannot be configured via this UI.`,
+            `See Example 3 below for how to pass a Svelte Snippet.`,
           ],
         },
         rows: 3,

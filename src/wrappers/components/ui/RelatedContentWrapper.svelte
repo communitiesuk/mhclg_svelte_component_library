@@ -47,13 +47,13 @@
    *
    */
   let descriptionArray = [
-    "The related content component is used to display a list of links relevant to the page the user is viewing.",
-    'Based on the <a href="https://components.publishing.service.gov.uk/component-guide/contextual_sidebar" target="_blank" rel="noopener noreferrer">GOV.UK Publishing Components contextual sidebar</a>.',
+    "Displays lists of related content links, such as related pages, topics, collections, or external resources.",
+    'Based on the <a href="https://components.publishing.service.gov.uk/component-guide/related_navigation" target="_blank" rel="noopener noreferrer">GOV.UK Publishing Components related navigation</a>.',
   ];
 
   let contextArray = [
-    "Use this component to provide supplementary navigation, helping users find related information or tasks.",
-    "Typically placed in a sidebar or near the end of the main content.",
+    "Use this component to provide supplementary navigation for users.",
+    "Different types of links are grouped under specific subheadings (e.g., 'Collection', 'Explore the topic').",
   ];
 
   let detailsArray = [
@@ -161,75 +161,165 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "mainHeadingText",
+        name: "headingText",
         category: "Content",
         value: "Related content",
-        description: {
-          markdown: true,
-          arr: [`The main heading text for the related content block.`],
-        },
+        description: { markdown: true, arr: [`The main heading text.`] },
         rows: 1,
       },
       {
-        name: "mainHeadingId",
+        name: "headingLevel",
         category: "Accessibility",
-        value: "related-nav-related_items",
+        options: [1, 2, 3, 4, 5, 6],
+        value: 2,
         description: {
           markdown: true,
           arr: [
-            `The ID applied to the main heading, used by the container's <code>aria-labelledby</code> attribute. Should be unique on the page.`,
+            `Sets the semantic heading level (h1-h6) for the main heading.`,
           ],
         },
-        rows: 1,
       },
       {
-        name: "sections",
-        category: "Content",
-        isRequired: true,
+        name: "orderedRelatedItems",
+        category: "Links",
         value: [
           {
-            title: "Travel abroad",
-            links: [
-              {
-                text: "Passports",
-                path: "/browse/abroad/passports",
-              },
-              {
-                text: "Travel abroad",
-                path: "/browse/abroad",
-              },
-              {
-                text: "Driving abroad",
-                path: "/browse/abroad/driving",
-              },
-              {
-                text: "Working abroad",
-                path: "/browse/abroad/working-abroad",
-              },
-            ],
+            title: "Find an apprenticeship",
+            base_path: "/apply-apprenticeship",
           },
           {
-            title: "Passports",
-            links: [
-              {
-                text: "Applications",
-                path: "/browse/abroad/passports/applications",
-              },
-              {
-                text: "Renewals",
-                path: "/browse/abroad/passports/renewals",
-              },
-            ],
+            title: "Training and study at work",
+            base_path: "/training-study-work-your-rights",
+          },
+          {
+            title: "Careers helpline for teenagers",
+            base_path: "/careers-helpline-for-teenagers",
           },
         ],
         description: {
           markdown: true,
           arr: [
-            `An array of section objects. Each section needs a <code>title</code> (string) and a <code>links</code> array.`,
-            `Each item in the <code>links</code> array needs a <code>text</code> (string) and a <code>path</code> (string/URL).`,
+            `Array of general related items. Rendered first, without a subheading.`,
+            `Each item needs <code>title</code> and <code>base_path</code>.`,
           ],
         },
-        rows: 15,
+        rows: 10,
+      },
+      {
+        name: "mainstreamBrowsePages",
+        category: "Links",
+        value: [],
+        description: {
+          markdown: true,
+          arr: [
+            `Links to mainstream browse pages. Rendered under "Explore the topic".`,
+            `Takes precedence over <code>taxons</code> if both are provided.`,
+            `Each item needs <code>title</code> and <code>base_path</code>.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "taxons",
+        category: "Links",
+        value: [],
+        description: {
+          markdown: true,
+          arr: [
+            `Links to taxonomy pages. Rendered under "Explore the topic" if <code>mainstreamBrowsePages</code> is empty.`,
+            `Each item needs <code>title</code> and <code>base_path</code>.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "documentCollections",
+        category: "Links",
+        value: [],
+        description: {
+          markdown: true,
+          arr: [
+            `Links to document collections. Rendered under "Collection".`,
+            `Each item needs <code>title</code> and <code>base_path</code>.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "topicalEvents",
+        category: "Links",
+        value: [],
+        description: {
+          markdown: true,
+          arr: [
+            `Links to topical events. Rendered under "Topical event".`,
+            `Each item needs <code>title</code> and <code>base_path</code>.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "worldLocations",
+        category: "Links",
+        value: [],
+        description: {
+          markdown: true,
+          arr: [
+            `Links to world locations. Rendered under "World locations".`,
+            `Each item needs <code>title</code> and <code>base_path</code>.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "relatedStatisticalDataSets",
+        category: "Links",
+        value: [],
+        description: {
+          markdown: true,
+          arr: [
+            `Links to statistical data sets. Rendered under "Statistical data set".`,
+            `Each item needs <code>title</code> and <code>base_path</code>.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "externalRelatedLinks",
+        category: "Links",
+        value: [],
+        description: {
+          markdown: true,
+          arr: [
+            `External links. Rendered under "Elsewhere on the web".`,
+            `Each item needs <code>title</code> and <code>url</code>.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "otherContacts",
+        category: "Links",
+        value: [],
+        description: {
+          markdown: true,
+          arr: [
+            `Other related contacts (passed via \`links.related\` in GOV.UK). Rendered under "Other contacts".`,
+            `Each item needs <code>title</code> and <code>base_path</code>.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "disableGa4",
+        category: "Tracking",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Set to <code>true</code> to disable GA4 link tracking attributes on the links.`,
+          ],
+        },
       },
     ]),
   );

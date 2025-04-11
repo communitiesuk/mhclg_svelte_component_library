@@ -47,13 +47,14 @@
    *
    */
   let descriptionArray = [
-    "Use the warning text component to warn users about something important, such as legal consequences.",
-    'Based on the <a href="https://design-system.service.gov.uk/components/warning-text/" target="_blank" rel="noopener noreferrer">GOV.UK Design System warning text component</a>.',
+    "Use the notification banner component to tell the user about something they need to know about, but that's not directly related to the page content.",
+    'Based on the <a href="https://design-system.service.gov.uk/components/notification-banner/" target="_blank" rel="noopener noreferrer">GOV.UK Design System notification banner component</a>.',
   ];
 
   let contextArray = [
-    "It helps users understand the potential consequences of their actions.",
-    "The component includes an exclamation mark icon and visually hidden text for accessibility.",
+    "Use the 'neutral' type for general information (e.g., service delays, upcoming deadlines).",
+    "Use the 'outcome' type (green banner) with role='alert' to confirm a user action has succeeded.",
+    "Avoid showing more than one banner per page.",
   ];
 
   let detailsArray = [
@@ -95,8 +96,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-import WarningText from "$lib/components/content/WarningText.svelte";
-import Examples from "./warning-text/Examples.svelte";
+  import NotificationBanner from "$lib/components/ui/NotificationBanner.svelte";
+  import Examples from "./notification-banner/Examples.svelte";
 
   let { data } = $props();
 
@@ -161,29 +162,121 @@ import Examples from "./warning-text/Examples.svelte";
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "assistiveText",
-        category: "Content",
-        value: "Warning",
+        name: "type",
+        category: "Appearance",
+        options: ["neutral", "outcome"],
+        value: "neutral",
         description: {
           markdown: true,
           arr: [
-            `Sets the visually hidden text announced by screen readers before the main warning message. Defaults to "Warning".`,
+            `Determines the banner style. 'neutral' is blue, 'outcome' is green (success).`,
+          ],
+        },
+      },
+      {
+        name: "title",
+        category: "Content",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Overrides the default title text (e.g., "Important" for neutral, "Success" for outcome). Leave blank to use default.`,
           ],
         },
         rows: 1,
       },
       {
-        name: "text",
+        name: "titleHeadingLevel",
+        category: "Accessibility",
+        options: ["h1", "h2", "h3", "h4", "h5", "h6"],
+        value: "h2",
+        description: {
+          markdown: true,
+          arr: [`Sets the semantic heading level for the banner title.`],
+        },
+      },
+      {
+        name: "content",
         category: "Content",
-        value: "You can be fined up to £5,000 if you do not register.",
+        isRequired: true,
+        value:
+          "There may be a delay in processing your application because of the coronavirus outbreak.",
         description: {
           markdown: true,
           arr: [
-            `The main warning message text displayed to the user. Can be a string or a Svelte Snippet. Note: Snippets cannot be configured via this UI.`,
-            `See examples below for how to pass a Svelte Snippet.`,
+            `The main content. Can be a string or a Svelte Snippet.`,
+            `If using as a string with <code>additionalContentHeading</code>, this content will be wrapped in a <code>&lt;p class="govuk-body"&gt;</code>.`,
+            `If used as a string *without* <code>additionalContentHeading</code>, it will be wrapped in a <code>&lt;p class="govuk-notification-banner__heading"&gt;</code>.`,
+            `Snippets are rendered directly. See examples for snippet usage.`,
           ],
         },
         rows: 3,
+      },
+      {
+        name: "additionalContentHeading",
+        category: "Content",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Optional heading rendered as an <code>&lt;h3 class="govuk-notification-banner__heading"&gt;</code>.`,
+            `<strong>Use this when you also want to provide separate body text via the <code>content</code> prop.</strong>`,
+            `When this is set, the <code>content</code> prop (if a string) will be rendered as body text (<code>&lt;p class="govuk-body"&gt;</code>).`,
+            `If this prop is omitted, the <code>content</code> prop (if a string) is rendered as the primary heading (<code>&lt;p class="govuk-notification-banner__heading"&gt;</code>).`,
+          ],
+        },
+        rows: 1,
+      },
+      {
+        name: "additionalContentHeadingLevel",
+        category: "Accessibility",
+        options: ["h3", "h4", "h5", "h6"],
+        value: "h3",
+        description: {
+          markdown: true,
+          arr: [
+            `Sets the semantic heading level (h3-h6) for the <code>additionalContentHeading</code>.`,
+            `Only visible/relevant if <code>additionalContentHeading</code> is provided.`,
+          ],
+        },
+      },
+      {
+        name: "linkText",
+        category: "Content",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Optional text for a link rendered after the heading element (unless content is a snippet without an <code>additionalContentHeading</code>).`,
+            `<strong>Requires <code>linkHref</code>.</strong>`,
+          ],
+        },
+        rows: 1,
+      },
+      {
+        name: "linkHref",
+        category: "Content",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Optional URL for the link.`,
+            `<strong>Requires <code>linkText</code>.</strong>`,
+          ],
+        },
+        rows: 1,
+      },
+      {
+        name: "titleId",
+        category: "Accessibility",
+        value: "govuk-notification-banner-title",
+        propType: "fixed",
+        description: {
+          markdown: true,
+          arr: [
+            `Sets the ID for the title element, used by \`aria-labelledby\`.`,
+          ],
+        },
       },
     ]),
   );
@@ -326,7 +419,7 @@ import Examples from "./warning-text/Examples.svelte";
  -->
 {#snippet Component()}
   <div class="p-8">
-<WarningText {...parametersObject}></WarningText>
+    <NotificationBanner {...parametersObject}></NotificationBanner>
   </div>
 {/snippet}
 

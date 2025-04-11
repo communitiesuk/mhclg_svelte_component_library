@@ -7,7 +7,6 @@
     title = undefined as string | undefined,
     content = undefined as string | Snippet | undefined,
     additionalContentHeading = undefined as string | undefined,
-    role = "region" as "region" | "alert",
     titleId = "govuk-notification-banner-title",
     linkText = undefined as string | undefined,
     linkHref = undefined as string | undefined,
@@ -17,7 +16,6 @@
     title?: string;
     content: string | Snippet;
     additionalContentHeading?: string;
-    role?: "region" | "alert";
     titleId?: string;
     linkText?: string;
     linkHref?: string;
@@ -28,13 +26,16 @@
   let displayTitle = $derived(
     title || (type === "outcome" ? "Success" : "Important"),
   );
+
+  // Determine the role based on type
+  let displayRole = $derived(type === "outcome" ? "alert" : "region");
 </script>
 
 <div
   class="govuk-notification-banner {type === 'outcome'
     ? 'govuk-notification-banner--success'
     : ''}"
-  {role}
+  role={displayRole}
   aria-labelledby={titleId}
   data-module="govuk-notification-banner"
 >

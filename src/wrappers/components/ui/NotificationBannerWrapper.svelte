@@ -247,19 +247,6 @@
         rows: 1,
       },
       {
-        name: "role",
-        category: "Accessibility",
-        options: ["region", "alert"],
-        value: "region",
-        propType: "radio",
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the ARIA role. Use 'alert' for success/outcome banners that appear after a user action to ensure focus shifts. Default is 'region'.`,
-          ],
-        },
-      },
-      {
         name: "titleId",
         category: "Accessibility",
         value: "govuk-notification-banner-title",

@@ -205,8 +205,8 @@
           markdown: true,
           arr: [
             `The main content. Can be a string or a Svelte Snippet.`,
-            `If using as a string with \`additionalContentHeading\`, this content will be wrapped in a \`<p class="govuk-body">\`.`,
-            `If used as a string *without* \`additionalContentHeading\`, it will be wrapped in a \`<p class="govuk-notification-banner__heading">\`.`,
+            `If using as a string with <code>additionalContentHeading</code>, this content will be wrapped in a <code>&lt;p class="govuk-body"&gt;</code>.`,
+            `If used as a string *without* <code>additionalContentHeading</code>, it will be wrapped in a <code>&lt;p class="govuk-notification-banner__heading"&gt;</code>.`,
             `Snippets are rendered directly. See examples for snippet usage.`,
           ],
         },
@@ -219,7 +219,10 @@
         description: {
           markdown: true,
           arr: [
-            `Optional: If provided, this text is rendered as an \`<h3 class="govuk-notification-banner__heading">\`, and the main \`content\` prop (if a string) is treated as body text (wrapped in \`<p class="govuk-body">\`).`,
+            `Optional heading rendered as an <code>&lt;h3 class="govuk-notification-banner__heading"&gt;</code>.`,
+            `<strong>Use this when you also want to provide separate body text via the <code>content</code> prop.</strong>`,
+            `When this is set, the <code>content</code> prop (if a string) will be rendered as body text (<code>&lt;p class="govuk-body"&gt;</code>).`,
+            `If this prop is omitted, the <code>content</code> prop (if a string) is rendered as the primary heading (<code>&lt;p class="govuk-notification-banner__heading"&gt;</code>).`,
           ],
         },
         rows: 1,
@@ -231,7 +234,8 @@
         description: {
           markdown: true,
           arr: [
-            `Optional text for a link rendered after the heading element (unless content is a snippet without an \`additionalContentHeading\`). Requires \`linkHref\`.`,
+            `Optional text for a link rendered after the heading element (unless content is a snippet without an <code>additionalContentHeading</code>).`,
+            `<strong>Requires <code>linkHref</code>.</strong>`,
           ],
         },
         rows: 1,
@@ -242,7 +246,10 @@
         value: "",
         description: {
           markdown: true,
-          arr: [`Optional URL for the link. Requires \`linkText\`.`],
+          arr: [
+            `Optional URL for the link.`,
+            `<strong>Requires <code>linkText</code>.</strong>`,
+          ],
         },
         rows: 1,
       },

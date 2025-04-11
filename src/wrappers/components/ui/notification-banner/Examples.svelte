@@ -34,7 +34,8 @@
     },
     {
       id: "6",
-      heading: "6. Neutral banner with custom H3 title",
+      heading:
+        "6. Outcome banner with custom title (H3) and content heading (H4)",
       content: Example6,
     },
   ];
@@ -106,8 +107,10 @@
 {#snippet ContentSnippet()}
   <p class="govuk-notification-banner__heading">Service update</p>
   <p class="govuk-body">
-    We are experiencing high demand. Please check back later if you cannot
-    access the service.
+    We are experiencing high demand. Please check <a
+      href="#"
+      class="govuk-notification-banner__link">status page</a
+    > or try again later.
   </p>
 {/snippet}
 
@@ -121,10 +124,12 @@
 {#snippet Example6()}
   <div class="p-5 bg-white">
     <NotificationBanner
-      type="neutral"
-      title="Service Information"
+      type="outcome"
+      title="Update Complete"
       titleHeadingLevel="h3"
-      content="This service will be unavailable on Sunday 14th July between 8am and 1pm."
+      additionalContentHeading="Optional Details"
+      additionalContentHeadingLevel="h4"
+      content="Your profile was updated successfully."
     />
   </div>
   <CodeBlock code={codeBlocks.codeBlock6} language="svelte"></CodeBlock>

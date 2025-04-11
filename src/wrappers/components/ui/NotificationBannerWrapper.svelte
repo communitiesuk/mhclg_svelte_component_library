@@ -228,6 +228,19 @@
         rows: 1,
       },
       {
+        name: "additionalContentHeadingLevel",
+        category: "Accessibility",
+        options: ["h3", "h4", "h5", "h6"],
+        value: "h3",
+        description: {
+          markdown: true,
+          arr: [
+            `Sets the semantic heading level (h3-h6) for the <code>additionalContentHeading</code>.`,
+            `Only visible/relevant if <code>additionalContentHeading</code> is provided.`,
+          ],
+        },
+      },
+      {
         name: "linkText",
         category: "Content",
         value: "",

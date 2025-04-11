@@ -7,6 +7,7 @@
     title = undefined as string | undefined,
     content = undefined as string | Snippet | undefined,
     additionalContentHeading = undefined as string | undefined,
+    additionalContentHeadingLevel = "h3" as "h3" | "h4" | "h5" | "h6",
     titleId = "govuk-notification-banner-title",
     linkText = undefined as string | undefined,
     linkHref = undefined as string | undefined,
@@ -16,6 +17,7 @@
     title?: string;
     content: string | Snippet;
     additionalContentHeading?: string;
+    additionalContentHeadingLevel?: "h3" | "h4" | "h5" | "h6";
     titleId?: string;
     linkText?: string;
     linkHref?: string;
@@ -51,15 +53,18 @@
   <div class="govuk-notification-banner__content">
     <!-- Block 1: Runs if additionalContentHeading is present -->
     {#if additionalContentHeading}
-      <h3 class="govuk-notification-banner__heading">
+      <svelte:element
+        this={additionalContentHeadingLevel}
+        class="govuk-notification-banner__heading"
+      >
         {additionalContentHeading}
-        <!-- Render link inside h3 if provided -->
+        <!-- Render link inside heading if provided -->
         {#if linkText && linkHref}
           <a class="govuk-notification-banner__link" href={linkHref}>
             {linkText}</a
           >
         {/if}
-      </h3>
+      </svelte:element>
       <!-- Render content prop (body or snippet) -->
       {#if typeof content === "string"}
         <p class="govuk-body">{content}</p>

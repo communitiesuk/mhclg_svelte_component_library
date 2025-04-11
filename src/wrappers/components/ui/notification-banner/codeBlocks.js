@@ -52,8 +52,7 @@ export const codeBlock5 = `
   {#snippet ContentSnippet()}
     <p class="govuk-notification-banner__heading">Service update</p>
     <p class="govuk-body">
-      We are experiencing high demand. Please check back later if you cannot access
-      the service.
+      We are experiencing high demand. Please check <a href="#" class="govuk-notification-banner__link">status page</a> or try again later.
     </p>
   {/snippet}
 </script>
@@ -67,9 +66,11 @@ export const codeBlock6 = `
 </script>
 
 <NotificationBanner
-  type="neutral"
-  title="Service Information"
+  type="outcome"
+  title="Update Complete"
   titleHeadingLevel="h3"
-  content="This service will be unavailable on Sunday 14th July between 8am and 1pm."
+  additionalContentHeading="Optional Details"
+  additionalContentHeadingLevel="h4"
+  content="Your profile was updated successfully."
 />
 `;

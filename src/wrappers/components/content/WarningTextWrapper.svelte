@@ -95,8 +95,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import WarningText from "$lib/components/content/WarningText.svelte";
-  import Examples from "./warning-text/Examples.svelte";
+import WarningText from "$lib/components/content/WarningText.svelte";
+import Examples from "./warning-text/Examples.svelte";
 
   let { data } = $props();
 
@@ -326,7 +326,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <WarningText {...parametersObject}></WarningText>
+<WarningText {...parametersObject}></WarningText>
   </div>
 {/snippet}
 

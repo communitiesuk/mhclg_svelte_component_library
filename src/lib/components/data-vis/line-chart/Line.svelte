@@ -1,9 +1,21 @@
 <script>
   import ValueLabel from "./ValueLabel.svelte";
+  import {
+    curveBasis,
+    curveCardinal,
+    curveLinear,
+    curveLinearClosed,
+    curveMonotoneX,
+    curveStep,
+    line,
+    area,
+  } from "d3-shape";
+
+  import { scaleLinear } from "d3-scale";
 
   let {
     dataArray,
-    opacity = 0.15,
+    opacity = 1,
     pathStrokeColor = "grey",
     pathStrokeWidth = 3,
     pathFillColor = "none",
@@ -17,9 +29,9 @@
     markerStroke = "white",
     markerStrokeWidth = 3,
     lineFunction,
+    curveFunction,
     xFunction,
     lineEnding = null,
-    areaFunction,
     yFunction,
     dataId,
     // markersDataId,
@@ -59,6 +71,14 @@
   function onMouseLeaveMarker(i) {
     hoveredMarker = null;
   }
+
+  let areaFunction = $derived(
+    area()
+      .y0((d) => yFunction(0))
+      .x((d) => xFunction(d.x))
+      .y1((d) => yFunction(d.y))
+      .curve(curveLinear),
+  );
 </script>
 
 <defs>
@@ -112,11 +132,6 @@
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
-    marker-start={lineEnding === "arrow"
-      ? `url(#arrow-${pathStrokeColor})`
-      : lineEnding === "circle"
-        ? `url(#circle-${pathStrokeColor})`
-        : null}
   ></path>
 
   <!-- {#if includeMarkers}

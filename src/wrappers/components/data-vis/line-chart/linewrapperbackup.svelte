@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "In progress",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -42,14 +42,17 @@
   /**
    * CUSTOMISETHIS  Update detailsArray to provide description of what this component does and when it should be used.
    * &&   By default the detailsArray includes description and context. The description is intended to explain what the component does, the context is intended to explain when the component will be used.
-   * ?  Within the array, each object has an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content (e.g. this can be used for including links to other pages).
+   * ?  Within each array, an object has an optional markdown (default = false) parameter. When set to true, it uses the @html tag to render the content (e.g. this can be used for including links to other pages).
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "This component takes an array of data, two scale functions and a line function and renders an svg path element (and optional markers at each data point)",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Used within svg elements as part of the creation of data visualisations - most notably by the <a href='/components/data-vis/line/'>Lines</a> component.",
+    "The Lines component renders a collection of lines as a group allowing all lines to update based on user interactions with a single line (e.g. reduce opacity of other lines when user hovers). Even individual lines should normally be created using the Lines component.",
   ];
 
   let detailsArray = [
@@ -92,6 +95,7 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
+  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
   import {
     curveBasis,
     curveCardinal,
@@ -102,7 +106,6 @@
     line,
     area,
   } from "d3-shape";
-  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
 
   let { data } = $props();
 
@@ -167,95 +170,34 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "includeArea",
-        category: "Overall styling",
-        propType: "fixed",
-        isProp: true,
-        value: true,
-      },
-      {
-        name: "xFunction",
-        category: "xScale",
-        functionElements: {
-          functionAsString: `function (number) {
-  return {
-    "scaleLinear()": scaleLinear(),
-    "scaleLog()": scaleLog(),
-    "scaleTime()": scaleTime(),
-  }[getValue("xScaleType")]
-    .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
-    .range([
-      0,
-      demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
-    ])(number);
-});`,
-        },
-      },
-      {
-        name: "yScaleType",
-        category: "yScale",
+        name: "svgHeight",
+        category: "dimensions",
         isProp: false,
-        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
+        value: 500,
       },
       {
-        name: "xScaleType",
-        category: "xScale",
+        name: "paddingTop",
+        category: "dimensions",
         isProp: false,
-        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
+        value: 50,
       },
       {
-        name: "yFunction",
-        category: "yScale",
-        functionElements: {
-          functionAsString: `function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("yScaleType")]
-      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
-      .range([
-        getValue("svgHeight") -
-          getValue("paddingTop") -
-          getValue("paddingBottom"),
-        0,
-      ])(number);
-  });`,
-        },
+        name: "paddingRight",
+        category: "dimensions",
+        isProp: false,
+        value: 50,
       },
       {
-        name: "curveFunction",
-        category: "lineFunction",
-        isProp: true,
-        options: [
-          "curveLinear",
-          "curveLinearClosed",
-          "curveCardinal",
-          "curveBasis",
-          "curveStep",
-          "curveMonotoneX",
-        ],
+        name: "paddingBottom",
+        category: "dimensions",
+        isProp: false,
+        value: 50,
       },
       {
-        name: "lineFunction",
-        category: "lineFunction",
-        functionElements: {
-          functionAsString: `function (dataArray) {
-    return line()
-      .x((d) => xFunction(d.x))
-      .y((d) => yFunction(d.y))
-      .curve(
-        {
-          curveLinear: curveLinear,
-          curveLinearClosed: curveLinearClosed,
-          curveCardinal: curveCardinal,
-          curveBasis: curveBasis,
-          curveStep: curveStep,
-          curveMonotoneX: curveMonotoneX,
-        }[getValue("curveFunction")],
-      )(dataArray);
-  });`,
-        },
+        name: "paddingLeft",
+        category: "dimensions",
+        isProp: false,
+        value: 50,
       },
       {
         name: "dataSource",
@@ -330,34 +272,28 @@
         ),
       },
       {
-        name: "paddingTop",
-        category: "dimensions",
+        name: "xScaleType",
+        category: "xScale",
         isProp: false,
-        value: 50,
+        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
       },
       {
-        name: "paddingRight",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingBottom",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingLeft",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "svgHeight",
-        category: "dimensions",
-        isProp: false,
-        value: 500,
+        name: "xFunction",
+        category: "xScale",
+        functionElements: {
+          functionAsString: `function (number) {
+  return {
+    "scaleLinear()": scaleLinear(),
+    "scaleLog()": scaleLog(),
+    "scaleTime()": scaleTime(),
+  }[getValue("xScaleType")]
+    .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
+    .range([
+      0,
+      demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
+    ])(number);
+});`,
+        },
       },
       {
         name: "yDomainLowerBound",
@@ -380,6 +316,258 @@
             .flat()
             .map((el) => el.y),
         ),
+      },
+      {
+        name: "yScaleType",
+        category: "yScale",
+        isProp: false,
+        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
+      },
+
+      {
+        name: "yFunction",
+        category: "yScale",
+        functionElements: {
+          functionAsString: `function (number) {
+    return {
+      "scaleLinear()": scaleLinear(),
+      "scaleLog()": scaleLog(),
+      "scaleTime()": scaleTime(),
+    }[getValue("yScaleType")]
+      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
+      .range([
+        getValue("svgHeight") -
+          getValue("paddingTop") -
+          getValue("paddingBottom"),
+        0,
+      ])(number);
+  });`,
+        },
+      },
+      {
+        name: "curveFunction",
+        category: "lineFunction",
+        isProp: false,
+        options: [
+          "curveLinear",
+          "curveLinearClosed",
+          "curveCardinal",
+          "curveBasis",
+          "curveStep",
+          "curveMonotoneX",
+        ],
+      },
+      {
+        name: "lineFunction",
+        category: "lineFunction",
+        functionElements: {
+          functionAsString: `function (dataArray) {
+    return line()
+      .x((d) => xFunction(d.x))
+      .y((d) => yFunction(d.y))
+      .curve(
+        {
+          curveLinear: curveLinear,
+          curveLinearClosed: curveLinearClosed,
+          curveCardinal: curveCardinal,
+          curveBasis: curveBasis,
+          curveStep: curveStep,
+          curveMonotoneX: curveMonotoneX,
+        }[getValue("curveFunction")],
+      )(dataArray);
+  });`,
+        },
+      },
+      {
+        name: "pathStrokeColor",
+        category: "path",
+        value: "grey",
+      },
+      {
+        name: "pathStrokeWidth",
+        category: "path",
+        value: 3,
+      },
+      {
+        name: "pathFillColor",
+        category: "path",
+        value: "none",
+      },
+      {
+        name: "pathStrokeDashArray",
+        category: "path",
+        value: "none",
+      },
+      {
+        name: "includeMarkers",
+        category: "markers",
+        value: false,
+      },
+      {
+        name: "markerShape",
+        category: "markers",
+        options: ["circle", "square", "diamond", "triangle"],
+        visible: [{ name: "includeMarkers", value: true }],
+      },
+      {
+        name: "markerRadius",
+        category: "markers",
+        value: 5,
+        visible: { name: "includeMarkers", value: true },
+      },
+
+      {
+        name: "markerFill",
+        category: "markers",
+        value: "#b312a0",
+        visible: { name: "includeMarkers", value: true },
+      },
+      {
+        name: "markerStroke",
+        category: "markers",
+        value: "white",
+        visible: { name: "includeMarkers", value: true },
+      },
+      {
+        name: "markerStrokeWidth",
+        category: "markers",
+        value: 1,
+        visible: { name: "includeMarkers", value: true },
+      },
+      {
+        name: "opacity",
+        category: "overallStyling",
+        value: 0.15,
+        step: 0.1,
+        min: 0,
+        max: 1,
+      },
+      {
+        name: "includeArea",
+        category: "overallStyling",
+        value: true,
+      },
+      {
+        name: "dataId",
+        category: "lineEvents",
+        value: "line-1",
+      },
+      {
+        name: "onClick",
+        category: "lineEvents",
+        value: function (event, dataArray) {
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseEnter",
+        category: "lineEvents",
+        value: function (event, dataArray) {
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseLeave",
+        category: "lineEvents",
+        value: function (event, dataArray) {
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseMove",
+        category: "lineEvents",
+        value: function (event, dataArray) {
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "markersDataId",
+        category: "markerEvents",
+        value: "markers-group-1",
+      },
+      {
+        name: "onClickMarker",
+        category: "markerEvents",
+        value: function (event, marker) {
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseEnterMarker",
+        category: "markerEvents",
+        value: function (event, marker) {
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseLeaveMarker",
+        category: "markerEvents",
+        value: function (event, marker) {
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
+      },
+      {
+        name: "onMouseMoveMarker",
+        category: "markerEvents",
+        value: function (event, marker) {
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { id: null },
+          counter: 0,
+        },
       },
     ]),
   );
@@ -419,16 +607,11 @@
   );
 
   /**
-   *  !  Step 4 - Define values for derived parameters, and add them to.
-   *  CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
-   *  && 		Here you can define calculations for any additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
-   *  &&    Next, add the variables to the derivedParametersObject.
-   *
-   *  &&    (e.g. let derivedProp = $derived(...code for calculating value here), then derivedParametersObject = $derived({ derivedProp }))
-   *
-   *  &&    Note that these parameters still need to be listed in the source array (with a null or absent value).
-   *  &&    You must then also combine them into the derivedParametersObject below so that they are passed to the component.
-   *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
+   * CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
+   * && 		Here you can define calculations for any additional component parameters which - rather than being set by the user - are calculated based on the value of other parameters.
+   * &&     Note that these parameters still need to be listed in the source array (with a null input type and null value).
+   * &&     You must then also combine them into the derivedParametersObject below so that they are passed to the component.
+   * &&     The getValueFromParametersArray function can be helpful for calculating based on the value of another parameter.
    */
 
   let derivedDataArray = $derived(
@@ -471,10 +654,35 @@
       ])(number);
   });
 
+  let curveFunctions = {
+    curveLinear: curveLinear,
+    curveLinearClosed: curveLinearClosed,
+    curveCardinal: curveCardinal,
+    curveBasis: curveBasis,
+    curveStep: curveStep,
+    curveMonotoneX: curveMonotoneX,
+  };
+
+  let areaFunction = $derived(
+    area()
+      .y0((d) => yFunction(0))
+      .x((d) => xFunction(d.x))
+      .y1((d) => yFunction(d.y))
+      .curve(
+        curveFunctions[
+          getValueFromParametersArray(
+            parametersSourceArray,
+            parametersValuesArray,
+            "curve",
+          )
+        ],
+      ),
+  );
+
   let lineFunction = $derived(function (dataArray) {
     return line()
-      .x((d) => xFunction(+d.x))
-      .y((d) => yFunction(+d.y))
+      .x((d) => xFunction(d.x))
+      .y((d) => yFunction(d.y))
       .curve(
         {
           curveLinear: curveLinear,
@@ -492,6 +700,7 @@
     dataArray,
     xFunction,
     yFunction,
+    areaFunction,
     lineFunction,
   });
 
@@ -517,7 +726,6 @@
    * &&     parametersParsingErrorsArray tracks any errors due to attempting to use JSON.parse() on strings which do not convert to valid JavaScript objects.
    * &&     $effect() is then use to update parametersParsingErrorsObject, which tracks when errors and fixes occur.
    */
-
   let [parametersObject, parametersParsingErrorsArray] = $derived(
     createParametersObject(
       parametersSourceArray,
@@ -559,8 +767,8 @@
 </script>
 
 <!--
-&&  WrapperNameAndStatus and WrapperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
-  -->
+  &&  WrapperNameAndStatus and WraaperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
+-->
 
 {#snippet WrapperNameAndStatus(name, folder, subFolder, homepage)}
   <BaseNameAndStatus
@@ -583,9 +791,15 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-8">
+  <div>
     <svg width={demoScreenWidth} height={getValue("svgHeight")}>
-      <Line {...parametersObject}></Line>
+      <g
+        transform="translate({getValue('paddingLeft')},{getValue(
+          'paddingTop',
+        )})"
+      >
+        <Line {...parametersObject}></Line>
+      </g>
     </svg>
   </div>
 {/snippet}

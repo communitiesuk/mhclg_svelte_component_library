@@ -26,6 +26,7 @@
     externalRelatedLinks = [] as ExternalLink[],
     otherContacts = [] as InternalLink[], // From links.related
     disableGa4 = false,
+    listTruncateThreshold = 5, // Default threshold for truncating lists
   } = $props<{
     headingText?: string;
     headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
@@ -39,6 +40,7 @@
     externalRelatedLinks?: ExternalLink[];
     otherContacts?: InternalLink[]; // From links.related
     disableGa4?: boolean;
+    listTruncateThreshold?: number;
   }>();
 
   // Helper to generate unique IDs for section headings
@@ -56,10 +58,87 @@
         ? taxons
         : [],
   );
+
+  // State to track expanded sections
+  let sectionExpandedState = $state({
+    orderedRelatedItems: false,
+    documentCollections: false,
+    exploreTopics: false,
+    topicalEvents: false,
+    worldLocations: false,
+    relatedStatisticalDataSets: false,
+    externalRelatedLinks: false,
+    otherContacts: false,
+  });
+
+  // Helper function to get visible items for a section
+  function getVisibleItems(items: any[], sectionKey: string): any[] {
+    if (!items || items.length <= listTruncateThreshold) return items;
+    return sectionExpandedState[sectionKey]
+      ? items
+      : items.slice(0, listTruncateThreshold);
+  }
+
+  // Helper function to toggle section expansion
+  function toggleSection(sectionKey: string) {
+    sectionExpandedState[sectionKey] = !sectionExpandedState[sectionKey];
+  }
+
+  // Add browser check for JavaScript support
+  import { browser } from "$app/environment";
+
+  // Track if JavaScript is supported
+  let hasJavaScript = $state(false);
+
+  // Set JavaScript support flag on mount
+  $effect(() => {
+    if (browser) {
+      hasJavaScript = true;
+    }
+  });
+
+  // Helper function to render expanded items with proper commas and "and"
+  function renderExpandedItems(
+    items: any[],
+    startIndex: number,
+    sectionName: string,
+  ) {
+    return items
+      .map((link, i) => {
+        const isSecondToLast = i === items.length - 2;
+        const isNotLast = i < items.length - 1;
+
+        return `
+        <a
+          href="${link.base_path || link.url}"
+          class="govuk-link govuk-link gem-c-related-navigation__section-link govuk-link gem-c-related-navigation__section-link--inline"
+          data-ga4-link='${
+            !disableGa4
+              ? JSON.stringify({
+                  event_name: "navigation",
+                  type: "related content",
+                  index_section: "1",
+                  index_link: (startIndex + i + 1).toString(),
+                  index_section_count: "1",
+                  index_total: items.length.toString(),
+                  section: sectionName,
+                })
+              : ""
+          }'
+        >
+          ${link.title}
+        </a>${isSecondToLast ? ", and " : isNotLast ? ", " : ""}
+      `;
+      })
+      .join("");
+  }
 </script>
 
 <div
-  class="gem-c-related-navigation govuk-!-display-none-print"
+  data-module="ga4-link-tracker"
+  class="gem-c-related-navigation govuk-!-display-none-print {hasJavaScript
+    ? 'govuk-frontend-supported'
+    : ''}"
   role="complementary"
 >
   <svelte:element
@@ -70,35 +149,30 @@
     {headingText}
   </svelte:element>
 
-  <!-- Ordered Related Items (No Subheading) -->
+  <!-- Ordered Related Items -->
   {#if orderedRelatedItems?.length > 0}
     <nav
-      role="navigation"
       class="gem-c-related-navigation__nav-section"
       aria-labelledby="related-nav-related_items"
+      data-module="gem-toggle"
     >
       <ul class="gem-c-related-navigation__link-list">
-        {#each orderedRelatedItems as link}
+        {#each orderedRelatedItems.slice(0, listTruncateThreshold) as link}
           <li class="gem-c-related-navigation__link">
-            <!-- NOTE: GOV.UK ERB renders these directly, not in <li>, adjusted for valid HTML list -->
             <a
               href={link.base_path}
-              class="govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--other"
-              data-track-category="relatedLinkClicked"
-              data-track-action={link.base_path}
-              data-track-label={link.title}
-              data-track-options={!disableGa4
-                ? JSON.stringify({
-                    dimension28: orderedRelatedItems.length,
-                    dimension29: link.title,
-                  })
-                : undefined}
+              class="govuk-link govuk-link gem-c-related-navigation__section-link"
               data-ga4-link={!disableGa4
                 ? JSON.stringify({
                     event_name: "navigation",
                     type: "related content",
-                    index_link: orderedRelatedItems.indexOf(link) + 1,
-                    index_total: orderedRelatedItems.length,
+                    index_section: "1",
+                    index_link: (
+                      orderedRelatedItems.indexOf(link) + 1
+                    ).toString(),
+                    index_section_count: "1",
+                    index_total: orderedRelatedItems.length.toString(),
+                    section: "Related content",
                   })
                 : undefined}
             >
@@ -106,6 +180,70 @@
             </a>
           </li>
         {/each}
+
+        {#if orderedRelatedItems.length > listTruncateThreshold}
+          <li
+            class="gem-c-related-navigation__link toggle-wrap"
+            data-module="ga4-event-tracker"
+          >
+            <a
+              class="gem-c-related-navigation__toggle"
+              data-controls="toggle_related_items"
+              data-expanded={sectionExpandedState.orderedRelatedItems}
+              data-toggled-text="Show {orderedRelatedItems.length -
+                listTruncateThreshold} more"
+              data-ga4-event={JSON.stringify({
+                event_name: "select_content",
+                type: "related content",
+              })}
+              href="#"
+              role="button"
+              aria-controls="toggle_related_items"
+              aria-expanded={sectionExpandedState.orderedRelatedItems}
+              on:click|preventDefault={() =>
+                toggleSection("orderedRelatedItems")}
+            >
+              {sectionExpandedState.orderedRelatedItems
+                ? "Show fewer"
+                : `Show ${orderedRelatedItems.length - listTruncateThreshold} more`}
+            </a>
+          </li>
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <span
+              id="toggle_related_items"
+              class="gem-c-related-navigation__toggle-more {sectionExpandedState.orderedRelatedItems
+                ? ''
+                : 'js-hidden'}"
+              aria-live="polite"
+              role="region"
+            >
+              {#each orderedRelatedItems.slice(listTruncateThreshold) as link, i (link.base_path)}
+                <a
+                  href={link.base_path}
+                  class="govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"
+                  data-ga4-link={JSON.stringify({
+                    event_name: "navigation",
+                    type: "related content",
+                    index_section: "1",
+                    index_link: (listTruncateThreshold + i + 1).toString(),
+                    index_section_count: "1",
+                    index_total: orderedRelatedItems.length.toString(),
+                    section: "Related content",
+                  })}
+                >
+                  {link.title}
+                </a>
+                {#if i === orderedRelatedItems.slice(listTruncateThreshold).length - 2}
+                  , and
+                {:else if i < orderedRelatedItems.slice(listTruncateThreshold).length - 1}
+                  ,
+                {/if}
+              {/each}
+            </span>
+          </li>
+        {/if}
       </ul>
     </nav>
   {/if}
@@ -114,34 +252,34 @@
   {#if documentCollections?.length > 0}
     {@const sectionId = getSectionHeadingId("collections")}
     <nav
-      role="navigation"
       class="gem-c-related-navigation__nav-section"
       aria-labelledby={sectionId}
+      data-module="gem-toggle"
     >
-      <h3 id={sectionId} class="gem-c-related-navigation__sub-heading">
+      <h3
+        id={sectionId}
+        class="gem-c-related-navigation__sub-heading"
+        data-track-count="sidebarRelatedItemSection"
+      >
         Collection
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each documentCollections as link}
+        {#each documentCollections.slice(0, listTruncateThreshold) as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
-              class="govuk-link gem-c-related-navigation__section-link"
-              data-track-category="relatedLinkClicked"
-              data-track-action={link.base_path}
-              data-track-label={link.title}
-              data-track-options={!disableGa4
-                ? JSON.stringify({
-                    dimension28: documentCollections.length,
-                    dimension29: link.title,
-                  })
-                : undefined}
+              class="govuk-link govuk-link gem-c-related-navigation__section-link"
               data-ga4-link={!disableGa4
                 ? JSON.stringify({
                     event_name: "navigation",
                     type: "related content",
-                    index_link: documentCollections.indexOf(link) + 1,
-                    index_total: documentCollections.length,
+                    index_section: "1",
+                    index_link: (
+                      documentCollections.indexOf(link) + 1
+                    ).toString(),
+                    index_section_count: "1",
+                    index_total: documentCollections.length.toString(),
+                    section: "Collection",
                   })
                 : undefined}
             >
@@ -149,6 +287,74 @@
             </a>
           </li>
         {/each}
+
+        {#if documentCollections.length > listTruncateThreshold}
+          <li
+            class="gem-c-related-navigation__link toggle-wrap"
+            data-module="ga4-event-tracker"
+          >
+            <a
+              class="gem-c-related-navigation__toggle"
+              data-controls="toggle_collections"
+              data-expanded={sectionExpandedState.documentCollections}
+              data-toggled-text="Show {documentCollections.length -
+                listTruncateThreshold} more"
+              data-ga4-event={JSON.stringify({
+                event_name: "select_content",
+                type: "related content",
+              })}
+              href="#"
+              role="button"
+              aria-controls="toggle_collections"
+              aria-expanded={sectionExpandedState.documentCollections}
+              on:click|preventDefault={() =>
+                toggleSection("documentCollections")}
+            >
+              {sectionExpandedState.documentCollections
+                ? "Show fewer"
+                : `Show ${documentCollections.length - listTruncateThreshold} more`}
+            </a>
+          </li>
+
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <span
+              id="toggle_collections"
+              class="gem-c-related-navigation__toggle-more {!sectionExpandedState.documentCollections
+                ? 'js-hidden'
+                : ''}"
+              aria-live="polite"
+              role="region"
+            >
+              {#each documentCollections.slice(listTruncateThreshold) as link, i}
+                <a
+                  href={link.base_path}
+                  class="govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"
+                  data-ga4-link={!disableGa4
+                    ? JSON.stringify({
+                        event_name: "navigation",
+                        type: "related content",
+                        index_section: "1",
+                        index_link: (listTruncateThreshold + i + 1).toString(),
+                        index_section_count: "1",
+                        index_total: documentCollections.length.toString(),
+                        section: "Collection",
+                      })
+                    : undefined}
+                >
+                  {link.title}
+                </a>{i <
+                documentCollections.slice(listTruncateThreshold).length - 2
+                  ? ", "
+                  : ""}
+                {#if i === documentCollections.slice(listTruncateThreshold).length - 2},
+                  and
+                {/if}
+              {/each}
+            </span>
+          </li>
+        {/if}
       </ul>
     </nav>
   {/if}
@@ -165,7 +371,7 @@
         Explore the topic
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each exploreTopicLinks as link}
+        {#each getVisibleItems(exploreTopicLinks, "exploreTopics") as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
@@ -192,6 +398,22 @@
             </a>
           </li>
         {/each}
+        {#if exploreTopicLinks.length > listTruncateThreshold}
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <button
+              type="button"
+              class="gem-c-related-navigation__toggle govuk-link"
+              aria-expanded={sectionExpandedState.exploreTopics}
+              on:click={() => toggleSection("exploreTopics")}
+            >
+              {sectionExpandedState.exploreTopics
+                ? "Show fewer"
+                : `Show ${exploreTopicLinks.length - listTruncateThreshold} more`}
+            </button>
+          </li>
+        {/if}
       </ul>
     </nav>
   {/if}
@@ -208,7 +430,7 @@
         Topical event
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each topicalEvents as link}
+        {#each getVisibleItems(topicalEvents, "topicalEvents") as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
@@ -235,6 +457,22 @@
             </a>
           </li>
         {/each}
+        {#if topicalEvents.length > listTruncateThreshold}
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <button
+              type="button"
+              class="gem-c-related-navigation__toggle govuk-link"
+              aria-expanded={sectionExpandedState.topicalEvents}
+              on:click={() => toggleSection("topicalEvents")}
+            >
+              {sectionExpandedState.topicalEvents
+                ? "Show fewer"
+                : `Show ${topicalEvents.length - listTruncateThreshold} more`}
+            </button>
+          </li>
+        {/if}
       </ul>
     </nav>
   {/if}
@@ -243,34 +481,32 @@
   {#if worldLocations?.length > 0}
     {@const sectionId = getSectionHeadingId("world-locations")}
     <nav
-      role="navigation"
       class="gem-c-related-navigation__nav-section"
       aria-labelledby={sectionId}
+      data-module="gem-toggle"
     >
-      <h3 id={sectionId} class="gem-c-related-navigation__sub-heading">
+      <h3
+        id={sectionId}
+        class="gem-c-related-navigation__sub-heading"
+        data-track-count="sidebarRelatedItemSection"
+      >
         World locations
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each worldLocations as link}
+        {#each worldLocations.slice(0, listTruncateThreshold) as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
-              class="govuk-link gem-c-related-navigation__section-link"
-              data-track-category="relatedLinkClicked"
-              data-track-action={link.base_path}
-              data-track-label={link.title}
-              data-track-options={!disableGa4
-                ? JSON.stringify({
-                    dimension28: worldLocations.length,
-                    dimension29: link.title,
-                  })
-                : undefined}
+              class="govuk-link govuk-link gem-c-related-navigation__section-link"
               data-ga4-link={!disableGa4
                 ? JSON.stringify({
                     event_name: "navigation",
                     type: "related content",
-                    index_link: worldLocations.indexOf(link) + 1,
-                    index_total: worldLocations.length,
+                    index_section: "1",
+                    index_link: (worldLocations.indexOf(link) + 1).toString(),
+                    index_section_count: "1",
+                    index_total: worldLocations.length.toString(),
+                    section: "World locations",
                   })
                 : undefined}
             >
@@ -278,6 +514,73 @@
             </a>
           </li>
         {/each}
+
+        {#if worldLocations.length > listTruncateThreshold}
+          <li
+            class="gem-c-related-navigation__link toggle-wrap"
+            data-module="ga4-event-tracker"
+          >
+            <a
+              class="gem-c-related-navigation__toggle"
+              data-controls="toggle_world_locations"
+              data-expanded={sectionExpandedState.worldLocations}
+              data-toggled-text="Show {worldLocations.length -
+                listTruncateThreshold} more"
+              data-ga4-event={JSON.stringify({
+                event_name: "select_content",
+                type: "related content",
+              })}
+              href="#"
+              role="button"
+              aria-controls="toggle_world_locations"
+              aria-expanded={sectionExpandedState.worldLocations}
+              on:click|preventDefault={() => toggleSection("worldLocations")}
+            >
+              {sectionExpandedState.worldLocations
+                ? "Show fewer"
+                : `Show ${worldLocations.length - listTruncateThreshold} more`}
+            </a>
+          </li>
+
+          <!-- This is a critical change - make the truncated links as a direct child of the list item -->
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <span
+              id="toggle_world_locations"
+              class="gem-c-related-navigation__toggle-more {!sectionExpandedState.worldLocations
+                ? 'js-hidden'
+                : ''}"
+              aria-live="polite"
+              role="region"
+            >
+              {#each worldLocations.slice(listTruncateThreshold) as link, i}
+                <a
+                  href={link.base_path}
+                  class="govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"
+                  data-ga4-link={!disableGa4
+                    ? JSON.stringify({
+                        event_name: "navigation",
+                        type: "related content",
+                        index_section: "1",
+                        index_link: (listTruncateThreshold + i + 1).toString(),
+                        index_section_count: "1",
+                        index_total: worldLocations.length.toString(),
+                        section: "World locations",
+                      })
+                    : undefined}
+                >
+                  {link.title}
+                </a>{i < worldLocations.slice(listTruncateThreshold).length - 2
+                  ? ", "
+                  : ""}
+                {#if i === worldLocations.slice(listTruncateThreshold).length - 2},
+                  and
+                {/if}
+              {/each}
+            </span>
+          </li>
+        {/if}
       </ul>
     </nav>
   {/if}
@@ -294,7 +597,7 @@
         Statistical data set
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each relatedStatisticalDataSets as link}
+        {#each getVisibleItems(relatedStatisticalDataSets, "relatedStatisticalDataSets") as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
@@ -321,6 +624,22 @@
             </a>
           </li>
         {/each}
+        {#if relatedStatisticalDataSets.length > listTruncateThreshold}
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <button
+              type="button"
+              class="gem-c-related-navigation__toggle govuk-link"
+              aria-expanded={sectionExpandedState.relatedStatisticalDataSets}
+              on:click={() => toggleSection("relatedStatisticalDataSets")}
+            >
+              {sectionExpandedState.relatedStatisticalDataSets
+                ? "Show fewer"
+                : `Show ${relatedStatisticalDataSets.length - listTruncateThreshold} more`}
+            </button>
+          </li>
+        {/if}
       </ul>
     </nav>
   {/if}
@@ -337,7 +656,7 @@
         Elsewhere on the web
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each externalRelatedLinks as link}
+        {#each getVisibleItems(externalRelatedLinks, "externalRelatedLinks") as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.url}
@@ -367,6 +686,22 @@
             </a>
           </li>
         {/each}
+        {#if externalRelatedLinks.length > listTruncateThreshold}
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <button
+              type="button"
+              class="gem-c-related-navigation__toggle govuk-link"
+              aria-expanded={sectionExpandedState.externalRelatedLinks}
+              on:click={() => toggleSection("externalRelatedLinks")}
+            >
+              {sectionExpandedState.externalRelatedLinks
+                ? "Show fewer"
+                : `Show ${externalRelatedLinks.length - listTruncateThreshold} more`}
+            </button>
+          </li>
+        {/if}
       </ul>
     </nav>
   {/if}
@@ -383,7 +718,7 @@
         Other contacts
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each otherContacts as link}
+        {#each getVisibleItems(otherContacts, "otherContacts") as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
@@ -410,6 +745,22 @@
             </a>
           </li>
         {/each}
+        {#if otherContacts.length > listTruncateThreshold}
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <button
+              type="button"
+              class="gem-c-related-navigation__toggle govuk-link"
+              aria-expanded={sectionExpandedState.otherContacts}
+              on:click={() => toggleSection("otherContacts")}
+            >
+              {sectionExpandedState.otherContacts
+                ? "Show fewer"
+                : `Show ${otherContacts.length - listTruncateThreshold} more`}
+            </button>
+          </li>
+        {/if}
       </ul>
     </nav>
   {/if}
@@ -585,6 +936,7 @@
 
   .gem-c-related-navigation__link--truncated-links {
     margin-top: 10px;
+    font-weight: bold;
   }
 
   .gem-c-related-navigation__toggle {
@@ -704,7 +1056,8 @@
   }
 
   .gem-c-related-navigation__section-link--inline {
-    line-height: 1.45;
+    display: inline;
+    font-weight: normal;
   }
 
   .gem-c-related-navigation__link-list {
@@ -723,5 +1076,14 @@
 
   .govuk-frontend-supported .gem-c-related-navigation__toggle-more.js-hidden {
     display: none;
+  }
+
+  .js-hidden {
+    display: none;
+  }
+
+  .gem-c-related-navigation__toggle-more {
+    display: block;
+    margin-top: 5px;
   }
 </style>

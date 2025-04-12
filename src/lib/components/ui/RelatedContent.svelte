@@ -231,15 +231,11 @@
                     index_section_count: "1",
                     index_total: orderedRelatedItems.length.toString(),
                     section: "Related content",
-                  })}
-                >
-                  {link.title}
-                </a>
-                {#if i === orderedRelatedItems.slice(listTruncateThreshold).length - 2}
-                  , and
-                {:else if i < orderedRelatedItems.slice(listTruncateThreshold).length - 1}
-                  ,
-                {/if}
+                  })}>{link.title}</a
+                >{#if i < orderedRelatedItems.slice(listTruncateThreshold).length - 1}{i ===
+                  orderedRelatedItems.slice(listTruncateThreshold).length - 2
+                    ? ", and "
+                    : ", "}{/if}
               {/each}
             </span>
           </li>
@@ -341,16 +337,11 @@
                         index_total: documentCollections.length.toString(),
                         section: "Collection",
                       })
-                    : undefined}
-                >
-                  {link.title}
-                </a>{i <
-                documentCollections.slice(listTruncateThreshold).length - 2
-                  ? ", "
-                  : ""}
-                {#if i === documentCollections.slice(listTruncateThreshold).length - 2},
-                  and
-                {/if}
+                    : undefined}>{link.title}</a
+                >{#if i < documentCollections.slice(listTruncateThreshold).length - 1}{i ===
+                  documentCollections.slice(listTruncateThreshold).length - 2
+                    ? ", and "
+                    : ", "}{/if}
               {/each}
             </span>
           </li>
@@ -554,7 +545,7 @@
               aria-live="polite"
               role="region"
             >
-              {#each worldLocations.slice(listTruncateThreshold) as link, i}
+              {#each worldLocations.slice(listTruncateThreshold) as link, i (link.base_path)}
                 <a
                   href={link.base_path}
                   class="govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"
@@ -568,15 +559,11 @@
                         index_total: worldLocations.length.toString(),
                         section: "World locations",
                       })
-                    : undefined}
-                >
-                  {link.title}
-                </a>{i < worldLocations.slice(listTruncateThreshold).length - 2
-                  ? ", "
-                  : ""}
-                {#if i === worldLocations.slice(listTruncateThreshold).length - 2},
-                  and
-                {/if}
+                    : undefined}>{link.title}</a
+                >{#if i < worldLocations.slice(listTruncateThreshold).length - 1}{i ===
+                  worldLocations.slice(listTruncateThreshold).length - 2
+                    ? ", and "
+                    : ", "}{/if}
               {/each}
             </span>
           </li>
@@ -767,290 +754,314 @@
 </div>
 
 <style>
-.gem-c-related-navigation {
+  .gem-c-related-navigation {
     border-top: 2px solid #1d70b8;
     margin-bottom: 60px;
     color: #0b0c0c;
-}
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation {
-        color: #000
+      color: #000;
     }
-}
+  }
 
-.gem-c-related-navigation__main-heading {
+  .gem-c-related-navigation__main-heading {
     margin-top: 15px;
     margin-bottom: 10px;
-    font-family: "GDS Transport",arial,sans-serif;
+    font-family: "GDS Transport", arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: 700;
     font-size: 1.1875rem;
-    line-height: 1.3157894737
-}
+    line-height: 1.3157894737;
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__main-heading {
-        font-family: sans-serif
+      font-family: sans-serif;
     }
-}
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__main-heading {
-        font-size: 14pt;
-        line-height: 1.15
+      font-size: 14pt;
+      line-height: 1.15;
     }
-}
+  }
 
-.gem-c-related-navigation__sub-heading {
+  .gem-c-related-navigation__sub-heading {
     border-top: 1px solid #b1b4b6;
     margin: 0;
     padding-top: 15px;
-    font-family: "GDS Transport",arial,sans-serif;
+    font-family: "GDS Transport", arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: 400;
     font-size: 1rem;
-    line-height: 1.25
-}
+    line-height: 1.25;
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__sub-heading {
-        font-family: sans-serif
+      font-family: sans-serif;
     }
-}
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__sub-heading {
-        font-size: 14pt;
-        line-height: 1.2
+      font-size: 14pt;
+      line-height: 1.2;
     }
-}
+  }
 
-.gem-c-related-navigation__sub-heading--footer {
+  .gem-c-related-navigation__sub-heading--footer {
     border-top: 0;
     padding-top: 0;
     margin-top: 15px;
     margin-bottom: 10px;
-    font-family: "GDS Transport",arial,sans-serif;
+    font-family: "GDS Transport", arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: 700;
     font-size: 1.1875rem;
-    line-height: 1.3157894737
-}
+    line-height: 1.3157894737;
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__sub-heading--footer {
-        font-family: sans-serif
+      font-family: sans-serif;
     }
-}
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__sub-heading--footer {
-        font-size: 14pt;
-        line-height: 1.15
+      font-size: 14pt;
+      line-height: 1.15;
     }
-}
+  }
 
-.gem-c-related-navigation__main-heading+.gem-c-related-navigation__sub-heading {
-    border-top: 0;
-    padding-top: 0
-}
-
-.gem-c-related-navigation__sub-heading--other {
+  .gem-c-related-navigation__main-heading
+    + .gem-c-related-navigation__sub-heading {
     border-top: 0;
     padding-top: 0;
-    font-family: "GDS Transport",arial,sans-serif;
+  }
+
+  .gem-c-related-navigation__sub-heading--other {
+    border-top: 0;
+    padding-top: 0;
+    font-family: "GDS Transport", arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: 700;
     font-size: 1.1875rem;
-    line-height: 1.3157894737
-}
+    line-height: 1.3157894737;
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__sub-heading--other {
-        font-family: sans-serif
+      font-family: sans-serif;
     }
-}
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__sub-heading--other {
-        font-size: 14pt;
-        line-height: 1.15
+      font-size: 14pt;
+      line-height: 1.15;
     }
-}
+  }
 
-.gem-c-related-navigation__nav-section {
-    margin-bottom: 30px
-}
+  .gem-c-related-navigation__nav-section {
+    margin-bottom: 30px;
+  }
 
-.gem-c-related-navigation__link {
+  .gem-c-related-navigation__link {
     list-style-type: none;
     margin-top: 15px;
-    font-family: "GDS Transport",arial,sans-serif;
+    font-family: "GDS Transport", arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: 400;
     font-size: 1rem;
-    line-height: 1.45
-}
+    line-height: 1.45;
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__link {
-        font-family: sans-serif
+      font-family: sans-serif;
     }
-}
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__link {
-        font-size: 14pt;
-        line-height: 1.45
+      font-size: 14pt;
+      line-height: 1.45;
     }
-}
+  }
 
-@media(min-width: 40.0625em) {
+  @media (min-width: 40.0625em) {
     .gem-c-related-navigation__link {
-        line-height:1.28
+      line-height: 1.28;
     }
-}
+  }
 
-.gem-c-related-navigation__link:focus,.gem-c-related-navigation__link:active:focus,.gem-c-related-navigation__link:link:focus,.gem-c-related-navigation__link:visited:focus {
-    outline: 3px solid rgba(0,0,0,0);
+  .gem-c-related-navigation__link:focus,
+  .gem-c-related-navigation__link:active:focus,
+  .gem-c-related-navigation__link:link:focus,
+  .gem-c-related-navigation__link:visited:focus {
+    outline: 3px solid rgba(0, 0, 0, 0);
     color: #0b0c0c;
     background-color: #fd0;
-    box-shadow: 0 -2px #fd0,0 4px #0b0c0c;
+    box-shadow:
+      0 -2px #fd0,
+      0 4px #0b0c0c;
     text-decoration: none;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-    color: #0b0c0c !important
-}
+    color: #0b0c0c !important;
+  }
 
-.gem-c-related-navigation__link--truncated-links {
-    margin-top: 10px
-}
+  .gem-c-related-navigation__link--truncated-links {
+    margin-top: 10px;
+  }
 
-.gem-c-related-navigation__toggle {
+  .gem-c-related-navigation__toggle {
     display: none;
-    font-family: "GDS Transport",arial,sans-serif;
+    font-family: "GDS Transport", arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-decoration: underline;
-    text-decoration-thickness: max(1px, .0625rem);
-    text-underline-offset: .1578em
-}
+    text-decoration-thickness: max(1px, 0.0625rem);
+    text-underline-offset: 0.1578em;
+  }
 
-@media print {
+  @media print {
     .gem-c-related-navigation__toggle {
-        font-family: sans-serif
+      font-family: sans-serif;
     }
-}
+  }
 
-.gem-c-related-navigation__toggle:hover {
-    text-decoration-thickness: max(3px, .1875rem, .12em);
+  .gem-c-related-navigation__toggle:hover {
+    text-decoration-thickness: max(3px, 0.1875rem, 0.12em);
     -webkit-text-decoration-skip-ink: none;
     text-decoration-skip-ink: none;
     -webkit-text-decoration-skip: none;
-    text-decoration-skip: none
-}
+    text-decoration-skip: none;
+  }
 
-.gem-c-related-navigation__toggle:focus {
-    outline: 3px solid rgba(0,0,0,0);
+  .gem-c-related-navigation__toggle:focus {
+    outline: 3px solid rgba(0, 0, 0, 0);
     color: #0b0c0c;
     background-color: #fd0;
-    box-shadow: 0 -2px #fd0,0 4px #0b0c0c;
-    text-decoration: none;
-    -webkit-box-decoration-break: clone;
-    box-decoration-break: clone
-}
-
-.gem-c-related-navigation__toggle:link {
-    color: #1d70b8
-}
-
-.gem-c-related-navigation__toggle:visited {
-    color: #1d70b8
-}
-
-.gem-c-related-navigation__toggle:hover {
-    color: #003078
-}
-
-.gem-c-related-navigation__toggle:active {
-    color: #0b0c0c
-}
-
-.gem-c-related-navigation__toggle:focus {
-    color: #0b0c0c
-}
-
-.govuk-frontend-supported .gem-c-related-navigation__toggle {
-    display: inline-block
-}
-
-.gem-c-related-navigation__section-link {
-    font-weight: bold
-}
-
-.gem-c-related-navigation__section-link:focus,.gem-c-related-navigation__section-link:active:focus,.gem-c-related-navigation__section-link:link:focus,.gem-c-related-navigation__section-link:visited:focus {
-    outline: 3px solid rgba(0,0,0,0);
-    color: #0b0c0c;
-    background-color: #fd0;
-    box-shadow: 0 -2px #fd0,0 4px #0b0c0c;
+    box-shadow:
+      0 -2px #fd0,
+      0 4px #0b0c0c;
     text-decoration: none;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-    color: #0b0c0c !important
-}
+  }
 
-.gem-c-related-navigation__section-link--other {
+  .gem-c-related-navigation__toggle:link {
+    color: #1d70b8;
+  }
+
+  .gem-c-related-navigation__toggle:visited {
+    color: #1d70b8;
+  }
+
+  .gem-c-related-navigation__toggle:hover {
+    color: #003078;
+  }
+
+  .gem-c-related-navigation__toggle:active {
+    color: #0b0c0c;
+  }
+
+  .gem-c-related-navigation__toggle:focus {
+    color: #0b0c0c;
+  }
+
+  .govuk-frontend-supported .gem-c-related-navigation__toggle {
+    display: inline-block;
+  }
+
+  .gem-c-related-navigation__section-link {
+    font-weight: bold;
+  }
+
+  .gem-c-related-navigation__section-link:focus,
+  .gem-c-related-navigation__section-link:active:focus,
+  .gem-c-related-navigation__section-link:link:focus,
+  .gem-c-related-navigation__section-link:visited:focus {
+    outline: 3px solid rgba(0, 0, 0, 0);
+    color: #0b0c0c;
+    background-color: #fd0;
+    box-shadow:
+      0 -2px #fd0,
+      0 4px #0b0c0c;
+    text-decoration: none;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    color: #0b0c0c !important;
+  }
+
+  .gem-c-related-navigation__section-link--other {
     font-weight: normal;
-}
+  }
 
-.gem-c-related-navigation__section-link--other:focus,.gem-c-related-navigation__section-link--other:active:focus,.gem-c-related-navigation__section-link--other:link:focus,.gem-c-related-navigation__section-link--other:visited:focus {
-    outline: 3px solid rgba(0,0,0,0);
+  .gem-c-related-navigation__section-link--other:focus,
+  .gem-c-related-navigation__section-link--other:active:focus,
+  .gem-c-related-navigation__section-link--other:link:focus,
+  .gem-c-related-navigation__section-link--other:visited:focus {
+    outline: 3px solid rgba(0, 0, 0, 0);
     color: #0b0c0c;
     background-color: #fd0;
-    box-shadow: 0 -2px #fd0,0 4px #0b0c0c;
+    box-shadow:
+      0 -2px #fd0,
+      0 4px #0b0c0c;
     text-decoration: none;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-    color: #0b0c0c !important
-}
+    color: #0b0c0c !important;
+  }
 
-.gem-c-related-navigation__section-link--footer:focus,.gem-c-related-navigation__section-link--footer:active:focus,.gem-c-related-navigation__section-link--footer:link:focus,.gem-c-related-navigation__section-link--footer:visited:focus {
-    outline: 3px solid rgba(0,0,0,0);
+  .gem-c-related-navigation__section-link--footer:focus,
+  .gem-c-related-navigation__section-link--footer:active:focus,
+  .gem-c-related-navigation__section-link--footer:link:focus,
+  .gem-c-related-navigation__section-link--footer:visited:focus {
+    outline: 3px solid rgba(0, 0, 0, 0);
     color: #0b0c0c;
     background-color: #fd0;
-    box-shadow: 0 -2px #fd0,0 4px #0b0c0c;
+    box-shadow:
+      0 -2px #fd0,
+      0 4px #0b0c0c;
     text-decoration: none;
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
-    color: #0b0c0c !important
-}
+    color: #0b0c0c !important;
+  }
 
-.gem-c-related-navigation__section-link--inline {
-    line-height: 1.45
-}
+  .gem-c-related-navigation__section-link--inline {
+    line-height: 1.45;
+  }
 
-.gem-c-related-navigation__link-list {
+  .gem-c-related-navigation__link-list {
     padding: 0;
     margin: 0;
     list-style: none;
-    margin-bottom: 1.25em
-}
+    margin-bottom: 1.25em;
+  }
 
-@media(min-width: 40.0625em) {
-    .gem-c-related-navigation__toggle-more .gem-c-related-navigation__section-link {
-        line-height:1.45
+  @media (min-width: 40.0625em) {
+    .gem-c-related-navigation__toggle-more
+      .gem-c-related-navigation__section-link {
+      line-height: 1.45;
     }
-}
+  }
 
-.govuk-frontend-supported .gem-c-related-navigation__toggle-more.js-hidden {
-    display: none
-}
+  .govuk-frontend-supported .gem-c-related-navigation__toggle-more.js-hidden {
+    display: none;
+  }
 
   /* Add new rule to override govuk-link default font weight */
   a.govuk-link.gem-c-related-navigation__section-link {

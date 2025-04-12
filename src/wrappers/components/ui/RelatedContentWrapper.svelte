@@ -321,6 +321,17 @@
           ],
         },
       },
+      {
+        name: "listTruncateThreshold",
+        category: "Behaviour",
+        value: 5,
+        description: {
+          markdown: true,
+          arr: [
+            `The number of links to display in each section before showing the 'Show more' toggle.`,
+          ],
+        },
+      },
     ]),
   );
 

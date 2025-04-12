@@ -936,7 +936,7 @@
 
   .gem-c-related-navigation__link--truncated-links {
     margin-top: 10px;
-    font-weight: bold;
+
   }
 
   .gem-c-related-navigation__toggle {
@@ -1085,5 +1085,10 @@
   .gem-c-related-navigation__toggle-more {
     display: block;
     margin-top: 5px;
+  }
+
+  /* Add new rule to override govuk-link default font weight */
+  a.govuk-link.gem-c-related-navigation__section-link {
+    font-weight: bold;
   }
 </style>

@@ -207,6 +207,18 @@
   </li>
 {/snippet}
 
+{#snippet sectionHeading(id, text, isOther = false)}
+  <h3
+    {id}
+    class="gem-c-related-navigation__sub-heading {isOther
+      ? 'gem-c-related-navigation__sub-heading--other'
+      : ''}"
+    data-track-count={!isOther ? "sidebarRelatedItemSection" : undefined}
+  >
+    {text}
+  </h3>
+{/snippet}
+
 <div
   data-module="ga4-link-tracker"
   class="gem-c-related-navigation govuk-!-display-none-print {hasJavaScript
@@ -262,13 +274,7 @@
       aria-labelledby={sectionId}
       data-module="gem-toggle"
     >
-      <h3
-        id={sectionId}
-        class="gem-c-related-navigation__sub-heading"
-        data-track-count="sidebarRelatedItemSection"
-      >
-        Collection
-      </h3>
+      {@render sectionHeading(sectionId, "Collection")}
       <ul class="gem-c-related-navigation__link-list">
         {#each documentCollections.slice(0, listTruncateThreshold) as link, i}
           {@render linkListItem(
@@ -301,9 +307,7 @@
       class="gem-c-related-navigation__nav-section"
       aria-labelledby={sectionId}
     >
-      <h3 id={sectionId} class="gem-c-related-navigation__sub-heading">
-        Explore the topic
-      </h3>
+      {@render sectionHeading(sectionId, "Explore the topic")}
       <ul class="gem-c-related-navigation__link-list">
         {#each exploreTopicLinks.slice(0, listTruncateThreshold) as link, i}
           {@render linkListItem(
@@ -336,9 +340,7 @@
       class="gem-c-related-navigation__nav-section"
       aria-labelledby={sectionId}
     >
-      <h3 id={sectionId} class="gem-c-related-navigation__sub-heading">
-        Topical event
-      </h3>
+      {@render sectionHeading(sectionId, "Topical event")}
       <ul class="gem-c-related-navigation__link-list">
         {#each topicalEvents.slice(0, listTruncateThreshold) as link, i}
           {@render linkListItem(
@@ -373,13 +375,7 @@
       data-module="gem-toggle"
       data-gem-toggle-module-started="true"
     >
-      <h3
-        id={sectionId}
-        class="gem-c-related-navigation__sub-heading"
-        data-track-count="sidebarRelatedItemSection"
-      >
-        World locations
-      </h3>
+      {@render sectionHeading(sectionId, "World locations")}
       <ul class="gem-c-related-navigation__link-list">
         {#each worldLocations.slice(0, listTruncateThreshold) as link, i}
           {@render linkListItem(
@@ -412,9 +408,7 @@
       class="gem-c-related-navigation__nav-section"
       aria-labelledby={sectionId}
     >
-      <h3 id={sectionId} class="gem-c-related-navigation__sub-heading">
-        Statistical data set
-      </h3>
+      {@render sectionHeading(sectionId, "Statistical data set")}
       <ul class="gem-c-related-navigation__link-list">
         {#each relatedStatisticalDataSets.slice(0, listTruncateThreshold) as link, i}
           {@render linkListItem(
@@ -450,12 +444,7 @@
       class="gem-c-related-navigation__nav-section"
       aria-labelledby={sectionId}
     >
-      <h3
-        id={sectionId}
-        class="gem-c-related-navigation__sub-heading gem-c-related-navigation__sub-heading--other"
-      >
-        Elsewhere on the web
-      </h3>
+      {@render sectionHeading(sectionId, "Elsewhere on the web", true)}
       <ul class="gem-c-related-navigation__link-list">
         {#each externalRelatedLinks.slice(0, listTruncateThreshold) as link, i}
           {@render linkListItem(
@@ -488,12 +477,7 @@
       class="gem-c-related-navigation__nav-section"
       aria-labelledby={sectionId}
     >
-      <h3
-        id={sectionId}
-        class="gem-c-related-navigation__sub-heading gem-c-related-navigation__sub-heading--other"
-      >
-        Other contacts
-      </h3>
+      {@render sectionHeading(sectionId, "Other contacts", true)}
       <ul class="gem-c-related-navigation__link-list">
         {#each otherContacts.slice(0, listTruncateThreshold) as link, i}
           {@render linkListItem(

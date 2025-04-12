@@ -639,7 +639,10 @@
       class="gem-c-related-navigation__nav-section"
       aria-labelledby={sectionId}
     >
-      <h3 id={sectionId} class="gem-c-related-navigation__sub-heading">
+      <h3
+        id={sectionId}
+        class="gem-c-related-navigation__sub-heading gem-c-related-navigation__sub-heading--other"
+      >
         Elsewhere on the web
       </h3>
       <ul class="gem-c-related-navigation__link-list">
@@ -701,7 +704,10 @@
       class="gem-c-related-navigation__nav-section"
       aria-labelledby={sectionId}
     >
-      <h3 id={sectionId} class="gem-c-related-navigation__sub-heading">
+      <h3
+        id={sectionId}
+        class="gem-c-related-navigation__sub-heading gem-c-related-navigation__sub-heading--other"
+      >
         Other contacts
       </h3>
       <ul class="gem-c-related-navigation__link-list">

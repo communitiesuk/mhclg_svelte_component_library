@@ -71,14 +71,6 @@
     otherContacts: false,
   });
 
-  // Helper function to get visible items for a section
-  function getVisibleItems(items: any[], sectionKey: string): any[] {
-    if (!items || items.length <= listTruncateThreshold) return items;
-    return sectionExpandedState[sectionKey]
-      ? items
-      : items.slice(0, listTruncateThreshold);
-  }
-
   // Helper function to toggle section expansion
   function toggleSection(sectionKey: string) {
     sectionExpandedState[sectionKey] = !sectionExpandedState[sectionKey];
@@ -97,41 +89,7 @@
     }
   });
 
-  // Helper function to render expanded items with proper commas and "and"
-  function renderExpandedItems(
-    items: any[],
-    startIndex: number,
-    sectionName: string,
-  ) {
-    return items
-      .map((link, i) => {
-        const isSecondToLast = i === items.length - 2;
-        const isNotLast = i < items.length - 1;
 
-        return `
-        <a
-          href="${link.base_path || link.url}"
-          class="govuk-link govuk-link gem-c-related-navigation__section-link govuk-link gem-c-related-navigation__section-link--inline"
-          data-ga4-link='${
-            !disableGa4
-              ? JSON.stringify({
-                  event_name: "navigation",
-                  type: "related content",
-                  index_section: "1",
-                  index_link: (startIndex + i + 1).toString(),
-                  index_section_count: "1",
-                  index_total: items.length.toString(),
-                  section: sectionName,
-                })
-              : ""
-          }'
-        >
-          ${link.title}
-        </a>${isSecondToLast ? ", and " : isNotLast ? ", " : ""}
-      `;
-      })
-      .join("");
-  }
 </script>
 
 <div
@@ -161,7 +119,7 @@
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
-              class="govuk-link govuk-link gem-c-related-navigation__section-link"
+              class="govuk-link govuk-link gem-c-related-navigation__section-link govuk-link gem-c-related-navigation__section-link--other"
               data-ga4-link={!disableGa4
                 ? JSON.stringify({
                     event_name: "navigation",
@@ -222,7 +180,8 @@
               {#each orderedRelatedItems.slice(listTruncateThreshold) as link, i (link.base_path)}
                 <a
                   href={link.base_path}
-                  class="govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"
+                  class="govuk-link govuk-link gem-c-related-navigation__section-link
+                  gem-c-related-navigation__section-link--other-truncated"
                   data-ga4-link={JSON.stringify({
                     event_name: "navigation",
                     type: "related content",
@@ -362,11 +321,11 @@
         Explore the topic
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each getVisibleItems(exploreTopicLinks, "exploreTopics") as link}
+        {#each exploreTopicLinks.slice(0, listTruncateThreshold) as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
-              class="govuk-link gem-c-related-navigation__section-link"
+              class="govuk-link govuk-link gem-c-related-navigation__section-link"
               data-track-category="relatedLinkClicked"
               data-track-action={link.base_path}
               data-track-label={link.title}
@@ -382,6 +341,7 @@
                     type: "related content",
                     index_link: exploreTopicLinks.indexOf(link) + 1,
                     index_total: exploreTopicLinks.length,
+                    section: "Explore the topic",
                   })
                 : undefined}
             >
@@ -391,18 +351,62 @@
         {/each}
         {#if exploreTopicLinks.length > listTruncateThreshold}
           <li
-            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+            class="gem-c-related-navigation__link toggle-wrap"
+            data-module="ga4-event-tracker"
           >
-            <button
-              type="button"
-              class="gem-c-related-navigation__toggle govuk-link"
+            <a
+              class="gem-c-related-navigation__toggle"
+              data-controls="toggle_explore_topics"
+              data-expanded={sectionExpandedState.exploreTopics}
+              data-toggled-text="Show {exploreTopicLinks.length -
+                listTruncateThreshold} more"
+              data-ga4-event={JSON.stringify({
+                event_name: "select_content",
+                type: "related content",
+              })}
+              href="#"
+              role="button"
+              aria-controls="toggle_explore_topics"
               aria-expanded={sectionExpandedState.exploreTopics}
-              on:click={() => toggleSection("exploreTopics")}
+              on:click|preventDefault={() => toggleSection("exploreTopics")}
             >
               {sectionExpandedState.exploreTopics
                 ? "Show fewer"
                 : `Show ${exploreTopicLinks.length - listTruncateThreshold} more`}
-            </button>
+            </a>
+          </li>
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <span
+              id="toggle_explore_topics"
+              class="gem-c-related-navigation__toggle-more {sectionExpandedState.exploreTopics
+                ? ''
+                : 'js-hidden'}"
+              aria-live="polite"
+              role="region"
+            >
+              {#each exploreTopicLinks.slice(listTruncateThreshold) as link, i (link.base_path)}
+                <a
+                  href={link.base_path}
+                  class="govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"
+                  data-ga4-link={!disableGa4
+                    ? JSON.stringify({
+                        event_name: "navigation",
+                        type: "related content",
+                        index_section: "1",
+                        index_link: (listTruncateThreshold + i + 1).toString(),
+                        index_section_count: "1",
+                        index_total: exploreTopicLinks.length.toString(),
+                        section: "Explore the topic",
+                      })
+                    : undefined}>{link.title}</a
+                >{#if i < exploreTopicLinks.slice(listTruncateThreshold).length - 1}{i ===
+                  exploreTopicLinks.slice(listTruncateThreshold).length - 2
+                    ? ", and "
+                    : ", "}{/if}
+              {/each}
+            </span>
           </li>
         {/if}
       </ul>
@@ -421,11 +425,11 @@
         Topical event
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each getVisibleItems(topicalEvents, "topicalEvents") as link}
+        {#each topicalEvents.slice(0, listTruncateThreshold) as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
-              class="govuk-link gem-c-related-navigation__section-link"
+              class="govuk-link govuk-link gem-c-related-navigation__section-link"
               data-track-category="relatedLinkClicked"
               data-track-action={link.base_path}
               data-track-label={link.title}
@@ -441,6 +445,7 @@
                     type: "related content",
                     index_link: topicalEvents.indexOf(link) + 1,
                     index_total: topicalEvents.length,
+                    section: "Topical event",
                   })
                 : undefined}
             >
@@ -450,18 +455,62 @@
         {/each}
         {#if topicalEvents.length > listTruncateThreshold}
           <li
-            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+            class="gem-c-related-navigation__link toggle-wrap"
+            data-module="ga4-event-tracker"
           >
-            <button
-              type="button"
-              class="gem-c-related-navigation__toggle govuk-link"
+            <a
+              class="gem-c-related-navigation__toggle"
+              data-controls="toggle_topical_events"
+              data-expanded={sectionExpandedState.topicalEvents}
+              data-toggled-text="Show {topicalEvents.length -
+                listTruncateThreshold} more"
+              data-ga4-event={JSON.stringify({
+                event_name: "select_content",
+                type: "related content",
+              })}
+              href="#"
+              role="button"
+              aria-controls="toggle_topical_events"
               aria-expanded={sectionExpandedState.topicalEvents}
-              on:click={() => toggleSection("topicalEvents")}
+              on:click|preventDefault={() => toggleSection("topicalEvents")}
             >
               {sectionExpandedState.topicalEvents
                 ? "Show fewer"
                 : `Show ${topicalEvents.length - listTruncateThreshold} more`}
-            </button>
+            </a>
+          </li>
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <span
+              id="toggle_topical_events"
+              class="gem-c-related-navigation__toggle-more {sectionExpandedState.topicalEvents
+                ? ''
+                : 'js-hidden'}"
+              aria-live="polite"
+              role="region"
+            >
+              {#each topicalEvents.slice(listTruncateThreshold) as link, i (link.base_path)}
+                <a
+                  href={link.base_path}
+                  class="govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"
+                  data-ga4-link={!disableGa4
+                    ? JSON.stringify({
+                        event_name: "navigation",
+                        type: "related content",
+                        index_section: "1",
+                        index_link: (listTruncateThreshold + i + 1).toString(),
+                        index_section_count: "1",
+                        index_total: topicalEvents.length.toString(),
+                        section: "Topical event",
+                      })
+                    : undefined}>{link.title}</a
+                >{#if i < topicalEvents.slice(listTruncateThreshold).length - 1}{i ===
+                  topicalEvents.slice(listTruncateThreshold).length - 2
+                    ? ", and "
+                    : ", "}{/if}
+              {/each}
+            </span>
           </li>
         {/if}
       </ul>
@@ -584,7 +633,7 @@
         Statistical data set
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each getVisibleItems(relatedStatisticalDataSets, "relatedStatisticalDataSets") as link}
+        {#each relatedStatisticalDataSets.slice(0, listTruncateThreshold) as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
@@ -604,6 +653,7 @@
                     type: "related content",
                     index_link: relatedStatisticalDataSets.indexOf(link) + 1,
                     index_total: relatedStatisticalDataSets.length,
+                    section: "Statistical data set",
                   })
                 : undefined}
             >
@@ -613,18 +663,66 @@
         {/each}
         {#if relatedStatisticalDataSets.length > listTruncateThreshold}
           <li
-            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+            class="gem-c-related-navigation__link toggle-wrap"
+            data-module="ga4-event-tracker"
           >
-            <button
-              type="button"
-              class="gem-c-related-navigation__toggle govuk-link"
+            <a
+              class="gem-c-related-navigation__toggle"
+              data-controls="toggle_statistical_data_sets"
+              data-expanded={sectionExpandedState.relatedStatisticalDataSets}
+              data-toggled-text="Show {relatedStatisticalDataSets.length -
+                listTruncateThreshold} more"
+              data-ga4-event={JSON.stringify({
+                event_name: "select_content",
+                type: "related content",
+              })}
+              href="#"
+              role="button"
+              aria-controls="toggle_statistical_data_sets"
               aria-expanded={sectionExpandedState.relatedStatisticalDataSets}
-              on:click={() => toggleSection("relatedStatisticalDataSets")}
+              on:click|preventDefault={() =>
+                toggleSection("relatedStatisticalDataSets")}
             >
               {sectionExpandedState.relatedStatisticalDataSets
                 ? "Show fewer"
                 : `Show ${relatedStatisticalDataSets.length - listTruncateThreshold} more`}
-            </button>
+            </a>
+          </li>
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <span
+              id="toggle_statistical_data_sets"
+              class="gem-c-related-navigation__toggle-more {sectionExpandedState.relatedStatisticalDataSets
+                ? ''
+                : 'js-hidden'}"
+              aria-live="polite"
+              role="region"
+            >
+              {#each relatedStatisticalDataSets.slice(listTruncateThreshold) as link, i (link.base_path)}
+                <a
+                  href={link.base_path}
+                  class="govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"
+                  data-ga4-link={!disableGa4
+                    ? JSON.stringify({
+                        event_name: "navigation",
+                        type: "related content",
+                        index_section: "1",
+                        index_link: (listTruncateThreshold + i + 1).toString(),
+                        index_section_count: "1",
+                        index_total:
+                          relatedStatisticalDataSets.length.toString(),
+                        section: "Statistical data set",
+                      })
+                    : undefined}>{link.title}</a
+                >{#if i < relatedStatisticalDataSets.slice(listTruncateThreshold).length - 1}{i ===
+                  relatedStatisticalDataSets.slice(listTruncateThreshold)
+                    .length -
+                    2
+                    ? ", and "
+                    : ", "}{/if}
+              {/each}
+            </span>
           </li>
         {/if}
       </ul>
@@ -646,11 +744,11 @@
         Elsewhere on the web
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each getVisibleItems(externalRelatedLinks, "externalRelatedLinks") as link}
+        {#each externalRelatedLinks.slice(0, listTruncateThreshold) as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.url}
-              class="govuk-link gem-c-related-navigation__section-link"
+              class="govuk-link govuk-link gem-c-related-navigation__section-link govuk-link gem-c-related-navigation__section-link--other"
               target="_blank"
               rel="noopener noreferrer external"
               data-track-category="relatedLinkClicked"
@@ -669,6 +767,7 @@
                     index_link: externalRelatedLinks.indexOf(link) + 1,
                     index_total: externalRelatedLinks.length,
                     external: "true",
+                    section: "Elsewhere on the web",
                   })
                 : undefined}
             >
@@ -678,18 +777,66 @@
         {/each}
         {#if externalRelatedLinks.length > listTruncateThreshold}
           <li
-            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+            class="gem-c-related-navigation__link toggle-wrap"
+            data-module="ga4-event-tracker"
           >
-            <button
-              type="button"
-              class="gem-c-related-navigation__toggle govuk-link"
+            <a
+              class="gem-c-related-navigation__toggle"
+              data-controls="toggle_external_links"
+              data-expanded={sectionExpandedState.externalRelatedLinks}
+              data-toggled-text="Show {externalRelatedLinks.length -
+                listTruncateThreshold} more"
+              data-ga4-event={JSON.stringify({
+                event_name: "select_content",
+                type: "related content",
+              })}
+              href="#"
+              role="button"
+              aria-controls="toggle_external_links"
               aria-expanded={sectionExpandedState.externalRelatedLinks}
-              on:click={() => toggleSection("externalRelatedLinks")}
+              on:click|preventDefault={() =>
+                toggleSection("externalRelatedLinks")}
             >
               {sectionExpandedState.externalRelatedLinks
                 ? "Show fewer"
                 : `Show ${externalRelatedLinks.length - listTruncateThreshold} more`}
-            </button>
+            </a>
+          </li>
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <span
+              id="toggle_external_links"
+              class="gem-c-related-navigation__toggle-more {sectionExpandedState.externalRelatedLinks
+                ? ''
+                : 'js-hidden'}"
+              aria-live="polite"
+              role="region"
+            >
+              {#each externalRelatedLinks.slice(listTruncateThreshold) as link, i (link.url)}
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noopener noreferrer external"
+                  class="govuk-link govuk-link gem-c-related-navigation__section-link govuk-link govuk-link gem-c-related-navigation__section-link--other-truncated"
+                  data-ga4-link={!disableGa4
+                    ? JSON.stringify({
+                        event_name: "navigation",
+                        type: "related content",
+                        index_section: "1",
+                        index_link: (listTruncateThreshold + i + 1).toString(),
+                        index_section_count: "1",
+                        index_total: externalRelatedLinks.length.toString(),
+                        section: "Elsewhere on the web",
+                        external: "true",
+                      })
+                    : undefined}>{link.title}</a
+                >{#if i < externalRelatedLinks.slice(listTruncateThreshold).length - 1}{i ===
+                  externalRelatedLinks.slice(listTruncateThreshold).length - 2
+                    ? ", and "
+                    : ", "}{/if}
+              {/each}
+            </span>
           </li>
         {/if}
       </ul>
@@ -711,11 +858,11 @@
         Other contacts
       </h3>
       <ul class="gem-c-related-navigation__link-list">
-        {#each getVisibleItems(otherContacts, "otherContacts") as link}
+        {#each otherContacts.slice(0, listTruncateThreshold) as link}
           <li class="gem-c-related-navigation__link">
             <a
               href={link.base_path}
-              class="govuk-link gem-c-related-navigation__section-link"
+              class="govuk-link govuk-link gem-c-related-navigation__section-link govuk-link gem-c-related-navigation__section-link--other"
               data-track-category="relatedLinkClicked"
               data-track-action={link.base_path}
               data-track-label={link.title}
@@ -731,6 +878,7 @@
                     type: "related content",
                     index_link: otherContacts.indexOf(link) + 1,
                     index_total: otherContacts.length,
+                    section: "Other contacts",
                   })
                 : undefined}
             >
@@ -740,18 +888,62 @@
         {/each}
         {#if otherContacts.length > listTruncateThreshold}
           <li
-            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+            class="gem-c-related-navigation__link toggle-wrap"
+            data-module="ga4-event-tracker"
           >
-            <button
-              type="button"
-              class="gem-c-related-navigation__toggle govuk-link"
+            <a
+              class="gem-c-related-navigation__toggle"
+              data-controls="toggle_other_contacts"
+              data-expanded={sectionExpandedState.otherContacts}
+              data-toggled-text="Show {otherContacts.length -
+                listTruncateThreshold} more"
+              data-ga4-event={JSON.stringify({
+                event_name: "select_content",
+                type: "related content",
+              })}
+              href="#"
+              role="button"
+              aria-controls="toggle_other_contacts"
               aria-expanded={sectionExpandedState.otherContacts}
-              on:click={() => toggleSection("otherContacts")}
+              on:click|preventDefault={() => toggleSection("otherContacts")}
             >
               {sectionExpandedState.otherContacts
                 ? "Show fewer"
                 : `Show ${otherContacts.length - listTruncateThreshold} more`}
-            </button>
+            </a>
+          </li>
+          <li
+            class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
+          >
+            <span
+              id="toggle_other_contacts"
+              class="gem-c-related-navigation__toggle-more {sectionExpandedState.otherContacts
+                ? ''
+                : 'js-hidden'}"
+              aria-live="polite"
+              role="region"
+            >
+              {#each otherContacts.slice(listTruncateThreshold) as link, i (link.base_path)}
+                <a
+                  href={link.base_path}
+                  class="govuk-link govuk-link gem-c-related-navigation__section-link govuk-link govuk-link gem-c-related-navigation__section-link--other-truncated"
+                  data-ga4-link={!disableGa4
+                    ? JSON.stringify({
+                        event_name: "navigation",
+                        type: "related content",
+                        index_section: "1",
+                        index_link: (listTruncateThreshold + i + 1).toString(),
+                        index_section_count: "1",
+                        index_total: otherContacts.length.toString(),
+                        section: "Other contacts",
+                      })
+                    : undefined}>{link.title}</a
+                >{#if i < otherContacts.slice(listTruncateThreshold).length - 1}{i ===
+                  otherContacts.slice(listTruncateThreshold).length - 2
+                    ? ", and "
+                    : ", "}{/if}
+              {/each}
+            </span>
           </li>
         {/if}
       </ul>
@@ -1069,8 +1261,18 @@
     display: none;
   }
 
-  /* Add new rule to override govuk-link default font weight */
+  /* Add new rules to override govuk-link default font weight */
   a.govuk-link.gem-c-related-navigation__section-link {
     font-weight: bold;
+  }
+
+  a.govuk-link.gem-c-related-navigation__section-link--other {
+    font-weight: normal;
+  }
+
+  /* New rules for truncated links with the --other modifiers */
+  a.govuk-link.gem-c-related-navigation__section-link--other-truncated {
+    line-height: 1.45;
+    font-weight: normal;
   }
 </style>

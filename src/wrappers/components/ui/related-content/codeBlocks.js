@@ -107,7 +107,27 @@ export const codeBlock8 = `
 <RelatedContent externalRelatedLinks={items} />
 `;
 
-export const codeBlock9 = `
+export const codeBlock9 = ` // Extensive World Locations
+<script>
+  import RelatedContent from "$lib/components/ui/RelatedContent.svelte";
+
+  const items = [
+      { title: "Algeria", base_path: "/world/algeria/news" },
+      { title: "Austria", base_path: "/world/austria/news" },
+      { title: "Belarus", base_path: "/world/belarus/news" },
+      { title: "Belgium", base_path: "/world/belgium/news" },
+      { title: "Bolivia", base_path: "/world/bolivia/news" },
+      { title: "Brazil", base_path: "/world/brazil/news" },
+      { title: "Canada", base_path: "/world/canada/news" },
+      { title: "Chile", base_path: "/world/chile/news" },
+      { title: "China", base_path: "/world/china/news" },
+  ];
+</script>
+
+<RelatedContent worldLocations={items} />
+`;
+
+export const codeBlock10 = ` // Statistical Data Sets
 <script>
   import RelatedContent from "$lib/components/ui/RelatedContent.svelte";
 
@@ -120,7 +140,7 @@ export const codeBlock9 = `
 <RelatedContent relatedStatisticalDataSets={items} />
 `;
 
-export const codeBlock10 = `
+export const codeBlock11 = ` // Other Contacts
 <script>
   import RelatedContent from "$lib/components/ui/RelatedContent.svelte";
 
@@ -132,20 +152,42 @@ export const codeBlock10 = `
 <RelatedContent otherContacts={items} />
 `;
 
-export const codeBlock11 = `
+export const codeBlock12 = ` // Different Languages
 <script>
   import RelatedContent from "$lib/components/ui/RelatedContent.svelte";
 
-  // Data defined for each section (as in previous examples)
-  const orderedRelatedItemsData = [{ title: "Find an apprenticeship", base_path: "/apply-apprenticeship" }, /* ... */];
-  const collectionsData = [{ title: "Recruit an apprentice...", base_path: "..." }, /* ... */];
-  const mainstreamData = [{ title: "Driving licences", base_path: "..." }, /* ... */];
-  const taxonsData = [{ title: "Driving instruction...", base_path: "..." }];
-  const topicalEventsData = [{ title: "UK-China High-Level...", base_path: "..." }];
-  const worldLocationsData = [{ title: "South Sudan", base_path: "..." }, /* ... */];
-  const statsData = [{ title: "International road fuel prices", base_path: "..." }, /* ... */];
-  const externalLinksData = [{ url: "...", title: "Student loans..." }, /* ... */];
-  const contactsData = [{ title: "Pest Control", base_path: "..." }];
+  // Data for each section needs the 'locale' property
+  const orderedRelatedItemsLangData = [
+    { title: "Find an apprenticeship (Welsh)", base_path: "/apply-apprenticeship.cy", locale: "cy" },
+  ];
+  const mainstreamLangData = [
+    { title: "Apprenticeships, 14 to 19 education... (Korean)", base_path: "/browse/education/find-course.ko", locale: "ko" },
+  ];
+  // ... Define other language-specific data arrays (topicalEvents, contacts, stats, collections, worldLocations, externalLinks)
+
+</script>
+
+<RelatedContent
+  orderedRelatedItems={orderedRelatedItemsLangData}
+  mainstreamBrowsePages={mainstreamLangData}
+  // ... Pass other language-specific props
+/>
+`;
+
+export const codeBlock13 = ` // All Types Combined
+<script>
+  import RelatedContent from "$lib/components/ui/RelatedContent.svelte";
+
+  // Define all data arrays as in previous examples
+  const orderedRelatedItemsData = [/* ... */];
+  const collectionsData = [/* ... */];
+  const mainstreamData = [/* ... */];
+  const taxonsData = [/* ... */]; // Will be ignored due to mainstreamData
+  const topicalEventsData = [/* ... */];
+  const worldLocationsData = [/* ... */];
+  const statsData = [/* ... */];
+  const externalLinksData = [/* ... */];
+  const contactsData = [/* ... */];
 
 </script>
 
@@ -162,7 +204,7 @@ export const codeBlock11 = `
 />
 `;
 
-export const codeBlock12 = `
+export const codeBlock14 = ` // Disable GA4
 <script>
   import RelatedContent from "$lib/components/ui/RelatedContent.svelte";
 

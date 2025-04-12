@@ -79,6 +79,80 @@
   ];
   const contactsData = [{ title: "Pest Control", base_path: "/pest-control" }];
 
+  // Data for Extensive World Locations Example
+  const extensiveWorldLocationsData = [
+    { title: "Algeria", base_path: "/world/algeria/news" },
+    { title: "Austria", base_path: "/world/austria/news" },
+    { title: "Belarus", base_path: "/world/belarus/news" },
+    { title: "Belgium", base_path: "/world/belgium/news" },
+    { title: "Bolivia", base_path: "/world/bolivia/news" },
+    { title: "Brazil", base_path: "/world/brazil/news" },
+    { title: "Canada", base_path: "/world/canada/news" },
+    { title: "Chile", base_path: "/world/chile/news" },
+    { title: "China", base_path: "/world/china/news" }, // Note: GOV.UK example had capitalization difference
+  ];
+
+  // Data for Different Languages Example
+  const orderedRelatedItemsLangData = [
+    {
+      title: "Find an apprenticeship (Welsh)",
+      base_path: "/apply-apprenticeship.cy",
+      locale: "cy",
+    },
+  ];
+  const mainstreamLangData = [
+    {
+      title:
+        "Apprenticeships, 14 to 19 education and training for work (Korean)",
+      base_path: "/browse/education/find-course.ko",
+      locale: "ko",
+    },
+  ];
+  const topicalEventsLangData = [
+    {
+      title: "UK-China High-Level People to People Dialogue 2017 (Spanish)",
+      base_path:
+        "/government/topical-events/uk-china-high-level-people-to-people-dialogue-2017.es",
+      locale: "es",
+    },
+  ];
+  const contactsLangData = [
+    {
+      title: "Jam producers (Spanish)",
+      base_path: "/jam-producers.es",
+      locale: "es",
+    },
+  ];
+  const statsLangData = [
+    {
+      title: "International road fuel prices (Italian)",
+      base_path:
+        "/government/statistical-data-sets/comparisons-of-industrial-and-domestic-energy-prices-monthly-figures.it",
+      locale: "it",
+    },
+  ];
+  const collectionsLangData = [
+    {
+      title: "Recruit an apprentice (formerly apprenticeship vacancies)",
+      base_path: "/government/collections/apprenticeship-vacancies",
+      locale: "en",
+    },
+  ];
+  const worldLocationsLangData = [
+    {
+      title: "South Sudan (Arabic)",
+      base_path: "/world/south-sudan/news.ar",
+      locale: "ar",
+    },
+  ];
+  const externalLinksLangData = [
+    {
+      url: "http://media.slc.co.uk/sfe/1718/ft/sfe_terms_and_conditions_guide_1718_d.pdf",
+      title: "Student loans: terms and conditions 2017 to 2018 (PDF, 136KB)",
+      locale: "en",
+    },
+  ];
+
   let accordionSnippetSections = [
     {
       id: "1",
@@ -100,10 +174,12 @@
     { id: "6", heading: "6. Topical Events", content: Example6 },
     { id: "7", heading: "7. World Locations", content: Example7 },
     { id: "8", heading: "8. External Links", content: Example8 },
-    { id: "9", heading: "9. Statistical Data Sets", content: Example9 },
-    { id: "10", heading: "10. Other Contacts", content: Example10 },
-    { id: "11", heading: "11. All Types Combined", content: Example11 },
-    { id: "12", heading: "12. Disable GA4 Tracking", content: Example12 },
+    { id: "9", heading: "9. Extensive World Locations", content: Example9 },
+    { id: "10", heading: "10. Statistical Data Sets", content: Example10 },
+    { id: "11", heading: "11. Other Contacts", content: Example11 },
+    { id: "12", heading: "12. With Different Languages", content: Example12 },
+    { id: "13", heading: "13. All Types Combined", content: Example13 },
+    { id: "14", heading: "14. Disable GA4 Tracking", content: Example14 },
   ];
 </script>
 
@@ -188,19 +264,42 @@
 
 {#snippet Example9()}
   <div class="p-5 bg-white max-w-xs">
-    <RelatedContent relatedStatisticalDataSets={statsData} />
+    <RelatedContent worldLocations={extensiveWorldLocationsData} />
   </div>
   <CodeBlock code={codeBlocks.codeBlock9} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example10()}
   <div class="p-5 bg-white max-w-xs">
-    <RelatedContent otherContacts={contactsData} />
+    <RelatedContent relatedStatisticalDataSets={statsData} />
   </div>
   <CodeBlock code={codeBlocks.codeBlock10} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example11()}
+  <div class="p-5 bg-white max-w-xs">
+    <RelatedContent otherContacts={contactsData} />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock11} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example12()}
+  <div class="p-5 bg-white max-w-xs">
+    <RelatedContent
+      orderedRelatedItems={orderedRelatedItemsLangData}
+      mainstreamBrowsePages={mainstreamLangData}
+      topicalEvents={topicalEventsLangData}
+      otherContacts={contactsLangData}
+      relatedStatisticalDataSets={statsLangData}
+      documentCollections={collectionsLangData}
+      worldLocations={worldLocationsLangData}
+      externalRelatedLinks={externalLinksLangData}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock12} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example13()}
   <div class="p-5 bg-white max-w-xs">
     <RelatedContent
       orderedRelatedItems={orderedRelatedItemsData}
@@ -214,15 +313,15 @@
       otherContacts={contactsData}
     />
   </div>
-  <CodeBlock code={codeBlocks.codeBlock11} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock13} language="svelte"></CodeBlock>
 {/snippet}
 
-{#snippet Example12()}
+{#snippet Example14()}
   <div class="p-5 bg-white max-w-xs">
     <RelatedContent
       orderedRelatedItems={orderedRelatedItemsData}
       disableGa4={true}
     />
   </div>
-  <CodeBlock code={codeBlocks.codeBlock12} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock14} language="svelte"></CodeBlock>
 {/snippet}

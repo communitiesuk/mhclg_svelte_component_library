@@ -247,6 +247,7 @@
           markdown: true,
           arr: [
             `Set to <code>true</code> to apply an alternative styling. This removes the dashes, adds more vertical space, and styles active links with a left border. Often used for navigation on landing pages.`,
+            `<strong>Note:</strong> This style is primarily intended for flat lists and may produce unexpected visual results when used with nested content (<code>items</code>).`,
           ],
         },
       },

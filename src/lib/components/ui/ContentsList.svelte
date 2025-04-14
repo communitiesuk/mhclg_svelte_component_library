@@ -417,7 +417,8 @@
 
   .brand--attorney-generals-office.brand__border-color,
   .brand--attorney-generals-office .brand__border-color {
-    border-color: #a91c8e;
+    border-left-color: #a91c8e !important;
+    color: #a91c8e !important;
   }
 
   .brand--attorney-generals-office .brand__color,
@@ -431,7 +432,8 @@
 
   .brand--cabinet-office.brand__border-color,
   .brand--cabinet-office .brand__border-color {
-    border-color: #0056b8;
+    border-left-color: #0056b8 !important;
+    color: #0056b8 !important;
   }
 
   .brand--cabinet-office .brand__color,
@@ -445,7 +447,8 @@
 
   .brand--civil-service.brand__border-color,
   .brand--civil-service .brand__border-color {
-    border-color: #b2292e;
+    border-left-color: #b2292e !important;
+    color: #b2292e !important;
   }
 
   .brand--civil-service .brand__color,
@@ -459,7 +462,8 @@
 
   .brand--department-for-business-trade.brand__border-color,
   .brand--department-for-business-trade .brand__border-color {
-    border-color: #e52d13;
+    border-left-color: #e52d13 !important;
+    color: #e52d13 !important;
   }
 
   .brand--department-for-business-trade .brand__color,
@@ -474,7 +478,8 @@
   .brand--department-for-business-energy-industrial-strategy.brand__border-color,
   .brand--department-for-business-energy-industrial-strategy
     .brand__border-color {
-    border-color: #003479;
+    border-left-color: #003479 !important;
+    color: #003479 !important;
   }
 
   .brand--department-for-business-energy-industrial-strategy .brand__color,
@@ -492,7 +497,8 @@
 
   .brand--department-for-business-innovation-skills.brand__border-color,
   .brand--department-for-business-innovation-skills .brand__border-color {
-    border-color: #003479;
+    border-left-color: #003479 !important;
+    color: #003479 !important;
   }
 
   .brand--department-for-business-innovation-skills .brand__color,
@@ -506,7 +512,8 @@
 
   .brand--department-for-communities-local-government.brand__border-color,
   .brand--department-for-communities-local-government .brand__border-color {
-    border-color: #099;
+    border-left-color: #099 !important;
+    color: #099 !important;
   }
 
   .brand--department-for-communities-local-government .brand__color,
@@ -520,7 +527,8 @@
 
   .brand--department-for-culture-media-sport.brand__border-color,
   .brand--department-for-culture-media-sport .brand__border-color {
-    border-color: #ed1588;
+    border-left-color: #ed1588 !important;
+    color: #ed1588 !important;
   }
 
   .brand--department-for-culture-media-sport .brand__color,
@@ -534,7 +542,8 @@
 
   .brand--department-for-digital-culture-media-sport.brand__border-color,
   .brand--department-for-digital-culture-media-sport .brand__border-color {
-    border-color: #d40072;
+    border-left-color: #d40072 !important;
+    color: #d40072 !important;
   }
 
   .brand--department-for-digital-culture-media-sport .brand__color,
@@ -548,7 +557,8 @@
 
   .brand--department-for-education.brand__border-color,
   .brand--department-for-education .brand__border-color {
-    border-color: #003764;
+    border-left-color: #003764 !important;
+    color: #003764 !important;
   }
 
   .brand--department-for-education .brand__color,
@@ -562,7 +572,8 @@
 
   .brand--department-for-energy-security-net-zero.brand__border-color,
   .brand--department-for-energy-security-net-zero .brand__border-color {
-    border-color: #00a33b;
+    border-left-color: #00a33b !important;
+    color: #00a33b !important;
   }
 
   .brand--department-for-energy-security-net-zero .brand__color,
@@ -576,7 +587,8 @@
 
   .brand--department-for-environment-food-rural-affairs.brand__border-color,
   .brand--department-for-environment-food-rural-affairs .brand__border-color {
-    border-color: #00a33b;
+    border-left-color: #00a33b !important;
+    color: #00a33b !important;
   }
 
   .brand--department-for-environment-food-rural-affairs .brand__color,
@@ -590,7 +602,8 @@
 
   .brand--department-for-exiting-the-european-union.brand__border-color,
   .brand--department-for-exiting-the-european-union .brand__border-color {
-    border-color: #009fe3;
+    border-left-color: #009fe3 !important;
+    color: #009fe3 !important;
   }
 
   .brand--department-for-exiting-the-european-union .brand__color,
@@ -604,7 +617,8 @@
 
   .brand--department-for-international-development.brand__border-color,
   .brand--department-for-international-development .brand__border-color {
-    border-color: #002878;
+    border-left-color: #002878 !important;
+    color: #002878 !important;
   }
 
   .brand--department-for-international-development .brand__color,
@@ -618,7 +632,8 @@
 
   .brand--department-for-international-trade.brand__border-color,
   .brand--department-for-international-trade .brand__border-color {
-    border-color: #cf102d;
+    border-left-color: #cf102d !important;
+    color: #cf102d !important;
   }
 
   .brand--department-for-international-trade .brand__color,
@@ -632,7 +647,8 @@
 
   .brand--department-for-levelling-up-housing-communities.brand__border-color,
   .brand--department-for-levelling-up-housing-communities .brand__border-color {
-    border-color: #012169;
+    border-left-color: #012169 !important;
+    color: #012169 !important;
   }
 
   .brand--department-for-levelling-up-housing-communities .brand__color,
@@ -646,7 +662,8 @@
 
   .brand--department-for-science-innovation-technology.brand__border-color,
   .brand--department-for-science-innovation-technology .brand__border-color {
-    border-color: #00f8f8;
+    border-left-color: #00f8f8 !important;
+    color: #00f8f8 !important;
   }
 
   .brand--department-for-science-innovation-technology .brand__color,
@@ -660,7 +677,8 @@
 
   .brand--department-for-transport.brand__border-color,
   .brand--department-for-transport .brand__border-color {
-    border-color: #006853;
+    border-left-color: #006853 !important;
+    color: #006853 !important;
   }
 
   .brand--department-for-transport .brand__color,
@@ -674,7 +692,8 @@
 
   .brand--department-for-work-pensions.brand__border-color,
   .brand--department-for-work-pensions .brand__border-color {
-    border-color: #00bcb5;
+    border-left-color: #00bcb5 !important;
+    color: #00bcb5 !important;
   }
 
   .brand--department-for-work-pensions .brand__color,
@@ -688,7 +707,8 @@
 
   .brand--department-of-energy-climate-change.brand__border-color,
   .brand--department-of-energy-climate-change .brand__border-color {
-    border-color: #009ddb;
+    border-left-color: #009ddb !important;
+    color: #009ddb !important;
   }
 
   .brand--department-of-energy-climate-change .brand__color,
@@ -702,7 +722,8 @@
 
   .brand--department-of-health.brand__border-color,
   .brand--department-of-health .brand__border-color {
-    border-color: #00ad93;
+    border-left-color: #00ad93 !important;
+    color: #00ad93 !important;
   }
 
   .brand--department-of-health .brand__color,
@@ -716,7 +737,8 @@
 
   .brand--department-of-health-social-care.brand__border-color,
   .brand--department-of-health-social-care .brand__border-color {
-    border-color: #00a990;
+    border-left-color: #00a990 !important;
+    color: #00a990 !important;
   }
 
   .brand--department-of-health-social-care .brand__color,
@@ -730,7 +752,8 @@
 
   .brand--foreign-commonwealth-office.brand__border-color,
   .brand--foreign-commonwealth-office .brand__border-color {
-    border-color: #003e74;
+    border-left-color: #003e74 !important;
+    color: #003e74 !important;
   }
 
   .brand--foreign-commonwealth-office .brand__color,
@@ -744,7 +767,8 @@
 
   .brand--foreign-commonwealth-development-office.brand__border-color,
   .brand--foreign-commonwealth-development-office .brand__border-color {
-    border-color: #012069;
+    border-left-color: #012069 !important;
+    color: #012069 !important;
   }
 
   .brand--foreign-commonwealth-development-office .brand__color,
@@ -758,7 +782,8 @@
 
   .brand--government-equalities-office.brand__border-color,
   .brand--government-equalities-office .brand__border-color {
-    border-color: #0056b8;
+    border-left-color: #0056b8 !important;
+    color: #0056b8 !important;
   }
 
   .brand--government-equalities-office .brand__color,
@@ -772,7 +797,8 @@
 
   .brand--hm-government.brand__border-color,
   .brand--hm-government .brand__border-color {
-    border-color: #266ebc;
+    border-left-color: #266ebc !important;
+    color: #266ebc !important;
   }
 
   .brand--hm-government .brand__color,
@@ -786,7 +812,8 @@
 
   .brand--hm-revenue-customs.brand__border-color,
   .brand--hm-revenue-customs .brand__border-color {
-    border-color: #008476;
+    border-left-color: #008476 !important;
+    color: #008476 !important;
   }
 
   .brand--hm-revenue-customs .brand__color,
@@ -800,7 +827,8 @@
 
   .brand--hm-treasury.brand__border-color,
   .brand--hm-treasury .brand__border-color {
-    border-color: #b2292e;
+    border-left-color: #b2292e !important;
+    color: #b2292e !important;
   }
 
   .brand--hm-treasury .brand__color,
@@ -814,7 +842,8 @@
 
   .brand--home-office.brand__border-color,
   .brand--home-office .brand__border-color {
-    border-color: #732282;
+    border-left-color: #732282 !important;
+    color: #732282 !important;
   }
 
   .brand--home-office .brand__color,
@@ -828,7 +857,8 @@
 
   .brand--ministry-of-defence.brand__border-color,
   .brand--ministry-of-defence .brand__border-color {
-    border-color: #532a45;
+    border-left-color: #532a45 !important;
+    color: #532a45 !important;
   }
 
   .brand--ministry-of-defence .brand__color,
@@ -843,7 +873,8 @@
   .brand--ministry-of-housing-communities-local-government.brand__border-color,
   .brand--ministry-of-housing-communities-local-government
     .brand__border-color {
-    border-color: #00625e;
+    border-left-color: #00625e !important;
+    color: #00625e !important;
   }
 
   .brand--ministry-of-housing-communities-local-government .brand__color,
@@ -858,7 +889,8 @@
 
   .brand--ministry-of-justice.brand__border-color,
   .brand--ministry-of-justice .brand__border-color {
-    border-color: #000;
+    border-left-color: #000 !important;
+    color: #000 !important;
   }
 
   .brand--ministry-of-justice .brand__color,
@@ -872,7 +904,8 @@
 
   .brand--northern-ireland-office.brand__border-color,
   .brand--northern-ireland-office .brand__border-color {
-    border-color: #00205c;
+    border-left-color: #00205c !important;
+    color: #00205c !important;
   }
 
   .brand--northern-ireland-office .brand__color,
@@ -886,7 +919,8 @@
 
   .brand--office-of-the-advocate-general-for-scotland.brand__border-color,
   .brand--office-of-the-advocate-general-for-scotland .brand__border-color {
-    border-color: #00205c;
+    border-left-color: #00205c !important;
+    color: #00205c !important;
   }
 
   .brand--office-of-the-advocate-general-for-scotland .brand__color,
@@ -900,7 +934,8 @@
 
   .brand--office-of-the-leader-of-the-house-of-commons.brand__border-color,
   .brand--office-of-the-leader-of-the-house-of-commons .brand__border-color {
-    border-color: #497629;
+    border-left-color: #497629 !important;
+    color: #497629 !important;
   }
 
   .brand--office-of-the-leader-of-the-house-of-commons .brand__color,
@@ -914,7 +949,8 @@
 
   .brand--office-of-the-leader-of-the-house-of-lords.brand__border-color,
   .brand--office-of-the-leader-of-the-house-of-lords .brand__border-color {
-    border-color: #9c182f;
+    border-left-color: #9c182f !important;
+    color: #9c182f !important;
   }
 
   .brand--office-of-the-leader-of-the-house-of-lords .brand__color,
@@ -928,7 +964,8 @@
 
   .brand--office-of-the-secretary-of-state-for-scotland.brand__border-color,
   .brand--office-of-the-secretary-of-state-for-scotland .brand__border-color {
-    border-color: #00205c;
+    border-left-color: #00205c !important;
+    color: #00205c !important;
   }
 
   .brand--office-of-the-secretary-of-state-for-scotland .brand__color,
@@ -942,7 +979,8 @@
 
   .brand--office-of-the-secretary-of-state-for-wales.brand__border-color,
   .brand--office-of-the-secretary-of-state-for-wales .brand__border-color {
-    border-color: #a8353a;
+    border-left-color: #a8353a !important;
+    color: #a8353a !important;
   }
 
   .brand--office-of-the-secretary-of-state-for-wales .brand__color,
@@ -956,7 +994,8 @@
 
   .brand--prime-ministers-office-10-downing-street.brand__border-color,
   .brand--prime-ministers-office-10-downing-street .brand__border-color {
-    border-color: #0b0c0c;
+    border-left-color: #0b0c0c !important;
+    color: #0b0c0c !important;
   }
 
   .brand--prime-ministers-office-10-downing-street .brand__color,
@@ -970,7 +1009,8 @@
 
   .brand--scotland-office.brand__border-color,
   .brand--scotland-office .brand__border-color {
-    border-color: #00205c;
+    border-left-color: #00205c !important;
+    color: #00205c !important;
   }
 
   .brand--scotland-office .brand__color,
@@ -984,7 +1024,8 @@
 
   .brand--serious-fraud-office.brand__border-color,
   .brand--serious-fraud-office .brand__border-color {
-    border-color: #82368c;
+    border-left-color: #82368c !important;
+    color: #82368c !important;
   }
 
   .brand--serious-fraud-office .brand__color,
@@ -998,7 +1039,8 @@
 
   .brand--uk-export-finance.brand__border-color,
   .brand--uk-export-finance .brand__border-color {
-    border-color: #cf102d;
+    border-left-color: #cf102d !important;
+    color: #cf102d !important;
   }
 
   .brand--uk-export-finance .brand__color,
@@ -1012,7 +1054,8 @@
 
   .brand--uk-trade-investment.brand__border-color,
   .brand--uk-trade-investment .brand__border-color {
-    border-color: #c80651;
+    border-left-color: #c80651 !important;
+    color: #c80651 !important;
   }
 
   .brand--uk-trade-investment .brand__color,
@@ -1026,7 +1069,8 @@
 
   .brand--wales-office.brand__border-color,
   .brand--wales-office .brand__border-color {
-    border-color: #a33038;
+    border-left-color: #a33038 !important;
+    color: #a33038 !important;
   }
 
   .brand--wales-office .brand__color,
@@ -1041,7 +1085,8 @@
   .brand--the-office-of-the-leader-of-the-house-of-commons.brand__border-color,
   .brand--the-office-of-the-leader-of-the-house-of-commons
     .brand__border-color {
-    border-color: #497629;
+    border-left-color: #497629 !important;
+    color: #497629 !important;
   }
 
   .brand--the-office-of-the-leader-of-the-house-of-commons .brand__color,
@@ -1054,24 +1099,11 @@
     color: #497629;
   }
 
-  .brand--civil-service.brand__border-color,
-  .brand--civil-service .brand__border-color {
-    border-color: #0b0c0c;
-  }
-
-  .brand--civil-service .brand__color,
-  .brand--civil-service .brand__color:link,
-  .brand--civil-service .brand__color:visited,
-  .brand--civil-service .brand__color:active,
-  .brand--civil-service .brand__color:hover,
-  .brand--civil-service .brand__color:focus {
-    color: #b2292e;
-  }
-
   .brand--department-for-science-innovation-and-technology.brand__border-color,
   .brand--department-for-science-innovation-and-technology
     .brand__border-color {
-    border-color: #00f8f8;
+    border-left-color: #00f8f8 !important;
+    color: #00f8f8 !important;
   }
 
   .brand--department-for-science-innovation-and-technology .brand__color,
@@ -1083,6 +1115,4 @@
   .brand--department-for-science-innovation-and-technology .brand__color:focus {
     color: #00f8f8;
   }
-
-
 </style>

@@ -139,7 +139,10 @@
         role="button"
         aria-controls={`toggle_${sectionId}`}
         aria-expanded={sectionExpandedState[sectionId]}
-        on:click|preventDefault={() => toggleSection(sectionId)}
+        onclick={(event) => {
+          event.preventDefault();
+          toggleSection(sectionId);
+        }}
       >
         {sectionExpandedState[sectionId]
           ? "Show fewer"

@@ -504,8 +504,8 @@
 {#snippet Example1()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections1} />
-    <CodeBlock code={codeBlocks.codeBlock1} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte" />
 {/snippet}
 
 {#snippet Example2()}
@@ -523,8 +523,8 @@
   </p>
   <div class="p-5 bg-white">
     <RelatedContent sections={sections2} />
-    <CodeBlock code={codeBlocks.codeBlock2} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte" />
 {/snippet}
 
 {#snippet Example3()}
@@ -542,8 +542,8 @@
   </p>
   <div class="p-5 bg-white">
     <RelatedContent sections={sections3} />
-    <CodeBlock code={codeBlocks.codeBlock3} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte" />
 {/snippet}
 
 {#snippet Example4()}
@@ -563,78 +563,78 @@
   </p>
   <div class="p-5 bg-white">
     <RelatedContent sections={sections4} />
-    <CodeBlock code={codeBlocks.codeBlock4} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock4} language="svelte" />
 {/snippet}
 
 {#snippet Example5()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections5} />
-    <CodeBlock code={codeBlocks.codeBlock5} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock5} language="svelte" />
 {/snippet}
 
 {#snippet Example6()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections6} />
-    <CodeBlock code={codeBlocks.codeBlock6} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock6} language="svelte" />
 {/snippet}
 
 {#snippet Example7()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections7} />
-    <CodeBlock code={codeBlocks.codeBlock7} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock7} language="svelte" />
 {/snippet}
 
 {#snippet Example8()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections8} />
-    <CodeBlock code={codeBlocks.codeBlock8} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock8} language="svelte" />
 {/snippet}
 
 {#snippet Example9()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections9} />
-    <CodeBlock code={codeBlocks.codeBlock9} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock9} language="svelte" />
 {/snippet}
 
 {#snippet Example10()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections10} />
-    <CodeBlock code={codeBlocks.codeBlock10} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock10} language="svelte" />
 {/snippet}
 
 {#snippet Example11()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections11} />
-    <CodeBlock code={codeBlocks.codeBlock11} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock11} language="svelte" />
 {/snippet}
 
 {#snippet Example12()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections12} />
-    <CodeBlock code={codeBlocks.codeBlock12} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock12} language="svelte" />
 {/snippet}
 
 {#snippet Example13()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections13} />
-    <CodeBlock code={codeBlocks.codeBlock13} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock13} language="svelte" />
 {/snippet}
 
 {#snippet Example14()}
   <div class="p-5 bg-white">
     <RelatedContent sections={sections14} disableGa4={true} />
-    <CodeBlock code={codeBlocks.codeBlock14} language="svelte" />
   </div>
+  <CodeBlock code={codeBlocks.codeBlock14} language="svelte" />
 {/snippet}
 
 <div class="my-20 p-2">

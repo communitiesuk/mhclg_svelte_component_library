@@ -175,7 +175,7 @@
             text: "A Nested Section",
             items: [
               { href: "#nested-one", text: "Nested Item One" },
-              { href: "#nested-two", text: "Nested Item Two", active: true },
+              { href: "#nested-two", text: "Nested Item Two" },
             ],
           },
         ],

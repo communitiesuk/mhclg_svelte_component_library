@@ -337,7 +337,7 @@
       {
         name: "lang",
         category: "Accessibility & Attributes",
-        value: null,
+        value: "",
         description: {
           markdown: true,
           arr: [

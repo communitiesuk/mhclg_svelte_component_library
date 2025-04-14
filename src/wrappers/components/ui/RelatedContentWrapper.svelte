@@ -412,15 +412,10 @@
   !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
-{#snippet Component()}
-  <div class="p-8">
-    <RelatedContent
-      sections={parametersObject.sections}
-      headingLevel={parametersObject.headingLevel}
-      listTruncateThreshold={parametersObject.listTruncateThreshold}
-      disableGa4={parametersObject.disableGa4}
-    ></RelatedContent>
-  </div>
+ {#snippet Component()}
+ <div class="p-8">
+   <RelatedContent {...parametersObject}></RelatedContent>
+ </div>
 {/snippet}
 
 <!--

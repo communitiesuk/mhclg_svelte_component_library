@@ -1,18 +1,18 @@
 <script lang="ts">
   // Type definitions
-  interface InternalLink {
+  export interface InternalLink {
     title: string;
     base_path: string;
     [key: string]: any;
   }
 
-  interface ExternalLink {
+  export interface ExternalLink {
     title: string;
     url: string;
     [key: string]: any;
   }
 
-  interface RelatedContentSection {
+  export interface RelatedContentSection {
     type: "main" | "subheading" | "other";
     id: string; // Unique ID for keys and state
     title?: string; // For the main H2 heading (type 'main' only)

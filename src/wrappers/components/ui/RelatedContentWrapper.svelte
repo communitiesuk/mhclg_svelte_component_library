@@ -161,11 +161,83 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "headingText",
+        name: "sections",
         category: "Content",
-        value: "Related content",
-        description: { markdown: true, arr: [`The main heading text.`] },
-        rows: 1,
+        value: [
+          {
+            type: "main",
+            id: "main-related",
+            title: "Related content",
+            links: [
+              {
+                title: "Find an apprenticeship",
+                base_path: "/apply-apprenticeship",
+              },
+              {
+                title: "Training and study at work",
+                base_path: "/training-study-work-your-rights",
+              },
+              {
+                title: "Careers helpline for teenagers",
+                base_path: "/careers-helpline-for-teenagers",
+              },
+            ],
+            linkStyle: "other",
+          },
+          {
+            type: "subheading",
+            id: "collections",
+            subheading: "Collection",
+            links: [],
+          },
+          {
+            type: "subheading",
+            id: "explore-topic",
+            subheading: "Explore the topic",
+            links: [],
+          },
+          {
+            type: "subheading",
+            id: "topical-events",
+            subheading: "Topical event",
+            links: [],
+          },
+          {
+            type: "subheading",
+            id: "world-locations",
+            subheading: "World locations",
+            links: [],
+          },
+          {
+            type: "subheading",
+            id: "statistical-data-sets",
+            subheading: "Statistical data set",
+            links: [],
+          },
+          {
+            type: "other",
+            id: "external-links",
+            subheading: "Elsewhere on the web",
+            links: [],
+          },
+          {
+            type: "other",
+            id: "other-contacts",
+            subheading: "Other contacts",
+            links: [],
+          },
+        ],
+        description: {
+          markdown: true,
+          arr: [
+            `An array of section objects defining the structure and content. Each object requires:`,
+            `<code>type</code>: ('main', 'subheading', 'other')`,
+            `<code>id</code>: (Unique string)`,
+            `<code>links</code>: (Array of link objects {title, base_path/url})`,
+            `Optional fields: <code>title</code> (string, for type 'main'), <code>subheading</code> (string, for type 'subheading'/'other'), <code>linkStyle</code> ('normal'/'other'), <code>truncateThreshold</code> (number), <code>disableTruncation</code> (boolean)`,
+          ],
+        },
+        rows: 20,
       },
       {
         name: "headingLevel",
@@ -178,137 +250,6 @@
             `Sets the semantic heading level (h1-h6) for the main heading.`,
           ],
         },
-      },
-      {
-        name: "orderedRelatedItems",
-        category: "Links",
-        value: [
-          {
-            title: "Find an apprenticeship",
-            base_path: "/apply-apprenticeship",
-          },
-          {
-            title: "Training and study at work",
-            base_path: "/training-study-work-your-rights",
-          },
-          {
-            title: "Careers helpline for teenagers",
-            base_path: "/careers-helpline-for-teenagers",
-          },
-        ],
-        description: {
-          markdown: true,
-          arr: [
-            `Array of general related items. Rendered first, without a subheading.`,
-            `Each item needs <code>title</code> and <code>base_path</code>.`,
-          ],
-        },
-        rows: 10,
-      },
-      {
-        name: "mainstreamBrowsePages",
-        category: "Links",
-        value: [],
-        description: {
-          markdown: true,
-          arr: [
-            `Links to mainstream browse pages. Rendered under "Explore the topic".`,
-            `Takes precedence over <code>taxons</code> if both are provided.`,
-            `Each item needs <code>title</code> and <code>base_path</code>.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "taxons",
-        category: "Links",
-        value: [],
-        description: {
-          markdown: true,
-          arr: [
-            `Links to taxonomy pages. Rendered under "Explore the topic" if <code>mainstreamBrowsePages</code> is empty.`,
-            `Each item needs <code>title</code> and <code>base_path</code>.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "documentCollections",
-        category: "Links",
-        value: [],
-        description: {
-          markdown: true,
-          arr: [
-            `Links to document collections. Rendered under "Collection".`,
-            `Each item needs <code>title</code> and <code>base_path</code>.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "topicalEvents",
-        category: "Links",
-        value: [],
-        description: {
-          markdown: true,
-          arr: [
-            `Links to topical events. Rendered under "Topical event".`,
-            `Each item needs <code>title</code> and <code>base_path</code>.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "worldLocations",
-        category: "Links",
-        value: [],
-        description: {
-          markdown: true,
-          arr: [
-            `Links to world locations. Rendered under "World locations".`,
-            `Each item needs <code>title</code> and <code>base_path</code>.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "relatedStatisticalDataSets",
-        category: "Links",
-        value: [],
-        description: {
-          markdown: true,
-          arr: [
-            `Links to statistical data sets. Rendered under "Statistical data set".`,
-            `Each item needs <code>title</code> and <code>base_path</code>.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "externalRelatedLinks",
-        category: "Links",
-        value: [],
-        description: {
-          markdown: true,
-          arr: [
-            `External links. Rendered under "Elsewhere on the web".`,
-            `Each item needs <code>title</code> and <code>url</code>.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "otherContacts",
-        category: "Links",
-        value: [],
-        description: {
-          markdown: true,
-          arr: [
-            `Other related contacts (passed via \`links.related\` in GOV.UK). Rendered under "Other contacts".`,
-            `Each item needs <code>title</code> and <code>base_path</code>.`,
-          ],
-        },
-        rows: 5,
       },
       {
         name: "disableGa4",
@@ -328,7 +269,7 @@
         description: {
           markdown: true,
           arr: [
-            `The number of links to display in each section before showing the 'Show more' toggle.`,
+            `The default number of links to display in each section before showing the 'Show more' toggle. Can be overridden per-section.`,
           ],
         },
       },
@@ -473,7 +414,12 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <RelatedContent {...parametersObject}></RelatedContent>
+    <RelatedContent
+      sections={parametersObject.sections}
+      headingLevel={parametersObject.headingLevel}
+      listTruncateThreshold={parametersObject.listTruncateThreshold}
+      disableGa4={parametersObject.disableGa4}
+    ></RelatedContent>
   </div>
 {/snippet}
 

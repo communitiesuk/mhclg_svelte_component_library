@@ -1,79 +1,65 @@
 <script lang="ts">
-  // Type definitions based on GOV.UK Publishing Components examples
+  // Type definitions
   interface InternalLink {
     title: string;
-    base_path: string; // Used by most internal link types
-    [key: string]: any; // Allow other potential fields like document_type, locale
+    base_path: string;
+    [key: string]: any;
   }
 
   interface ExternalLink {
     title: string;
-    url: string; // Used specifically for external links
-    [key: string]: any; // Allow other potential fields like locale
+    url: string;
+    [key: string]: any;
+  }
+
+  interface RelatedContentSection {
+    type: "main" | "subheading" | "other";
+    id: string; // Unique ID for keys and state
+    title?: string; // For the main H2 heading (type 'main' only)
+    subheading?: string; // For H3 subheadings (type 'subheading' or 'other')
+    links: (InternalLink | ExternalLink)[];
+    linkStyle?: "normal" | "other"; // Default determined by type if undefined
+    truncateThreshold?: number; // Per-section override
+    disableTruncation?: boolean; // Disable truncation for this section
   }
 
   // Define component props
   let {
-    headingText = "Related content",
-    headingLevel = 2 as 1 | 2 | 3 | 4 | 5 | 6, // Main heading level
-    orderedRelatedItems = [] as InternalLink[],
-    mainstreamBrowsePages = [] as InternalLink[],
-    taxons = [] as InternalLink[],
-    documentCollections = [] as InternalLink[],
-    topicalEvents = [] as InternalLink[],
-    worldLocations = [] as InternalLink[],
-    relatedStatisticalDataSets = [] as InternalLink[],
-    externalRelatedLinks = [] as ExternalLink[],
-    otherContacts = [] as InternalLink[], // From links.related
+    sections = [] as RelatedContentSection[],
+    headingLevel = 2 as 1 | 2 | 3 | 4 | 5 | 6, // Main heading level (used by first 'main' section)
+    listTruncateThreshold = 5, // Default threshold, can be overridden per section
     disableGa4 = false,
-    listTruncateThreshold = 5, // Default threshold for truncating lists
   } = $props<{
-    headingText?: string;
+    sections?: RelatedContentSection[];
     headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
-    orderedRelatedItems?: InternalLink[];
-    mainstreamBrowsePages?: InternalLink[];
-    taxons?: InternalLink[];
-    documentCollections?: InternalLink[];
-    topicalEvents?: InternalLink[];
-    worldLocations?: InternalLink[];
-    relatedStatisticalDataSets?: InternalLink[];
-    externalRelatedLinks?: ExternalLink[];
-    otherContacts?: InternalLink[]; // From links.related
+    listTruncateThreshold?: number; // Default threshold
     disableGa4?: boolean;
-    listTruncateThreshold?: number;
   }>();
 
-  // Helper to generate unique IDs for section headings
-  // Using a simpler approach than the Ruby component for Svelte context
-  function getSectionHeadingId(suffix: string): string {
-    return `related-navigation-${suffix}`;
+  // Helper to check if a link is external
+  function isExternalLink(
+    link: InternalLink | ExternalLink,
+  ): link is ExternalLink {
+    return "url" in link;
   }
 
-  // Combine mainstream browse pages and taxons for the 'Explore the topic' section
-  // Prioritize mainstream browse pages if both exist, as per documentation
-  let exploreTopicLinks = $derived(
-    mainstreamBrowsePages?.length > 0
-      ? mainstreamBrowsePages
-      : taxons?.length > 0
-        ? taxons
-        : [],
-  );
+  // State to track expanded sections, keyed by section.id
+  let sectionExpandedState = $state<Record<string, boolean>>({});
 
-  // State to track expanded sections
-  let sectionExpandedState = $state({
-    orderedRelatedItems: false,
-    documentCollections: false,
-    exploreTopics: false,
-    topicalEvents: false,
-    worldLocations: false,
-    relatedStatisticalDataSets: false,
-    externalRelatedLinks: false,
-    otherContacts: false,
+  $effect(() => {
+    // Initialize state when sections change
+    const initialState: Record<string, boolean> = {};
+    for (const section of sections) {
+      initialState[section.id] = false;
+    }
+    sectionExpandedState = initialState;
   });
 
-  // Helper function to toggle section expansion
-  function toggleSection(sectionKey: string) {
-    sectionExpandedState[sectionKey] = !sectionExpandedState[sectionKey];
+  // Helper function to toggle section expansion by ID
+  function toggleSection(sectionId: string) {
+    if (sectionId in sectionExpandedState) {
+      sectionExpandedState[sectionId] = !sectionExpandedState[sectionId];
+    }
   }
 
   // Add browser check for JavaScript support
@@ -88,6 +74,8 @@
       hasJavaScript = true;
     }
   });
+
+  const mainSection = $derived(sections.find((s) => s.type === "main"));
 </script>
 
 <!-- Define snippets outside the script tag, in the markup area -->
@@ -97,18 +85,19 @@
   totalItems,
   sectionName,
   isOther = false,
-  isExternal = false,
+  sectionIndex,
 )}
+  {@const isExternal = isExternalLink(link)}
   {@const href = isExternal ? link.url : link.base_path}
   {@const ga4LinkData = !disableGa4
     ? JSON.stringify({
         event_name: "navigation",
         type: "related content",
-        index_section: "1",
+        index_section: (sectionIndex + 1).toString(), // Use dynamic section index
         index_link: (index + 1).toString(),
-        index_section_count: "1",
+        index_section_count: sections.length.toString(), // Total number of sections
         index_total: totalItems.toString(),
-        section: sectionName,
+        section: sectionName, // Use subheading or main title as section name
         ...(isExternal && { external: "true" }),
       })
     : undefined}
@@ -128,83 +117,90 @@
   </li>
 {/snippet}
 
-{#snippet toggleControl(items, sectionKey)}
-  <li
-    class="gem-c-related-navigation__link toggle-wrap"
-    data-module="ga4-event-tracker"
-  >
-    <a
-      class="gem-c-related-navigation__toggle"
-      data-controls="toggle_{sectionKey}"
-      data-expanded={sectionExpandedState[sectionKey]}
-      data-toggled-text="Show {items.length - listTruncateThreshold} more"
-      data-ga4-event={JSON.stringify({
-        event_name: "select_content",
-        type: "related content",
-      })}
-      href={"#"}
-      role="button"
-      aria-controls="toggle_{sectionKey}"
-      aria-expanded={sectionExpandedState[sectionKey]}
-      on:click|preventDefault={() => toggleSection(sectionKey)}
+{#snippet toggleControl(items, sectionId, threshold)}
+  {@const numHidden = items.length - threshold}
+  {#if numHidden > 0}
+    <li
+      class="gem-c-related-navigation__link toggle-wrap"
+      data-module="ga4-event-tracker"
     >
-      {sectionExpandedState[sectionKey]
-        ? "Show fewer"
-        : `Show ${items.length - listTruncateThreshold} more`}
-    </a>
-  </li>
+      <a
+        class="gem-c-related-navigation__toggle"
+        data-controls={`toggle_${sectionId}`}
+        data-expanded={sectionExpandedState[sectionId]}
+        data-toggled-text="Show {numHidden} more"
+        data-ga4-event={JSON.stringify({
+          event_name: "select_content",
+          type: "related content",
+        })}
+        href={"#"}
+        role="button"
+        aria-controls={`toggle_${sectionId}`}
+        aria-expanded={sectionExpandedState[sectionId]}
+        on:click|preventDefault={() => toggleSection(sectionId)}
+      >
+        {sectionExpandedState[sectionId]
+          ? "Show fewer"
+          : `Show ${numHidden} more`}
+      </a>
+    </li>
+  {/if}
 {/snippet}
 
 {#snippet truncatedItemsList(
   items,
-  sectionKey,
+  sectionId,
   sectionName,
   isOther = false,
-  isExternal = false,
+  threshold,
+  sectionIndex,
 )}
-  {@const truncatedItems = items.slice(listTruncateThreshold)}
-  <li
-    class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
-  >
-    <span
-      id="toggle_{sectionKey}"
-      class="gem-c-related-navigation__toggle-more {sectionExpandedState[
-        sectionKey
-      ]
-        ? ''
-        : 'js-hidden'}"
-      aria-live="polite"
-      role="region"
+  {@const truncatedItems = items.slice(threshold)}
+  {#if truncatedItems.length > 0}
+    <li
+      class="gem-c-related-navigation__link gem-c-related-navigation__link--truncated-links"
     >
-      {#each truncatedItems as link, i (link.url ?? link.base_path)}
-        {@const href = isExternal ? link.url : link.base_path}
-        {@const itemClass = isOther
-          ? "govuk-link govuk-link gem-c-related-navigation__section-link govuk-link gem-c-related-navigation__section-link--other-truncated"
-          : "govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"}
-        {@const ga4LinkData = !disableGa4
-          ? JSON.stringify({
-              event_name: "navigation",
-              type: "related content",
-              index_section: "1",
-              index_link: (listTruncateThreshold + i + 1).toString(),
-              index_section_count: "1",
-              index_total: items.length.toString(),
-              section: sectionName,
-              ...(isExternal && { external: "true" }),
-            })
-          : undefined}
-        <a
-          {href}
-          class={itemClass}
-          target={isExternal ? "_blank" : undefined}
-          rel={isExternal ? "noopener noreferrer external" : undefined}
-          data-ga4-link={ga4LinkData}>{link.title}</a
-        >{#if i < truncatedItems.length - 1}{i === truncatedItems.length - 2
-            ? ", and "
-            : ", "}{/if}
-      {/each}
-    </span>
-  </li>
+      <span
+        id={`toggle_${sectionId}`}
+        class="gem-c-related-navigation__toggle-more {sectionExpandedState[
+          sectionId
+        ]
+          ? ''
+          : 'js-hidden'}"
+        aria-live="polite"
+        role="region"
+      >
+        {#each truncatedItems as link, i (isExternalLink(link) ? link.url : link.base_path)}
+          {@const isExternal = isExternalLink(link)}
+          {@const href = isExternal ? link.url : link.base_path}
+          {@const itemClass = isOther
+            ? "govuk-link govuk-link gem-c-related-navigation__section-link govuk-link gem-c-related-navigation__section-link--other-truncated"
+            : "govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"}
+          {@const ga4LinkData = !disableGa4
+            ? JSON.stringify({
+                event_name: "navigation",
+                type: "related content",
+                index_section: (sectionIndex + 1).toString(),
+                index_link: (threshold + i + 1).toString(), // Adjust index based on threshold
+                index_section_count: sections.length.toString(),
+                index_total: items.length.toString(),
+                section: sectionName,
+                ...(isExternal && { external: "true" }),
+              })
+            : undefined}
+          <a
+            {href}
+            class={itemClass}
+            target={isExternal ? "_blank" : undefined}
+            rel={isExternal ? "noopener noreferrer external" : undefined}
+            data-ga4-link={ga4LinkData}>{link.title}</a
+          >{#if i < truncatedItems.length - 1}{i === truncatedItems.length - 2
+              ? ", and "
+              : ", "}{/if}
+        {/each}
+      </span>
+    </li>
+  {/if}
 {/snippet}
 
 {#snippet sectionHeading(id, text, isOther = false)}
@@ -226,282 +222,69 @@
     : ''}"
   role="complementary"
 >
-  <svelte:element
-    this={`h${headingLevel}`}
-    id="related-nav-related_items"
-    class="gem-c-related-navigation__main-heading"
-  >
-    {headingText}
-  </svelte:element>
-
-  <!-- Ordered Related Items -->
-  {#if orderedRelatedItems?.length > 0}
-    <nav
-      class="gem-c-related-navigation__nav-section"
-      aria-labelledby="related-nav-related_items"
-      data-module="gem-toggle"
+  {#if mainSection && mainSection.title}
+    <svelte:element
+      this={`h${headingLevel}`}
+      id={`related-nav-${mainSection.id}`}
+      class="gem-c-related-navigation__main-heading"
     >
-      <ul class="gem-c-related-navigation__link-list">
-        {#each orderedRelatedItems.slice(0, listTruncateThreshold) as link, i}
-          {@render linkListItem(
-            link,
-            i,
-            orderedRelatedItems.length,
-            "Related content",
-            true,
-            false,
-          )}
-        {/each}
-        {#if orderedRelatedItems.length > listTruncateThreshold}
-          {@render toggleControl(orderedRelatedItems, "orderedRelatedItems")}
-          {@render truncatedItemsList(
-            orderedRelatedItems,
-            "orderedRelatedItems",
-            "Related content",
-            true,
-            false,
-          )}
-        {/if}
-      </ul>
-    </nav>
+      {mainSection.title}
+    </svelte:element>
   {/if}
 
-  <!-- Document Collections -->
-  {#if documentCollections?.length > 0}
-    {@const sectionId = getSectionHeadingId("collections")}
-    <nav
-      class="gem-c-related-navigation__nav-section"
-      aria-labelledby={sectionId}
-      data-module="gem-toggle"
-    >
-      {@render sectionHeading(sectionId, "Collection")}
-      <ul class="gem-c-related-navigation__link-list">
-        {#each documentCollections.slice(0, listTruncateThreshold) as link, i}
-          {@render linkListItem(
-            link,
-            i,
-            documentCollections.length,
-            "Collection",
-            false,
-            false,
-          )}
-        {/each}
-        {#if documentCollections.length > listTruncateThreshold}
-          {@render toggleControl(documentCollections, "documentCollections")}
-          {@render truncatedItemsList(
-            documentCollections,
-            "documentCollections",
-            "Collection",
-            false,
-            false,
-          )}
-        {/if}
-      </ul>
-    </nav>
-  {/if}
+  {#each sections as section, sectionIndex (section.id)}
+    {@const sectionLinks = section.links ?? []}
+    {@const threshold = section.truncateThreshold ?? listTruncateThreshold}
+    {@const isTruncatable =
+      !section.disableTruncation && sectionLinks.length > threshold}
+    {@const defaultLinkStyle =
+      section.type === "main" || section.type === "other" ? "other" : "normal"}
+    {@const useOtherStyle = (section.linkStyle ?? defaultLinkStyle) === "other"}
+    {@const sectionTitle =
+      section.subheading ?? mainSection?.title ?? "Related content"}
 
-  <!-- Explore the Topic -->
-  {#if exploreTopicLinks.length > 0}
-    {@const sectionId = getSectionHeadingId("explore-topic")}
-    <nav
-      class="gem-c-related-navigation__nav-section"
-      aria-labelledby={sectionId}
-    >
-      {@render sectionHeading(sectionId, "Explore the topic")}
-      <ul class="gem-c-related-navigation__link-list">
-        {#each exploreTopicLinks.slice(0, listTruncateThreshold) as link, i}
-          {@render linkListItem(
-            link,
-            i,
-            exploreTopicLinks.length,
-            "Explore the topic",
-            false,
-            false,
-          )}
-        {/each}
-        {#if exploreTopicLinks.length > listTruncateThreshold}
-          {@render toggleControl(exploreTopicLinks, "exploreTopics")}
-          {@render truncatedItemsList(
-            exploreTopicLinks,
-            "exploreTopics",
-            "Explore the topic",
-            false,
-            false,
+    {#if sectionLinks.length > 0}
+      <nav
+        class="gem-c-related-navigation__nav-section"
+        aria-labelledby={section.type !== "main"
+          ? `related-nav-heading-${section.id}`
+          : undefined}
+        data-module={isTruncatable ? "gem-toggle" : undefined}
+      >
+        {#if section.type === "subheading" || section.type === "other"}
+          {@render sectionHeading(
+            `related-nav-heading-${section.id}`,
+            section.subheading ?? "",
+            section.type === "other",
           )}
         {/if}
-      </ul>
-    </nav>
-  {/if}
 
-  <!-- Topical Events -->
-  {#if topicalEvents?.length > 0}
-    {@const sectionId = getSectionHeadingId("topical-events")}
-    <nav
-      class="gem-c-related-navigation__nav-section"
-      aria-labelledby={sectionId}
-    >
-      {@render sectionHeading(sectionId, "Topical event")}
-      <ul class="gem-c-related-navigation__link-list">
-        {#each topicalEvents.slice(0, listTruncateThreshold) as link, i}
-          {@render linkListItem(
-            link,
-            i,
-            topicalEvents.length,
-            "Topical event",
-            false,
-            false,
-          )}
-        {/each}
-        {#if topicalEvents.length > listTruncateThreshold}
-          {@render toggleControl(topicalEvents, "topicalEvents")}
-          {@render truncatedItemsList(
-            topicalEvents,
-            "topicalEvents",
-            "Topical event",
-            false,
-            false,
-          )}
-        {/if}
-      </ul>
-    </nav>
-  {/if}
-
-  <!-- World Locations -->
-  {#if worldLocations?.length > 0}
-    {@const sectionId = getSectionHeadingId("world-locations")}
-    <nav
-      class="gem-c-related-navigation__nav-section"
-      aria-labelledby={sectionId}
-      data-module="gem-toggle"
-      data-gem-toggle-module-started="true"
-    >
-      {@render sectionHeading(sectionId, "World locations")}
-      <ul class="gem-c-related-navigation__link-list">
-        {#each worldLocations.slice(0, listTruncateThreshold) as link, i}
-          {@render linkListItem(
-            link,
-            i,
-            worldLocations.length,
-            "World locations",
-            false,
-            false,
-          )}
-        {/each}
-        {#if worldLocations.length > listTruncateThreshold}
-          {@render toggleControl(worldLocations, "worldLocations")}
-          {@render truncatedItemsList(
-            worldLocations,
-            "worldLocations",
-            "World locations",
-            false,
-            false,
-          )}
-        {/if}
-      </ul>
-    </nav>
-  {/if}
-
-  <!-- Statistical Data Sets -->
-  {#if relatedStatisticalDataSets?.length > 0}
-    {@const sectionId = getSectionHeadingId("statistical-data-sets")}
-    <nav
-      class="gem-c-related-navigation__nav-section"
-      aria-labelledby={sectionId}
-    >
-      {@render sectionHeading(sectionId, "Statistical data set")}
-      <ul class="gem-c-related-navigation__link-list">
-        {#each relatedStatisticalDataSets.slice(0, listTruncateThreshold) as link, i}
-          {@render linkListItem(
-            link,
-            i,
-            relatedStatisticalDataSets.length,
-            "Statistical data set",
-            false,
-            false,
-          )}
-        {/each}
-        {#if relatedStatisticalDataSets.length > listTruncateThreshold}
-          {@render toggleControl(
-            relatedStatisticalDataSets,
-            "relatedStatisticalDataSets",
-          )}
-          {@render truncatedItemsList(
-            relatedStatisticalDataSets,
-            "relatedStatisticalDataSets",
-            "Statistical data set",
-            false,
-            false,
-          )}
-        {/if}
-      </ul>
-    </nav>
-  {/if}
-
-  <!-- External Related Links -->
-  {#if externalRelatedLinks?.length > 0}
-    {@const sectionId = getSectionHeadingId("external-links")}
-    <nav
-      class="gem-c-related-navigation__nav-section"
-      aria-labelledby={sectionId}
-    >
-      {@render sectionHeading(sectionId, "Elsewhere on the web", true)}
-      <ul class="gem-c-related-navigation__link-list">
-        {#each externalRelatedLinks.slice(0, listTruncateThreshold) as link, i}
-          {@render linkListItem(
-            link,
-            i,
-            externalRelatedLinks.length,
-            "Elsewhere on the web",
-            true,
-            true,
-          )}
-        {/each}
-        {#if externalRelatedLinks.length > listTruncateThreshold}
-          {@render toggleControl(externalRelatedLinks, "externalRelatedLinks")}
-          {@render truncatedItemsList(
-            externalRelatedLinks,
-            "externalRelatedLinks",
-            "Elsewhere on the web",
-            true,
-            true,
-          )}
-        {/if}
-      </ul>
-    </nav>
-  {/if}
-
-  <!-- Other Contacts -->
-  {#if otherContacts?.length > 0}
-    {@const sectionId = getSectionHeadingId("other-contacts")}
-    <nav
-      class="gem-c-related-navigation__nav-section"
-      aria-labelledby={sectionId}
-    >
-      {@render sectionHeading(sectionId, "Other contacts", true)}
-      <ul class="gem-c-related-navigation__link-list">
-        {#each otherContacts.slice(0, listTruncateThreshold) as link, i}
-          {@render linkListItem(
-            link,
-            i,
-            otherContacts.length,
-            "Other contacts",
-            true,
-            false,
-          )}
-        {/each}
-        {#if otherContacts.length > listTruncateThreshold}
-          {@render toggleControl(otherContacts, "otherContacts")}
-          {@render truncatedItemsList(
-            otherContacts,
-            "otherContacts",
-            "Other contacts",
-            true,
-            false,
-          )}
-        {/if}
-      </ul>
-    </nav>
-  {/if}
+        <ul class="gem-c-related-navigation__link-list">
+          {#each sectionLinks.slice(0, isTruncatable ? threshold : sectionLinks.length) as link, i}
+            {@render linkListItem(
+              link,
+              i,
+              sectionLinks.length,
+              sectionTitle,
+              useOtherStyle,
+              sectionIndex,
+            )}
+          {/each}
+          {#if isTruncatable && hasJavaScript}
+            {@render toggleControl(sectionLinks, section.id, threshold)}
+            {@render truncatedItemsList(
+              sectionLinks,
+              section.id,
+              sectionTitle,
+              useOtherStyle,
+              threshold,
+              sectionIndex,
+            )}
+          {/if}
+        </ul>
+      </nav>
+    {/if}
+  {/each}
 </div>
 
 <style>

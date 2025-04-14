@@ -317,22 +317,24 @@
 {#snippet WithBranding()}
   <div class="p-5 bg-white">
     <ContentsList
-      brand="prime-ministers-office-10-downing-street"
-      formatNumbers={true}
       contents={[
         {
           href: "#first-thing",
           text: "1. First thing",
           items: [
-            { href: "#second-thing", text: "2. Numbers not parsed" },
-            { href: "#third-thing", text: "3. Numbers are just text" },
+            {
+              href: "#second-thing",
+              text: "2. Numbers not parsed",
+            },
+            {
+              href: "#third-thing",
+              text: "3. Numbers are just text",
+            },
           ],
         },
-        {
-          href: "#another-thing",
-          text: "4. Another item",
-        },
       ]}
+      brand="prime-ministers-office-10-downing-street"
+      formatNumbers={true}
     />
   </div>
   <CodeBlock code={codeBlocks.withBrand} language="svelte"></CodeBlock>

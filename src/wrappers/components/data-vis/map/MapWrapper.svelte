@@ -94,7 +94,7 @@
   import Map from "$lib/components/data-vis/map/Map.svelte";
 
   let { data } = $props();
-
+  $inspect(data.dataInFormatForMap);
   /**
    * DONOTTOUCH *
    * ? 		uses the page url to identify the name of the component and the folder it belongs to (folder is only used by snippets exported to the homepage to link back to this page).
@@ -156,12 +156,6 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "data",
-        category: "data",
-        value: data,
-        visible: false,
-      },
-      {
         name: "cooperativeGestures",
         isProp: true,
         description:
@@ -177,11 +171,37 @@
         category: "Styling",
       },
       {
+        name: "maxBorderWidth",
+        isProp: true,
+        description:
+          "Borders get gradually thicker with zoom level, this is the maximum thickness",
+        value: 1.5,
+        category: "Styling",
+        visible: { name: "showBorder", value: true },
+      },
+      {
+        name: "fillOpacity",
+        isProp: true,
+        description: "The opacity for the fill layer, a value between 0 and 1",
+        value: 0.5,
+        category: "Styling",
+      },
+      {
         name: "changeOpacityOnHover",
         isProp: true,
-        description: "Make the hovered area more opaque",
+        description:
+          "Change the opacity of the hovered area - uses the 'hoverOpacity' value",
         value: true,
         category: "Styling",
+      },
+      {
+        name: "hoverOpacity",
+        isProp: true,
+        category: "Styling",
+        description:
+          "The opacity for an area that is hovered, a value between 0 and 1",
+        value: 0.8,
+        visible: { name: "changeOpacityOnHover", value: true },
       },
       {
         name: "tooltip",
@@ -201,22 +221,76 @@
         name: "geoType",
         isProp: true,
         description: "The geography level",
-        category: "data",
+        category: "Data",
         value: "ltla",
         options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
       },
       {
         name: "year",
         isProp: true,
-        category: "data",
+        category: "Data",
         value: 2022,
         options: data.years,
       },
       {
         name: "metric",
         isProp: true,
-        category: "data",
+        category: "Data",
         options: data.metrics,
+      },
+      {
+        name: "dummyData",
+        category: "Data",
+        value: [
+          {
+            year: 2022,
+            data: [
+              {
+                areaCode: "E2020202",
+                areaName: "Sdfsa",
+                data: {
+                  "Household waste recycling rate": 23.5,
+                  "Other measure": 493,
+                  "Something else": 2,
+                },
+              },
+              {
+                areaCode: "E2020203",
+                areaName: "Dsfd",
+                data: {
+                  "Household waste recycling rate": 23.5,
+                  "Other measure": 493,
+                  "Something else": 2,
+                },
+              },
+            ],
+          },
+          {
+            year: 2021,
+            data: [
+              {
+                areaCode: "E2020202",
+                areaName: "Sdfsa",
+                data: {
+                  "Household waste recycling rate": 23.5,
+                  "Other measure": 493,
+                  "Something else": 2,
+                },
+              },
+              "etc.",
+            ],
+          },
+          "etc.",
+        ],
+        visible: true,
+        isProp: false,
+        description: `An example of the format that 'data' needs to be in. Don't pass 'dummyData' as a prop, just use 'data'.`,
+      },
+      {
+        name: "data",
+        category: "Data",
+        visible: false,
+        value: data.dataInFormatForMap,
       },
       {
         name: "center",

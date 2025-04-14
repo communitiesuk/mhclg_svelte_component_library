@@ -1,7 +1,13 @@
 <script lang="ts">
   //@ts-nocheck
   import type maplibregl from "maplibre-gl";
-  import { MapLibre, GeoJSON, FillLayer, LineLayer } from "svelte-maplibre";
+  import {
+    MapLibre,
+    GeoJSON,
+    FillLayer,
+    LineLayer,
+    zoomTransition,
+  } from "svelte-maplibre";
   import { contrastingColor } from "./colors.ts";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { ExpressionSpecification } from "maplibre-gl";
@@ -13,20 +19,21 @@
   let {
     data,
     cooperativeGestures,
-    showBorder,
+    showBorder = false,
+    maxBorderWidth = 1.5,
     tooltip,
-    clickToZoom,
+    clickToZoom = true,
     geoType,
     year,
     metric,
+    fillOpacity = 0.5,
     changeOpacityOnHover = true,
+    hoverOpacity = 0.8,
     center = [-2.5, 53],
     zoom = 5,
   } = $props();
 
-  let mapData = $derived(
-    data?.dataInFormatForMap.filter((d) => d.year == year)[0]?.data,
-  );
+  let mapData = $derived(data?.filter((d) => d.year == year)[0]?.data);
 
   let filteredMapData = $derived(
     mapData.map((el) => ({
@@ -154,95 +161,97 @@
   {center}
   {zoom}
 >
-  {#key merged}
-    <GeoJSON id="states" data={merged} promoteId="areanm">
-      <!-- {#if showFill} -->
-      <FillLayer
+  <GeoJSON id="states" data={merged} promoteId="areanm">
+    <FillLayer
+      paint={{
+        // "fill-color": hoverStateFilter(fillColor[0], colors[0].hoverBgColor),
+        "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
+        ////Or use a step function to do the processing:
+        // "fill-color": [
+        //   "step",
+        //// 'coalesce' says what to do if the value is null or undefined
+        //   ["coalesce", ["get", "metric"], -1000],
+        //   "lightgrey",
+        //   1,
+        //   "pink",
+        //   8.4,
+        //   "green",
+        //   43.2,
+        //   "white",
+        //   49.5,
+        //   "blue",
+        //   61.6,
+        //   "yellow",
+        //// Use "metric" property for color mapping
+        // ],
+        // "fill-opacity": 0.5,
+
+        "fill-opacity": changeOpacityOnHover
+          ? [
+              "case",
+              ["boolean", ["feature-state", "hover"], false],
+              hoverOpacity,
+              fillOpacity,
+            ]
+          : fillOpacity,
+      }}
+      beforeLayerType="symbol"
+      manageHoverState
+      onclick={(e) => {
+        if (clickToZoom) {
+          let coordArray =
+            e.features[0].geometry.coordinates.length === 1
+              ? e.features[0].geometry.coordinates[0]
+              : //Do some extra processing to get the data in the right shape if the area has non-contiguous areas
+                e.features[0].geometry.coordinates.flat(2);
+
+          let minValues = [
+            Math.min(...coordArray.map((d) => +d[0])),
+            Math.max(...coordArray.map((d) => +d[0])),
+          ];
+
+          let maxValues = [
+            Math.min(...coordArray.map((d) => +d[1])),
+            Math.max(...coordArray.map((d) => +d[1])),
+          ];
+
+          map?.fitBounds([
+            [minValues[0], maxValues[0]],
+            [minValues[1], maxValues[1]],
+          ]);
+        }
+      }}
+      onmousemove={(e) => {
+        // console.log(e.features[0].properties.metric);
+        hoveredArea = e.features[0].id;
+        hoveredAreaData = e.features[0].properties.metric;
+        currentMousePosition = e.event.point;
+      }}
+      onmouseleave={(e) => {
+        (hoveredArea = null), (hoveredAreaData = null);
+      }}
+    />
+
+    {#if showBorder}
+      <LineLayer
+        layout={{ "line-cap": "round", "line-join": "round" }}
         paint={{
-          // "fill-color": hoverStateFilter(fillColor[0], colors[0].hoverBgColor),
-          "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
-          ////Or use a step function to do the processing:
-          // "fill-color": [
-          //   "step",
-          //// 'coalesce' says what to do if the value is null or undefined
-          //   ["coalesce", ["get", "metric"], -1000],
-          //   "lightgrey",
-          //   1,
-          //   "pink",
-          //   8.4,
-          //   "green",
-          //   43.2,
-          //   "white",
-          //   49.5,
-          //   "blue",
-          //   61.6,
-          //   "yellow",
-          //// Use "metric" property for color mapping
-          // ],
-          // "fill-opacity": 0.5,
-
-          "fill-opacity": changeOpacityOnHover
-            ? ["case", ["boolean", ["feature-state", "hover"], false], 0.8, 0.5]
-            : 0.5,
+          "line-color": hoverStateFilter(borderColor, "orange"), // Neat svelte-maplibre method for setting the colour based on whether the area is hovered - compare with the fill-opacity code above
+          "line-width": zoomTransition(3, 0, 12, maxBorderWidth), // Neat svelte-maplibre method for setting the line-width based on the zoom level
         }}
-        beforeLayerType="symbol"
-        manageHoverState
-        onclick={(e) => {
-          if (clickToZoom) {
-            let coordArray =
-              e.features[0].geometry.coordinates.length === 1
-                ? e.features[0].geometry.coordinates[0]
-                : //Do some extra processing to get the data in the right shape if the area has non-contiguous areas
-                  e.features[0].geometry.coordinates.flat(2);
-
-            let minValues = [
-              Math.min(...coordArray.map((d) => +d[0])),
-              Math.max(...coordArray.map((d) => +d[0])),
-            ];
-
-            let maxValues = [
-              Math.min(...coordArray.map((d) => +d[1])),
-              Math.max(...coordArray.map((d) => +d[1])),
-            ];
-
-            map?.fitBounds([
-              [minValues[0], maxValues[0]],
-              [minValues[1], maxValues[1]],
-            ]);
-          }
-        }}
-        onmousemove={(e) => {
-          // console.log(e.features[0].properties.metric);
-          hoveredArea = e.features[0].id;
-          hoveredAreaData = e.features[0].properties.metric;
-          currentMousePosition = e.event.point;
-        }}
-        onmouseleave={(e) => {
-          (hoveredArea = null), (hoveredAreaData = null);
-        }}
-      />
-      <!-- {/if} -->
-      {#if showBorder}
-        <LineLayer
-          layout={{ "line-cap": "round", "line-join": "round" }}
-          paint={{
-            "line-color": hoverStateFilter(borderColor, "orange"), // Neat svelte-maplibre method for setting the colour based on whether the area is hovered - compare with the fill-opacity code above
-            "line-width": 1,
-          }}
-          beforeLayerType="symbol"
-        />
-      {/if}
-    </GeoJSON>
-    {#if tooltip}
-      <Tooltip
-        {currentMousePosition}
-        {hoveredArea}
-        {hoveredAreaData}
-        {year}
-        {metric}
+        beforeLayerType=""
       />
     {/if}
-  {/key}
+  </GeoJSON>
+  {#if tooltip}
+    <Tooltip
+      {currentMousePosition}
+      {hoveredArea}
+      {hoveredAreaData}
+      {year}
+      {metric}
+    />
+  {/if}
 </MapLibre>
 
 <style>

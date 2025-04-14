@@ -303,12 +303,10 @@
     <ContentsList
       brand="prime-ministers-office-10-downing-street"
       formatNumbers={true}
-      alternativeLineStyle={true}
       contents={[
         {
           href: "#first-thing",
           text: "1. First thing",
-          active: true,
           items: [
             { href: "#second-thing", text: "2. Numbers not parsed" },
             { href: "#third-thing", text: "3. Numbers are just text" },

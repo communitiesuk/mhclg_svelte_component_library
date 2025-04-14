@@ -55,24 +55,10 @@
     return null;
   }
 
-  // Mapping based on govuk-frontend spacing scale: https://design-system.service.gov.uk/styles/spacing/#responsive-spacing
-  const marginBottomMap = {
-    0: "0px",
-    1: "5px",
-    2: "10px",
-    3: "15px",
-    4: "20px",
-    5: "25px",
-    6: "30px",
-    7: "40px",
-    8: "50px",
-    9: "60px",
-  };
-  const computedMarginBottom = $derived(marginBottomMap[marginBottom]);
-
   const navClasses = $derived(
     clsx(
       "gem-c-contents-list",
+      `govuk-!-margin-bottom-${marginBottom}`,
       alternativeLineStyle && "gem-c-contents-list--alternative-line-style",
       brand && `brand--${brand}`,
       classes,
@@ -96,7 +82,6 @@
 
 <nav
   class={navClasses}
-  style:margin-bottom={computedMarginBottom}
   aria-label={aria?.label || defaultAriaLabel}
   role="navigation"
   {id}
@@ -114,21 +99,19 @@
     {#each contents as item, i ((item.href || "") + item.text + i)}
       {@const hasSubItems = item.items && item.items.length > 0}
       {@const parsed = formatNumbers ? parseFormattedNumber(item.text) : null}
-      {@const isDashed = !alternativeLineStyle && !formatNumbers}
+      {@const isDashed = !formatNumbers}
 
       <li
+        aria-current={item.active ? "true" : undefined}
         class={clsx(
           "gem-c-contents-list__list-item",
           {
             "gem-c-contents-list__list-item--dashed": isDashed,
             "gem-c-contents-list__list-item--numbered": formatNumbers && parsed,
             "gem-c-contents-list__list-item--parent": hasSubItems,
-            "gem-c-contents-list__list-item--active":
-              item.active && alternativeLineStyle,
+            "gem-c-contents-list__list-item--active": item.active,
           },
-          brand && item.active && alternativeLineStyle
-            ? "brand__border-color"
-            : "",
+          brand && item.active ? "brand__border-color" : "",
         )}
       >
         {#if isDashed}
@@ -136,29 +119,24 @@
           ></span>
         {/if}
 
-        {#if item.active && !item.href}
+        {#if item.active}
           {#if parsed}
-            <span class="gem-c-contents-list__link">
-              <span class="gem-c-contents-list__number">{parsed.num}</span>
-              <span class="gem-c-contents-list__numbered-text"
-                >{parsed.rest}</span
-              >
-            </span>
+            <span class="gem-c-contents-list__number">{parsed.num}</span>
+            <span class="gem-c-contents-list__numbered-text">{parsed.rest}</span
+            >
           {:else}
-            <span class="gem-c-contents-list__link">{item.text}</span>
+            {item.text}
           {/if}
         {:else}
           <a
             href={item.href || "#"}
             class={clsx(
               "gem-c-contents-list__link",
-              {
-                "gem-c-contents-list__link--active": item.active,
-                "gem-c-contents-list__link--underlined": underlineLinks,
-              },
+              "govuk-link",
+              "gem-c-force-print-link-styles",
+              underlineLinks ? null : "govuk-link--no-underline",
               brand ? "brand__color" : "",
             )}
-            aria-current={item.active ? "true" : undefined}
           >
             {#if parsed}
               <span class="gem-c-contents-list__number">{parsed.num}</span>
@@ -178,55 +156,42 @@
               {@const subParsed = formatNumbers
                 ? parseFormattedNumber(subItem.text)
                 : null}
-              {@const subIsDashed = !alternativeLineStyle && !formatNumbers}
+              {@const subIsDashed = !formatNumbers}
 
               <li
+                aria-current={subItem.active ? "true" : undefined}
                 class={clsx(
                   "gem-c-contents-list__list-item",
                   {
                     "gem-c-contents-list__list-item--dashed": subIsDashed,
                     "gem-c-contents-list__list-item--numbered":
                       formatNumbers && subParsed,
-                    "gem-c-contents-list__list-item--active":
-                      subItem.active && alternativeLineStyle,
+                    "gem-c-contents-list__list-item--active": subItem.active,
                   },
-                  brand && subItem.active && alternativeLineStyle
-                    ? "brand__border-color"
-                    : "",
+                  brand && subItem.active ? "brand__border-color" : "",
                 )}
               >
-                {#if subIsDashed}
-                  <span
-                    class="gem-c-contents-list__list-item-dash"
-                    aria-hidden="true"
-                  ></span>
-                {/if}
-                {#if subItem.active && !subItem.href}
+                {#if subItem.active}
                   {#if subParsed}
-                    <span class="gem-c-contents-list__link">
-                      <span class="gem-c-contents-list__number"
-                        >{subParsed.num}</span
-                      >
-                      <span class="gem-c-contents-list__numbered-text"
-                        >{subParsed.rest}</span
-                      >
-                    </span>
-                  {:else}
-                    <span class="gem-c-contents-list__link">{subItem.text}</span
+                    <span class="gem-c-contents-list__number"
+                      >{subParsed.num}</span
                     >
+                    <span class="gem-c-contents-list__numbered-text"
+                      >{subParsed.rest}</span
+                    >
+                  {:else}
+                    {subItem.text}
                   {/if}
                 {:else}
                   <a
                     href={subItem.href || "#"}
                     class={clsx(
                       "gem-c-contents-list__link",
-                      {
-                        "gem-c-contents-list__link--active": subItem.active,
-                        "gem-c-contents-list__link--underlined": underlineLinks,
-                      },
+                      "govuk-link",
+                      "gem-c-force-print-link-styles",
+                      underlineLinks ? null : "govuk-link--no-underline",
                       brand ? "brand__color" : "",
                     )}
-                    aria-current={subItem.active ? "true" : undefined}
                   >
                     {#if subParsed}
                       <span class="gem-c-contents-list__number"
@@ -361,10 +326,6 @@
     color: #0b0c0c !important;
   }
 
-  .gem-c-contents-list__link {
-    text-decoration: none;
-  }
-
   .gem-c-contents-list__link--underlined {
     text-decoration: underline;
   }
@@ -457,675 +418,6 @@
     .gem-c-contents-list__list-item--parent {
       list-style-type: none;
     }
-  }
-
-  .brand--attorney-generals-office.brand__border-color,
-  .brand--attorney-generals-office .brand__border-color {
-    border-color: #a91c8e;
-  }
-
-  .brand--attorney-generals-office .brand__color,
-  .brand--attorney-generals-office .brand__color:link,
-  .brand--attorney-generals-office .brand__color:visited,
-  .brand--attorney-generals-office .brand__color:active,
-  .brand--attorney-generals-office .brand__color:hover,
-  .brand--attorney-generals-office .brand__color:focus {
-    color: #a91c8e;
-  }
-
-  .brand--cabinet-office.brand__border-color,
-  .brand--cabinet-office .brand__border-color {
-    border-color: #0056b8;
-  }
-
-  .brand--cabinet-office .brand__color,
-  .brand--cabinet-office .brand__color:link,
-  .brand--cabinet-office .brand__color:visited,
-  .brand--cabinet-office .brand__color:active,
-  .brand--cabinet-office .brand__color:hover,
-  .brand--cabinet-office .brand__color:focus {
-    color: #0056b8;
-  }
-
-  .brand--civil-service.brand__border-color,
-  .brand--civil-service .brand__border-color {
-    border-color: #b2292e;
-  }
-
-  .brand--civil-service .brand__color,
-  .brand--civil-service .brand__color:link,
-  .brand--civil-service .brand__color:visited,
-  .brand--civil-service .brand__color:active,
-  .brand--civil-service .brand__color:hover,
-  .brand--civil-service .brand__color:focus {
-    color: #b2292e;
-  }
-
-  .brand--department-for-business-trade.brand__border-color,
-  .brand--department-for-business-trade .brand__border-color {
-    border-color: #e52d13;
-  }
-
-  .brand--department-for-business-trade .brand__color,
-  .brand--department-for-business-trade .brand__color:link,
-  .brand--department-for-business-trade .brand__color:visited,
-  .brand--department-for-business-trade .brand__color:active,
-  .brand--department-for-business-trade .brand__color:hover,
-  .brand--department-for-business-trade .brand__color:focus {
-    color: #e52d13;
-  }
-
-  .brand--department-for-business-energy-industrial-strategy.brand__border-color,
-  .brand--department-for-business-energy-industrial-strategy
-    .brand__border-color {
-    border-color: #003479;
-  }
-
-  .brand--department-for-business-energy-industrial-strategy .brand__color,
-  .brand--department-for-business-energy-industrial-strategy .brand__color:link,
-  .brand--department-for-business-energy-industrial-strategy
-    .brand__color:visited,
-  .brand--department-for-business-energy-industrial-strategy
-    .brand__color:active,
-  .brand--department-for-business-energy-industrial-strategy
-    .brand__color:hover,
-  .brand--department-for-business-energy-industrial-strategy
-    .brand__color:focus {
-    color: #003479;
-  }
-
-  .brand--department-for-business-innovation-skills.brand__border-color,
-  .brand--department-for-business-innovation-skills .brand__border-color {
-    border-color: #003479;
-  }
-
-  .brand--department-for-business-innovation-skills .brand__color,
-  .brand--department-for-business-innovation-skills .brand__color:link,
-  .brand--department-for-business-innovation-skills .brand__color:visited,
-  .brand--department-for-business-innovation-skills .brand__color:active,
-  .brand--department-for-business-innovation-skills .brand__color:hover,
-  .brand--department-for-business-innovation-skills .brand__color:focus {
-    color: #003479;
-  }
-
-  .brand--department-for-communities-local-government.brand__border-color,
-  .brand--department-for-communities-local-government .brand__border-color {
-    border-color: #099;
-  }
-
-  .brand--department-for-communities-local-government .brand__color,
-  .brand--department-for-communities-local-government .brand__color:link,
-  .brand--department-for-communities-local-government .brand__color:visited,
-  .brand--department-for-communities-local-government .brand__color:active,
-  .brand--department-for-communities-local-government .brand__color:hover,
-  .brand--department-for-communities-local-government .brand__color:focus {
-    color: #099;
-  }
-
-  .brand--department-for-culture-media-sport.brand__border-color,
-  .brand--department-for-culture-media-sport .brand__border-color {
-    border-color: #ed1588;
-  }
-
-  .brand--department-for-culture-media-sport .brand__color,
-  .brand--department-for-culture-media-sport .brand__color:link,
-  .brand--department-for-culture-media-sport .brand__color:visited,
-  .brand--department-for-culture-media-sport .brand__color:active,
-  .brand--department-for-culture-media-sport .brand__color:hover,
-  .brand--department-for-culture-media-sport .brand__color:focus {
-    color: #ed1588;
-  }
-
-  .brand--department-for-digital-culture-media-sport.brand__border-color,
-  .brand--department-for-digital-culture-media-sport .brand__border-color {
-    border-color: #d40072;
-  }
-
-  .brand--department-for-digital-culture-media-sport .brand__color,
-  .brand--department-for-digital-culture-media-sport .brand__color:link,
-  .brand--department-for-digital-culture-media-sport .brand__color:visited,
-  .brand--department-for-digital-culture-media-sport .brand__color:active,
-  .brand--department-for-digital-culture-media-sport .brand__color:hover,
-  .brand--department-for-digital-culture-media-sport .brand__color:focus {
-    color: #d40072;
-  }
-
-  .brand--department-for-education.brand__border-color,
-  .brand--department-for-education .brand__border-color {
-    border-color: #003764;
-  }
-
-  .brand--department-for-education .brand__color,
-  .brand--department-for-education .brand__color:link,
-  .brand--department-for-education .brand__color:visited,
-  .brand--department-for-education .brand__color:active,
-  .brand--department-for-education .brand__color:hover,
-  .brand--department-for-education .brand__color:focus {
-    color: #003764;
-  }
-
-  .brand--department-for-energy-security-net-zero.brand__border-color,
-  .brand--department-for-energy-security-net-zero .brand__border-color {
-    border-color: #00a33b;
-  }
-
-  .brand--department-for-energy-security-net-zero .brand__color,
-  .brand--department-for-energy-security-net-zero .brand__color:link,
-  .brand--department-for-energy-security-net-zero .brand__color:visited,
-  .brand--department-for-energy-security-net-zero .brand__color:active,
-  .brand--department-for-energy-security-net-zero .brand__color:hover,
-  .brand--department-for-energy-security-net-zero .brand__color:focus {
-    color: #00a33b;
-  }
-
-  .brand--department-for-environment-food-rural-affairs.brand__border-color,
-  .brand--department-for-environment-food-rural-affairs .brand__border-color {
-    border-color: #00a33b;
-  }
-
-  .brand--department-for-environment-food-rural-affairs .brand__color,
-  .brand--department-for-environment-food-rural-affairs .brand__color:link,
-  .brand--department-for-environment-food-rural-affairs .brand__color:visited,
-  .brand--department-for-environment-food-rural-affairs .brand__color:active,
-  .brand--department-for-environment-food-rural-affairs .brand__color:hover,
-  .brand--department-for-environment-food-rural-affairs .brand__color:focus {
-    color: #00a33b;
-  }
-
-  .brand--department-for-exiting-the-european-union.brand__border-color,
-  .brand--department-for-exiting-the-european-union .brand__border-color {
-    border-color: #009fe3;
-  }
-
-  .brand--department-for-exiting-the-european-union .brand__color,
-  .brand--department-for-exiting-the-european-union .brand__color:link,
-  .brand--department-for-exiting-the-european-union .brand__color:visited,
-  .brand--department-for-exiting-the-european-union .brand__color:active,
-  .brand--department-for-exiting-the-european-union .brand__color:hover,
-  .brand--department-for-exiting-the-european-union .brand__color:focus {
-    color: #009fe3;
-  }
-
-  .brand--department-for-international-development.brand__border-color,
-  .brand--department-for-international-development .brand__border-color {
-    border-color: #002878;
-  }
-
-  .brand--department-for-international-development .brand__color,
-  .brand--department-for-international-development .brand__color:link,
-  .brand--department-for-international-development .brand__color:visited,
-  .brand--department-for-international-development .brand__color:active,
-  .brand--department-for-international-development .brand__color:hover,
-  .brand--department-for-international-development .brand__color:focus {
-    color: #002878;
-  }
-
-  .brand--department-for-international-trade.brand__border-color,
-  .brand--department-for-international-trade .brand__border-color {
-    border-color: #cf102d;
-  }
-
-  .brand--department-for-international-trade .brand__color,
-  .brand--department-for-international-trade .brand__color:link,
-  .brand--department-for-international-trade .brand__color:visited,
-  .brand--department-for-international-trade .brand__color:active,
-  .brand--department-for-international-trade .brand__color:hover,
-  .brand--department-for-international-trade .brand__color:focus {
-    color: #cf102d;
-  }
-
-  .brand--department-for-levelling-up-housing-communities.brand__border-color,
-  .brand--department-for-levelling-up-housing-communities .brand__border-color {
-    border-color: #012169;
-  }
-
-  .brand--department-for-levelling-up-housing-communities .brand__color,
-  .brand--department-for-levelling-up-housing-communities .brand__color:link,
-  .brand--department-for-levelling-up-housing-communities .brand__color:visited,
-  .brand--department-for-levelling-up-housing-communities .brand__color:active,
-  .brand--department-for-levelling-up-housing-communities .brand__color:hover,
-  .brand--department-for-levelling-up-housing-communities .brand__color:focus {
-    color: #012169;
-  }
-
-  .brand--department-for-science-innovation-technology.brand__border-color,
-  .brand--department-for-science-innovation-technology .brand__border-color {
-    border-color: #00f8f8;
-  }
-
-  .brand--department-for-science-innovation-technology .brand__color,
-  .brand--department-for-science-innovation-technology .brand__color:link,
-  .brand--department-for-science-innovation-technology .brand__color:visited,
-  .brand--department-for-science-innovation-technology .brand__color:active,
-  .brand--department-for-science-innovation-technology .brand__color:hover,
-  .brand--department-for-science-innovation-technology .brand__color:focus {
-    color: #00f8f8;
-  }
-
-  .brand--department-for-transport.brand__border-color,
-  .brand--department-for-transport .brand__border-color {
-    border-color: #006853;
-  }
-
-  .brand--department-for-transport .brand__color,
-  .brand--department-for-transport .brand__color:link,
-  .brand--department-for-transport .brand__color:visited,
-  .brand--department-for-transport .brand__color:active,
-  .brand--department-for-transport .brand__color:hover,
-  .brand--department-for-transport .brand__color:focus {
-    color: #006853;
-  }
-
-  .brand--department-for-work-pensions.brand__border-color,
-  .brand--department-for-work-pensions .brand__border-color {
-    border-color: #00bcb5;
-  }
-
-  .brand--department-for-work-pensions .brand__color,
-  .brand--department-for-work-pensions .brand__color:link,
-  .brand--department-for-work-pensions .brand__color:visited,
-  .brand--department-for-work-pensions .brand__color:active,
-  .brand--department-for-work-pensions .brand__color:hover,
-  .brand--department-for-work-pensions .brand__color:focus {
-    color: #00bcb5;
-  }
-
-  .brand--department-of-energy-climate-change.brand__border-color,
-  .brand--department-of-energy-climate-change .brand__border-color {
-    border-color: #009ddb;
-  }
-
-  .brand--department-of-energy-climate-change .brand__color,
-  .brand--department-of-energy-climate-change .brand__color:link,
-  .brand--department-of-energy-climate-change .brand__color:visited,
-  .brand--department-of-energy-climate-change .brand__color:active,
-  .brand--department-of-energy-climate-change .brand__color:hover,
-  .brand--department-of-energy-climate-change .brand__color:focus {
-    color: #009ddb;
-  }
-
-  .brand--department-of-health.brand__border-color,
-  .brand--department-of-health .brand__border-color {
-    border-color: #00ad93;
-  }
-
-  .brand--department-of-health .brand__color,
-  .brand--department-of-health .brand__color:link,
-  .brand--department-of-health .brand__color:visited,
-  .brand--department-of-health .brand__color:active,
-  .brand--department-of-health .brand__color:hover,
-  .brand--department-of-health .brand__color:focus {
-    color: #00ad93;
-  }
-
-  .brand--department-of-health-social-care.brand__border-color,
-  .brand--department-of-health-social-care .brand__border-color {
-    border-color: #00a990;
-  }
-
-  .brand--department-of-health-social-care .brand__color,
-  .brand--department-of-health-social-care .brand__color:link,
-  .brand--department-of-health-social-care .brand__color:visited,
-  .brand--department-of-health-social-care .brand__color:active,
-  .brand--department-of-health-social-care .brand__color:hover,
-  .brand--department-of-health-social-care .brand__color:focus {
-    color: #00a990;
-  }
-
-  .brand--foreign-commonwealth-office.brand__border-color,
-  .brand--foreign-commonwealth-office .brand__border-color {
-    border-color: #003e74;
-  }
-
-  .brand--foreign-commonwealth-office .brand__color,
-  .brand--foreign-commonwealth-office .brand__color:link,
-  .brand--foreign-commonwealth-office .brand__color:visited,
-  .brand--foreign-commonwealth-office .brand__color:active,
-  .brand--foreign-commonwealth-office .brand__color:hover,
-  .brand--foreign-commonwealth-office .brand__color:focus {
-    color: #003e74;
-  }
-
-  .brand--foreign-commonwealth-development-office.brand__border-color,
-  .brand--foreign-commonwealth-development-office .brand__border-color {
-    border-color: #012069;
-  }
-
-  .brand--foreign-commonwealth-development-office .brand__color,
-  .brand--foreign-commonwealth-development-office .brand__color:link,
-  .brand--foreign-commonwealth-development-office .brand__color:visited,
-  .brand--foreign-commonwealth-development-office .brand__color:active,
-  .brand--foreign-commonwealth-development-office .brand__color:hover,
-  .brand--foreign-commonwealth-development-office .brand__color:focus {
-    color: #012069;
-  }
-
-  .brand--government-equalities-office.brand__border-color,
-  .brand--government-equalities-office .brand__border-color {
-    border-color: #0056b8;
-  }
-
-  .brand--government-equalities-office .brand__color,
-  .brand--government-equalities-office .brand__color:link,
-  .brand--government-equalities-office .brand__color:visited,
-  .brand--government-equalities-office .brand__color:active,
-  .brand--government-equalities-office .brand__color:hover,
-  .brand--government-equalities-office .brand__color:focus {
-    color: #0056b8;
-  }
-
-  .brand--hm-government.brand__border-color,
-  .brand--hm-government .brand__border-color {
-    border-color: #266ebc;
-  }
-
-  .brand--hm-government .brand__color,
-  .brand--hm-government .brand__color:link,
-  .brand--hm-government .brand__color:visited,
-  .brand--hm-government .brand__color:active,
-  .brand--hm-government .brand__color:hover,
-  .brand--hm-government .brand__color:focus {
-    color: #266ebc;
-  }
-
-  .brand--hm-revenue-customs.brand__border-color,
-  .brand--hm-revenue-customs .brand__border-color {
-    border-color: #008476;
-  }
-
-  .brand--hm-revenue-customs .brand__color,
-  .brand--hm-revenue-customs .brand__color:link,
-  .brand--hm-revenue-customs .brand__color:visited,
-  .brand--hm-revenue-customs .brand__color:active,
-  .brand--hm-revenue-customs .brand__color:hover,
-  .brand--hm-revenue-customs .brand__color:focus {
-    color: #008476;
-  }
-
-  .brand--hm-treasury.brand__border-color,
-  .brand--hm-treasury .brand__border-color {
-    border-color: #b2292e;
-  }
-
-  .brand--hm-treasury .brand__color,
-  .brand--hm-treasury .brand__color:link,
-  .brand--hm-treasury .brand__color:visited,
-  .brand--hm-treasury .brand__color:active,
-  .brand--hm-treasury .brand__color:hover,
-  .brand--hm-treasury .brand__color:focus {
-    color: #b2292e;
-  }
-
-  .brand--home-office.brand__border-color,
-  .brand--home-office .brand__border-color {
-    border-color: #732282;
-  }
-
-  .brand--home-office .brand__color,
-  .brand--home-office .brand__color:link,
-  .brand--home-office .brand__color:visited,
-  .brand--home-office .brand__color:active,
-  .brand--home-office .brand__color:hover,
-  .brand--home-office .brand__color:focus {
-    color: #732282;
-  }
-
-  .brand--ministry-of-defence.brand__border-color,
-  .brand--ministry-of-defence .brand__border-color {
-    border-color: #532a45;
-  }
-
-  .brand--ministry-of-defence .brand__color,
-  .brand--ministry-of-defence .brand__color:link,
-  .brand--ministry-of-defence .brand__color:visited,
-  .brand--ministry-of-defence .brand__color:active,
-  .brand--ministry-of-defence .brand__color:hover,
-  .brand--ministry-of-defence .brand__color:focus {
-    color: #532a45;
-  }
-
-  .brand--ministry-of-housing-communities-local-government.brand__border-color,
-  .brand--ministry-of-housing-communities-local-government
-    .brand__border-color {
-    border-color: #00625e;
-  }
-
-  .brand--ministry-of-housing-communities-local-government .brand__color,
-  .brand--ministry-of-housing-communities-local-government .brand__color:link,
-  .brand--ministry-of-housing-communities-local-government
-    .brand__color:visited,
-  .brand--ministry-of-housing-communities-local-government .brand__color:active,
-  .brand--ministry-of-housing-communities-local-government .brand__color:hover,
-  .brand--ministry-of-housing-communities-local-government .brand__color:focus {
-    color: #00625e;
-  }
-
-  .brand--ministry-of-justice.brand__border-color,
-  .brand--ministry-of-justice .brand__border-color {
-    border-color: #000;
-  }
-
-  .brand--ministry-of-justice .brand__color,
-  .brand--ministry-of-justice .brand__color:link,
-  .brand--ministry-of-justice .brand__color:visited,
-  .brand--ministry-of-justice .brand__color:active,
-  .brand--ministry-of-justice .brand__color:hover,
-  .brand--ministry-of-justice .brand__color:focus {
-    color: #000;
-  }
-
-  .brand--northern-ireland-office.brand__border-color,
-  .brand--northern-ireland-office .brand__border-color {
-    border-color: #00205c;
-  }
-
-  .brand--northern-ireland-office .brand__color,
-  .brand--northern-ireland-office .brand__color:link,
-  .brand--northern-ireland-office .brand__color:visited,
-  .brand--northern-ireland-office .brand__color:active,
-  .brand--northern-ireland-office .brand__color:hover,
-  .brand--northern-ireland-office .brand__color:focus {
-    color: #00205c;
-  }
-
-  .brand--office-of-the-advocate-general-for-scotland.brand__border-color,
-  .brand--office-of-the-advocate-general-for-scotland .brand__border-color {
-    border-color: #00205c;
-  }
-
-  .brand--office-of-the-advocate-general-for-scotland .brand__color,
-  .brand--office-of-the-advocate-general-for-scotland .brand__color:link,
-  .brand--office-of-the-advocate-general-for-scotland .brand__color:visited,
-  .brand--office-of-the-advocate-general-for-scotland .brand__color:active,
-  .brand--office-of-the-advocate-general-for-scotland .brand__color:hover,
-  .brand--office-of-the-advocate-general-for-scotland .brand__color:focus {
-    color: #00205c;
-  }
-
-  .brand--office-of-the-leader-of-the-house-of-commons.brand__border-color,
-  .brand--office-of-the-leader-of-the-house-of-commons .brand__border-color {
-    border-color: #497629;
-  }
-
-  .brand--office-of-the-leader-of-the-house-of-commons .brand__color,
-  .brand--office-of-the-leader-of-the-house-of-commons .brand__color:link,
-  .brand--office-of-the-leader-of-the-house-of-commons .brand__color:visited,
-  .brand--office-of-the-leader-of-the-house-of-commons .brand__color:active,
-  .brand--office-of-the-leader-of-the-house-of-commons .brand__color:hover,
-  .brand--office-of-the-leader-of-the-house-of-commons .brand__color:focus {
-    color: #497629;
-  }
-
-  .brand--office-of-the-leader-of-the-house-of-lords.brand__border-color,
-  .brand--office-of-the-leader-of-the-house-of-lords .brand__border-color {
-    border-color: #9c182f;
-  }
-
-  .brand--office-of-the-leader-of-the-house-of-lords .brand__color,
-  .brand--office-of-the-leader-of-the-house-of-lords .brand__color:link,
-  .brand--office-of-the-leader-of-the-house-of-lords .brand__color:visited,
-  .brand--office-of-the-leader-of-the-house-of-lords .brand__color:active,
-  .brand--office-of-the-leader-of-the-house-of-lords .brand__color:hover,
-  .brand--office-of-the-leader-of-the-house-of-lords .brand__color:focus {
-    color: #9c182f;
-  }
-
-  .brand--office-of-the-secretary-of-state-for-scotland.brand__border-color,
-  .brand--office-of-the-secretary-of-state-for-scotland .brand__border-color {
-    border-color: #00205c;
-  }
-
-  .brand--office-of-the-secretary-of-state-for-scotland .brand__color,
-  .brand--office-of-the-secretary-of-state-for-scotland .brand__color:link,
-  .brand--office-of-the-secretary-of-state-for-scotland .brand__color:visited,
-  .brand--office-of-the-secretary-of-state-for-scotland .brand__color:active,
-  .brand--office-of-the-secretary-of-state-for-scotland .brand__color:hover,
-  .brand--office-of-the-secretary-of-state-for-scotland .brand__color:focus {
-    color: #00205c;
-  }
-
-  .brand--office-of-the-secretary-of-state-for-wales.brand__border-color,
-  .brand--office-of-the-secretary-of-state-for-wales .brand__border-color {
-    border-color: #a8353a;
-  }
-
-  .brand--office-of-the-secretary-of-state-for-wales .brand__color,
-  .brand--office-of-the-secretary-of-state-for-wales .brand__color:link,
-  .brand--office-of-the-secretary-of-state-for-wales .brand__color:visited,
-  .brand--office-of-the-secretary-of-state-for-wales .brand__color:active,
-  .brand--office-of-the-secretary-of-state-for-wales .brand__color:hover,
-  .brand--office-of-the-secretary-of-state-for-wales .brand__color:focus {
-    color: #a8353a;
-  }
-
-  .brand--prime-ministers-office-10-downing-street.brand__border-color,
-  .brand--prime-ministers-office-10-downing-street .brand__border-color {
-    border-color: #0b0c0c;
-  }
-
-  .brand--prime-ministers-office-10-downing-street .brand__color,
-  .brand--prime-ministers-office-10-downing-street .brand__color:link,
-  .brand--prime-ministers-office-10-downing-street .brand__color:visited,
-  .brand--prime-ministers-office-10-downing-street .brand__color:active,
-  .brand--prime-ministers-office-10-downing-street .brand__color:hover,
-  .brand--prime-ministers-office-10-downing-street .brand__color:focus {
-    color: #0b0c0c;
-  }
-
-  .brand--scotland-office.brand__border-color,
-  .brand--scotland-office .brand__border-color {
-    border-color: #00205c;
-  }
-
-  .brand--scotland-office .brand__color,
-  .brand--scotland-office .brand__color:link,
-  .brand--scotland-office .brand__color:visited,
-  .brand--scotland-office .brand__color:active,
-  .brand--scotland-office .brand__color:hover,
-  .brand--scotland-office .brand__color:focus {
-    color: #00205c;
-  }
-
-  .brand--serious-fraud-office.brand__border-color,
-  .brand--serious-fraud-office .brand__border-color {
-    border-color: #82368c;
-  }
-
-  .brand--serious-fraud-office .brand__color,
-  .brand--serious-fraud-office .brand__color:link,
-  .brand--serious-fraud-office .brand__color:visited,
-  .brand--serious-fraud-office .brand__color:active,
-  .brand--serious-fraud-office .brand__color:hover,
-  .brand--serious-fraud-office .brand__color:focus {
-    color: #82368c;
-  }
-
-  .brand--uk-export-finance.brand__border-color,
-  .brand--uk-export-finance .brand__border-color {
-    border-color: #cf102d;
-  }
-
-  .brand--uk-export-finance .brand__color,
-  .brand--uk-export-finance .brand__color:link,
-  .brand--uk-export-finance .brand__color:visited,
-  .brand--uk-export-finance .brand__color:active,
-  .brand--uk-export-finance .brand__color:hover,
-  .brand--uk-export-finance .brand__color:focus {
-    color: #cf102d;
-  }
-
-  .brand--uk-trade-investment.brand__border-color,
-  .brand--uk-trade-investment .brand__border-color {
-    border-color: #c80651;
-  }
-
-  .brand--uk-trade-investment .brand__color,
-  .brand--uk-trade-investment .brand__color:link,
-  .brand--uk-trade-investment .brand__color:visited,
-  .brand--uk-trade-investment .brand__color:active,
-  .brand--uk-trade-investment .brand__color:hover,
-  .brand--uk-trade-investment .brand__color:focus {
-    color: #c80651;
-  }
-
-  .brand--wales-office.brand__border-color,
-  .brand--wales-office .brand__border-color {
-    border-color: #a33038;
-  }
-
-  .brand--wales-office .brand__color,
-  .brand--wales-office .brand__color:link,
-  .brand--wales-office .brand__color:visited,
-  .brand--wales-office .brand__color:active,
-  .brand--wales-office .brand__color:hover,
-  .brand--wales-office .brand__color:focus {
-    color: #a33038;
-  }
-
-  .brand--the-office-of-the-leader-of-the-house-of-commons.brand__border-color,
-  .brand--the-office-of-the-leader-of-the-house-of-commons
-    .brand__border-color {
-    border-color: #497629;
-  }
-
-  .brand--the-office-of-the-leader-of-the-house-of-commons .brand__color,
-  .brand--the-office-of-the-leader-of-the-house-of-commons .brand__color:link,
-  .brand--the-office-of-the-leader-of-the-house-of-commons
-    .brand__color:visited,
-  .brand--the-office-of-the-leader-of-the-house-of-commons .brand__color:active,
-  .brand--the-office-of-the-leader-of-the-house-of-commons .brand__color:hover,
-  .brand--the-office-of-the-leader-of-the-house-of-commons .brand__color:focus {
-    color: #497629;
-  }
-
-  .brand--civil-service.brand__border-color,
-  .brand--civil-service .brand__border-color {
-    border-color: #0b0c0c;
-  }
-
-  .brand--civil-service .brand__color,
-  .brand--civil-service .brand__color:link,
-  .brand--civil-service .brand__color:visited,
-  .brand--civil-service .brand__color:active,
-  .brand--civil-service .brand__color:hover,
-  .brand--civil-service .brand__color:focus {
-    color: #b2292e;
-  }
-
-  .brand--department-for-science-innovation-and-technology.brand__border-color,
-  .brand--department-for-science-innovation-and-technology
-    .brand__border-color {
-    border-color: #00f8f8;
-  }
-
-  .brand--department-for-science-innovation-and-technology .brand__color,
-  .brand--department-for-science-innovation-and-technology .brand__color:link,
-  .brand--department-for-science-innovation-and-technology
-    .brand__color:visited,
-  .brand--department-for-science-innovation-and-technology .brand__color:active,
-  .brand--department-for-science-innovation-and-technology .brand__color:hover,
-  .brand--department-for-science-innovation-and-technology .brand__color:focus {
-    color: #00f8f8;
   }
 
   .brand--government-digital-service.brand__border-color,

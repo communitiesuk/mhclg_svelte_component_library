@@ -87,7 +87,6 @@
 <nav
   class={navClasses}
   aria-label={aria?.label || defaultAriaLabel}
-  role="navigation"
   {id}
   dir={dir || undefined}
   {lang}

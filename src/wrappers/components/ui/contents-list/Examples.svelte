@@ -190,13 +190,29 @@
         {
           href: "#first-thing",
           text: "First thing",
+        },
+        {
+          href: "#second-thing",
+          text: "Second thing",
+        },
+        {
+          href: "#third-thing",
+          text: "Third thing",
           items: [
-            { href: "#first-sub-item", text: "First sub-item" },
-            { href: "#second-sub-item", text: "Second sub-item" },
+            {
+              href: "#sub-third-thing",
+              text: "Sub third thing",
+            },
+            {
+              href: "#another-third-thing",
+              text: "Another third thing",
+            },
           ],
         },
-        { href: "#second-thing", text: "Second thing" },
-        { href: "#third-thing", text: "Third thing" },
+        {
+          href: "#fourth-thing",
+          text: "Fourth thing",
+        },
       ]}
     />
   </div>

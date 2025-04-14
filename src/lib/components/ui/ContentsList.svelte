@@ -42,6 +42,10 @@
     lang = undefined,
   }: Props = $props();
 
+  const anyTopLevelHasSubItems = $derived(
+    contents.some((item) => item.items && item.items.length > 0),
+  );
+
   const numberFormatRegex = /^(\d{1,3}(?:\.\d{1,2})?\.?|\d)\s+(.*)/;
 
   function parseFormattedNumber(
@@ -99,7 +103,7 @@
     {#each contents as item, i ((item.href || "") + item.text + i)}
       {@const hasSubItems = item.items && item.items.length > 0}
       {@const parsed = formatNumbers ? parseFormattedNumber(item.text) : null}
-      {@const isDashed = !formatNumbers}
+      {@const isDashed = !formatNumbers && !anyTopLevelHasSubItems}
 
       <li
         aria-current={item.active ? "true" : undefined}
@@ -108,10 +112,12 @@
           {
             "gem-c-contents-list__list-item--dashed": isDashed,
             "gem-c-contents-list__list-item--numbered": formatNumbers && parsed,
-            "gem-c-contents-list__list-item--parent": hasSubItems,
+            "gem-c-contents-list__list-item--parent": anyTopLevelHasSubItems,
             "gem-c-contents-list__list-item--active": item.active,
           },
-          brand && item.active ? "brand__border-color" : "",
+          brand && item.active && alternativeLineStyle
+            ? "brand__border-color"
+            : "",
         )}
       >
         {#if isDashed}
@@ -156,7 +162,9 @@
               {@const subParsed = formatNumbers
                 ? parseFormattedNumber(subItem.text)
                 : null}
-              {@const subIsDashed = !formatNumbers}
+              {@const subHasSubItems =
+                subItem.items && subItem.items.length > 0}
+              {@const subIsDashed = !formatNumbers && !subHasSubItems}
 
               <li
                 aria-current={subItem.active ? "true" : undefined}
@@ -171,6 +179,12 @@
                   brand && subItem.active ? "brand__border-color" : "",
                 )}
               >
+                {#if subIsDashed}
+                  <span
+                    class="gem-c-contents-list__list-item-dash"
+                    aria-hidden="true"
+                  ></span>
+                {/if}
                 {#if subItem.active}
                   {#if subParsed}
                     <span class="gem-c-contents-list__number"

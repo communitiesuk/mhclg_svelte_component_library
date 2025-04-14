@@ -1,6 +1,6 @@
 <script lang="ts">
   //@ts-nocheck
-  import type maplibregl from "maplibre-gl";
+
   import {
     MapLibre,
     GeoJSON,
@@ -10,11 +10,16 @@
   } from "svelte-maplibre";
   import { contrastingColor } from "./colors.ts";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
-  import type { ExpressionSpecification } from "maplibre-gl";
+  import type { maplibregl, ExpressionSpecification } from "maplibre-gl";
   import fullTopo from "./fullTopo.json";
   import * as topojson from "topojson-client";
   import Tooltip from "./Tooltip.svelte";
-  import { getColor, filterGeo } from "./mapUtils.js";
+  import {
+    getColor,
+    filterGeo,
+    jenksBreaks,
+    quantileBreaks,
+  } from "./mapUtils.js";
 
   let {
     data,
@@ -26,6 +31,8 @@
     geoType,
     year,
     metric,
+    breaksType,
+    numberOfBreaks = 5,
     fillOpacity = 0.5,
     changeOpacityOnHover = true,
     hoverOpacity = 0.8,
@@ -48,13 +55,11 @@
   );
 
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
-  $inspect(filteredGeoJsonData.features);
 
   let fillColor = ["#ffffcc", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"];
   let borderColor = "#003300";
 
   let map: maplibregl.Map | undefined = $state();
-  // $inspect(map?.cooperativeGestures);
 
   let loaded = $state(false);
   let textLayers: maplibregl.LayerSpecification[] = $derived(
@@ -87,23 +92,21 @@
   let vals = $derived(
     filteredMapData.map((d) => d.metric).sort((a, b) => a - b),
   );
-  let len = $derived(vals.length);
-  let breaks = $derived([
-    vals[0],
-    vals[Math.floor(len * 0.2)],
-    vals[Math.floor(len * 0.4)],
-    vals[Math.floor(len * 0.6)],
-    vals[Math.floor(len * 0.8)],
-    vals[len - 1],
-  ]);
-  // $inspect(metric, breaks);
+
+  let breaks = $derived(
+    breaksType == "jenks"
+      ? jenksBreaks(vals, numberOfBreaks)
+      : quantileBreaks(vals, numberOfBreaks),
+  );
 
   let dataWithColor = $derived(
     filteredMapData.map((d) => {
-      return { ...d, color: getColor(d.metric, breaks, fillColor) };
+      return {
+        ...d,
+        color: getColor(d.metric, breaks, fillColor),
+      };
     }),
   );
-  // $inspect(dataWithColor);
 
   //Joining the data to the GeoJSON
   let obj2Map = $derived(
@@ -145,11 +148,34 @@
     crs: { properties: { name: "EPSG:4326" }, type: "name" },
   });
 
-  // $inspect(merged);
-
   let hoveredArea = $state();
   let hoveredAreaData = $state();
   let currentMousePosition = $state();
+
+  function zoomToArea(e) {
+    if (clickToZoom) {
+      let coordArray =
+        e.features[0].geometry.coordinates.length === 1
+          ? e.features[0].geometry.coordinates[0]
+          : //Do some extra processing to get the data in the right shape if the area has non-contiguous areas
+            e.features[0].geometry.coordinates.flat(2);
+
+      let minValues = [
+        Math.min(...coordArray.map((d) => +d[0])),
+        Math.max(...coordArray.map((d) => +d[0])),
+      ];
+
+      let maxValues = [
+        Math.min(...coordArray.map((d) => +d[1])),
+        Math.max(...coordArray.map((d) => +d[1])),
+      ];
+
+      map?.fitBounds([
+        [minValues[0], maxValues[0]],
+        [minValues[1], maxValues[1]],
+      ]);
+    }
+  }
 </script>
 
 <MapLibre
@@ -161,68 +187,19 @@
   {center}
   {zoom}
 >
-  <GeoJSON id="states" data={merged} promoteId="areanm">
+  <GeoJSON id="areas" data={merged} promoteId="areanm">
     <FillLayer
       paint={{
-        // "fill-color": hoverStateFilter(fillColor[0], colors[0].hoverBgColor),
+        //Get the color property of the area, or lightgrey if that's undefined
         "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
-        ////Or use a step function to do the processing:
-        // "fill-color": [
-        //   "step",
-        //// 'coalesce' says what to do if the value is null or undefined
-        //   ["coalesce", ["get", "metric"], -1000],
-        //   "lightgrey",
-        //   1,
-        //   "pink",
-        //   8.4,
-        //   "green",
-        //   43.2,
-        //   "white",
-        //   49.5,
-        //   "blue",
-        //   61.6,
-        //   "yellow",
-        //// Use "metric" property for color mapping
-        // ],
-        // "fill-opacity": 0.5,
-
         "fill-opacity": changeOpacityOnHover
-          ? [
-              "case",
-              ["boolean", ["feature-state", "hover"], false],
-              hoverOpacity,
-              fillOpacity,
-            ]
+          ? hoverStateFilter(fillOpacity, hoverOpacity) //setting the fill-opacity based on whether the area is hovered
           : fillOpacity,
       }}
       beforeLayerType="symbol"
       manageHoverState
-      onclick={(e) => {
-        if (clickToZoom) {
-          let coordArray =
-            e.features[0].geometry.coordinates.length === 1
-              ? e.features[0].geometry.coordinates[0]
-              : //Do some extra processing to get the data in the right shape if the area has non-contiguous areas
-                e.features[0].geometry.coordinates.flat(2);
-
-          let minValues = [
-            Math.min(...coordArray.map((d) => +d[0])),
-            Math.max(...coordArray.map((d) => +d[0])),
-          ];
-
-          let maxValues = [
-            Math.min(...coordArray.map((d) => +d[1])),
-            Math.max(...coordArray.map((d) => +d[1])),
-          ];
-
-          map?.fitBounds([
-            [minValues[0], maxValues[0]],
-            [minValues[1], maxValues[1]],
-          ]);
-        }
-      }}
+      onclick={(e) => zoomToArea(e)}
       onmousemove={(e) => {
-        // console.log(e.features[0].properties.metric);
         hoveredArea = e.features[0].id;
         hoveredAreaData = e.features[0].properties.metric;
         currentMousePosition = e.event.point;
@@ -236,10 +213,10 @@
       <LineLayer
         layout={{ "line-cap": "round", "line-join": "round" }}
         paint={{
-          "line-color": hoverStateFilter(borderColor, "orange"), // Neat svelte-maplibre method for setting the colour based on whether the area is hovered - compare with the fill-opacity code above
-          "line-width": zoomTransition(3, 0, 12, maxBorderWidth), // Neat svelte-maplibre method for setting the line-width based on the zoom level
+          "line-color": hoverStateFilter(borderColor, "orange"), //setting the colour based on whether the area is hovered
+          "line-width": zoomTransition(3, 0, 12, maxBorderWidth), //setting the line-width based on the zoom level
         }}
-        beforeLayerType=""
+        beforeLayerType="symbol"
       />
     {/if}
   </GeoJSON>

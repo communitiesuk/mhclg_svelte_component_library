@@ -239,6 +239,18 @@
         options: data.metrics,
       },
       {
+        name: "breaksType",
+        isProp: true,
+        category: "Data",
+        options: ["quantile", "jenks"],
+      },
+      {
+        name: "numberOfBreaks",
+        isProp: true,
+        category: "Data",
+        value: 5,
+      },
+      {
         name: "dummyData",
         category: "Data",
         value: [

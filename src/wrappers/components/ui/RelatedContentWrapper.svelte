@@ -234,7 +234,12 @@
             `<code>type</code>: ('main', 'subheading', 'other')`,
             `<code>id</code>: (Unique string)`,
             `<code>links</code>: (Array of link objects {title, base_path/url})`,
-            `Optional fields: <code>title</code> (string, for type 'main'), <code>subheading</code> (string, for type 'subheading'/'other'), <code>linkStyle</code> ('normal'/'other'), <code>truncateThreshold</code> (number), <code>disableTruncation</code> (boolean)`,
+            `Optional fields:`,
+            `&nbsp;<code>title</code>: (string, for type 'main')`,
+            `&nbsp;<code>subheading</code>: (string, for type 'subheading'/'other')`,
+            `&nbsp;<code>linkStyle</code>: ('normal'/'other')`,
+            `&nbsp;<code>truncateThreshold</code>: (number)`,
+            `&nbsp;<code>disableTruncation</code>: (boolean)`,
           ],
         },
         rows: 20,
@@ -412,10 +417,10 @@
   !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
- {#snippet Component()}
- <div class="p-8">
-   <RelatedContent {...parametersObject}></RelatedContent>
- </div>
+{#snippet Component()}
+  <div class="p-8">
+    <RelatedContent {...parametersObject}></RelatedContent>
+  </div>
 {/snippet}
 
 <!--

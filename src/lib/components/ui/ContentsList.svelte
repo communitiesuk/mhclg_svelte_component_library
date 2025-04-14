@@ -159,12 +159,10 @@
           {@const subItems = item.items as ContentItem[]}
           <ol class="gem-c-contents-list__nested-list">
             {#each subItems as subItem, j ((subItem.href || "") + subItem.text + j)}
-              {@const subParsed = formatNumbers
-                ? parseFormattedNumber(subItem.text)
-                : null}
+              {@const subParsed = null}
               {@const subHasSubItems =
                 subItem.items && subItem.items.length > 0}
-              {@const subIsDashed = !formatNumbers && !subHasSubItems}
+              {@const subIsDashed = !subHasSubItems}
 
               <li
                 aria-current={subItem.active ? "true" : undefined}
@@ -172,11 +170,12 @@
                   "gem-c-contents-list__list-item",
                   {
                     "gem-c-contents-list__list-item--dashed": subIsDashed,
-                    "gem-c-contents-list__list-item--numbered":
-                      formatNumbers && subParsed,
+                    "gem-c-contents-list__list-item--numbered": false,
                     "gem-c-contents-list__list-item--active": subItem.active,
                   },
-                  brand && subItem.active ? "brand__border-color" : "",
+                  brand && subItem.active && alternativeLineStyle
+                    ? "brand__border-color"
+                    : "",
                 )}
               >
                 {#if subIsDashed}
@@ -186,16 +185,7 @@
                   ></span>
                 {/if}
                 {#if subItem.active}
-                  {#if subParsed}
-                    <span class="gem-c-contents-list__number"
-                      >{subParsed.num}</span
-                    >
-                    <span class="gem-c-contents-list__numbered-text"
-                      >{subParsed.rest}</span
-                    >
-                  {:else}
-                    {subItem.text}
-                  {/if}
+                  {subItem.text}
                 {:else}
                   <a
                     href={subItem.href || "#"}
@@ -207,16 +197,7 @@
                       brand ? "brand__color" : "",
                     )}
                   >
-                    {#if subParsed}
-                      <span class="gem-c-contents-list__number"
-                        >{subParsed.num}</span
-                      >
-                      <span class="gem-c-contents-list__numbered-text"
-                        >{subParsed.rest}</span
-                      >
-                    {:else}
-                      {subItem.text}
-                    {/if}
+                    {subItem.text}
                   </a>
                 {/if}
               </li>

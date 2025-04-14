@@ -264,11 +264,11 @@
       {
         name: "brand",
         category: "Styling",
-        value: null,
+        value: "",
         description: {
           markdown: true,
           arr: [
-            `Applies organisation-specific branding (e.g., 'prime-ministers-office-10-downing-street'). Requires corresponding CSS to be available.`,
+            `Applies organisation-specific branding (e.g., 'prime-ministers-office-10-downing-street') by adding a <code>gem-c-contents-list--brand-{brand}</code> class. Requires corresponding CSS for the specified brand.`,
           ],
         },
         rows: 1,
@@ -324,12 +324,12 @@
       {
         name: "dir",
         category: "Accessibility & Attributes",
-        options: [null, "ltr", "rtl", "auto"],
-        value: null,
+        options: ["", "ltr", "rtl", "auto"],
+        value: "",
         description: {
           markdown: true,
           arr: [
-            `Sets the text direction (<code>dir</code> attribute) for the component.`,
+            `Sets the text direction (<code>dir</code> attribute) for the component. Empty string means default behavior.`,
           ],
         },
       },

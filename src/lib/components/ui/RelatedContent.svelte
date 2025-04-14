@@ -89,6 +89,7 @@
 )}
   {@const isExternal = isExternalLink(link)}
   {@const href = isExternal ? link.url : link.base_path}
+  {@const langAttr = link.locale}
   {@const ga4LinkData = !disableGa4
     ? JSON.stringify({
         event_name: "navigation",
@@ -111,6 +112,7 @@
       target={isExternal ? "_blank" : undefined}
       rel={isExternal ? "noopener noreferrer external" : undefined}
       data-ga4-link={ga4LinkData}
+      lang={langAttr}
     >
       {link.title}
     </a>
@@ -173,6 +175,7 @@
         {#each truncatedItems as link, i (isExternalLink(link) ? link.url : link.base_path)}
           {@const isExternal = isExternalLink(link)}
           {@const href = isExternal ? link.url : link.base_path}
+          {@const langAttr = link.locale}
           {@const itemClass = isOther
             ? "govuk-link govuk-link gem-c-related-navigation__section-link govuk-link gem-c-related-navigation__section-link--other-truncated"
             : "govuk-link govuk-link gem-c-related-navigation__section-link gem-c-related-navigation__section-link--inline"}
@@ -193,8 +196,10 @@
             class={itemClass}
             target={isExternal ? "_blank" : undefined}
             rel={isExternal ? "noopener noreferrer external" : undefined}
-            data-ga4-link={ga4LinkData}>{link.title}</a
-          >{#if i < truncatedItems.length - 1}{i === truncatedItems.length - 2
+            data-ga4-link={ga4LinkData}
+            lang={langAttr}>{link.title}</a
+          >
+          {#if i < truncatedItems.length - 1}{i === truncatedItems.length - 2
               ? ", and "
               : ", "}{/if}
         {/each}

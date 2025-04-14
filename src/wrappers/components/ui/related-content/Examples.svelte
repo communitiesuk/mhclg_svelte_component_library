@@ -509,6 +509,18 @@
 {/snippet}
 
 {#snippet Example2()}
+  <p class="govuk-body text-sm">
+    Shows the component when the 'Explore the topic' section in the `sections`
+    data is prepared <strong>by the user</strong> to only contain links corresponding
+    to GOV.UK's 'mainstream browse pages'.
+  </p>
+  <p class="govuk-body text-sm">
+    <i
+      >(Note: Unlike the original GOV.UK component which handles link type
+      precedence internally, this Svelte component requires the user to prepare
+      the `sections` data accordingly).</i
+    >
+  </p>
   <div class="p-5 bg-white">
     <RelatedContent sections={sections2} />
     <CodeBlock code={codeBlocks.codeBlock2} language="svelte" />
@@ -516,6 +528,18 @@
 {/snippet}
 
 {#snippet Example3()}
+  <p class="govuk-body text-sm">
+    Shows the component when the 'Explore the topic' section in the `sections`
+    data is prepared <strong>by the user</strong> to only contain links corresponding
+    to GOV.UK's 'taxons' (a type of topic link distinct from 'mainstream browse pages').
+  </p>
+  <p class="govuk-body text-sm">
+    <i
+      >(Note: Unlike the original GOV.UK component which handles link type
+      precedence internally, this Svelte component requires the user to prepare
+      the `sections` data accordingly).</i
+    >
+  </p>
   <div class="p-5 bg-white">
     <RelatedContent sections={sections3} />
     <CodeBlock code={codeBlocks.codeBlock3} language="svelte" />
@@ -523,6 +547,20 @@
 {/snippet}
 
 {#snippet Example4()}
+  <p class="govuk-body text-sm">
+    Demonstrates how a user would mimic the GOV.UK precedence rule: If both
+    'mainstream browse pages' and 'taxons' *could* apply to an 'Explore the
+    topic' section, the `sections` data passed to this component must be
+    prepared <strong>by the user</strong> to only include the mainstream browse links
+    for that specific section object.
+  </p>
+  <p class="govuk-body text-sm">
+    <i
+      >(Note: The original GOV.UK component handled this precedence internally
+      based on link type. This Svelte component requires the user to prepare the
+      data accordingly).</i
+    >
+  </p>
   <div class="p-5 bg-white">
     <RelatedContent sections={sections4} />
     <CodeBlock code={codeBlocks.codeBlock4} language="svelte" />

@@ -42,8 +42,18 @@
     lang = undefined,
   }: Props = $props();
 
+  // Reactive check: True if any top-level item in 'contents' has a non-empty 'items' array.
   const anyTopLevelHasSubItems = $derived(
-    contents.some((item) => item.items && item.items.length > 0),
+    contents.some((item) => {
+      // Get the potential sub-items array
+      const subItemsArray = item.items;
+      // Check if the array exists and has items
+      const hasPopulatedSubItems = subItemsArray
+        ? subItemsArray.length > 0
+        : false;
+      // Return true for this item if it has a sub-items array that's not empty
+      return hasPopulatedSubItems;
+    }),
   );
 
   // Regex to capture a leading number format (e.g., "1", "1.", "1.2", "1.2.", "123.45")

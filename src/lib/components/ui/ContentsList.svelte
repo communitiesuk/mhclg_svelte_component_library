@@ -73,7 +73,6 @@
     if (!text) return null;
     const match = text.match(numberFormatRegex);
     if (match) {
-      // Extract the captured groups into clearly named variables
       const numberPart = match[1];
       const textPart = match[2];
       return { num: numberPart, rest: textPart };

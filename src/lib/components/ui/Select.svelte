@@ -46,18 +46,15 @@
     "id" | "name" | "value" | "class" | "aria-describedby"
   > = $props();
 
-  // Calculate aria-describedby based on props
   let describedByIds = $derived(() => {
     if (describedBy) {
-      // Use the explicitly provided prop value if it exists
-      return describedBy;
+      return describedBy; // Use provided value if it exists
     }
-    // Otherwise, construct it based on hint and error message presence
+    // Otherwise, compute based on hint/error
     const ids: string[] = [];
     if (hint) ids.push(`${id}-hint`);
     if (errorMessage && error) ids.push(`${id}-error`);
-    const generated = ids.join(" ");
-    return generated ? generated : undefined; // Return undefined if no ids, avoids empty aria-describedby
+    return ids.length > 0 ? ids.join(" ") : undefined; // Return joined string or undefined
   });
 </script>
 
@@ -102,7 +99,7 @@
     {id}
     {name}
     bind:value
-    aria-describedby={describedByIds}
+    aria-describedby={describedByIds() || undefined}
     {...attributes}
   >
     {#each items as item (item.value)}

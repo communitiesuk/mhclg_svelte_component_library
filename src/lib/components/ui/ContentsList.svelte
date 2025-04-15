@@ -81,7 +81,7 @@
     ),
   );
 
-  const listClasses = $derived(clsx("gem-c-contents-list__list"));
+  const listClasses = "gem-c-contents-list__list";
 
   const ga4Attributes = $derived(
     disableGa4

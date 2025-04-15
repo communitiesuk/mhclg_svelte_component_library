@@ -186,3 +186,31 @@ export const codeBlock8 = `
   data-custom-attribute="example-value" // Example of spreading other attributes
 />
 `;
+
+export const codeBlock9 = `
+<script>
+  import Select from "$lib/components/ui/Select.svelte";
+
+  let items = [
+    { value: "published", text: "Recently published" },
+    { value: "updated", text: "Recently updated" },
+    { value: "views", text: "Most views" },
+    { value: "comments", text: "Most comments" },
+  ];
+
+  // Reactive state variable for the selected value
+  let selectedValue = $state("updated"); 
+</script>
+
+<div class="govuk-body">
+  <p>Selected value (bound): <code class="bg-gray-200 p-1 rounded">{selectedValue}</code></p>
+</div>
+
+<Select 
+  id="sort-bind"
+  name="sort-bind"
+  label="Sort by (bind:value)"
+  {items}
+  bind:value={selectedValue} // Bind the value
+/>
+`;

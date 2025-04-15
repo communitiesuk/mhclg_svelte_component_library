@@ -98,7 +98,15 @@
         "8. With other props (formGroupClasses, describedBy, attributes)",
       content: Example8,
     },
+    {
+      id: "9",
+      heading: "9. Using bind:value",
+      content: Example9,
+    },
   ];
+
+  // Add state for the new bindable example
+  let selectedValue9 = $state("updated");
 
   // Reactive variables for binding in examples
 </script>
@@ -125,11 +133,7 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Select
-      id="sort-basic"
-      name="sort-basic"
-      items={basicItems}
-    />
+    <Select id="sort-basic" name="sort-basic" items={basicItems} />
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
@@ -234,4 +238,24 @@
     />
   </div>
   <CodeBlock code={codeBlocks.codeBlock8} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example9()}
+  <div class="p-5 bg-white">
+    <div class="govuk-body mb-2">
+      <p>
+        Selected value (bound): <code class="bg-gray-200 p-1 rounded"
+          >{selectedValue9}</code
+        >
+      </p>
+    </div>
+    <Select
+      id="sort-bind"
+      name="sort-bind"
+      label="Sort by (bind:value)"
+      items={basicItems}
+      bind:value={selectedValue9}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock9} language="svelte"></CodeBlock>
 {/snippet}

@@ -188,6 +188,7 @@
         name: "items",
         category: "Core attributes",
         isRequired: true,
+        isEditable: true,
         value: [
           { value: "govuk-1", text: "Option 1" },
           {
@@ -207,7 +208,6 @@
             `An array of objects defining the options for the dropdown. Each object should have:`,
             `<code>value</code>: The value attribute for the option.`,
             `<code>text</code>: The text displayed for the option.`,
-            `<code>selected</code> (optional): Set to <code>true</code> for the initially selected option.`,
             `<code>disabled</code> (optional): Set to <code>true</code> to disable the option.`,
           ],
         },

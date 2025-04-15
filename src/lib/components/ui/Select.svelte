@@ -4,7 +4,6 @@
   type SelectItem = {
     value: string | number;
     text: string;
-    selected?: boolean;
     disabled?: boolean;
   };
 
@@ -13,7 +12,7 @@
     id = "select-1", // Default ID if not provided
     name,
     items = [] as SelectItem[], // Use simple default array
-    value: valueProp = undefined, // Rename prop to avoid conflict with bind:value if needed, use simple undefined default
+    value = $bindable(), // Use $bindable() for the value prop
 
     // Label and hints
     label,
@@ -47,34 +46,12 @@
     "id" | "name" | "value" | "class" | "aria-describedby"
   > = $props();
 
-  let value = $state(valueProp); // Initialize local state with prop value
-
-  $effect(() => {
-    value = valueProp;
-  });
-
   let describedByIds = describedBy;
   if (!describedByIds) {
     const ids: string[] = [];
     if (hint) ids.push(`${id}-hint`);
     if (errorMessage && error) ids.push(`${id}-error`);
     describedByIds = ids.join(" ");
-  }
-
-  // Initialize value based on selected item if value is not initially provided via prop
-  if (value === undefined) {
-    const selectedItem = items.find((item) => item.selected);
-    if (selectedItem) {
-      value = selectedItem.value;
-    } else if (
-      items.length > 0 &&
-      !items.some((item) => item.disabled && item.selected !== false)
-    ) {
-      const firstEnabledItem = items.find((item) => !item.disabled);
-      if (firstEnabledItem) {
-        value = firstEnabledItem.value;
-      }
-    }
   }
 </script>
 

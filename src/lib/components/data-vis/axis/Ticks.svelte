@@ -3,18 +3,21 @@
 
   let {
     ticksArray = $bindable(),
+    prefix,
+    suffix,
     chartWidth,
     chartHeight,
     axisFunction,
     values,
     numberOfTicks,
+    baseline,
     orientation,
+    yearsInput,
   } = $props();
 
-  // $inspect(ticksArray);
+  $inspect(ticksArray);
 
-  //TODO: Ticks based on width
-  function generateTicks(data, numTicks) {
+  function generateTicks(data, numTicks, baseline) {
     let minVal = Math.min(...data);
     let maxVal = Math.max(...data);
     let rangeVal = maxVal - minVal;
@@ -27,22 +30,26 @@
     let optimalStep =
       normalizedSteps.find((step) => step >= normalizedStep) / stepPower;
 
-    let scaleMin = Math.floor(minVal / optimalStep) * optimalStep;
+    let scaleMin = baseline
+      ? 0
+      : Math.floor(minVal / optimalStep) * optimalStep;
     let scaleMax = Math.ceil(maxVal / optimalStep) * optimalStep;
 
     let ticks = [];
-    for (let i = scaleMin; i <= scaleMax; i += optimalStep) {
-      ticks.push(i);
-    }
-
+    for (let i = scaleMin; i <= scaleMax; i += optimalStep) {}
     return ticks;
   }
 
-  ticksArray = generateTicks(values, numberOfTicks);
+  function yearsFormat(ticks) {
+    return ticks.map((tick) => `FY ${tick % 100}-${(tick % 100) + 1}`);
+  }
+
+  ticksArray = generateTicks(values, numberOfTicks, baseline);
+  let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 </script>
 
-{#if axisFunction != null && ticksArray != null && orientation.hasOwnProperty("axis") && orientation.hasOwnProperty("position")}
-  {#each ticksArray as tick}
+{#if axisFunction && ticksArray && orientation.axis && orientation.position}
+  {#each ticksArray as tick, index}
     <g
       transform="translate({orientation.axis === 'x'
         ? axisFunction(tick)
@@ -76,7 +83,8 @@
             ? "end"
             : "start"}
         fill="black"
-        >{tick}
+      >
+        {yearsInput ? yearTicks[index] : `${prefix}${tick}${suffix}`}
       </text>
     </g>
   {/each}

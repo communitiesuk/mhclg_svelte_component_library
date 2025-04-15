@@ -97,6 +97,7 @@
 
   import Ticks from "$lib/components/data-vis/axis/Ticks.svelte";
   import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
+  import CategoryLabel from "$lib/components/data-vis/line-chart/CategoryLabel.svelte";
 
   let { data } = $props();
 
@@ -246,6 +247,19 @@
         category: "customisations",
         value: 5,
       },
+
+      {
+        name: "prefix",
+        category: "customisations",
+        value: "number of",
+      },
+      {
+        name: "suffix",
+        category: "customisations",
+        value: "%",
+      },
+      { name: "baseline", category: "customisations", value: false },
+      { name: "yearsInput", category: "customisations", value: false },
       {
         name: "orientationAxis",
         category: "customisations",

@@ -16,7 +16,7 @@
     formatNumbers?: boolean;
     alternativeLineStyle?: boolean;
     disableGa4?: boolean;
-    brand?: string; // Not implemented yet, just adding prop
+    brand?: string;
     id?: string;
     classes?: string;
     dataAttributes?: Record<string, string>;

@@ -9,9 +9,9 @@
 
   let {
     // Core attributes
-    id = "select-1", // Default ID if not provided
+    id,
     name,
-    items = [] as SelectItem[],
+    items,
     value = $bindable<string | number | undefined>(), // Use bindable value
 
     // Label and hints
@@ -20,8 +20,8 @@
     hint = undefined,
 
     // Error handling
-    serverErrorMessage = undefined, // Renamed from errorMessage
-    validate = undefined, // Added client-side validation function
+    error = undefined, // serverside error message
+    validate = undefined, // Client-side validation function
 
     // Styling and layout
     formGroupClasses = "", // Additional classes for the form group wrapper
@@ -29,15 +29,15 @@
     describedBy = "", // Optional override for aria-describedby
     ...attributes // Allow passing additional HTML attributes to the select element
   }: {
-    id?: string;
+    id: string;
     name: string;
-    items?: SelectItem[];
+    items: SelectItem[];
     value?: string | number | undefined;
     label: string;
     labelIsPageHeading?: boolean;
     hint?: string;
-    serverErrorMessage?: string; // Renamed
-    validate?: (value: string | number | undefined) => string | undefined; // Added
+    error?: string; // Changed back from serverErrorMessage
+    validate?: (value: string | number | undefined) => string | undefined;
     formGroupClasses?: string;
     fullWidth?: boolean;
     describedBy?: string;
@@ -48,16 +48,12 @@
 
   // Client-side validation result
   let validationError = $derived(validate ? validate(value) : undefined);
-  // Combined error state (true if either client or server error exists)
-  let error = $derived(!!(validationError || serverErrorMessage));
-  // The actual error message to display
-  let displayedErrorMessage = $derived(validationError || serverErrorMessage);
 </script>
 
 <div
   class={cx(
     "govuk-form-group",
-    error && "govuk-form-group--error",
+    (validationError || error) && "govuk-form-group--error", // Check both validation and server error
     formGroupClasses,
   )}
 >
@@ -79,24 +75,30 @@
     </div>
   {/if}
 
-  {#if error}
+  {#if validationError || error}
+    <!-- Check both validation and server error -->
     <p id="{id}-error" class="govuk-error-message">
       <span class="govuk-visually-hidden">Error:</span>
-      {displayedErrorMessage}
+      {validationError || error}
+      <!-- Display whichever error exists (client first) -->
     </p>
   {/if}
 
   <select
     class={cx(
       "govuk-select",
-      error && "govuk-select--error",
+      (validationError || error) && "govuk-select--error", // Check both validation and server error
       fullWidth && "govuk-!-width-full",
     )}
     {id}
     {name}
     bind:value
-    aria-describedby={describedBy ||
-      [hint ? `${id}-hint` : null, error ? `${id}-error` : null]
+    aria-describedby={// Recompute directly here based on new logic
+    describedBy ||
+      [
+        hint ? `${id}-hint` : null,
+        validationError || error ? `${id}-error` : null,
+      ]
         .filter(Boolean)
         .join(" ") ||
       undefined}

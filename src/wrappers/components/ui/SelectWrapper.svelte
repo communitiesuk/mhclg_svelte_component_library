@@ -122,17 +122,6 @@
    */
   let selectedValue = $state("govuk-2");
 
-  // Example client-side validation function
-  function validateSelection(value) {
-    if (value === undefined || value === null || value === "") {
-      return "Please make a selection (client-side).";
-    }
-    if (value === "govuk-1") {
-      return "Option 1 is not allowed (client-side).";
-    }
-    return undefined; // No error
-  }
-
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -176,11 +165,12 @@
       {
         name: "id",
         category: "Core attributes",
+        isRequired: true,
         value: "select-example",
         description: {
           markdown: true,
           arr: [
-            `The ID attribute for the <code>select</code> element. Defaults to <code>select-1</code> if not provided. Used to link the label and hint/error messages.`,
+            `The ID attribute for the <code>select</code> element. Used to link the label and hint/error messages.`,
           ],
         },
       },
@@ -242,7 +232,7 @@
       {
         name: "label",
         category: "Label and hints",
-        isRequired: true,
+        isRequired: false,
         value: "Select an option",
         description: {
           markdown: true,
@@ -276,24 +266,11 @@
       {
         name: "error",
         category: "Error handling",
-        value: false,
+        value: "",
         description: {
           markdown: true,
           arr: [
-            `Simulates a server-side error condition. If <code>true</code>, the <code>serverErrorMessage</code> is passed to the component.`,
-            `Note: Client-side validation via the <code>validate</code> prop will still run.`,
-          ],
-        },
-      },
-      {
-        name: "serverErrorMessage",
-        category: "Error handling",
-        value: "This is a server-side error message.",
-        visible: { name: "error", value: true },
-        description: {
-          markdown: true,
-          arr: [
-            `The error message passed from the server when <code>error</code> is true.`,
+            `Optional error message string. If present, indicates a server-side error and displays this message (unless overridden by client-side validation).`,
           ],
         },
         rows: 2,
@@ -302,9 +279,17 @@
         name: "validate",
         category: "Error handling",
         propType: "fixed",
-        value: validateSelection,
+        value: function (value) {
+          if (value === undefined || value === null || value === "") {
+            return "Please make a selection (client-side).";
+          }
+          if (value === "govuk-1") {
+            return "Option 1 is not allowed (client-side).";
+          }
+          return undefined; // No error
+        },
         functionElements: {
-          functionAsString: `function validateSelection(value) {\n  if (value === undefined || value === null || value === "") {\n    return "Please make a selection (client-side).";\n  }\n  if (value === "govuk-1") {\n      return "Option 1 is not allowed (client-side)." \n  }\n  return undefined; // No error\n}`,
+          functionAsString: `function (value) {\n  if (value === undefined || value === null || value === "") {\n    return "Please make a selection (client-side).";\n  }\n  if (value === "govuk-1") {\n    return "Option 1 is not allowed (client-side).";\n  }\n  return undefined; // No error\n}`,
         },
         description: {
           markdown: true,
@@ -501,14 +486,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <Select
-      {...parametersObject}
-      bind:value={selectedValue}
-      validate={parametersObject.validate}
-      serverErrorMessage={parametersObject.error
-        ? parametersObject.serverErrorMessage
-        : undefined}
-    />
+    <Select {...parametersObject} bind:value={selectedValue} />
   </div>
 {/snippet}
 

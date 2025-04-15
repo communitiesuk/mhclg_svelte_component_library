@@ -169,7 +169,6 @@
       {
         name: "includeArea",
         category: "Overall styling",
-        propType: "fixed",
         isProp: true,
         value: true,
       },

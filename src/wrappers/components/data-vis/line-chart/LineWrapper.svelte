@@ -170,7 +170,14 @@
         name: "includeArea",
         category: "Overall styling",
         isProp: true,
-        value: true,
+        value: false,
+      },
+      {
+        name: "areaFillColor",
+        category: "Overall styling",
+        isProp: true,
+        value: "lightgrey",
+        visible: { name: "includeArea", value: true },
       },
       {
         name: "xFunction",

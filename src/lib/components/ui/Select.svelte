@@ -108,5 +108,4 @@
 </div>
 
 <style>
-  /* Ensure GOV.UK Frontend styles are imported globally or via a layout component */
 </style>

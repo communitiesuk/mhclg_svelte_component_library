@@ -11,17 +11,17 @@
     // Core attributes
     id = "select-1", // Default ID if not provided
     name,
-    items = [] as SelectItem[], // Use simple default array
-    value = $bindable(), // Use $bindable() for the value prop
+    items = [] as SelectItem[],
+    value = $bindable<string | number | undefined>(), // Use bindable value
 
     // Label and hints
     label,
-    labelIsPageHeading = false, // If true, label is wrapped in H1 and gets larger style
-    hint = undefined, // Optional hint text
+    labelIsPageHeading = false,
+    hint = undefined,
 
     // Error handling
-    errorMessage = undefined, // Optional error message
-    error = false, // If true, applies error styles
+    serverErrorMessage = undefined, // Renamed from errorMessage
+    validate = undefined, // Added client-side validation function
 
     // Styling and layout
     formGroupClasses = "", // Additional classes for the form group wrapper
@@ -36,8 +36,8 @@
     label: string;
     labelIsPageHeading?: boolean;
     hint?: string;
-    errorMessage?: string;
-    error?: boolean;
+    serverErrorMessage?: string; // Renamed
+    validate?: (value: string | number | undefined) => string | undefined; // Added
     formGroupClasses?: string;
     fullWidth?: boolean;
     describedBy?: string;
@@ -46,16 +46,12 @@
     "id" | "name" | "value" | "class" | "aria-describedby"
   > = $props();
 
-  let describedByIds = $derived(() => {
-    if (describedBy) {
-      return describedBy; // Use provided value if it exists
-    }
-    // Otherwise, compute based on hint/error
-    const ids: string[] = [];
-    if (hint) ids.push(`${id}-hint`);
-    if (errorMessage && error) ids.push(`${id}-error`);
-    return ids.length > 0 ? ids.join(" ") : undefined; // Return joined string or undefined
-  });
+  // Client-side validation result
+  let validationError = $derived(validate ? validate(value) : undefined);
+  // Combined error state (true if either client or server error exists)
+  let error = $derived(!!(validationError || serverErrorMessage));
+  // The actual error message to display
+  let displayedErrorMessage = $derived(validationError || serverErrorMessage);
 </script>
 
 <div
@@ -83,10 +79,10 @@
     </div>
   {/if}
 
-  {#if errorMessage && error}
+  {#if error}
     <p id="{id}-error" class="govuk-error-message">
       <span class="govuk-visually-hidden">Error:</span>
-      {errorMessage}
+      {displayedErrorMessage}
     </p>
   {/if}
 
@@ -99,7 +95,11 @@
     {id}
     {name}
     bind:value
-    aria-describedby={describedByIds() || undefined}
+    aria-describedby={describedBy ||
+      [hint ? `${id}-hint` : null, error ? `${id}-error` : null]
+        .filter(Boolean)
+        .join(" ") ||
+      undefined}
     {...attributes}
   >
     {#each items as item (item.value)}

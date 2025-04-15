@@ -122,6 +122,17 @@
    */
   let selectedValue = $state("govuk-2");
 
+  // Example client-side validation function
+  function validateSelection(value) {
+    if (value === undefined || value === null || value === "") {
+      return "Please make a selection (client-side).";
+    }
+    if (value === "govuk-1") {
+      return "Option 1 is not allowed (client-side).";
+    }
+    return undefined; // No error
+  }
+
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -269,22 +280,39 @@
         description: {
           markdown: true,
           arr: [
-            `If <code>true</code>, applies error styling to the form group and select element.`,
+            `Simulates a server-side error condition. If <code>true</code>, the <code>serverErrorMessage</code> is passed to the component.`,
+            `Note: Client-side validation via the <code>validate</code> prop will still run.`,
           ],
         },
       },
       {
-        name: "errorMessage",
+        name: "serverErrorMessage",
         category: "Error handling",
-        value: "Please select an option",
+        value: "This is a server-side error message.",
         visible: { name: "error", value: true },
         description: {
           markdown: true,
           arr: [
-            `The error message text displayed when <code>error</code> is true.`,
+            `The error message passed from the server when <code>error</code> is true.`,
           ],
         },
         rows: 2,
+      },
+      {
+        name: "validate",
+        category: "Error handling",
+        propType: "fixed",
+        value: validateSelection,
+        functionElements: {
+          functionAsString: `function validateSelection(value) {\n  if (value === undefined || value === null || value === "") {\n    return "Please make a selection (client-side).";\n  }\n  if (value === "govuk-1") {\n      return "Option 1 is not allowed (client-side)." \n  }\n  return undefined; // No error\n}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `A client-side validation function <code>(value) => string | undefined</code>.`,
+            `Receives the current selected value and should return an error message string if invalid, or <code>undefined</code> if valid.`,
+          ],
+        },
       },
 
       {
@@ -473,7 +501,14 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <Select {...parametersObject} bind:value={selectedValue}></Select>
+    <Select
+      {...parametersObject}
+      bind:value={selectedValue}
+      validate={parametersObject.validate}
+      serverErrorMessage={parametersObject.error
+        ? parametersObject.serverErrorMessage
+        : undefined}
+    />
   </div>
 {/snippet}
 

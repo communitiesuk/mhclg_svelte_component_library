@@ -46,6 +46,15 @@
     contents.some((item) => item.items && item.items.length > 0),
   );
 
+  // Regex to capture a leading number format (e.g., "1", "1.", "1.2", "1.2.", "123.45")
+  // followed by whitespace and the rest of the text.
+  // Group 1: Captures the number part (e.g., "1", "1.", "1.2", "123.45")
+  //   - \d{1,3} : 1-3 digits
+  //   - (?:\.\d{1,2})? : Optional non-capturing group for a decimal point and 1-2 digits
+  //   - \.? : Optional trailing decimal point
+  //   - | : OR
+  //   - \d : A single digit (alternative)
+  // Group 2: Captures the remaining text after the first whitespace following the number
   const numberFormatRegex = /^(\d{1,3}(?:\.\d{1,2})?\.?|\d)\s+(.*)/;
 
   function parseFormattedNumber(
@@ -54,7 +63,10 @@
     if (!text) return null;
     const match = text.match(numberFormatRegex);
     if (match) {
-      return { num: match[1], rest: match[2] };
+      // Extract the captured groups into clearly named variables
+      const numberPart = match[1];
+      const textPart = match[2];
+      return { num: numberPart, rest: textPart };
     }
     return null;
   }

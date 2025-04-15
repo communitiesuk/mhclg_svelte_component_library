@@ -48,12 +48,13 @@
    */
   let descriptionArray = [
     `Renders a standard HTML <code>select</code> dropdown component styled according to the GOV.UK Design System.`,
-    `It includes features like labels, hint text, error messages, and options for styling.`,
+    `Based on the <a href="https://design-system.service.gov.uk/components/select/" target="_blank" rel="noopener noreferrer">GOV.UK Design System Select component</a>.`,
   ];
 
   let contextArray = [
-    `Use this component whenever you need users to select one option from a predefined list.`,
-    `It's suitable for forms where a simple dropdown selection is required.`,
+    `Use this component when you need to ask users to select one option from a predefined list.`,
+    `GOV.UK recommends avoiding select components for multiple selections due to usability and accessibility issues. Use checkboxes instead for multi-select scenarios.`,
+    `Be aware of <a href="https://design-system.service.gov.uk/components/select/#research-on-this-component" target="_blank" rel="noopener noreferrer">known usability issues</a> with select components, especially on smaller devices. Consider alternatives like radios if appropriate.`,
   ];
 
   let detailsArray = [

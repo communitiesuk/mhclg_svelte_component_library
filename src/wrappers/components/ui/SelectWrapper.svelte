@@ -189,18 +189,17 @@
         category: "Core attributes",
         isRequired: true,
         value: [
-          { value: "govuk-1", text: "GOV.UK Frontend option 1" },
+          { value: "govuk-1", text: "Option 1" },
           {
             value: "govuk-2",
-            text: "GOV.UK Frontend option 2",
-            selected: true,
+            text: "Option 2",
           },
           {
             value: "govuk-3",
-            text: "GOV.UK Frontend option 3",
+            text: "Option 3",
             disabled: true,
           },
-          { value: "govuk-4", text: "GOV.UK Frontend option 4" },
+          { value: "govuk-4", text: "Option 4" },
         ],
         description: {
           markdown: true,

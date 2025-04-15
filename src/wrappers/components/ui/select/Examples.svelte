@@ -4,15 +4,103 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-import Select from "$lib/components/ui/Select.svelte";
+  import Select from "$lib/components/ui/Select.svelte";
+
+  // Shared items for examples
+  let basicItems = [
+    { value: "published", text: "Recently published" },
+    { value: "updated", text: "Recently updated" },
+    { value: "views", text: "Most views" },
+    { value: "comments", text: "Most comments" },
+  ];
+
+  let itemsWithErrorOption = [
+    { value: "", text: "Please select" },
+    ...basicItems,
+  ];
+
+  // New items array for default example with placeholder
+  let itemsWithPlaceholder = [
+    { value: "", text: "Please select" },
+    ...basicItems,
+  ];
+
+  let itemsWithDisabled = [
+    { value: "published", text: "Recently published" },
+    { value: "updated", text: "Recently updated", disabled: true },
+    { value: "views", text: "Most views" },
+    { value: "comments", text: "Most comments" },
+  ];
+
+  let itemsForValidation = [
+    { value: "", text: "Please select" },
+    { value: "allowed", text: "Allowed Option" },
+    { value: "disallowed", text: "Disallowed Option (Client Validation)" },
+    { value: "other", text: "Other Option" },
+  ];
+
+  let itemsForExtraProps = [
+    { value: "alpha", text: "Alpha" },
+    { value: "beta", text: "Beta" },
+    { value: "gamma", text: "Gamma" },
+  ];
+
+  // Client-side validation function for example 6
+  function validateSelectExample(value) {
+    if (!value) {
+      return "You must select an option.";
+    }
+    if (value === "disallowed") {
+      return "This option is not permitted.";
+    }
+    return undefined; // Valid
+  }
 
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
+      heading: "1. Minimum required usage",
       content: Example1,
     },
+    {
+      id: "2",
+      heading: "2. Default value selection (with placeholder)",
+      content: Example2,
+    },
+    {
+      id: "3",
+      heading: "3. With hint text",
+      content: Example3,
+    },
+    {
+      id: "4",
+      heading: "4. With server-side error message",
+      content: Example4,
+    },
+    {
+      id: "5",
+      heading: "5. As page heading and full width",
+      content: Example5,
+    },
+    {
+      id: "6",
+      heading: "6. With a disabled option",
+      content: Example6,
+    },
+    {
+      id: "7",
+      heading: "7. With client-side validation",
+      content: Example7,
+    },
+    {
+      id: "8",
+      heading:
+        "8. With other props (formGroupClasses, describedBy, attributes)",
+      content: Example8,
+    },
   ];
+
+  // Reactive variables for binding in examples
 </script>
 
 <div class="my-20 p-2">
@@ -37,32 +125,113 @@ import Select from "$lib/components/ui/Select.svelte";
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    <Select
+      id="sort-basic"
+      name="sort-basic"
+      items={basicItems}
+    />
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example2()}
+  <div class="p-5 bg-white">
+    <Select
+      id="sort-default"
+      name="sort-default"
+      label="Sort by (Default Value - with Placeholder)"
+      items={itemsWithPlaceholder}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example3()}
+  <div class="p-5 bg-white">
+    <Select
+      id="sort-hint"
+      name="sort-hint"
+      label="Sort by"
+      hint="Choose the order items are displayed in."
+      items={basicItems}
+      value="updated"
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example4()}
+  <div class="p-5 bg-white">
+    <Select
+      id="sort-error"
+      name="sort-error"
+      label="Sort by"
+      error="You must select a sort option."
+      items={itemsWithErrorOption}
+      value=""
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example5()}
+  <div class="p-5 bg-white">
+    <Select
+      id="sort-heading-full"
+      name="sort-heading-full"
+      label="Sort results by"
+      labelIsPageHeading={true}
+      fullWidth={true}
+      items={basicItems}
+      value="updated"
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example6()}
+  <div class="p-5 bg-white">
+    <Select
+      id="sort-disabled"
+      name="sort-disabled"
+      label="Sort by (with disabled option)"
+      items={itemsWithDisabled}
+      value="published"
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock6} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example7()}
+  <div class="p-5 bg-white">
+    <Select
+      id="sort-validation"
+      name="sort-validation"
+      label="Select (with validation)"
+      hint="Try selecting the disallowed option."
+      items={itemsForValidation}
+      value=""
+      validate={validateSelectExample}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock7} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example8()}
+  <div class="p-5 bg-white">
+    <div id="extra-description" class="govuk-body-s govuk-!-margin-bottom-1">
+      This text provides extra context.
+    </div>
+    <Select
+      id="sort-extra-props"
+      name="sort-extra-props"
+      label="Select with extra props"
+      items={itemsForExtraProps}
+      value="beta"
+      formGroupClasses="my-custom-form-group another-class"
+      describedBy="extra-description"
+      data-custom-attribute="example-value"
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock8} language="svelte"></CodeBlock>
 {/snippet}

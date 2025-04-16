@@ -91,13 +91,13 @@
     },
     invisibles: {
       listenForOnHoverEvents: true,
-      pathStrokeWidth: 10,
+      pathStrokeWidth: 1,
       opacity: 0,
     },
     primary: {
       halo: true,
       includeMarkers: true,
-      pathStrokeWidth: areaCodeHover == null ? 10 : 1,
+      pathStrokeWidth: areaCodeHover === null ? 5 : 2,
       color: "red", // functionOfSomeKind(
       //data.lines
       // .filter((el) => el.tiers.includes("primary"))
@@ -108,6 +108,7 @@
     },
     hover: {
       color: "orange",
+      pathStrokeWidth: 5,
     },
   });
 
@@ -123,7 +124,6 @@
       opacity: areaCodeHover == null ? 1 : 0.2,
     },
   });
-  // $inspect(dataArray);
 
   let showAllData = true;
 </script>

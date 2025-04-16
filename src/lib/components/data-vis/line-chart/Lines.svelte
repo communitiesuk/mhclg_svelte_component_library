@@ -82,6 +82,7 @@
       {areaFunction}
       dataArray={line.data}
       pathStrokeColor={defaultLineParams[tier].color ?? "grey"}
+      pathStrokeWidth={defaultLineParams[tier].pathStrokeWidth ?? 1}
       dataId={line.areaCode}
       onClick={function (event, dataArray, dataId) {
         areaCodeHover = dataId;

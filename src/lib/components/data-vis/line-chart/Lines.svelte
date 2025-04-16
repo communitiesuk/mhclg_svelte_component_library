@@ -29,7 +29,7 @@
   let selectedLine = $derived([labelHovered, labelClicked]);
 
   let transformed = $derived(
-    tieredDataObject["primary"].map((item) => {
+    tieredDataObject[areaCodeHover ? "hover" : "primary"].map((item) => {
       let lastY = yFunction(item.data[0].y);
       return { areaCode: item.areaCode, lastY };
     }),
@@ -98,7 +98,7 @@
       }}
       {...defaultLineParams}
     ></Line>
-    {#if labelsPlaced && tier === "primary"}
+    {#if (!areaCodeHover && tier === "primary") || (areaCodeHover && tier === "hover")}
       {@render categoryLabelSnippet(
         line,
         labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,

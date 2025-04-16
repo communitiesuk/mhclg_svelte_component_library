@@ -135,7 +135,7 @@
       d={lineFunction(dataArray)}
       fill={pathFillColor}
       stroke={chartBackgroundColor}
-      stroke-width={pathStrokeWidth * 1.5}
+      stroke-width={pathStrokeWidth * 1.2}
       stroke-dasharray={pathStrokeDashArray}
     ></path>
   {/if}

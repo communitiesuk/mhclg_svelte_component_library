@@ -1,7 +1,7 @@
 <script lang="ts">
   import { clsx } from "clsx";
   import { browser } from "$app/environment";
-  import searchIconRaw from "/assets/govuk_publishing_components/images/icon-search.svg?raw"; // Import raw SVG
+  import IconSearch from "$lib/icons/IconSearch.svelte";
   import DOMPurify from "dompurify";
 
   // Define the props based on GOV.UK documentation
@@ -166,7 +166,7 @@
     <div class="gem-c-search__item gem-c-search__submit-wrapper">
       <button class={buttonClasses} type="submit" enterkeyhint="search">
         <span class="govuk-visually-hidden">{button_text}</span>
-        {@html searchIconRaw}
+        <IconSearch class="gem-c-search__icon" />
       </button>
     </div>
   </div>
@@ -313,16 +313,6 @@
     height: 40px;
     text-indent: -5000px;
     overflow: hidden;
-  }
-
-  .gem-c-search__submit .gem-c-search__icon {
-    pointer-events: none;
-    position: absolute;
-    height: 100%;
-    width: 100%;
-    top: 0;
-    left: 0;
-    transform: scale(0.5);
   }
 
   .gem-c-search__submit:focus {

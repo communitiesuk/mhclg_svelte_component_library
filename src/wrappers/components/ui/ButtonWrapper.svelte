@@ -191,6 +191,23 @@
         },
         rows: 5,
       },
+      {
+        name: "buttonFunction",
+        category: "Input props",
+        value: someFunction,
+        functionElements: {
+          functionAsString: `function someFunction() {
+    console.log("The answer to 2 x 2 is " + 2 * 2);
+  }`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a function to the <code>${pageName}</code> component that is executed when the button is clicked`,
+          ],
+        },
+        rows: 5,
+      },
     ]),
   );
 
@@ -304,6 +321,10 @@
       ]),
     ),
   );
+
+  function someFunction() {
+    console.log("The answer to 2 x 2 is " + 2 * 2);
+  }
 </script>
 
 <!--

@@ -74,35 +74,38 @@
 {/snippet}
 
 {#each Object.keys(tieredDataObject) as tier}
-  {#each tieredDataObject[tier] as line, i}
-    <Line
-      {lineFunction}
-      {xFunction}
-      {yFunction}
-      {areaFunction}
-      dataArray={line.data}
-      pathStrokeColor={defaultLineParams[tier].color ?? "grey"}
-      pathStrokeWidth={defaultLineParams[tier].pathStrokeWidth ?? 1}
-      dataId={line.areaCode}
-      onClick={function (event, dataArray, dataId) {
-        areaCodeHover = dataId;
-      }}
-      onMouseEnter={function (event, dataArray, dataId) {
-        areaCodeHover = dataId;
-      }}
-      onMouseMove={function (event, dataArray, dataId) {
-        areaCodeHover = dataId;
-      }}
-      onMouseLeave={function (event, dataArray, dataId) {
-        areaCodeHover = null;
-      }}
-      {...defaultLineParams}
-    ></Line>
-    {#if (!areaCodeHover && tier === "primary") || (areaCodeHover && tier === "hover")}
-      {@render categoryLabelSnippet(
-        line,
-        labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
-      )}
-    {/if}
-  {/each}
+  {console.log(tier, globalTierRules[tier].opacity ?? "r")}
+  <g opacity={globalTierRules[tier].opacity}>
+    {#each tieredDataObject[tier] as line, i}
+      <Line
+        {lineFunction}
+        {xFunction}
+        {yFunction}
+        {areaFunction}
+        dataArray={line.data}
+        pathStrokeColor={defaultLineParams[tier].color ?? "grey"}
+        pathStrokeWidth={defaultLineParams[tier].pathStrokeWidth ?? 1}
+        dataId={line.areaCode}
+        onClick={function (event, dataArray, dataId) {
+          areaCodeHover = dataId;
+        }}
+        onMouseEnter={function (event, dataArray, dataId) {
+          areaCodeHover = dataId;
+        }}
+        onMouseMove={function (event, dataArray, dataId) {
+          areaCodeHover = dataId;
+        }}
+        onMouseLeave={function (event, dataArray, dataId) {
+          areaCodeHover = null;
+        }}
+        {...defaultLineParams}
+      ></Line>
+      {#if (!areaCodeHover && tier === "primary") || (areaCodeHover && tier === "hover")}
+        {@render categoryLabelSnippet(
+          line,
+          labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
+        )}
+      {/if}
+    {/each}
+  </g>
 {/each}

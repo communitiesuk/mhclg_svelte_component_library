@@ -85,14 +85,13 @@
   };
 
   let defaultLineParams = $derived({
-    otherTier: {},
-    secondary: {
-      "pointer-events": "none",
-    },
     invisibles: {
       listenForOnHoverEvents: true,
       pathStrokeWidth: 1,
-      opacity: 0,
+    },
+    otherTier: {},
+    secondary: {
+      "pointer-events": "none",
     },
     primary: {
       halo: true,
@@ -120,9 +119,17 @@
   );
 
   let globalTierRules = $derived({
-    primary: {
-      opacity: areaCodeHover == null ? 1 : 0.2,
+    otherTier: {
+      opacity: areaCodeHover == null ? 1 : 1,
     },
+    invisibles: { opacity: 0 },
+    secondary: {
+      opacity: areaCodeHover == null ? 1 : 0.8,
+    },
+    primary: {
+      opacity: areaCodeHover == null ? 1 : 0.1,
+    },
+    hover: { opacity: 1 },
   });
 
   let showAllData = true;

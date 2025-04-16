@@ -15,7 +15,7 @@
 
   let {
     dataArray,
-    opacity = 1,
+    opacity,
     pathStrokeColor = "grey",
     pathStrokeWidth = 3,
     pathFillColor = "none",

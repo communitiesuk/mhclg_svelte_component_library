@@ -51,6 +51,6 @@
     x={20}
     y={newY}
   >
-    {dataArray.name}
+    {areaCode}
   </text>
 </g>

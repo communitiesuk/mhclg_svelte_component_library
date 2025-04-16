@@ -75,7 +75,7 @@
 {/snippet}
 
 {#each Object.keys(tieredDataObject) as tier}
-  <g>
+  <g opacity={globalTierRules[tier].opacity} id={tier}>
     {#each tieredDataObject[tier] as line, i}
       <Line
         {lineFunction}

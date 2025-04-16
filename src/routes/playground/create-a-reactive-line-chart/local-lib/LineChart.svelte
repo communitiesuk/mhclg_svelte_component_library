@@ -73,7 +73,7 @@
           ? ["hover", "secondary"]
           : primaryLines.includes(el.areaCode)
             ? ["primary"]
-            : ["invisibles"],
+            : ["invisibles", "secondary"],
       includeMarkers: selectedAreaCode === "E07000223",
     })),
   );
@@ -83,16 +83,17 @@
   };
 
   let colorPalette = {
-    base: ["blue", "green", "red"],
+    base: ["grey", "blue", "green", "red"],
   };
 
   let defaultLineParams = $derived({
+    otherTier: { halo: false },
+
     invisibles: {
       listenForOnHoverEvents: true,
       pathStrokeWidth: 1,
       halo: false,
     },
-    otherTier: { halo: false },
     secondary: {
       "pointer-events": "none",
       halo: false,
@@ -104,9 +105,8 @@
       color: "red", // functionOfSomeKind(
       //data.lines
       // .filter((el) => el.tiers.includes("primary"))
-      //.map((el) => el.areaCode),
-      //lookupObj,
-      //colorPalette["base"],
+      //.map((el, i) => el.areaCode),
+      //lookupObj[el.areaCode] ?? colorPalette.base[i % colorPalette.base.length]
       //),
       halo: true,
     },

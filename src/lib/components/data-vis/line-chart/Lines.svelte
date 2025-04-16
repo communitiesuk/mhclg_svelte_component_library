@@ -21,6 +21,7 @@
     showAllData,
     defaultLineParams,
     globalTierRules,
+    chartBackgroundColor,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
@@ -74,8 +75,7 @@
 {/snippet}
 
 {#each Object.keys(tieredDataObject) as tier}
-  {console.log(tier, globalTierRules[tier].opacity ?? "r")}
-  <g opacity={globalTierRules[tier].opacity}>
+  <g>
     {#each tieredDataObject[tier] as line, i}
       <Line
         {lineFunction}
@@ -83,9 +83,10 @@
         {yFunction}
         {areaFunction}
         dataArray={line.data}
-        pathStrokeColor={defaultLineParams[tier].color ?? "grey"}
-        pathStrokeWidth={defaultLineParams[tier].pathStrokeWidth ?? 1}
+        pathStrokeColor={defaultLineParams[tier].color}
+        pathStrokeWidth={defaultLineParams[tier].pathStrokeWidth}
         dataId={line.areaCode}
+        halo={defaultLineParams[tier].halo}
         onClick={function (event, dataArray, dataId) {
           areaCodeHover = dataId;
         }}
@@ -99,6 +100,7 @@
           areaCodeHover = null;
         }}
         {...defaultLineParams}
+        {chartBackgroundColor}
       ></Line>
       {#if (!areaCodeHover && tier === "primary") || (areaCodeHover && tier === "hover")}
         {@render categoryLabelSnippet(

@@ -13,6 +13,8 @@
   let svgWidth = $state(),
     svgHeight = 600;
 
+  let chartBackgroundColor = "#f5f5f5";
+
   /*let staticMargin = { top: 10, right: 20, bottom: 20, left: 10 };
   let dynamicMargin = $derived({ top: 0, right: 0, bottom: 0, left: 0 });
   let totalMargin = $derived({
@@ -88,10 +90,12 @@
     invisibles: {
       listenForOnHoverEvents: true,
       pathStrokeWidth: 1,
+      halo: false,
     },
-    otherTier: {},
+    otherTier: { halo: false },
     secondary: {
       "pointer-events": "none",
+      halo: false,
     },
     primary: {
       halo: true,
@@ -104,10 +108,12 @@
       //lookupObj,
       //colorPalette["base"],
       //),
+      halo: true,
     },
     hover: {
       color: "orange",
       pathStrokeWidth: 5,
+      halo: true,
     },
   });
 
@@ -120,14 +126,14 @@
 
   let globalTierRules = $derived({
     otherTier: {
-      opacity: areaCodeHover == null ? 1 : 1,
+      opacity: areaCodeHover == null ? 1 : 0.5,
     },
     invisibles: { opacity: 0 },
     secondary: {
-      opacity: areaCodeHover == null ? 1 : 0.8,
+      opacity: areaCodeHover == null ? 1 : 0.5,
     },
     primary: {
-      opacity: areaCodeHover == null ? 1 : 0.1,
+      opacity: areaCodeHover == null ? 1 : 0.5,
     },
     hover: { opacity: 1 },
   });
@@ -164,7 +170,7 @@
     onclick={handleClickOutside}
     width={svgWidth ?? 400}
     height={svgHeight}
-    style="background-color: #f5f5f5"
+    style="background-color: {chartBackgroundColor}"
   >
     {#if svgWidth}
       <g transform="translate({totalMargin.left},{totalMargin.top})">
@@ -196,6 +202,7 @@
             {defaultLineParams}
             {showAllData}
             {globalTierRules}
+            {chartBackgroundColor}
           ></Lines>
         </g>
       </g>

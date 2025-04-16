@@ -173,6 +173,12 @@
         value: false,
       },
       {
+        name: "halo",
+        category: "Overall styling",
+        isProp: true,
+        value: false,
+      },
+      {
         name: "areaFillColor",
         category: "Overall styling",
         isProp: true,

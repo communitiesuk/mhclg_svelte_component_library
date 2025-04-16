@@ -15,7 +15,7 @@
 
   let {
     dataArray,
-    opacity,
+    opacity = 1,
     pathStrokeColor = "grey",
     pathStrokeWidth = 3,
     pathFillColor = "none",
@@ -39,6 +39,8 @@
     onMouseEnter,
     onMouseLeave,
     onMouseMove,
+    halo,
+    chartBackgroundColor = "#d1d1d1",
     // onClickMarker,
     // onMouseEnterMarker,
     // onMouseLeaveMarker,
@@ -119,6 +121,7 @@
   {#if includeArea}
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
   {/if}
+
   <path
     d={lineFunction(dataArray)}
     fill="none"
@@ -126,6 +129,16 @@
     stroke-width="20"
     pointer-events="stroke"
   ></path>
+  {#if halo}
+    {console.log(halo)}
+    <path
+      d={lineFunction(dataArray)}
+      fill={pathFillColor}
+      stroke={chartBackgroundColor}
+      stroke-width={pathStrokeWidth * 1.5}
+      stroke-dasharray={pathStrokeDashArray}
+    ></path>
+  {/if}
   <path
     d={lineFunction(dataArray)}
     fill={pathFillColor}

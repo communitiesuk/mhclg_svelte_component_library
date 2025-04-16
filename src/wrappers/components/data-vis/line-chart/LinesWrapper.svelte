@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "In progress",
+    progress: "To be developed",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -70,12 +70,7 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [
-    {
-      label: "Child components",
-      arr: [{ name: "Line", folder: "line-chart" }],
-    },
-  ];
+  let connectedComponentsArray = [];
 </script>
 
 <script>
@@ -97,16 +92,6 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
-  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
-  import {
-    curveBasis,
-    curveCardinal,
-    curveLinear,
-    curveLinearClosed,
-    curveMonotoneX,
-    curveStep,
-    line,
-  } from "d3-shape";
 
   let { data } = $props();
 
@@ -129,9 +114,6 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let labelClicked = $state();
-
-  let svgWidth = $state(demoScreenWidth);
 
   /**
    * ! Step 3 - Add your props
@@ -174,212 +156,142 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "svgHeight",
-        category: "dimensions",
-        isProp: false,
-        value: 500,
+        name: "componentNameProp",
+        category: "Input props",
+        propType: "fixed",
+        value: pageName,
       },
       {
-        name: "svgWidth",
-        category: "dimensions",
-        isProp: false,
-        value: svgWidth,
+        name: "textProp",
+        category: "Input props",
+        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 2,
       },
       {
-        name: "paddingTop",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
+        name: "numberProp",
+        category: "Input props",
+        value: 9,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 5,
       },
       {
-        name: "paddingRight",
-        category: "dimensions",
-        isProp: false,
-        value: 150,
-      },
-      {
-        name: "paddingBottom",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingLeft",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "chartHeight",
-        category: "dimensions",
-      },
-      {
-        name: "chartWidth",
-        category: "dimensions",
-      },
-      {
-        name: "metric",
-        category: "data",
-        isProp: false,
-        options: data.metrics,
-      },
-      {
-        name: "dataArray",
-        category: "data",
-      },
-      {
-        name: "xDomainLowerBound",
-        category: "xScale",
-        isProp: false,
-        value: Math.min(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.x),
-        ),
-      },
-      {
-        name: "xDomainUpperBound",
-        category: "xScale",
-        isProp: false,
-        value: Math.max(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.x),
-        ),
-      },
-      {
-        name: "xScaleType",
-        category: "xScale",
-        isProp: false,
-        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
-      },
-      {
-        name: "xFunction",
-        category: "xScale",
-        functionElements: {
-          functionAsString: `function (number) {
-  return {
-    "scaleLinear()": scaleLinear(),
-    "scaleLog()": scaleLog(),
-    "scaleTime()": scaleTime(),
-  }[getValue("xScaleType")]
-    .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
-    .range([
-      0,
-      demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
-    ])(number);
-});`,
+        name: "checkboxProp",
+        category: "Input props",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
+          ],
         },
       },
       {
-        name: "yDomainLowerBound",
-        category: "yScale",
-        isProp: false,
-        value: Math.min(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.y),
-        ),
-      },
-      {
-        name: "yDomainUpperBound",
-        category: "yScale",
-        isProp: false,
-        value: Math.max(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.y),
-        ),
-      },
-      {
-        name: "yScaleType",
-        category: "yScale",
-        isProp: false,
-        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
-      },
-      {
-        name: "yFunction",
-        category: "yScale",
-        functionElements: {
-          functionAsString: `function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("yScaleType")]
-      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
-      .range([
-        getValue("svgHeight") -
-          getValue("paddingTop") -
-          getValue("paddingBottom"),
-        0,
-      ])(number);
-  });`,
+        name: "dropdownProp",
+        category: "Input props",
+        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes the selected <code>option</code> to the component as a string.`,
+          ],
         },
       },
       {
-        name: "curveFunction",
-        category: "lineFunction",
-        isProp: false,
-        options: [
-          "curveLinear",
-          "curveLinearClosed",
-          "curveCardinal",
-          "curveBasis",
-          "curveStep",
-          "curveMonotoneX",
+        name: "radioProp",
+        category: "Input props",
+        propType: "radio",
+        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes the selected <code>option</code> to the component as a string.`,
+          ],
+        },
+      },
+      {
+        name: "jsObjectProp",
+        category: "Input props",
+        value: [
+          {
+            name: "Pikachu",
+            type: "Electric",
+            color: "#fde047",
+          },
+          {
+            name: "Charmander",
+            type: "Fire",
+            color: "#fca5a5",
+          },
+          {
+            name: "Squirtle",
+            type: "Water",
+            color: "#93c5fd",
+          },
+          {
+            name: "Bulbasaur",
+            type: "Grass",
+            color: "#86efac",
+          },
         ],
-      },
-      {
-        name: "lineFunction",
-        category: "lineFunction",
-        functionElements: {
-          functionAsString: `function (dataArray) {
-    return line()
-      .x((d) => xFunction(d.x))
-      .y((d) => yFunction(d.y))
-      .curve(
-        {
-          curveLinear: curveLinear,
-          curveLinearClosed: curveLinearClosed,
-          curveCardinal: curveCardinal,
-          curveBasis: curveBasis,
-          curveStep: curveStep,
-          curveMonotoneX: curveMonotoneX,
-        }[getValue("curveFunction")],
-      )(dataObject);
-  });`,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes the selected a JS object to the component.`,
+            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
+          ],
         },
       },
       {
-        name: "selectedAreaCode",
-        category: "specifyingLines",
-        value: "E07000223",
-      },
-      {
-        name: "showAllData",
-        category: "specifyingLines",
-        value: true,
-      },
-      {
-        name: "additionalKeyLines",
-        category: "specifyingLines",
-        value: ["E07000222", "E07000224"],
-      },
-      {
-        name: "colors",
-        category: "specifyingLines",
-        value: ["red", "blue", "green", "orange", "purple", "cyan"],
-      },
-      {
-        name: "labelClicked",
-        category: "lineEvents",
-        isBinded: true,
-        value: labelClicked,
+        name: "functionProp",
+        category: "Fixed props",
+
+        isRequired: true,
+        value: function (event, pokemon) {
+          window.alert(
+            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
+          );
+
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { role: null, id: null },
+          counter: 0,
+          functionAsString: `function (event, pokemon) {
+window.alert(
+  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
+);
+
+this.functionElements.counter += 1;
+Object.keys(this.functionElements.dataset).forEach((el) => {
+  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+});
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
+            `Firstly, it is not editable via the UI.`,
+            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
+            ,
+            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
+            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
+          ],
+        },
       },
     ]),
   );
@@ -431,72 +343,7 @@
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
 
-  let dataArray = $derived(
-    data.dataInFormatForLineChart.find((el) => el.metric === getValue("metric"))
-      .lines,
-  );
-
-  let chartHeight = $derived(
-    getValue("svgHeight") - getValue("paddingTop") - getValue("paddingBottom"),
-  );
-  let chartWidth = $derived(
-    getValue("svgWidth") - getValue("paddingLeft") - getValue("paddingRight"),
-  );
-
-  let xFunction = $derived(function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("xScaleType")]
-      .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
-      .range([
-        0,
-        getValue("svgWidth") -
-          getValue("paddingLeft") -
-          getValue("paddingRight"),
-      ])(number);
-  });
-
-  let yFunction = $derived(function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("yScaleType")]
-      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
-      .range([
-        getValue("svgHeight") -
-          getValue("paddingTop") -
-          getValue("paddingBottom"),
-        0,
-      ])(number);
-  });
-
-  let lineFunction = $derived(function (dataArray) {
-    return line()
-      .x((d) => xFunction(d.x))
-      .y((d) => yFunction(d.y))
-      .curve(
-        {
-          curveLinear: curveLinear,
-          curveLinearClosed: curveLinearClosed,
-          curveCardinal: curveCardinal,
-          curveBasis: curveBasis,
-          curveStep: curveStep,
-          curveMonotoneX: curveMonotoneX,
-        }[getValue("curveFunction")],
-      )(dataArray);
-  });
-
-  let derivedParametersObject = $derived({
-    dataArray,
-    chartHeight,
-    chartWidth,
-    xFunction,
-    yFunction,
-    lineFunction,
-  });
+  let derivedParametersObject = $derived({});
 
   /**
    * DONOTTOUCH *
@@ -586,39 +433,8 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div bind:clientWidth={svgWidth}>
-    <svg
-      width={getValue("svgWidth")}
-      height={getValue("svgHeight")}
-      style="background-color: #f5f5f5"
-    >
-      {#if getValue("svgWidth")}
-        <g
-          transform="translate({getValue('paddingLeft')},{getValue(
-            'paddingTop',
-          )})"
-        >
-          <g data-role="y-axis">
-            <path
-              d="M0 0 l0 {getValue('chartHeight')}"
-              stroke="black"
-              stroke-width="2px"
-            ></path>
-          </g>
-          <g data-role="x-axis">
-            <path
-              d="M0 {getValue('chartHeight')} l{getValue('chartWidth')} 0"
-              stroke="black"
-              stroke-width="2px"
-            ></path>
-          </g>
-
-          <g data-role="lines-group">
-            <Lines {...parametersObject} bind:labelClicked></Lines>
-          </g>
-        </g>
-      {/if}
-    </svg>
+  <div class="p-8">
+    <Lines {...parametersObject}></Lines>
   </div>
 {/snippet}
 

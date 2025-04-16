@@ -84,7 +84,7 @@
     base: ["blue", "green", "red"],
   };
 
-  let defaultLineParams = {
+  let defaultLineParams = $derived({
     otherTier: {},
     secondary: {
       "pointer-events": "none",
@@ -109,7 +109,7 @@
     hover: {
       color: "orange",
     },
-  };
+  });
 
   let tieredDataObject = $derived(
     Object.keys(defaultLineParams).reduce((acc, key, index) => {
@@ -118,11 +118,11 @@
     }, {}),
   );
 
-  let globalTierRules = {
+  let globalTierRules = $derived({
     primary: {
       opacity: areaCodeHover == null ? 1 : 0.2,
     },
-  };
+  });
   // $inspect(dataArray);
 
   let showAllData = true;

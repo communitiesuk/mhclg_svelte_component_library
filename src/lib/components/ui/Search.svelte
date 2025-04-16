@@ -2,6 +2,7 @@
   import { clsx } from "clsx";
   import { browser } from "$app/environment";
   import searchIconRaw from "/assets/govuk_publishing_components/images/icon-search.svg?raw"; // Import raw SVG
+  import DOMPurify from "dompurify";
 
   // Define the props based on GOV.UK documentation
   type Props = {
@@ -125,7 +126,7 @@
 
 {#snippet LabelContent()}
   <label for={defaultId} class={derivedLabelClasses}>
-    {@html label_text}
+    {@html DOMPurify.sanitize(label_text)}
   </label>
 {/snippet}
 

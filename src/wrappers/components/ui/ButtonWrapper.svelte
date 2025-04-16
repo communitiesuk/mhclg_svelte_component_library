@@ -199,11 +199,13 @@
       {
         name: "buttonFunction",
         category: "Input props",
-        value: someFunction,
+        value: function () {
+          window.alert(`The button function has been triggered.`);
+        },
         functionElements: {
-          functionAsString: `function someFunction() {
-    console.log("The answer to 2 x 2 is " + 2 * 2);
-  }`,
+          functionAsString: `function () {
+          window.alert('The button function has been triggered.');
+        }`,
         },
         description: {
           markdown: true,
@@ -326,10 +328,6 @@
       ]),
     ),
   );
-
-  function someFunction() {
-    console.log("The answer to 2 x 2 is " + 2 * 2);
-  }
 </script>
 
 <!--

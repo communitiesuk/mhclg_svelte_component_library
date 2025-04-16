@@ -29,6 +29,7 @@
       draggable="false"
       class="govuk-button govuk-button--start"
       data-module="govuk-button"
+      onclick={buttonFunction}
     >
       Start now
       <svg
@@ -50,6 +51,7 @@
       aria-disabled="true"
       class="govuk-button"
       data-module="govuk-button"
+      onclick={buttonFunction}
     >
       {textContent}
     </button>
@@ -63,10 +65,6 @@
       {textContent}
     </button>
   {/if}
-</div>
-
-<div>
-  Clicking this button calculates 2 x 2 and logs the answer in the console.
 </div>
 
 <style>

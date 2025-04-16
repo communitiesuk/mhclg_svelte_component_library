@@ -1,6 +1,7 @@
 <script lang="ts">
   import { clsx } from "clsx";
   import { browser } from "$app/environment";
+  import searchIconRaw from "/assets/govuk_publishing_components/images/icon-search.svg?raw"; // Import raw SVG
 
   // Define the props based on GOV.UK documentation
   type Props = {
@@ -122,35 +123,6 @@
   const Tag = $derived(`h${heading_level}`);
 </script>
 
-{#snippet SearchIcon()}
-  <svg
-    class="gem-c-search__icon"
-    width="27"
-    height="27"
-    viewBox="0 0 27 27"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <circle
-      cx="12.0161"
-      cy="11.0161"
-      r="8.51613"
-      stroke="currentColor"
-      stroke-width="3"
-    ></circle>
-    <line
-      x1="17.8668"
-      y1="17.3587"
-      x2="26.4475"
-      y2="25.9393"
-      stroke="currentColor"
-      stroke-width="3"
-    ></line>
-  </svg>
-{/snippet}
-
 {#snippet LabelContent()}
   <label for={defaultId} class={derivedLabelClasses}>
     {@html label_text}
@@ -193,7 +165,7 @@
     <div class="gem-c-search__item gem-c-search__submit-wrapper">
       <button class={buttonClasses} type="submit" enterkeyhint="search">
         <span class="govuk-visually-hidden">{button_text}</span>
-        {@render SearchIcon()}
+        {@html searchIconRaw}
       </button>
     </div>
   </div>
@@ -318,7 +290,7 @@
 
   .gem-c-search__input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
-    background-image: url(/assets/govuk_publishing_components/icon-close-c9e25d87ee09bc4606268f712b229318acbe12606e8d7a0b96cb19c2ae1dc0ee.svg);
+    background-image: url(/assets/govuk_publishing_components/images/icon-close.svg);
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;

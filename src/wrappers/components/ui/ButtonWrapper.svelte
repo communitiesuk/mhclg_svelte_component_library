@@ -174,7 +174,7 @@
         description: {
           markdown: true,
           arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
+            `This is the text that you want to appear on the <code>${pageName}</code>.`,
           ],
         },
         rows: 2,
@@ -182,12 +182,17 @@
       {
         name: "buttonType",
         category: "Input props",
-        options: ["default", "secondary"],
+        options: [
+          "default",
+          "secondary",
+          "start",
+          "warning",
+          "dark background",
+          "disabled",
+        ],
         description: {
           markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
+          arr: [`This is the type of <code>${pageName}</code> you want.`],
         },
         rows: 5,
       },
@@ -351,6 +356,7 @@
   !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
+
 {#snippet Component()}
   <Button {...parametersObject}></Button>
 {/snippet}

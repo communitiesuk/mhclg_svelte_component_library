@@ -230,7 +230,7 @@
         description: {
           markdown: true,
           arr: [
-            `Set to <code>true</code> to apply specific styling for homepage use.`,
+            `Set to <code>true</code> to apply specific styling for homepage use. This styling is only applied when <code>on_govuk_blue</code> is also set to <code>true</code>.`,
           ],
         },
       },

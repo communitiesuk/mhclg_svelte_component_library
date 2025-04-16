@@ -75,9 +75,10 @@
             ? ["primary"]
             : ["invisibles", "secondary"],
       includeMarkers: selectedAreaCode === "E07000223",
+      color: primaryLines.includes(el.areaCode) ? "green" : "grey",
     })),
   );
-
+  $inspect(dataArray);
   let lookupObj = {
     EnglandMedian: "purple",
   };

@@ -208,6 +208,7 @@
           ],
         },
         rows: 1,
+        isRequired: true,
       },
 
       // --- Styling & Layout Props ---
@@ -308,7 +309,7 @@
       // --- Behaviour & Accessibility Props ---
       {
         name: "wrap_label_in_a_heading",
-        category: "Accessibility & Structure",
+        category: "Accessibility & Attributes",
         value: false,
         description: {
           markdown: true,
@@ -319,7 +320,7 @@
       },
       {
         name: "heading_level",
-        category: "Accessibility & Structure",
+        category: "Accessibility & Attributes",
         options: [1, 2, 3, 4, 5, 6],
         value: 2,
         description: {
@@ -332,7 +333,7 @@
       },
       {
         name: "label_id",
-        category: "Accessibility & Structure",
+        category: "Accessibility & Attributes",
         value: "", // Let component generate default if empty
         description: {
           markdown: true,
@@ -344,7 +345,7 @@
       },
       {
         name: "aria_controls",
-        category: "Accessibility & Structure",
+        category: "Accessibility & Attributes",
         value: "",
         description: {
           markdown: true,
@@ -356,7 +357,7 @@
       },
       {
         name: "disable_corrections",
-        category: "Behaviour",
+        category: "Accessibility & Attributes",
         value: false,
         description: {
           markdown: true,
@@ -378,6 +379,7 @@
           ],
         },
         rows: 1,
+        isRequired: true,
       },
       {
         name: "classes",

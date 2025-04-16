@@ -92,16 +92,18 @@
 
   const derivedLabelClasses = $derived(
     clsx(
-      label_size
-        ? [`govuk-label`, `govuk-label--${label_size}`]
-        : "gem-c-search__label",
+      // Only add default classes if NO custom class is provided
+      !label_custom_class &&
+        (label_size
+          ? [`govuk-label`, `govuk-label--${label_size}`]
+          : "gem-c-search__label"),
       homepage && label_size && "gem-c-search__label--white",
       !isInlineLabel &&
         label_margin_bottom !== undefined &&
         label_margin_bottom >= 0 &&
         label_margin_bottom <= 9 &&
         `govuk-!-margin-bottom-${label_margin_bottom}`,
-      label_custom_class,
+      label_custom_class, // Always add the custom class if present
     ),
   );
 

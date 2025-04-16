@@ -30,3 +30,79 @@ functionProp={function (event, pokemon) {
   window.alert("Example 1 functionProp has been triggered.");
 }}
 ></Template>`;
+
+export const defaultValue = `
+<Search value="driving licence" />
+`;
+
+export const inlineLabelFalse = `
+<Search inline_label={false} />
+`;
+
+export const onGovukBlue = `
+<div class="p-8 bg-[#1d70b8]"> {/* Blue background for context */}
+  <Search on_govuk_blue={true} />
+</div>
+`;
+
+export const homepage = `
+<div class="p-8 bg-[#1d70b8]"> {/* Blue background for context */}
+  <Search
+    label_text="Search"
+    inline_label={false}
+    on_govuk_blue={true}
+    label_size="s"
+    label_margin_bottom={3}
+    homepage={true}
+    size="large"
+  />
+</div>
+`;
+
+export const customLabelText = `
+<Search label_text="Search" />
+`;
+
+export const customLabelId = `
+<Search label_id="my_unique_id" />
+`;
+
+export const largeSize = `
+<Search size="large" />
+`;
+
+export const customName = `
+<Search name="my_own_fieldname" />
+`;
+
+export const withAriaControls = `
+<Search aria_controls="wrapper" />
+`;
+
+export const customButtonText = `
+<Search button_text="Search absolutely everywhere" />
+`;
+
+export const withLabelSize = `
+<Search label_size="xl" />
+`;
+
+export const wrapLabelInHeading = `
+<Search wrap_label_in_a_heading={true} heading_level={1} />
+`;
+
+export const withMarginBottom = `
+<Search margin_bottom={9} />
+`;
+
+export const withLabelMarginBottom = `
+<Search label_margin_bottom={9} inline_label={false} />
+`;
+
+export const withCustomLabelClass = `
+<Search label_custom_class="govuk-heading-xl" inline_label={false} />
+`;
+
+export const disableCorrections = `
+<Search disable_corrections={true} />
+`;

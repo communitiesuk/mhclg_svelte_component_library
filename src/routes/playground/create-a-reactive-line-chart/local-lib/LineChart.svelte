@@ -55,23 +55,6 @@
   let labelClicked = $state();
   let selectedAreaCode = $state("E07000223");
 
-  let areaFunction = $derived(
-    homepage ??
-      area()
-        .y0((d) => yFunction(0))
-        .x((d) => xFunction(d.x))
-        .y1((d) => yFunction(d.y))
-        .curve(
-          curveFunctions[
-            getValueFromParametersArray(
-              parametersSourceArray,
-              parametersValuesArray,
-              "curve",
-            )
-          ],
-        ),
-  );
-
   function handleClickOutside(event) {
     if (labelClicked && !event.target.closest('[id^="label"]')) {
       labelClicked = null;
@@ -123,7 +106,9 @@
       //colorPalette["base"],
       //),
     },
-    hover: {},
+    hover: {
+      color: "orange",
+    },
   };
 
   let tieredDataObject = $derived(
@@ -197,8 +182,8 @@
             {chartWidth}
             {xFunction}
             {yFunction}
-            {areaFunction}
             bind:labelClicked
+            bind:areaCodeHover
             {chartHeight}
             {colorPalette}
             {defaultLineParams}

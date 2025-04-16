@@ -15,6 +15,7 @@
     yFunction,
     areaFunction,
     labelClicked = $bindable(),
+    areaCodeHover = $bindable(),
     chartHeight,
     colors,
     showAllData,
@@ -22,7 +23,6 @@
     globalTierRules,
   } = $props();
 
-  let hoveredLine = $state(null);
   let bounds = $state([0, chartHeight]);
 
   let labelHovered = $state();
@@ -81,20 +81,20 @@
       {yFunction}
       {areaFunction}
       dataArray={line.data}
-      pathStrokeColor={defaultLineParams[tier].color ?? "blue"}
+      pathStrokeColor={defaultLineParams[tier].color ?? "grey"}
       opacity={1}
       dataId={line.areaCode}
       onClick={function (event, dataArray, dataId) {
-        hoveredLine = dataId;
+        areaCodeHover = dataId;
       }}
       onMouseEnter={function (event, dataArray, dataId) {
-        hoveredLine = dataId;
+        areaCodeHover = dataId;
       }}
       onMouseMove={function (event, dataArray, dataId) {
-        hoveredLine = dataId;
+        areaCodeHover = dataId;
       }}
       onMouseLeave={function (event, dataArray, dataId) {
-        hoveredLine = null;
+        areaCodeHover = null;
       }}
       {...defaultLineParams}
     ></Line>

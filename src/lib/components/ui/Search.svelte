@@ -200,7 +200,6 @@
 </div>
 
 <style>
-  /* EXACT CSS PROVIDED BY USER IN INITIAL REQUEST */
   .gem-c-search {
     position: relative;
   }
@@ -367,6 +366,9 @@
     display: table;
     width: 100%;
     background: #fff;
+    /* Override inherited line-height from global styles (currently from govuk-frontend) */
+    /* that can cause incorrect height calculation in table display which was causing the wrapper to be too tall */
+    line-height: 0;
   }
 
   .gem-c-search__item {

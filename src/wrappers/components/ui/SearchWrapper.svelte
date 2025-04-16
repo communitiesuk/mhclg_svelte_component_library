@@ -248,7 +248,7 @@
       {
         name: "label_size",
         category: "Styling",
-        options: [null, "s", "m", "l", "xl"],
+        options: ["s", "m", "l", "xl"],
         value: null,
         description: {
           markdown: true,

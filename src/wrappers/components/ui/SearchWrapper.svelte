@@ -304,6 +304,26 @@
         },
         rows: 1,
       },
+      {
+        name: "input_width",
+        category: "Styling",
+        options: [
+          "",
+          "full",
+          "three-quarters",
+          "two-thirds",
+          "one-half",
+          "one-third",
+          "one-quarter",
+        ],
+        value: "", // Default to empty string (no width class)
+        description: {
+          markdown: true,
+          arr: [
+            `Sets the maximum width of the entire search component using GOV.UK Frontend utility classes (e.g., <code>govuk-!-width-two-thirds</code>). The input and button will fill this width. Leave empty for default (stretches to fit its parent container).`,
+          ],
+        },
+      },
 
       // --- Behaviour & Accessibility Props ---
       {

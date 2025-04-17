@@ -23,6 +23,15 @@
     label_margin_bottom?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | undefined; // Label margin
     label_custom_class?: string; // Custom class for label
     disable_corrections?: boolean; // Disable mobile autocorrect/caps
+    input_width?:
+      | "full"
+      | "three-quarters"
+      | "two-thirds"
+      | "one-half"
+      | "one-third"
+      | "one-quarter"
+      | ""
+      | null; // GOV.UK input width class
     // Standard wrapper props
     id?: string;
     classes?: string;
@@ -52,6 +61,7 @@
     label_margin_bottom = undefined,
     label_custom_class = undefined,
     disable_corrections = false,
+    input_width = null, // Add default for input_width
     id = undefined,
     classes = "",
     dataAttributes = {},
@@ -81,6 +91,7 @@
     clsx(
       "gem-c-search",
       "govuk-!-display-none-print",
+      input_width && `govuk-!-width-${input_width}`, // Apply width class to the wrapper
       `govuk-!-margin-bottom-${margin_bottom}`,
       size === "large" && "gem-c-search--large",
       homepage && "gem-c-search--homepage",

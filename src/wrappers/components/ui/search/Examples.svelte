@@ -120,7 +120,7 @@
 
 <div class="my-20 p-2">
   <h5 class="underline underline-offset-4 my-6">
-    Examples from GOV.UK Component Guide
+    Examples of specific use cases
   </h5>
   <Accordion
     activeClass="text-[#EA580C] focus:ring-2 focus:ring-[#EA580C]"

@@ -209,6 +209,18 @@
         rows: 1,
         isRequired: true,
       },
+      {
+        name: "hint",
+        category: "Content",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Optional hint text to display below the label and associate with the input via <code>aria-describedby</code>.`,
+          ],
+        },
+        rows: 2,
+      },
 
       // --- Styling & Layout Props ---
       {

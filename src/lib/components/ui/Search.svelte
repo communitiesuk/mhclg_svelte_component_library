@@ -10,6 +10,7 @@
     label_text?: string; // Text for the label
     label_id?: string; // ID for the input, connects label
     inline_label?: boolean; // Label appears inline (default depends on label_size)
+    hint?: string; // Add hint prop
     on_govuk_blue?: boolean; // Style for blue background
     homepage?: boolean; // Style for homepage use
     size?: "large" | ""; // Size variation
@@ -48,6 +49,7 @@
     label_text = "Search on GOV.UK",
     label_id = undefined,
     inline_label = undefined, // Default depends on label_size
+    hint = undefined, // Add hint default
     on_govuk_blue = false,
     homepage = false,
     size = "",
@@ -161,6 +163,12 @@
     {@render LabelContent()}
   {/if}
 
+  {#if hint}
+    <div id="{defaultId}-hint" class="govuk-hint">
+      {hint}
+    </div>
+  {/if}
+
   <div class="gem-c-search__item-wrapper">
     <div class="js-search-input-wrapper">
       <input
@@ -172,6 +180,7 @@
         title="Search"
         type="search"
         bind:value
+        aria-describedby={hint ? `${defaultId}-hint` : undefined}
         autocorrect={correctionValue}
         autocapitalize={correctionValue}
       />

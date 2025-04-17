@@ -110,3 +110,10 @@ export const disableCorrections = `
 export const customButtonColor = `
 <Search button_background_color="#00625e" />
 `;
+
+export const hintAndWidth = `
+<Search 
+  hint="Enter your full name"
+  input_width="two-thirds"
+/>
+`;

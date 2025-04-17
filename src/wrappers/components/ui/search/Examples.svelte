@@ -109,6 +109,12 @@
       content: ExampleCustomButtonColor,
       code: codeBlocks.customButtonColor,
     },
+    {
+      id: "18",
+      heading: "18. With Hint Text and Custom Width",
+      content: ExampleHintAndWidth,
+      code: codeBlocks.hintAndWidth,
+    },
   ];
 </script>
 
@@ -263,5 +269,15 @@
   </p>
   <div class="p-5 bg-white">
     <Search button_background_color="#00625e" />
+  </div>
+{/snippet}
+
+{#snippet ExampleHintAndWidth()}
+  <p class="govuk-body text-sm">
+    Demonstrates using the <code>hint</code> prop to add descriptive text and
+    the <code>input_width</code> prop to control the component's width simultaneously.
+  </p>
+  <div class="p-5 bg-white">
+    <Search hint="Enter your full name" input_width="two-thirds" />
   </div>
 {/snippet}

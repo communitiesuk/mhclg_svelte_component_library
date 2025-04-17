@@ -48,14 +48,13 @@
    *
    */
   let descriptionArray = [
-    `A search box with a label and attached submit button.`,
-    `Must be used within an HTML <form>. The search input has name="q" by default.`,
-    `Can be styled for white or GOV.UK blue backgrounds.`,
+    `A search box with label and attached submit button.`,
+    `Based on the <a href="https://components.publishing.service.gov.uk/component-guide/search" target="_blank" rel="noopener noreferrer">GOV.UK Publishing Components search box</a>.`,
   ];
 
   let contextArray = [
-    `Use this for site-wide search or specific finder searches.`,
-    `Consider disabling autocorrect for domain-specific terms using <code>disable_corrections</code>.`,
+    `The component <strong>must</strong> be used within an HTML <code>&lt;form&gt;</code>. Consider giving the form <code>role="search"</code> for accessibility.`,
+    `Use this for site-wide search or specific finder searches where user input is needed to filter or find content.`,
   ];
 
   let detailsArray = [

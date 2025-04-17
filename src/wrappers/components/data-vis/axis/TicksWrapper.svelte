@@ -258,7 +258,8 @@
         category: "customisations",
         value: "%",
       },
-      { name: "baseline", category: "customisations", value: false },
+      { name: "baseline", category: "customisations", value: 0 },
+      { name: "setMax", category: "customisations", value: 100 },
       { name: "yearsInput", category: "customisations", value: false },
       {
         name: "orientationAxis",

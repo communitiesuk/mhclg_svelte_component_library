@@ -11,15 +11,16 @@
     values,
     numberOfTicks,
     baseline,
+    maxTick,
     orientation,
     yearsInput,
   } = $props();
 
   $inspect(ticksArray);
 
-  function generateTicks(data, numTicks, baseline) {
-    let minVal = Math.min(...data);
-    let maxVal = Math.max(...data);
+  function generateTicks(data, numTicks, baseline, maxTick) {
+    let minVal = baseline !== null ? baseline : Math.min(...data);
+    let maxVal = maxTick !== null ? maxTick : Math.max(...data);
     let rangeVal = maxVal - minVal;
 
     let roughStep = rangeVal / (numTicks - 1);
@@ -30,13 +31,13 @@
     let optimalStep =
       normalizedSteps.find((step) => step >= normalizedStep) / stepPower;
 
-    let scaleMin = baseline
-      ? 0
-      : Math.floor(minVal / optimalStep) * optimalStep;
+    let scaleMin = Math.floor(minVal / optimalStep) * optimalStep;
     let scaleMax = Math.ceil(maxVal / optimalStep) * optimalStep;
 
     let ticks = [];
-    for (let i = scaleMin; i <= scaleMax; i += optimalStep) {}
+    for (let i = scaleMin; i <= scaleMax; i += optimalStep) {
+      ticks.push(i);
+    }
     return ticks;
   }
 
@@ -44,7 +45,7 @@
     return ticks.map((tick) => `FY ${tick % 100}-${(tick % 100) + 1}`);
   }
 
-  ticksArray = generateTicks(values, numberOfTicks, baseline);
+  ticksArray = generateTicks(values, numberOfTicks, baseline, maxTick);
   let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 </script>
 

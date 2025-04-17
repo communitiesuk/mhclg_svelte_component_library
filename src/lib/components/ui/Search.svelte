@@ -41,6 +41,7 @@
     role?: string;
     lang?: string;
     dir?: "rtl" | "ltr" | "auto";
+    button_background_color?: string; // Add prop for custom button bg
   };
 
   // --- Prop Defaults & Processing ---
@@ -71,6 +72,7 @@
     role = undefined,
     lang = undefined,
     dir = undefined,
+    button_background_color = undefined, // Add default
   }: Props = $props();
 
   // Generate default ID if none provided (only in browser)
@@ -186,7 +188,14 @@
       />
     </div>
     <div class="gem-c-search__item gem-c-search__submit-wrapper">
-      <button class={buttonClasses} type="submit" enterkeyhint="search">
+      <button
+        class={buttonClasses}
+        type="submit"
+        enterkeyhint="search"
+        style={button_background_color && !on_govuk_blue && !homepage
+          ? `background-color: ${button_background_color};`
+          : undefined}
+      >
         <span class="govuk-visually-hidden">{button_text}</span>
         <IconSearch class="gem-c-search__icon" />
       </button>

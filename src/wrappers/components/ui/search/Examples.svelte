@@ -103,6 +103,12 @@
       content: ExampleDisableCorrections,
       code: codeBlocks.disableCorrections,
     },
+    {
+      id: "17",
+      heading: "17. With custom button background color (MHCLG)",
+      content: ExampleCustomButtonColor,
+      code: codeBlocks.customButtonColor,
+    },
   ];
 </script>
 
@@ -246,5 +252,16 @@
 {#snippet ExampleDisableCorrections()}
   <div class="p-5 bg-white">
     <Search disable_corrections={true} />
+  </div>
+{/snippet}
+
+{#snippet ExampleCustomButtonColor()}
+  <p class="govuk-body text-sm">
+    Demonstrates applying a custom background color to the button. This color
+    will be overridden if <code>on_govuk_blue</code> or <code>homepage</code> props
+    are true.
+  </p>
+  <div class="p-5 bg-white">
+    <Search button_background_color="#00625e" />
   </div>
 {/snippet}

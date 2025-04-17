@@ -336,6 +336,19 @@
           ],
         },
       },
+      {
+        name: "button_background_color",
+        category: "Styling",
+        value: "", // Default empty, no custom color
+        description: {
+          markdown: true,
+          arr: [
+            `Sets a custom background color for the search submit button using a valid CSS color value (e.g., <code>#ff0000</code>).`,
+            `<strong>Note:</strong> This custom color will be overridden by the default styles if <code>on_govuk_blue</code> or <code>homepage</code> props are set to <code>true</code>.`,
+          ],
+        },
+        rows: 1,
+      },
 
       // --- Behaviour & Accessibility Props ---
       {

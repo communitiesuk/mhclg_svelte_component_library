@@ -106,3 +106,7 @@ export const withCustomLabelClass = `
 export const disableCorrections = `
 <Search disable_corrections={true} />
 `;
+
+export const customButtonColor = `
+<Search button_background_color="#00625e" />
+`;

@@ -56,6 +56,7 @@
   let areaCodeHover = $state();
   let labelClicked = $state();
   let selectedAreaCode = $state("E07000223");
+  let EnglandMedian = $state("E07000227");
 
   function handleClickOutside(event) {
     if (labelClicked && !event.target.closest('[id^="label"]')) {
@@ -63,25 +64,34 @@
     }
   }
 
-  let primaryLines = ["E07000223", "E07000224"];
-
+  let primaryLines = $derived(["E07000223", "E07000224", EnglandMedian]);
   let dataArray = $derived(
-    data.lines.map((el, i) => ({
-      ...el,
-      tiers:
+    data.lines.map((el, i) => {
+      const tiers =
         areaCodeHover === el.areaCode
           ? ["hover", "secondary"]
           : primaryLines.includes(el.areaCode)
             ? ["primary"]
-            : ["invisibles", "secondary"],
-      includeMarkers: selectedAreaCode === "E07000223",
-      color: primaryLines.includes(el.areaCode) ? "green" : "grey",
-    })),
+            : ["invisibles", "secondary"];
+      return {
+        ...el,
+        tiers,
+        includeMarkers: selectedAreaCode === "E07000223",
+        color: lookupObj[el.areaCode] ?? "grey",
+      };
+    }),
   );
-  $inspect(dataArray);
-  let lookupObj = {
-    EnglandMedian: "purple",
-  };
+  let lookupObj = $derived({
+    [EnglandMedian]: "purple",
+  });
+
+  $inspect(lookupObj[el.areaCode]);
+
+  function getColor(lines, areaCode) {
+    lines
+      .filter((el) => el.tiers.includes("primary"))
+      .map((el) => lookupObj[el.areaCode] ?? colorPalette["base"]);
+  }
 
   let colorPalette = {
     base: ["grey", "blue", "green", "red"],

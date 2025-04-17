@@ -4,6 +4,7 @@
   import labelplacer from "labelplacer";
   import { onMount } from "svelte";
   import { derived } from "svelte/store";
+  import { linear } from "svelte/easing";
 
   let {
     tieredDataObject,
@@ -83,7 +84,7 @@
         {yFunction}
         {areaFunction}
         dataArray={line.data}
-        pathStrokeColor={defaultLineParams[tier].color}
+        pathStrokeColor={line.color}
         pathStrokeWidth={defaultLineParams[tier].pathStrokeWidth}
         dataId={line.areaCode}
         halo={defaultLineParams[tier].halo}

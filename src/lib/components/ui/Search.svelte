@@ -301,6 +301,7 @@
     color: #0b0c0c;
   }
 
+  /* REMOVED :global() - Restore original scoped rule */
   .gem-c-search__input[type="search"] {
     margin: 0;
     width: 100%;

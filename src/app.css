@@ -2,7 +2,6 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
-
 @import "/css/govuk-additional.css";
 @import "/css/code-block.css";
 @import "/css/fonts.css";
@@ -71,4 +70,214 @@ code {
   padding: 2px 4px;
   color: #27272a;
   background-color: #f1f5f9;
+}
+
+.gem-c-search-with-autocomplete__wrapper {
+  position: relative;
+}
+
+.gem-c-search-with-autocomplete__menu {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  background-color: #fff;
+  border: 1px solid #b1b4b6;
+  border-top: 0;
+  margin-right: -40px;
+}
+
+.gem-c-search-with-autocomplete__menu--visible {
+  display: block;
+}
+
+.gem-c-search-with-autocomplete__menu--hidden {
+  display: none;
+}
+
+.gem-c-search-with-autocomplete__menu--inline {
+  position: relative;
+}
+
+.gem-c-search-with-autocomplete__option {
+  display: block;
+  cursor: pointer;
+  font-family: "GDS Transport", arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  font-size: 1.1875rem;
+  line-height: 1.3157894737;
+}
+
+@media print {
+  .gem-c-search-with-autocomplete__option {
+    font-family: sans-serif;
+  }
+}
+
+@media print {
+  .gem-c-search-with-autocomplete__option {
+    font-size: 14pt;
+    line-height: 1.15;
+  }
+}
+
+.gem-c-search-with-autocomplete__option > * {
+  pointer-events: none;
+}
+
+.gem-c-search-with-autocomplete__option > span {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.gem-c-search-with-autocomplete__option--focused,
+.gem-c-search-with-autocomplete__option:hover,
+.gem-c-search-with-autocomplete__option:focus-visible {
+  background-color: #f3f2f1;
+  outline: none;
+  text-decoration: underline;
+  text-decoration-thickness: max(1px, 0.0625rem);
+  text-underline-offset: 0.1578em;
+  text-decoration-thickness: max(3px, 0.1875rem, 0.12em);
+  -webkit-text-decoration-skip-ink: none;
+  text-decoration-skip-ink: none;
+  -webkit-text-decoration-skip: none;
+  text-decoration-skip: none;
+}
+
+.gem-c-search-with-autocomplete__option--focused
+  .gem-c-search-with-autocomplete__suggestion-icon,
+.gem-c-search-with-autocomplete__option:hover
+  .gem-c-search-with-autocomplete__suggestion-icon,
+.gem-c-search-with-autocomplete__option:focus-visible
+  .gem-c-search-with-autocomplete__suggestion-icon {
+  background-color: #0b0c0c;
+}
+
+.gem-c-search-with-autocomplete__option:focus-visible
+  .gem-c-search-with-autocomplete__suggestion-text {
+  background-color: #fd0;
+}
+
+.gem-c-search-with-autocomplete__option-wrapper {
+  display: flex;
+  align-items: center;
+  margin: 0 15px;
+  padding: 5px 0;
+  border-bottom: 1px solid #b1b4b6;
+}
+
+.gem-c-search-with-autocomplete__option:last-child
+  .gem-c-search-with-autocomplete__option-wrapper {
+  border-bottom: 0;
+}
+
+.gem-c-search-with-autocomplete__suggestion-icon {
+  width: 20px;
+  height: 40px;
+  margin-right: 10px;
+  flex: none;
+  mask-image: url(/assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg);
+  -webkit-mask-image: url(/assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg);
+  background-color: #505a5f;
+}
+
+.gem-c-search-with-autocomplete__suggestion-text {
+  font-weight: bold;
+}
+
+.gem-c-search-with-autocomplete__suggestion-highlight {
+  font-weight: normal;
+  background: none;
+}
+
+.gem-c-search-with-autocomplete.gem-c-search-with-autocomplete--large
+  .gem-c-search-with-autocomplete__menu {
+  margin-right: -50px;
+}
+
+.gem-c-search-with-autocomplete.gem-c-search-with-autocomplete--large
+  .gem-c-search-with-autocomplete__option {
+  min-height: 50px;
+}
+
+.gem-c-search-with-autocomplete.gem-c-search-with-autocomplete--on-govuk-blue
+  .gem-c-search-with-autocomplete__menu {
+  border-top: 1px solid #b1b4b6;
+}
+
+@media (forced-colors: active) {
+  .gem-c-search-with-autocomplete__menu {
+    border-color: FieldText;
+  }
+
+  .gem-c-search-with-autocomplete__option {
+    forced-color-adjust: none;
+    background-color: Field;
+    color: FieldText;
+  }
+
+  .gem-c-search-with-autocomplete__option--focused,
+  .gem-c-search-with-autocomplete__option:hover,
+  .gem-c-search-with-autocomplete__option:focus-visible {
+    background-color: Highlight;
+    color: HighlightText;
+    border-color: FieldText;
+  }
+
+  .gem-c-search-with-autocomplete__option--focused
+    .gem-c-search-with-autocomplete__suggestion-text,
+  .gem-c-search-with-autocomplete__option:hover
+    .gem-c-search-with-autocomplete__suggestion-text,
+  .gem-c-search-with-autocomplete__option:focus-visible
+    .gem-c-search-with-autocomplete__suggestion-text {
+    background: none;
+  }
+
+  .gem-c-search-with-autocomplete__option--focused
+    .gem-c-search-with-autocomplete__suggestion-highlight,
+  .gem-c-search-with-autocomplete__option:hover
+    .gem-c-search-with-autocomplete__suggestion-highlight,
+  .gem-c-search-with-autocomplete__option:focus-visible
+    .gem-c-search-with-autocomplete__suggestion-highlight {
+    color: HighlightText;
+  }
+
+  .gem-c-search-with-autocomplete__option--focused
+    .gem-c-search-with-autocomplete__suggestion-icon,
+  .gem-c-search-with-autocomplete__option:hover
+    .gem-c-search-with-autocomplete__suggestion-icon,
+  .gem-c-search-with-autocomplete__option:focus-visible
+    .gem-c-search-with-autocomplete__suggestion-icon {
+    background-color: HighlightText;
+  }
+
+  .gem-c-search-with-autocomplete__option:focus-visible:not(:hover) {
+    background-color: SelectedItem;
+    color: SelectedItemText;
+  }
+
+  .gem-c-search-with-autocomplete__option:focus-visible:not(:hover)
+    .gem-c-search-with-autocomplete__suggestion-highlight {
+    color: SelectedItemText;
+  }
+
+  .gem-c-search-with-autocomplete__option:focus-visible:not(:hover)
+    .gem-c-search-with-autocomplete__suggestion-icon {
+    background-color: SelectedItemText;
+  }
+
+  .gem-c-search-with-autocomplete__suggestion-highlight {
+    color: FieldText;
+  }
+
+  .gem-c-search-with-autocomplete__suggestion-icon {
+    background-color: FieldText;
+  }
 }

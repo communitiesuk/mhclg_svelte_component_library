@@ -1,6 +1,7 @@
 <script>
   let {
     componentNameProp = undefined,
+    data = undefined,
     textProp = undefined,
     numberProp = undefined,
     checkboxProp = false,
@@ -19,6 +20,8 @@
 
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
+
+  <p>{data[0].metric}</p>
 
   {#each [{ name: "textProp", prop: textProp }, { name: "numberProp", prop: numberProp }] as output}
     {#if output.prop != undefined}

@@ -91,10 +91,11 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-import Table from "$lib/components/data-vis/table/Table.svelte";
-import Examples from "./table/Examples.svelte";
+  import Table from "$lib/components/data-vis/table/Table.svelte";
+  import Examples from "./table/Examples.svelte";
 
   let { data } = $props();
+  $inspect(data.dataInFormatForTable[0]);
 
   /**
    * DONOTTOUCH *
@@ -161,6 +162,12 @@ import Examples from "./table/Examples.svelte";
         category: "Input props",
         propType: "fixed",
         value: pageName,
+      },
+      {
+        name: "data",
+        category: "Data",
+        visible: false,
+        value: data.dataInFormatForTable,
       },
       {
         name: "textProp",
@@ -435,7 +442,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
  -->
 {#snippet Component()}
   <div class="p-8">
-<Table {...parametersObject}></Table>
+    <Table {...parametersObject}></Table>
   </div>
 {/snippet}
 

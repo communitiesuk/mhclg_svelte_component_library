@@ -63,7 +63,9 @@
       labelClicked = null;
     }
   }
-
+  let lookupObj = $derived({
+    [EnglandMedian]: "purple",
+  });
   let primaryLines = $derived(["E07000223", "E07000224", EnglandMedian]);
   let dataArray = $derived(
     data.lines.map((el, i) => {
@@ -81,11 +83,6 @@
       };
     }),
   );
-  let lookupObj = $derived({
-    [EnglandMedian]: "purple",
-  });
-
-  $inspect(lookupObj[el.areaCode]);
 
   function getColor(lines, areaCode) {
     lines

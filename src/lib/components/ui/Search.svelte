@@ -78,7 +78,7 @@
 
   // Generate default ID if none provided (only in browser)
   const defaultId = $derived(
-    label_id ??
+    label_id ||
       (browser
         ? `search-main-${crypto.randomUUID().slice(0, 8)}`
         : "search-main-ssr"),

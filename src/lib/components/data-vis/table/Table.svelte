@@ -10,6 +10,11 @@
     jsObjectProp = [],
     functionProp = undefined,
   } = $props();
+
+  // reduce data to more manageable size
+  data = data.filter(
+    (el) => el.x === 2022 && el.metric === "Household waste recycling rate",
+  );
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -21,7 +26,27 @@
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
 
-  <p>{data[0].metric}</p>
+  <p>The number of rows in the data is {data.length}</p>
+
+  <div class="table-container">
+    <table>
+      <caption></caption>
+      <thead
+        ><tr>
+          <th>Area</th>
+          <th>Value</th>
+        </tr></thead
+      >
+      <tbody>
+        {#each data as row}
+          <tr
+            ><td>{row.areaName}</td>
+            <td>{row.y}</td></tr
+          >
+        {/each}</tbody
+      >
+    </table>
+  </div>
 
   {#each [{ name: "textProp", prop: textProp }, { name: "numberProp", prop: numberProp }] as output}
     {#if output.prop != undefined}
@@ -99,5 +124,10 @@
   [data-role="pokemon-card"]:focus {
     opacity: 1;
     border: 2px solid;
+  }
+
+  .table-container {
+    max-height: 400px;
+    overflow-y: auto;
   }
 </style>

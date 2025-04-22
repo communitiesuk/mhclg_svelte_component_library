@@ -73,7 +73,7 @@
 
   // --- Lifecycle & Autocomplete Initialization ---
   onMount(() => {
-    console.log("SearchAutocomplete: onMount started.");
+    // console.log("SearchAutocomplete: onMount started.");
 
     // Assert type for querySelector results
     const targetInputWrapper = containerElement?.querySelector(
@@ -85,7 +85,7 @@
 
     if (!targetInputWrapper || !searchInput) {
       console.error(
-        "SearchAutocomplete: Could not find target elements for initialization.",
+        "SearchAutocomplete: Could not find target elements for initialisation.",
       );
       return;
     }
@@ -129,11 +129,12 @@
       scratch.textContent = result;
       const sanitizedResult = scratch.innerHTML;
 
-      // Type assertion needed here
-      const currentInputValue =
-        (
-          autocompleteInstance?.inputElement as HTMLInputElement
-        )?.value?.toLowerCase() || "";
+      // Get the input value directly from the DOM input created by the library
+      const inputElement = containerElement?.querySelector(
+        ".gem-c-search-with-autocomplete__input",
+      ) as HTMLInputElement | null; // Find the specific input
+      const currentInputValue = inputElement?.value?.toLowerCase() || ""; // Get its value
+
       const index = currentInputValue
         ? sanitizedResult.toLowerCase().indexOf(currentInputValue)
         : -1;
@@ -191,6 +192,7 @@
       element: targetInputWrapper, // Target the div *containing* the input
       id: searchInput.id, // Use the ID from the *rendered* Search input
       name: searchInput.name, // Use the name from the *rendered* Search input
+      inputClasses: searchInput.classList, // Pass original classes directly
       source: getResults,
       minLength: 3,
       confirmOnBlur: false,
@@ -210,17 +212,15 @@
     const autocompleteInputElement = containerElement?.querySelector(
       ".gem-c-search-with-autocomplete__input",
     ) as HTMLInputElement | null;
-    console.log(
-      "SearchAutocomplete: Input element queried from DOM:",
-      autocompleteInputElement,
-    ); // Updated log
+    // console.log(
+    //   "SearchAutocomplete: Input element queried from DOM:",
+    //   autocompleteInputElement,
+    // ); // Updated log
 
     // Post-initialization tweaks
     if (autocompleteInputElement) {
-      autocompleteInputElement.setAttribute("type", "search"); // Ensure input type is 
-      searchInput.classList.add(...searchInput.classList); // Re-apply  
-      autocompleteInputElement.classList.add(...searchInput.classList); // Re-apply      classes from original input
-      autocompleteInputElement.classList.add("autocomplete__input"); // Add specific class if needed
+      autocompleteInputElement.setAttribute("type", "search"); // Ensure input type is search
+      // autocompleteInputElement.classList.add("autocomplete__input"); // Add specific class if needed
 
       // Add Enter key workaround from original JS
       autocompleteInputElement.addEventListener("keydown", (e) => {
@@ -239,6 +239,11 @@
           }
         }
       });
+
+      // console.log(
+      //   "Autocomplete input classes AFTER add:",
+      //   Array.from(autocompleteInputElement.classList),
+      // );
     }
 
     // IMPORTANT: Remove the original Search.svelte input, as accessible-autocomplete replaces it.
@@ -270,77 +275,4 @@
 </div>
 
 <style>
-  /* ADDED: Explicit base styling for the generated input, copied from Search.svelte */
-  .gem-c-search-with-autocomplete
-    :global(.gem-c-search-with-autocomplete__input) {
-    margin: 0;
-    width: 100%;
-    height: 2.1052631579em;
-    padding: 0.3157894737em;
-    border: 2px solid #0b0c0c;
-    background: #fff;
-    border-radius: 0;
-    box-sizing: border-box;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    font-family: "GDS Transport", arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    font-weight: 400;
-    font-size: 1.1875rem;
-    line-height: 1.4736842105;
-  }
-
-  /* Keep the focus override */
-  /* Increased specificity - KEEP THIS */
-  .gem-c-search-with-autocomplete
-    :global(.gem-c-search-with-autocomplete__input--focused) {
-    outline: 3px solid #fd0;
-    outline-offset: 0;
-    box-shadow: inset 0 0 0 2px;
-    z-index: 2;
-    position: relative;
-  }
-
-  /* Keep Large variant input override IF it differs from base .gem-c-search--large */
-  /* If base .gem-c-search--large .gem-c-search__input handles height, remove this */
-  .gem-c-search-with-autocomplete--large
-    :global(.gem-c-search-with-autocomplete__input) {
-    height: 50px;
-  }
-
-  /* Keep On blue variant input override - Increased specificity */
-  .gem-c-search-with-autocomplete--on-govuk-blue
-    :global(.gem-c-search-with-autocomplete__input) {
-    border-width: 0;
-    outline: 2px solid rgba(0, 0, 0, 0);
-    outline-offset: 0;
-    position: relative;
-  }
-
-  /* Keep On blue variant input focus style - Increased specificity */
-  .gem-c-search-with-autocomplete--on-govuk-blue
-    :global(.gem-c-search-with-autocomplete__input--focused) {
-    outline: 3px solid #fd0;
-    outline-offset: 0;
-    box-shadow: inset 0 0 0 4px;
-  }
-
-  /* ADDED: Style the clear button (X) for WebKit browsers */
-  .gem-c-search-with-autocomplete
-    :global(
-      .gem-c-search-with-autocomplete__input[type="search"]::-webkit-search-cancel-button
-    ) {
-    -webkit-appearance: none;
-    /* Ensure this path is correct relative to your build output */
-    background-image: url(/assets/govuk_publishing_components/images/icon-close.svg);
-    background-position: center;
-    background-repeat: no-repeat;
-    cursor: pointer;
-    height: 20px;
-    margin-left: 0;
-    margin-right: 0;
-    width: 20px;
-  }
 </style>

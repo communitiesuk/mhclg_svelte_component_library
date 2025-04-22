@@ -84,6 +84,11 @@ export const load: LayoutLoad = async (event) => {
       ),
     }));
 
+    let dataInFormatForTable = testData.flatMetricData.map(d => ({
+      ...d,
+      areaName: testData.areaCodeLookup[d.areaCode]
+    }))
+
   return {
     metrics,
     areas,
@@ -91,6 +96,7 @@ export const load: LayoutLoad = async (event) => {
     dataInFormatForLineChart,
     dataInFormatForBarChart,
     dataInFormatForMap,
+    dataInFormatForTable,
     areaCodeLookup: testData.areaCodeLookup,
     svgFontDimensions,
     componentSections,

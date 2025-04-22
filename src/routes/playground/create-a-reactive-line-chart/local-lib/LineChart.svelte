@@ -56,17 +56,31 @@
   let areaCodeHover = $state();
   let labelClicked = $state();
   let selectedAreaCode = $state("E07000223");
-  let EnglandMedian = $state("E07000227");
+  let englandMedian = $state("E07000227");
 
   function handleClickOutside(event) {
     if (labelClicked && !event.target.closest('[id^="label"]')) {
       labelClicked = null;
     }
   }
+
+  let primaryLines = $derived(["E07000223", "E07000224", englandMedian]);
+
+  let colorPalette = {
+    base: ["red", "white", "yellow", "pink"],
+  };
+
   let lookupObj = $derived({
-    [EnglandMedian]: "purple",
+    [englandMedian]: "purple",
+    [selectedAreaCode]: "green",
   });
-  let primaryLines = $derived(["E07000223", "E07000224", EnglandMedian]);
+
+  function getColor(primaryLines, areaCode, lookupObj, i) {
+    return primaryLines.includes(areaCode)
+      ? (lookupObj[areaCode] ?? colorPalette.base[i % colorPalette.base.length])
+      : undefined;
+  }
+
   let dataArray = $derived(
     data.lines.map((el, i) => {
       const tiers =
@@ -79,24 +93,13 @@
         ...el,
         tiers,
         includeMarkers: selectedAreaCode === "E07000223",
-        color: lookupObj[el.areaCode] ?? "grey",
+        color: getColor(primaryLines, el.areaCode, lookupObj, i),
       };
     }),
   );
 
-  function getColor(lines, areaCode) {
-    lines
-      .filter((el) => el.tiers.includes("primary"))
-      .map((el) => lookupObj[el.areaCode] ?? colorPalette["base"]);
-  }
-
-  let colorPalette = {
-    base: ["grey", "blue", "green", "red"],
-  };
-
   let defaultLineParams = $derived({
     otherTier: { halo: false },
-
     invisibles: {
       listenForOnHoverEvents: true,
       pathStrokeWidth: 1,
@@ -110,12 +113,7 @@
       halo: true,
       includeMarkers: true,
       pathStrokeWidth: areaCodeHover === null ? 5 : 2,
-      color: "red", // functionOfSomeKind(
-      //data.lines
-      // .filter((el) => el.tiers.includes("primary"))
-      //.map((el, i) => el.areaCode),
-      //lookupObj[el.areaCode] ?? colorPalette.base[i % colorPalette.base.length]
-      //),
+      color: "red",
       halo: true,
     },
     hover: {

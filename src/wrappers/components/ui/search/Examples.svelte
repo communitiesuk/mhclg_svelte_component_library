@@ -278,6 +278,10 @@
     the <code>input_width</code> prop to control the component's width simultaneously.
   </p>
   <div class="p-5 bg-white">
-    <Search hint="Enter your full name" input_width="two-thirds" />
+    <Search
+      hint="Enter your full name"
+      input_width="two-thirds"
+      inline_label={false}
+    />
   </div>
 {/snippet}

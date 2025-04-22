@@ -115,5 +115,6 @@ export const hintAndWidth = `
 <Search 
   hint="Enter your full name"
   input_width="two-thirds"
+  inline_label={false}
 />
 `;

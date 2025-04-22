@@ -4,8 +4,7 @@
   export { WrapperNameAndStatus, WrapperInformation };
 
   /**
-   * ! Documentation on GOV.UK Component Guide:
-   * https://components.publishing.service.gov.uk/component-guide/search
+   * !  More documentation is provided on the component library's user guide page.
    */
 
   /**
@@ -27,10 +26,10 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "Baseline completed",
+    progress: "To be developed",
     statusRows: [
       {
-        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },
+        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
         visibleOnHompepage: false,
       },
       {
@@ -47,14 +46,10 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = [
-    `A search box with label and attached submit button.`,
-    `Based on the <a href="https://components.publishing.service.gov.uk/component-guide/search" target="_blank" rel="noopener noreferrer">GOV.UK Publishing Components search box</a>.`,
-  ];
+  let descriptionArray = ["Explain here what the component does."];
 
   let contextArray = [
-    `The component <strong>must</strong> be used within an HTML <code>&lt;form&gt;</code>. Consider giving the form <code>role="search"</code> for accessibility.`,
-    `Use this for site-wide search or specific finder searches where user input is needed to filter or find content.`,
+    "Explain here the different contexts in which the component should be used.",
   ];
 
   let detailsArray = [
@@ -96,8 +91,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Search from "$lib/components/ui/Search.svelte";
-  import Examples from "./search/Examples.svelte";
+import SearchAutocomplete from "$lib/components/ui/SearchAutocomplete.svelte";
+import Examples from "./search-autocomplete/Examples.svelte";
 
   let { data } = $props();
 
@@ -161,343 +156,141 @@
    */
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
-      // --- Content & Value Props ---
       {
-        name: "label_text",
-        category: "Content",
-        value: "Search on GOV.UK",
+        name: "componentNameProp",
+        category: "Input props",
+        propType: "fixed",
+        value: pageName,
+      },
+      {
+        name: "textProp",
+        category: "Input props",
+        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
         description: {
           markdown: true,
           arr: [
-            `The text content for the <code>label</code> element. Allows HTML.`,
-          ],
-        },
-        rows: 1,
-      },
-      {
-        name: "value",
-        category: "Content",
-        value: "",
-        description: {
-          markdown: true,
-          arr: [`Sets the initial value of the search input field.`],
-        },
-        rows: 1,
-      },
-      {
-        name: "button_text",
-        category: "Content",
-        value: "Search",
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the visually hidden text content for the submit button, read by screen readers. Defaults to "Search".`,
-          ],
-        },
-        rows: 1,
-      },
-      {
-        name: "name",
-        category: "Content",
-        value: "q",
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the <code>name</code> attribute for the search input field. Defaults to "q".`,
-          ],
-        },
-        rows: 1,
-        isRequired: true,
-      },
-      {
-        name: "hint",
-        category: "Content",
-        value: "",
-        description: {
-          markdown: true,
-          arr: [
-            `Optional hint text to display below the label and associate with the input via <code>aria-describedby</code>.`,
-            `<strong>Rendering Behaviour:</strong>`,
-            `&nbsp;&nbsp;&nbsp;- If the label is separate (not inline) AND <code>homepage</code> and <code>on_govuk_blue</code> are both false, the hint is rendered as a separate <code>&lt;div&gt;</code> below the label.`,
-            `&nbsp;&nbsp;&nbsp;- If the label is separate AND either <code>homepage</code> or <code>on_govuk_blue</code> is true, the hint text is instead used as the <code>placeholder</code> attribute for the input field.`,
-            `&nbsp;&nbsp;&nbsp;- If the label is inline, the hint text is not visually rendered (but still linked via <code>aria-describedby</code>).`,
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
           ],
         },
         rows: 2,
       },
-
-      // --- Styling & Layout Props ---
       {
-        name: "on_govuk_blue",
-        category: "Styling",
+        name: "numberProp",
+        category: "Input props",
+        value: 9,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "checkboxProp",
+        category: "Input props",
         value: false,
         description: {
           markdown: true,
           arr: [
-            `Set to <code>true</code> to apply styling for use on a dark blue (<code>#003078</code>) background.`,
+            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
           ],
         },
       },
       {
-        name: "homepage",
-        category: "Styling",
-        value: false,
+        name: "dropdownProp",
+        category: "Input props",
+        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
         description: {
           markdown: true,
           arr: [
-            `Set to <code>true</code> to apply specific styling for homepage use (e.g., large size, different button colors). This automatically applies the necessary styles for a dark blue background, effectively incorporating the behaviour of <code>on_govuk_blue: true</code>.`,
+            `This prop passes the selected <code>option</code> to the component as a string.`,
           ],
         },
       },
       {
-        name: "size",
-        category: "Styling",
-        options: ["", "large"],
-        value: "",
+        name: "radioProp",
+        category: "Input props",
+        propType: "radio",
+        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
         description: {
           markdown: true,
           arr: [
-            `Sets the size variant. Leave empty for default, or set to <code>large</code>.`,
+            `This prop passes the selected <code>option</code> to the component as a string.`,
           ],
         },
       },
       {
-        name: "label_size",
-        category: "Styling",
-        options: ["", "s", "m", "l", "xl"],
-        value: "",
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the size of the label text using GOV.UK typography classes. Options: <code>s</code>, <code>m</code>, <code>l</code>, <code>xl</code>. If set, <code>inline_label</code> defaults to <code>false</code>.`,
-          ],
-        },
-      },
-      {
-        name: "inline_label",
-        category: "Styling",
-        value: true,
-        description: {
-          markdown: true,
-          arr: [
-            `Set to <code>false</code> to prevent the label from appearing absolutely positioned over the input field. Defaults to <code>true</code> unless <code>label_size</code> is set.`,
-          ],
-        },
-        visible: { name: "label_size", value: "" }, // Only show if label_size is not set
-      },
-      {
-        name: "margin_bottom",
-        category: "Styling",
-        options: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        value: 6,
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the bottom margin for the component wrapper using the GOV.UK spacing scale (0-9). Defaults to 6.`, // Default based on Ruby template
-          ],
-        },
-      },
-      {
-        name: "label_margin_bottom",
-        category: "Styling",
-        options: [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        value: null,
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the bottom margin for the label when it's not inline, using the GOV.UK spacing scale (0-9). Only applies if <code>inline_label</code> is <code>false</code> (or <code>label_size</code> is set).`,
-          ],
-        },
-        visible: { name: "inline_label", value: false }, // Crude visibility - ideally check derived isInlineLabel
-      },
-      {
-        name: "label_custom_class",
-        category: "Styling",
-        value: "",
-        description: {
-          markdown: true,
-          arr: [`Adds a custom CSS class to the label element.`],
-        },
-        rows: 1,
-      },
-      {
-        name: "input_width",
-        category: "Styling",
-        options: [
-          "",
-          "full",
-          "three-quarters",
-          "two-thirds",
-          "one-half",
-          "one-third",
-          "one-quarter",
+        name: "jsObjectProp",
+        category: "Input props",
+        value: [
+          {
+            name: "Pikachu",
+            type: "Electric",
+            color: "#fde047",
+          },
+          {
+            name: "Charmander",
+            type: "Fire",
+            color: "#fca5a5",
+          },
+          {
+            name: "Squirtle",
+            type: "Water",
+            color: "#93c5fd",
+          },
+          {
+            name: "Bulbasaur",
+            type: "Grass",
+            color: "#86efac",
+          },
         ],
-        value: "", // Default to empty string (no width class)
         description: {
           markdown: true,
           arr: [
-            `Sets the maximum width of the entire search component using GOV.UK Frontend utility classes (e.g., <code>govuk-!-width-two-thirds</code>). The input and button will fill this width. Leave empty for default (stretches to fit its parent container).`,
+            `This prop passes the selected a JS object to the component.`,
+            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
           ],
         },
       },
       {
-        name: "button_background_color",
-        category: "Styling",
-        value: "", // Default empty, no custom color
-        description: {
-          markdown: true,
-          arr: [
-            `Sets a custom background color for the search submit button using a valid CSS color value (e.g., <code>#ff0000</code>).`,
-            `<strong>Note:</strong> This custom color will be overridden by the default styles if <code>on_govuk_blue</code> or <code>homepage</code> props are set to <code>true</code>.`,
-          ],
-        },
-        rows: 1,
-      },
+        name: "functionProp",
+        category: "Fixed props",
 
-      // --- Behaviour & Accessibility Props ---
-      {
-        name: "wrap_label_in_a_heading",
-        category: "Accessibility & Attributes",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `Set to <code>true</code> to wrap the label content within a heading tag.`,
-          ],
-        },
-      },
-      {
-        name: "heading_level",
-        category: "Accessibility & Attributes",
-        options: [1, 2, 3, 4, 5, 6],
-        value: 2,
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the heading level (1-6) if <code>wrap_label_in_a_heading</code> is <code>true</code>. Defaults to 2.`,
-          ],
-        },
-        visible: { name: "wrap_label_in_a_heading", value: true },
-      },
-      {
-        name: "label_id",
-        category: "Accessibility & Attributes",
-        value: "", // Let component generate default if empty
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the <code>id</code> attribute for the input field and the <code>for</code> attribute of the label. If left empty, a unique ID will be generated.`,
-          ],
-        },
-        rows: 1,
-      },
-      {
-        name: "aria_controls",
-        category: "Accessibility & Attributes",
-        value: "",
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the <code>aria-controls</code> attribute on the input field, pointing to the ID of the element whose content is controlled by the search.`,
-          ],
-        },
-        rows: 1,
-      },
-      {
-        name: "disable_corrections",
-        category: "Accessibility & Attributes",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `Set to <code>true</code> to disable mobile browser autocorrect and autocapitalization features on the input field by adding <code>autocorrect="off"</code> and <code>autocapitalize="off"</code>.`,
-          ],
-        },
-      },
-
-      // --- Standard Wrapper Props ---
-      {
-        name: "id",
-        category: "Accessibility & Attributes",
-        value: "",
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the <code>id</code> attribute on the wrapping <code>div</code> element.`,
-          ],
-        },
-        rows: 1,
         isRequired: true,
-      },
-      {
-        name: "classes",
-        category: "Accessibility & Attributes",
-        value: "",
-        description: {
-          markdown: true,
-          arr: [
-            `Adds custom CSS classes to the wrapping <code>div</code> element. Should typically be prefixed with <code>js-</code> if used for JavaScript hooks.`,
-          ],
+        value: function (event, pokemon) {
+          window.alert(
+            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
+          );
+
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
         },
-        rows: 1,
-      },
-      {
-        name: "dataAttributes",
-        category: "Accessibility & Attributes",
-        value: {},
-        description: {
-          markdown: true,
-          arr: [
-            `Adds custom <code>data-*</code> attributes to the wrapping <code>div</code> element. Provide as a JSON object (e.g., <code>{"module": "my-module"}</code>). Note: <code>data-module="gem-toggle-input-class-on-focus"</code> is added by default.`,
-          ],
+        functionElements: {
+          dataset: { role: null, id: null },
+          counter: 0,
+          functionAsString: `function (event, pokemon) {
+window.alert(
+  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
+);
+
+this.functionElements.counter += 1;
+Object.keys(this.functionElements.dataset).forEach((el) => {
+  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+});
+}`,
         },
-        rows: 5,
-      },
-      {
-        name: "aria",
-        category: "Accessibility & Attributes",
-        value: {},
         description: {
           markdown: true,
           arr: [
-            `Adds custom <code>aria-*</code> attributes to the wrapping <code>div</code> element. Provide as a JSON object (e.g., <code>{"labelledby": "element-id"}</code>).`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "role",
-        category: "Accessibility & Attributes",
-        value: "",
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the <code>role</code> attribute on the wrapping <code>div</code> element. Consider using <code>role="search"</code> on the parent <code>form</code> element instead.`,
-          ],
-        },
-        rows: 1,
-      },
-      {
-        name: "lang",
-        category: "Accessibility & Attributes",
-        value: "",
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the language (<code>lang</code> attribute) for the component.`,
-          ],
-        },
-        rows: 1,
-      },
-      {
-        name: "dir",
-        category: "Accessibility & Attributes",
-        options: ["", "ltr", "rtl", "auto"],
-        value: "",
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the text direction (<code>dir</code> attribute) for the component. Empty string means default behavior.`,
+            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
+            `Firstly, it is not editable via the UI.`,
+            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
+            ,
+            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
+            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
           ],
         },
       },
@@ -641,14 +434,8 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div
-    class="p-8"
-    style="background-color: {parametersObject.homepage ||
-    parametersObject.on_govuk_blue
-      ? '#1d70b8'
-      : ''};"
-  >
-    <Search {...parametersObject} />
+  <div class="p-8">
+<SearchAutocomplete {...parametersObject}></SearchAutocomplete>
   </div>
 {/snippet}
 
@@ -695,5 +482,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section" class="px-5">
-  <Examples />
+  <Examples></Examples>
 </div>

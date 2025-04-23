@@ -2,6 +2,7 @@
   import { onMount } from "svelte";
   import { clsx } from "clsx";
   import Search from "$lib/components/ui/Search.svelte"; // Base component
+  import "accessible-autocomplete/dist/accessible-autocomplete.min.css";
 
   // --- Define Props ---
   // Minimal type definition locally if needed, or rely on inference
@@ -11,7 +12,6 @@
     outerClasses?: string; // Optional classes for the outer wrapper
     outerDataAttributes?: Record<string, string>; // Optional data attributes for the outer wrapper
     // Add other expected props passed down (e.g., size, on_govuk_blue, id, name etc.)
-    // Type these loosely or specifically as needed
     size?: "large" | "";
     on_govuk_blue?: boolean;
     homepage?: boolean;
@@ -21,6 +21,18 @@
     button_text?: string;
     // Include any other props you expect to pass through
     [key: string]: any; // Allow other props via rest spread, less type-safe
+    // --- Add new props for accessible-autocomplete config ---
+    minLength?: number;
+    confirmOnBlur?: boolean;
+    showNoOptionsFound?: boolean;
+    defaultValue?: string;
+    placeholder?: string;
+    required?: boolean;
+    tNoResults?: () => string; // Function prop
+    tAssistiveHint?: () => string; // Function prop
+    menuAttributes?: Record<string, any>; // Object prop
+    menuClasses?: string | null;
+    hint?: string; // Add hint prop
   };
 
   let {
@@ -35,6 +47,19 @@
     name = "q", // Pass down name or use default
     label_text = "Search", // Example: Default label
     button_text = "Search", // Pass down button text
+    // --- Destructure new props ---
+    minLength = 3, // Default from accessible-autocomplete
+    confirmOnBlur = false, // Default from accessible-autocomplete
+    showNoOptionsFound = true, // Default from accessible-autocomplete
+    defaultValue = "", // Default to empty string
+    placeholder = "",
+    required = false,
+    tNoResults = () => "No results found", // Default function
+    tAssistiveHint = () =>
+      "When autocomplete results are available use up and down arrows to review and enter to select. Touch device users, explore by touch or with swipe gestures.", // Default function
+    menuAttributes = {},
+    menuClasses = "", // Default to empty string
+    hint = undefined, // Add hint destructuring
     ...restSearchProps // Other props for the base Search component
   }: Props = $props();
 
@@ -65,7 +90,7 @@
     size, // Pass size down
     on_govuk_blue, // Pass blue status down
     homepage, // Pass homepage status down
-    hint: undefined, // Ensure hint is not passed down, as autocomplete handles it
+    hint, // Pass the hint prop down
     value: undefined, // Don't pass initial value, let autocomplete handle it
   });
 
@@ -197,10 +222,18 @@
       name: searchInput.name, // Use the name from the *rendered* Search input
       inputClasses: searchInput.classList, // Pass original classes directly
       source: getResults,
-      minLength: 3,
-      confirmOnBlur: false,
-      showNoOptionsFound: true,
-      defaultValue: searchInput.value, // Start with any value already in the input
+      minLength: minLength,
+      confirmOnBlur: confirmOnBlur,
+      showNoOptionsFound: showNoOptionsFound,
+      defaultValue: defaultValue,
+      // --- Pass even more props ---
+      placeholder: placeholder,
+      required: required,
+      tNoResults: tNoResults,
+      tAssistiveHint: tAssistiveHint,
+      menuAttributes: menuAttributes,
+      menuClasses: menuClasses,
+      // --- End new props ---
       displayMenu: "overlay", // Use overlay menu by default
       cssNamespace: "gem-c-search-with-autocomplete",
       onConfirm: handleConfirm,

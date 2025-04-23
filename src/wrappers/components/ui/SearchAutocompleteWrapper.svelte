@@ -203,6 +203,143 @@
         rows: 1,
         isRequired: true,
       },
+      {
+        name: "minLength",
+        category: "Autocomplete",
+        value: 3,
+        description: {
+          markdown: true,
+          arr: [
+            `The minimum number of characters the user must type before suggestions appear. Defaults to 3.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "confirmOnBlur",
+        category: "Autocomplete",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, selecting a suggestion happens when the user blurs the input. If <code>false</code> (default), the user must press Enter or click a suggestion.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "showNoOptionsFound",
+        category: "Autocomplete",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code> (default), displays a "No results found" message when the query yields no suggestions.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "defaultValue",
+        category: "Autocomplete",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Sets the initial value of the input field when the component loads.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+        rows: 1,
+      },
+      {
+        name: "placeholder",
+        category: "Autocomplete",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Sets the placeholder text for the input field. Defaults to empty string.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+        rows: 1,
+      },
+      {
+        name: "required",
+        category: "Autocomplete",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Adds the <code>required</code> attribute to the input field. Defaults to <code>false</code>.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "tNoResults",
+        category: "Autocomplete Text Customization",
+        value: () => "No results found",
+        propType: "fixed", // Cannot edit functions via UI
+        functionElements: {
+          functionAsString: '() => "No results found"',
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Function that returns the text to display when no results are found.`,
+            `Default: <code>() => 'No results found'</code>`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "tAssistiveHint",
+        category: "Autocomplete Text Customization",
+        value: () =>
+          "When autocomplete results are available use up and down arrows to review and enter to select. Touch device users, explore by touch or with swipe gestures.",
+        propType: "fixed",
+        functionElements: {
+          functionAsString:
+            '() => "When autocomplete results are available use up and down arrows to review and enter to select. Touch device users, explore by touch or with swipe gestures."',
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Function that returns the text for the assistive hint (hidden text read by screen readers).`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "menuAttributes",
+        category: "Autocomplete Styling & Attributes",
+        value: {},
+        description: {
+          markdown: true,
+          arr: [
+            `An object containing attributes to add to the suggestions menu <code>&lt;ul&gt;</code> element. Provide as a JSON object.`,
+            `Example: <code>{"data-testid": "my-menu"}</code>`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+        rows: 3,
+      },
+      {
+        name: "menuClasses",
+        category: "Autocomplete Styling & Attributes",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Optional string of CSS classes to add to the suggestions menu <code>&lt;ul&gt;</code> element. Defaults to <code>null</code>.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+        rows: 1,
+      },
+      // --- End More Autocomplete Config Props ---
 
       // --- Content Props (Inherited from Search) ---
       {
@@ -243,6 +380,21 @@
         rows: 1,
         isRequired: true,
       },
+      // --- Hint Prop (Passed to Search) ---
+      {
+        name: "hint",
+        category: "Content",
+        value: "Try 'benefits' or 'driving'", // Example hint
+        description: {
+          markdown: true,
+          arr: [
+            `Optional hint text displayed below the label (if not ongovuk_blue or homepage).`,
+            `Note: Autocomplete functionality does not directly use this hint.`,
+          ],
+        },
+        rows: 2,
+      },
+      // --- End Hint Prop ---
 
       // --- Styling & Layout Props ---
       {
@@ -641,7 +793,9 @@
       : "#fff"}
   <div class="p-8" style="background-color: {bgColor};">
     {#if parametersObject.source_url && parametersObject.source_key}
-      <SearchAutocomplete {...parametersObject} />
+      {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses].join("|")}
+        <SearchAutocomplete {...parametersObject} />
+      {/key}
     {:else}
       <p class="text-red-600 font-bold">
         Error: Please provide both `source_url` and `source_key` props in the

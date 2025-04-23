@@ -2,6 +2,7 @@
   let {
     componentNameProp = undefined,
     data = undefined,
+    // filterRows,
     textProp = undefined,
     numberProp = undefined,
     checkboxProp = false,
@@ -12,9 +13,9 @@
   } = $props();
 
   // reduce data to more manageable size
-  data = data.filter(
-    (el) => el.x === 2022 && el.metric === "Household waste recycling rate",
-  );
+  // data = data.filter((el) => el.x === 2022 && el.metric === filterRows);
+
+  // $inspect("the filtered metric is " + filterRows);
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -26,8 +27,32 @@
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
 
+  <!-- <p>The metric being filtered in is {filterRows}</p> -->
+
   <p>The number of rows in the data is {data.length}</p>
 
+  <div class="table-container">
+    <table>
+      <caption></caption>
+      <thead
+        ><tr>
+          <th>Area</th>
+          <th>Metric</th>
+          <th>Value</th>
+        </tr></thead
+      >
+      <tbody>
+        {#each data as row}
+          <tr
+            ><td>{row.areaName}</td>
+            <td>{row.metric}</td>
+            <td>{row.y}</td></tr
+          >
+        {/each}</tbody
+      >
+    </table>
+  </div>
+  <br />
   <div class="table-container">
     <table>
       <caption></caption>

@@ -95,7 +95,8 @@
   import Examples from "./table/Examples.svelte";
 
   let { data } = $props();
-  $inspect(data.dataInFormatForTable[0]);
+  // $inspect(data.dataInFormatForTable[0]);
+  $inspect(data.dataInFormatForTable);
 
   /**
    * DONOTTOUCH *
@@ -169,6 +170,15 @@
         visible: false,
         value: data.dataInFormatForTable,
       },
+      // {
+      //   name: "filterRows",
+      //   category: "Input props",
+      //   options: data.metrics,
+      //   description: {
+      //     markdown: true,
+      //     arr: [`Select the rows of the flat data that you want to keep.`],
+      //   },
+      // },
       {
         name: "textProp",
         category: "Input props",

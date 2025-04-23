@@ -260,6 +260,7 @@
       },
       { name: "baseline", category: "customisations", value: 0 },
       { name: "setMax", category: "customisations", value: 100 },
+      { name: "generateTicksNum", category: "customisations", value: false },
       { name: "yearsInput", category: "customisations", value: false },
       {
         name: "orientationAxis",

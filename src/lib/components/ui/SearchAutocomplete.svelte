@@ -104,6 +104,7 @@
           return response.json();
         })
         .then((data) => {
+          // console.log("SearchAutocomplete: Data fetched:", data);
           const results = data[source_key] || [];
           if (!Array.isArray(results)) {
             console.error(
@@ -196,7 +197,7 @@
       source: getResults,
       minLength: 3,
       confirmOnBlur: false,
-      showNoOptionsFound: false,
+      showNoOptionsFound: true,
       defaultValue: searchInput.value, // Start with any value already in the input
       displayMenu: "overlay", // Use overlay menu by default
       cssNamespace: "gem-c-search-with-autocomplete",

@@ -2,8 +2,6 @@
   import { onMount } from "svelte";
   import { clsx } from "clsx";
   import Search from "$lib/components/ui/Search.svelte"; // Base component
-  import accessibleAutocomplete from "accessible-autocomplete";
-  import "accessible-autocomplete/dist/accessible-autocomplete.min.css"; // Import CSS
 
   // --- Define Props ---
   // Minimal type definition locally if needed, or rely on inference
@@ -72,8 +70,12 @@
   });
 
   // --- Lifecycle & Autocomplete Initialization ---
-  onMount(() => {
+  onMount(async () => {
     // console.log("SearchAutocomplete: onMount started.");
+
+    // --- Add dynamic import inside onMount ---
+    const accessibleAutocomplete = (await import("accessible-autocomplete"))
+      .default;
 
     // Assert type for querySelector results
     const targetInputWrapper = containerElement?.querySelector(

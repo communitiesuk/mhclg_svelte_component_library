@@ -2,16 +2,14 @@
   import { onMount } from "svelte";
   import { clsx } from "clsx";
   import Search from "$lib/components/ui/Search.svelte"; // Base component
+  import accessibleAutocomplete from "accessible-autocomplete";
+  import "accessible-autocomplete/dist/accessible-autocomplete.min.css"; // Import CSS
 
   // --- Define Props ---
   // Minimal type definition locally if needed, or rely on inference
-  type SuggestionObject = { label: string; value: any }; // Define a type for suggestion objects
-  type Suggestion = string | SuggestionObject;
-
   type Props = {
-    source_url?: string; // Optional: URL for autocomplete suggestions
-    source_key?: string; // Optional: Key in the JSON response containing suggestions array
-    options?: Suggestion[]; // Optional: Directly provided suggestions
+    source_url: string; // Required: URL for autocomplete suggestions
+    source_key: string; // Required: Key in the JSON response containing suggestions array
     outerClasses?: string; // Optional classes for the outer wrapper
     outerDataAttributes?: Record<string, string>; // Optional data attributes for the outer wrapper
     // Add other expected props passed down (e.g., size, on_govuk_blue, id, name etc.)
@@ -30,7 +28,6 @@
   let {
     source_url,
     source_key,
-    options = undefined, // Default options to undefined
     size = "", // Default size from Search
     on_govuk_blue = false,
     homepage = false, // Added homepage prop handling
@@ -75,12 +72,8 @@
   });
 
   // --- Lifecycle & Autocomplete Initialization ---
-  onMount(async () => {
+  onMount(() => {
     // console.log("SearchAutocomplete: onMount started.");
-
-    // --- Dynamically import the library only on the client ---
-    const accessibleAutocomplete = (await import("accessible-autocomplete"))
-      .default;
 
     // Assert type for querySelector results
     const targetInputWrapper = containerElement?.querySelector(
@@ -97,20 +90,11 @@
       return;
     }
 
-    // --- Define Source Functions ---
-
-    // Source function for fetching from API
-    const getResultsFromApi = (
+    // Define source function
+    const getResults = (
       query: string,
       populateResults: (results: string[]) => void,
     ) => {
-      if (!source_url || !source_key) {
-        console.error(
-          "SearchAutocomplete: source_url and source_key are required for API mode.",
-        );
-        populateResults([]);
-        return;
-      }
       const url = new URL(source_url);
       url.searchParams.set("q", query);
       fetch(url, { headers: { Accept: "application/json" } })
@@ -139,39 +123,11 @@
         });
     };
 
-    // Source function for using provided options array
-    const getResultsFromOptions = (
-      query: string,
-      populateResults: (results: Suggestion[]) => void,
-    ) => {
-      if (!options) {
-        populateResults([]);
-        return;
-      }
-      const lowerQuery = query.toLowerCase();
-      const filtered = options.filter((option) => {
-        const label = typeof option === "string" ? option : option.label;
-        return label.toLowerCase().includes(lowerQuery);
-      });
-      populateResults(filtered);
-    };
-
-    // Determine which source function to use
-    const shouldUseOptions =
-      options && Array.isArray(options) && options.length > 0;
-    const sourceFunction = shouldUseOptions
-      ? getResultsFromOptions
-      : getResultsFromApi;
-
-    // --- Define Template Functions ---
-
     // Define suggestion template function (sanitize and highlight)
-    const suggestionTemplate = (result: Suggestion): string => {
-      const displayLabel = typeof result === "string" ? result : result.label;
-
+    const suggestionTemplate = (result: string): string => {
       // Basic sanitization
       const scratch = document.createElement("div");
-      scratch.textContent = displayLabel;
+      scratch.textContent = result;
       const sanitizedResult = scratch.innerHTML;
 
       // Get the input value directly from the DOM input created by the library
@@ -204,25 +160,10 @@
       `;
     };
 
-    // Define inputValue template function (handles objects)
-    const inputValueTemplate = (result: Suggestion | undefined): string => {
-      if (result === undefined) return "";
-      return typeof result === "string" ? result : result.label; // Use label for input value
-    };
-
-    // --- Define Confirm Function ---
-
     // Define confirm function
     let isSubmitting = false; // Prevent double submit
-    const handleConfirm = (confirmedValue: Suggestion | undefined) => {
-      // Note: confirmedValue here will be the *object* if options had objects,
-      // or the *string* if options had strings or if fetched from API.
-      // The actual input value is set by accessible-autocomplete using inputValueTemplate.
-
+    const handleConfirm = (confirmedValue: string | undefined) => {
       if (confirmedValue === undefined || isSubmitting) return;
-
-      // We don't need the valueToSubmit variable here because accessible-autocomplete
-      // will update the input based on the inputValueTemplate.
 
       // Type assertion needed here
       const inputElement =
@@ -232,7 +173,7 @@
       if (!inputElement || !form) return;
 
       isSubmitting = true;
-      inputElement.value = inputValueTemplate(confirmedValue);
+      inputElement.value = confirmedValue;
       inputElement.dataset.autocompleteAccepted = "true"; // Set tracking attribute
 
       // Submit form
@@ -247,15 +188,13 @@
       }, 500);
     };
 
-    // --- Initialize Autocomplete ---
-
     // Initialize accessible-autocomplete
     autocompleteInstance = accessibleAutocomplete({
       element: targetInputWrapper, // Target the div *containing* the input
       id: searchInput.id, // Use the ID from the *rendered* Search input
       name: searchInput.name, // Use the name from the *rendered* Search input
       inputClasses: searchInput.classList, // Pass original classes directly
-      source: sourceFunction, // Use the determined source function
+      source: getResults,
       minLength: 3,
       confirmOnBlur: false,
       showNoOptionsFound: true,
@@ -265,7 +204,7 @@
       onConfirm: handleConfirm,
       templates: {
         suggestion: suggestionTemplate,
-        inputValue: inputValueTemplate, // Add the inputValue template
+        // inputValue: optional template to transform displayed value
         // noOptionsFound: optional template
       },
     });

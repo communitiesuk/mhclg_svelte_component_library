@@ -45,6 +45,23 @@
       (d) => 20 * Math.ceil(d.areaCode.length / 15),
     ),
   );
+
+  function generateLineAttributes(line, defaultLineParams, tier) {
+    const listOfProperties = [
+      ...new Set([
+        ...Object.keys(line),
+        ...Object.keys(defaultLineParams[tier]),
+      ]),
+    ];
+
+    const merged = Object.fromEntries(
+      listOfProperties.map((key) => [
+        key,
+        line[key] ?? defaultLineParams[tier][key],
+      ]),
+    );
+    return merged;
+  }
 </script>
 
 {#snippet categoryLabelSnippet(dataArray, newY)}
@@ -84,7 +101,8 @@
         {yFunction}
         {areaFunction}
         dataArray={line.data}
-        pathStrokeColor={line.color}
+        pathStrokeColor={generateLineAttributes(line, defaultLineParams, tier)
+          .color}
         pathStrokeWidth={defaultLineParams[tier].pathStrokeWidth}
         dataId={line.areaCode}
         halo={defaultLineParams[tier].halo}

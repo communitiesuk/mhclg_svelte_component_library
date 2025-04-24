@@ -12,6 +12,7 @@
     options?: Suggestion[]; // Predefined suggestions list
     source_url?: string; // Optional: URL for autocomplete suggestions
     source_key?: string; // Optional: Key in the JSON response containing suggestions array
+    source_property?: string; // Property to extract from API objects
     outerClasses?: string; // Optional classes for the outer wrapper
     outerDataAttributes?: Record<string, string>; // Optional data attributes for the outer wrapper
     // Add other expected props passed down (e.g., size, on_govuk_blue, id, name etc.)
@@ -42,6 +43,7 @@
     options = undefined,
     source_url = undefined,
     source_key = undefined,
+    source_property = undefined,
     size = "", // Default size from Search
     on_govuk_blue = false,
     homepage = false, // Added homepage prop handling
@@ -158,9 +160,30 @@
             populateResults([]);
             return;
           }
-          // TODO: Add tracking attribute logic here if needed (see original JS)
-          // Ensure results are strings. Handle potential null/undefined in data.
-          populateResults(results.map((item) => String(item ?? "")));
+          // --- API MAPPING LOGIC ---
+          populateResults(
+            results.map((item: any) => {
+              if (typeof item === "string") {
+                return item;
+              } else if (item && typeof item === "object") {
+                // 1. Try the specified source_property if provided
+                if (source_property && source_property in item) {
+                  return String(item[source_property]);
+                }
+                // 2. Fallback to 'label'
+                if ("label" in item) return String(item.label);
+                // 3. Fallback to 'postcode' (for backwards compatibility/common case)
+                if ("postcode" in item) return String(item.postcode);
+                // 4. If none found, stringify the object (might be undesirable)
+                console.warn(
+                  "SearchAutocomplete: Could not find 'label', 'postcode', or specified 'source_property' in object:",
+                  item,
+                );
+              }
+              // 5. Final fallback: stringify the item
+              return String(item ?? ""); // Ensure null/undefined becomes empty string
+            }),
+          );
         })
         .catch((error) => {
           console.error("SearchAutocomplete: Error fetching results:", error);
@@ -311,7 +334,7 @@
       // Listen for input changes on the autocomplete field
       autocompleteInputElement.addEventListener("input", () => {
         const val = autocompleteInputElement.value;
-        // Remove any existing 'too-short' warning before adding a new one to ensure we don’t accumulate multiple warning items.
+        // Remove any existing 'too-short' warning before adding a new one to ensure we don't accumulate multiple warning items.
         suggestionsMenu
           ?.querySelector(".gem-c-search-with-autocomplete__option--too-short")
           ?.remove();
@@ -324,7 +347,7 @@
           suggestionsMenu?.classList.remove(
             "gem-c-search-with-autocomplete__menu--hidden",
           );
-          // Create a new <li> element with the warning text. Classes match the library’s own suggestion items (so it looks and behaves consistently). Set role="option" and aria-disabled="true" for accessibility
+          // Create a new <li> element with the warning text. Classes match the library's own suggestion items (so it looks and behaves consistently). Set role="option" and aria-disabled="true" for accessibility
           const li = document.createElement("li");
           li.className =
             "gem-c-search-with-autocomplete__option gem-c-search-with-autocomplete__option--too-short";
@@ -383,6 +406,7 @@
   data-module="gem-search-with-autocomplete"
   data-source-url={source_url}
   data-source-key={source_key}
+  data-source-property={source_property}
   {...outerDataAttributes}
 >
   <!-- Render the base Search component initially -->

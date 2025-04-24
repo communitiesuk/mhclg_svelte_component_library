@@ -179,7 +179,7 @@
         name: "options",
         category: "Autocomplete",
         isEditable: true,
-        value: ["Option 1", "Option 2", "Option 3"],
+        value: [],
         description: {
           markdown: true,
           arr: [
@@ -217,6 +217,21 @@
         },
         rows: 1,
         isRequired: true,
+      },
+      {
+        name: "source_property",
+        category: "Autocomplete",
+        value: "", // Default to empty string, means auto-detect (label/postcode)
+        description: {
+          markdown: true,
+          arr: [
+            `Optional. Specifies the property name within the fetched JSON objects to use as the primary suggestion label. Useful when the API response doesn't use 'label' or 'postcode'.`,
+            `If left empty or the property is not found, the component falls back to checking for 'label', then 'postcode'.`,
+            `Example: If your API returns <code>[{ "name": "London", ... }]</code>, set this to <code>"name"</code>.`,
+          ],
+        },
+        rows: 1,
+        isRequired: false, // It's optional
       },
       {
         name: "minLength",
@@ -294,7 +309,7 @@
       },
       {
         name: "tNoResults",
-        category: "Autocomplete Text Customization",
+        category: "Autocomplete Text Customisation",
         value: () => "No results found",
         propType: "fixed", // Cannot edit functions via UI
         functionElements: {
@@ -311,7 +326,7 @@
       },
       {
         name: "tAssistiveHint",
-        category: "Autocomplete Text Customization",
+        category: "Autocomplete Text Customisation",
         value: () =>
           "When autocomplete results are available use up and down arrows to review and enter to select. Touch device users, explore by touch or with swipe gestures.",
         propType: "fixed",

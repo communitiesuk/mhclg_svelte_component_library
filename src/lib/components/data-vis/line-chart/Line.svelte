@@ -130,7 +130,6 @@
     pointer-events="stroke"
   ></path>
   {#if halo}
-    {console.log(halo)}
     <path
       d={lineFunction(dataArray)}
       fill={pathFillColor}

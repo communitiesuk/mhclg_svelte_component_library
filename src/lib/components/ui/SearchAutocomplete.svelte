@@ -5,10 +5,13 @@
   import "accessible-autocomplete/dist/accessible-autocomplete.min.css";
 
   // --- Define Props ---
-  // Minimal type definition locally if needed, or rely on inference
+  type SuggestionObject = { label: string; value: any };
+  type Suggestion = string | SuggestionObject;
   type Props = {
-    source_url: string; // Required: URL for autocomplete suggestions
-    source_key: string; // Required: Key in the JSON response containing suggestions array
+    // User can supply either an options array or an API source
+    options?: Suggestion[]; // Predefined suggestions list
+    source_url?: string; // Optional: URL for autocomplete suggestions
+    source_key?: string; // Optional: Key in the JSON response containing suggestions array
     outerClasses?: string; // Optional classes for the outer wrapper
     outerDataAttributes?: Record<string, string>; // Optional data attributes for the outer wrapper
     // Add other expected props passed down (e.g., size, on_govuk_blue, id, name etc.)
@@ -36,8 +39,9 @@
   };
 
   let {
-    source_url,
-    source_key,
+    options = undefined,
+    source_url = undefined,
+    source_key = undefined,
     size = "", // Default size from Search
     on_govuk_blue = false,
     homepage = false, // Added homepage prop handling
@@ -117,11 +121,20 @@
       return;
     }
 
-    // Define source function
-    const getResults = (
+    // --- Define Source Functions ---
+
+    // Source function for fetching from API
+    const getResultsFromApi = (
       query: string,
       populateResults: (results: string[]) => void,
     ) => {
+      if (!source_url || !source_key) {
+        console.error(
+          "SearchAutocomplete: source_url and source_key are required for API mode.",
+        );
+        populateResults([]);
+        return;
+      }
       const url = new URL(source_url);
       url.searchParams.set("q", query);
       fetch(url, { headers: { Accept: "application/json" } })
@@ -150,11 +163,35 @@
         });
     };
 
+    // Source function for using provided options array
+    const getResultsFromOptions = (
+      query: string,
+      populateResults: (results: Suggestion[]) => void,
+    ) => {
+      if (!options) {
+        populateResults([]);
+        return;
+      }
+      const lowerQuery = query.toLowerCase();
+      const filtered = options.filter((option) => {
+        const label = typeof option === "string" ? option : option.label;
+        return label.toLowerCase().includes(lowerQuery);
+      });
+      populateResults(filtered);
+    };
+
+    // Determine which source to use
+    const useOptions = Array.isArray(options) && options.length > 0;
+    const sourceFunction = useOptions
+      ? getResultsFromOptions
+      : getResultsFromApi;
+
     // Define suggestion template function (sanitize and highlight)
-    const suggestionTemplate = (result: string): string => {
+    const suggestionTemplate = (result: Suggestion): string => {
+      const displayLabel = typeof result === "string" ? result : result.label;
       // Basic sanitization
       const scratch = document.createElement("div");
-      scratch.textContent = result;
+      scratch.textContent = displayLabel;
       const sanitizedResult = scratch.innerHTML;
 
       // Get the input value directly from the DOM input created by the library
@@ -187,9 +224,16 @@
       `;
     };
 
+    // Define inputValue template function (handles objects)
+    const inputValueTemplate = (result: Suggestion | undefined): string => {
+      if (result === undefined) return "";
+      // Use label for input value if it's an object, otherwise use the string
+      return typeof result === "string" ? result : result.label;
+    };
+
     // Define confirm function
     let isSubmitting = false; // Prevent double submit
-    const handleConfirm = (confirmedValue: string | undefined) => {
+    const handleConfirm = (confirmedValue: Suggestion | undefined) => {
       if (confirmedValue === undefined || isSubmitting) return;
 
       // Type assertion needed here
@@ -200,7 +244,7 @@
       if (!inputElement || !form) return;
 
       isSubmitting = true;
-      inputElement.value = confirmedValue;
+      inputElement.value = inputValueTemplate(confirmedValue);
       inputElement.dataset.autocompleteAccepted = "true"; // Set tracking attribute
 
       // Submit form
@@ -215,13 +259,13 @@
       }, 500);
     };
 
-    // Initialize accessible-autocomplete
+    // Initialise accessible-autocomplete
     autocompleteInstance = accessibleAutocomplete({
       element: targetInputWrapper, // Target the div *containing* the input
       id: searchInput.id, // Use the ID from the *rendered* Search input
       name: searchInput.name, // Use the name from the *rendered* Search input
       inputClasses: searchInput.classList, // Pass original classes directly
-      source: getResults,
+      source: sourceFunction,
       minLength: minLength,
       confirmOnBlur: confirmOnBlur,
       showNoOptionsFound: showNoOptionsFound,
@@ -239,7 +283,7 @@
       onConfirm: handleConfirm,
       templates: {
         suggestion: suggestionTemplate,
-        // inputValue: optional template to transform displayed value
+        inputValue: inputValueTemplate, // optional template to transform displayed value
         // noOptionsFound: optional template
       },
     });
@@ -253,7 +297,7 @@
     //   autocompleteInputElement,
     // ); // Updated log
 
-    // Post-initialization tweaks
+    // Post-initialisation tweaks
     if (autocompleteInputElement) {
       autocompleteInputElement.setAttribute("type", "search"); // Ensure input type is search
       // autocompleteInputElement.classList.add("autocomplete__input"); // Add specific class if needed

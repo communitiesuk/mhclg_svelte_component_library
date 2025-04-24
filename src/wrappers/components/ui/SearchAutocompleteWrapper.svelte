@@ -176,6 +176,21 @@
     addIndexAndInitalValue([
       // --- Autocomplete Specific Props ---
       {
+        name: "options",
+        category: "Autocomplete",
+        isEditable: true,
+        value: ["Option 1", "Option 2", "Option 3"],
+        description: {
+          markdown: true,
+          arr: [
+            `An array of suggestion strings or objects with <code>{ label: string, value: any }</code> to use instead of an API endpoint.`,
+            `If this prop is provided with a non-empty array, it will be used as the suggestion source instead of <code>source_url</code> and <code>source_key</code>.`,
+            `Example (strings): <code>["Apple", "Banana", "Cherry"]</code>`,
+            `Example (objects, requires valid JSON in input): <code>[ { "label": "Aberdeen City", "value": "S12000033" }, { "label": "Aberdeenshire", "value": "S12000034" }, ... ]</code>`,
+          ],
+        },
+      },
+      {
         name: "source_url",
         category: "Autocomplete",
         value: "https://www.gov.uk/api/search.json?suggest=autocomplete", // Updated value
@@ -793,7 +808,7 @@
       : "#fff"}
   <div class="p-8" style="background-color: {bgColor};">
     {#if parametersObject.source_url && parametersObject.source_key}
-      {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses].join("|")}
+      {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}
         <SearchAutocomplete {...parametersObject} />
       {/key}
     {:else}

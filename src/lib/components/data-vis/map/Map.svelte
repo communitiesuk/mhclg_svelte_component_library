@@ -7,8 +7,15 @@
     FillLayer,
     LineLayer,
     zoomTransition,
+    Control,
+    ControlButton,
+    ControlGroup,
+    NavigationControl,
+    GeolocateControl,
+    FullscreenControl,
+    ScaleControl,
   } from "svelte-maplibre";
-  import { contrastingColor } from "./colors.ts";
+  import { contrastingColor, colorPalette } from "./colors.ts";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { maplibregl, ExpressionSpecification } from "maplibre-gl";
   import fullTopo from "./fullTopo.json";
@@ -24,6 +31,16 @@
   let {
     data,
     cooperativeGestures,
+    standardControls = true,
+    navigationControl,
+    navigationControlPosition = "top-left",
+    geolocateControl,
+    geolocateControlPosition = "top-left",
+    fullscreenControl,
+    fullscreenControlPosition = "top-left",
+    scaleControl,
+    scaleControlPosition = "bottom-left",
+    scaleControlUnit = "metric",
     showBorder = false,
     maxBorderWidth = 1.5,
     tooltip,
@@ -39,7 +56,7 @@
     center = [-2.5, 53],
     zoom = 5,
   } = $props();
-
+  $inspect(navigationControlPosition);
   let mapData = $derived(data?.filter((d) => d.year == year)[0]?.data);
 
   let filteredMapData = $derived(
@@ -56,7 +73,8 @@
 
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
 
-  let fillColor = ["#ffffcc", "#a1dab4", "#41b6c4", "#2c7fb8", "#253494"];
+  let fillColor = $derived(colorPalette[numberOfBreaks]);
+  $inspect(fillColor);
   let borderColor = "#003300";
 
   let map: maplibregl.Map | undefined = $state();
@@ -130,7 +148,7 @@
       // Get the matching item from obj2Map based on the areaCode
       const match = obj2Map[item1.properties.areacd];
 
-      // If a match exists, merge the 'salary' and 'color' into the 'properties' of item1
+      // If a match exists, merge the 'metric' and 'color' into the 'properties' of item1
       if (match) {
         return {
           ...item1, // Keep all properties of the feature
@@ -183,10 +201,44 @@
   bind:loaded
   style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
   class="map"
-  standardControls
+  {standardControls}
   {center}
   {zoom}
 >
+  {#if navigationControl && !standardControls}
+    {#key navigationControlPosition}
+      <NavigationControl position={navigationControlPosition} />
+    {/key}
+  {/if}
+  {#if geolocateControl && !standardControls}
+    {#key geolocateControlPosition}
+      <GeolocateControl position={geolocateControlPosition} />
+    {/key}
+  {/if}
+  {#if fullscreenControl && !standardControls}
+    {#key fullscreenControlPosition}
+      <FullscreenControl position={fullscreenControlPosition} />
+    {/key}
+  {/if}
+  {#if scaleControl && !standardControls}
+    {#key { scaleControlPosition, scaleControlUnit }}
+      <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
+    {/key}
+  {/if}
+  <Control>
+    <ControlGroup>
+      <button
+        class="reset-button"
+        onclick={() => {
+          map.flyTo({
+            center: center,
+            zoom: zoom,
+          });
+        }}>Reset view</button
+      ></ControlGroup
+    >
+  </Control>
+
   <GeoJSON id="areas" data={merged} promoteId="areanm">
     <FillLayer
       paint={{
@@ -208,7 +260,6 @@
         (hoveredArea = null), (hoveredAreaData = null);
       }}
     />
-
     {#if showBorder}
       <LineLayer
         layout={{ "line-cap": "round", "line-join": "round" }}
@@ -234,5 +285,11 @@
 <style>
   :global(.map) {
     height: 500px;
+  }
+
+  :global(.maplibregl-ctrl-group button.reset-button) {
+    /* margin: 10px; */
+    width: fit-content;
+    padding: 0px 10px;
   }
 </style>

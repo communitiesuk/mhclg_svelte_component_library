@@ -11,16 +11,18 @@
     values,
     numberOfTicks,
     baseline,
-    maxTick,
+    setMax,
     orientation,
     yearsInput,
+    generateTicksNum,
   } = $props();
 
   $inspect(ticksArray);
 
-  function generateTicks(data, numTicks, baseline, maxTick) {
+  function generateTicks(data, numTicks, baseline, setTick) {
+    console.log(data, typeof data);
     let minVal = baseline !== null ? baseline : Math.min(...data);
-    let maxVal = maxTick !== null ? maxTick : Math.max(...data);
+    let maxVal = setTick !== null ? setTick : Math.max(...data);
     let rangeVal = maxVal - minVal;
 
     let roughStep = rangeVal / (numTicks - 1);
@@ -41,11 +43,17 @@
     return ticks;
   }
 
+  function tickCount(chartWidth) {
+    return Math.floor(chartWidth / 50);
+  }
+
   function yearsFormat(ticks) {
     return ticks.map((tick) => `FY ${tick % 100}-${(tick % 100) + 1}`);
   }
 
-  ticksArray = generateTicks(values, numberOfTicks, baseline, maxTick);
+  numberOfTicks = tickCount(chartWidth);
+
+  ticksArray = generateTicks(values, numberOfTicks, baseline, setMax);
   let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 </script>
 

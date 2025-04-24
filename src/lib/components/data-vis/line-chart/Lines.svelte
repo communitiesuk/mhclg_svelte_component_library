@@ -95,15 +95,21 @@
 {#each Object.keys(tieredDataObject) as tier}
   <g opacity={globalTierRules[tier].opacity} id={tier}>
     {#each tieredDataObject[tier] as line, i}
+      {@const lineAttributes = generateLineAttributes(
+        lineFunction,
+        defaultLineParams,
+        tier,
+      )}
+      {#if tier == "primary"}
+        {console.log(line.pathStrokeColor, lineAttributes.pathStrokeColor)}
+      {/if}
       <Line
         {lineFunction}
         {xFunction}
         {yFunction}
         {areaFunction}
         dataArray={line.data}
-        pathStrokeColor={generateLineAttributes(line, defaultLineParams, tier)
-          .color}
-        pathStrokeWidth={defaultLineParams[tier].pathStrokeWidth}
+        {...lineAttributes}
         dataId={line.areaCode}
         halo={defaultLineParams[tier].halo}
         onClick={function (event, dataArray, dataId) {

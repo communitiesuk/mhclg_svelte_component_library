@@ -112,17 +112,17 @@
     secondary: {
       "pointer-events": "none",
       halo: false,
-      color: "grey",
+      pathStrokeColor: "grey",
     },
     primary: {
       halo: true,
       includeMarkers: true,
       pathStrokeWidth: areaCodeHover === null ? 5 : 2,
-      color: "green",
+      pathStrokeColor: "green",
       halo: true,
     },
     hover: {
-      color: "orange",
+      pathStrokeColor: "orange",
       pathStrokeWidth: 5,
       halo: true,
     },
@@ -144,7 +144,7 @@
           ...el,
           strokeWidth: "3px",
           includeMarkers: key === "primary" ? true : false,
-          color:
+          pathStrokeColor:
             key === "primary"
               ? getColor(
                   el.areaCode,

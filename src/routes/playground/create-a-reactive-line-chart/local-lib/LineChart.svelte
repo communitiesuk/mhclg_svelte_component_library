@@ -64,7 +64,13 @@
     }
   }
 
-  let primaryLines = $derived(["E07000223", "E07000224", englandMedian]);
+  let primaryLines = $derived([
+    "E07000223",
+    "E07000224",
+    "E07000225",
+    "E07000226",
+    englandMedian,
+  ]);
 
   let colorPalette = {
     base: ["red", "white", "yellow", "pink"],
@@ -75,10 +81,10 @@
     [selectedAreaCode]: "green",
   });
 
-  function getColor(primaryLines, areaCode, lookupObj, i) {
-    return primaryLines.includes(areaCode)
-      ? (lookupObj[areaCode] ?? colorPalette.base[i % colorPalette.base.length])
-      : undefined;
+  function getColor(areaCode, lookupObj, i) {
+    return (
+      lookupObj[areaCode] ?? colorPalette.base[i % colorPalette.base.length]
+    );
   }
 
   let dataArray = $derived(
@@ -92,8 +98,6 @@
       return {
         ...el,
         tiers,
-        includeMarkers: selectedAreaCode === "E07000223",
-        color: getColor(primaryLines, el.areaCode, lookupObj, i),
       };
     }),
   );
@@ -108,12 +112,13 @@
     secondary: {
       "pointer-events": "none",
       halo: false,
+      color: "grey",
     },
     primary: {
       halo: true,
       includeMarkers: true,
       pathStrokeWidth: areaCodeHover === null ? 5 : 2,
-      color: "red",
+      color: "green",
       halo: true,
     },
     hover: {
@@ -125,7 +130,29 @@
 
   let tieredDataObject = $derived(
     Object.keys(defaultLineParams).reduce((acc, key, index) => {
-      acc[key] = dataArray.filter((el) => el.tiers.includes(key));
+      acc[key] = dataArray
+        .filter((el) => {
+          if (key === "primary") {
+            return primaryLines.includes(el.areaCode);
+          } else if (key === "secondary") {
+            return true;
+          } else if (key === "hover") {
+            return areaCodeHover === el.areaCode;
+          }
+        })
+        .map((el) => ({
+          ...el,
+          strokeWidth: "3px",
+          includeMarkers: key === "primary" ? true : false,
+          color:
+            key === "primary"
+              ? getColor(
+                  el.areaCode,
+                  lookupObj,
+                  primaryLines.indexOf(el.areaCode),
+                )
+              : null,
+        }));
       return acc;
     }, {}),
   );

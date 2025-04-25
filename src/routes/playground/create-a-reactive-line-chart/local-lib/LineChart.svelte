@@ -57,6 +57,7 @@
   let labelClicked = $state();
   let selectedAreaCode = $state("E07000223");
   let englandMedian = $state("E07000227");
+  let similarAreas = $state("E07000224");
 
   function handleClickOutside(event) {
     if (labelClicked && !event.target.closest('[id^="label"]')) {
@@ -64,21 +65,36 @@
     }
   }
 
+  let colors = {
+    teal: "#408A7B",
+    lightblue: "#509EC8",
+    darkblue: "#335F91",
+    ochre: "#BA7F30",
+    coral: "#E46B6C",
+    fuschia: "#BB2765",
+    purple: "#736CAC",
+    lightgrey: "#A0A0A0",
+    darkgrey: "#636363",
+  };
+
   let primaryLines = $derived([
-    "E07000223",
+    selectedAreaCode,
     "E07000224",
     "E07000225",
     "E07000226",
+    "E07000228",
     englandMedian,
+    similarAreas,
   ]);
 
   let colorPalette = {
-    base: ["red", "white", "yellow", "pink"],
+    base: [colors.coral, colors.fuschia, colors.purple],
   };
 
   let lookupObj = $derived({
-    [englandMedian]: "purple",
-    [selectedAreaCode]: "green",
+    [englandMedian]: colors.lightblue,
+    [selectedAreaCode]: colors.teal,
+    [similarAreas]: colors.darkblue,
   });
 
   function getColor(areaCode, lookupObj, i) {
@@ -112,17 +128,17 @@
     secondary: {
       "pointer-events": "none",
       halo: false,
-      pathStrokeColor: "grey",
+      pathStrokeColor: colors.lightgrey,
     },
     primary: {
       halo: true,
       includeMarkers: true,
       pathStrokeWidth: areaCodeHover === null ? 5 : 2,
-      pathStrokeColor: "green",
+      pathStrokeColor: colors.darkgrey,
       halo: true,
     },
     hover: {
-      pathStrokeColor: "orange",
+      pathStrokeColor: colors.ochre,
       pathStrokeWidth: 5,
       halo: true,
     },

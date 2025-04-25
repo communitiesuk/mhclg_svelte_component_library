@@ -96,13 +96,10 @@
   <g opacity={globalTierRules[tier].opacity} id={tier}>
     {#each tieredDataObject[tier] as line, i}
       {@const lineAttributes = generateLineAttributes(
-        lineFunction,
+        line,
         defaultLineParams,
         tier,
       )}
-      {#if tier == "primary"}
-        {console.log(line.pathStrokeColor, lineAttributes.pathStrokeColor)}
-      {/if}
       <Line
         {lineFunction}
         {xFunction}

@@ -75,3 +75,36 @@ export const codeBlock6 = `
   confirmOnBlur={true}
   placeholder="Confirm on blur..."
 />`;
+
+// Example 8: Selected Value Binding
+export const codeBlock7 = `
+<script lang="ts">
+  import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
+
+  let demoSelectedAutocompleteValue: string | null = $state(null); // Initialise as null
+</script>
+
+<div class="mt-4">
+  <SearchAutocomplete
+    label_text="Select a country"
+    options={[
+      { label: "United States of America", value: "USA" },
+      { label: "Canada", value: "CAN" },
+      { label: "Mexico", value: "MEX" },
+      { label: "United Kingdom", value: "GBR" },
+    ]}
+    bind:selectedValue={demoSelectedAutocompleteValue}
+    placeholder="Start typing a country name..."
+  />
+</div>
+
+{#if demoSelectedAutocompleteValue !== null}
+  <p class="govuk-body mt-4">
+    Confirmed selected value: {demoSelectedAutocompleteValue}
+  </p>
+{:else}
+   <p class="govuk-body mt-4 text-gray-500">
+    No value selected yet.
+  </p>
+{/if}
+`;

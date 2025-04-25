@@ -1,10 +1,13 @@
-<script>
+<script lang="ts">
   import { AccordionItem, Accordion } from "flowbite-svelte";
 
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
   import SearchAutocomplete from "$lib/components/ui/SearchAutocomplete.svelte";
+
+  // Initialize state to null to show it only updates on confirmation
+  let demoSelectedAutocompleteValue: string | null = $state(null);
 
   // Define the list of example snippets to show in the accordion
   let accordionSnippetSections = [
@@ -29,6 +32,11 @@
       id: "6",
       heading: "6. Behaviour (Default & Confirm)",
       content: ExampleBehaviour,
+    },
+    {
+      id: "7",
+      heading: "7. With Selected Value Binding",
+      content: Example7,
     },
   ];
 </script>
@@ -129,4 +137,32 @@
     />
   </div>
   <CodeBlock code={codeBlocks.codeBlock6} language="svelte" />
+{/snippet}
+
+<!-- Example 7: With Selected Value Binding -->
+{#snippet Example7()}
+  <div class="p-5 bg-white">
+    <div class="mt-4">
+      <SearchAutocomplete
+        label_text="Select a country"
+        options={[
+          { label: "United States of America", value: "USA" },
+          { label: "Canada", value: "CAN" },
+          { label: "Mexico", value: "MEX" },
+          { label: "United Kingdom", value: "GBR" },
+        ]}
+        bind:selectedValue={demoSelectedAutocompleteValue}
+        placeholder="Start typing a country name..."
+      />
+    </div>
+
+    {#if demoSelectedAutocompleteValue !== null}
+      <p class="govuk-body mt-4">
+        Confirmed selected value: {demoSelectedAutocompleteValue}
+      </p>
+    {:else}
+      <p class="govuk-body mt-4 text-gray-500">No value selected yet.</p>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock7} language="svelte"></CodeBlock>
 {/snippet}

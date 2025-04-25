@@ -37,6 +37,7 @@
     menuAttributes?: Record<string, any>; // Object prop
     menuClasses?: string | null;
     hint?: string; // Add hint prop
+    selectedValue?: any; // Bindable selected value, updated on selection
   };
 
   let {
@@ -66,6 +67,7 @@
     menuAttributes = {},
     menuClasses = "", // Default to empty string
     hint = undefined, // Add hint destructuring
+    selectedValue = $bindable(), // Bindable prop for selected value
     ...restSearchProps // Other props for the base Search component
   }: Props = $props();
 
@@ -263,6 +265,13 @@
     let isSubmitting = false; // Prevent double submit
     const handleConfirm = (confirmedValue: Suggestion | undefined) => {
       if (confirmedValue === undefined || isSubmitting) return;
+
+      // Re-assign selectedValue before any form-based guard checks (!form) so bindings still update 
+      // (e.g. when no <form> exists around the component usage) and search component value is being used clienside without a page reload
+      selectedValue =
+        typeof confirmedValue === "string"
+          ? confirmedValue
+          : confirmedValue.value;
 
       // Type assertion needed here
       const inputElement =

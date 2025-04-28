@@ -82,7 +82,6 @@
       (on_govuk_blue || homepage) &&
         "gem-c-search-with-autocomplete--on-govuk-blue", // Apply blue style if either is true
       // TODO: Replicate margin logic from Ruby template if needed using govuk utility classes
-      // Example: margin_bottom prop handling could go here
       outerClasses,
     ),
   );
@@ -107,7 +106,7 @@
     return `Enter ${min} or more characters for suggestions`;
   }
 
-  // --- Lifecycle & Autocomplete Initialization ---
+  // --- Lifecycle & Autocomplete Initialisation ---
   onMount(async () => {
     // console.log("SearchAutocomplete: onMount started.");
 

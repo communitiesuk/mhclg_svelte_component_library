@@ -1,10 +1,12 @@
-<script>
+<script lang="ts">
   import { AccordionItem, Accordion } from "flowbite-svelte";
 
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
   import Search from "$lib/components/ui/Search.svelte";
+
+  let demoSearchValue = $state("initial value"); // State for binding example
 
   let accordionSnippetSections = [
     {
@@ -114,6 +116,12 @@
       heading: "18. With Hint Text and Custom Width",
       content: ExampleHintAndWidth,
       code: codeBlocks.hintAndWidth,
+    },
+    {
+      id: "19",
+      heading: "19. Bindable Value",
+      content: ExampleBinding,
+      code: codeBlocks.codeBlockBinding,
     },
   ];
 </script>
@@ -278,6 +286,24 @@
     the <code>input_width</code> prop to control the component's width simultaneously.
   </p>
   <div class="p-5 bg-white">
-    <Search hint="Enter your full name" input_width="two-thirds" />
+    <Search
+      hint="Enter your full name"
+      input_width="two-thirds"
+      inline_label={false}
+    />
+  </div>
+{/snippet}
+
+{#snippet ExampleBinding()}
+  <div class="p-5 bg-white">
+    <Search
+      label_text="Search with bound value"
+      bind:value={demoSearchValue}
+      inline_label={false}
+      hint="For exmaple: 'new value'"
+    />
+    <p class="govuk-body mt-4">
+      Current bound value: <strong>{demoSearchValue}</strong>
+    </p>
   </div>
 {/snippet}

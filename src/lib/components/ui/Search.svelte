@@ -3,6 +3,7 @@
   import { browser } from "$app/environment";
   import IconSearch from "$lib/icons/IconSearch.svelte";
   import DOMPurify from "dompurify";
+  import { onMount } from "svelte";
 
   // Define the props based on GOV.UK documentation
   type Props = {
@@ -17,7 +18,7 @@
     name?: string; // Name attribute for input
     aria_controls?: string; // ID of controlled element
     button_text?: string; // Visually hidden button text
-    label_size?: "xl" | "l" | "m" | "s" | null; // Label text size
+    label_size?: "xl" | "l" | "m" | "s" | "" | null; // Add "" to the type
     wrap_label_in_a_heading?: boolean; // Wrap label in heading
     heading_level?: 1 | 2 | 3 | 4 | 5 | 6; // Heading level
     margin_bottom?: 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9; // Component margin
@@ -46,7 +47,7 @@
 
   // --- Prop Defaults & Processing ---
   let {
-    value = "",
+    value = $bindable(""), // Make value bindable
     label_text = "Search on GOV.UK",
     label_id = undefined,
     inline_label = undefined, // Default depends on label_size
@@ -77,15 +78,21 @@
 
   // Generate default ID if none provided (only in browser)
   const defaultId = $derived(
-    label_id ??
+    label_id ||
       (browser
         ? `search-main-${crypto.randomUUID().slice(0, 8)}`
         : "search-main-ssr"),
   );
 
   // Determine if label should be inline
+  // If label_size is set, force isInlineLabel = false
+  // Otherwise, respect inline_label if set to false, default to true
   const isInlineLabel = $derived(
-    inline_label === undefined ? !label_size : inline_label,
+    label_size
+      ? false // If label_size is set, it's NOT inline
+      : inline_label === false
+        ? false // If no size, but explicitly set to false, it's NOT inline
+        : true, // Otherwise (no size, inline_label is true or undefined), it IS inline
   );
 
   // --- Derived Classes & Attributes ---
@@ -99,7 +106,9 @@
       `govuk-!-margin-bottom-${margin_bottom}`,
       size === "large" && "gem-c-search--large",
       homepage && "gem-c-search--homepage",
-      on_govuk_blue ? "gem-c-search--on-govuk-blue" : "gem-c-search--on-white",
+      on_govuk_blue || homepage
+        ? "gem-c-search--on-govuk-blue"
+        : "gem-c-search--on-white",
       !isInlineLabel && "gem-c-search--separate-label",
       classes,
     ),
@@ -107,18 +116,22 @@
 
   const derivedLabelClasses = $derived(
     clsx(
-      // Only add default classes if NO custom class is provided
-      !label_custom_class &&
-        (label_size
-          ? [`govuk-label`, `govuk-label--${label_size}`]
-          : "gem-c-search__label"),
-      homepage && label_size && "gem-c-search__label--white",
+      label_custom_class
+        ? label_custom_class // If custom class, use it...
+        : [
+            // Otherwise calculate standard classes:
+            isInlineLabel ? "gem-c-search__label" : "govuk-label", // Base class depends on inline status
+            !isInlineLabel && label_size ? `govuk-label--${label_size}` : null, // Size modifier only if separate and size set
+            (!isInlineLabel && on_govuk_blue) || homepage
+              ? "gem-c-search__label--white"
+              : null, // White text only if separate and on blue
+          ],
+      // Margin applies if NOT inline, regardless of custom class
       !isInlineLabel &&
         label_margin_bottom !== undefined &&
         label_margin_bottom >= 0 &&
         label_margin_bottom <= 9 &&
         `govuk-!-margin-bottom-${label_margin_bottom}`,
-      label_custom_class, // Always add the custom class if present
     ),
   );
 
@@ -138,6 +151,7 @@
   });
 
   // --- Render Logic ---
+  // Define Tag based on heading_level
   const Tag = $derived(`h${heading_level}`);
 </script>
 
@@ -165,7 +179,7 @@
     {@render LabelContent()}
   {/if}
 
-  {#if hint}
+  {#if hint && !isInlineLabel && !(homepage || on_govuk_blue)}
     <div id="{defaultId}-hint" class="govuk-hint">
       {hint}
     </div>
@@ -181,8 +195,15 @@
         {name}
         title="Search"
         type="search"
+        placeholder={hint && !isInlineLabel && (homepage || on_govuk_blue)
+          ? hint
+          : undefined}
         bind:value
-        aria-describedby={hint ? `${defaultId}-hint` : undefined}
+        aria-describedby={hint
+          ? `${defaultId}-hint`
+          : label_text
+            ? `${defaultId}-label`
+            : undefined}
         autocorrect={correctionValue}
         autocapitalize={correctionValue}
       />
@@ -260,7 +281,8 @@
     }
   }
 
-  .govuk-frontend-supported .gem-c-search__label {
+  /* Apply :global() to the external .govuk-frontend-supported class as it's not scoped to the component */
+  :global(.govuk-frontend-supported) .gem-c-search__label {
     position: absolute;
     left: 2px;
     top: 2px;
@@ -272,10 +294,14 @@
     background: #fff;
   }
 
-  .govuk-frontend-supported .gem-c-search--separate-label .gem-c-search__label {
+  /* Apply :global() to the external .govuk-frontend-supported class as it's not scoped to the component */
+  :global(.govuk-frontend-supported)
+    .gem-c-search--separate-label
+    .gem-c-search__label {
     color: #0b0c0c;
   }
 
+  /* REMOVED :global() - Restore original scoped rule */
   .gem-c-search__input[type="search"] {
     margin: 0;
     width: 100%;
@@ -401,7 +427,9 @@
     background-color: hsl(180, 4.347826087%, 9.5098039216%);
   }
 
-  .govuk-frontend-supported .gem-c-search--on-govuk-blue .gem-c-search__label {
+  :global(.govuk-frontend-supported)
+    .gem-c-search--on-govuk-blue
+    .gem-c-search__label {
     color: #505a5f;
   }
 

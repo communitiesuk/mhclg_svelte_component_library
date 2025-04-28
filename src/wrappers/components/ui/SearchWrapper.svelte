@@ -120,7 +120,7 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-
+  let selectedValue = $state("");
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -177,10 +177,11 @@
       {
         name: "value",
         category: "Content",
-        value: "",
+        value: selectedValue,
+        isBinded: true,
         description: {
           markdown: true,
-          arr: [`Sets the initial value of the search input field.`],
+          arr: [`The current value of the search input field. Can be bound to reactively get the confirmed selection without submitting a form.`],
         },
         rows: 1,
       },
@@ -648,7 +649,7 @@
       ? '#1d70b8'
       : ''};"
   >
-    <Search {...parametersObject} />
+    <Search {...parametersObject} bind:value={selectedValue}/>
   </div>
 {/snippet}
 

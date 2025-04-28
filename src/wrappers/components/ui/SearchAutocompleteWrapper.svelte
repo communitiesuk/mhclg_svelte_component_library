@@ -134,7 +134,7 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-
+  let selectedValue = $state("");
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -385,6 +385,18 @@
           ],
         },
         rows: 1,
+      },
+      {
+        name: "selectedValue",
+        category: "Content",
+        isBinded: true,
+        value: selectedValue,
+        description: {
+          markdown: true,
+          arr: [
+            `The current value of the search input field. Can be bound to reactively get the confirmed selection without submitting a form.`,
+          ],
+        },
       },
       {
         name: "button_text",
@@ -825,7 +837,7 @@
   <div class="p-8" style="background-color: {bgColor};">
     {#if parametersObject.source_url && parametersObject.source_key}
       {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}
-        <SearchAutocomplete {...parametersObject} />
+        <SearchAutocomplete {...parametersObject} bind:selectedValue/>
       {/key}
     {:else}
       <p class="text-red-600 font-bold">

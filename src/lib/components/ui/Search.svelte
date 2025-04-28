@@ -47,7 +47,7 @@
 
   // --- Prop Defaults & Processing ---
   let {
-    value = "",
+    value = $bindable(""), // Make value bindable
     label_text = "Search on GOV.UK",
     label_id = undefined,
     inline_label = undefined, // Default depends on label_size

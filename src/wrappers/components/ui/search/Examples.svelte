@@ -296,7 +296,12 @@
 
 {#snippet ExampleBinding()}
   <div class="p-5 bg-white">
-    <Search label_text="Search with bound value" bind:value={demoSearchValue} inline_label={false} hint="For exmaple: 'new value'"/>
+    <Search
+      label_text="Search with bound value"
+      bind:value={demoSearchValue}
+      inline_label={false}
+      hint="For exmaple: 'new value'"
+    />
     <p class="govuk-body mt-4">
       Current bound value: <strong>{demoSearchValue}</strong>
     </p>

@@ -181,7 +181,9 @@
         isBinded: true,
         description: {
           markdown: true,
-          arr: [`The current value of the search input field. Can be bound to reactively get the confirmed selection without submitting a form.`],
+          arr: [
+            `The current value of the search input field. Can be bound to reactively get the confirmed selection without submitting a form.`,
+          ],
         },
         rows: 1,
       },
@@ -649,7 +651,7 @@
       ? '#1d70b8'
       : ''};"
   >
-    <Search {...parametersObject} bind:value={selectedValue}/>
+    <Search {...parametersObject} bind:value={selectedValue} />
   </div>
 {/snippet}
 

@@ -53,7 +53,8 @@
   ];
 
   let contextArray = [
-    `The component <strong>must</strong> be used within an HTML <code>&lt;form&gt;</code>. Consider giving the form <code>role="search"</code> for accessibility.`,
+    `The component should ideally be used within an HTML <code>&lt;form&gt;</code> to allow standard form submission (works with or without JavaScript). Consider giving the form <code>role="search"</code> for accessibility.`,
+    `For client-side handling (e.g., in Single Page Applications where a full form submission isn't desired), you can use the <code>bind:selectedValue</code> prop to reactively get the confirmed selection without submitting the form.`,
     `Use this for site-wide search or specific finder searches where user input is needed to filter or find content.`,
   ];
 

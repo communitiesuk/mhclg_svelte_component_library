@@ -4,7 +4,7 @@
   import HeaderNav from "$lib/components/ui/HeaderNav.svelte";
   import MobileNav from "$lib/components/ui/MobileNav.svelte";
   import SideNav from "$lib/components/ui/SideNav.svelte";
-  import "../app.css";
+  import "../app.scss";
   import type {
     SideNavGroup,
     SideNavItem,

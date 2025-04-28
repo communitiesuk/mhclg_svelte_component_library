@@ -1,0 +1,190 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+// --- Other Global Imports ---
+// Keep these if they are still needed globally
+@import "/css/govuk-additional.css";
+@import "/css/code-block.css";
+@import "/css/fonts.css";
+
+@import "/css/base.css"; // Ensure this doesn't clash heavily with GOV.UK base
+@import "/css/components.css"; // Ensure this doesn't clash heavily
+@import "/css/moj-frontend.min.css"; // Consider applying SCSS partial strategy here too
+body {
+  font-family: "GDS Transport";
+  font-size: 1.2rem;
+  line-height: 1.5rem;
+  color: #222222;
+}
+
+p {
+  margin: 1rem 0px;
+  padding: 0px;
+}
+
+h1 {
+  font-size: 3em;
+  font-weight: bold;
+  line-height: 1.2em;
+}
+
+h2 {
+  font-size: 2.5em;
+  font-weight: bold;
+  line-height: 1.2em;
+}
+
+h3 {
+  font-size: 2em;
+  font-weight: 600;
+  line-height: 1.2em;
+}
+
+h4 {
+  font-size: 1.8em;
+  font-weight: 600;
+  line-height: 1.2em;
+}
+
+h5 {
+  font-size: 1.65em;
+  font-weight: 600;
+  line-height: 1.2em;
+}
+
+h6 {
+  font-size: 1.35em;
+  font-weight: 600;
+  line-height: 1.2em;
+}
+
+a {
+  color: #1d70b8;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+}
+
+code {
+  font-size: 0.9rem;
+  margin: 0px 2px;
+  padding: 2px 4px;
+  color: #27272a;
+  background-color: #f1f5f9;
+}
+
+// --- GOV.UK Frontend: Base ---
+// Core reset, root styles and variables
+@import "govuk-frontend/dist/govuk/_base.scss";
+
+// --- GOV.UK Frontend: Settings ---
+// Global variables for colours, typography, spacing, etc.
+@import "govuk-frontend/dist/govuk/settings/_assets.scss";
+@import "govuk-frontend/dist/govuk/settings/_colours-palette.scss";
+@import "govuk-frontend/dist/govuk/settings/_colours-organisations.scss";
+@import "govuk-frontend/dist/govuk/settings/_colours-applied.scss";
+@import "govuk-frontend/dist/govuk/settings/_typography-font.scss";
+@import "govuk-frontend/dist/govuk/settings/_typography-responsive.scss";
+@import "govuk-frontend/dist/govuk/settings/_spacing.scss";
+@import "govuk-frontend/dist/govuk/settings/_media-queries.scss";
+@import "govuk-frontend/dist/govuk/settings/_links.scss";
+@import "govuk-frontend/dist/govuk/settings/_measurements.scss";
+@import "govuk-frontend/dist/govuk/settings/_warnings.scss";
+@import "govuk-frontend/dist/govuk/settings/_global-styles.scss";
+
+// --- GOV.UK Frontend: Core ---
+// Global HTML element, typography, lists, links, section breaks
+@import "govuk-frontend/dist/govuk/core/_global-styles.scss";
+@import "govuk-frontend/dist/govuk/core/_govuk-frontend-properties.scss";
+@import "govuk-frontend/dist/govuk/core/_typography.scss";
+@import "govuk-frontend/dist/govuk/core/_lists.scss";
+@import "govuk-frontend/dist/govuk/core/_links.scss";
+@import "govuk-frontend/dist/govuk/core/_section-break.scss";
+
+// --- GOV.UK Frontend: Helpers ---
+// Mixins and utility functions (media queries, grid, spacing)
+@import "govuk-frontend/dist/govuk/helpers/_grid.scss";
+@import "govuk-frontend/dist/govuk/helpers/_media-queries.scss";
+@import "govuk-frontend/dist/govuk/helpers/_shape-arrow.scss";
+@import "govuk-frontend/dist/govuk/helpers/_spacing.scss";
+@import "govuk-frontend/dist/govuk/helpers/_colour.scss";
+@import "govuk-frontend/dist/govuk/helpers/_links.scss";
+@import "govuk-frontend/dist/govuk/helpers/_typography.scss";
+@import "govuk-frontend/dist/govuk/helpers/_font-faces.scss";
+@import "govuk-frontend/dist/govuk/helpers/_device-pixels.scss";
+@import "govuk-frontend/dist/govuk/helpers/_focused.scss";
+@import "govuk-frontend/dist/govuk/helpers/_visually-hidden.scss";
+@import "govuk-frontend/dist/govuk/helpers/_clearfix.scss";
+
+// --- GOV.UK Frontend: Objects ---
+// Structural patterns (layout wrappers, form groups, button groups)
+@import "govuk-frontend/dist/govuk/objects/_width-container.scss";
+@import "govuk-frontend/dist/govuk/objects/_main-wrapper.scss";
+@import "govuk-frontend/dist/govuk/objects/_template.scss";
+@import "govuk-frontend/dist/govuk/objects/_grid.scss";
+@import "govuk-frontend/dist/govuk/objects/_form-group.scss";
+@import "govuk-frontend/dist/govuk/objects/_button-group.scss";
+
+// --- GOV.UK Frontend: Components ---
+// Reusable UI components (only those used in this app listed)
+@import "govuk-frontend/dist/govuk/components/accordion/_accordion.scss";
+@import "govuk-frontend/dist/govuk/components/back-link/_back-link.scss";
+@import "govuk-frontend/dist/govuk/components/breadcrumbs/_breadcrumbs.scss";
+@import "govuk-frontend/dist/govuk/components/button/_button.scss";
+@import "govuk-frontend/dist/govuk/components/character-count/_character-count.scss";
+@import "govuk-frontend/dist/govuk/components/checkboxes/_checkboxes.scss";
+@import "govuk-frontend/dist/govuk/components/cookie-banner/_cookie-banner.scss";
+@import "govuk-frontend/dist/govuk/components/date-input/_date-input.scss";
+@import "govuk-frontend/dist/govuk/components/details/_details.scss";
+@import "govuk-frontend/dist/govuk/components/error-message/_error-message.scss";
+@import "govuk-frontend/dist/govuk/components/error-summary/_error-summary.scss";
+@import "govuk-frontend/dist/govuk/components/exit-this-page/_exit-this-page.scss";
+@import "govuk-frontend/dist/govuk/components/fieldset/_fieldset.scss";
+@import "govuk-frontend/dist/govuk/components/file-upload/_file-upload.scss";
+@import "govuk-frontend/dist/govuk/components/footer/_footer.scss";
+@import "govuk-frontend/dist/govuk/components/header/_header.scss";
+@import "govuk-frontend/dist/govuk/components/hint/_hint.scss";
+@import "govuk-frontend/dist/govuk/components/input/_input.scss";
+@import "govuk-frontend/dist/govuk/components/inset-text/_inset-text.scss";
+@import "govuk-frontend/dist/govuk/components/label/_label.scss";
+@import "govuk-frontend/dist/govuk/components/notification-banner/_notification-banner.scss";
+@import "govuk-frontend/dist/govuk/components/pagination/_pagination.scss";
+@import "govuk-frontend/dist/govuk/components/panel/_panel.scss";
+@import "govuk-frontend/dist/govuk/components/password-input/_password-input.scss";
+@import "govuk-frontend/dist/govuk/components/phase-banner/_phase-banner.scss";
+@import "govuk-frontend/dist/govuk/components/radios/_radios.scss";
+@import "govuk-frontend/dist/govuk/components/select/_select.scss";
+@import "govuk-frontend/dist/govuk/components/service-navigation/_service-navigation.scss";
+@import "govuk-frontend/dist/govuk/components/skip-link/_skip-link.scss";
+@import "govuk-frontend/dist/govuk/components/summary-list/_summary-list.scss";
+@import "govuk-frontend/dist/govuk/components/table/_table.scss";
+@import "govuk-frontend/dist/govuk/components/tabs/_tabs.scss";
+@import "govuk-frontend/dist/govuk/components/tag/_tag.scss";
+@import "govuk-frontend/dist/govuk/components/task-list/_task-list.scss";
+@import "govuk-frontend/dist/govuk/components/textarea/_textarea.scss";
+@import "govuk-frontend/dist/govuk/components/warning-text/_warning-text.scss";
+
+// --- GOV.UK Frontend: Overrides ---
+// Custom overrides of framework defaults
+@import "govuk-frontend/dist/govuk/overrides/_display.scss";
+@import "govuk-frontend/dist/govuk/overrides/_spacing.scss";
+@import "govuk-frontend/dist/govuk/overrides/_text-align.scss";
+@import "govuk-frontend/dist/govuk/overrides/_typography.scss";
+@import "govuk-frontend/dist/govuk/overrides/_width.scss";
+
+// --- GOV.UK Frontend: Tools ---
+// Sass mixins, helper functions for URLs, unit conversions
+@import "govuk-frontend/dist/govuk/tools/_exports.scss";
+@import "govuk-frontend/dist/govuk/tools/_font-url.scss";
+@import "govuk-frontend/dist/govuk/tools/_image-url.scss";
+@import "govuk-frontend/dist/govuk/tools/_px-to-em.scss";
+@import "govuk-frontend/dist/govuk/tools/_px-to-rem.scss";
+
+// --- GOV.UK Frontend: Utilities ---
+// Utility classes for layout tweaks (visibility, clearfix, etc.)
+@import "govuk-frontend/dist/govuk/utilities/_visually-hidden.scss";
+@import "govuk-frontend/dist/govuk/utilities/_clearfix.scss";
+
+// --- GOV.UK Frontend: Vendor ---
+// Third-party dependencies (e.g., media query helper)
+@import "govuk-frontend/dist/govuk/vendor/_sass-mq.scss";

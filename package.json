@@ -58,6 +58,7 @@
     "prettier": "^3.3.2",
     "prettier-plugin-svelte": "^3.3.3",
     "publint": "^0.2.0",
+    "sass": "^1.87.0",
     "shiki": "^1.27.2",
     "svelte": "^5.19.1",
     "svelte-check": "^4.0.0",

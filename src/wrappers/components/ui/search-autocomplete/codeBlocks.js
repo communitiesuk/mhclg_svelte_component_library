@@ -76,7 +76,7 @@ export const codeBlock6 = `
   placeholder="Confirm on blur..."
 />`;
 
-// Example 8: Selected Value Binding
+// Example 7: Selected Value Binding
 export const codeBlock7 = `
 <script lang="ts">
   import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
@@ -106,5 +106,108 @@ export const codeBlock7 = `
    <p class="govuk-body mt-4 text-gray-500">
     No value selected yet.
   </p>
+{/if}
+`;
+
+// Example 8: Used Inside a Form for progressive enhancement
+export const codeBlockForm = `
+<script lang="ts">
+  import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
+  let { form } = $props(); // Accept form prop from parent (form request processed by server +page.server.ts)
+</script>
+
+<form method="POST" class="govuk-form-group">
+  <SearchAutocomplete
+    name="search"
+    options={[
+      { label: "United States of America", value: "USA" },
+      { label: "Canada", value: "CAN" },
+      { label: "Mexico", value: "MEX" },
+    ]}
+    placeholder="Search countries..."
+  />
+  <p class="govuk-body mt-4">
+    <strong>Note:</strong> submitting this form will trigger a page refresh...
+  </p>
+</form>
+{#if form?.search}
+  <div
+    class="govuk-notification-banner govuk-notification-banner--success mt-4"
+    role="region"
+    aria-labelledby="submission-success"
+  >
+    <h2 class="govuk-notification-banner__title" id="submission-success">
+      Search submitted
+    </h2>
+    <p class="govuk-notification-banner__content">
+      You searched for: <strong>{form.search}</strong>
+    </p>
+  </div>
+{/if}
+`;
+
+// Example 9: Using enhance for Progressive Enhancement
+export const codeBlockEnhance = `
+<script lang="ts">
+  import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
+  import { enhance } from '$app/forms';
+
+  let searchValue: string = $state("");
+  let showSuccessBanner: boolean = $state(false);
+
+  let { form } = $props(); // Accept form prop from parent (form request processed by server +page.server.ts)
+</script>
+
+<form
+  method="POST"
+  use:enhance={({ formData, cancel }) => {
+    // bind to selectedValue prop
+    searchValue = searchValue;
+    showSuccessBanner = true;
+    // Prevent server submission
+    cancel();
+  }}
+  // alternatively could still allow server submission to handle data processing and use "use:enhance" to just prevent the default refresh behaviour
+  class="govuk-form-group"
+>
+  <SearchAutocomplete
+    name="search"
+    options={[
+      { label: "United States of America", value: "USA" },
+      { label: "Canada", value: "CAN" },
+      { label: "Mexico", value: "MEX" },
+    ]}
+    placeholder="Search countries (client-side handling)..."
+  />
+  <!-- icon button inside SearchAutocomplete handles submission -->
+</form>
+
+{#if showSuccessBanner}
+  <div
+    class="govuk-notification-banner govuk-notification-banner--success mt-4"
+    role="alert" 
+    aria-labelledby="enhance-success-title"
+  >
+    <h2 class="govuk-notification-banner__title" id="enhance-success-title">
+      Client-side Search Handled
+    </h2>
+    <div class="govuk-notification-banner__content">
+      <p>You searched for: <strong>{searchValue}</strong></p>
+    </div>
+  </div>
+{/if}
+{#if form?.search}
+  <div
+    class="govuk-notification-banner govuk-notification-banner--success mt-4"
+    role="region"
+    aria-labelledby="submission-success"
+  >
+    <h2 class="govuk-notification-banner__title" id="submission-success">
+      Search submitted
+    </h2>
+    <p class="govuk-notification-banner__content">
+      You searched for: <strong>{form.search}</strong>
+    </p>
+  </div>
 {/if}
 `;

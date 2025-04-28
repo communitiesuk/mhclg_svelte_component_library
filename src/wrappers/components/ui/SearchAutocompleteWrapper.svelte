@@ -112,7 +112,7 @@
   import SearchAutocomplete from "$lib/components/ui/SearchAutocomplete.svelte";
   import Examples from "./search-autocomplete/Examples.svelte";
 
-  let { data } = $props();
+  let { data, form } = $props();
 
   /**
    * DONOTTOUCH *
@@ -878,5 +878,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section" class="px-5">
-  <Examples></Examples>
+  <Examples {form}></Examples>
 </div>

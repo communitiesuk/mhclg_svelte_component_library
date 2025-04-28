@@ -1,10 +1,15 @@
 <script lang="ts">
   import { AccordionItem, Accordion } from "flowbite-svelte";
-
+  import { enhance } from "$app/forms";
+  let searchValue: string = $state("");
+  let showSuccessBanner: boolean = $state(false);
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
   import SearchAutocomplete from "$lib/components/ui/SearchAutocomplete.svelte";
+
+  // Accept form prop from parent (runes mode)
+  let { form } = $props();
 
   // Initialize state to null to show it only updates on confirmation
   let demoSelectedAutocompleteValue: string | null = $state(null);
@@ -37,6 +42,16 @@
       id: "7",
       heading: "7. With Selected Value Binding",
       content: Example7,
+    },
+    {
+      id: "8",
+      heading: "8. Used Inside a Form for progressive enhancement",
+      content: ExampleForm,
+    },
+    {
+      id: "9",
+      heading: "9. Using enhance for Progressive Enhancement",
+      content: ExampleEnhance,
     },
   ];
 </script>
@@ -165,4 +180,104 @@
     {/if}
   </div>
   <CodeBlock code={codeBlocks.codeBlock7} language="svelte"></CodeBlock>
+{/snippet}
+
+<!-- Example 8: Used Inside a Form for progressive enhancement -->
+{#snippet ExampleForm()}
+  <div class="p-5 bg-white">
+    <form method="POST" class="govuk-form-group">
+      <SearchAutocomplete
+        name="search"
+        options={[
+          { label: "United States of America", value: "USA" },
+          { label: "Canada", value: "CAN" },
+          { label: "Mexico", value: "MEX" },
+        ]}
+        placeholder="Search countries..."
+      />
+      <p class="govuk-body mt-4">
+        <strong>Note:</strong> submitting this form will trigger a page refresh,
+        come back to this section to see if this submission worked and we retrieve
+        the value searched from the server. This ensures that the component will
+        submit without JavaScript on a fully progressively enhancened site (our site
+        isn't fully progressively enhanced yet so the examples accordian won't render
+        without JS).
+      </p>
+      <!-- icon button inside SearchAutocomplete handles submission -->
+    </form>
+    {#if form?.search}
+      <div
+        class="govuk-notification-banner govuk-notification-banner--success mt-4"
+        role="region"
+        aria-labelledby="submission-success"
+      >
+        <h2 class="govuk-notification-banner__title" id="submission-success">
+          Search submitted
+        </h2>
+        <p class="govuk-notification-banner__content">
+          You searched for: <strong>{form.search}</strong>
+        </p>
+      </div>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.codeBlockForm} language="svelte" />
+{/snippet}
+
+<!-- Example 9: Using enhance for Progressive Enhancement -->
+{#snippet ExampleEnhance()}
+  <div class="p-5 bg-white">
+    <form
+      method="POST"
+      use:enhance={({ formData, cancel }) => {
+        // bind to selectedValue prop
+        searchValue = searchValue;
+        showSuccessBanner = true;
+        // Prevent server submission
+        cancel();
+      }}
+      class="govuk-form-group"
+    >
+      <SearchAutocomplete
+        name="search"
+        options={[
+          { label: "United States of America", value: "USA" },
+          { label: "Canada", value: "CAN" },
+          { label: "Mexico", value: "MEX" },
+        ]}
+        placeholder="Search countries (client-side handling)..."
+        bind:selectedValue={searchValue}
+      />
+      <!-- icon button inside SearchAutocomplete handles submission -->
+    </form>
+
+    {#if showSuccessBanner}
+      <div
+        class="govuk-notification-banner govuk-notification-banner--success mt-4"
+        role="alert"
+        aria-labelledby="enhance-success-title"
+      >
+        <h2 class="govuk-notification-banner__title" id="enhance-success-title">
+          Client-side Search Handled
+        </h2>
+        <div class="govuk-notification-banner__content">
+          <p>You searched for: <strong>{searchValue}</strong></p>
+        </div>
+      </div>
+    {/if}
+    {#if form?.search}
+      <div
+        class="govuk-notification-banner govuk-notification-banner--success mt-4"
+        role="region"
+        aria-labelledby="submission-success"
+      >
+        <h2 class="govuk-notification-banner__title" id="submission-success">
+          Search submitted
+        </h2>
+        <p class="govuk-notification-banner__content">
+          You searched for: <strong>{form.search}</strong>
+        </p>
+      </div>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.codeBlockEnhance} language="svelte" />
 {/snippet}

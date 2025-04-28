@@ -394,7 +394,7 @@
         description: {
           markdown: true,
           arr: [
-            `The current value of the search input field. Can be bound to reactively get the confirmed selection without submitting a form.`,
+            `The current value of the search input field. Can be bound to reactively get the confirmed selection without submitting a form. Shows the label of the selected suggestion by default unless a value for the option was also parsed with the label intially as an object.`,
           ],
         },
       },

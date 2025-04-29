@@ -1,5 +1,6 @@
 <script>
   import { tick } from "svelte";
+  import Decimal from "decimal.js";
 
   let {
     ticksArray = $bindable(),
@@ -20,25 +21,34 @@
   $inspect(ticksArray);
 
   function generateTicks(data, numTicks, baseline, setTick) {
-    console.log(data, typeof data);
-    let minVal = baseline !== null ? baseline : Math.min(...data);
-    let maxVal = setTick !== null ? setTick : Math.max(...data);
-    let rangeVal = maxVal - minVal;
+    let minVal =
+      baseline !== null
+        ? new Decimal(baseline)
+        : Decimal.min(...data.map((val) => new Decimal(val)));
+    let maxVal =
+      setTick !== null
+        ? new Decimal(setTick)
+        : Decimal.max(...data.map((val) => new Decimal(val)));
+    let rangeVal = maxVal.minus(minVal);
 
-    let roughStep = rangeVal / (numTicks - 1);
+    let roughStep = rangeVal.div(numTicks - 1);
     let normalizedSteps = [1, 2, 5, 10];
 
-    let stepPower = Math.pow(10, -Math.floor(Math.log10(roughStep)));
-    let normalizedStep = roughStep * stepPower;
-    let optimalStep =
-      normalizedSteps.find((step) => step >= normalizedStep) / stepPower;
+    let stepPower = Decimal.pow(
+      10,
+      -Math.floor(Math.log10(roughStep.toNumber())),
+    );
+    let normalizedStep = roughStep.mul(stepPower);
+    let optimalStep = new Decimal(
+      normalizedSteps.find((step) => step >= normalizedStep.toNumber()),
+    ).div(stepPower);
 
-    let scaleMin = Math.floor(minVal / optimalStep) * optimalStep;
-    let scaleMax = Math.ceil(maxVal / optimalStep) * optimalStep;
+    let scaleMin = minVal.div(optimalStep).floor().mul(optimalStep);
+    let scaleMax = maxVal.div(optimalStep).ceil().mul(optimalStep);
 
     let ticks = [];
-    for (let i = scaleMin; i <= scaleMax; i += optimalStep) {
-      ticks.push(i);
+    for (let i = scaleMin; i.lte(scaleMax); i = i.plus(optimalStep)) {
+      ticks.push(i.toNumber());
     }
     return ticks;
   }

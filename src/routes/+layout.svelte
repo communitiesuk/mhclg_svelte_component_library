@@ -31,8 +31,8 @@
   let navigationItems = $state([
     { text: "Home", href: "/", current: true },
     { text: "Components", href: "/components", current: false },
-    { text: "Patterns", href: "/patterns", current: false },
-    { text: "Community", href: "/community", current: false },
+    { text: "Playground", href: "/playground", current: false },
+    { text: "User guide", href: "/user-guide", current: false },
   ]);
 
   // Get component data from server
@@ -222,12 +222,12 @@
       currentSection = "Components";
       navigationItems[1].current = true;
       mobileNavSections[1].current = true;
-    } else if (path.startsWith("/patterns")) {
-      currentSection = "Patterns";
+    } else if (path.startsWith("/playground")) {
+      currentSection = "Playground";
       navigationItems[2].current = true;
       mobileNavSections[2].current = true;
-    } else if (path.startsWith("/community")) {
-      currentSection = "Community";
+    } else if (path.startsWith("/user-guide")) {
+      currentSection = "User guide";
       navigationItems[3].current = true;
       mobileNavSections[3].current = true;
     } else {
@@ -294,6 +294,8 @@
   function getSectionTitle(section: string): string {
     return section;
   }
+
+  $inspect(currentSection, currentPage);
 </script>
 
 <div class="min-h-screen flex flex-col">
@@ -329,7 +331,7 @@
     <div class="app-pane__body govuk-width-container">
       <div class="app-split-pane">
         <!-- Side navigation - show for Components, Patterns, or Community pages -->
-        {#if currentSection !== "Home"}
+        {#if !["Home", "Playground", "User guide"].includes(currentSection) && (currentSection != "Components" || currentPage === "components")}
           <aside class="app-split-pane__nav">
             <SideNav
               title={getSectionTitle(currentSection)}

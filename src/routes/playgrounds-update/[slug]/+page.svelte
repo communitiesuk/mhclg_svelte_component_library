@@ -14,6 +14,8 @@
       slugArray[slugArray.length - 1].substring(1),
   );
 
+  $inspect(wrapper);
+
   /**
    * &&   Imports the wrapper component, reports error if the URL does not correspond to a component.
    */
@@ -25,7 +27,7 @@
       try {
         const module = await import(
           /* @vite-ignore */
-          `/src/wrappers/playgrounds/${wrapper}.svelte`
+          `/src/wrappers/playgrounds/${wrapper}/Wrapper.svelte`
         );
         Component = module.default;
       } catch (error) {

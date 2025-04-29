@@ -72,7 +72,7 @@ TODO
     </div>
 
     <div>
-      <h2 class="govuk-heading-l mb-6 mt-10">Playground</h2>
+      <h2 class="govuk-heading-l mb-6 mt-10">Playgrounds</h2>
       <p class="govuk-body">
         The playground is a sandbox space where developers can test code and
         practice combining components.

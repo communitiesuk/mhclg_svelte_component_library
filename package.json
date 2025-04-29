@@ -1,11 +1,11 @@
 {
-  "name": "office-for-local-gov-svelte-component-library",
+  "name": "oflog-svelte-component-library",
   "version": "0.0.1",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run package",
     "preview": "vite preview",
-    "package": "svelte-kit sync && svelte-package && publint",
+    "package": "svelte-package",
     "prepublishOnly": "npm run package",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
@@ -34,12 +34,13 @@
     }
   },
   "peerDependencies": {
+    "@sveltejs/kit": "^2.0.0",
     "svelte": "^5.0.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.3.0",
     "@sveltejs/kit": "^2.16.1",
-    "@sveltejs/package": "^2.0.0",
+    "@sveltejs/package": "^2.3.11",
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.9",

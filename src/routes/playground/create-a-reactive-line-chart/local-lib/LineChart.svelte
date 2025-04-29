@@ -185,7 +185,7 @@
         .filter((el) => {
           if (key === "primary") {
             return primaryLines.includes(el.areaCode);
-          } else if (key === "secondary") {
+          } else if (key === "secondary" && showAllData) {
             return true;
           } else if (key === "hover") {
             return selectedLine.includes(el.areaCode);
@@ -221,7 +221,7 @@
     hover: { opacity: 1 },
   });
 
-  let showAllData = true;
+  let showAllData = false;
 </script>
 
 <h3>Example Usage</h3>

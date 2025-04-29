@@ -11,28 +11,29 @@
   let { data, homepage = false, folders } = $props();
 
   let pageInfo = page?.route.id.split("/");
-  $inspect(page.url?.searchParams);
 
-  let urlParams = $state({});
-  let urlParamsString = $derived(
-    Object.entries(urlParams)
-      .map(([key, value]) => `${key}=${value}`)
-      .join("&"),
-  );
-  // $inspect(urlParams["selectedYear"], urlParamsString);
+  let urlParams = $state(data.urlParams);
 
-  let stateTracker = $state(page.url.searchParams);
-  for (const p of stateTracker) {
-    // console.log(p);
-    urlParams[p[0]] = p[1];
+  function updateUrlParams(value) {
+    urlParams[Object.keys(value)] = Object.values(value)[0];
+
+    let urlParamsString = new URLSearchParams(urlParams).toString();
+
+    goto("?" + urlParamsString, {
+      keepFocus: true,
+      noScroll: true,
+    });
   }
+
   details.name = textStringConversion(
     folders ? folders[folders.length - 1] : pageInfo[pageInfo.length - 1],
     "title-first-word",
   );
 
-  let selectedYear = $state(urlParams["selectedYear"] ?? data?.years[0]);
-  let numberOfBars = $state(urlParams["numberOfBars"] ?? 10);
+  let selectedYear = $state(+(urlParams["selectedYear"] ?? data?.years[0]));
+  $inspect({ selectedYear });
+  let numberOfBars = $state(+(urlParams["numberOfBars"] ?? 10));
+  $inspect(numberOfBars);
 
   let dataArray = $derived(
     data?.dataInFormatForBarChart
@@ -50,14 +51,6 @@
       .sort((a, b) => b.label.length - a.label.length)
       .slice(0, numberOfBars),
   );
-
-  function updateUrlParams(value) {
-    urlParams[Object.keys(value)] = Object.values(value)[0];
-    goto("?" + urlParamsString, {
-      keepFocus: true,
-      noScroll: true,
-    });
-  }
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -72,16 +65,17 @@
           <div class="flex flex-row flex-wrap gap-2">
             {#if selectedYear}
               {#each data.years as option, i}
-                <!-- <Radio
-                value={option}
-                bind:group={selectedYear}
-                on:click={() => updateUrlParams({ selectedYear })}
-              >
-                <span class="text-base font-normal">
-                  {option}
-                </span>
-              </Radio> -->
-                <Input let:props>
+                <Radio
+                  value={option}
+                  bind:group={selectedYear}
+                  checked={option == selectedYear}
+                  onchange={() => updateUrlParams({ selectedYear })}
+                >
+                  <span class="text-base font-normal">
+                    {option}
+                  </span>
+                </Radio>
+                <!-- <Input let:props>
                   <input
                     type="radio"
                     {...props}
@@ -90,10 +84,10 @@
                     class=""
                     bind:group={selectedYear}
                     checked={option == selectedYear}
-                    onclick={updateUrlParams({ selectedYear })}
+                    onchange={updateUrlParams({ selectedYear })}
                   />
                   <label for="radio-{option}">{option}</label>
-                </Input>
+                </Input> -->
               {/each}
             {/if}
           </div>
@@ -108,13 +102,13 @@
               min={2}
               max={100}
               bind:value={numberOfBars}
-              onsubmit={updateUrlParams({ numberOfBars })}
+              onchange={updateUrlParams({ numberOfBars })}
             />
           </Input>
         </div>
         <p>
           To see how these persist across pages <a
-            href="./create-a-reactive-line-chart?{urlParamsString}"
+            href="./create-a-reactive-line-chart?{data.urlParamsString}"
             >go to the line chart example.</a
           >
         </p>
@@ -133,9 +127,5 @@
     display: flex;
     flex-direction: column;
     gap: 40px;
-  }
-
-  input[type="radio"]:checked {
-    border: 10px solid black;
   }
 </style>

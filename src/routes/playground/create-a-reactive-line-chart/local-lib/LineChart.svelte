@@ -4,7 +4,7 @@
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
 
   import { scaleLinear } from "d3-scale";
-  import { curveLinear, line } from "d3-shape";
+  import { curveLinear, line, area } from "d3-shape";
   import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
 
@@ -53,8 +53,20 @@
       .curve(curveLinear),
   );
 
-  let areaCodeHover = $state();
+  let areaFunction = $derived(
+    area()
+      .y0((d) => yFunction(0))
+      .x((d) => xFunction(d.x))
+      .y1((d) => yFunction(d.y))
+      .curve(curveLinear),
+  );
+
+  let lineHovered = $state();
   let labelClicked = $state();
+  let labelHovered = $state();
+  let selectedLine = $derived([lineHovered, labelClicked, labelHovered]);
+
+  $inspect(selectedLine.every((item) => item == null));
   let selectedAreaCode = $state("E07000223");
   let englandMedian = $state("E07000227");
   let similarAreas = $state("E07000224");
@@ -105,12 +117,11 @@
 
   let dataArray = $derived(
     data.lines.map((el, i) => {
-      const tiers =
-        areaCodeHover === el.areaCode
-          ? ["hover", "secondary"]
-          : primaryLines.includes(el.areaCode)
-            ? ["primary"]
-            : ["invisibles", "secondary"];
+      const tiers = selectedLine.includes(el.areaCode)
+        ? ["hover", "secondary"]
+        : primaryLines.includes(el.areaCode)
+          ? ["primary"]
+          : ["invisibles", "secondary"];
       return {
         ...el,
         tiers,
@@ -119,28 +130,49 @@
   );
 
   let defaultLineParams = $derived({
-    otherTier: { halo: false },
+    otherTier: {
+      halo: false,
+      lineFunction: lineFunction,
+      xFunction: xFunction,
+      yFunction: yFunction,
+      areaFunction: areaFunction,
+    },
     invisibles: {
       listenForOnHoverEvents: true,
       pathStrokeWidth: 1,
       halo: false,
+      lineFunction: lineFunction,
+      xFunction: xFunction,
+      yFunction: yFunction,
+      areaFunction: areaFunction,
     },
     secondary: {
       "pointer-events": "none",
       halo: false,
       pathStrokeColor: colors.lightgrey,
+      lineFunction: lineFunction,
+      xFunction: xFunction,
+      yFunction: yFunction,
+      areaFunction: areaFunction,
     },
     primary: {
       halo: true,
       includeMarkers: true,
-      pathStrokeWidth: areaCodeHover === null ? 5 : 2,
+      pathStrokeWidth: selectedLine.every((item) => item == null) ? 5 : 2,
       pathStrokeColor: colors.darkgrey,
-      halo: true,
+      lineFunction: lineFunction,
+      xFunction: xFunction,
+      yFunction: yFunction,
+      areaFunction: areaFunction,
     },
     hover: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 5,
       halo: true,
+      lineFunction: lineFunction,
+      xFunction: xFunction,
+      yFunction: yFunction,
+      areaFunction: areaFunction,
     },
   });
 
@@ -153,7 +185,7 @@
           } else if (key === "secondary") {
             return true;
           } else if (key === "hover") {
-            return areaCodeHover === el.areaCode;
+            return selectedLine.includes(el.areaCode);
           }
         })
         .map((el) => ({
@@ -175,14 +207,14 @@
 
   let globalTierRules = $derived({
     otherTier: {
-      opacity: areaCodeHover == null ? 1 : 0.5,
+      opacity: selectedLine.every((item) => item == null) ? 1 : 0.5,
     },
     invisibles: { opacity: 0 },
     secondary: {
-      opacity: areaCodeHover == null ? 1 : 0.5,
+      opacity: selectedLine.every((item) => item == null) ? 1 : 0.5,
     },
     primary: {
-      opacity: areaCodeHover == null ? 1 : 0.5,
+      opacity: selectedLine.every((item) => item == null) ? 1 : 0.5,
     },
     hover: { opacity: 1 },
   });
@@ -223,18 +255,6 @@
   >
     {#if svgWidth}
       <g transform="translate({totalMargin.left},{totalMargin.top})">
-        <g data-role="y-axis">
-          <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
-          ></path>
-        </g>
-        <g data-role="x-axis">
-          <path
-            d="M0 {chartHeight} l{chartWidth} 0"
-            stroke="black"
-            stroke-width="2px"
-          ></path>
-        </g>
-
         <g data-role="lines-group">
           <Lines
             {tieredDataObject}
@@ -245,7 +265,8 @@
             {xFunction}
             {yFunction}
             bind:labelClicked
-            bind:areaCodeHover
+            bind:labelHovered
+            bind:lineHovered
             {chartHeight}
             {colorPalette}
             {defaultLineParams}
@@ -253,6 +274,17 @@
             {globalTierRules}
             {chartBackgroundColor}
           ></Lines>
+        </g>
+        <g data-role="y-axis">
+          <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
+          ></path>
+        </g>
+        <g data-role="x-axis">
+          <path
+            d="M0 {chartHeight} l{chartWidth} 0"
+            stroke="black"
+            stroke-width="2px"
+          ></path>
         </g>
       </g>
     {/if}

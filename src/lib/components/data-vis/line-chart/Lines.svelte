@@ -16,7 +16,8 @@
     yFunction,
     areaFunction,
     labelClicked = $bindable(),
-    areaCodeHover = $bindable(),
+    labelHovered = $bindable(),
+    lineHovered = $bindable(),
     chartHeight,
     colors,
     showAllData,
@@ -27,11 +28,8 @@
 
   let bounds = $state([0, chartHeight]);
 
-  let labelHovered = $state();
-  let selectedLine = $derived([labelHovered, labelClicked]);
-
   let transformed = $derived(
-    tieredDataObject[areaCodeHover ? "hover" : "primary"].map((item) => {
+    tieredDataObject[lineHovered ? "hover" : "primary"].map((item) => {
       let lastY = yFunction(item.data[0].y);
       return { areaCode: item.areaCode, lastY };
     }),
@@ -101,30 +99,25 @@
         tier,
       )}
       <Line
-        {lineFunction}
-        {xFunction}
-        {yFunction}
-        {areaFunction}
         dataArray={line.data}
         {...lineAttributes}
         dataId={line.areaCode}
-        halo={defaultLineParams[tier].halo}
         onClick={function (event, dataArray, dataId) {
-          areaCodeHover = dataId;
+          lineHovered = dataId;
         }}
         onMouseEnter={function (event, dataArray, dataId) {
-          areaCodeHover = dataId;
+          lineHovered = dataId;
         }}
         onMouseMove={function (event, dataArray, dataId) {
-          areaCodeHover = dataId;
+          lineHovered = dataId;
         }}
         onMouseLeave={function (event, dataArray, dataId) {
-          areaCodeHover = null;
+          lineHovered = null;
         }}
         {...defaultLineParams}
         {chartBackgroundColor}
       ></Line>
-      {#if (!areaCodeHover && tier === "primary") || (areaCodeHover && tier === "hover")}
+      {#if (!lineHovered && tier === "primary") || (lineHovered && tier === "hover")}
         {@render categoryLabelSnippet(
           line,
           labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,

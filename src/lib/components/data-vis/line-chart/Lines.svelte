@@ -91,32 +91,34 @@
 {/snippet}
 
 {#each Object.keys(tieredDataObject) as tier}
-  <g opacity={globalTierRules[tier].opacity} id={tier}>
+  <g id={tier}>
     {#each tieredDataObject[tier] as line, i}
       {@const lineAttributes = generateLineAttributes(
         line,
         defaultLineParams,
         tier,
       )}
-      <Line
-        dataArray={line.data}
-        {...lineAttributes}
-        dataId={line.areaCode}
-        onClick={function (event, dataArray, dataId) {
-          lineHovered = dataId;
-        }}
-        onMouseEnter={function (event, dataArray, dataId) {
-          lineHovered = dataId;
-        }}
-        onMouseMove={function (event, dataArray, dataId) {
-          lineHovered = dataId;
-        }}
-        onMouseLeave={function (event, dataArray, dataId) {
-          lineHovered = null;
-        }}
-        {...defaultLineParams}
-        {chartBackgroundColor}
-      ></Line>
+      <g opacity={globalTierRules[tier].opacity}>
+        <Line
+          dataArray={line.data}
+          {...lineAttributes}
+          dataId={line.areaCode}
+          onClick={function (event, dataArray, dataId) {
+            lineHovered = dataId;
+          }}
+          onMouseEnter={function (event, dataArray, dataId) {
+            lineHovered = dataId;
+          }}
+          onMouseMove={function (event, dataArray, dataId) {
+            lineHovered = dataId;
+          }}
+          onMouseLeave={function (event, dataArray, dataId) {
+            lineHovered = null;
+          }}
+          {...defaultLineParams}
+          {chartBackgroundColor}
+        ></Line>
+      </g>
       {#if (!lineHovered && tier === "primary") || (lineHovered && tier === "hover")}
         {@render categoryLabelSnippet(
           line,

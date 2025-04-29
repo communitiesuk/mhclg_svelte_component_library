@@ -184,7 +184,7 @@
   let defaultLineParams = Object.fromEntries(
     Object.entries(tieredLineParams).map(([key, group]) => [
       key,
-      { ...group, ...basicLineParams },
+      { ...basicLineParams, ...group },
     ]),
   );
 

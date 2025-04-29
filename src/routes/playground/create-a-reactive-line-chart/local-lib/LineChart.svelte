@@ -86,16 +86,17 @@
     purple: "#736CAC",
     lightgrey: "#A0A0A0",
     darkgrey: "#636363",
+    black: "161616",
   };
 
   let primaryLines = $derived([
-    selectedAreaCode,
     "E07000224",
     "E07000225",
     "E07000226",
     "E07000228",
     englandMedian,
     similarAreas,
+    selectedAreaCode,
   ]);
 
   let colorPalette = {
@@ -128,56 +129,47 @@
     }),
   );
 
-  let defaultLineParams = $derived({
+  let tieredLineParams = $derived({
     otherTier: {
       halo: false,
-      lineFunction: lineFunction,
-      xFunction: xFunction,
-      yFunction: yFunction,
-      areaFunction: areaFunction,
     },
     invisibles: {
       listenForOnHoverEvents: true,
       pathStrokeWidth: 1,
       halo: false,
-      lineFunction: lineFunction,
-      xFunction: xFunction,
-      yFunction: yFunction,
-      areaFunction: areaFunction,
     },
     secondary: {
       "pointer-events": "none",
       halo: false,
-      pathStrokeColor: "black",
+      pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
-      lineFunction: lineFunction,
-      xFunction: xFunction,
-      yFunction: yFunction,
-      areaFunction: areaFunction,
     },
     primary: {
       halo: true,
-      includeMarkers: true,
       pathStrokeWidth: nothingSelected ? 5 : 2,
       pathStrokeColor: colors.darkgrey,
-      lineFunction: lineFunction,
-      xFunction: xFunction,
-      yFunction: yFunction,
-      areaFunction: areaFunction,
     },
     hover: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 5,
       halo: true,
-      lineFunction: lineFunction,
-      xFunction: xFunction,
-      yFunction: yFunction,
-      areaFunction: areaFunction,
     },
   });
 
-  // use map to give params that are consistent across tiers
+  let basicLineParams = {
+    lineFunction: lineFunction,
+    xFunction: xFunction,
+    yFunction: yFunction,
+    areaFunction: areaFunction,
+  };
+
+  let defaultLineParams = Object.fromEntries(
+    Object.entries(tieredLineParams).map(([key, group]) => [
+      key,
+      { ...group, ...basicLineParams },
+    ]),
+  );
 
   let tieredDataObject = $derived(
     Object.keys(defaultLineParams).reduce((acc, key, index) => {

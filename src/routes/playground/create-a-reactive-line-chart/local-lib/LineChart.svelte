@@ -148,7 +148,9 @@
     secondary: {
       "pointer-events": "none",
       halo: false,
-      pathStrokeColor: colors.lightgrey,
+      pathStrokeColor: "black",
+      pathStrokeWidth: 1,
+      opacity: 0.05,
       lineFunction: lineFunction,
       xFunction: xFunction,
       yFunction: yFunction,
@@ -174,6 +176,8 @@
       areaFunction: areaFunction,
     },
   });
+
+  // use map to give params that are consistent across tiers
 
   let tieredDataObject = $derived(
     Object.keys(defaultLineParams).reduce((acc, key, index) => {

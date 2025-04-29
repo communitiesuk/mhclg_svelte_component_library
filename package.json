@@ -1,6 +1,11 @@
 {
-  "name": "office-for-local-gov-svelte-component-library",
-  "version": "0.0.1",
+  "name": "@communitiesuk/svelte-component-library",
+  "version": "0.1.0",
+  "repository":"https://github.com/communitiesuk/oflog_svelte_component_library",
+  "publishConfig": {
+  "registry": "https://npm.pkg.github.com"},
+  "author": "Ibrahim-Haizel",
+  "description": "A collection of reusable Svelte components",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && npm run package",

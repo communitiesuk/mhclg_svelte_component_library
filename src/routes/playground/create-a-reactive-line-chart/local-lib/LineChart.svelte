@@ -65,8 +65,7 @@
   let labelClicked = $state();
   let labelHovered = $state();
   let selectedLine = $derived([lineHovered, labelClicked, labelHovered]);
-
-  $inspect(selectedLine.every((item) => item == null));
+  let nothingSelected = $derived(selectedLine.every((item) => item == null));
   let selectedAreaCode = $state("E07000223");
   let englandMedian = $state("E07000227");
   let similarAreas = $state("E07000224");
@@ -158,7 +157,7 @@
     primary: {
       halo: true,
       includeMarkers: true,
-      pathStrokeWidth: selectedLine.every((item) => item == null) ? 5 : 2,
+      pathStrokeWidth: nothingSelected ? 5 : 2,
       pathStrokeColor: colors.darkgrey,
       lineFunction: lineFunction,
       xFunction: xFunction,
@@ -192,14 +191,13 @@
           ...el,
           strokeWidth: "3px",
           includeMarkers: key === "primary" ? true : false,
-          pathStrokeColor:
-            key === "primary"
-              ? getColor(
-                  el.areaCode,
-                  lookupObj,
-                  primaryLines.indexOf(el.areaCode),
-                )
-              : null,
+          pathStrokeColor: ["primary", "hover"].includes(key)
+            ? getColor(
+                el.areaCode,
+                lookupObj,
+                primaryLines.indexOf(el.areaCode),
+              )
+            : null,
         }));
       return acc;
     }, {}),
@@ -207,14 +205,14 @@
 
   let globalTierRules = $derived({
     otherTier: {
-      opacity: selectedLine.every((item) => item == null) ? 1 : 0.5,
+      opacity: nothingSelected ? 1 : 0.5,
     },
     invisibles: { opacity: 0 },
     secondary: {
-      opacity: selectedLine.every((item) => item == null) ? 1 : 0.5,
+      opacity: nothingSelected ? 1 : 0.5,
     },
     primary: {
-      opacity: selectedLine.every((item) => item == null) ? 1 : 0.5,
+      opacity: nothingSelected ? 1 : 0.5,
     },
     hover: { opacity: 1 },
   });

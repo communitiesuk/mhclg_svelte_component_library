@@ -11,6 +11,7 @@
 @import "/css/base.css"; // Ensure this doesn't clash heavily with GOV.UK base
 @import "/css/components.css"; // Ensure this doesn't clash heavily
 @import "/css/moj-frontend.min.css"; // Consider applying SCSS partial strategy here too
+
 body {
   font-family: "GDS Transport";
   font-size: 1.2rem;
@@ -128,40 +129,40 @@ code {
 // --- GOV.UK Frontend: Components ---
 // Reusable UI components (only those used in this app listed)
 @import "govuk-frontend/dist/govuk/components/accordion/_accordion.scss";
-@import "govuk-frontend/dist/govuk/components/back-link/_back-link.scss";
+// @import "govuk-frontend/dist/govuk/components/back-link/_back-link.scss";
 @import "govuk-frontend/dist/govuk/components/breadcrumbs/_breadcrumbs.scss";
 @import "govuk-frontend/dist/govuk/components/button/_button.scss";
-@import "govuk-frontend/dist/govuk/components/character-count/_character-count.scss";
+// @import "govuk-frontend/dist/govuk/components/character-count/_character-count.scss";
 @import "govuk-frontend/dist/govuk/components/checkboxes/_checkboxes.scss";
-@import "govuk-frontend/dist/govuk/components/cookie-banner/_cookie-banner.scss";
-@import "govuk-frontend/dist/govuk/components/date-input/_date-input.scss";
+// @import "govuk-frontend/dist/govuk/components/cookie-banner/_cookie-banner.scss";
+// @import "govuk-frontend/dist/govuk/components/date-input/_date-input.scss";
 @import "govuk-frontend/dist/govuk/components/details/_details.scss";
 @import "govuk-frontend/dist/govuk/components/error-message/_error-message.scss";
-@import "govuk-frontend/dist/govuk/components/error-summary/_error-summary.scss";
-@import "govuk-frontend/dist/govuk/components/exit-this-page/_exit-this-page.scss";
+// @import "govuk-frontend/dist/govuk/components/error-summary/_error-summary.scss";
+// @import "govuk-frontend/dist/govuk/components/exit-this-page/_exit-this-page.scss";
 @import "govuk-frontend/dist/govuk/components/fieldset/_fieldset.scss";
-@import "govuk-frontend/dist/govuk/components/file-upload/_file-upload.scss";
+// @import "govuk-frontend/dist/govuk/components/file-upload/_file-upload.scss";
 @import "govuk-frontend/dist/govuk/components/footer/_footer.scss";
 @import "govuk-frontend/dist/govuk/components/header/_header.scss";
 @import "govuk-frontend/dist/govuk/components/hint/_hint.scss";
-@import "govuk-frontend/dist/govuk/components/input/_input.scss";
+// @import "govuk-frontend/dist/govuk/components/input/_input.scss";
 @import "govuk-frontend/dist/govuk/components/inset-text/_inset-text.scss";
 @import "govuk-frontend/dist/govuk/components/label/_label.scss";
 @import "govuk-frontend/dist/govuk/components/notification-banner/_notification-banner.scss";
-@import "govuk-frontend/dist/govuk/components/pagination/_pagination.scss";
-@import "govuk-frontend/dist/govuk/components/panel/_panel.scss";
-@import "govuk-frontend/dist/govuk/components/password-input/_password-input.scss";
+// @import "govuk-frontend/dist/govuk/components/pagination/_pagination.scss";
+// @import "govuk-frontend/dist/govuk/components/panel/_panel.scss";
+// @import "govuk-frontend/dist/govuk/components/password-input/_password-input.scss";
 @import "govuk-frontend/dist/govuk/components/phase-banner/_phase-banner.scss";
 @import "govuk-frontend/dist/govuk/components/radios/_radios.scss";
 @import "govuk-frontend/dist/govuk/components/select/_select.scss";
 @import "govuk-frontend/dist/govuk/components/service-navigation/_service-navigation.scss";
-@import "govuk-frontend/dist/govuk/components/skip-link/_skip-link.scss";
-@import "govuk-frontend/dist/govuk/components/summary-list/_summary-list.scss";
-@import "govuk-frontend/dist/govuk/components/table/_table.scss";
+// @import "govuk-frontend/dist/govuk/components/skip-link/_skip-link.scss";
+// @import "govuk-frontend/dist/govuk/components/summary-list/_summary-list.scss";
+// @import "govuk-frontend/dist/govuk/components/table/_table.scss";
 @import "govuk-frontend/dist/govuk/components/tabs/_tabs.scss";
-@import "govuk-frontend/dist/govuk/components/tag/_tag.scss";
-@import "govuk-frontend/dist/govuk/components/task-list/_task-list.scss";
-@import "govuk-frontend/dist/govuk/components/textarea/_textarea.scss";
+// @import "govuk-frontend/dist/govuk/components/tag/_tag.scss";
+// @import "govuk-frontend/dist/govuk/components/task-list/_task-list.scss";
+// @import "govuk-frontend/dist/govuk/components/textarea/_textarea.scss";
 @import "govuk-frontend/dist/govuk/components/warning-text/_warning-text.scss";
 
 // --- GOV.UK Frontend: Overrides ---

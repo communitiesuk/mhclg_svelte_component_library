@@ -61,6 +61,19 @@
       .curve(curveLinear),
   );
 
+  let onClick = (event, dataArray, dataId) => {
+    lineHovered = dataId;
+  };
+  let onMouseEnter = (event, dataArray, dataId) => {
+    lineHovered = dataId;
+  };
+  let onMouseMove = (event, dataArray, dataId) => {
+    lineHovered = dataId;
+  };
+  let onMouseLeave = () => {
+    lineHovered = null;
+  };
+
   let lineHovered = $state();
   let labelClicked = $state();
   let labelHovered = $state();
@@ -132,13 +145,10 @@
   );
 
   let tieredLineParams = $derived({
-    otherTier: {
-      halo: false,
-    },
+    otherTier: {},
     invisibles: {
       listenForOnHoverEvents: true,
       pathStrokeWidth: 1,
-      halo: false,
     },
     secondary: {
       "pointer-events": "none",
@@ -164,6 +174,11 @@
     xFunction: xFunction,
     yFunction: yFunction,
     areaFunction: areaFunction,
+    onClick: onClick,
+    onMouseEnter: onMouseEnter,
+    onMouseMove: onMouseMove,
+    onMouseLeave: onMouseLeave,
+    haloColor: chartBackgroundColor,
   };
 
   let defaultLineParams = Object.fromEntries(
@@ -202,15 +217,13 @@
   );
 
   let globalTierRules = $derived({
-    otherTier: {
-      opacity: nothingSelected ? 1 : 0.5,
-    },
+    otherTier: {},
     invisibles: { opacity: 0 },
     secondary: {
       opacity: nothingSelected ? 1 : 0.5,
     },
     primary: {
-      opacity: nothingSelected ? 1 : 0.5,
+      opacity: nothingSelected ? 1 : 0.4,
     },
     hover: { opacity: 1 },
   });

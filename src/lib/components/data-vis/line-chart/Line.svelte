@@ -40,7 +40,7 @@
     onMouseLeave,
     onMouseMove,
     halo,
-    chartBackgroundColor = "#d1d1d1",
+    haloColor = "#d1aad1",
     // onClickMarker,
     // onMouseEnterMarker,
     // onMouseLeaveMarker,
@@ -125,7 +125,7 @@
     <path
       d={lineFunction(dataArray)}
       fill={pathFillColor}
-      stroke={chartBackgroundColor}
+      stroke={haloColor}
       stroke-width={pathStrokeWidth * 1.2}
       stroke-dasharray={pathStrokeDashArray}
     ></path>

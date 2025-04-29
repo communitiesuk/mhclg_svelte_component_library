@@ -58,7 +58,11 @@
         line[key] ?? defaultLineParams[tier][key],
       ]),
     );
-    return merged;
+    return {
+      ...merged,
+      dataId: line.areaCode, // should I just use areaCode in the component itself?
+      dataArray: line.data, // should I just rename data in the original object so it's not repeated?
+    };
   }
 </script>
 
@@ -99,17 +103,8 @@
           defaultLineParams,
           tier,
         )}
-        <Line
-          dataArray={line.data}
-          {...lineAttributes}
-          dataId={line.areaCode}
-          onClick={(event, dataArray, dataId) => (lineHovered = dataId)}
-          onMouseEnter={(event, dataArray, dataId) => (lineHovered = dataId)}
-          onMouseMove={(event, dataArray, dataId) => (lineHovered = dataId)}
-          onMouseLeave={() => (lineHovered = null)}
-          {...defaultLineParams}
-          {chartBackgroundColor}
-        />
+        {console.log(lineAttributes)}
+        <Line {...lineAttributes} {chartBackgroundColor} />
       {/each}
     </g>
 

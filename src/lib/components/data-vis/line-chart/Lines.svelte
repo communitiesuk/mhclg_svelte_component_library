@@ -103,8 +103,7 @@
           defaultLineParams,
           tier,
         )}
-        {console.log(lineAttributes)}
-        <Line {...lineAttributes} {chartBackgroundColor} />
+        <Line {...lineAttributes} />
       {/each}
     </g>
 

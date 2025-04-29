@@ -73,14 +73,6 @@
   function onMouseLeaveMarker(i) {
     hoveredMarker = null;
   }
-
-  let areaFunction = $derived(
-    area()
-      .y0((d) => yFunction(0))
-      .x((d) => xFunction(d.x))
-      .y1((d) => yFunction(d.y))
-      .curve(curveLinear),
-  );
 </script>
 
 <defs>

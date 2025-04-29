@@ -1,9 +1,13 @@
 {
   "name": "@communitiesuk/svelte-component-library",
   "version": "0.1.0",
-  "repository":"https://github.com/communitiesuk/oflog_svelte_component_library",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/communitiesuk/oflog_svelte_component_library.git"
+  },
   "publishConfig": {
-  "registry": "https://npm.pkg.github.com"},
+    "registry": "https://npm.pkg.github.com"
+  },
   "author": "Ibrahim-Haizel",
   "description": "A collection of reusable Svelte components",
   "scripts": {
@@ -39,7 +43,8 @@
     }
   },
   "peerDependencies": {
-    "svelte": "^5.0.0"
+    "svelte": "^5.0.0",
+    "@sveltejs/kit": "^2.0.0"
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.3.0",

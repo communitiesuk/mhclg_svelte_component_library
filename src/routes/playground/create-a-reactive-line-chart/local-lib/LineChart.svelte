@@ -62,7 +62,7 @@
   );
 
   let onClick = (event, dataArray, dataId) => {
-    lineHovered = dataId;
+    lineClicked = dataId;
   };
   let onMouseEnter = (event, dataArray, dataId) => {
     lineHovered = dataId;
@@ -75,17 +75,28 @@
   };
 
   let lineHovered = $state();
-  let labelClicked = $state();
+  let lineClicked = $state();
   let labelHovered = $state();
-  let selectedLine = $derived([lineHovered, labelClicked, labelHovered]);
+  let labelClicked = $state();
+
+  let selectedLine = $derived([
+    lineHovered,
+    lineClicked,
+    labelHovered,
+    labelClicked,
+  ]);
   let nothingSelected = $derived(selectedLine.every((item) => item == null));
   let selectedAreaCode = $state("E07000223");
   let englandMedian = $state("E07000227");
   let similarAreas = $state("E07000224");
 
   function handleClickOutside(event) {
-    if (labelClicked && !event.target.closest('[id^="label"]')) {
+    if (
+      (labelClicked || lineClicked) &&
+      !event.target.closest('[id^="label"]')
+    ) {
       labelClicked = null;
+      lineClicked = null;
     }
   }
 

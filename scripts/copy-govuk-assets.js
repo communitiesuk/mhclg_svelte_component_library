@@ -2,84 +2,125 @@
 
 // terminal command: node scripts/copy-govuk-assets.js
 
-import fs from 'fs';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import fs from "fs";
+import { dirname, join } from "path";
+import { fileURLToPath } from "url";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-const projectRoot = join(__dirname, '..');
+const projectRoot = join(__dirname, "..");
 
 // Add components directory
 const dirs = [
-    join(projectRoot, 'static/assets'),
-    join(projectRoot, 'static/assets/images'),
-    join(projectRoot, 'static/assets/fonts'),
-    join(projectRoot, 'static/css'),
-    join(projectRoot, 'static/js'),
-    join(projectRoot, 'src/lib/components/js/components')
+  join(projectRoot, "static/assets"),
+  join(projectRoot, "static/assets/images"),
+  join(projectRoot, "static/assets/fonts"),
+  join(projectRoot, "static/css"),
+  join(projectRoot, "static/js"),
+  join(projectRoot, "src/lib/components/js/components"),
 ];
 
-dirs.forEach(dir => {
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
-        console.log(`Created directory: ${dir}`);
-    }
+dirs.forEach((dir) => {
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+    console.log(`Created directory: ${dir}`);
+  }
 });
 
 // Source paths
-const govukPath = join(projectRoot, 'node_modules/govuk-frontend/dist/govuk');
+const govukPath = join(projectRoot, "node_modules/govuk-frontend/dist/govuk");
+const mojPath = join(projectRoot, "node_modules/@ministryofjustice/frontend");
 
 // Copy function
 function copyDir(src, dest) {
-    if (fs.existsSync(src)) {
-        fs.cpSync(src, dest, { recursive: true });
-        console.log(`Copied ${src} to ${dest}`);
-    } else {
-        console.warn(`Source directory not found: ${src}`);
-    }
+  if (fs.existsSync(src)) {
+    fs.cpSync(src, dest, { recursive: true });
+    console.log(`Copied ${src} to ${dest}`);
+  } else {
+    console.warn(`Source directory not found: ${src}`);
+  }
 }
 
 // Copy manifest.json
-const manifestSrc = join(govukPath, 'assets/manifest.json');
-const manifestDest = join(projectRoot, 'static/assets/manifest.json');
+const manifestSrc = join(govukPath, "assets/manifest.json");
+const manifestDest = join(projectRoot, "static/assets/manifest.json");
 if (fs.existsSync(manifestSrc)) {
-    fs.copyFileSync(manifestSrc, manifestDest);
-    console.log(`Copied manifest.json to ${manifestDest}`);
+  fs.copyFileSync(manifestSrc, manifestDest);
+  console.log(`Copied manifest.json to ${manifestDest}`);
 } else {
-    console.warn(`manifest.json not found at ${manifestSrc}`);
+  console.warn(`manifest.json not found at ${manifestSrc}`);
 }
 
 // Copy images
 copyDir(
-    join(govukPath, 'assets/images'),
-    join(projectRoot, 'static/assets/images')
+  join(govukPath, "assets/images"),
+  join(projectRoot, "static/assets/images"),
 );
 
 // Copy fonts
 copyDir(
-    join(govukPath, 'assets/fonts'),
-    join(projectRoot, 'static/assets/fonts')
+  join(govukPath, "assets/fonts"),
+  join(projectRoot, "static/assets/fonts"),
 );
 
-// Copy CSS
-const cssSrc = join(govukPath, 'govuk-frontend.min.css');
-const cssDest = join(projectRoot, 'static/css/govuk-frontend.min.css');
-if (fs.existsSync(cssSrc)) {
-    fs.copyFileSync(cssSrc, cssDest);
-    console.log(`Copied CSS to ${cssDest}`);
+// Copy GOVUK CSS to BOTH locations
+const govukCssSrc = join(govukPath, "govuk-frontend.min.css");
+const govukCssDestStatic = join(
+  projectRoot,
+  "static/css/govuk-frontend.min.css",
+);
+const govukCssDestLib = join(
+  projectRoot,
+  "src/lib/styles/vendor/govuk-frontend.min.css",
+);
+
+if (fs.existsSync(govukCssSrc)) {
+  // Ensure static destination directory exists
+  fs.mkdirSync(dirname(govukCssDestStatic), { recursive: true });
+  fs.copyFileSync(govukCssSrc, govukCssDestStatic);
+  console.log(`Copied GOVUK CSS to ${govukCssDestStatic}`);
+
+  // Ensure lib destination directory exists
+  fs.mkdirSync(dirname(govukCssDestLib), { recursive: true });
+  fs.copyFileSync(govukCssSrc, govukCssDestLib);
+  console.log(`Copied GOVUK CSS to ${govukCssDestLib}`);
 } else {
-    console.warn(`CSS file not found at ${cssSrc}`);
+  console.warn(`GOVUK CSS file not found at ${govukCssSrc}`);
+}
+
+// Copy MOJ CSS to BOTH locations
+const mojCssSrc = join(mojPath, "moj/moj-frontend.min.css");
+const mojCssDestStatic = join(projectRoot, "static/css/moj-frontend.min.css");
+const mojCssDestLib = join(
+  projectRoot,
+  "src/lib/styles/vendor/moj-frontend.min.css",
+);
+
+if (fs.existsSync(mojCssSrc)) {
+  // Ensure static destination directory exists
+  fs.mkdirSync(dirname(mojCssDestStatic), { recursive: true });
+  fs.copyFileSync(mojCssSrc, mojCssDestStatic);
+  console.log(`Copied MOJ CSS to ${mojCssDestStatic}`);
+
+  // Ensure lib destination directory exists
+  fs.mkdirSync(dirname(mojCssDestLib), { recursive: true });
+  fs.copyFileSync(mojCssSrc, mojCssDestLib);
+  console.log(`Copied MOJ CSS to ${mojCssDestLib}`);
+} else {
+  console.warn(`MOJ CSS file not found at ${mojCssSrc}`);
+  console.warn(
+    `Please check the path in node_modules/@ministryofjustice/frontend`,
+  );
 }
 
 // Copy JavaScript
-const jsSrc = join(govukPath, 'govuk-frontend.min.js');
-const jsDest = join(projectRoot, 'static/js/govuk-frontend.min.js');
+const jsSrc = join(govukPath, "govuk-frontend.min.js");
+const jsDest = join(projectRoot, "static/js/govuk-frontend.min.js");
 if (fs.existsSync(jsSrc)) {
-    fs.copyFileSync(jsSrc, jsDest);
-    console.log(`Copied JavaScript to ${jsDest}`);
+  fs.copyFileSync(jsSrc, jsDest);
+  console.log(`Copied JavaScript to ${jsDest}`);
 } else {
-    console.warn(`JavaScript file not found at ${jsSrc}`);
+  console.warn(`JavaScript file not found at ${jsSrc}`);
 }
 
-console.log('GOV.UK Frontend assets copy process completed!');
+console.log("GOV.UK Frontend assets copy process completed!");

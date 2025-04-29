@@ -54,7 +54,7 @@ const exports = svelteFilesInComponents
 // Write the file only if there are no duplicates
 writeFileSync(
   indexFile,
-  `// this file is auto-generated — do not edit by hand\nimport "$lib/app.css";\n\n${exports.join("\n")}\n`,
+  `// this file is auto-generated — do not edit by hand\nimport "$lib/components_base.css";\n\n${exports.join("\n")}\n`,
 );
 
 console.log(

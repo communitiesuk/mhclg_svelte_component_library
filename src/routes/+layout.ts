@@ -84,10 +84,14 @@ export const load: LayoutLoad = async (event) => {
       ),
     }));
 
-    let dataInFormatForTable = testData.flatMetricData.map(d => ({
+    let dataInFormatForTable = testData.flatMetricData
+        .map(d => ({
       ...d,
       areaName: testData.areaCodeLookup[d.areaCode]
-    })).map(({areaCode, xLabel, ...rest }) => rest).filter((el) => el.x === 2022).map(({ x, ...rest }) => rest)
+    })) 
+        .map(({areaCode, xLabel, ...rest }) => rest)
+        .filter((el) => el.x === 2022)
+        .map(({ x, ...rest }) => rest)
 
   return {
     metrics,

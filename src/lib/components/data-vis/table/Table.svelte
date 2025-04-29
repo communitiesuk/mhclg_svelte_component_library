@@ -1,4 +1,6 @@
 <script>
+  import { areSameLanguages } from "@maptiler/sdk";
+
   let {
     componentNameProp = undefined,
     data = undefined,
@@ -12,10 +14,16 @@
     functionProp = undefined,
   } = $props();
 
-  // reduce data to more manageable size
-  // data = data.filter((el) => el.x === 2022 && el.metric === filterRows);
+  // get metrics
+  // let metrics = [
+  //   ...new Set(
+  //     data.map((d) => {
+  //       return d.metric;
+  //     }),
+  //   ),
+  // ];
 
-  // $inspect("the filtered metric is " + filterRows);
+  $inspect(data.dataInFormatForTable);
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -27,9 +35,7 @@
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
 
-  <!-- <p>The metric being filtered in is {filterRows}</p> -->
-
-  <p>The number of rows in the data is {data.length}</p>
+  <p>The number of rows in the data is {data.dataInFormatForTable.length}</p>
 
   <div class="table-container">
     <table>
@@ -37,22 +43,23 @@
       <thead
         ><tr>
           <th>Area</th>
-          <th>Metric</th>
-          <th>Value</th>
+          {#each data.metrics as metric}
+            <th>{metric}</th>
+          {/each}
         </tr></thead
       >
       <tbody>
-        {#each data as row}
+        {#each data.areas as area}
           <tr
-            ><td>{row.areaName}</td>
-            <td>{row.metric}</td>
-            <td>{row.y}</td></tr
-          >
+            ><th>{area}</th>
+            <!-- find the recycling data point for {area} -->
+            <td>{data.dataInFormatForTable.find()}</td>
+          </tr>
         {/each}</tbody
       >
     </table>
   </div>
-  <br />
+  <!-- <br />
   <div class="table-container">
     <table>
       <caption></caption>
@@ -71,7 +78,7 @@
         {/each}</tbody
       >
     </table>
-  </div>
+  </div> -->
 
   {#each [{ name: "textProp", prop: textProp }, { name: "numberProp", prop: numberProp }] as output}
     {#if output.prop != undefined}

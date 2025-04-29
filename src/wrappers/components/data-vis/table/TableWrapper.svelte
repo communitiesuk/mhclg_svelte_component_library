@@ -96,7 +96,7 @@
 
   let { data } = $props();
   // $inspect(data.dataInFormatForTable[0]);
-  $inspect(data.dataInFormatForTable);
+  $inspect(data);
 
   /**
    * DONOTTOUCH *
@@ -168,7 +168,7 @@
         name: "data",
         category: "Data",
         visible: false,
-        value: data.dataInFormatForTable,
+        value: data,
       },
       // {
       //   name: "filterRows",

@@ -1,5 +1,5 @@
 // this file is auto-generated — do not edit by hand
-import "$lib/app.css";
+import "$lib/components_base.css";
 
 export { default as InsetText } from './components/content/InsetText.svelte';
 export { default as WarningText } from './components/content/WarningText.svelte';

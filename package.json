@@ -15,7 +15,7 @@
     "dev": "vite dev",
     "build": "vite build && npm run package",
     "preview": "vite preview",
-    "prepackage": "tsx scripts/generate-index.ts",
+    "prepackage": "tsx scripts/generate-index.ts && node scripts/copy-static-assets.js && npm run copy-govuk-assets",
     "package": "npm run prepackage && svelte-kit sync && svelte-package && publint",
     "prepublishOnly": "npm run package",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -23,6 +23,7 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "generate-data": "tsx scripts/generateJSONData.cjs",
+    "copy-static-assets": "node scripts/copy-static-assets.js",
     "copy-govuk-assets": "node scripts/copy-govuk-assets.js",
     "prepare": "npm run copy-govuk-assets",
     "create-component-and-wrapper-pages": "node scripts/create-component-and-wrapper-pages.js"
@@ -77,8 +78,7 @@
     "tsx": "^4.19.2",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.0.0",
-    "vite": "^5.0.11",
-    "vite-plugin-static-copy": "^2.3.1"
+    "vite": "^5.0.11"
   },
   "dependencies": {
     "@dwp/dwp-frontend": "^3.3.0",

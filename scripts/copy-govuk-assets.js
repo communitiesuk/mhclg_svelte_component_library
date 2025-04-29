@@ -10,7 +10,7 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const projectRoot = join(__dirname, "..");
 
-// Add components directory
+// Add components directory and new static assets directory
 const dirs = [
   join(projectRoot, "static/assets"),
   join(projectRoot, "static/assets/images"),
@@ -18,6 +18,7 @@ const dirs = [
   join(projectRoot, "static/css"),
   join(projectRoot, "static/js"),
   join(projectRoot, "src/lib/components/js/components"),
+  join(projectRoot, "src/lib/static/assets/css"), // Add new CSS destination
 ];
 
 dirs.forEach((dir) => {
@@ -71,7 +72,7 @@ const govukCssDestStatic = join(
 );
 const govukCssDestLib = join(
   projectRoot,
-  "src/lib/styles/vendor/govuk-frontend.min.css",
+  "src/lib/static/assets/css/govuk-frontend.min.css",
 );
 
 if (fs.existsSync(govukCssSrc)) {
@@ -93,7 +94,7 @@ const mojCssSrc = join(mojPath, "moj/moj-frontend.min.css");
 const mojCssDestStatic = join(projectRoot, "static/css/moj-frontend.min.css");
 const mojCssDestLib = join(
   projectRoot,
-  "src/lib/styles/vendor/moj-frontend.min.css",
+  "src/lib/static/assets/css/moj-frontend.min.css",
 );
 
 if (fs.existsSync(mojCssSrc)) {

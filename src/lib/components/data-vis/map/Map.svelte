@@ -15,7 +15,7 @@
     FullscreenControl,
     ScaleControl,
   } from "svelte-maplibre";
-  import { contrastingColor, colorPalette } from "./colors.ts";
+  import { contrastingColor, colorPalette } from "./colors";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { maplibregl, ExpressionSpecification } from "maplibre-gl";
   import fullTopo from "./fullTopo.json";

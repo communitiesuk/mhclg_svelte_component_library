@@ -57,7 +57,6 @@
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
     "@types/eslint": "^9.6.0",
-    "accessible-autocomplete": "^3.0.1",
     "autoprefixer": "^10.4.20",
     "eslint": "^9.7.0",
     "eslint-config-prettier": "^9.1.0",
@@ -81,6 +80,7 @@
     "vite": "^5.0.11"
   },
   "dependencies": {
+    "accessible-autocomplete": "^3.0.1",
     "@dwp/dwp-frontend": "^3.3.0",
     "@maptiler/sdk": "^3.0.1",
     "@ministryofjustice/frontend": "^4.0.1",

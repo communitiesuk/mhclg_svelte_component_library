@@ -86,7 +86,7 @@
     purple: "#736CAC",
     lightgrey: "#A0A0A0",
     darkgrey: "#636363",
-    black: "161616",
+    black: "#161616",
   };
 
   let primaryLines = $derived([
@@ -102,6 +102,8 @@
   let colorPalette = {
     base: [colors.coral, colors.fuschia, colors.purple],
   };
+
+  let showAllData = true;
 
   let lookupObj = $derived({
     [englandMedian]: colors.lightblue,
@@ -212,8 +214,6 @@
     },
     hover: { opacity: 1 },
   });
-
-  let showAllData = false;
 </script>
 
 <h3>Example Usage</h3>

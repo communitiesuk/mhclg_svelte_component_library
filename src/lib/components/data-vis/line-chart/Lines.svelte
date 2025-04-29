@@ -92,39 +92,36 @@
 
 {#each Object.keys(tieredDataObject) as tier}
   <g id={tier}>
-    {#each tieredDataObject[tier] as line, i}
-      {@const lineAttributes = generateLineAttributes(
-        line,
-        defaultLineParams,
-        tier,
-      )}
-      <g opacity={globalTierRules[tier].opacity}>
+    <g opacity={globalTierRules[tier].opacity}>
+      {#each tieredDataObject[tier] as line, i}
+        {@const lineAttributes = generateLineAttributes(
+          line,
+          defaultLineParams,
+          tier,
+        )}
         <Line
           dataArray={line.data}
           {...lineAttributes}
           dataId={line.areaCode}
-          onClick={function (event, dataArray, dataId) {
-            lineHovered = dataId;
-          }}
-          onMouseEnter={function (event, dataArray, dataId) {
-            lineHovered = dataId;
-          }}
-          onMouseMove={function (event, dataArray, dataId) {
-            lineHovered = dataId;
-          }}
-          onMouseLeave={function (event, dataArray, dataId) {
-            lineHovered = null;
-          }}
+          onClick={(event, dataArray, dataId) => (lineHovered = dataId)}
+          onMouseEnter={(event, dataArray, dataId) => (lineHovered = dataId)}
+          onMouseMove={(event, dataArray, dataId) => (lineHovered = dataId)}
+          onMouseLeave={() => (lineHovered = null)}
           {...defaultLineParams}
           {chartBackgroundColor}
-        ></Line>
-      </g>
-      {#if (!lineHovered && tier === "primary") || (lineHovered && tier === "hover")}
-        {@render categoryLabelSnippet(
-          line,
-          labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
-        )}
-      {/if}
-    {/each}
+        />
+      {/each}
+    </g>
+
+    <g>
+      {#each tieredDataObject[tier] as line, i}
+        {#if (!lineHovered && tier === "primary") || (lineHovered && tier === "hover")}
+          {@render categoryLabelSnippet(
+            line,
+            labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
+          )}
+        {/if}
+      {/each}
+    </g>
   </g>
 {/each}

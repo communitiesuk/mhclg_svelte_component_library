@@ -1,9 +1,19 @@
 <script lang="ts">
   import { clsx } from "clsx";
   import { browser } from "$app/environment";
-  import IconSearch from "$lib/icons/IconSearch.svelte";
-  import DOMPurify from "dompurify";
   import { onMount } from "svelte";
+  import IconSearch from "$lib/icons/IconSearch.svelte";
+
+  // SSR-safe HTML sanitizer: no-op on server
+  let sanitize = $state<(html: string) => string>((html) => html);
+
+  // Hook up DOMPurify sanitize in browser
+  onMount(async () => {
+    if (browser) {
+      const DOMPurify = (await import("dompurify")).default;
+      sanitize = DOMPurify.sanitize;
+    }
+  });
 
   // Define the props based on GOV.UK documentation
   type Props = {
@@ -157,7 +167,7 @@
 
 {#snippet LabelContent()}
   <label for={defaultId} class={derivedLabelClasses}>
-    {@html DOMPurify.sanitize(label_text)}
+    {@html sanitize(label_text)}
   </label>
 {/snippet}
 

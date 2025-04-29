@@ -546,8 +546,9 @@
       height: 40px;
       margin-right: 10px;
       flex: none;
-      mask-image: url(/assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg);
-      -webkit-mask-image: url(/assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg);
+      /* Use relative paths so Vite bundles the asset */
+      mask-image: url(../../static/assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg);
+      -webkit-mask-image: url(../../static/assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg);
       background-color: #505a5f;
     }
 

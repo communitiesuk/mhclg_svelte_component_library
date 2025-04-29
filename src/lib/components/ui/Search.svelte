@@ -358,7 +358,8 @@
 
   .gem-c-search__input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
-    background-image: url(/assets/govuk_publishing_components/images/icon-close.svg);
+    /* Use a relative path so Vite bundles the asset */
+    background-image: url(../../static/assets/govuk_publishing_components/images/icon-close.svg);
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;

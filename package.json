@@ -77,6 +77,7 @@
     "@types/dompurify": "^3.0.5",
     "csv-parser": "^3.0.0",
     "d3": "^7.9.0",
+    "decimal.js": "^10.5.0",
     "dompurify": "^3.2.5",
     "flowbite-svelte-icons": "^2.0.3",
     "govuk-frontend": "^5.9.0",

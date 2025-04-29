@@ -36,27 +36,33 @@ function findSvelteFiles(dir: string): string[] {
 const svelteFilesInComponents = findSvelteFiles(componentsDir);
 
 const exportedNames = new Set<string>(); // Keep track of names already exported
+const skippedFiles: string[] = []; // Track skipped files
 
 const exports = svelteFilesInComponents
   .map((filePath) => {
     const name = basename(filePath, ".svelte");
+    const fullImportPath = join("components", filePath).replace(/\\/g, "/");
 
     // Only export if the name hasn't been used yet
     if (!exportedNames.has(name)) {
       exportedNames.add(name); // Mark name as used
-      const importPath = join("components", filePath).replace(/\\\\/g, "/");
-      return `export { default as ${name} } from './${importPath}';`;
+      return `export { default as ${name} } from './${fullImportPath}';`;
     }
+    skippedFiles.push(fullImportPath); // Log skipped file path
     return null; // Skip duplicate
   })
   .filter((line): line is string => line !== null); // Remove null entries
 
-// Write the file only if there are no duplicates
+// Write the file
 writeFileSync(
   indexFile,
   `// this file is auto-generated — do not edit by hand\nimport "$lib/components_base.css";\n\n${exports.join("\n")}\n`,
 );
 
-console.log(
-  `Generated ${indexFile} with ${exports.length} unique exports from ./components. Duplicates were ignored.`,
-);
+let logMessage = `Generated ${indexFile} with ${exports.length} unique exports from ./components.`;
+
+if (skippedFiles.length > 0) {
+  logMessage += `\nSkipped ${skippedFiles.length} duplicate file(s):\n  - ${skippedFiles.join("\n  - ")}`;
+}
+
+console.log(logMessage);

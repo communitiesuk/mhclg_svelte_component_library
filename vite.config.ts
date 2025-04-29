@@ -1,5 +1,6 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import { defineConfig } from "vite";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
 export default defineConfig({
   plugins: [
@@ -13,6 +14,22 @@ export default defineConfig({
         return code;
       },
     },
+    viteStaticCopy({
+      targets: [
+        {
+          src: "static/assets/fonts",
+          dest: "assets", // dist/assets/fonts
+        },
+        {
+          src: "static/assets/images",
+          dest: "assets",// dist/assets/images
+        },
+        {
+          src: "static/assets/govuk_publishing_components",
+          dest: "assets", // dist/assets/govuk_publishing_components
+        },
+      ],
+    }),
   ],
   server: {
     fs: {

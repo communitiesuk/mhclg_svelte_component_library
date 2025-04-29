@@ -11,6 +11,7 @@
   "author": "Ibrahim-Haizel",
   "description": "A collection of reusable Svelte components",
   "scripts": {
+    "test": "echo \"No tests defined\"",
     "dev": "vite dev",
     "build": "vite build && npm run package",
     "preview": "vite preview",

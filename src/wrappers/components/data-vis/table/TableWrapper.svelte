@@ -95,8 +95,6 @@
   import Examples from "./table/Examples.svelte";
 
   let { data } = $props();
-  // $inspect(data.dataInFormatForTable[0]);
-  $inspect(data);
 
   /**
    * DONOTTOUCH *

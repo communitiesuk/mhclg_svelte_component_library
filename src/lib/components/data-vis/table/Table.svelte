@@ -1,4 +1,6 @@
 <script>
+  import { TabItem } from "flowbite-svelte";
+
   // import { areSameLanguages } from "@maptiler/sdk";
 
   let {
@@ -14,7 +16,21 @@
     functionProp = undefined,
   } = $props();
 
-  $inspect(data);
+  $inspect(data[0]);
+
+  let localCopyOfData = $state([...data]);
+  // let localCopyOfData = [...data];
+
+  $inspect(localCopyOfData[0]);
+
+  function alphabeticalOrder() {
+    localCopyOfData.sort((a, b) => a.areaName.localeCompare(b.name));
+  }
+  function unalphabeticalOrder() {
+    console.log("button clicked");
+    localCopyOfData.sort((a, b) => b.areaName.localeCompare(a.name));
+    console.log(localCopyOfData[0], data[0]);
+  }
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -25,6 +41,9 @@
 
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
+
+  <button onclick={alphabeticalOrder}>A-Z</button>
+  <button onclick={unalphabeticalOrder}>Z-A</button>
 
   <div class="table-container">
     <table>
@@ -38,7 +57,7 @@
         </tr></thead
       >
       <tbody>
-        {#each data as row}
+        {#each localCopyOfData as row}
           <tr>
             <td>{row["areaName"]}</td>
             <td>{row["Household waste recycling rate"]}</td>
@@ -131,5 +150,12 @@
   .table-container {
     max-height: 400px;
     overflow-y: auto;
+  }
+
+  button {
+    background-color: green;
+    padding: 20px;
+    color: white;
+    border-radius: 10%;
   }
 </style>

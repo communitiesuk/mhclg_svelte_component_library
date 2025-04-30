@@ -18,6 +18,7 @@
     labelClicked = $bindable(),
     labelHovered = $bindable(),
     lineHovered = $bindable(),
+    lineClicked = $bindable(),
     chartHeight,
     colors,
     showAllData,
@@ -60,8 +61,8 @@
     );
     return {
       ...merged,
-      dataId: line.areaCode, // should I just use areaCode in the component itself?
-      dataArray: line.data, // should I just rename data in the original object so it's not repeated?
+      dataId: line.areaCode,
+      dataArray: line.data, // rename in the original to avoid this
     };
   }
 </script>
@@ -109,7 +110,10 @@
 
     <g>
       {#each tieredDataObject[tier] as line, i}
-        {#if (!lineHovered && tier === "primary") || (lineHovered && tier === "hover")}
+        {#if tier == "hover"}
+          {console.log(line.areaCode == lineClicked)}
+        {/if}
+        {#if (!lineHovered && tier === "primary") || [lineClicked, lineHovered].includes(line.areaCode)}
           {@render categoryLabelSnippet(
             line,
             labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,

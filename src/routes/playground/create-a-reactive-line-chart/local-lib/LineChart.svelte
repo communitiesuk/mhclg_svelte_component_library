@@ -92,8 +92,8 @@
 
   function handleClickOutside(event) {
     if (
-      (labelClicked || lineClicked) &&
-      !event.target.closest('[id^="label"]')
+      lineClicked != event.target.parentElement.dataset.id ||
+      (labelClicked && !event.target.closest('[id^="label"]'))
     ) {
       labelClicked = null;
       lineClicked = null;
@@ -175,7 +175,7 @@
     },
     hover: {
       pathStrokeColor: colors.ochre,
-      pathStrokeWidth: 5,
+      pathStrokeWidth: lineClicked ? 8 : 5,
       halo: true,
     },
   });
@@ -285,6 +285,7 @@
             bind:labelClicked
             bind:labelHovered
             bind:lineHovered
+            bind:lineClicked
             {chartHeight}
             {colorPalette}
             {defaultLineParams}

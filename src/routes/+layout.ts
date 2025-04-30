@@ -92,6 +92,17 @@ export const load: LayoutLoad = async (event) => {
         .map(({areaCode, xLabel, ...rest }) => rest)
         .filter((el) => el.x === 2022)
         .map(({ x, ...rest }) => rest)
+     
+    let groupedTableData = {}
+
+    for (let row of dataInFormatForTable) {
+      if(!groupedTableData[row.areaName]) {
+        groupedTableData[row.areaName] = {areaName: row.areaName}
+      }
+      groupedTableData[row.areaName][row.metric] = row.y
+    }
+
+    let tableData = Object.values(groupedTableData);
 
   return {
     metrics,
@@ -101,6 +112,7 @@ export const load: LayoutLoad = async (event) => {
     dataInFormatForBarChart,
     dataInFormatForMap,
     dataInFormatForTable,
+    tableData,
     areaCodeLookup: testData.areaCodeLookup,
     svgFontDimensions,
     componentSections,

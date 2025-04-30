@@ -1,5 +1,5 @@
 <script>
-  import { areSameLanguages } from "@maptiler/sdk";
+  // import { areSameLanguages } from "@maptiler/sdk";
 
   let {
     componentNameProp = undefined,
@@ -14,16 +14,7 @@
     functionProp = undefined,
   } = $props();
 
-  // get metrics
-  // let metrics = [
-  //   ...new Set(
-  //     data.map((d) => {
-  //       return d.metric;
-  //     }),
-  //   ),
-  // ];
-
-  $inspect(data.dataInFormatForTable);
+  $inspect(data);
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -35,50 +26,29 @@
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
 
-  <p>The number of rows in the data is {data.dataInFormatForTable.length}</p>
-
   <div class="table-container">
     <table>
       <caption></caption>
       <thead
         ><tr>
           <th>Area</th>
-          {#each data.metrics as metric}
-            <th>{metric}</th>
-          {/each}
-        </tr></thead
-      >
-      <tbody>
-        {#each data.areas as area}
-          <tr
-            ><th>{area}</th>
-            <!-- find the recycling data point for {area} -->
-            <td>{data.dataInFormatForTable.find()}</td>
-          </tr>
-        {/each}</tbody
-      >
-    </table>
-  </div>
-  <!-- <br />
-  <div class="table-container">
-    <table>
-      <caption></caption>
-      <thead
-        ><tr>
-          <th>Area</th>
-          <th>Value</th>
+          <th>Recycling rate</th>
+          <th>Contamination</th>
+          <th>Residual waste</th>
         </tr></thead
       >
       <tbody>
         {#each data as row}
-          <tr
-            ><td>{row.areaName}</td>
-            <td>{row.y}</td></tr
-          >
-        {/each}</tbody
-      >
+          <tr>
+            <td>{row["areaName"]}</td>
+            <td>{row["Household waste recycling rate"]}</td>
+            <td>{row["Recycling contamination rate"]}</td>
+            <td>{row["Residual household waste"]}</td>
+          </tr>
+        {/each}
+      </tbody>
     </table>
-  </div> -->
+  </div>
 
   {#each [{ name: "textProp", prop: textProp }, { name: "numberProp", prop: numberProp }] as output}
     {#if output.prop != undefined}

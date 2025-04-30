@@ -168,7 +168,7 @@
         name: "data",
         category: "Data",
         visible: false,
-        value: data,
+        value: data.tableData,
       },
       // {
       //   name: "filterRows",

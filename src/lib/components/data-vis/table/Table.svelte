@@ -16,20 +16,34 @@
     functionProp = undefined,
   } = $props();
 
-  $inspect(data[0]);
-
   let localCopyOfData = $state([...data]);
-  // let localCopyOfData = [...data];
 
-  $inspect(localCopyOfData[0]);
+  let sortState = $state({ column: "sortedColumn", order: "ascending" });
 
-  function alphabeticalOrder() {
-    localCopyOfData.sort((a, b) => a.areaName.localeCompare(b.name));
+  function updateSortState(columnToSort, sortOrder) {
+    sortState.column = columnToSort;
+    sortState.order = sortOrder;
   }
-  function unalphabeticalOrder() {
-    console.log("button clicked");
-    localCopyOfData.sort((a, b) => b.areaName.localeCompare(a.name));
-    console.log(localCopyOfData[0], data[0]);
+
+  function sortFunction() {
+    if (typeof localCopyOfData[0][sortState["column"]] === "number") {
+      if (sortState.order === "ascending") {
+        localCopyOfData.sort(
+          (a, b) => a[sortState.column] - b[sortState.column],
+        );
+      } else {
+        localCopyOfData.sort(
+          (a, b) => b[sortState.column] - a[sortState.column],
+        );
+      }
+    }
+    if (typeof localCopyOfData[0][sortState["column"]] === "string") {
+      if (sortState.order === "ascending") {
+        localCopyOfData.sort((a, b) => a.areaName.localeCompare(b.name));
+      } else {
+        localCopyOfData.sort((a, b) => b.areaName.localeCompare(a.name));
+      }
+    }
   }
 </script>
 
@@ -42,8 +56,64 @@
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
 
-  <button onclick={alphabeticalOrder}>A-Z</button>
-  <button onclick={unalphabeticalOrder}>Z-A</button>
+  <div class="buttons-container">
+    <button
+      class="ascending"
+      onclick={() => {
+        updateSortState("areaName", "ascending");
+        sortFunction();
+      }}>▲</button
+    >
+    <button
+      class="descending"
+      onclick={() => {
+        updateSortState("areaName", "descending");
+        sortFunction();
+      }}>▼</button
+    >
+    <button
+      class="ascending"
+      onclick={() => {
+        updateSortState("Household waste recycling rate", "ascending");
+        sortFunction();
+      }}>▲</button
+    >
+    <button
+      class="descending"
+      onclick={() => {
+        updateSortState("Household waste recycling rate", "descending");
+        sortFunction();
+      }}>▼</button
+    >
+    <button
+      class="ascending"
+      onclick={() => {
+        updateSortState("Recycling contamination rate", "ascending");
+        sortFunction();
+      }}>▲</button
+    >
+    <button
+      class="descending"
+      onclick={() => {
+        updateSortState("Recycling contamination rate", "descending");
+        sortFunction();
+      }}>▼</button
+    >
+    <button
+      class="ascending"
+      onclick={() => {
+        updateSortState("Residual household waste", "ascending");
+        sortFunction();
+      }}>▲</button
+    >
+    <button
+      class="descending"
+      onclick={() => {
+        updateSortState("Residual household waste", "descending");
+        sortFunction();
+      }}>▼</button
+    >
+  </div>
 
   <div class="table-container">
     <table>
@@ -67,42 +137,6 @@
         {/each}
       </tbody>
     </table>
-  </div>
-
-  {#each [{ name: "textProp", prop: textProp }, { name: "numberProp", prop: numberProp }] as output}
-    {#if output.prop != undefined}
-      <div>
-        <p class="mb-0">
-          The <span class="font-bold">{output.name}</span> value being passed to
-          the component is:
-          {#if output.name === "numberProp"}
-            {@render propNameAndValue("m-2", "py-2 pl-2 pr-3", numberProp)}
-          {/if}
-        </p>
-        {#if output.name === "textProp"}
-          {@render propNameAndValue(
-            "ml-6 mt-4",
-            "py-2 pl-2 pr-3",
-            "'" + output.prop + "'",
-          )}
-        {/if}
-      </div>
-    {/if}
-  {/each}
-
-  <div class="grid grid-cols-3 gap-4 mt-6">
-    {#each [{ name: "checkboxProp", prop: checkboxProp }, { name: "dropdownProp", prop: dropdownProp }, { name: "radioProp", prop: radioProp }] as card}
-      {#if card.prop != undefined}
-        <div class="p-2">
-          <p class="my-2">
-            <span class="font-bold">{card.name}</span> is set to:
-          </p>
-          <p class="p-2 inline-block italic bg-slate-100 rounded">
-            {card.prop}
-          </p>
-        </div>
-      {/if}
-    {/each}
   </div>
 
   <div class="mt-10">
@@ -154,8 +188,22 @@
 
   button {
     background-color: green;
-    padding: 20px;
+  }
+
+  .ascending {
+    background-color: #ff7f7f;
+  }
+  .descending {
+    background-color: #add8e6;
+  }
+  .buttons-container {
+    display: flex;
+    gap: 20px;
+  }
+  .buttons-container > button {
+    flex: 1;
+    padding: 5px;
     color: white;
-    border-radius: 10%;
+    border-radius: 50%;
   }
 </style>

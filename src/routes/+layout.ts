@@ -85,7 +85,11 @@ export const load: LayoutLoad = async (event) => {
     }));
 
     let dataInFormatForTable = testData.flatMetricData
-        .map(d => ({
+      .map(item => ({
+        ...item,
+        y: parseFloat(item.y)
+      }))  
+      .map(d => ({
       ...d,
       areaName: testData.areaCodeLookup[d.areaCode]
     })) 

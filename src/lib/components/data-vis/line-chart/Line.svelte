@@ -38,9 +38,8 @@
     onClick,
     onMouseEnter,
     onMouseLeave,
-    onMouseMove,
     halo,
-    chartBackgroundColor = "#d1d1d1",
+    haloColor = "#d1aad1",
     // onClickMarker,
     // onMouseEnterMarker,
     // onMouseLeaveMarker,
@@ -73,14 +72,6 @@
   function onMouseLeaveMarker(i) {
     hoveredMarker = null;
   }
-
-  let areaFunction = $derived(
-    area()
-      .y0((d) => yFunction(0))
-      .x((d) => xFunction(d.x))
-      .y1((d) => yFunction(d.y))
-      .curve(curveLinear),
-  );
 </script>
 
 <defs>
@@ -112,7 +103,6 @@
   onclick={(event) => onClick(event, dataArray, dataId)}
   onmouseenter={(event) => onMouseEnter(event, dataArray, dataId)}
   onmouseleave={(event) => onMouseLeave(event, dataArray, dataId)}
-  onmousemove={(event) => onMouseMove(event, dataArray, dataId)}
   role="button"
   tabindex="0"
   onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}
@@ -130,11 +120,10 @@
     pointer-events="stroke"
   ></path>
   {#if halo}
-    {console.log(halo)}
     <path
       d={lineFunction(dataArray)}
       fill={pathFillColor}
-      stroke={chartBackgroundColor}
+      stroke={haloColor}
       stroke-width={pathStrokeWidth * 1.2}
       stroke-dasharray={pathStrokeDashArray}
     ></path>

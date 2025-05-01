@@ -115,5 +115,23 @@ export const hintAndWidth = `
 <Search 
   hint="Enter your full name"
   input_width="two-thirds"
+  inline_label={false}
 />
+`;
+
+// Code block for bind:value example
+export const codeBlockBinding = `
+<script lang="ts">
+  import Search from '$lib/components/ui/Search.svelte';
+
+  let demoSearchValue = $state("initial value"); 
+</script>
+
+<Search
+  label_text="Search with bound value"
+  bind:value={demoSearchValue}
+/>
+
+<p class="govuk-body mt-4">Current bound value: <strong>{demoSearchValue}</strong></p>
+
 `;

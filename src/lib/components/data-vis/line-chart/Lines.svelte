@@ -16,7 +16,9 @@
     yFunction,
     areaFunction,
     labelClicked = $bindable(),
-    areaCodeHover = $bindable(),
+    labelHovered = $bindable(),
+    lineHovered = $bindable(),
+    lineClicked = $bindable(),
     chartHeight,
     colors,
     showAllData,
@@ -27,11 +29,8 @@
 
   let bounds = $state([0, chartHeight]);
 
-  let labelHovered = $state();
-  let selectedLine = $derived([labelHovered, labelClicked]);
-
   let transformed = $derived(
-    tieredDataObject[areaCodeHover ? "hover" : "primary"].map((item) => {
+    tieredDataObject[lineHovered ? "hover" : "primary"].map((item) => {
       let lastY = yFunction(item.data[0].y);
       return { areaCode: item.areaCode, lastY };
     }),
@@ -45,6 +44,27 @@
       (d) => 20 * Math.ceil(d.areaCode.length / 15),
     ),
   );
+
+  function generateLineAttributes(line, defaultLineParams, tier) {
+    const listOfProperties = [
+      ...new Set([
+        ...Object.keys(line),
+        ...Object.keys(defaultLineParams[tier]),
+      ]),
+    ];
+
+    const merged = Object.fromEntries(
+      listOfProperties.map((key) => [
+        key,
+        line[key] ?? defaultLineParams[tier][key],
+      ]),
+    );
+    return {
+      ...merged,
+      dataId: line.areaCode,
+      dataArray: line.data, // rename in the original to avoid this
+    };
+  }
 </script>
 
 {#snippet categoryLabelSnippet(dataArray, newY)}
@@ -76,39 +96,30 @@
 {/snippet}
 
 {#each Object.keys(tieredDataObject) as tier}
-  <g opacity={globalTierRules[tier].opacity} id={tier}>
-    {#each tieredDataObject[tier] as line, i}
-      <Line
-        {lineFunction}
-        {xFunction}
-        {yFunction}
-        {areaFunction}
-        dataArray={line.data}
-        pathStrokeColor={line.color}
-        pathStrokeWidth={defaultLineParams[tier].pathStrokeWidth}
-        dataId={line.areaCode}
-        halo={defaultLineParams[tier].halo}
-        onClick={function (event, dataArray, dataId) {
-          areaCodeHover = dataId;
-        }}
-        onMouseEnter={function (event, dataArray, dataId) {
-          areaCodeHover = dataId;
-        }}
-        onMouseMove={function (event, dataArray, dataId) {
-          areaCodeHover = dataId;
-        }}
-        onMouseLeave={function (event, dataArray, dataId) {
-          areaCodeHover = null;
-        }}
-        {...defaultLineParams}
-        {chartBackgroundColor}
-      ></Line>
-      {#if (!areaCodeHover && tier === "primary") || (areaCodeHover && tier === "hover")}
-        {@render categoryLabelSnippet(
+  <g id={tier}>
+    <g opacity={globalTierRules[tier].opacity}>
+      {#each tieredDataObject[tier] as line, i}
+        {@const lineAttributes = generateLineAttributes(
           line,
-          labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
+          defaultLineParams,
+          tier,
         )}
-      {/if}
-    {/each}
+        <Line {...lineAttributes} />
+      {/each}
+    </g>
+
+    <g>
+      {#each tieredDataObject[tier] as line, i}
+        {#if tier == "hover"}
+          {console.log(line.areaCode == lineClicked)}
+        {/if}
+        {#if (!lineHovered && tier === "primary") || (lineHovered && tier === "hover") || (line.areaCode == lineClicked && ["primary", "hover"].includes(tier))}
+          {@render categoryLabelSnippet(
+            line,
+            labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
+          )}
+        {/if}
+      {/each}
+    </g>
   </g>
 {/each}

@@ -4,8 +4,7 @@
   export { WrapperNameAndStatus, WrapperInformation };
 
   /**
-   * ! Documentation on GOV.UK Component Guide:
-   * https://components.publishing.service.gov.uk/component-guide/search
+   * !  More documentation is provided on the component library's user guide page.
    */
 
   /**
@@ -27,10 +26,10 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "Baseline completed",
+    progress: "In progress", // Updated status
     statusRows: [
       {
-        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },
+        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true }, // Assuming based on underlying components
         visibleOnHompepage: false,
       },
       {
@@ -48,14 +47,15 @@
    *
    */
   let descriptionArray = [
-    `A search box with label and attached submit button.`,
-    `Based on the <a href="https://components.publishing.service.gov.uk/component-guide/search" target="_blank" rel="noopener noreferrer">GOV.UK Publishing Components search box</a>.`,
+    `A search box that provides autocomplete suggestions as the user types.`,
+    `Based on the <a href="https://components.publishing.service.gov.uk/component-guide/search_with_autocomplete" target="_blank" rel="noopener noreferrer">GOV.UK Publishing Components search with autocomplete box</a>.`,
+    `Uses the <a href="https://github.com/alphagov/accessible-autocomplete" target="_blank" rel="noopener noreferrer">accessible-autocomplete</a> library.`,
   ];
 
   let contextArray = [
     `The component should ideally be used within an HTML <code>&lt;form&gt;</code> to allow standard form submission (works with or without JavaScript). Consider giving the form <code>role="search"</code> for accessibility.`,
     `For client-side handling (e.g., in Single Page Applications where a full form submission isn't desired), you can use the <code>bind:selectedValue</code> prop to reactively get the confirmed selection without submitting the form.`,
-    `Use this for site-wide search or specific finder searches where user input is needed to filter or find content.`,
+    `Use when you want to help users find specific items by suggesting results from a predefined list or API endpoint as they type. Requires setting up either <code>options</code> or <code>source_url</code>/<code>source_key</code>.`,
   ];
 
   let detailsArray = [
@@ -76,7 +76,20 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [];
+  let connectedComponentsArray = [
+    {
+      label: "Parent Component", // Added label
+      visibleOnHomepage: false, // Added visibility flag
+      arr: [
+        // Nested the actual component info inside 'arr'
+        {
+          name: "Search",
+          folder: "ui", // Added folder needed for link generation
+          // href and description are not directly used by BaseInformation
+        },
+      ],
+    },
+  ];
 </script>
 
 <script>
@@ -97,10 +110,10 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Search from "$lib/components/ui/Search.svelte";
-  import Examples from "./search/Examples.svelte";
+  import SearchAutocomplete from "$lib/components/ui/SearchAutocomplete.svelte";
+  import Examples from "./search-autocomplete/Examples.svelte";
 
-  let { data } = $props();
+  let { data, form } = $props();
 
   /**
    * DONOTTOUCH *
@@ -162,31 +175,229 @@
    */
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
-      // --- Content & Value Props ---
+      // --- Autocomplete Specific Props ---
       {
-        name: "label_text",
-        category: "Content",
-        value: "Search on GOV.UK",
+        name: "options",
+        category: "Autocomplete",
+        isEditable: true,
+        value: [],
         description: {
           markdown: true,
           arr: [
-            `The text content for the <code>label</code> element. Allows HTML.`,
+            `An array of suggestion strings or objects with <code>{ label: string, value: any }</code> to use instead of an API endpoint.`,
+            `If this prop is provided with a non-empty array, it will be used as the suggestion source instead of <code>source_url</code> and <code>source_key</code>.`,
+            `Example (strings): <code>["Apple", "Banana", "Cherry"]</code>`,
+            `Example (objects, requires valid JSON in input): <code>[ { "label": "Aberdeen City", "value": "S12000033" }, { "label": "Aberdeenshire", "value": "S12000034" }, ... ]</code>`,
+          ],
+        },
+      },
+      {
+        name: "source_url",
+        category: "Autocomplete",
+        value: "https://www.gov.uk/api/search.json?suggest=autocomplete", // Updated value
+        description: {
+          markdown: true,
+          arr: [
+            `Required. The URL endpoint that the component will query to fetch autocomplete suggestions.`,
+            `The query parameter will be appended automatically (e.g., <code>/api/suggestions?q=user_input</code>).`,
+            `The endpoint should return JSON.`,
+          ],
+        },
+        rows: 1,
+        isRequired: true,
+      },
+      {
+        name: "source_key",
+        category: "Autocomplete",
+        value: "suggested_autocomplete", // Updated value
+        description: {
+          markdown: true,
+          arr: [
+            `Required. The key within the JSON response from <code>source_url</code> that contains the array of suggestion strings.`,
+          ],
+        },
+        rows: 1,
+        isRequired: true,
+      },
+      {
+        name: "source_property",
+        category: "Autocomplete",
+        value: "", // Default to empty string, means auto-detect (label/postcode)
+        description: {
+          markdown: true,
+          arr: [
+            `Optional. Specifies the property name within the fetched JSON objects to use as the primary suggestion label. Useful when the API response doesn't use 'label' or 'postcode'.`,
+            `If left empty or the property is not found, the component falls back to checking for 'label', then 'postcode'.`,
+            `Example: If your API returns <code>[{ "name": "London", ... }]</code>, set this to <code>"name"</code>.`,
+          ],
+        },
+        rows: 1,
+        isRequired: false, // It's optional
+      },
+      {
+        name: "minLength",
+        category: "Autocomplete",
+        value: 3,
+        description: {
+          markdown: true,
+          arr: [
+            `The minimum number of characters the user must type before suggestions appear. Defaults to 3.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "confirmOnBlur",
+        category: "Autocomplete",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, selecting a suggestion happens when the user blurs the input. If <code>false</code> (default), the user must press Enter or click a suggestion.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "showNoOptionsFound",
+        category: "Autocomplete",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code> (default), displays a "No results found" message when the query yields no suggestions.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "defaultValue",
+        category: "Autocomplete",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Sets the initial value of the input field when the component loads.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
           ],
         },
         rows: 1,
       },
       {
-        name: "value",
+        name: "placeholder",
+        category: "Autocomplete",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Sets the placeholder text for the input field. Defaults to empty string.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+        rows: 1,
+      },
+      {
+        name: "required",
+        category: "Autocomplete",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Adds the <code>required</code> attribute to the input field. Defaults to <code>false</code>.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "tNoResults",
+        category: "Autocomplete Text Customisation",
+        value: () => "No results found",
+        propType: "fixed", // Cannot edit functions via UI
+        functionElements: {
+          functionAsString: '() => "No results found"',
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Function that returns the text to display when no results are found.`,
+            `Default: <code>() => 'No results found'</code>`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "tAssistiveHint",
+        category: "Autocomplete Text Customisation",
+        value: () =>
+          "When autocomplete results are available use up and down arrows to review and enter to select. Touch device users, explore by touch or with swipe gestures.",
+        propType: "fixed",
+        functionElements: {
+          functionAsString:
+            '() => "When autocomplete results are available use up and down arrows to review and enter to select. Touch device users, explore by touch or with swipe gestures."',
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Function that returns the text for the assistive hint (hidden text read by screen readers).`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "menuAttributes",
+        category: "Autocomplete Styling & Attributes",
+        value: {},
+        description: {
+          markdown: true,
+          arr: [
+            `An object containing attributes to add to the suggestions menu <code>&lt;ul&gt;</code> element. Provide as a JSON object.`,
+            `Example: <code>{"data-testid": "my-menu"}</code>`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+        rows: 3,
+      },
+      {
+        name: "menuClasses",
+        category: "Autocomplete Styling & Attributes",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Optional string of CSS classes to add to the suggestions menu <code>&lt;ul&gt;</code> element. Defaults to <code>null</code>.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+        rows: 1,
+      },
+      // --- End More Autocomplete Config Props ---
+
+      // --- Content Props (Inherited from Search) ---
+      {
+        name: "label_text",
         category: "Content",
-        value: selectedValue,
+        value: "Search GOV.UK", // Adjusted default
+        description: {
+          markdown: true,
+          arr: [
+            `The text content for the <code>label</code> element. Allows HTML.`,
+            `Note: Autocomplete component always uses a separate label (not inline).`,
+          ],
+        },
+        rows: 1,
+      },
+      {
+        name: "selectedValue",
+        category: "Content",
         isBinded: true,
+        value: selectedValue,
         description: {
           markdown: true,
           arr: [
             `The current value of the search input field. Can be bound to reactively get the confirmed selection without submitting a form.`,
+            `Shows the <code>label</code> of the selected suggestion by default <strong>unless</strong> a <code>value</code> for the option was also parsed with the label intially as an object.`,
           ],
         },
-        rows: 1,
       },
       {
         name: "button_text",
@@ -213,22 +424,21 @@
         rows: 1,
         isRequired: true,
       },
+      // --- Hint Prop (Passed to Search) ---
       {
         name: "hint",
         category: "Content",
-        value: "",
+        value: "Try 'benefits' or 'driving'", // Example hint
         description: {
           markdown: true,
           arr: [
-            `Optional hint text to display below the label and associate with the input via <code>aria-describedby</code>.`,
-            `<strong>Rendering Behaviour:</strong>`,
-            `&nbsp;&nbsp;&nbsp;- If the label is separate (not inline) AND <code>homepage</code> and <code>on_govuk_blue</code> are both false, the hint is rendered as a separate <code>&lt;div&gt;</code> below the label.`,
-            `&nbsp;&nbsp;&nbsp;- If the label is separate AND either <code>homepage</code> or <code>on_govuk_blue</code> is true, the hint text is instead used as the <code>placeholder</code> attribute for the input field.`,
-            `&nbsp;&nbsp;&nbsp;- If the label is inline, the hint text is not visually rendered (but still linked via <code>aria-describedby</code>).`,
+            `Optional hint text displayed below the label (if not ongovuk_blue or homepage).`,
+            `Note: Autocomplete functionality does not directly use this hint.`,
           ],
         },
         rows: 2,
       },
+      // --- End Hint Prop ---
 
       // --- Styling & Layout Props ---
       {
@@ -269,50 +479,26 @@
         name: "label_size",
         category: "Styling",
         options: ["", "s", "m", "l", "xl"],
-        value: "",
+        value: "", // Use empty string as default to match Search
         description: {
           markdown: true,
           arr: [
-            `Sets the size of the label text using GOV.UK typography classes. Options: <code>s</code>, <code>m</code>, <code>l</code>, <code>xl</code>. If set, <code>inline_label</code> defaults to <code>false</code>.`,
+            `Sets the size of the label text using GOV.UK typography classes. Options: <code>s</code>, <code>m</code>, <code>l</code>, <code>xl</code>.`,
           ],
         },
       },
-      {
-        name: "inline_label",
-        category: "Styling",
-        value: true,
-        description: {
-          markdown: true,
-          arr: [
-            `Set to <code>false</code> to prevent the label from appearing absolutely positioned over the input field. Defaults to <code>true</code> unless <code>label_size</code> is set.`,
-          ],
-        },
-        visible: { name: "label_size", value: "" }, // Only show if label_size is not set
-      },
-      {
-        name: "margin_bottom",
-        category: "Styling",
-        options: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        value: 6,
-        description: {
-          markdown: true,
-          arr: [
-            `Sets the bottom margin for the component wrapper using the GOV.UK spacing scale (0-9). Defaults to 6.`, // Default based on Ruby template
-          ],
-        },
-      },
+      // inline_label removed - handled by autocomplete component
       {
         name: "label_margin_bottom",
         category: "Styling",
         options: [null, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-        value: null,
+        value: null, // Default to null, let Search handle GOV.UK defaults
         description: {
           markdown: true,
           arr: [
-            `Sets the bottom margin for the label when it's not inline, using the GOV.UK spacing scale (0-9). Only applies if <code>inline_label</code> is <code>false</code> (or <code>label_size</code> is set).`,
+            `Sets the bottom margin for the label using the GOV.UK spacing scale (0-9).`,
           ],
         },
-        visible: { name: "inline_label", value: false }, // Crude visibility - ideally check derived isInlineLabel
       },
       {
         name: "label_custom_class",
@@ -353,6 +539,18 @@
           arr: [
             `Sets a custom background color for the search submit button using a valid CSS color value (e.g., <code>#ff0000</code>).`,
             `<strong>Note:</strong> This custom color will be overridden by the default styles if <code>on_govuk_blue</code> or <code>homepage</code> props are set to <code>true</code>.`,
+          ],
+        },
+        rows: 1,
+      },
+      {
+        name: "outerClasses",
+        category: "Styling",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Optional. Adds custom CSS classes to the outermost wrapping <code>div</code> element of the autocomplete component.`,
           ],
         },
         rows: 1,
@@ -403,6 +601,7 @@
           markdown: true,
           arr: [
             `Sets the <code>aria-controls</code> attribute on the input field, pointing to the ID of the element whose content is controlled by the search.`,
+            `Note: accessible-autocomplete might add its own aria attributes.`,
           ],
         },
         rows: 1,
@@ -419,40 +618,27 @@
         },
       },
 
-      // --- Standard Wrapper Props ---
+      // --- Standard Wrapper Props (Apply to outer div) ---
       {
-        name: "id",
+        name: "id", // This ID applies to the outer wrapper now
         category: "Accessibility & Attributes",
-        value: "",
+        value: "", // Changed to allow user to set ID on the *autocomplete wrapper*
         description: {
           markdown: true,
           arr: [
-            `Sets the <code>id</code> attribute on the wrapping <code>div</code> element.`,
-          ],
-        },
-        rows: 1,
-        isRequired: true,
-      },
-      {
-        name: "classes",
-        category: "Accessibility & Attributes",
-        value: "",
-        description: {
-          markdown: true,
-          arr: [
-            `Adds custom CSS classes to the wrapping <code>div</code> element. Should typically be prefixed with <code>js-</code> if used for JavaScript hooks.`,
+            `Sets the <code>id</code> attribute on the outermost wrapping <code>div</code> element.`,
           ],
         },
         rows: 1,
       },
       {
-        name: "dataAttributes",
+        name: "outerDataAttributes",
         category: "Accessibility & Attributes",
         value: {},
         description: {
           markdown: true,
           arr: [
-            `Adds custom <code>data-*</code> attributes to the wrapping <code>div</code> element. Provide as a JSON object (e.g., <code>{"module": "my-module"}</code>). Note: <code>data-module="gem-toggle-input-class-on-focus"</code> is added by default.`,
+            `Adds custom <code>data-*</code> attributes to the outermost wrapping <code>div</code> element. Provide as a JSON object. Note: <code>data-module="gem-search-with-autocomplete"</code> is added by the component.`,
           ],
         },
         rows: 5,
@@ -464,7 +650,7 @@
         description: {
           markdown: true,
           arr: [
-            `Adds custom <code>aria-*</code> attributes to the wrapping <code>div</code> element. Provide as a JSON object (e.g., <code>{"labelledby": "element-id"}</code>).`,
+            `Adds custom <code>aria-*</code> attributes to the outermost wrapping <code>div</code> element. Provide as a JSON object (e.g., <code>{"labelledby": "element-id"}</code>).`,
           ],
         },
         rows: 5,
@@ -476,7 +662,7 @@
         description: {
           markdown: true,
           arr: [
-            `Sets the <code>role</code> attribute on the wrapping <code>div</code> element. Consider using <code>role="search"</code> on the parent <code>form</code> element instead.`,
+            `Sets the <code>role</code> attribute on the outermost wrapping <code>div</code> element. Consider using <code>role="search"</code> on the parent <code>form</code> element instead.`,
           ],
         },
         rows: 1,
@@ -645,14 +831,21 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div
-    class="p-8"
-    style="background-color: {parametersObject.homepage ||
-    parametersObject.on_govuk_blue
-      ? '#1d70b8'
-      : ''};"
-  >
-    <Search {...parametersObject} bind:value={selectedValue} />
+  {@const bgColor =
+    parametersObject.homepage || parametersObject.on_govuk_blue
+      ? "#1d70b8"
+      : "#fff"}
+  <div class="p-8" style="background-color: {bgColor};">
+    {#if parametersObject.source_url && parametersObject.source_key}
+      {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}
+        <SearchAutocomplete {...parametersObject} bind:selectedValue/>
+      {/key}
+    {:else}
+      <p class="text-red-600 font-bold">
+        Error: Please provide both `source_url` and `source_key` props in the
+        'Autocomplete' category below.
+      </p>
+    {/if}
   </div>
 {/snippet}
 
@@ -699,5 +892,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section" class="px-5">
-  <Examples />
+  <Examples {form}></Examples>
 </div>

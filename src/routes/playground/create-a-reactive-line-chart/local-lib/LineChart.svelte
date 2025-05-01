@@ -4,7 +4,7 @@
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
 
   import { scaleLinear } from "d3-scale";
-  import { curveLinear, line } from "d3-shape";
+  import { curveLinear, line, area } from "d3-shape";
   import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
 
@@ -53,98 +53,187 @@
       .curve(curveLinear),
   );
 
-  let areaCodeHover = $state();
+  let areaFunction = $derived(
+    area()
+      .y0((d) => yFunction(0))
+      .x((d) => xFunction(d.x))
+      .y1((d) => yFunction(d.y))
+      .curve(curveLinear),
+  );
+
+  let onClick = (event, dataArray, dataId) => {
+    lineClicked = dataId;
+  };
+  let onMouseEnter = (event, dataArray, dataId) => {
+    lineHovered = dataId;
+  };
+  let onMouseLeave = () => {
+    lineHovered = null;
+  };
+
+  let lineHovered = $state();
+  let lineClicked = $state();
+  let labelHovered = $state();
   let labelClicked = $state();
+
+  let selectedLine = $derived([
+    lineHovered,
+    lineClicked,
+    labelHovered,
+    labelClicked,
+  ]);
+  let nothingSelected = $derived(selectedLine.every((item) => item == null));
   let selectedAreaCode = $state("E07000223");
   let englandMedian = $state("E07000227");
+  let similarAreas = $state("E07000224");
 
   function handleClickOutside(event) {
-    if (labelClicked && !event.target.closest('[id^="label"]')) {
+    if (
+      lineClicked != event.target.parentElement.dataset.id ||
+      (labelClicked && !event.target.closest('[id^="label"]'))
+    ) {
       labelClicked = null;
+      lineClicked = null;
     }
   }
 
-  let primaryLines = $derived(["E07000223", "E07000224", englandMedian]);
-
-  let colorPalette = {
-    base: ["red", "white", "yellow", "pink"],
+  let colors = {
+    teal: "#408A7B",
+    lightblue: "#509EC8",
+    darkblue: "#335F91",
+    ochre: "#BA7F30",
+    coral: "#E46B6C",
+    fuschia: "#BB2765",
+    purple: "#736CAC",
+    lightgrey: "#A0A0A0",
+    darkgrey: "#636363",
+    black: "#161616",
   };
 
+  let primaryLines = $derived([
+    "E07000224",
+    "E07000225",
+    "E07000226",
+    "E07000228",
+    englandMedian,
+    similarAreas,
+    selectedAreaCode,
+  ]);
+
+  let colorPalette = {
+    base: [colors.coral, colors.fuschia, colors.purple],
+  };
+
+  let showAllData = true;
+
   let lookupObj = $derived({
-    [englandMedian]: "purple",
-    [selectedAreaCode]: "green",
+    [englandMedian]: colors.lightblue,
+    [selectedAreaCode]: colors.teal,
+    [similarAreas]: colors.darkblue,
   });
 
-  function getColor(primaryLines, areaCode, lookupObj, i) {
-    return primaryLines.includes(areaCode)
-      ? (lookupObj[areaCode] ?? colorPalette.base[i % colorPalette.base.length])
-      : undefined;
+  function getColor(areaCode, lookupObj, i) {
+    return (
+      lookupObj[areaCode] ?? colorPalette.base[i % colorPalette.base.length]
+    );
   }
 
   let dataArray = $derived(
     data.lines.map((el, i) => {
-      const tiers =
-        areaCodeHover === el.areaCode
-          ? ["hover", "secondary"]
-          : primaryLines.includes(el.areaCode)
-            ? ["primary"]
-            : ["invisibles", "secondary"];
+      const tiers = selectedLine.includes(el.areaCode)
+        ? ["hover", "secondary"]
+        : primaryLines.includes(el.areaCode)
+          ? ["primary"]
+          : ["invisibles", "secondary"];
       return {
         ...el,
         tiers,
-        includeMarkers: selectedAreaCode === "E07000223",
-        color: getColor(primaryLines, el.areaCode, lookupObj, i),
       };
     }),
   );
 
-  let defaultLineParams = $derived({
-    otherTier: { halo: false },
+  let tieredLineParams = $derived({
+    otherTier: {},
     invisibles: {
       listenForOnHoverEvents: true,
       pathStrokeWidth: 1,
-      halo: false,
     },
     secondary: {
       "pointer-events": "none",
       halo: false,
+      pathStrokeColor: colors.black,
+      pathStrokeWidth: 1,
+      opacity: 0.05,
     },
     primary: {
       halo: true,
-      includeMarkers: true,
-      pathStrokeWidth: areaCodeHover === null ? 5 : 2,
-      color: "red",
-      halo: true,
+      pathStrokeWidth: nothingSelected ? 5 : 2,
+      pathStrokeColor: colors.darkgrey,
     },
     hover: {
-      color: "orange",
-      pathStrokeWidth: 5,
+      pathStrokeColor: colors.ochre,
+      pathStrokeWidth: lineClicked ? 8 : 5,
       halo: true,
     },
   });
 
+  let basicLineParams = {
+    lineFunction: lineFunction,
+    xFunction: xFunction,
+    yFunction: yFunction,
+    areaFunction: areaFunction,
+    onClick: onClick,
+    onMouseEnter: onMouseEnter,
+    onMouseLeave: onMouseLeave,
+    haloColor: chartBackgroundColor,
+  };
+
+  let defaultLineParams = Object.fromEntries(
+    Object.entries(tieredLineParams).map(([key, group]) => [
+      key,
+      { ...basicLineParams, ...group },
+    ]),
+  );
+
   let tieredDataObject = $derived(
     Object.keys(defaultLineParams).reduce((acc, key, index) => {
-      acc[key] = dataArray.filter((el) => el.tiers.includes(key));
+      acc[key] = dataArray
+        .filter((el) => {
+          if (key === "primary") {
+            return primaryLines.includes(el.areaCode);
+          } else if (key === "secondary" && showAllData) {
+            return true;
+          } else if (key === "hover") {
+            return selectedLine.includes(el.areaCode);
+          }
+        })
+        .map((el) => ({
+          ...el,
+          strokeWidth: "3px",
+          includeMarkers: key === "primary" ? true : false,
+          pathStrokeColor: ["primary", "hover"].includes(key)
+            ? getColor(
+                el.areaCode,
+                lookupObj,
+                primaryLines.indexOf(el.areaCode),
+              )
+            : null,
+        }));
       return acc;
     }, {}),
   );
 
   let globalTierRules = $derived({
-    otherTier: {
-      opacity: areaCodeHover == null ? 1 : 0.5,
-    },
+    otherTier: {},
     invisibles: { opacity: 0 },
     secondary: {
-      opacity: areaCodeHover == null ? 1 : 0.5,
+      opacity: nothingSelected ? 1 : 0.5,
     },
     primary: {
-      opacity: areaCodeHover == null ? 1 : 0.5,
+      opacity: nothingSelected ? 1 : 0.4,
     },
     hover: { opacity: 1 },
   });
-
-  let showAllData = true;
 </script>
 
 <h3>Example Usage</h3>
@@ -180,18 +269,6 @@
   >
     {#if svgWidth}
       <g transform="translate({totalMargin.left},{totalMargin.top})">
-        <g data-role="y-axis">
-          <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
-          ></path>
-        </g>
-        <g data-role="x-axis">
-          <path
-            d="M0 {chartHeight} l{chartWidth} 0"
-            stroke="black"
-            stroke-width="2px"
-          ></path>
-        </g>
-
         <g data-role="lines-group">
           <Lines
             {tieredDataObject}
@@ -202,7 +279,9 @@
             {xFunction}
             {yFunction}
             bind:labelClicked
-            bind:areaCodeHover
+            bind:labelHovered
+            bind:lineHovered
+            bind:lineClicked
             {chartHeight}
             {colorPalette}
             {defaultLineParams}
@@ -210,6 +289,17 @@
             {globalTierRules}
             {chartBackgroundColor}
           ></Lines>
+        </g>
+        <g data-role="y-axis">
+          <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
+          ></path>
+        </g>
+        <g data-role="x-axis">
+          <path
+            d="M0 {chartHeight} l{chartWidth} 0"
+            stroke="black"
+            stroke-width="2px"
+          ></path>
         </g>
       </g>
     {/if}

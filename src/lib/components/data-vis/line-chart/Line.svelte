@@ -38,7 +38,6 @@
     onClick,
     onMouseEnter,
     onMouseLeave,
-    onMouseMove,
     halo,
     haloColor = "#d1aad1",
     // onClickMarker,
@@ -104,7 +103,6 @@
   onclick={(event) => onClick(event, dataArray, dataId)}
   onmouseenter={(event) => onMouseEnter(event, dataArray, dataId)}
   onmouseleave={(event) => onMouseLeave(event, dataArray, dataId)}
-  onmousemove={(event) => onMouseMove(event, dataArray, dataId)}
   role="button"
   tabindex="0"
   onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}

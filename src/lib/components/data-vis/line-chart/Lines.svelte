@@ -113,7 +113,7 @@
         {#if tier == "hover"}
           {console.log(line.areaCode == lineClicked)}
         {/if}
-        {#if (!lineHovered && tier === "primary") || [lineClicked, lineHovered].includes(line.areaCode)}
+        {#if (!lineHovered && tier === "primary") || (lineHovered && tier === "hover") || (line.areaCode == lineClicked && ["primary", "hover"].includes(tier))}
           {@render categoryLabelSnippet(
             line,
             labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,

@@ -67,9 +67,6 @@
   let onMouseEnter = (event, dataArray, dataId) => {
     lineHovered = dataId;
   };
-  let onMouseMove = (event, dataArray, dataId) => {
-    lineHovered = dataId;
-  };
   let onMouseLeave = () => {
     lineHovered = null;
   };
@@ -187,7 +184,6 @@
     areaFunction: areaFunction,
     onClick: onClick,
     onMouseEnter: onMouseEnter,
-    onMouseMove: onMouseMove,
     onMouseLeave: onMouseLeave,
     haloColor: chartBackgroundColor,
   };

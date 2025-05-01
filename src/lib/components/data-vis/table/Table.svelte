@@ -12,8 +12,6 @@
 
   let localCopyOfData = $state([...data]);
 
-  $inspect(localCopyOfData);
-
   let sortState = $state({ column: "sortedColumn", order: "ascending" });
 
   function updateSortState(columnToSort, sortOrder) {
@@ -40,6 +38,47 @@
         localCopyOfData.sort((a, b) => b.areaName.localeCompare(a.name));
       }
     }
+  }
+
+  // heat map
+  const recyclingValues = localCopyOfData.map(
+    (item) => item["Household waste recycling rate"],
+  );
+  const recyclingMin = Math.min(...recyclingValues);
+  const recyclingMax = Math.max(...recyclingValues);
+
+  const contaminationValues = localCopyOfData.map(
+    (item) => item["Recycling contamination rate"],
+  );
+  const contaminationMin = Math.min(...contaminationValues);
+  const contaminationMax = Math.max(...contaminationValues);
+
+  const wasteValues = localCopyOfData.map(
+    (item) => item["Residual household waste"],
+  );
+  const wasteMin = Math.min(...wasteValues);
+  const wasteMax = Math.max(...wasteValues);
+
+  localCopyOfData = localCopyOfData.map((item) => ({
+    ...item,
+    recyclingNorm:
+      (item["Household waste recycling rate"] - recyclingMin) /
+      (recyclingMax - recyclingMin),
+    contaminationNorm:
+      (item["Recycling contamination rate"] - contaminationMin) /
+      (contaminationMax - contaminationMin),
+    wasteNorm:
+      (item["Residual household waste"] - wasteMin) / (wasteMax - wasteMin),
+  }));
+
+  function normToColor(norm) {
+    const hue = 120 * norm;
+    return `hsl(${hue}, 100%, 80%)`;
+  }
+
+  function normToColorReverse(norm) {
+    const hue = 120 * (1 - norm);
+    return `hsl(${hue}, 100%, 80%)`;
   }
 </script>
 
@@ -142,9 +181,17 @@
         {#each localCopyOfData as row}
           <tr>
             <td>{row["areaName"]}</td>
-            <td>{row["Household waste recycling rate"]}</td>
-            <td>{row["Recycling contamination rate"]}</td>
-            <td>{row["Residual household waste"]}</td>
+            <td style="background-color: {normToColor(row.recyclingNorm)}"
+              >{row["Household waste recycling rate"]}</td
+            >
+            <td
+              style="background-color: {normToColorReverse(
+                row.contaminationNorm,
+              )}">{row["Recycling contamination rate"]}</td
+            >
+            <td style="background-color: {normToColorReverse(row.wasteNorm)}"
+              >{row["Residual household waste"]}</td
+            >
           </tr>
         {/each}
       </tbody>

@@ -6,17 +6,13 @@
   let {
     componentNameProp = undefined,
     data = undefined,
-    // filterRows,
-    textProp = undefined,
-    numberProp = undefined,
-    checkboxProp = false,
-    dropdownProp = undefined,
-    radioProp = undefined,
     jsObjectProp = [],
     functionProp = undefined,
   } = $props();
 
   let localCopyOfData = $state([...data]);
+
+  $inspect(localCopyOfData);
 
   let sortState = $state({ column: "sortedColumn", order: "ascending" });
 
@@ -121,9 +117,25 @@
       <thead
         ><tr>
           <th>Area</th>
-          <th>Recycling rate</th>
-          <th>Contamination</th>
-          <th>Residual waste</th>
+          <th
+            >Household waste recycling rate (%) <br /><span
+              class="metric-explainer"
+              >The proportion of household waste sent for recyling</span
+            ></th
+          >
+          <th
+            >Recycling contamination rate (%) <br /><span
+              class="metric-explainer"
+              >The proportion of household waste sent for recyling that cannot
+              be recyled</span
+            ></th
+          >
+          <th
+            >Residual household waste (kg per household) <br /><span
+              class="metric-explainer"
+              >Non-recyclable waste per household, measured by weight</span
+            ></th
+          >
         </tr></thead
       >
       <tbody>
@@ -182,7 +194,7 @@
   }
 
   .table-container {
-    max-height: 400px;
+    max-height: 600px;
     overflow-y: auto;
   }
 
@@ -202,8 +214,13 @@
   }
   .buttons-container > button {
     flex: 1;
-    padding: 5px;
+    padding: 0px;
     color: white;
     border-radius: 50%;
+  }
+  .metric-explainer {
+    font-size: 13px;
+    font-style: italic;
+    font-weight: 400;
   }
 </style>

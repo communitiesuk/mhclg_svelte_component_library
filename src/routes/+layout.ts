@@ -87,7 +87,7 @@ export const load: LayoutLoad = async (event) => {
     let dataInFormatForTable = testData.flatMetricData
       .map(item => ({
         ...item,
-        y: parseFloat(item.y)
+        y: Math.round(parseFloat(item.y)),
       }))  
       .map(d => ({
       ...d,

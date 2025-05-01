@@ -34,6 +34,7 @@
     lineEnding = null,
     yFunction,
     dataId,
+    tier,
     // markersDataId,
     onClick,
     onMouseEnter,
@@ -111,14 +112,16 @@
   {#if includeArea}
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
   {/if}
-
-  <path
-    d={lineFunction(dataArray)}
-    fill="none"
-    stroke="transparent"
-    stroke-width="20"
-    pointer-events="stroke"
-  ></path>
+  {console.log(tier)}
+  {#if tier !== "invisibles"}
+    <path
+      d={lineFunction(dataArray)}
+      fill="none"
+      stroke="invisible"
+      stroke-width="20"
+      pointer-events="stroke"
+    ></path>
+  {/if}
   {#if halo}
     <path
       d={lineFunction(dataArray)}
@@ -126,6 +129,7 @@
       stroke={haloColor}
       stroke-width={pathStrokeWidth * 1.2}
       stroke-dasharray={pathStrokeDashArray}
+      pointer-events="none"
     ></path>
   {/if}
   <path
@@ -134,6 +138,7 @@
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
+    pointer-events="none"
   ></path>
 
   <!-- {#if includeMarkers}

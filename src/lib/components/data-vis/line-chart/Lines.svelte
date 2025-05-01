@@ -97,6 +97,7 @@
 
 {#each Object.keys(tieredDataObject) as tier}
   <g id={tier}>
+    {console.log(tier)}
     <g opacity={globalTierRules[tier].opacity}>
       {#each tieredDataObject[tier] as line, i}
         {@const lineAttributes = generateLineAttributes(
@@ -104,15 +105,12 @@
           defaultLineParams,
           tier,
         )}
-        <Line {...lineAttributes} />
+        <Line {...lineAttributes} {tier} />
       {/each}
     </g>
 
     <g>
       {#each tieredDataObject[tier] as line, i}
-        {#if tier == "hover"}
-          {console.log(line.areaCode == lineClicked)}
-        {/if}
         {#if (!lineHovered && tier === "primary") || (lineHovered && tier === "hover") || (line.areaCode == lineClicked && ["primary", "hover"].includes(tier))}
           {@render categoryLabelSnippet(
             line,

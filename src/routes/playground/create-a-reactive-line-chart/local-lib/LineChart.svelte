@@ -65,23 +65,28 @@
     lineClicked = dataId;
   };
   let onMouseEnter = (event, dataArray, dataId) => {
-    lineHovered = dataId;
+    if (lineHovered !== dataId) {
+      lineHovered = dataId;
+    }
   };
-  let onMouseLeave = () => {
-    lineHovered = null;
+  let onMouseLeave = (event, dataArray, dataId) => {
+    if (lineHovered === dataId) {
+      lineHovered = null;
+    }
   };
 
   let lineHovered = $state();
   let lineClicked = $state();
   let labelHovered = $state();
   let labelClicked = $state();
-
   let selectedLine = $derived([
     lineHovered,
     lineClicked,
     labelHovered,
     labelClicked,
   ]);
+  $inspect({ selectedLine });
+
   let nothingSelected = $derived(selectedLine.every((item) => item == null));
   let selectedAreaCode = $state("E07000223");
   let englandMedian = $state("E07000227");
@@ -140,11 +145,12 @@
 
   let dataArray = $derived(
     data.lines.map((el, i) => {
-      const tiers = selectedLine.includes(el.areaCode)
-        ? ["hover", "secondary"]
+      const tiers = ["invisibles"];
+      selectedLine.includes(el.areaCode)
+        ? tiers.push("hover")
         : primaryLines.includes(el.areaCode)
-          ? ["primary"]
-          : ["invisibles", "secondary"];
+          ? tiers.push("primary")
+          : tiers.push("secondary");
       return {
         ...el,
         tiers,
@@ -154,12 +160,7 @@
 
   let tieredLineParams = $derived({
     otherTier: {},
-    invisibles: {
-      listenForOnHoverEvents: true,
-      pathStrokeWidth: 1,
-    },
     secondary: {
-      "pointer-events": "none",
       halo: false,
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
@@ -167,13 +168,18 @@
     },
     primary: {
       halo: true,
-      pathStrokeWidth: nothingSelected ? 5 : 2,
+      pathStrokeWidth: nothingSelected ? 5 : 8,
       pathStrokeColor: colors.darkgrey,
     },
     hover: {
       pathStrokeColor: colors.ochre,
-      pathStrokeWidth: lineClicked ? 8 : 5,
+      pathStrokeWidth: 5,
       halo: true,
+    },
+    invisibles: {
+      // listenForOnHoverEvents: true, //PASS THESE THROUGH TO LINE
+      // "pointer-events": "visibleStroke",
+      // pathStrokeWidth: 5,
     },
   });
 
@@ -186,6 +192,7 @@
     onMouseEnter: onMouseEnter,
     onMouseLeave: onMouseLeave,
     haloColor: chartBackgroundColor,
+    "pointer-events": "none",
   };
 
   let defaultLineParams = Object.fromEntries(
@@ -201,15 +208,16 @@
         .filter((el) => {
           if (key === "primary") {
             return primaryLines.includes(el.areaCode);
-          } else if (key === "secondary" && showAllData) {
+          }
+          if (key === "secondary" && showAllData) {
             return true;
-          } else if (key === "hover") {
+          }
+          if (key === "hover") {
             return selectedLine.includes(el.areaCode);
           }
         })
         .map((el) => ({
           ...el,
-          strokeWidth: "3px",
           includeMarkers: key === "primary" ? true : false,
           pathStrokeColor: ["primary", "hover"].includes(key)
             ? getColor(
@@ -234,6 +242,8 @@
     },
     hover: { opacity: 1 },
   });
+
+  $inspect({ tieredDataObject });
 </script>
 
 <h3>Example Usage</h3>

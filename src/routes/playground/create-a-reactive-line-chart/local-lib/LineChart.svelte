@@ -312,6 +312,7 @@
             {showAllData}
             {globalTierRules}
             {chartBackgroundColor}
+            {nothingSelected}
           ></Lines>
         </g>
         <g data-role="y-axis">

@@ -25,15 +25,24 @@
     defaultLineParams,
     globalTierRules,
     chartBackgroundColor,
+    nothingSelected,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
 
   let transformed = $derived(
-    tieredDataObject[lineHovered ? "hover" : "primary"].map((item) => {
-      let lastY = yFunction(item.data[0].y);
-      return { areaCode: item.areaCode, lastY };
-    }),
+    (nothingSelected
+      ? tieredDataObject.primary
+      : [...(tieredDataObject.hover || []), ...(tieredDataObject.clicked || [])]
+    )
+      .filter(
+        (item, index, self) =>
+          self.findIndex((other) => other.areaCode === item.areaCode) === index,
+      )
+      .map((item) => ({
+        areaCode: item.areaCode,
+        lastY: yFunction(item.data[0].y),
+      })),
   );
 
   let labelsPlaced = $derived(
@@ -111,10 +120,10 @@
 
     <g>
       {#each tieredDataObject[tier] as line, i}
-        {#if (!lineHovered && tier === "primary") || (lineHovered && tier === "hover") || (line.areaCode == lineClicked && ["primary", "hover"].includes(tier))}
+        {#if (tier == "primary" && nothingSelected) || ["hover", "clicked"].includes(tier)}
           {@render categoryLabelSnippet(
             line,
-            labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
+            labelsPlaced.find((el) => el.datum.areaCode === line.areaCode)?.y,
           )}
         {/if}
       {/each}

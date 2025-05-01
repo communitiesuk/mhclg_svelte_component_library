@@ -11,7 +11,8 @@
     ControlButton,
     ControlGroup,
   } from "svelte-maplibre";
-  import { contrastingColor, colorPalette } from "./colors.ts";
+  import { contrastingColor } from "./colors.ts";
+  import { colorbrewer } from "./colorbrewer.js";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { maplibregl, ExpressionSpecification } from "maplibre-gl";
   import fullTopo from "./fullTopo.json";
@@ -38,6 +39,7 @@
     scaleControl,
     scaleControlPosition = "bottom-left",
     scaleControlUnit = "metric",
+    colorPalette = "YlGnBu",
     showBorder = false,
     maxBorderWidth = 1.5,
     tooltip,
@@ -53,7 +55,7 @@
     center = [-2.5, 53],
     zoom = 5,
   } = $props();
-  $inspect(navigationControlPosition);
+
   let mapData = $derived(data?.filter((d) => d.year == year)[0]?.data);
 
   let filteredMapData = $derived(
@@ -70,8 +72,8 @@
 
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
 
-  let fillColor = $derived(colorPalette[numberOfBreaks]);
-  $inspect(fillColor);
+  let fillColor = $derived(colorbrewer[colorPalette][numberOfBreaks]);
+
   let borderColor = "#003300";
 
   let map: maplibregl.Map | undefined = $state();

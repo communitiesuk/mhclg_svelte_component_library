@@ -3,12 +3,7 @@
 
   // import { areSameLanguages } from "@maptiler/sdk";
 
-  let {
-    componentNameProp = undefined,
-    data = undefined,
-    jsObjectProp = [],
-    functionProp = undefined,
-  } = $props();
+  let { componentNameProp = undefined, data = undefined } = $props();
 
   let localCopyOfData = $state([...data]);
 
@@ -105,7 +100,7 @@
       <caption></caption>
       <thead
         ><tr>
-          <th>Area</th>
+          <th class="col-one-header">Area</th>
           <th title="The proportion of household waste sent for recyling">
             <div class="header">
               <div class="header-top">
@@ -215,32 +210,6 @@
       </tbody>
     </table>
   </div>
-
-  <div class="mt-10">
-    <p class="font-bold">jsObjectProp:</p>
-    <p>
-      Click on a card to trigger a call of the functionProp, which will write to
-      the console.
-    </p>
-    <div class="grid grid-cols-2 gap-4 mt-6 cursor-pointer">
-      {#each jsObjectProp as pokemon}
-        <button
-          data-id={pokemon.name}
-          data-role="pokemon-card"
-          class="rounded p-2 grid grid-cols-[auto_1fr] gap-2"
-          style="background-color: {pokemon.color};"
-          onclick={(event) => functionProp(event, pokemon)}
-        >
-          {#each Object.keys(pokemon) as key}
-            {#if key != "color"}
-              <p class="m-0 p-0">{key}:</p>
-              <p class="m-0 p-0">{pokemon[key]}</p>
-            {/if}
-          {/each}
-        </button>
-      {/each}
-    </div>
-  </div>
 </div>
 
 <style>
@@ -248,23 +217,12 @@
     margin: 0px;
     padding: 0px;
   }
-  [data-role="pokemon-card"] {
-    opacity: 0.6;
-    border: 2px solid transparent;
-  }
-
-  [data-role="pokemon-card"]:hover {
-    opacity: 0.8;
-    border: 2px solid;
-  }
-  [data-role="pokemon-card"]:focus {
-    opacity: 1;
-    border: 2px solid;
-  }
 
   .table-container {
-    max-height: 600px;
+    max-height: 85vh;
     overflow-y: auto;
+    border: 1px solid black;
+    border-radius: 1%;
   }
 
   .ascending {
@@ -296,16 +254,13 @@
   }
 
   td {
-    padding: 0.7rem 0.5rem;
+    padding: 0.5rem 0.5rem;
   }
 
   th {
     text-align: left;
     font-size: medium;
     vertical-align: top;
-    position: sticky;
-    top: 0;
-    z-index: 10;
   }
 
   td {
@@ -350,5 +305,9 @@
     justify-content: center;
     background-color: lightgray;
     border-radius: 20%;
+  }
+  .col-one-header {
+    text-align: right;
+    padding: 5px;
   }
 </style>

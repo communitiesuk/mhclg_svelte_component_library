@@ -285,6 +285,31 @@
         category: "data",
         visible: false,
       },
+      {
+        name: "tieredDataObject",
+        category: "data",
+        visible: false,
+      },
+      {
+        name: "tieredLineParams",
+        category: "data",
+        visible: false,
+      },
+      {
+        name: "defaultLineParams",
+        category: "data",
+        visible: false,
+      },
+      {
+        name: "globalTierRules",
+        category: "data",
+        visible: false,
+      },
+      {
+        name: "lineFunction",
+        category: "data",
+        visible: false,
+      },
     ]),
   );
 
@@ -520,6 +545,7 @@
     defaultLineParams,
     tieredDataObject,
     globalTierRules,
+    lineFunction,
   });
 
   /**
@@ -552,6 +578,8 @@
       derivedParametersValuesArray,
     ),
   );
+
+  $inspect(parametersObject);
 
   let parametersParsingErrorsObject = $state({});
 

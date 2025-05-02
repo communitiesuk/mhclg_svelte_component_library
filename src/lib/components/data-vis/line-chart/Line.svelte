@@ -40,7 +40,9 @@
     onMouseEnter,
     onMouseLeave,
     halo,
-    haloColor = "#d1aad1",
+    chartBackgroundColor,
+    invisibleStrokeWidth,
+    interactive,
     // onClickMarker,
     // onMouseEnterMarker,
     // onMouseLeaveMarker,
@@ -113,20 +115,18 @@
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
   {/if}
   {console.log(tier)}
-  {#if tier !== "invisibles"}
-    <path
-      d={lineFunction(dataArray)}
-      fill="none"
-      stroke="invisible"
-      stroke-width="20"
-      pointer-events="stroke"
-    ></path>
-  {/if}
+  <path
+    d={lineFunction(dataArray)}
+    fill="none"
+    stroke="invisible"
+    stroke-width={invisibleStrokeWidth}
+    pointer-events={interactive ? "stroke" : "none"}
+  ></path>
   {#if halo}
     <path
       d={lineFunction(dataArray)}
       fill={pathFillColor}
-      stroke={haloColor}
+      stroke={chartBackgroundColor}
       stroke-width={pathStrokeWidth * 1.2}
       stroke-dasharray={pathStrokeDashArray}
       pointer-events="none"

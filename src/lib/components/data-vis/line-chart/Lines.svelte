@@ -20,8 +20,6 @@
     lineHovered = $bindable(),
     lineClicked = $bindable(),
     chartHeight,
-    colors,
-    showAllData,
     defaultLineParams,
     globalTierRules,
     chartBackgroundColor,
@@ -114,7 +112,7 @@
           defaultLineParams,
           tier,
         )}
-        <Line {...lineAttributes} {tier} />
+        <Line {...lineAttributes} {tier} {chartBackgroundColor} />
       {/each}
     </g>
 

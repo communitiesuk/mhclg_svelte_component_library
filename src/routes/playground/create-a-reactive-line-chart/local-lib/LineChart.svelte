@@ -92,6 +92,8 @@
   let englandMedian = $state("E06000040");
   let similarAreas = $state("E07000224");
 
+  let interactiveLines = $state(["primary", "secondary"]);
+
   function handleClickOutside(event) {
     if (
       lineClicked != event.target.parentElement.dataset.id ||
@@ -145,7 +147,7 @@
 
   let dataArray = $derived(
     data.lines.map((el, i) => {
-      const tiers = ["invisibles"];
+      const tiers = [];
       el.areaCode == lineClicked
         ? tiers.push("clicked")
         : el.areaCode == lineHovered
@@ -167,27 +169,25 @@
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
+      interactive: interactiveLines.includes("secondary"),
     },
     primary: {
       halo: true,
       pathStrokeWidth: 5,
       pathStrokeColor: colors.darkgrey,
+      interactive: interactiveLines.includes("primary"),
     },
     clicked: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 7,
       halo: true,
+      interactive: true,
     },
     hover: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 5,
       halo: true,
-    },
-
-    invisibles: {
-      // listenForOnHoverEvents: true, //PASS THESE THROUGH TO LINE
-      // "pointer-events": "visibleStroke",
-      // pathStrokeWidth: 5,
+      interactive: true,
     },
   });
 
@@ -200,7 +200,7 @@
     onMouseEnter: onMouseEnter,
     onMouseLeave: onMouseLeave,
     haloColor: chartBackgroundColor,
-    "pointer-events": "none",
+    invisibleStrokeWidth: 20,
   });
 
   let defaultLineParams = $derived(
@@ -219,7 +219,11 @@
           if (key === "primary") {
             return primaryLines.includes(el.areaCode);
           }
-          if (key === "secondary" && showAllData) {
+          if (
+            key === "secondary" &&
+            showAllData &&
+            !primaryLines.includes(el.areaCode)
+          ) {
             return true;
           }
           if (key === "hover") {
@@ -246,7 +250,6 @@
 
   let globalTierRules = $derived({
     otherTier: {},
-    invisibles: { opacity: 0 },
     secondary: {
       opacity: nothingSelected ? 1 : 0.5,
     },

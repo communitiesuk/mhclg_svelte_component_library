@@ -4,11 +4,11 @@ import { join } from "node:path";
 const projectRoot = join(process.cwd()); // Assumes script run from project root
 
 const staticDir = join(projectRoot, "static/assets");
-const libDestDir = join(projectRoot, "src/lib/static/assets");
+const libDestDir = join(projectRoot, "src/lib/assets");
 
 const assetsToCopy = ["fonts", "images", "govuk_publishing_components"];
 
-console.log("Copying static assets to src/lib/static/assets...");
+console.log("Copying static assets to src/lib/assets...");
 
 // Ensure the base destination directory exists
 fs.ensureDirSync(libDestDir);

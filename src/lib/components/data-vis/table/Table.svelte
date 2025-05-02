@@ -91,6 +91,14 @@
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
 
+  <br />
+
+  <div class="legend">
+    <div class="good" style="background-color: {normToColor(1)}">Good</div>
+    <div class="good" style="background-color: {normToColor(0.5)}">Ok</div>
+    <div class="bad" style="background-color: {normToColor(0)}">Bad</div>
+  </div>
+
   <div class="buttons-container">
     <button
       class="ascending"
@@ -269,5 +277,15 @@
     font-size: 13px;
     font-style: italic;
     font-weight: 400;
+  }
+  .legend {
+    display: flex;
+    gap: 20px;
+    margin: 10px;
+  }
+
+  .legend > * {
+    border-radius: 10%;
+    padding: 6px;
   }
 </style>

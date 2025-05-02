@@ -159,36 +159,60 @@
   </div>
 
   <div class="table-container">
-    <table>
+    <table class="my-table">
       <caption></caption>
       <thead
         ><tr>
           <th>Area</th>
-          <th
-            >Household waste recycling rate (%) <br /><span
-              class="metric-explainer"
-              >The proportion of household waste sent for recyling</span
-            ></th
-          >
-          <th
-            >Recycling contamination rate (%) <br /><span
-              class="metric-explainer"
-              >The proportion of household waste sent for recyling that cannot
-              be recyled</span
-            ></th
-          >
-          <th
-            >Residual household waste (kg per household) <br /><span
-              class="metric-explainer"
-              >Non-recyclable waste per household, measured by weight</span
-            ></th
-          >
+          <th>
+            <div class="header">
+              <div class="header-top">
+                <div class="metric">Household recycling rate (%)</div>
+                <div class="sorting-button">
+                  <div>▲</div>
+                  <div>▼</div>
+                </div>
+              </div>
+              <div class="metric-explainer">
+                The proportion of household waste sent for recyling
+              </div>
+            </div>
+          </th>
+          <th>
+            <div class="header">
+              <div class="header-top">
+                <div class="metric">Recycling contamination rate (%)</div>
+                <div class="sorting-button">
+                  <div>▲</div>
+                  <div>▼</div>
+                </div>
+              </div>
+              <div class="metric-explainer">
+                The proportion of household waste sent for recyling that cannot
+                be recyled
+              </div>
+            </div>
+          </th>
+          <th>
+            <div class="header">
+              <div class="header-top">
+                <div class="metric">Household waste (kg)</div>
+                <div class="sorting-button">
+                  <div>▲</div>
+                  <div>▼</div>
+                </div>
+              </div>
+              <div class="metric-explainer">
+                Non-recyclable waste per household, measured by weight
+              </div>
+            </div>
+          </th>
         </tr></thead
       >
       <tbody>
         {#each localCopyOfData as row}
           <tr>
-            <td>{row["areaName"]}</td>
+            <td class="areas">{row["areaName"]}</td>
             <td style="background-color: {normToColor(row.recyclingNorm)}"
               >{row["Household waste recycling rate"]}</td
             >
@@ -234,6 +258,10 @@
 </div>
 
 <style>
+  * {
+    margin: 0px;
+    padding: 0px;
+  }
   [data-role="pokemon-card"] {
     opacity: 0.6;
     border: 2px solid transparent;
@@ -288,4 +316,71 @@
     border-radius: 10%;
     padding: 6px;
   }
+
+  td {
+    padding: 0.7rem 0.5rem;
+  }
+
+  th {
+    text-align: left;
+    font-size: medium;
+    vertical-align: top;
+  }
+
+  td {
+    text-align: right;
+  }
+  .areas {
+    font-size: medium;
+  }
+  .my-table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .my-table th:first-child,
+  .my-table td:first-child {
+    width: 19%;
+  }
+
+  .my-table th:nth-child(n + 2),
+  .my-table td:nth-child(n + 2) {
+    width: 27%;
+  }
+
+  .header {
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    justify-content: flex-start;
+  }
+
+  .header-top {
+    display: flex;
+    gap: 0px;
+  }
+
+  .sorting-button {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.8em;
+    line-height: 1; /* removes extra space between lines */
+    gap: 3px;
+  }
+
+  /* th.header {
+    display: grid;
+    grid-template: 1fr 1fr / 1fr 1fr;
+  }
+
+  .header > .metric {
+    grid-area: 1 1 2 2;
+  }
+  .header > .sorting-button {
+    grid-area: 1 2 2 3;
+  }
+
+  .header > .metric-explainer {
+    grid-area: 2 1 3 3;
+  } */
 </style>

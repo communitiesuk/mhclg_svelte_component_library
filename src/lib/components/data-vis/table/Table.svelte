@@ -106,7 +106,7 @@
       <thead
         ><tr>
           <th>Area</th>
-          <th>
+          <th title="The proportion of household waste sent for recyling">
             <div class="header">
               <div class="header-top">
                 <div class="metric">Household recycling rate (%)</div>
@@ -136,7 +136,9 @@
               </div>
             </div>
           </th>
-          <th>
+          <th
+            title="The proportion of household waste sent for recyling that cannot be recyled"
+          >
             <div class="header">
               <div class="header-top">
                 <div class="metric">Recycling contamination rate (%)</div>
@@ -167,7 +169,7 @@
               </div>
             </div>
           </th>
-          <th>
+          <th title="Non-recyclable waste per household, measured by weight">
             <div class="header">
               <div class="header-top">
                 <div class="metric">Household waste (kg)</div>
@@ -301,6 +303,9 @@
     text-align: left;
     font-size: medium;
     vertical-align: top;
+    position: sticky;
+    top: 0;
+    z-index: 10;
   }
 
   td {
@@ -316,12 +321,12 @@
 
   .my-table th:first-child,
   .my-table td:first-child {
-    width: 19%;
+    width: 25%;
   }
 
   .my-table th:nth-child(n + 2),
   .my-table td:nth-child(n + 2) {
-    width: 27%;
+    width: 25%;
   }
 
   .header {

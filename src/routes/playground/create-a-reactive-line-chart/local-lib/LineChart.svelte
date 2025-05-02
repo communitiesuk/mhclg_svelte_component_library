@@ -259,8 +259,6 @@
     hover: { opacity: 1 },
     clicked: { opacity: 1 },
   });
-
-  $inspect({ tieredDataObject });
 </script>
 
 <h3>Example Usage</h3>

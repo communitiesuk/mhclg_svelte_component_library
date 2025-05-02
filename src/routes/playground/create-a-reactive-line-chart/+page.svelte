@@ -1,4 +1,5 @@
 <script>
+  //@ts-nocheck
   import { page } from "$app/state";
   import PlaygroundDetails from "$lib/package-wrapping/PlaygroundDetails.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
@@ -16,20 +17,23 @@
     "title-first-word",
   );
 
-  let urlParams = $state({});
-  let urlParamsString = $derived(
-    Object.entries(urlParams)
-      .map(([key, value]) => `${key}=${value}`)
-      .join("&"),
-  );
-  let stateTracker = $state(page.url.searchParams);
-  for (const p of stateTracker) {
-    urlParams[p[0]] = p[1];
-  }
+  let urlParams = $derived(data.urlParams);
 
-  let selectedYear = $derived(urlParams["selectedYear"]);
-  // $inspect(selectedYear);
-  let selectedMetric = $state(data?.metrics[0]);
+  function updateUrlParams(value) {
+    urlParams[Object.keys(value)] = Object.values(value)[0];
+
+    let urlParamsString = new URLSearchParams(urlParams).toString();
+
+    goto("?" + urlParamsString, {
+      keepFocus: true,
+      noScroll: true,
+      replaceState: true,
+    });
+  }
+  let selectedMetric = $derived(
+    urlParams["selectedMetric"] ?? data?.metrics[0],
+  );
+  $inspect(selectedMetric);
 </script>
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
@@ -40,7 +44,12 @@
         class="top-level-container border-solid rounded-lg border-2 border-current p-2"
       >
         <div class="radio-container">
-          <Radio options={data.metrics} bind:value={selectedMetric}></Radio>
+          <Radio
+            options={data.metrics}
+            bind:value={selectedMetric}
+            {selectedMetric}
+            onchange={() => updateUrlParams({ selectedMetric })}
+          ></Radio>
         </div>
         <div class="svg-container mt-6">
           {#if selectedMetric}
@@ -48,7 +57,6 @@
               data={data.dataInFormatForLineChart.find(
                 (el) => el.metric === selectedMetric,
               )}
-              {selectedYear}
             ></LineChart>
           {/if}
         </div>

@@ -2,13 +2,19 @@ import { base } from "$app/paths";
 import type { LayoutLoad } from "./$types.js";
 import type { ComponentItem } from "./+layout.server.js";
 
-export const load: LayoutLoad = async (event) => {
-  const testData = await (
-    await event.fetch(`${base}/data/testData.json`)
-  ).json();
+export const load: LayoutLoad = async ({ fetch, url, data }) => {
+  let urlParams = {};
+
+  for (const p of url.searchParams) {
+    urlParams[p[0]] = p[1];
+  }
+
+  let urlParamsString = url.searchParams.toString();
+
+  const testData = await (await fetch(`${base}/data/testData.json`)).json();
 
   const svgFontDimensions = await (
-    await event.fetch(`${base}/data/svgFontDimensions.json`)
+    await fetch(`${base}/data/svgFontDimensions.json`)
   ).json();
 
   // Get server-loaded component data
@@ -17,7 +23,7 @@ export const load: LayoutLoad = async (event) => {
     uiComponents,
     componentSections,
     componentTree,
-  } = event.data;
+  } = data;
 
   let metrics = [
     ...new Set(
@@ -97,5 +103,8 @@ export const load: LayoutLoad = async (event) => {
     componentDirectories,
     uiComponents,
     componentTree,
+    urlParams,
+    urlParamsString,
+    url,
   };
 };

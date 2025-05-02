@@ -1,5 +1,5 @@
 <script>
-  let { options, value = $bindable() } = $props();
+  let { options, value = $bindable(), selectedMetric, ...rest } = $props();
 </script>
 
 <label>Choose a metric:</label>
@@ -13,6 +13,8 @@
         id={option.toLowerCase().replaceAll(" ", "_")}
         name="metric-selection"
         value={option}
+        checked={option == selectedMetric}
+        {...rest}
       />
       <label for={option.toLowerCase().replaceAll(" ", "_")}>{option}</label>
     </div>

@@ -12,7 +12,7 @@
 
   let pageInfo = page?.route.id.split("/");
 
-  let urlParams = $state(data.urlParams);
+  let urlParams = $derived(data.urlParams);
 
   function updateUrlParams(value) {
     urlParams[Object.keys(value)] = Object.values(value)[0];
@@ -22,6 +22,7 @@
     goto("?" + urlParamsString, {
       keepFocus: true,
       noScroll: true,
+      replaceState: true,
     });
   }
 
@@ -30,9 +31,9 @@
     "title-first-word",
   );
 
-  let selectedYear = $state(+(urlParams["selectedYear"] ?? data?.years[0]));
+  let selectedYear = $derived(+(urlParams["selectedYear"] ?? data?.years[0]));
   $inspect({ selectedYear });
-  let numberOfBars = $state(+(urlParams["numberOfBars"] ?? 10));
+  let numberOfBars = $derived(+(urlParams["numberOfBars"] ?? 10));
   $inspect(numberOfBars);
 
   let dataArray = $derived(

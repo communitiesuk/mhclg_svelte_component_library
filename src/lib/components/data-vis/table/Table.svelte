@@ -94,68 +94,10 @@
   <br />
 
   <div class="legend">
+    <div>Colour key:</div>
     <div class="good" style="background-color: {normToColor(1)}">Good</div>
     <div class="good" style="background-color: {normToColor(0.5)}">Ok</div>
     <div class="bad" style="background-color: {normToColor(0)}">Bad</div>
-  </div>
-
-  <div class="buttons-container">
-    <button
-      class="ascending"
-      onclick={() => {
-        updateSortState("areaName", "ascending");
-        sortFunction();
-      }}>▲</button
-    >
-    <button
-      class="descending"
-      onclick={() => {
-        updateSortState("areaName", "descending");
-        sortFunction();
-      }}>▼</button
-    >
-    <button
-      class="ascending"
-      onclick={() => {
-        updateSortState("Household waste recycling rate", "ascending");
-        sortFunction();
-      }}>▲</button
-    >
-    <button
-      class="descending"
-      onclick={() => {
-        updateSortState("Household waste recycling rate", "descending");
-        sortFunction();
-      }}>▼</button
-    >
-    <button
-      class="ascending"
-      onclick={() => {
-        updateSortState("Recycling contamination rate", "ascending");
-        sortFunction();
-      }}>▲</button
-    >
-    <button
-      class="descending"
-      onclick={() => {
-        updateSortState("Recycling contamination rate", "descending");
-        sortFunction();
-      }}>▼</button
-    >
-    <button
-      class="ascending"
-      onclick={() => {
-        updateSortState("Residual household waste", "ascending");
-        sortFunction();
-      }}>▲</button
-    >
-    <button
-      class="descending"
-      onclick={() => {
-        updateSortState("Residual household waste", "descending");
-        sortFunction();
-      }}>▼</button
-    >
   </div>
 
   <div class="table-container">
@@ -169,8 +111,24 @@
               <div class="header-top">
                 <div class="metric">Household recycling rate (%)</div>
                 <div class="sorting-button">
-                  <div>▲</div>
-                  <div>▼</div>
+                  <button
+                    onclick={() => {
+                      updateSortState(
+                        "Household waste recycling rate",
+                        "ascending",
+                      );
+                      sortFunction();
+                    }}>▲</button
+                  >
+                  <button
+                    onclick={() => {
+                      updateSortState(
+                        "Household waste recycling rate",
+                        "descending",
+                      );
+                      sortFunction();
+                    }}>▼</button
+                  >
                 </div>
               </div>
               <div class="metric-explainer">
@@ -183,8 +141,24 @@
               <div class="header-top">
                 <div class="metric">Recycling contamination rate (%)</div>
                 <div class="sorting-button">
-                  <div>▲</div>
-                  <div>▼</div>
+                  <button
+                    onclick={() => {
+                      updateSortState(
+                        "Recycling contamination rate",
+                        "ascending",
+                      );
+                      sortFunction();
+                    }}>▲</button
+                  >
+                  <button
+                    onclick={() => {
+                      updateSortState(
+                        "Recycling contamination rate",
+                        "descending",
+                      );
+                      sortFunction();
+                    }}>▼</button
+                  >
                 </div>
               </div>
               <div class="metric-explainer">
@@ -198,8 +172,18 @@
               <div class="header-top">
                 <div class="metric">Household waste (kg)</div>
                 <div class="sorting-button">
-                  <div>▲</div>
-                  <div>▼</div>
+                  <button
+                    onclick={() => {
+                      updateSortState("Residual household waste", "ascending");
+                      sortFunction();
+                    }}>▲</button
+                  >
+                  <button
+                    onclick={() => {
+                      updateSortState("Residual household waste", "descending");
+                      sortFunction();
+                    }}>▼</button
+                  >
                 </div>
               </div>
               <div class="metric-explainer">
@@ -281,10 +265,6 @@
     overflow-y: auto;
   }
 
-  button {
-    background-color: green;
-  }
-
   .ascending {
     background-color: #ff7f7f;
   }
@@ -295,12 +275,7 @@
     display: flex;
     gap: 20px;
   }
-  .buttons-container > button {
-    flex: 1;
-    padding: 0px;
-    color: white;
-    border-radius: 50%;
-  }
+
   .metric-explainer {
     font-size: 13px;
     font-style: italic;
@@ -308,6 +283,7 @@
   }
   .legend {
     display: flex;
+    justify-content: center;
     gap: 20px;
     margin: 10px;
   }
@@ -366,21 +342,8 @@
     font-size: 0.8em;
     line-height: 1; /* removes extra space between lines */
     gap: 3px;
+    justify-content: center;
+    background-color: lightgray;
+    border-radius: 20%;
   }
-
-  /* th.header {
-    display: grid;
-    grid-template: 1fr 1fr / 1fr 1fr;
-  }
-
-  .header > .metric {
-    grid-area: 1 1 2 2;
-  }
-  .header > .sorting-button {
-    grid-area: 1 2 2 3;
-  }
-
-  .header > .metric-explainer {
-    grid-area: 2 1 3 3;
-  } */
 </style>

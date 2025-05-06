@@ -3,6 +3,7 @@
   import { browser } from "$app/environment";
   import { onMount } from "svelte";
   import IconSearch from "$lib/icons/IconSearch.svelte";
+  import closeIconUrl from "$lib/assets/govuk_publishing_components/images/icon-close.svg?url";
 
   // SSR-safe HTML sanitizer: no-op on server
   let sanitize = $state<(html: string) => string>((html) => html);
@@ -216,6 +217,7 @@
             : undefined}
         autocorrect={correctionValue}
         autocapitalize={correctionValue}
+        style={`--cancel-icon: url("${closeIconUrl}")`}
       />
     </div>
     <div class="gem-c-search__item gem-c-search__submit-wrapper">
@@ -358,8 +360,7 @@
 
   .gem-c-search__input[type="search"]::-webkit-search-cancel-button {
     -webkit-appearance: none;
-    /* Use a relative path so Vite bundles the asset */
-    background-image: url(../../assets/govuk_publishing_components/images/icon-close.svg);
+    background-image: var(--cancel-icon);
     background-position: center;
     background-repeat: no-repeat;
     cursor: pointer;

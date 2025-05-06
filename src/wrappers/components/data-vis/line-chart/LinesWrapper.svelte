@@ -166,6 +166,7 @@
     line,
     area,
   } from "d3-shape";
+  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
 
   let { data } = $props();
 
@@ -306,9 +307,83 @@
         visible: false,
       },
       {
+        name: "curveFunction",
+        category: "lineFunction",
+        isProp: true,
+        options: [
+          "curveLinear",
+          "curveLinearClosed",
+          "curveCardinal",
+          "curveBasis",
+          "curveStep",
+          "curveMonotoneX",
+        ],
+      },
+      {
         name: "lineFunction",
-        category: "data",
-        visible: false,
+        category: "lineFunction",
+        isProp: true,
+        functionElements: {
+          functionAsString: `function (dataArray) {
+    return line()
+      .x((d) => xFunction(d.x))
+      .y((d) => yFunction(d.y))
+      .curve(
+        {
+          curveLinear: curveLinear,
+          curveLinearClosed: curveLinearClosed,
+          curveCardinal: curveCardinal,
+          curveBasis: curveBasis,
+          curveStep: curveStep,
+          curveMonotoneX: curveMonotoneX,
+        }[getValue("curveFunction")],
+      )(dataArray);
+  });`,
+        },
+      },
+      {
+        name: "yDomainLowerBound",
+        category: "yScale",
+        isProp: false,
+        value: Math.min(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.y),
+        ),
+      },
+      {
+        name: "yDomainUpperBound",
+        category: "yScale",
+        isProp: false,
+        value: Math.max(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.y),
+        ),
+      },
+      {
+        name: "xDomainLowerBound",
+        category: "xScale",
+        isProp: false,
+        value: Math.min(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.x),
+        ),
+      },
+      {
+        name: "xDomainUpperBound",
+        category: "xScale",
+        isProp: false,
+        value: Math.max(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.x),
+        ),
       },
     ]),
   );
@@ -456,22 +531,13 @@
       )(dataArray);
   });
 
-  let areaFunction = $derived(
-    area()
-      .y0((d) => yFunction(0))
-      .x((d) => xFunction(d.x))
-      .y1((d) => yFunction(d.y))
-      .curve(curveLinear),
-  );
-
   let basicLineParams = $derived({
-    lineFunction: lineFunction,
-    xFunction: xFunction,
-    yFunction: yFunction,
-    areaFunction: areaFunction,
-    onClick: onClick,
-    onMouseEnter: onMouseEnter,
-    onMouseLeave: onMouseLeave,
+    lineFunction: getValue(lineFunction),
+    xFunction: getValue(xFunction),
+    yFunction: getValue(yFunction),
+    onClick: getValue(onClick),
+    onMouseEnter: getValue(onMouseEnter),
+    onMouseLeave: getValue(onMouseLeave),
     invisibleStrokeWidth: 20,
   });
 
@@ -540,12 +606,12 @@
 
   let derivedParametersObject = $derived({
     derivedDataArray,
+    lineFunction,
     dataArray,
     tieredLineParams,
     defaultLineParams,
     tieredDataObject,
     globalTierRules,
-    lineFunction,
   });
 
   /**
@@ -578,8 +644,6 @@
       derivedParametersValuesArray,
     ),
   );
-
-  $inspect(parametersObject);
 
   let parametersParsingErrorsObject = $state({});
 

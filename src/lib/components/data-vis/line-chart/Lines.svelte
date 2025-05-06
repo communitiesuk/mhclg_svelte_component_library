@@ -14,7 +14,6 @@
     chartWidth,
     xFunction,
     yFunction,
-    areaFunction,
     labelClicked = $bindable(),
     labelHovered = $bindable(),
     lineHovered = $bindable(),

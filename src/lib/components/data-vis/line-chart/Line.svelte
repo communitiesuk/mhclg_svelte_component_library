@@ -21,7 +21,7 @@
     pathFillColor = "none",
     pathStrokeDashArray = "none",
     areaFillColor,
-    includeArea,
+    includeArea = false,
     includeMarkers = false,
     markerShape = "circle",
     markerRadius = 5,
@@ -29,6 +29,7 @@
     markerStroke = "white",
     markerStrokeWidth = 3,
     lineFunction,
+    areaFunction,
     curveFunction,
     xFunction,
     lineEnding = null,
@@ -114,7 +115,6 @@
   {#if includeArea}
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
   {/if}
-  {console.log(tier)}
   <path
     d={lineFunction(dataArray)}
     fill="none"

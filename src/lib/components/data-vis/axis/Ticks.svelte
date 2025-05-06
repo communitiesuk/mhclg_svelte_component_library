@@ -11,23 +11,24 @@
     axisFunction,
     values,
     numberOfTicks,
-    baseline,
-    setMax,
+    minTick,
+    maxTick,
     orientation,
     yearsInput,
     generateTicksNum,
+    yearFormating,
   } = $props();
 
   $inspect(ticksArray);
 
-  function generateTicks(data, numTicks, baseline, setTick) {
+  function generateTicks(data, numTicks, minTick, maxTick) {
     let minVal =
-      baseline !== null
-        ? new Decimal(baseline)
+      minTick !== null
+        ? new Decimal(minTick)
         : Decimal.min(...data.map((val) => new Decimal(val)));
     let maxVal =
-      setTick !== null
-        ? new Decimal(setTick)
+      maxTick !== null
+        ? new Decimal(maxTick)
         : Decimal.max(...data.map((val) => new Decimal(val)));
     let rangeVal = maxVal.minus(minVal);
 
@@ -63,7 +64,7 @@
 
   numberOfTicks = tickCount(chartWidth);
 
-  ticksArray = generateTicks(values, numberOfTicks, baseline, setMax);
+  ticksArray = generateTicks(values, numberOfTicks, minTick, maxTick);
   let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 </script>
 
@@ -103,7 +104,7 @@
             : "start"}
         fill="black"
       >
-        {yearsInput ? yearTicks[index] : `${prefix}${tick}${suffix}`}
+        {yearsInput ? yearTicks[index] : "${prefix{tick}{suffix}"}
       </text>
     </g>
   {/each}

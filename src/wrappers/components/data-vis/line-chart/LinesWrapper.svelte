@@ -532,12 +532,12 @@
   });
 
   let basicLineParams = $derived({
-    lineFunction: getValue(lineFunction),
-    xFunction: getValue(xFunction),
-    yFunction: getValue(yFunction),
-    onClick: getValue(onClick),
-    onMouseEnter: getValue(onMouseEnter),
-    onMouseLeave: getValue(onMouseLeave),
+    lineFunction,
+    xFunction,
+    yFunction,
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
     invisibleStrokeWidth: 20,
   });
 

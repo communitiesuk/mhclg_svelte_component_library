@@ -26,7 +26,7 @@
     "copy-static-assets-to-lib": "node scripts/copy-static-assets-to-lib.js",
     "copy-govuk-assets": "node scripts/copy-govuk-assets-to-static.js",
     "copy-moj-assets": "node scripts/copy-moj-assets-to-static.js",
-    "prepare": "npm run copy-govuk-assets",
+    "prepare": "",
     "create-component-and-wrapper-pages": "node scripts/create-component-and-wrapper-pages.js"
   },
   "files": [

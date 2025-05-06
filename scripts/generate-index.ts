@@ -56,7 +56,7 @@ const exports = svelteFilesInComponents
 // Write the file
 writeFileSync(
   indexFile,
-  `// this file is auto-generated — do not edit by hand\nimport "$lib/components_base.css";\n\n${exports.join("\n")}\n`,
+  `// this file is auto-generated — do not edit by hand\nimport "$lib/main.css";\n\n${exports.join("\n")}\n`,
 );
 
 let logMessage = `Generated ${indexFile} with ${exports.length} unique exports from ./components.`;

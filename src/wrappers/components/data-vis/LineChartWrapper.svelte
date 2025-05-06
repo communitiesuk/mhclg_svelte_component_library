@@ -169,7 +169,7 @@
       {
         name: "lineChartData",
         category: "Data",
-        visible: true,
+        visible: false,
         isProp: true,
       },
       {
@@ -178,6 +178,8 @@
         visible: true,
         isProp: true,
         value: true,
+        description:
+          "Whether to show all data in the background, in addition to primary lines",
       },
       {
         name: "interactiveLines",
@@ -185,6 +187,8 @@
         visible: true,
         isProp: true,
         value: ["primary", "secondary"],
+        description:
+          "A list of line types that should handle hover and click interactions.",
       },
       {
         name: "chartBackgroundColor",
@@ -192,6 +196,8 @@
         visible: true,
         isProp: true,
         value: "#f5f5f5",
+        description:
+          "Background color of the chart. Also used for the 'halo' outline given to lines.",
       },
     ]),
   );

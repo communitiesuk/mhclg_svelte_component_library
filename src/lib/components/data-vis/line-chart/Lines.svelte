@@ -111,7 +111,12 @@
           defaultLineParams,
           tier,
         )}
-        <Line {...lineAttributes} {tier} {chartBackgroundColor} />
+        <Line
+          {...lineAttributes}
+          {tier}
+          {chartBackgroundColor}
+          {lineFunction}
+        />
       {/each}
     </g>
 

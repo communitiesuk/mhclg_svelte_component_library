@@ -385,6 +385,56 @@
             .map((el) => el.x),
         ),
       },
+      {
+        name: "xFunction",
+        category: "xScale",
+        functionElements: {
+          functionAsString: `function (number) {
+  return {
+    "scaleLinear()": scaleLinear(),
+    "scaleLog()": scaleLog(),
+    "scaleTime()": scaleTime(),
+  }[getValue("xScaleType")]
+    .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
+    .range([
+      0,
+      demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
+    ])(number);
+});`,
+        },
+      },
+      {
+        name: "yFunction",
+        category: "yScale",
+        functionElements: {
+          functionAsString: `function (number) {
+    return {
+      "scaleLinear()": scaleLinear(),
+      "scaleLog()": scaleLog(),
+      "scaleTime()": scaleTime(),
+    }[getValue("yScaleType")]
+      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
+      .range([
+        getValue("svgHeight") -
+          getValue("paddingTop") -
+          getValue("paddingBottom"),
+        0,
+      ])(number);
+  });`,
+        },
+      },
+      {
+        name: "yScaleType",
+        category: "yScale",
+        isProp: false,
+        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
+      },
+      {
+        name: "xScaleType",
+        category: "xScale",
+        isProp: false,
+        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
+      },
     ]),
   );
 

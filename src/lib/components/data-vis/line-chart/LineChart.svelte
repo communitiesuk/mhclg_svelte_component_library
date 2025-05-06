@@ -8,12 +8,11 @@
   import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
 
-  let { data } = $props();
+  let { lineChartData, interactiveLines, showAllData, chartBackgroundColor } =
+    $props();
 
   let svgWidth = $state(),
     svgHeight = 600;
-
-  let chartBackgroundColor = "#f5f5f5";
 
   /*let staticMargin = { top: 10, right: 20, bottom: 20, left: 10 };
   let dynamicMargin = $derived({ top: 0, right: 0, bottom: 0, left: 0 });
@@ -28,7 +27,7 @@
   let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
   let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
 
-  let flatData = $derived(data.lines.map((el) => el.data).flat());
+  let flatData = $derived(lineChartData.lines.map((el) => el.data).flat());
 
   let allYears = $derived(flatData.map((el) => el.x));
 
@@ -85,14 +84,11 @@
     labelHovered,
     labelClicked,
   ]);
-  $inspect({ selectedLine });
 
   let nothingSelected = $derived(selectedLine.every((item) => item == null));
   let selectedAreaCode = $state("E09000033");
   let englandMedian = $state("E06000040");
   let similarAreas = $state("E07000224");
-
-  let interactiveLines = $state(["primary", "secondary"]);
 
   function handleClickOutside(event) {
     if (
@@ -131,8 +127,6 @@
     base: [colors.coral, colors.fuschia, colors.purple],
   });
 
-  let showAllData = true;
-
   let lookupObj = $derived({
     [englandMedian]: colors.lightblue,
     [selectedAreaCode]: colors.teal,
@@ -146,7 +140,7 @@
   }
 
   let dataArray = $derived(
-    data.lines.map((el, i) => {
+    lineChartData.lines.map((el, i) => {
       const tiers = [];
       el.areaCode == lineClicked
         ? tiers.push("clicked")
@@ -260,30 +254,6 @@
     clicked: { opacity: 1 },
   });
 </script>
-
-<h3>Example Usage</h3>
-<pre><code use:highlight
-    >{`
-<script>
-  import LineChart from './LineChart.svelte';
-  
-  const data = {
-    lines: [
-      {
-        areaCode: "E07000223",
-        data: [
-          { x: 2019, y: 45 },
-          { x: 2020, y: 72 },
-          { x: 2021, y: 89 }
-        ]
-      }
-    ]
-  };
-<\/script>
-
-<LineChart {data} />
-`}</code
-  ></pre>
 
 <div bind:clientWidth={svgWidth}>
   <svg

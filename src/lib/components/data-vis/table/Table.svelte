@@ -84,6 +84,12 @@
   const colorKey = Object.entries({ Good: 1, Ok: 0.5, Bad: 0 });
 
   $inspect(colorKey);
+
+  const metricDirections = {
+    "Household waste recycling rate": "higher-is-better",
+    "Recycling contamination rate": "lower-is-better",
+    "Residual household waste": "lower-is-better",
+  };
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -194,21 +200,21 @@
         {#each localCopyOfData as row}
           <tr>
             <td class="areas">{row["areaName"]}</td>
-            <td
-              style="background-color: {normToColor(
-                row[metrics[0] + '__normalised'],
-              )}">{row[metrics[0]]}</td
-            >
-            <td
-              style="background-color: {normToColorReverse(
-                row[metrics[1] + '__normalised'],
-              )}">{row[metrics[1]]}</td
-            >
-            <td
-              style="background-color: {normToColorReverse(
-                row[metrics[2] + '__normalised'],
-              )}">{row[metrics[2]]}</td
-            >
+            {#each metrics as metric}
+              {#if metricDirections[metric] === "higher-is-better"}
+                <td
+                  style="background-color: {normToColor(
+                    row[metric + '__normalised'],
+                  )}">{row[metric]}</td
+                >
+              {:else}
+                <td
+                  style="background-color: {normToColorReverse(
+                    row[metric + '__normalised'],
+                  )}">{row[metric]}</td
+                >
+              {/if}
+            {/each}
           </tr>
         {/each}
       </tbody>

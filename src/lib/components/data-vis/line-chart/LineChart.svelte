@@ -9,6 +9,20 @@
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
 
   let {
+    getColor,
+    tieredLineParams,
+    colors,
+    xFunction,
+    yFunction,
+    lineFunction,
+    lineClicked = $bindable(),
+    svgWidth = $bindable(500),
+    onClick,
+    svgHeight = 500,
+    paddingTop = 50,
+    paddingBottom = 50,
+    paddingLeft = 50,
+    paddingRight = 150,
     lineChartData,
     interactiveLines,
     showAllData,
@@ -16,8 +30,8 @@
     primaryLines,
   } = $props();
 
-  let svgWidth = $state(),
-    svgHeight = 600;
+  /*let svgWidth = $state(),
+    svgHeight = 600;*/
 
   /*let staticMargin = { top: 10, right: 20, bottom: 20, left: 10 };
   let dynamicMargin = $derived({ top: 0, right: 0, bottom: 0, left: 0 });
@@ -27,35 +41,12 @@
     bottom: staticMargin.bottom + dynamicMargin.bottom,
     left: staticMargin.left + dynamicMargin.left,
   });*/
-  let totalMargin = { top: 20, right: 150, bottom: 40, left: 50 };
 
-  let chartWidth = $derived(svgWidth - totalMargin.left - totalMargin.right);
-  let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);
+  /*let chartWidth = $derived(svg - totalMargin.left - totalMargin.right);
+  let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);*/
 
-  let flatData = $derived(lineChartData.lines.map((el) => el.data).flat());
-
-  let allYears = $derived(flatData.map((el) => el.x));
-
-  let yearsMinMax = $derived([Math.min(...allYears), Math.max(...allYears)]);
-
-  let xFunction = $derived(
-    scaleLinear().domain(yearsMinMax).range([0, chartWidth]),
-  );
-
-  let allValues = $derived(flatData.map((el) => el.y));
-
-  let valuesMinMax = $derived([Math.min(...allValues), Math.max(...allValues)]);
-
-  let yFunction = $derived(
-    scaleLinear().domain(valuesMinMax).range([chartHeight, 0]),
-  );
-
-  let lineFunction = $derived(
-    line()
-      .x((d) => xFunction(d.x))
-      .y((d) => yFunction(d.y))
-      .curve(curveLinear),
-  );
+  let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
+  let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
 
   let areaFunction = $derived(
     area()
@@ -65,9 +56,6 @@
       .curve(curveLinear),
   );
 
-  let onClick = (event, dataArray, dataId) => {
-    lineClicked = dataId;
-  };
   let onMouseEnter = (event, dataArray, dataId) => {
     if (lineHovered !== dataId) {
       lineHovered = dataId;
@@ -80,7 +68,7 @@
   };
 
   let lineHovered = $state();
-  let lineClicked = $state();
+
   let labelHovered = $state();
   let labelClicked = $state();
   let selectedLine = $derived([
@@ -91,9 +79,6 @@
   ]);
 
   let nothingSelected = $derived(selectedLine.every((item) => item == null));
-  let selectedAreaCode = $state("E09000033");
-  let englandMedian = $state("E06000040");
-  let similarAreas = $state("E07000224");
 
   function handleClickOutside(event) {
     if (
@@ -103,35 +88,6 @@
       labelClicked = null;
       lineClicked = null;
     }
-  }
-
-  let colors = {
-    teal: "#408A7B",
-    lightblue: "#509EC8",
-    darkblue: "#335F91",
-    ochre: "#BA7F30",
-    coral: "#E46B6C",
-    fuschia: "#BB2765",
-    purple: "#736CAC",
-    lightgrey: "#A0A0A0",
-    darkgrey: "#636363",
-    black: "#161616",
-  };
-
-  let colorPalette = $derived({
-    base: [colors.coral, colors.fuschia, colors.purple],
-  });
-
-  let lookupObj = $derived({
-    [englandMedian]: colors.lightblue,
-    [selectedAreaCode]: colors.teal,
-    [similarAreas]: colors.darkblue,
-  });
-
-  function getColor(areaCode, lookupObj, i) {
-    return (
-      lookupObj[areaCode] ?? colorPalette.base[i % colorPalette.base.length]
-    );
   }
 
   let dataArray = $derived(
@@ -150,35 +106,6 @@
       };
     }),
   );
-
-  let tieredLineParams = $derived({
-    otherTier: {},
-    secondary: {
-      halo: false,
-      pathStrokeColor: colors.black,
-      pathStrokeWidth: 1,
-      opacity: 0.05,
-      interactive: interactiveLines.includes("secondary"),
-    },
-    primary: {
-      halo: true,
-      pathStrokeWidth: 5,
-      pathStrokeColor: colors.darkgrey,
-      interactive: interactiveLines.includes("primary"),
-    },
-    clicked: {
-      pathStrokeColor: colors.ochre,
-      pathStrokeWidth: 7,
-      halo: true,
-      interactive: true,
-    },
-    hover: {
-      pathStrokeColor: colors.ochre,
-      pathStrokeWidth: 5,
-      halo: true,
-      interactive: true,
-    },
-  });
 
   let basicLineParams = $derived({
     lineFunction: lineFunction,
@@ -226,11 +153,7 @@
           ...el,
           includeMarkers: key === "primary" ? true : false,
           pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
-            ? getColor(
-                el.areaCode,
-                lookupObj,
-                primaryLines.indexOf(el.areaCode),
-              )
+            ? getColor(el.areaCode, primaryLines.indexOf(el.areaCode))
             : null,
         }));
       return acc;
@@ -248,23 +171,24 @@
     hover: { opacity: 1 },
     clicked: { opacity: 1 },
   });
+
+  $inspect(svgWidth);
 </script>
 
 <div bind:clientWidth={svgWidth}>
   <svg
     onclick={handleClickOutside}
-    width={svgWidth ?? 400}
+    width={svgWidth}
     height={svgHeight}
     style="background-color: {chartBackgroundColor}"
   >
     {#if svgWidth}
-      <g transform="translate({totalMargin.left},{totalMargin.top})">
+      <g transform="translate({paddingLeft},{paddingTop})">
         <g data-role="lines-group">
           <Lines
             {tieredDataObject}
             {dataArray}
             {lineFunction}
-            {selectedAreaCode}
             {chartWidth}
             {xFunction}
             {yFunction}
@@ -273,7 +197,6 @@
             bind:lineHovered
             bind:lineClicked
             {chartHeight}
-            {colorPalette}
             {defaultLineParams}
             {showAllData}
             {globalTierRules}

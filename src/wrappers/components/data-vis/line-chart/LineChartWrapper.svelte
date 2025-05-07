@@ -92,7 +92,10 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import LineChart from "$lib/components/data-vis/line-chart/LineChart.svelte";
-  import Examples from "./line chart/Examples.svelte";
+  import Examples from "./line-chart/Examples.svelte";
+
+  import { scaleLinear } from "d3-scale";
+  import { curveLinear, line, area } from "d3-shape";
 
   let { data } = $props();
 
@@ -119,6 +122,21 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
+  let colors = $state({
+    teal: "#408A7B",
+    lightblue: "#509EC8",
+    darkblue: "#335F91",
+    ochre: "#BA7F30",
+    coral: "#E46B6C",
+    fuschia: "#BB2765",
+    purple: "#736CAC",
+    lightgrey: "#A0A0A0",
+    darkgrey: "#636363",
+    black: "#161616",
+  });
+
+  let lineClicked = $state();
+  let svgWidth = $state(500);
 
   /**
    * ! Step 3 - Add your props
@@ -158,8 +176,89 @@
    * ?      <isRequired> - (optional, default = false) - Should be set to true for any props which the component will not functionally properly without (e.g. props with no default value, props which will cause erros if undefined).
    *
    */
+
+  $inspect(lineClicked);
+
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
+      {
+        name: "colors",
+        category: "customisingLines",
+        value: colors,
+      },
+      {
+        name: "lineClicked",
+        category: "lineEvents",
+        isBinded: true,
+        value: lineClicked,
+      },
+      {
+        name: "onClick",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function(event, dataArray, dataId) {
+    lineClicked = dataId;
+  };`,
+        },
+        value: function (event, dataArray, dataId) {
+          lineClicked = dataId;
+        },
+      },
+      {
+        name: "tieredLineParams",
+        category: "customisingLines",
+      },
+      {
+        name: "getColor",
+        category: "customisingLines",
+        functionElements: {
+          functionAsString: `function (areaCode, i) {
+    let colorsArray = [colors.coral, colors.fuschia, colors.purple];
+
+    return (
+      {
+        [englandMedian]: colors.lightblue,
+        [selectedAreaCode]: colors.teal,
+        [similarAreas]: colors.darkblue,
+      }[areaCode] ?? colorsArray[i % colorsArray.length]
+    );
+  };`,
+        },
+      },
+      {
+        name: "basicLineParams",
+        category: "customisingLines",
+      },
+      {
+        name: "paddingTop",
+        category: "dimensions",
+        value: 50,
+      },
+      {
+        name: "paddingRight",
+        category: "dimensions",
+        value: 150,
+      },
+      {
+        name: "paddingBottom",
+        category: "dimensions",
+        value: 50,
+      },
+      {
+        name: "paddingLeft",
+        category: "dimensions",
+        value: 50,
+      },
+      {
+        name: "svgHeight",
+        category: "dimensions",
+        value: 500,
+      },
+      {
+        name: "svgWidth",
+        category: "dimensions",
+        value: svgWidth,
+      },
       {
         name: "selectedMetric",
         category: "Data",
@@ -218,6 +317,18 @@
         description:
           "Background color of the chart. Also used for the 'halo' outline given to lines.",
       },
+      {
+        name: "xFunction",
+        category: "xScale",
+      },
+      {
+        name: "yFunction",
+        category: "yScale",
+      },
+      {
+        name: "lineFunction",
+        category: "lineFunction",
+      },
     ]),
   );
   /**
@@ -271,7 +382,99 @@
       (el) => el.metric === getValue("selectedMetric"),
     ),
   );
-  let derivedParametersObject = $derived({ lineChartData });
+
+  let tieredLineParams = $derived({
+    otherTier: {},
+    secondary: {
+      halo: false,
+      pathStrokeColor: colors.black,
+      pathStrokeWidth: 1,
+      opacity: 0.05,
+      interactive: getValue("interactiveLines").includes("secondary"),
+    },
+    primary: {
+      halo: true,
+      pathStrokeWidth: 5,
+      pathStrokeColor: colors.darkgrey,
+      interactive: getValue("interactiveLines").includes("primary"),
+    },
+    clicked: {
+      pathStrokeColor: colors.ochre,
+      pathStrokeWidth: 7,
+      halo: true,
+      interactive: true,
+    },
+    hover: {
+      pathStrokeColor: colors.ochre,
+      pathStrokeWidth: 5,
+      halo: true,
+      interactive: true,
+    },
+  });
+
+  let getColor = function (areaCode, i) {
+    let colorsArray = [colors.coral, colors.fuschia, colors.purple];
+
+    return (
+      {
+        [englandMedian]: colors.lightblue,
+        [selectedAreaCode]: colors.teal,
+        [similarAreas]: colors.darkblue,
+      }[areaCode] ?? colorsArray[i % colorsArray.length]
+    );
+  };
+
+  let xFunction = $derived(function (number) {
+    return scaleLinear()
+      .domain([2015, 2023])
+      .range([
+        0,
+        svgWidth - getValue("paddingLeft") - getValue("paddingRight"),
+      ])(number);
+  });
+
+  let yFunction = $derived(function (number) {
+    return scaleLinear()
+      .domain([0, 100])
+      .range([
+        getValue("svgHeight") -
+          getValue("paddingTop") -
+          getValue("paddingBottom"),
+        0,
+      ])(number);
+  });
+
+  let lineFunction = $derived(
+    line()
+      .x((d) => xFunction(d.x))
+      .y((d) => yFunction(d.y))
+      .curve(curveLinear),
+  );
+
+  let basicLineParams = $derived({
+    xFunction,
+    yFunction,
+    lineFunction,
+    /*lineFunction: lineFunction,
+    xFunction: xFunction,
+    yFunction: yFunction,
+    areaFunction: areaFunction,
+    onClick: onClick,
+    onMouseEnter: onMouseEnter,
+    onMouseLeave: onMouseLeave,*/
+    haloColor: getValue("chartBackgroundColor"),
+    invisibleStrokeWidth: 20,
+  });
+
+  let derivedParametersObject = $derived({
+    xFunction,
+    yFunction,
+    lineFunction,
+    lineChartData,
+    tieredLineParams,
+    getColor,
+    basicLineParams,
+  });
 
   /**
    * DONOTTOUCH *
@@ -361,8 +564,8 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-8">
-    <LineChart {...parametersObject}></LineChart>
+  <div class="p-8" b>
+    <LineChart {...parametersObject} bind:lineClicked bind:svgWidth></LineChart>
   </div>
 {/snippet}
 

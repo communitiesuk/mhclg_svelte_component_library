@@ -10,7 +10,6 @@
     tieredDataObject,
     dataArray,
     lineFunction,
-    selectedAreaCode,
     chartWidth,
     xFunction,
     yFunction,
@@ -24,6 +23,8 @@
     chartBackgroundColor = "#fafafa",
     nothingSelected,
   } = $props();
+
+  $inspect(tieredDataObject);
 
   let bounds = $state([0, chartHeight]);
 

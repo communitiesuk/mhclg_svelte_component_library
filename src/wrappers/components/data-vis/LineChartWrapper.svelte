@@ -96,6 +96,10 @@
 
   let { data } = $props();
 
+  let selectedAreaCode = $state("E09000033");
+  let englandMedian = $state("E06000040");
+  let similarAreas = $state("E07000224");
+
   /**
    * DONOTTOUCH *
    * ? 		uses the page url to identify the name of the component and the folder it belongs to (folder is only used by snippets exported to the homepage to link back to this page).
@@ -189,6 +193,21 @@
         value: ["primary", "secondary"],
         description:
           "A list of line types that should handle hover and click interactions.",
+      },
+      {
+        name: "primaryLines",
+        category: "Data",
+        isProp: true,
+        value: [
+          "E07000224",
+          "E07000225",
+          "E07000226",
+          "E07000228",
+          englandMedian,
+          similarAreas,
+        ],
+        description:
+          "Key lines, displayed in different colours. Specify in order of importance.",
       },
       {
         name: "chartBackgroundColor",

@@ -8,8 +8,13 @@
   import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
 
-  let { lineChartData, interactiveLines, showAllData, chartBackgroundColor } =
-    $props();
+  let {
+    lineChartData,
+    interactiveLines,
+    showAllData,
+    chartBackgroundColor,
+    primaryLines,
+  } = $props();
 
   let svgWidth = $state(),
     svgHeight = 600;
@@ -112,16 +117,6 @@
     darkgrey: "#636363",
     black: "#161616",
   };
-
-  let primaryLines = $derived([
-    "E07000224",
-    "E07000225",
-    "E07000226",
-    "E07000228",
-    englandMedian,
-    similarAreas,
-    selectedAreaCode,
-  ]);
 
   let colorPalette = $derived({
     base: [colors.coral, colors.fuschia, colors.purple],

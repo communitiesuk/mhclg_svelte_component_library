@@ -21,7 +21,7 @@
     chartHeight,
     defaultLineParams,
     globalTierRules,
-    chartBackgroundColor,
+    chartBackgroundColor = "#fafafa",
     nothingSelected,
   } = $props();
 
@@ -103,7 +103,6 @@
 
 {#each Object.keys(tieredDataObject) as tier}
   <g id={tier}>
-    {console.log(tier)}
     <g opacity={globalTierRules[tier].opacity}>
       {#each tieredDataObject[tier] as line, i}
         {@const lineAttributes = generateLineAttributes(

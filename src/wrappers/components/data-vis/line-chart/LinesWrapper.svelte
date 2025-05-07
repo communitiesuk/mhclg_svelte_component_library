@@ -241,7 +241,6 @@
         name: "primaryLines",
         category: "data",
         isProp: true,
-        options: data.areas,
         value: [
           "E07000224",
           "E07000225",
@@ -434,6 +433,36 @@
         category: "xScale",
         isProp: false,
         options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
+      },
+      {
+        name: "paddingTop",
+        category: "dimensions",
+        isProp: false,
+        value: 50,
+      },
+      {
+        name: "paddingRight",
+        category: "dimensions",
+        isProp: false,
+        value: 50,
+      },
+      {
+        name: "paddingBottom",
+        category: "dimensions",
+        isProp: false,
+        value: 50,
+      },
+      {
+        name: "paddingLeft",
+        category: "dimensions",
+        isProp: false,
+        value: 50,
+      },
+      {
+        name: "svgHeight",
+        category: "dimensions",
+        isProp: false,
+        value: 500,
       },
     ]),
   );
@@ -753,7 +782,9 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <Lines {...parametersObject}></Lines>
+    <svg width={demoScreenWidth} height={getValue("svgHeight")}>
+      <Lines {...parametersObject}></Lines>
+    </svg>
   </div>
 {/snippet}
 

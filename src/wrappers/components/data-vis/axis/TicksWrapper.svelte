@@ -251,15 +251,15 @@
       {
         name: "prefix",
         category: "customisations",
-        value: "number of",
+        value: "",
       },
       {
         name: "suffix",
         category: "customisations",
-        value: "%",
+        value: "",
       },
-      { name: "baseline", category: "customisations", value: 0 },
-      { name: "setMax", category: "customisations", value: 100 },
+      { name: "minTick", category: "formatting", value: 0 },
+      { name: "maxTick", category: "formatting", value: 100 },
       { name: "generateTicksNum", category: "customisations", value: false },
       { name: "yearsInput", category: "customisations", value: false },
       {
@@ -279,6 +279,13 @@
       {
         name: "orientation",
         category: "customisations",
+      },
+      {
+        name: "yearFormating",
+        category: "formatting",
+        functionElements: {
+          functionAsString: `function yearsFormat(ticks) {return ticks.map((tick) => "FY {tick % 100}-{(tick % 100) + 1}");}`,
+        },
       },
     ]),
   );
@@ -356,7 +363,7 @@
       "scaleLinear()": scaleLinear(),
       "scaleLog()": scaleLog(),
       "scaleTime()": scaleTime(),
-    }[getValue("yScaleType")]
+    }[getValue("xyScaleType")]
       .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
       .range([
         getValue("svgHeight") -
@@ -375,11 +382,16 @@
     orientation?.axis === "x" ? xFunction : yFunction,
   );
 
+  let yearFormating = $derived(function yearsFormat(ticks) {
+    return ticks;
+  });
+
   let derivedParametersObject = $derived({
     chartWidth,
     chartHeight,
     orientation,
     axisFunction,
+    yearFormating,
   });
   /**
    * DONOTTOUCH *

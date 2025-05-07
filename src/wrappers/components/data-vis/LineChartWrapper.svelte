@@ -91,18 +91,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Line from "$lib/components/data-vis/line-chart/Line.svelte";
-  import {
-    curveBasis,
-    curveCardinal,
-    curveLinear,
-    curveLinearClosed,
-    curveMonotoneX,
-    curveStep,
-    line,
-    area,
-  } from "d3-shape";
-  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
+  import LineChart from "$lib/components/data-vis/line-chart/LineChart.svelte";
+  import Examples from "./line chart/Examples.svelte";
 
   let { data } = $props();
 
@@ -167,235 +157,50 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "includeArea",
-        category: "Overall styling",
-        isProp: true,
-        value: false,
-      },
-      {
-        name: "halo",
-        category: "Overall styling",
-        isProp: true,
-        value: false,
-      },
-      {
-        name: "areaFillColor",
-        category: "Overall styling",
-        isProp: true,
-        value: "lightgrey",
-        visible: { name: "includeArea", value: true },
-      },
-      {
-        name: "xFunction",
-        category: "xScale",
-        functionElements: {
-          functionAsString: `function (number) {
-  return {
-    "scaleLinear()": scaleLinear(),
-    "scaleLog()": scaleLog(),
-    "scaleTime()": scaleTime(),
-  }[getValue("xScaleType")]
-    .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
-    .range([
-      0,
-      demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
-    ])(number);
-});`,
-        },
-      },
-      {
-        name: "yScaleType",
-        category: "yScale",
-        isProp: false,
-        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
-      },
-      {
-        name: "xScaleType",
-        category: "xScale",
-        isProp: false,
-        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
-      },
-      {
-        name: "yFunction",
-        category: "yScale",
-        functionElements: {
-          functionAsString: `function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("yScaleType")]
-      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
-      .range([
-        getValue("svgHeight") -
-          getValue("paddingTop") -
-          getValue("paddingBottom"),
-        0,
-      ])(number);
-  });`,
-        },
-      },
-      {
-        name: "curveFunction",
-        category: "lineFunction",
-        isProp: true,
+        name: "selectedMetric",
+        category: "Data",
+        visible: true,
         options: [
-          "curveLinear",
-          "curveLinearClosed",
-          "curveCardinal",
-          "curveBasis",
-          "curveStep",
-          "curveMonotoneX",
+          "Household waste recycling rate",
+          "Recycling contamination rate",
+          "Residual household waste",
         ],
       },
       {
-        name: "lineFunction",
-        category: "lineFunction",
-        functionElements: {
-          functionAsString: `function (dataArray) {
-    return line()
-      .x((d) => xFunction(d.x))
-      .y((d) => yFunction(d.y))
-      .curve(
-        {
-          curveLinear: curveLinear,
-          curveLinearClosed: curveLinearClosed,
-          curveCardinal: curveCardinal,
-          curveBasis: curveBasis,
-          curveStep: curveStep,
-          curveMonotoneX: curveMonotoneX,
-        }[getValue("curveFunction")],
-      )(dataArray);
-  });`,
-        },
-      },
-      {
-        name: "dataSource",
-        category: "data",
-        isProp: false,
-        propType: "radio",
-        options: ["from base data", "custom"],
-      },
-      {
-        name: "metric",
-        category: "data",
-        isProp: false,
-        options: data.metrics,
-        visible: { name: "dataSource", value: "from base data" },
-      },
-      {
-        name: "area",
-        category: "data",
-        isProp: false,
-        options: data.areas,
-        visible: { name: "dataSource", value: "from base data" },
-      },
-      {
-        name: "customDataArray",
-        category: "data",
-        isProp: false,
-        visible: { name: "dataSource", value: "custom" },
-        value: data.dataInFormatForLineChart[0].lines[0].data.map((el) => ({
-          x: el.x,
-          y: el.y,
-        })),
-      },
-      {
-        name: "derivedDataArray",
-        category: "data",
-        isProp: false,
-        visible: { name: "dataSource", value: "from base data" },
-        propType: "fixed",
-        description: {
-          markdown: true,
-          arr: [
-            "Calculated here based on the selected metric and area.",
-            "Passed to the Line component as <span class='font-bold'>dataArray</span> when dataSource is set to <span class='italic'>'from base data'</span>.",
-          ],
-        },
-      },
-      {
-        name: "dataArray",
-        category: "data",
+        name: "lineChartData",
+        category: "Data",
         visible: false,
+        isProp: true,
       },
       {
-        name: "xDomainLowerBound",
-        category: "xScale",
-        isProp: false,
-        value: Math.min(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.x),
-        ),
+        name: "showAllData",
+        category: "Data",
+        visible: true,
+        isProp: true,
+        value: true,
+        description:
+          "Whether to show all data in the background, in addition to primary lines",
       },
       {
-        name: "xDomainUpperBound",
-        category: "xScale",
-        isProp: false,
-        value: Math.max(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.x),
-        ),
+        name: "interactiveLines",
+        category: "Interaction",
+        visible: true,
+        isProp: true,
+        value: ["primary", "secondary"],
+        description:
+          "A list of line types that should handle hover and click interactions.",
       },
       {
-        name: "paddingTop",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingRight",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingBottom",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingLeft",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "svgHeight",
-        category: "dimensions",
-        isProp: false,
-        value: 500,
-      },
-      {
-        name: "yDomainLowerBound",
-        category: "yScale",
-        isProp: false,
-        value: Math.min(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.y),
-        ),
-      },
-      {
-        name: "yDomainUpperBound",
-        category: "yScale",
-        isProp: false,
-        value: Math.max(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.y),
-        ),
+        name: "chartBackgroundColor",
+        category: "Aesthetics",
+        visible: true,
+        isProp: true,
+        value: "#f5f5f5",
+        description:
+          "Background color of the chart. Also used for the 'halo' outline given to lines.",
       },
     ]),
   );
-
   /**
    * DONOTTOUCH *
    * && 		Defining functions. generateValuesArray is used to create our arrays which track the $state() and $derived() props. getValue can used to access a reactive value from the $state() based on the prop name.
@@ -442,70 +247,12 @@
    *  &&    You must then also combine them into the derivedParametersObject below so that they are passed to the component.
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
-
-  let derivedDataArray = $derived(
-    data.dataInFormatForLineChart
-      .find((el) => el.metric === getValue("metric"))
-      .lines.find((el) => el.areaCode === getValue("area")).data,
+  let lineChartData = $derived(
+    data.dataInFormatForLineChart.find(
+      (el) => el.metric === getValue("selectedMetric"),
+    ),
   );
-
-  let dataArray = $derived(
-    getValue("dataSource") === "from base data"
-      ? derivedDataArray
-      : JSON.parse(getValue("customDataArray")),
-  );
-
-  let xFunction = $derived(function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("xScaleType")]
-      .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
-      .range([
-        0,
-        demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
-      ])(number);
-  });
-
-  let yFunction = $derived(function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("yScaleType")]
-      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
-      .range([
-        getValue("svgHeight") -
-          getValue("paddingTop") -
-          getValue("paddingBottom"),
-        0,
-      ])(number);
-  });
-
-  let lineFunction = $derived(function (dataArray) {
-    return line()
-      .x((d) => xFunction(+d.x))
-      .y((d) => yFunction(+d.y))
-      .curve(
-        {
-          curveLinear: curveLinear,
-          curveLinearClosed: curveLinearClosed,
-          curveCardinal: curveCardinal,
-          curveBasis: curveBasis,
-          curveStep: curveStep,
-          curveMonotoneX: curveMonotoneX,
-        }[getValue("curveFunction")],
-      )(dataArray);
-  });
-
-  let derivedParametersObject = $derived({
-    derivedDataArray,
-    dataArray,
-    xFunction,
-    yFunction,
-    lineFunction,
-  });
+  let derivedParametersObject = $derived({ lineChartData });
 
   /**
    * DONOTTOUCH *
@@ -596,9 +343,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <svg width={demoScreenWidth} height={getValue("svgHeight")}>
-      <Line {...parametersObject}></Line>
-    </svg>
+    <LineChart {...parametersObject}></LineChart>
   </div>
 {/snippet}
 
@@ -644,4 +389,6 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5"></div>
+<div id="examples" data-role="examples-section" class="px-5">
+  <Examples></Examples>
+</div>

@@ -3,7 +3,7 @@
   import PlaygroundDetails from "$lib/package-wrapping/PlaygroundDetails.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import { details } from "./details.js";
-  import LineChart from "./local-lib/LineChart.svelte";
+  import LineChart from "$lib/components/data-vis/line-chart/LineChart.svelte";
   import Radio from "./local-lib/Radio.svelte";
   import { goto } from "$app/navigation";
 

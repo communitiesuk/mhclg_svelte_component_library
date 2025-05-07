@@ -21,7 +21,7 @@
     pathFillColor = "none",
     pathStrokeDashArray = "none",
     areaFillColor,
-    includeArea,
+    includeArea = false,
     includeMarkers = false,
     markerShape = "circle",
     markerRadius = 5,
@@ -29,18 +29,21 @@
     markerStroke = "white",
     markerStrokeWidth = 3,
     lineFunction,
+    areaFunction,
     curveFunction,
     xFunction,
     lineEnding = null,
     yFunction,
     dataId,
+    tier,
     // markersDataId,
     onClick,
     onMouseEnter,
     onMouseLeave,
-    onMouseMove,
     halo,
-    chartBackgroundColor = "#d1d1d1",
+    chartBackgroundColor,
+    invisibleStrokeWidth,
+    interactive,
     // onClickMarker,
     // onMouseEnterMarker,
     // onMouseLeaveMarker,
@@ -73,14 +76,6 @@
   function onMouseLeaveMarker(i) {
     hoveredMarker = null;
   }
-
-  let areaFunction = $derived(
-    area()
-      .y0((d) => yFunction(0))
-      .x((d) => xFunction(d.x))
-      .y1((d) => yFunction(d.y))
-      .curve(curveLinear),
-  );
 </script>
 
 <defs>
@@ -112,7 +107,6 @@
   onclick={(event) => onClick(event, dataArray, dataId)}
   onmouseenter={(event) => onMouseEnter(event, dataArray, dataId)}
   onmouseleave={(event) => onMouseLeave(event, dataArray, dataId)}
-  onmousemove={(event) => onMouseMove(event, dataArray, dataId)}
   role="button"
   tabindex="0"
   onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}
@@ -121,13 +115,12 @@
   {#if includeArea}
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
   {/if}
-
   <path
     d={lineFunction(dataArray)}
     fill="none"
-    stroke="transparent"
-    stroke-width="20"
-    pointer-events="stroke"
+    stroke="invisible"
+    stroke-width={invisibleStrokeWidth}
+    pointer-events={interactive ? "stroke" : "none"}
   ></path>
   {#if halo}
     <path
@@ -136,6 +129,7 @@
       stroke={chartBackgroundColor}
       stroke-width={pathStrokeWidth * 1.2}
       stroke-dasharray={pathStrokeDashArray}
+      pointer-events="none"
     ></path>
   {/if}
   <path
@@ -144,6 +138,7 @@
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
+    pointer-events="none"
   ></path>
 
   <!-- {#if includeMarkers}

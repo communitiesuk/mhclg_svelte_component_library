@@ -10,12 +10,9 @@
     Control,
     ControlButton,
     ControlGroup,
-    NavigationControl,
-    GeolocateControl,
-    FullscreenControl,
-    ScaleControl,
   } from "svelte-maplibre";
   import { contrastingColor, colorPalette } from "./colors";
+  import { colorbrewer } from "./colorbrewer.js";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { maplibregl, ExpressionSpecification } from "maplibre-gl";
   import fullTopo from "./fullTopo.json";
@@ -27,6 +24,7 @@
     jenksBreaks,
     quantileBreaks,
   } from "./mapUtils.js";
+  import NonStandardControls from "./NonStandardControls.svelte";
 
   let {
     data,
@@ -41,6 +39,7 @@
     scaleControl,
     scaleControlPosition = "bottom-left",
     scaleControlUnit = "metric",
+    colorPalette = "YlGnBu",
     showBorder = false,
     maxBorderWidth = 1.5,
     tooltip,
@@ -56,7 +55,7 @@
     center = [-2.5, 53],
     zoom = 5,
   } = $props();
-  $inspect(navigationControlPosition);
+
   let mapData = $derived(data?.filter((d) => d.year == year)[0]?.data);
 
   let filteredMapData = $derived(
@@ -73,8 +72,8 @@
 
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
 
-  let fillColor = $derived(colorPalette[numberOfBreaks]);
-  $inspect(fillColor);
+  let fillColor = $derived(colorbrewer[colorPalette][numberOfBreaks]);
+
   let borderColor = "#003300";
 
   let map: maplibregl.Map | undefined = $state();
@@ -205,26 +204,20 @@
   {center}
   {zoom}
 >
-  {#if navigationControl && !standardControls}
-    {#key navigationControlPosition}
-      <NavigationControl position={navigationControlPosition} />
-    {/key}
+  {#if !standardControls}
+    <NonStandardControls
+      {navigationControl}
+      {navigationControlPosition}
+      {geolocateControl}
+      {geolocateControlPosition}
+      {fullscreenControl}
+      {fullscreenControlPosition}
+      {scaleControl}
+      {scaleControlPosition}
+      {scaleControlUnit}
+    />
   {/if}
-  {#if geolocateControl && !standardControls}
-    {#key geolocateControlPosition}
-      <GeolocateControl position={geolocateControlPosition} />
-    {/key}
-  {/if}
-  {#if fullscreenControl && !standardControls}
-    {#key fullscreenControlPosition}
-      <FullscreenControl position={fullscreenControlPosition} />
-    {/key}
-  {/if}
-  {#if scaleControl && !standardControls}
-    {#key { scaleControlPosition, scaleControlUnit }}
-      <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
-    {/key}
-  {/if}
+
   <Control>
     <ControlGroup>
       <button
@@ -291,5 +284,6 @@
     /* margin: 10px; */
     width: fit-content;
     padding: 0px 10px;
+    font-size: 16px;
   }
 </style>

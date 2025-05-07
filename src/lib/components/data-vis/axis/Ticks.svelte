@@ -1,5 +1,6 @@
 <script>
   import { tick } from "svelte";
+  import Decimal from "decimal.js";
 
   let {
     ticksArray = $bindable(),
@@ -10,35 +11,45 @@
     axisFunction,
     values,
     numberOfTicks,
-    baseline,
-    setMax,
+    minTick,
+    maxTick,
     orientation,
     yearsInput,
     generateTicksNum,
+    yearFormating,
   } = $props();
 
   $inspect(ticksArray);
 
-  function generateTicks(data, numTicks, baseline, setTick) {
-    console.log(data, typeof data);
-    let minVal = baseline !== null ? baseline : Math.min(...data);
-    let maxVal = setTick !== null ? setTick : Math.max(...data);
-    let rangeVal = maxVal - minVal;
+  function generateTicks(data, numTicks, minTick, maxTick) {
+    let minVal =
+      minTick !== null
+        ? new Decimal(minTick)
+        : Decimal.min(...data.map((val) => new Decimal(val)));
+    let maxVal =
+      maxTick !== null
+        ? new Decimal(maxTick)
+        : Decimal.max(...data.map((val) => new Decimal(val)));
+    let rangeVal = maxVal.minus(minVal);
 
-    let roughStep = rangeVal / (numTicks - 1);
+    let roughStep = rangeVal.div(numTicks - 1);
     let normalizedSteps = [1, 2, 5, 10];
 
-    let stepPower = Math.pow(10, -Math.floor(Math.log10(roughStep)));
-    let normalizedStep = roughStep * stepPower;
-    let optimalStep =
-      normalizedSteps.find((step) => step >= normalizedStep) / stepPower;
+    let stepPower = Decimal.pow(
+      10,
+      -Math.floor(Math.log10(roughStep.toNumber())),
+    );
+    let normalizedStep = roughStep.mul(stepPower);
+    let optimalStep = new Decimal(
+      normalizedSteps.find((step) => step >= normalizedStep.toNumber()),
+    ).div(stepPower);
 
-    let scaleMin = Math.floor(minVal / optimalStep) * optimalStep;
-    let scaleMax = Math.ceil(maxVal / optimalStep) * optimalStep;
+    let scaleMin = minVal.div(optimalStep).floor().mul(optimalStep);
+    let scaleMax = maxVal.div(optimalStep).ceil().mul(optimalStep);
 
     let ticks = [];
-    for (let i = scaleMin; i <= scaleMax; i += optimalStep) {
-      ticks.push(i);
+    for (let i = scaleMin; i.lte(scaleMax); i = i.plus(optimalStep)) {
+      ticks.push(i.toNumber());
     }
     return ticks;
   }
@@ -53,7 +64,7 @@
 
   numberOfTicks = tickCount(chartWidth);
 
-  ticksArray = generateTicks(values, numberOfTicks, baseline, setMax);
+  ticksArray = generateTicks(values, numberOfTicks, minTick, maxTick);
   let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 </script>
 
@@ -93,7 +104,7 @@
             : "start"}
         fill="black"
       >
-        {yearsInput ? yearTicks[index] : `${prefix}${tick}${suffix}`}
+        {yearsInput ? yearTicks[index] : "${prefix{tick}{suffix}"}
       </text>
     </g>
   {/each}

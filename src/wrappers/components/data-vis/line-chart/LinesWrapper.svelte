@@ -3,6 +3,70 @@
   import BaseInformation from "$lib/package-wrapping/BaseInformation.svelte";
   export { WrapperNameAndStatus, WrapperInformation };
 
+  let lineHovered = $state();
+  let lineClicked = $state();
+  let labelHovered = $state();
+  let labelClicked = $state();
+  let selectedLine = $derived([
+    lineHovered,
+    lineClicked,
+    labelHovered,
+    labelClicked,
+  ]);
+  let nothingSelected = $derived(selectedLine.every((item) => item == null));
+
+  let selectedAreaCode = $state("E09000033");
+  let englandMedian = $state("E06000040");
+  let similarAreas = $state("E07000224");
+  let showAllData = true;
+
+  function handleClickOutside(event) {
+    if (
+      lineClicked != event.target.parentElement.dataset.id ||
+      (labelClicked && !event.target.closest('[id^="label"]'))
+    ) {
+      labelClicked = null;
+      lineClicked = null;
+    }
+  }
+
+  let colors = {
+    teal: "#408A7B",
+    lightblue: "#509EC8",
+    darkblue: "#335F91",
+    ochre: "#BA7F30",
+    coral: "#E46B6C",
+    fuschia: "#BB2765",
+    purple: "#736CAC",
+    lightgrey: "#A0A0A0",
+    darkgrey: "#636363",
+    black: "#161616",
+  };
+
+  let colorPalette = $derived({
+    base: [colors.coral, colors.fuschia, colors.purple],
+  });
+
+  let onClick = (event, dataArray, dataId) => {
+    lineClicked = dataId;
+  };
+  let onMouseEnter = (event, dataArray, dataId) => {
+    if (lineHovered !== dataId) {
+      lineHovered = dataId;
+    }
+  };
+  let onMouseLeave = (event, dataArray, dataId) => {
+    if (lineHovered === dataId) {
+      lineHovered = null;
+    }
+  };
+
+  function getColor(areaCode, lookupObj, i) {
+    return (
+      lookupObj[areaCode] ?? colorPalette.base[i % colorPalette.base.length]
+    );
+  }
+
   /**
    * !  More documentation is provided on the component library's user guide page.
    */
@@ -26,7 +90,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "In progress",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -92,6 +156,17 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
+  import {
+    curveBasis,
+    curveCardinal,
+    curveLinear,
+    curveLinearClosed,
+    curveMonotoneX,
+    curveStep,
+    line,
+    area,
+  } from "d3-shape";
+  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
 
   let { data } = $props();
 
@@ -156,142 +231,209 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
+        name: "metric",
+        category: "data",
+        isProp: false,
+        options: data.metrics,
+        visible: { name: "dataSource", value: "from base data" },
       },
       {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 2,
-      },
-      {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
-          ],
-        },
-      },
-      {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "jsObjectProp",
-        category: "Input props",
+        name: "primaryLines",
+        category: "data",
+        isProp: true,
+        options: data.areas,
         value: [
-          {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
-          },
-          {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
-          },
-          {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
-          },
+          "E07000224",
+          "E07000225",
+          "E07000226",
+          "E07000228",
+          englandMedian,
+          similarAreas,
+          selectedAreaCode,
         ],
+      },
+      {
+        name: "interactiveLines",
+        category: "data",
+        value: ["primary", "secondary"],
+      },
+      {
+        name: "customDataArray",
+        category: "data",
+        isProp: false,
+        visible: { name: "dataSource", value: "custom" },
+        value: data.dataInFormatForLineChart[0].lines[0].data.map((el) => ({
+          x: el.x,
+          y: el.y,
+        })),
+      },
+      {
+        name: "derivedDataArray",
+        category: "data",
+        isProp: false,
+        visible: { name: "dataSource", value: "from base data" },
+        propType: "fixed",
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
+            "Calculated here based on the selected metric and area.",
+            "Passed to the Line component as <span class='font-bold'>dataArray</span> when dataSource is set to <span class='italic'>'from base data'</span>.",
           ],
         },
       },
       {
-        name: "functionProp",
-        category: "Fixed props",
-
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
+        name: "dataArray",
+        category: "data",
+        visible: false,
+      },
+      {
+        name: "tieredDataObject",
+        category: "data",
+        visible: false,
+      },
+      {
+        name: "tieredLineParams",
+        category: "data",
+        visible: false,
+      },
+      {
+        name: "defaultLineParams",
+        category: "data",
+        visible: false,
+      },
+      {
+        name: "globalTierRules",
+        category: "data",
+        visible: false,
+      },
+      {
+        name: "curveFunction",
+        category: "lineFunction",
+        isProp: true,
+        options: [
+          "curveLinear",
+          "curveLinearClosed",
+          "curveCardinal",
+          "curveBasis",
+          "curveStep",
+          "curveMonotoneX",
+        ],
+      },
+      {
+        name: "lineFunction",
+        category: "lineFunction",
+        isProp: true,
         functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
+          functionAsString: `function (dataArray) {
+    return line()
+      .x((d) => xFunction(d.x))
+      .y((d) => yFunction(d.y))
+      .curve(
+        {
+          curveLinear: curveLinear,
+          curveLinearClosed: curveLinearClosed,
+          curveCardinal: curveCardinal,
+          curveBasis: curveBasis,
+          curveStep: curveStep,
+          curveMonotoneX: curveMonotoneX,
+        }[getValue("curveFunction")],
+      )(dataArray);
+  });`,
         },
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
-          ],
+      },
+      {
+        name: "yDomainLowerBound",
+        category: "yScale",
+        isProp: false,
+        value: Math.min(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.y),
+        ),
+      },
+      {
+        name: "yDomainUpperBound",
+        category: "yScale",
+        isProp: false,
+        value: Math.max(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.y),
+        ),
+      },
+      {
+        name: "xDomainLowerBound",
+        category: "xScale",
+        isProp: false,
+        value: Math.min(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.x),
+        ),
+      },
+      {
+        name: "xDomainUpperBound",
+        category: "xScale",
+        isProp: false,
+        value: Math.max(
+          ...data.dataInFormatForLineChart[0].lines
+            .map((el) => el.data)
+            .flat()
+            .map((el) => el.x),
+        ),
+      },
+      {
+        name: "xFunction",
+        category: "xScale",
+        functionElements: {
+          functionAsString: `function (number) {
+  return {
+    "scaleLinear()": scaleLinear(),
+    "scaleLog()": scaleLog(),
+    "scaleTime()": scaleTime(),
+  }[getValue("xScaleType")]
+    .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
+    .range([
+      0,
+      demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
+    ])(number);
+});`,
         },
+      },
+      {
+        name: "yFunction",
+        category: "yScale",
+        functionElements: {
+          functionAsString: `function (number) {
+    return {
+      "scaleLinear()": scaleLinear(),
+      "scaleLog()": scaleLog(),
+      "scaleTime()": scaleTime(),
+    }[getValue("yScaleType")]
+      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
+      .range([
+        getValue("svgHeight") -
+          getValue("paddingTop") -
+          getValue("paddingBottom"),
+        0,
+      ])(number);
+  });`,
+        },
+      },
+      {
+        name: "yScaleType",
+        category: "yScale",
+        isProp: false,
+        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
+      },
+      {
+        name: "xScaleType",
+        category: "xScale",
+        isProp: false,
+        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
       },
     ]),
   );
@@ -343,7 +485,184 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
 
-  let derivedParametersObject = $derived({});
+  let derivedDataArray = $derived(
+    data.dataInFormatForLineChart.find(
+      (el) => el.metric === getValue("metric"),
+    ),
+  );
+
+  let dataArray = $derived(
+    derivedDataArray.lines.map((el, i) => {
+      const tiers = [];
+      el.areaCode == lineClicked
+        ? tiers.push("clicked")
+        : el.areaCode == lineHovered
+          ? tiers.push("hover")
+          : getValue("primaryLines").includes(el.areaCode)
+            ? tiers.push("primary")
+            : tiers.push("secondary");
+      return {
+        ...el,
+        tiers,
+      };
+    }),
+  );
+
+  let tieredLineParams = $derived({
+    otherTier: {},
+    secondary: {
+      halo: false,
+      pathStrokeColor: colors.black,
+      pathStrokeWidth: 1,
+      opacity: 0.05,
+      interactive: getValue("interactiveLines").includes("secondary"),
+    },
+    primary: {
+      halo: true,
+      pathStrokeWidth: 5,
+      pathStrokeColor: colors.darkgrey,
+      interactive: getValue("interactiveLines").includes("primary"),
+    },
+    clicked: {
+      pathStrokeColor: colors.ochre,
+      pathStrokeWidth: 7,
+      halo: true,
+      interactive: true,
+    },
+    hover: {
+      pathStrokeColor: colors.ochre,
+      pathStrokeWidth: 5,
+      halo: true,
+      interactive: true,
+    },
+  });
+
+  let xFunction = $derived(function (number) {
+    return {
+      "scaleLinear()": scaleLinear(),
+      "scaleLog()": scaleLog(),
+      "scaleTime()": scaleTime(),
+    }[getValue("xScaleType")]
+      .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
+      .range([
+        0,
+        demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
+      ])(number);
+  });
+
+  let yFunction = $derived(function (number) {
+    return {
+      "scaleLinear()": scaleLinear(),
+      "scaleLog()": scaleLog(),
+      "scaleTime()": scaleTime(),
+    }[getValue("yScaleType")]
+      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
+      .range([
+        getValue("svgHeight") -
+          getValue("paddingTop") -
+          getValue("paddingBottom"),
+        0,
+      ])(number);
+  });
+
+  let lineFunction = $derived(function (dataArray) {
+    return line()
+      .x((d) => xFunction(+d.x))
+      .y((d) => yFunction(+d.y))
+      .curve(
+        {
+          curveLinear: curveLinear,
+          curveLinearClosed: curveLinearClosed,
+          curveCardinal: curveCardinal,
+          curveBasis: curveBasis,
+          curveStep: curveStep,
+          curveMonotoneX: curveMonotoneX,
+        }[getValue("curveFunction")],
+      )(dataArray);
+  });
+
+  let basicLineParams = $derived({
+    lineFunction,
+    xFunction,
+    yFunction,
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
+    invisibleStrokeWidth: 20,
+  });
+
+  let lookupObj = $derived({
+    // [englandMedian]: colors.lightblue,
+    // [selectedAreaCode]: colors.teal,
+    // [similarAreas]: colors.darkblue,
+  });
+
+  let defaultLineParams = $derived(
+    Object.fromEntries(
+      Object.entries(tieredLineParams).map(([key, group]) => [
+        key,
+        { ...basicLineParams, ...group },
+      ]),
+    ),
+  );
+
+  let tieredDataObject = $derived(
+    Object.keys(defaultLineParams).reduce((acc, key, index) => {
+      acc[key] = dataArray
+        .filter((el) => {
+          if (key === "primary") {
+            return getValue("primaryLines").includes(el.areaCode);
+          }
+          if (
+            key === "secondary" &&
+            showAllData &&
+            !getValue("primaryLines").includes(el.areaCode)
+          ) {
+            return true;
+          }
+          if (key === "hover") {
+            return lineHovered == el.areaCode;
+          }
+          if (key === "clicked") {
+            return lineClicked == el.areaCode;
+          }
+        })
+        .map((el) => ({
+          ...el,
+          includeMarkers: key === "primary" ? true : false,
+          pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
+            ? getColor(
+                el.areaCode,
+                lookupObj,
+                getValue("primaryLines").indexOf(el.areaCode),
+              )
+            : null,
+        }));
+      return acc;
+    }, {}),
+  );
+
+  let globalTierRules = $derived({
+    otherTier: {},
+    secondary: {
+      opacity: nothingSelected ? 1 : 0.5,
+    },
+    primary: {
+      opacity: nothingSelected ? 1 : 0.4,
+    },
+    hover: { opacity: 1 },
+    clicked: { opacity: 1 },
+  });
+
+  let derivedParametersObject = $derived({
+    derivedDataArray,
+    lineFunction,
+    dataArray,
+    tieredLineParams,
+    defaultLineParams,
+    tieredDataObject,
+    globalTierRules,
+  });
 
   /**
    * DONOTTOUCH *

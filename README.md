@@ -16,7 +16,7 @@ Because this package is currently privately published to the GitHub npm package 
     *   Provide a descriptive name in the "Note" field.
     *   Set an expiration date if needed.
     *   Choose the required scopes or permissions for the token. For installing the package, we will need "write:packages" (Upload packages to GitHub Package Registry), "read:packages" (Download packages from GitHub Package Registry) and "repo".
-    ![image.png](image.png)
+
 5.  **Generate and Save the Token**:
     *   Click Generate token.
     *   Optionally, copy the new token to your clipboard for immediate use. Make sure to save it securely, as you won’t be able to view it again.
@@ -113,7 +113,6 @@ git push && git push --tags
 Now the tag has been pushed, we can create a release on GitHub to trigger the GitHub Actions workflow defined in `.github/workflows/npm-publish-github-packages.yml`, which will handle the actual `npm publish` step to GitHub Packages.
 
 Click on "create new release" from the repo homepage.
-![image.png](image.png)
 
 Choose the target branch that you want to release (e.g. main).
 

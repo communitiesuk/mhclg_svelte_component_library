@@ -12,8 +12,6 @@
     localCopyOfData[0].length,
   );
 
-  $inspect(metrics);
-
   let sortState = $state({ column: "sortedColumn", order: "ascending" });
 
   function updateSortState(columnToSort, sortOrder) {
@@ -79,16 +77,25 @@
     return `hsl(${hue}, 100%, 80%)`;
   }
 
-  $inspect(localCopyOfData[0]);
-
   const colorKey = Object.entries({ Good: 1, Ok: 0.5, Bad: 0 });
 
-  $inspect(colorKey);
-
-  const metricDirections = {
-    "Household waste recycling rate": "higher-is-better",
-    "Recycling contamination rate": "lower-is-better",
-    "Residual household waste": "lower-is-better",
+  const metricInfo = {
+    "Household waste recycling rate": {
+      direction: "higher-is-better",
+      explainer: "Percentage of household waste sent for recycling.",
+      label: "Household recycling rate (%)",
+    },
+    "Recycling contamination rate": {
+      direction: "lower-is-better",
+      explainer:
+        "Percentage of recycling that is contaminated and cannot be processed.",
+      label: "Recycling contamination rate (%)",
+    },
+    "Residual household waste": {
+      direction: "lower-is-better",
+      explainer: "Amount of non-recyclable waste per household (kg/year).",
+      label: "Household waste (kg)",
+    },
   };
 </script>
 
@@ -101,7 +108,6 @@
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
 
-  <div>{metrics[0]}</div>
   <br />
 
   <div class="legend">
@@ -119,81 +125,32 @@
       <thead
         ><tr>
           <th class="col-one-header">Area</th>
-          <th title="The proportion of household waste sent for recyling">
-            <div class="header">
-              <div class="header-top">
-                <div class="metric">Household recycling rate (%)</div>
-                <div class="sorting-button">
-                  <button
-                    onclick={() => {
-                      updateSortState(metrics[0], "ascending");
-                      sortFunction();
-                    }}>▲</button
-                  >
-                  <button
-                    onclick={() => {
-                      updateSortState(metrics[0], "descending");
-                      sortFunction();
-                    }}>▼</button
-                  >
+          {#each metrics as metric}
+            <th title={metricInfo[metric].explainer}>
+              <div class="header">
+                <div class="header-top">
+                  <div class="metric">{metricInfo[metric].label}</div>
+                  <div class="sorting-button">
+                    <button
+                      onclick={() => {
+                        updateSortState(metric, "ascending");
+                        sortFunction();
+                      }}>▲</button
+                    >
+                    <button
+                      onclick={() => {
+                        updateSortState(metric, "descending");
+                        sortFunction();
+                      }}>▼</button
+                    >
+                  </div>
+                </div>
+                <div class="metric-explainer">
+                  {metricInfo[metric].explainer}
                 </div>
               </div>
-              <div class="metric-explainer">
-                The proportion of household waste sent for recyling
-              </div>
-            </div>
-          </th>
-          <th
-            title="The proportion of household waste sent for recyling that cannot be recyled"
-          >
-            <div class="header">
-              <div class="header-top">
-                <div class="metric">Recycling contamination rate (%)</div>
-                <div class="sorting-button">
-                  <button
-                    onclick={() => {
-                      updateSortState(metrics[1], "ascending");
-                      sortFunction();
-                    }}>▲</button
-                  >
-                  <button
-                    onclick={() => {
-                      updateSortState(metrics[1], "descending");
-                      sortFunction();
-                    }}>▼</button
-                  >
-                </div>
-              </div>
-              <div class="metric-explainer">
-                The proportion of household waste sent for recyling that cannot
-                be recyled
-              </div>
-            </div>
-          </th>
-          <th title="Non-recyclable waste per household, measured by weight">
-            <div class="header">
-              <div class="header-top">
-                <div class="metric">Household waste (kg)</div>
-                <div class="sorting-button">
-                  <button
-                    onclick={() => {
-                      updateSortState(metrics[2], "ascending");
-                      sortFunction();
-                    }}>▲</button
-                  >
-                  <button
-                    onclick={() => {
-                      updateSortState(metrics[2], "descending");
-                      sortFunction();
-                    }}>▼</button
-                  >
-                </div>
-              </div>
-              <div class="metric-explainer">
-                Non-recyclable waste per household, measured by weight
-              </div>
-            </div>
-          </th>
+            </th>
+          {/each}
         </tr></thead
       >
       <tbody>
@@ -201,7 +158,7 @@
           <tr>
             <td class="areas">{row["areaName"]}</td>
             {#each metrics as metric}
-              {#if metricDirections[metric] === "higher-is-better"}
+              {#if metricInfo[metric].direction === "higher-is-better"}
                 <td
                   style="background-color: {normToColor(
                     row[metric + '__normalised'],

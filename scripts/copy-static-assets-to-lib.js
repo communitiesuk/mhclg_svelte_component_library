@@ -40,7 +40,7 @@ const libCssDestDir = join(projectRoot, "src/lib/assets/css");
 const cssFilesToCopyAndProcess = ["govuk-frontend.min.css"];
 const mapFileToCopy = "govuk-frontend.min.css.map";
 
-// Define the PostCSS plugin logic directly here
+// PostCSS plugin logic
 const transformAssetUrlsPlugin = {
   postcssPlugin: "transform-asset-urls-for-lib",
   Declaration(decl) {

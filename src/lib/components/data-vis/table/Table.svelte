@@ -7,6 +7,13 @@
 
   let localCopyOfData = $state([...data]);
 
+  const metrics = Object.keys(localCopyOfData[0]).slice(
+    1,
+    localCopyOfData[0].length,
+  );
+
+  $inspect(metrics);
+
   let sortState = $state({ column: "sortedColumn", order: "ascending" });
 
   function updateSortState(columnToSort, sortOrder) {
@@ -36,35 +43,31 @@
   }
 
   // heat map
-  const recyclingValues = localCopyOfData.map(
-    (item) => item["Household waste recycling rate"],
-  );
-  const recyclingMin = Math.min(...recyclingValues);
-  const recyclingMax = Math.max(...recyclingValues);
 
-  const contaminationValues = localCopyOfData.map(
-    (item) => item["Recycling contamination rate"],
-  );
-  const contaminationMin = Math.min(...contaminationValues);
-  const contaminationMax = Math.max(...contaminationValues);
+  // calculate the min and max of each metric
+  const minAndMaxValues = {}; // create an empty object to store them in
+  for (const metric of metrics) {
+    // get the values
+    const metricValues = localCopyOfData.map((item) => item[metric]);
+    const min = Math.min(...metricValues);
+    const max = Math.max(...metricValues);
+    // store them
+    minAndMaxValues[metric] = { min, max };
+  }
 
-  const wasteValues = localCopyOfData.map(
-    (item) => item["Residual household waste"],
-  );
-  const wasteMin = Math.min(...wasteValues);
-  const wasteMax = Math.max(...wasteValues);
+  localCopyOfData = localCopyOfData.map((row) => {
+    const rowWithNorms = { ...row };
 
-  localCopyOfData = localCopyOfData.map((item) => ({
-    ...item,
-    recyclingNorm:
-      (item["Household waste recycling rate"] - recyclingMin) /
-      (recyclingMax - recyclingMin),
-    contaminationNorm:
-      (item["Recycling contamination rate"] - contaminationMin) /
-      (contaminationMax - contaminationMin),
-    wasteNorm:
-      (item["Residual household waste"] - wasteMin) / (wasteMax - wasteMin),
-  }));
+    for (const metric of metrics) {
+      const { min, max } = minAndMaxValues[metric];
+      const value = row[metric];
+      const normalisedValue = (value - min) / (max - min);
+
+      rowWithNorms[`${metric}__normalised`] = normalisedValue;
+    }
+
+    return rowWithNorms;
+  });
 
   function normToColor(norm) {
     const hue = 120 * norm;

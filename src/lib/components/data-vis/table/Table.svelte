@@ -89,6 +89,7 @@
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
 
+  <div>{metrics[0]}</div>
   <br />
 
   <div class="legend">
@@ -111,19 +112,13 @@
                 <div class="sorting-button">
                   <button
                     onclick={() => {
-                      updateSortState(
-                        "Household waste recycling rate",
-                        "ascending",
-                      );
+                      updateSortState(metrics[0], "ascending");
                       sortFunction();
                     }}>▲</button
                   >
                   <button
                     onclick={() => {
-                      updateSortState(
-                        "Household waste recycling rate",
-                        "descending",
-                      );
+                      updateSortState(metrics[0], "descending");
                       sortFunction();
                     }}>▼</button
                   >
@@ -143,19 +138,13 @@
                 <div class="sorting-button">
                   <button
                     onclick={() => {
-                      updateSortState(
-                        "Recycling contamination rate",
-                        "ascending",
-                      );
+                      updateSortState(metrics[1], "ascending");
                       sortFunction();
                     }}>▲</button
                   >
                   <button
                     onclick={() => {
-                      updateSortState(
-                        "Recycling contamination rate",
-                        "descending",
-                      );
+                      updateSortState(metrics[1], "descending");
                       sortFunction();
                     }}>▼</button
                   >
@@ -174,13 +163,13 @@
                 <div class="sorting-button">
                   <button
                     onclick={() => {
-                      updateSortState("Residual household waste", "ascending");
+                      updateSortState(metrics[2], "ascending");
                       sortFunction();
                     }}>▲</button
                   >
                   <button
                     onclick={() => {
-                      updateSortState("Residual household waste", "descending");
+                      updateSortState(metrics[2], "descending");
                       sortFunction();
                     }}>▼</button
                   >

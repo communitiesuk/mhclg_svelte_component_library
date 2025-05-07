@@ -78,6 +78,12 @@
     const hue = 120 * (1 - norm);
     return `hsl(${hue}, 100%, 80%)`;
   }
+
+  $inspect(localCopyOfData[0]);
+
+  const colorKey = Object.entries({ Good: 1, Ok: 0.5, Bad: 0 });
+
+  $inspect(colorKey);
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -94,9 +100,11 @@
 
   <div class="legend">
     <div>Colour key:</div>
-    <div class="good" style="background-color: {normToColor(1)}">Good</div>
-    <div class="good" style="background-color: {normToColor(0.5)}">Ok</div>
-    <div class="bad" style="background-color: {normToColor(0)}">Bad</div>
+    {#each colorKey as key}
+      <div class="good" style="background-color: {normToColor(key[1])}">
+        {key[0]}
+      </div>
+    {/each}
   </div>
 
   <div class="table-container">
@@ -186,16 +194,20 @@
         {#each localCopyOfData as row}
           <tr>
             <td class="areas">{row["areaName"]}</td>
-            <td style="background-color: {normToColor(row.recyclingNorm)}"
-              >{row["Household waste recycling rate"]}</td
+            <td
+              style="background-color: {normToColor(
+                row[metrics[0] + '__normalised'],
+              )}">{row[metrics[0]]}</td
             >
             <td
               style="background-color: {normToColorReverse(
-                row.contaminationNorm,
-              )}">{row["Recycling contamination rate"]}</td
+                row[metrics[1] + '__normalised'],
+              )}">{row[metrics[1]]}</td
             >
-            <td style="background-color: {normToColorReverse(row.wasteNorm)}"
-              >{row["Residual household waste"]}</td
+            <td
+              style="background-color: {normToColorReverse(
+                row[metrics[2] + '__normalised'],
+              )}">{row[metrics[2]]}</td
             >
           </tr>
         {/each}

@@ -6,7 +6,6 @@
   let {
     componentNameProp = undefined,
     data = undefined,
-    metricDirection = undefined,
     metaData = undefined,
   } = $props();
 

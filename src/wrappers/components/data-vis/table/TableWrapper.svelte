@@ -174,18 +174,6 @@
         visible: false,
         value: data.metaData,
       },
-      // {
-      //   name: "metricDirection",
-      //   category: "Input props",
-      //   propType: "radio",
-      //   options: ["Higher is better", "Lower is better"],
-      //   description: {
-      //     markdown: true,
-      //     arr: [
-      //       `Select the metric direction. Is a higher or lower metric value good?`,
-      //     ],
-      //   },
-      // },
     ]),
   );
 

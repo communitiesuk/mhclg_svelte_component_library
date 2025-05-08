@@ -16,8 +16,11 @@
     yFunction,
     lineFunction,
     lineClicked = $bindable(),
+    lineHovered = $bindable(),
     svgWidth = $bindable(500),
     onClick,
+    onMouseEnter,
+    onMouseLeave,
     svgHeight = 500,
     paddingTop = 50,
     paddingBottom = 50,
@@ -55,19 +58,6 @@
       .y1((d) => yFunction(d.y))
       .curve(curveLinear),
   );
-
-  let onMouseEnter = (event, dataArray, dataId) => {
-    if (lineHovered !== dataId) {
-      lineHovered = dataId;
-    }
-  };
-  let onMouseLeave = (event, dataArray, dataId) => {
-    if (lineHovered === dataId) {
-      lineHovered = null;
-    }
-  };
-
-  let lineHovered = $state();
 
   let labelHovered = $state();
   let labelClicked = $state();

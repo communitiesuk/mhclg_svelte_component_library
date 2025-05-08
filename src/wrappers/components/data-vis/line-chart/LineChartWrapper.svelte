@@ -136,6 +136,7 @@
   });
 
   let lineClicked = $state();
+  let lineHovered = $state();
   let svgWidth = $state(500);
 
   /**
@@ -177,8 +178,6 @@
    *
    */
 
-  $inspect(lineClicked);
-
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
@@ -202,6 +201,44 @@
         },
         value: function (event, dataArray, dataId) {
           lineClicked = dataId;
+        },
+      },
+      {
+        name: "lineHovered",
+        category: "lineEvents",
+        isBinded: true,
+        value: lineHovered,
+      },
+      {
+        name: "onMouseEnter",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function(event, dataArray, dataId) {
+    if (lineHovered !== dataId) {
+      lineHovered = dataId;
+    }
+  };`,
+        },
+        value: function (event, dataArray, dataId) {
+          if (lineHovered !== dataId) {
+            lineHovered = dataId;
+          }
+        },
+      },
+      {
+        name: "onMouseLeave",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function(event, dataArray, dataId) {
+    if (lineHovered === dataId) {
+      lineHovered = null;
+    }
+  };`,
+        },
+        value: function (event, dataArray, dataId) {
+          if (lineHovered === dataId) {
+            lineHovered = null;
+          }
         },
       },
       {
@@ -426,7 +463,7 @@
 
   let xFunction = $derived(function (number) {
     return scaleLinear()
-      .domain([2015, 2023])
+      .domain([2015, 2022])
       .range([
         0,
         svgWidth - getValue("paddingLeft") - getValue("paddingRight"),
@@ -565,7 +602,12 @@
  -->
 {#snippet Component()}
   <div class="p-8" b>
-    <LineChart {...parametersObject} bind:lineClicked bind:svgWidth></LineChart>
+    <LineChart
+      {...parametersObject}
+      bind:lineClicked
+      bind:lineHovered
+      bind:svgWidth
+    ></LineChart>
   </div>
 {/snippet}
 

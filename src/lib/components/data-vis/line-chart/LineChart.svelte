@@ -102,21 +102,35 @@
     ),
   );
 
+  function overrideDefaultStyles(key, el) {
+    return {
+      pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
+        ? getColor(
+            el.areaCode,
+            ["E07000224", "E07000225", "E07000226", "E07000228"].indexOf(
+              el.areaCode,
+            ),
+          )
+        : null,
+    };
+  }
+
   let tieredDataObject = $derived(
     Object.keys(defaultLineParams).reduce((acc, key, index) => {
       acc[key] = lineChartData.lines
         .filter((el) => getLine(key, el))
-        .map((el) => ({
+        .map((el) => {
+          return { ...el, ...overrideDefaultStyles(key, el) };
+        });
+      /*.map((el) => ({
           ...el,
           pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
             ? getColor(el.areaCode, primaryLines.indexOf(el.areaCode))
             : null,
-        }));
+        }));*/
       return acc;
     }, {}),
   );
-
-  function overrideDefaultStyle(parameterName, key, el) {}
 
   $inspect(tieredLineParams);
 

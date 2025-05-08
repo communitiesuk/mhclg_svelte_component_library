@@ -29,11 +29,11 @@
     progress: "Baseline completed",
     statusRows: [
       {
-        obj: { Accessible: true, Responsive: true, "Prog. enhanced": false },
+        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
         visibleOnHompepage: true,
       },
       {
-        obj: { Reviewed: true, Tested: true },
+        obj: { Reviewed: false, Tested: false },
         visibleOnHomepage: true,
       },
     ],

@@ -1,7 +1,7 @@
 <script lang="ts">
-  import HeaderNav from "./HeaderNav.svelte";
-  import MobileNav from "./MobileNav.svelte";
-  import SideNav from "./SideNav.svelte";
+  import HeaderNav from "../layout/service-navigation-nested-mobile/HeaderNav.svelte";
+  import MobileNav from "../layout/service-navigation-nested-mobile/MobileNav.svelte";
+  import SideNav from "../layout/service-navigation-nested-mobile/SideNav.svelte";
   import { onMount } from "svelte";
 
   // Example navigation data

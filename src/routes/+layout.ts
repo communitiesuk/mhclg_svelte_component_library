@@ -108,6 +108,8 @@ export const load: LayoutLoad = async (event) => {
 
     let tableData = Object.values(groupedTableData);
 
+    let metaData = testData.metaData
+
   return {
     metrics,
     areas,
@@ -123,5 +125,6 @@ export const load: LayoutLoad = async (event) => {
     componentDirectories,
     uiComponents,
     componentTree,
+    metaData,
   };
 };

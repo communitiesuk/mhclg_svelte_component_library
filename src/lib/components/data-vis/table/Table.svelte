@@ -3,7 +3,12 @@
 
   // import { areSameLanguages } from "@maptiler/sdk";
 
-  let { componentNameProp = undefined, data = undefined } = $props();
+  let {
+    componentNameProp = undefined,
+    data = undefined,
+    metricDirection = undefined,
+    metaData = undefined,
+  } = $props();
 
   let localCopyOfData = $state([...data]);
 
@@ -78,25 +83,6 @@
   }
 
   const colorKey = Object.entries({ Good: 1, Ok: 0.5, Bad: 0 });
-
-  const metricInfo = {
-    "Household waste recycling rate": {
-      direction: "higher-is-better",
-      explainer: "Percentage of household waste sent for recycling.",
-      label: "Household recycling rate (%)",
-    },
-    "Recycling contamination rate": {
-      direction: "lower-is-better",
-      explainer:
-        "Percentage of recycling that is contaminated and cannot be processed.",
-      label: "Recycling contamination rate (%)",
-    },
-    "Residual household waste": {
-      direction: "lower-is-better",
-      explainer: "Amount of non-recyclable waste per household (kg/year).",
-      label: "Household waste (kg)",
-    },
-  };
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -107,8 +93,6 @@
 
 <div class="p-4">
   <h4>{componentNameProp} component</h4>
-
-  <br />
 
   <div class="legend">
     <div>Colour key:</div>
@@ -126,10 +110,10 @@
         ><tr>
           <th class="col-one-header">Area</th>
           {#each metrics as metric}
-            <th title={metricInfo[metric].explainer}>
+            <th title={metaData[metric].explainer}>
               <div class="header">
                 <div class="header-top">
-                  <div class="metric">{metricInfo[metric].label}</div>
+                  <div class="metric">{metaData[metric].label}</div>
                   <div class="sorting-button">
                     <button
                       onclick={() => {
@@ -146,7 +130,7 @@
                   </div>
                 </div>
                 <div class="metric-explainer">
-                  {metricInfo[metric].explainer}
+                  {metaData[metric].explainer}
                 </div>
               </div>
             </th>
@@ -158,7 +142,7 @@
           <tr>
             <td class="areas">{row["areaName"]}</td>
             {#each metrics as metric}
-              {#if metricInfo[metric].direction === "higher-is-better"}
+              {#if metaData[metric].direction === "Higher is better"}
                 <td
                   style="background-color: {normToColor(
                     row[metric + '__normalised'],

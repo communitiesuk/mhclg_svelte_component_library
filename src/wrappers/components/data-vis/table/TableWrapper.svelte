@@ -169,79 +169,23 @@
         value: data.tableData,
       },
       {
-        name: "jsObjectProp",
-        category: "Input props",
-        value: [
-          {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
-          },
-          {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
-          },
-          {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
-          },
-        ],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
-          ],
-        },
+        name: "metaData",
+        category: "Data",
+        visible: false,
+        value: data.metaData,
       },
-      {
-        name: "functionProp",
-        category: "Fixed props",
-
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
-        functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
-        },
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
-          ],
-        },
-      },
+      // {
+      //   name: "metricDirection",
+      //   category: "Input props",
+      //   propType: "radio",
+      //   options: ["Higher is better", "Lower is better"],
+      //   description: {
+      //     markdown: true,
+      //     arr: [
+      //       `Select the metric direction. Is a higher or lower metric value good?`,
+      //     ],
+      //   },
+      // },
     ]),
   );
 

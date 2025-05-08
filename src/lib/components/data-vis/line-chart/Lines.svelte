@@ -22,6 +22,7 @@
     globalTierRules,
     chartBackgroundColor = "#fafafa",
     nothingSelected,
+    getLine,
   } = $props();
 
   $inspect(tieredDataObject);

@@ -312,39 +312,7 @@
         visible: false,
         isProp: true,
       },
-      {
-        name: "showAllData",
-        category: "Data",
-        visible: true,
-        isProp: true,
-        value: true,
-        description:
-          "Whether to show all data in the background, in addition to primary lines",
-      },
-      {
-        name: "interactiveLines",
-        category: "Interaction",
-        visible: true,
-        isProp: true,
-        value: ["primary", "secondary"],
-        description:
-          "A list of line types that should handle hover and click interactions.",
-      },
-      {
-        name: "primaryLines",
-        category: "Data",
-        isProp: true,
-        value: [
-          "E07000224",
-          "E07000225",
-          "E07000226",
-          "E07000228",
-          englandMedian,
-          similarAreas,
-        ],
-        description:
-          "Key lines, displayed in different colours. Specify in order of importance.",
-      },
+
       {
         name: "chartBackgroundColor",
         category: "Aesthetics",
@@ -365,6 +333,52 @@
       {
         name: "lineFunction",
         category: "lineFunction",
+      },
+      {
+        name: "getLine",
+        category: "customisingLines",
+        functionElements: {
+          functionAsString: `function getLine(key, el, param) {
+    if (key === "primary") {
+      return primaryLines.includes(el.areaCode);
+    }
+    if (
+      key === "secondary" &&
+      showAllData &&
+      !primaryLines.includes(el.areaCode)
+    ) {
+      return true;
+    }
+    if (key === "hover") {
+      return lineHovered == el.areaCode;
+    }
+    if (key === "clicked") {
+      return lineClicked == el.areaCode;
+    }
+  }`,
+        },
+        value: function (key, el, param) {
+          let primaryLines = [
+            "E07000224",
+            "E07000225",
+            "E07000226",
+            "E07000228",
+            englandMedian,
+            similarAreas,
+          ];
+          if (key === "primary") {
+            return primaryLines.includes(el.areaCode);
+          }
+          if (key === "secondary" && !primaryLines.includes(el.areaCode)) {
+            return true;
+          }
+          if (key === "hover") {
+            return lineHovered == el.areaCode;
+          }
+          if (key === "clicked") {
+            return lineClicked == el.areaCode;
+          }
+        },
       },
     ]),
   );
@@ -427,25 +441,29 @@
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
-      interactive: getValue("interactiveLines").includes("secondary"),
+      interactive: true,
+      markers: false,
     },
     primary: {
       halo: true,
       pathStrokeWidth: 5,
       pathStrokeColor: colors.darkgrey,
-      interactive: getValue("interactiveLines").includes("primary"),
+      interactive: true,
+      markers: false,
     },
     clicked: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 7,
       halo: true,
       interactive: true,
+      markers: false,
     },
     hover: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 5,
       halo: true,
       interactive: true,
+      markers: false,
     },
   });
 

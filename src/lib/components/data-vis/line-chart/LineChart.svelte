@@ -30,7 +30,8 @@
     interactiveLines,
     showAllData,
     chartBackgroundColor,
-    primaryLines,
+    getLine,
+    basicLineParams,
   } = $props();
 
   /*let svgWidth = $state(),
@@ -80,34 +81,17 @@
     }
   }
 
-  let dataArray = $derived(
-    lineChartData.lines.map((el, i) => {
-      const tiers = [];
-      el.areaCode == lineClicked
-        ? tiers.push("clicked")
-        : el.areaCode == lineHovered
-          ? tiers.push("hover")
-          : primaryLines.includes(el.areaCode)
-            ? tiers.push("primary")
-            : tiers.push("secondary");
-      return {
-        ...el,
-        tiers,
-      };
-    }),
-  );
-
-  let basicLineParams = $derived({
-    lineFunction: lineFunction,
-    xFunction: xFunction,
-    yFunction: yFunction,
-    areaFunction: areaFunction,
-    onClick: onClick,
-    onMouseEnter: onMouseEnter,
-    onMouseLeave: onMouseLeave,
-    haloColor: chartBackgroundColor,
-    invisibleStrokeWidth: 20,
-  });
+  // let basicLineParams = $derived({
+  //   lineFunction: lineFunction,
+  //   xFunction: xFunction,
+  //   yFunction: yFunction,
+  //   areaFunction: areaFunction,
+  //   onClick: onClick,
+  //   onMouseEnter: onMouseEnter,
+  //   onMouseLeave: onMouseLeave,
+  //   haloColor: chartBackgroundColor,
+  //   invisibleStrokeWidth: 20,
+  // });
 
   let defaultLineParams = $derived(
     Object.fromEntries(
@@ -120,28 +104,10 @@
 
   let tieredDataObject = $derived(
     Object.keys(defaultLineParams).reduce((acc, key, index) => {
-      acc[key] = dataArray
-        .filter((el) => {
-          if (key === "primary") {
-            return primaryLines.includes(el.areaCode);
-          }
-          if (
-            key === "secondary" &&
-            showAllData &&
-            !primaryLines.includes(el.areaCode)
-          ) {
-            return true;
-          }
-          if (key === "hover") {
-            return lineHovered == el.areaCode;
-          }
-          if (key === "clicked") {
-            return lineClicked == el.areaCode;
-          }
-        })
+      acc[key] = lineChartData.lines
+        .filter((el) => getLine(key, el))
         .map((el) => ({
           ...el,
-          includeMarkers: key === "primary" ? true : false,
           pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
             ? getColor(el.areaCode, primaryLines.indexOf(el.areaCode))
             : null,
@@ -149,6 +115,10 @@
       return acc;
     }, {}),
   );
+
+  function overrideDefaultStyle(parameterName, key, el) {}
+
+  $inspect(tieredLineParams);
 
   let globalTierRules = $derived({
     otherTier: {},
@@ -177,7 +147,7 @@
         <g data-role="lines-group">
           <Lines
             {tieredDataObject}
-            {dataArray}
+            dataArray={lineChartData.lines}
             {lineFunction}
             {chartWidth}
             {xFunction}
@@ -192,6 +162,7 @@
             {globalTierRules}
             {chartBackgroundColor}
             {nothingSelected}
+            {getLine}
           ></Lines>
         </g>
         <g data-role="y-axis">

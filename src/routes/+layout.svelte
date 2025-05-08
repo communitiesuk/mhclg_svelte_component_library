@@ -1,6 +1,6 @@
 <script lang="ts">
   import Footer from "$lib/components/ui/Footer.svelte";
-  import InternalHeader from "$lib/components/ui/InternalHeader.svelte";
+  import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
   import HeaderNav from "$lib/components/ui/HeaderNav.svelte";
   import MobileNav from "$lib/components/ui/MobileNav.svelte";
   import SideNav from "$lib/components/ui/SideNav.svelte";

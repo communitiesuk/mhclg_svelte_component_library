@@ -104,7 +104,7 @@
             : "start"}
         fill="black"
       >
-        {yearsInput ? yearTicks[index] : "${prefix{tick}{suffix}"}
+        {yearsInput ? yearTicks[index] : prefix + tick + suffix}
       </text>
     </g>
   {/each}

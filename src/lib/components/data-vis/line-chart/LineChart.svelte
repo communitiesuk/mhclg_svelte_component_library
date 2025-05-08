@@ -33,6 +33,8 @@
     getLine,
     basicLineParams,
     overrideDefaultStyles,
+    nothingSelected,
+    globalTierRules,
   } = $props();
 
   /*let svgWidth = $state(),
@@ -70,8 +72,6 @@
     labelClicked,
   ]);
 
-  let nothingSelected = $derived(selectedLine.every((item) => item == null));
-
   function handleClickOutside(event) {
     if (
       lineClicked != event.target.parentElement.dataset.id ||
@@ -93,7 +93,6 @@
   //   haloColor: chartBackgroundColor,
   //   invisibleStrokeWidth: 20,
   // });
-
   let defaultLineParams = $derived(
     Object.fromEntries(
       Object.entries(tieredLineParams).map(([key, group]) => [
@@ -110,31 +109,28 @@
         .map((el) => {
           return { ...el, ...overrideDefaultStyles(key, el) };
         });
-      /*.map((el) => ({
-          ...el,
-          pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
-            ? getColor(el.areaCode, primaryLines.indexOf(el.areaCode))
-            : null,
-        }));*/
+
       return acc;
     }, {}),
   );
 
-  $inspect(tieredLineParams);
-
-  let globalTierRules = $derived({
-    otherTier: {},
-    secondary: {
-      opacity: nothingSelected ? 1 : 0.5,
-    },
-    primary: {
-      opacity: nothingSelected ? 1 : 0.4,
-    },
-    hover: { opacity: 1 },
-    clicked: { opacity: 1 },
-  });
-
-  $inspect(svgWidth);
+  // let tieredDataObject = $derived(
+  //   ([tieredLineParams, basicLineParams, lineChartData]) => {
+  //     return Object.entries(tieredLineParams).reduce(
+  //       (acc, [groupKey, groupOverrides]) => {
+  //         acc[groupKey] = lineChartData.lines
+  //           .filter((line) => getLine(groupKey, line))
+  //           .map((line) => ({
+  //             ...basicLineParams, // base defaults
+  //             ...groupOverrides, // group-level overrides
+  //             ...line, // original line data (e.g. id, x/y)
+  //             ...overrideDefaultStyles(groupKey, line), // final per-line overrides
+  //           }));
+  //         return acc;
+  //       },
+  //     );
+  //   },
+  // );
 </script>
 
 <div bind:clientWidth={svgWidth}>

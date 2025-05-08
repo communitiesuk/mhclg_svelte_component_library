@@ -105,7 +105,7 @@
 
 {#each Object.keys(tieredDataObject) as tier}
   <g id={tier}>
-    <g opacity={globalTierRules[tier].opacity}>
+    <g {...globalTierRules[tier]}>
       {#each tieredDataObject[tier] as line, i}
         {@const lineAttributes = generateLineAttributes(
           line,

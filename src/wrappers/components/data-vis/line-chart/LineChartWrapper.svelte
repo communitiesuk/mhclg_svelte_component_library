@@ -138,6 +138,9 @@
   let lineClicked = $state();
   let lineHovered = $state();
   let svgWidth = $state(500);
+  let nothingSelected = $derived(
+    [lineClicked, lineHovered].every((item) => item == null),
+  );
 
   /**
    * ! Step 3 - Add your props
@@ -418,6 +421,23 @@
           };
         },
       },
+      {
+        name: "globalTierRules",
+        category: "customisingLines",
+        description:
+          "Defines how the entire tier should be rendered. Must be valid SVG attributes",
+        value: {
+          otherTier: {},
+          secondary: {
+            opacity: nothingSelected ? 1 : 0.5,
+          },
+          primary: {
+            opacity: nothingSelected ? 1 : 0.4,
+          },
+          hover: { opacity: 1 },
+          clicked: { opacity: 1 },
+        },
+      },
     ]),
   );
   /**
@@ -567,6 +587,7 @@
     tieredLineParams,
     getColor,
     basicLineParams,
+    nothingSelected,
   });
 
   /**

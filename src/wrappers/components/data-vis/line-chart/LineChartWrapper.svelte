@@ -380,6 +380,44 @@
           }
         },
       },
+      {
+        name: "overrideDefaultStyles",
+        category: "customisingLines",
+        functionElements: {
+          functionAsString: `function (key, el) {
+            return {
+              pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
+                ? getColor(
+                    el.areaCode,
+                    [
+                      "E07000224",
+                      "E07000225",
+                      "E07000226",
+                      "E07000228",
+                    ].indexOf(el.areaCode),
+                  )
+                : null,
+            };
+          }`,
+        },
+        value: function (key, el) {
+          return {
+            pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
+              ? getColor(
+                  el.areaCode,
+                  [
+                    "E07000224",
+                    "E07000225",
+                    "E07000226",
+                    "E07000228",
+                    englandMedian,
+                    similarAreas,
+                  ].indexOf(el.areaCode),
+                )
+              : null,
+          };
+        },
+      },
     ]),
   );
   /**

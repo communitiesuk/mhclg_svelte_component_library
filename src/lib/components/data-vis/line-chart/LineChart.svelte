@@ -32,6 +32,7 @@
     chartBackgroundColor,
     getLine,
     basicLineParams,
+    overrideDefaultStyles,
   } = $props();
 
   /*let svgWidth = $state(),
@@ -101,19 +102,6 @@
       ]),
     ),
   );
-
-  function overrideDefaultStyles(key, el) {
-    return {
-      pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
-        ? getColor(
-            el.areaCode,
-            ["E07000224", "E07000225", "E07000226", "E07000228"].indexOf(
-              el.areaCode,
-            ),
-          )
-        : null,
-    };
-  }
 
   let tieredDataObject = $derived(
     Object.keys(defaultLineParams).reduce((acc, key, index) => {

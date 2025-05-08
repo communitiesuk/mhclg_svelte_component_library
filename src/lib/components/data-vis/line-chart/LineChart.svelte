@@ -93,26 +93,87 @@
   //   haloColor: chartBackgroundColor,
   //   invisibleStrokeWidth: 20,
   // });
-  let defaultLineParams = $derived(
-    Object.fromEntries(
-      Object.entries(tieredLineParams).map(([key, group]) => [
-        key,
-        { ...basicLineParams, ...group },
+  // let defaultLineParams = $derived(
+  //   Object.fromEntries(
+  //     Object.entries(tieredLineParams).map(([key, group]) => [
+  //       key,
+  //       { ...basicLineParams, ...group },
+  //     ]),
+  //   ),
+  // );
+  function generateLineAttributes(
+    line,
+    tier,
+    overrideDefaultStyles,
+    tieredLineParams,
+    basicLineParams,
+  ) {
+    // const defaultForTier = { ...basicLineParams, ...tieredLineParams[tier] };
+
+    const listOfProperties = [
+      ...new Set([
+        ...Object.keys(basicLineParams),
+        ...Object.keys(tieredLineParams[tier] || {}),
+        ...Object.keys(line),
+        ...Object.keys(overrideDefaultStyles(tier, line)),
       ]),
-    ),
-  );
+    ];
+
+    const merged = Object.fromEntries(
+      listOfProperties.map((key) => [
+        key,
+        overrideDefaultStyles(tier, line)[key] ??
+          line[key] ??
+          tieredLineParams[tier]?.[key] ??
+          basicLineParams[key],
+      ]),
+    );
+
+    return {
+      ...merged,
+      dataId: line.areaCode,
+      dataArray: line.data,
+    };
+  }
 
   let tieredDataObject = $derived(
-    Object.keys(defaultLineParams).reduce((acc, key, index) => {
+    Object.keys(tieredLineParams).reduce((acc, key) => {
       acc[key] = lineChartData.lines
         .filter((el) => getLine(key, el))
-        .map((el) => {
-          return { ...el, ...overrideDefaultStyles(key, el) };
-        });
+        .map((el) =>
+          generateLineAttributes(
+            el,
+            key,
+            overrideDefaultStyles,
+            tieredLineParams,
+            basicLineParams,
+          ),
+        );
 
       return acc;
     }, {}),
   );
+
+  // function generateLineAttributes(line, defaultLineParams, tier) {
+  //   const listOfProperties = [
+  //     ...new Set([
+  //       ...Object.keys(line),
+  //       ...Object.keys(defaultLineParams[tier]),
+  //     ]),
+  //   ];
+
+  //   const merged = Object.fromEntries(
+  //     listOfProperties.map((key) => [
+  //       key,
+  //       line[key] ?? defaultLineParams[tier][key],
+  //     ]),
+  //   );
+  //   return {
+  //     ...merged,
+  //     dataId: line.areaCode,
+  //     dataArray: line.data, // rename in the original to avoid this
+  //   };
+  // }
 
   // let tieredDataObject = $derived(
   //   ([tieredLineParams, basicLineParams, lineChartData]) => {
@@ -131,6 +192,17 @@
   //     );
   //   },
   // );
+
+  // function getLineAttributes(line, basicLineParams, groupOverrides, groupKey) {
+  //   return {
+  //     ...basicLineParams,
+  //     ...groupOverrides,
+  //     ...line,
+  //     ...overrideDefaultStyles(groupKey, line),
+  //     dataId: line.areaCode,
+  //     dataArray: line.data,
+  //   };
+  // }
 </script>
 
 <div bind:clientWidth={svgWidth}>
@@ -155,7 +227,6 @@
             bind:lineHovered
             bind:lineClicked
             {chartHeight}
-            {defaultLineParams}
             {showAllData}
             {globalTierRules}
             {chartBackgroundColor}

@@ -18,7 +18,6 @@
     lineHovered = $bindable(),
     lineClicked = $bindable(),
     chartHeight,
-    defaultLineParams,
     globalTierRules,
     chartBackgroundColor = "#fafafa",
     nothingSelected,
@@ -107,17 +106,12 @@
   <g id={tier}>
     <g {...globalTierRules[tier]}>
       {#each tieredDataObject[tier] as line, i}
-        {@const lineAttributes = generateLineAttributes(
+        <!-- {@const lineAttributes = generateLineAttributes(
           line,
           defaultLineParams,
           tier,
-        )}
-        <Line
-          {...lineAttributes}
-          {tier}
-          {chartBackgroundColor}
-          {lineFunction}
-        />
+        )} -->
+        <Line {...line} {tier} {chartBackgroundColor} {lineFunction} />
       {/each}
     </g>
 

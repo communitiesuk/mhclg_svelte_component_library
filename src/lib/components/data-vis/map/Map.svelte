@@ -41,6 +41,7 @@
     scaleControl,
     scaleControlPosition = "bottom-left",
     scaleControlUnit = "metric",
+    styleSheet = "Carto-light",
     colorPalette = "YlGnBu",
     showBorder = false,
     maxBorderWidth = 1.5,
@@ -57,6 +58,14 @@
     center = [-2.5, 53],
     zoom = 5,
   } = $props();
+
+  let styleLookup = {
+    "Carto-light":
+      "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+    "Carto-dark":
+      "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+  };
+  let style = $derived(styleLookup[styleSheet] ?? styleSheet);
 
   let mapData = $derived(data?.filter((d) => d.year == year)[0]?.data);
 
@@ -82,7 +91,7 @@
 
   let loaded = $state(false);
   let textLayers: maplibregl.LayerSpecification[] = $derived(
-    map && loaded
+    map && loaded && styleSheet
       ? map.getStyle().layers.filter((layer) => {
           return layer.type === "symbol" && layer["source-layer"] === "place";
         })
@@ -91,6 +100,25 @@
 
   let colors = $derived(fillColor.map((d) => contrastingColor(d)));
   $effect(() => {
+    //Things can get out of sync when changing source
+    //this section makes sure that the geojson layers end up below the text layers
+    let geoJsonLayerIds = map
+      ?.getStyle()
+      ?.layers.filter((layer) => {
+        return layer.source == "areas";
+      })
+      .map((d) => d.id);
+    const labelLayerId = map
+      ?.getStyle()
+      ?.layers.find(
+        (layer) => layer.type === "symbol" && layer["source-layer"] === "place",
+      )?.id;
+    if (geoJsonLayerIds && labelLayerId) {
+      for (let layer of geoJsonLayerIds) {
+        map.moveLayer(layer, labelLayerId);
+      }
+    }
+
     for (let layer of textLayers) {
       //Hard coded to first color for testing
       map?.setPaintProperty(layer.id, "text-color", colors[0].textColor);
@@ -164,7 +192,7 @@
 <MapLibre
   bind:map
   bind:loaded
-  style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+  {style}
   class="map"
   {standardControls}
   {center}

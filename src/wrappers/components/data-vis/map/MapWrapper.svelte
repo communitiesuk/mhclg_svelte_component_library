@@ -265,6 +265,24 @@
         ],
       },
       {
+        name: "styleSheet",
+        isProp: true,
+        description: {
+          markdown: true,
+          arr: [
+            "The stylesheet affects how the base map looks, either use one of these options, or the url of a stylesheet or pass an object in the <a href='https://maplibre.org/maplibre-style-spec/root/'> maplibre style format</a>",
+          ],
+        },
+        options: [
+          "Carto-light",
+          "Carto-dark",
+          "https://raw.githubusercontent.com/ONSvisual/svelte-maps/refs/heads/main/dist/data/style-ons-light.json",
+          { version: 8, sources: {}, layers: [] },
+        ],
+
+        category: "Styling",
+      },
+      {
         name: "colorPalette",
         isProp: true,
         description: "The colour palette to use for data visualisation",

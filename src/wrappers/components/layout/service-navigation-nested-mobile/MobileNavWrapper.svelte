@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "In progress",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -46,10 +46,17 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "The <code>MobileNav</code> component provides a mobile-specific navigation panel.",
+    "It typically appears as a fly-out or full-screen menu, triggered by a toggle button in a primary header (like <code>HeaderNav</code>).",
+    "It displays a structured list of navigation sections and items, allowing users to navigate the application on smaller screens.",
+    "This component is often managed by the <code>ServiceNavigationNestedMobile</code> component, which coordinates its state and interactions with <code>HeaderNav</code>.",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "This component is used in responsive web designs to offer a compact and accessible navigation solution for mobile users.",
+    "It works in conjunction with a main header component that handles its visibility (e.g., <code>HeaderNav</code>'s mobile menu toggle), often orchestrated by <code>ServiceNavigationNestedMobile</code>.",
+    "The structure of the navigation links (<code>sections</code> prop) can be tailored to match the application's information architecture and should usually match the nav items in <code>SideNav</code>.",
   ];
 
   let detailsArray = [
@@ -70,7 +77,35 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [];
+  let connectedComponentsArray = [
+    {
+      label: "Orchestrating Parent",
+      arr: [
+        {
+          name: "ServiceNavigationNestedMobile",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+      ],
+    },
+    {
+      label: "Sibling Component (Controls Visibility)",
+      arr: [
+        {
+          name: "HeaderNav",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+      ],
+    },
+    {
+      label: "Related Component (Part of Navigation Pattern)",
+      arr: [
+        {
+          name: "SideNav",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+      ],
+    },
+  ];
 </script>
 
 <script>
@@ -107,7 +142,7 @@
    * DONOTTOUCH *
    * ? 		demoScreenWidth is a reactive variable which tracks which screen size the user has selected for demoing the component
    */
-  let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
+  let demoScreenWidth = $state(defaultScreenWidthBreakpoints.sm);
 
   /**
    * ! Step 2 - Adding binded props
@@ -157,140 +192,155 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        name: "isOpen",
+        category: "State & Behavior",
+        value: true,
         description: {
           markdown: true,
           arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 2,
-      },
-      {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
+            "Controls the visibility of the mobile navigation panel. Set to <code>true</code> to show, <code>false</code> to hide.",
+            "This is typically controlled by a parent component (e.g., a toggle button in <code>HeaderNav</code>).",
           ],
         },
       },
       {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "jsObjectProp",
-        category: "Input props",
+        name: "sections",
+        category: "Content & Structure",
+        rows: 20,
         value: [
           {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
+            title: "Home",
+            href: "/#home-wrapper",
+            current: true,
+            items: [{ text: "Overview", href: "/#home-overview-wrapper" }],
           },
           {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
+            title: "Components",
+            href: "/#components-wrapper",
+            current: false,
+            items: [
+              {
+                title: "Layout",
+                items: [
+                  {
+                    text: "HeaderNav",
+                    href: "/components/layout/service-navigation-nested-mobile/header-nav",
+                  },
+                  {
+                    text: "MobileNav",
+                    href: "/components/layout/service-navigation-nested-mobile/mobile-nav",
+                  },
+                  {
+                    text: "SideNav",
+                    href: "/components/layout/service-navigation-nested-mobile/side-nav",
+                  },
+                ],
+              },
+              { text: "Button", href: "/components/ui/button" },
+            ],
           },
           {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
+            title: "Patterns",
+            href: "/#patterns-wrapper",
+            current: false,
+            items: [
+              { text: "Forms", href: "/patterns/forms" },
+              { text: "Tables", href: "/patterns/tables" },
+            ],
           },
           {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
+            title: "Community",
+            href: "/#community-wrapper",
+            current: false,
+            items: [
+              { text: "Updates", href: "/community/updates" },
+              { text: "Contributing", href: "/community/contributing" },
+            ],
           },
         ],
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
+            "An array of <code>NavSection</code> objects that define the structure and content of the mobile navigation.",
+            "Each section object has a <code>title</code>, <code>href</code>, optional <code>current</code> status, and an <code>items</code> array.",
+            "The <code>items</code> array can contain <code>SubNavItem</code> objects (with <code>text</code>, <code>href</code>, <code>current</code>) or nested group objects (with <code>title</code> and an <code>items</code> array of <code>SubNavItem</code>).",
+            "Use hashed hrefs (e.g. <code>/#some-id</code>) if you want to test navigation within this wrapper page without full page reloads.",
           ],
         },
       },
       {
-        name: "functionProp",
-        category: "Fixed props",
-
+        name: "currentSection",
+        category: "State & Behavior",
+        options: [
+          "Home",
+          "Components",
+          "Patterns",
+          "Community",
+          "Other Section",
+        ],
+        value: "Home",
+        description: {
+          markdown: true,
+          arr: [
+            "A string indicating the currently active top-level section (e.g., 'Home', 'Components').",
+            "This helps highlight the relevant section in the mobile navigation and can be used by the component to determine which section is initially expanded.",
+            "Should match one of the <code>title</code> properties in the <code>sections</code> array for intended behavior.",
+          ],
+        },
+      },
+      {
+        name: "onNavigate",
+        category: "Event Handlers",
+        propType: "fixed",
         isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
+        value: function (href, event) {
+          if (event && typeof event.preventDefault === "function") {
+            event.preventDefault();
+          }
+          if (this && this.functionElements) {
+            window.alert(
+              `MobileNav demo: Navigating to ${href}. Default navigation PREVENTED. In a real app, this would trigger page navigation and likely close the mobile menu.`,
+            );
+            this.functionElements.counter += 1;
+            if (this.functionElements.dataset) {
+              this.functionElements.dataset.lastHref = href;
+            }
+          } else {
+            window.alert(
+              `MobileNav demo: Navigating to ${href}. Default navigation PREVENTED. (Standard function call)`,
+            );
+          }
         },
         functionElements: {
-          dataset: { role: null, id: null },
           counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
+          dataset: { lastHref: null },
+          functionAsString: `'''function (href, event) {
+  // event parameter is passed by MobileNav.svelte
+  if (event && typeof event.preventDefault === 'function') {
+    event.preventDefault(); // Prevent default browser navigation for demo purposes
+  }
 
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
+  // This function is called when a navigation link (SubNavItem)
+  // inside the mobile menu is clicked.
+  // It receives the 'href' of the clicked link as an argument.
+  // Example implementation:
+  // import { goto } from '$app/navigation';
+  // import { getContext } from 'svelte';
+  // const mobileMenuStore = getContext('mobileMenuStore'); // Or manage state via props/context
+  // mobileMenuStore.close(); // Assuming a method to close the menu
+  // goto(href);
+  alert("MobileNav: Navigating to " + href + ". Default navigation prevented.");
+}'''`,
         },
         description: {
           markdown: true,
           arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
+            "An event handler function that is called when a navigable item within the mobile menu is clicked.",
+            "It receives the <code>href</code> (string) of the clicked item and the original <code>MouseEvent</code> as arguments.",
+            "Access to the <code>MouseEvent</code> allows for more advanced control, such as:",
+            "<ul><li>Checking for modifier keys (e.g., <code>event.ctrlKey</code>, <code>event.metaKey</code>) to alter behavior (like opening in a new tab).</li><li>Conditionally calling <code>event.preventDefault()</code> to stop the default link navigation based on specific logic.</li></ul>",
+            "The main purpose is to implement the desired navigation logic (e.g., using SvelteKit's <code>goto</code>) and potentially close the mobile menu.",
+            "For this demo, <code>event.preventDefault()</code> is called unconditionally to stop the browser from following the link directly and allow observation of the callback.",
           ],
         },
       },
@@ -420,7 +470,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
     {subFolder}
     {homepage}
     {statusObject}
-    parentFolder="components-update"
+    parentFolder="components-layout-service-navigation-nested-mobile"
   ></BaseNameAndStatus>
 {/snippet}
 
@@ -430,12 +480,27 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
 {/snippet}
 
 <!-- 
-  !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
-  CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
+  !   Step 5 - Create a context for the component
  -->
 {#snippet Component()}
-  <div class="p-8">
-    <MobileNav {...parametersObject}></MobileNav>
+  <p class="govuk-body p-4">
+    This demo attempts to keep the navigation panel visible even on wider
+    screens for easier inspection. In a real application,
+    <code>MobileNav</code> would typically only appear on mobile viewports due
+    to its internal styling, and its <code>isOpen</code> state would be
+    controlled by a component like <code>HeaderNav</code>.
+  </p>
+  <div
+    class="border border-neutral-300 min-h-[400px] bg-gray-50 demo-mobile-nav-container"
+  >
+    {#if parametersObject.isOpen}
+      <MobileNav {...parametersObject}></MobileNav>
+    {:else}
+      <p class="p-4 text-gray-500 italic">
+        MobileNav is currently closed (<code>isOpen</code> is false). Toggle it via
+        the prop in the "State & Behavior" panel to see it.
+      </p>
+    {/if}
   </div>
 {/snippet}
 
@@ -484,3 +549,11 @@ DONOTTOUCH  *
 <div id="examples" data-role="examples-section" class="px-5">
   <Examples></Examples>
 </div>
+
+<style>
+  /* Force MobileNav to be visible in the demo on wider screens if isOpen is true */
+  .demo-mobile-nav-container
+    :global(nav.app-mobile-nav.app-mobile-nav--active) {
+    display: block !important;
+  }
+</style>

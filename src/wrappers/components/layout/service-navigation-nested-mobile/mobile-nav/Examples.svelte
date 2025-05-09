@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { AccordionItem, Accordion } from "flowbite-svelte";
 
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
@@ -6,10 +6,66 @@
 
   import MobileNav from "$lib/components/layout/service-navigation-nested-mobile/MobileNav.svelte";
 
+  // Example 1: Basic MobileNav with an external toggle button
+  let ex1IsOpen = $state(false);
+  const ex1Sections = [
+    {
+      title: "Dashboard",
+      href: "#/dashboard",
+      current: true,
+      items: [
+        { text: "Overview", href: "#/dashboard/overview" },
+        { text: "Analytics", href: "#/dashboard/analytics" },
+      ],
+    },
+    {
+      title: "Settings",
+      href: "#/settings",
+      current: false,
+      items: [
+        { text: "Profile", href: "#/settings/profile" },
+        { text: "Account", href: "#/settings/account" },
+        {
+          title: "Preferences", // Nested group
+          items: [
+            {
+              text: "Notifications",
+              href: "#/settings/preferences/notifications",
+            },
+            { text: "Theme", href: "#/settings/preferences/theme" },
+          ],
+        },
+      ],
+    },
+    {
+      title: "Help",
+      href: "#/help",
+      current: false,
+      items: [
+        { text: "FAQ", href: "#/help/faq" },
+        { text: "Support", href: "#/help/support" },
+      ],
+    },
+  ];
+  let ex1CurrentSection = $state("Dashboard");
+
+  function ex1ToggleMobileNav() {
+    ex1IsOpen = !ex1IsOpen;
+  }
+
+  function ex1HandleNavigate(href: string, event: MouseEvent) {
+    if (event && typeof event.preventDefault === "function") {
+      event.preventDefault();
+    }
+    alert(`Example 1: Navigating to ${href}. Default navigation prevented.`);
+    // In a real app, you might close the nav here: ex1IsOpen = false;
+    // And then use SvelteKit's goto(href);
+  }
+
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
+      heading: "1. MobileNav with External Toggle Button",
       content: Example1,
     },
   ];
@@ -36,33 +92,46 @@
 </div>
 
 {#snippet Example1()}
-  <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+  <div class="p-5 bg-white border border-neutral-300 relative">
+    <p class="govuk-body mb-4">
+      This example shows how to control the <code>MobileNav</code> component's visibility
+      using an external button. Click the button below to toggle the navigation panel.
+      The panel is styled to appear even on desktop for this demo.
+    </p>
+    <button class="govuk-button mb-4" onclick={ex1ToggleMobileNav}>
+      {ex1IsOpen ? "Close" : "Open"} Mobile Menu
+    </button>
+
+    <div
+      class="demo-mobile-nav-container relative min-h-[300px] border border-dashed border-gray-400 bg-gray-50 p-2"
+    >
+      {#if ex1IsOpen}
+        <MobileNav
+          isOpen={ex1IsOpen}
+          sections={ex1Sections}
+          currentSection={ex1CurrentSection}
+          onNavigate={ex1HandleNavigate}
+        />
+      {:else}
+        <p class="text-center text-gray-500 italic p-4">
+          MobileNav is closed. Click the button above to open.
+        </p>
+      {/if}
+    </div>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
+
+<style>
+  /* Styles from MobileNavWrapper to force visibility in demo */
+  .demo-mobile-nav-container
+    :global(nav.app-mobile-nav.app-mobile-nav--active) {
+    display: block !important;
+    /* For demo purposes, let's make it appear within the container */
+    position: absolute; /* Or relative, depending on desired effect */
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10;
+  }
+</style>

@@ -85,7 +85,6 @@
     "@dwp/dwp-frontend": "^3.3.0",
     "@maptiler/sdk": "^3.0.1",
     "@ministryofjustice/frontend": "^4.0.1",
-    "@moduk/frontend": "^2.0.23",
     "@monaco-editor/loader": "^1.4.0",
     "@types/dompurify": "^3.0.5",
     "accessible-autocomplete": "^3.0.1",

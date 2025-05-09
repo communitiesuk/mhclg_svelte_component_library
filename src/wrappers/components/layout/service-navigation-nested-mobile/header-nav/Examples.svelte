@@ -14,7 +14,7 @@
   ];
 
   // Props for Example 1
-  let ex1ServiceName = "My Web App";
+  let ex1ServiceName = "My Application";
   let ex1NavigationItems = $state([
     { text: "Home", href: "#/home", current: true },
     { text: "Features", href: "#/features", current: false },
@@ -48,9 +48,9 @@
         current: item.text === section,
       }));
       // Optionally close mobile nav on navigation
-      // if (ex1MobileNavOpen) {
-      //   ex1MobileNavOpen = false;
-      // }
+      if (ex1MobileNavOpen) {
+        ex1MobileNavOpen = false;
+      }
     }
   }
 
@@ -96,7 +96,7 @@
     <HeaderNav
       serviceName={ex1ServiceName}
       navigationItems={ex1NavigationItems}
-      currentSection={ex1CurrentSection}
+      bind:currentSection={ex1CurrentSection}
       bind:mobileNavIsOpen={ex1MobileNavOpen}
       onToggle={ex1ToggleMobileNav}
     />

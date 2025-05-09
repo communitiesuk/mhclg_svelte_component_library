@@ -16,13 +16,8 @@ export const codeBlock1 = `
 
   function toggleMobileNav() {
     mobileNavOpen = !mobileNavOpen;
-    console.log("Mobile nav toggled:", mobileNavOpen);
   }
 
-  // Example of how currentSection might be updated (e.g., by other UI elements)
-  function changeSection(newSection: string) {
-    currentSection = newSection;
-  }
 </script>
 
 <HeaderNav 
@@ -32,14 +27,6 @@ export const codeBlock1 = `
   bind:mobileNavIsOpen={mobileNavOpen} 
   onToggle={toggleMobileNav} 
 />
-
-<div>
-  <p class="mt-4">Current Section (from parent): {currentSection}</p>
-  <button class="mr-2 p-2 border rounded" onclick={() => changeSection("Home")}>Set to Home</button>
-  <button class="mr-2 p-2 border rounded" onclick={() => changeSection("Features")}>Set to Features</button>
-  <button class="mr-2 p-2 border rounded" onclick={() => changeSection("Pricing")}>Set to Pricing</button>
-  <button class="p-2 border rounded" onclick={() => changeSection("Contact")}>Set to Contact</button>
-</div>
 
 {#if mobileNavOpen}
   <div style="padding: 1rem; background-color: #f0f0f0; border-top: 1px solid #ccc;" class="mt-2">

@@ -286,50 +286,6 @@
     generateValuesArray(parametersSourceArray, true, {}),
   );
 
-  $effect(() => {
-    const csIndex = parametersSourceArray.findIndex(
-      (p) => p.name === "currentSection",
-    );
-    if (
-      csIndex !== -1 &&
-      statedParametersValuesArray[csIndex] !== currentSection
-    ) {
-      currentSection = statedParametersValuesArray[csIndex];
-    }
-
-    const mnoIndex = parametersSourceArray.findIndex(
-      (p) => p.name === "mobileNavIsOpen",
-    );
-    if (
-      mnoIndex !== -1 &&
-      statedParametersValuesArray[mnoIndex] !== mobileNavIsOpen
-    ) {
-      mobileNavIsOpen = statedParametersValuesArray[mnoIndex];
-    }
-  });
-
-  $effect(() => {
-    const csIndex = parametersSourceArray.findIndex(
-      (p) => p.name === "currentSection",
-    );
-    if (
-      csIndex !== -1 &&
-      currentSection !== statedParametersValuesArray[csIndex]
-    ) {
-      statedParametersValuesArray[csIndex] = currentSection;
-    }
-
-    const mnoIndex = parametersSourceArray.findIndex(
-      (p) => p.name === "mobileNavIsOpen",
-    );
-    if (
-      mnoIndex !== -1 &&
-      mobileNavIsOpen !== statedParametersValuesArray[mnoIndex]
-    ) {
-      statedParametersValuesArray[mnoIndex] = mobileNavIsOpen;
-    }
-  });
-
   /**
    *  !  Step 4 - Define values for derived parameters, and add them to.
    *  CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
@@ -445,11 +401,7 @@
  -->
 {#snippet Component()}
   <div class="p-0 border border-neutral-300">
-    <HeaderNav
-      {...parametersObject}
-      bind:mobileNavIsOpen
-      bind:currentSection
-    ></HeaderNav>
+    <HeaderNav {...parametersObject} bind:mobileNavIsOpen bind:currentSection />
     {#if mobileNavIsOpen}
       <div class="p-4 bg-gray-100">Mobile Menu Area (Simulated)</div>
     {/if}

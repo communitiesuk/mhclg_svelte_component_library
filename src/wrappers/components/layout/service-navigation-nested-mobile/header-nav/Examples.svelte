@@ -88,6 +88,10 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white border border-neutral-300">
+    <p class="govuk-body">
+      To test the mobile menu, please reduce your screen width to below a
+      typical mobile breakpoint.
+    </p>
     <p class="mb-2 text-sm text-gray-600">
       Current simulated section: <strong class="text-orange-600"
         >{ex1CurrentSection}</strong

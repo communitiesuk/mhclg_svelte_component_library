@@ -164,7 +164,7 @@
     addIndexAndInitalValue([
       {
         name: "serviceName",
-        category: "Input props",
+        category: "Content & Appearance",
         value: "Svelte Component Library",
         description: {
           markdown: true,
@@ -175,7 +175,7 @@
       },
       {
         name: "navigationItems",
-        category: "Input props",
+        category: "Content & Appearance",
         value: [
           { text: "Home", href: "/", current: true },
           { text: "Components", href: "/components", current: false },
@@ -192,7 +192,7 @@
       },
       {
         name: "currentSection",
-        category: "Input props",
+        category: "Stateful & Bindable",
         isBinded: true,
         options: ["Home", "Components", "Patterns", "Community"],
         value: "Home",
@@ -207,7 +207,7 @@
       },
       {
         name: "mobileNavIsOpen",
-        category: "Input props",
+        category: "Stateful & Bindable",
         isBinded: true,
         value: false,
         description: {
@@ -221,13 +221,13 @@
       },
       {
         name: "onToggle",
-        category: "Fixed props",
+        category: "Event Handlers",
         propType: "fixed",
         isRequired: true,
         value: function () {
           mobileNavIsOpen = !mobileNavIsOpen;
           window.alert(
-            `The onToggle function has been triggered. Mobile nav is now ${mobileNavIsOpen ? "open" : "closed"}. Open the 'Input props' panel to see the updated 'mobileNavIsOpen' value.`,
+            `The onToggle function has been triggered. Mobile nav is now ${mobileNavIsOpen ? "open" : "closed"}. Open the Stateful & Bindable and Event Handlers panels to see the updated mobileNavIsOpen and onToggle function values.`,
           );
           this.functionElements.counter += 1;
         },
@@ -400,11 +400,17 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-0 border border-neutral-300">
+
+  <p class="govuk-body">
+    To test the mobile menu, please reduce your screen width to below a
+    typical mobile breakpoint.
+  </p>
+  <div>
     <HeaderNav {...parametersObject} bind:mobileNavIsOpen bind:currentSection />
     {#if mobileNavIsOpen}
       <div class="p-4 bg-gray-100">Mobile Menu Area (Simulated)</div>
     {/if}
+
   </div>
 {/snippet}
 

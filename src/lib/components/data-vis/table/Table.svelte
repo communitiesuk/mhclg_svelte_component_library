@@ -1,8 +1,4 @@
 <script>
-  import { TabItem } from "flowbite-svelte";
-
-  // import { areSameLanguages } from "@maptiler/sdk";
-
   let {
     componentNameProp = undefined,
     data = undefined,

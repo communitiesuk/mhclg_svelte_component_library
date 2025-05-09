@@ -49,6 +49,7 @@
   let descriptionArray = [
     "The <code>HeaderNav</code> component displays the main service navigation header.",
     "It includes the service name, a set of primary navigation links, and a toggle button for mobile navigation.",
+    "This component is essentially the same as the <code>Service Navigation</code> component, but allows you too plugin your own mobile nav link flyout panel and monitor the current section. Both of these features are useful when used in conjunction with the MobileNav and SideNav components to synchronise the expanded state and use more advanced navigation patterns / layouts.",
   ];
 
   let contextArray = [
@@ -400,17 +401,15 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-
   <p class="govuk-body">
-    To test the mobile menu, please reduce your screen width to below a
-    typical mobile breakpoint.
+    To test the mobile menu, please reduce your screen width to below a typical
+    mobile breakpoint.
   </p>
   <div>
     <HeaderNav {...parametersObject} bind:mobileNavIsOpen bind:currentSection />
     {#if mobileNavIsOpen}
       <div class="p-4 bg-gray-100">Mobile Menu Area (Simulated)</div>
     {/if}
-
   </div>
 {/snippet}
 

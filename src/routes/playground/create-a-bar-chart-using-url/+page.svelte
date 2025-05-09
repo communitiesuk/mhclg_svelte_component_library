@@ -37,6 +37,11 @@
   let numberOfBars = $derived(+(urlParams["numberOfBars"] ?? 10));
   $inspect(numberOfBars);
 
+  let shareableParams = $derived(
+    new URLSearchParams({ selectedYear, numberOfBars }).toString(),
+  );
+  $inspect(shareableParams);
+
   let dataArray = $derived(
     data?.dataInFormatForBarChart
       .find((el) => el.x === selectedYear)
@@ -70,7 +75,6 @@
                   value={option}
                   bind:group={selectedYear}
                   checked={option == selectedYear}
-                  onchange={() => updateUrlParams({ selectedYear })}
                 >
                   <span class="text-base font-normal">
                     {option}
@@ -103,7 +107,6 @@
               min={2}
               max={100}
               bind:value={numberOfBars}
-              onchange={updateUrlParams({ numberOfBars })}
             />
           </Input>
         </div>
@@ -116,6 +119,7 @@
         <div class="row-chart-container">
           <RowChart {dataArray}></RowChart>
         </div>
+        <p>Share this chart: {data.url}?{shareableParams}</p>
       </div>
     </div>
   </div>

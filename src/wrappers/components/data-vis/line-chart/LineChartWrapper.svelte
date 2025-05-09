@@ -184,6 +184,74 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
+        name: "basicLineParams",
+        category: "customisingLines",
+        description: "Parameters that are shared by lines in all tiers.",
+      },
+      {
+        name: "tieredLineParams",
+        category: "customisingLines",
+        description:
+          "Parameters that are specific to particular tiers. Takes priority over `basicLineParams`",
+      },
+      {
+        name: "overrideLineParams",
+        category: "customisingLines",
+        description:
+          "Parameters that are specific to particular lines. Takes priority over `basicLineParams` and tieredLineParams",
+        functionElements: {
+          functionAsString: `function (key, el) {
+            return {
+              pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
+                ? getColor(
+                    el.areaCode,
+                    [
+                      "E07000224",
+                      "E07000225",
+                      "E07000226",
+                      "E07000228",
+                    ].indexOf(el.areaCode),
+                  )
+                : null,
+            };
+          }`,
+        },
+        value: function (key, el) {
+          return {
+            pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
+              ? getColor(
+                  el.areaCode,
+                  [
+                    "E07000224",
+                    "E07000225",
+                    "E07000226",
+                    "E07000228",
+                    englandMedian,
+                    similarAreas,
+                  ].indexOf(el.areaCode),
+                )
+              : null,
+          };
+        },
+      },
+      {
+        name: "globalTierRules",
+        category: "customisingLines",
+        description:
+          "Defines how the entire tier should be rendered. Must be valid SVG attributes",
+        value: {
+          otherTier: {},
+          secondary: {
+            opacity: nothingSelected ? 1 : 0.5,
+          },
+          primary: {
+            opacity: nothingSelected ? 1 : 0.4,
+          },
+          hover: { opacity: 1 },
+          clicked: { opacity: 1 },
+        },
+      },
+      {
         name: "colors",
         category: "customisingLines",
         value: colors,
@@ -244,10 +312,7 @@
           }
         },
       },
-      {
-        name: "tieredLineParams",
-        category: "customisingLines",
-      },
+
       {
         name: "getColor",
         category: "customisingLines",
@@ -265,10 +330,7 @@
   };`,
         },
       },
-      {
-        name: "basicLineParams",
-        category: "customisingLines",
-      },
+
       {
         name: "paddingTop",
         category: "dimensions",
@@ -381,61 +443,6 @@
           if (key === "clicked") {
             return lineClicked == el.areaCode;
           }
-        },
-      },
-      {
-        name: "overrideDefaultStyles",
-        category: "customisingLines",
-        functionElements: {
-          functionAsString: `function (key, el) {
-            return {
-              pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
-                ? getColor(
-                    el.areaCode,
-                    [
-                      "E07000224",
-                      "E07000225",
-                      "E07000226",
-                      "E07000228",
-                    ].indexOf(el.areaCode),
-                  )
-                : null,
-            };
-          }`,
-        },
-        value: function (key, el) {
-          return {
-            pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
-              ? getColor(
-                  el.areaCode,
-                  [
-                    "E07000224",
-                    "E07000225",
-                    "E07000226",
-                    "E07000228",
-                    englandMedian,
-                    similarAreas,
-                  ].indexOf(el.areaCode),
-                )
-              : null,
-          };
-        },
-      },
-      {
-        name: "globalTierRules",
-        category: "customisingLines",
-        description:
-          "Defines how the entire tier should be rendered. Must be valid SVG attributes",
-        value: {
-          otherTier: {},
-          secondary: {
-            opacity: nothingSelected ? 1 : 0.5,
-          },
-          primary: {
-            opacity: nothingSelected ? 1 : 0.4,
-          },
-          hover: { opacity: 1 },
-          clicked: { opacity: 1 },
         },
       },
     ]),

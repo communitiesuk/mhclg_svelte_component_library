@@ -32,7 +32,7 @@
     chartBackgroundColor,
     getLine,
     basicLineParams,
-    overrideDefaultStyles,
+    overrideLineParams,
     nothingSelected,
     globalTierRules,
   } = $props();
@@ -93,37 +93,26 @@
   //   haloColor: chartBackgroundColor,
   //   invisibleStrokeWidth: 20,
   // });
-  // let defaultLineParams = $derived(
-  //   Object.fromEntries(
-  //     Object.entries(tieredLineParams).map(([key, group]) => [
-  //       key,
-  //       { ...basicLineParams, ...group },
-  //     ]),
-  //   ),
-  // );
+
   function generateLineAttributes(
     line,
     tier,
-    overrideDefaultStyles,
+    overrideLineParams,
     tieredLineParams,
     basicLineParams,
   ) {
-    // const defaultForTier = { ...basicLineParams, ...tieredLineParams[tier] };
-
     const listOfProperties = [
       ...new Set([
         ...Object.keys(basicLineParams),
-        ...Object.keys(tieredLineParams[tier] || {}),
-        ...Object.keys(line),
-        ...Object.keys(overrideDefaultStyles(tier, line)),
+        ...Object.keys(tieredLineParams[tier] ?? {}),
+        ...Object.keys(overrideLineParams(tier, line)),
       ]),
     ];
 
     const merged = Object.fromEntries(
       listOfProperties.map((key) => [
         key,
-        overrideDefaultStyles(tier, line)[key] ??
-          line[key] ??
+        overrideLineParams(tier, line)[key] ??
           tieredLineParams[tier]?.[key] ??
           basicLineParams[key],
       ]),
@@ -131,20 +120,21 @@
 
     return {
       ...merged,
+      ...line,
       dataId: line.areaCode,
       dataArray: line.data,
     };
   }
 
   let tieredDataObject = $derived(
-    Object.keys(tieredLineParams).reduce((acc, key) => {
-      acc[key] = lineChartData.lines
-        .filter((el) => getLine(key, el))
-        .map((el) =>
+    Object.keys(tieredLineParams).reduce((acc, tier) => {
+      acc[tier] = lineChartData.lines
+        .filter((el) => getLine(tier, el))
+        .map((line) =>
           generateLineAttributes(
-            el,
-            key,
-            overrideDefaultStyles,
+            line,
+            tier,
+            overrideLineParams,
             tieredLineParams,
             basicLineParams,
           ),

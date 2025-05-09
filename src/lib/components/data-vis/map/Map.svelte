@@ -11,7 +11,7 @@
     ControlButton,
     ControlGroup,
   } from "svelte-maplibre";
-  import { contrastingColor, colorPalette } from "./colors";
+  import { contrastingColor } from "./colors";
   import { colorbrewer } from "./colorbrewer.js";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
   import type { maplibregl, ExpressionSpecification } from "maplibre-gl";

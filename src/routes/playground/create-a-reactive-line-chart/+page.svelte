@@ -38,6 +38,11 @@
 
 <PlaygroundDetails {homepage} {details}></PlaygroundDetails>
 {#if !homepage}
+  <a
+    href="./create-a-bar-chart-using-url?{new URLSearchParams(
+      urlParams,
+    ).toString()}">Go to the bar chart</a
+  >
   <div class="chart-container">
     <div class="mt-20">
       <div

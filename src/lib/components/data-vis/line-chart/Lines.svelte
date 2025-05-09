@@ -120,6 +120,8 @@
           {onMouseEnter}
           {onMouseLeave}
           {onClick}
+          bind:lineClicked
+          bind:lineHovered
         />
       {/each}
     </g>
@@ -127,10 +129,34 @@
     <g>
       {#each tieredDataObject[tier] as line, i}
         {#if (tier == "primary" && nothingSelected) || ["hover", "clicked"].includes(tier)}
-          {@render categoryLabelSnippet(
-            line,
-            labelsPlaced.find((el) => el.datum.areaCode === line.areaCode)?.y,
-          )}
+          <CategoryLabel
+            id={`label-${line.areaCode}`}
+            bind:labelClicked
+            bind:labelHovered
+            {chartWidth}
+            {lineFunction}
+            dataArray={line}
+            {xFunction}
+            {yFunction}
+            newY={labelsPlaced.find((el) => el.datum.areaCode === line.areaCode)
+              ?.y}
+            onClick={function (areaCode) {
+              labelClicked === areaCode
+                ? ((labelClicked = null), (labelHovered = null))
+                : (labelClicked = areaCode);
+            }}
+            onMouseEnter={function onMouseEnter(areaCode) {
+              labelHovered = areaCode;
+            }}
+            onMouseLeave={function onMouseLeave(areaCode) {
+              labelClicked === areaCode
+                ? (labelHovered = null)
+                : (labelHovered = areaCode);
+              labelHovered === areaCode
+                ? (labelHovered = null)
+                : (labelHovered = null);
+            }}
+          ></CategoryLabel>
         {/if}
       {/each}
     </g>

@@ -52,6 +52,8 @@
     // labelText,
     // labelColor,
     // labelTextColor,
+    lineClicked = $bindable(),
+    lineHovered = $bindable(),
   } = $props();
 
   function makeList(inputValue) {

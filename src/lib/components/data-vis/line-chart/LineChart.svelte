@@ -17,6 +17,8 @@
     lineFunction,
     lineClicked = $bindable(),
     lineHovered = $bindable(),
+    labelClicked = $bindable(),
+    labelHovered = $bindable(),
     svgWidth = $bindable(500),
     onClick,
     onMouseEnter,
@@ -63,8 +65,6 @@
       .curve(curveLinear),
   );
 
-  let labelHovered = $state();
-  let labelClicked = $state();
   let selectedLine = $derived([
     lineHovered,
     lineClicked,

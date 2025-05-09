@@ -77,6 +77,7 @@
   //@ts-nocheck
   import { page } from "$app/state";
   import { browser } from "$app/environment";
+  import { tick } from "svelte";
 
   import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
   import ParsingErrorToastsContainer from "$lib/package-wrapping/ParsingErrorToastsContainer.svelte";
@@ -137,9 +138,13 @@
 
   let lineClicked = $state();
   let lineHovered = $state();
+  let labelClicked = $state();
+  let labelHovered = $state();
   let svgWidth = $state(500);
   let nothingSelected = $derived(
-    [lineClicked, lineHovered].every((item) => item == null),
+    [lineClicked, lineHovered, labelClicked, labelHovered].every(
+      (item) => item == null,
+    ),
   );
 
   /**
@@ -271,7 +276,14 @@
   };`,
         },
         value: function (event, dataArray, dataId) {
-          lineClicked = dataId;
+          if (lineClicked === dataId) {
+            lineClicked = null;
+          } else {
+            lineClicked = null;
+            tick().then(() => {
+              lineClicked = dataId;
+            });
+          }
         },
       },
       {
@@ -328,6 +340,17 @@
       }[areaCode] ?? colorsArray[i % colorsArray.length]
     );
   };`,
+        },
+        value: function (areaCode, i) {
+          let colorsArray = [colors.coral, colors.fuschia, colors.purple];
+
+          return (
+            {
+              [englandMedian]: colors.lightblue,
+              [selectedAreaCode]: colors.teal,
+              [similarAreas]: colors.darkblue,
+            }[areaCode] ?? colorsArray[i % colorsArray.length]
+          );
         },
       },
 
@@ -696,6 +719,8 @@
       {...parametersObject}
       bind:lineClicked
       bind:lineHovered
+      bind:labelClicked
+      bind:labelHovered
       bind:svgWidth
     ></LineChart>
   </div>

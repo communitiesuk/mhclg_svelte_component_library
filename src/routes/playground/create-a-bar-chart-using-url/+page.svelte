@@ -31,6 +31,7 @@
     "title-first-word",
   );
 
+  //Note the type coercion here
   let selectedYear = $derived(+(urlParams["selectedYear"] ?? data?.years[0]));
   $inspect({ selectedYear });
   let numberOfBars = $derived(+(urlParams["numberOfBars"] ?? 10));
@@ -38,8 +39,7 @@
 
   let dataArray = $derived(
     data?.dataInFormatForBarChart
-      //Had to remove type checking (===) for ?? to work above
-      .find((el) => el.x == selectedYear)
+      .find((el) => el.x === selectedYear)
       ?.bars.map((el, index) => ({
         ...el,
         label: data.areaCodeLookup[el.areaCode],

@@ -390,6 +390,14 @@
       {
         name: "xFunction",
         category: "xScale",
+        value: function (number) {
+          return scaleLinear()
+            .domain([2015, 2022])
+            .range([
+              0,
+              svgWidth - getValue("paddingLeft") - getValue("paddingRight"),
+            ])(number);
+        },
       },
       {
         name: "yFunction",
@@ -398,11 +406,6 @@
       {
         name: "lineFunction",
         category: "lineFunction",
-      },
-      {
-        name: "curveType",
-        category: "lineFunction",
-        value: curveLinear,
       },
       {
         name: "getLine",
@@ -452,7 +455,6 @@
       },
     ]),
   );
-
   /**
    * DONOTTOUCH *
    * && 		Defining functions. generateValuesArray is used to create our arrays which track the $state() and $derived() props. getValue can used to access a reactive value from the $state() based on the prop name.
@@ -550,9 +552,6 @@
     );
   };
 
-  let curveType = getValue("curveType");
-  $inspect(curveType);
-
   let xFunction = $derived(function (number) {
     return scaleLinear()
       .domain([2015, 2022])
@@ -581,21 +580,17 @@
   );
 
   let basicLineParams = $derived({
-    xFunction, //why are these functions not being associated with individual lines?
+    // functions in this object aren't passed to the child because generateValuesArray turns editable variables to null
+    xFunction,
     yFunction,
     lineFunction,
-    /*lineFunction: lineFunction,
-    xFunction: xFunction,
-    yFunction: yFunction,
+    /* onClick,
     areaFunction: areaFunction,
-    onClick: onClick,
-    onMouseEnter,
-    onMouseLeave,*/
+    onMouseEnter: onMouseEnter,
+    onMouseLeave: onMouseLeave,*/
     haloColor: getValue("chartBackgroundColor"),
     invisibleStrokeWidth: 20,
   });
-
-  $inspect("IN WRAPPER", { basicLineParams });
 
   let derivedParametersObject = $derived({
     xFunction,
@@ -603,7 +598,6 @@
     lineFunction,
     lineChartData,
     tieredLineParams,
-    curveType,
     getColor,
     basicLineParams,
     nothingSelected,
@@ -616,8 +610,6 @@
   let derivedParametersValuesArray = $derived(
     generateValuesArray(parametersSourceArray, false, derivedParametersObject),
   );
-
-  $inspect({ derivedParametersValuesArray });
 
   /**
    * DONOTTOUCH *
@@ -672,8 +664,6 @@
       ]),
     ),
   );
-
-  $inspect({ parametersObject });
 </script>
 
 <!--

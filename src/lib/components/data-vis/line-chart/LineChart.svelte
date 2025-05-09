@@ -222,6 +222,9 @@
             {chartBackgroundColor}
             {nothingSelected}
             {getLine}
+            {onMouseEnter}
+            {onMouseLeave}
+            {onClick}
           ></Lines>
         </g>
         <g data-role="y-axis">

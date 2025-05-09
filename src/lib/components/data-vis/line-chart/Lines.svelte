@@ -22,9 +22,10 @@
     chartBackgroundColor = "#fafafa",
     nothingSelected,
     getLine,
+    onMouseEnter,
+    onMouseLeave,
+    onClick,
   } = $props();
-
-  $inspect(tieredDataObject);
 
   let bounds = $state([0, chartHeight]);
 
@@ -111,7 +112,15 @@
           defaultLineParams,
           tier,
         )} -->
-        <Line {...line} {tier} {chartBackgroundColor} {lineFunction} />
+        <Line
+          {...line}
+          {tier}
+          {chartBackgroundColor}
+          {lineFunction}
+          {onMouseEnter}
+          {onMouseLeave}
+          {onClick}
+        />
       {/each}
     </g>
 

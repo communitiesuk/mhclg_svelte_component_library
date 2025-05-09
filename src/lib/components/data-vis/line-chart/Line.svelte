@@ -54,8 +54,6 @@
     // labelTextColor,
   } = $props();
 
-  let hoveredMarker = $state();
-
   function makeList(inputValue) {
     let items = inputValue.split("\\n").map((item) => item.trim());
     return items;
@@ -69,13 +67,21 @@
     return mappedItems;
   }
 
-  function onMouseEnterMarker(i) {
-    hoveredMarker = i;
-  }
+  // let hoveredMarker = $state();
 
-  function onMouseLeaveMarker(i) {
-    hoveredMarker = null;
-  }
+  // function onMouseEnterMarker(i) {
+  //   hoveredMarker = i;
+  // }
+
+  // function onMouseLeaveMarker(i) {
+  //   hoveredMarker = null;
+  // }
+
+  let handleClick = (e) => onClick(e, dataArray, dataId);
+  let handleEnter = (e) => onMouseEnter(e, dataArray, dataId);
+  let handleLeave = (e) => onMouseLeave(e, dataArray, dataId);
+
+  let linePath = lineFunction(dataArray);
 </script>
 
 <defs>
@@ -104,9 +110,9 @@
 
 <g
   data-id={dataId}
-  onclick={(event) => onClick(event, dataArray, dataId)}
-  onmouseenter={(event) => onMouseEnter(event, dataArray, dataId)}
-  onmouseleave={(event) => onMouseLeave(event, dataArray, dataId)}
+  onclick={handleClick}
+  onmouseenter={handleEnter}
+  onmouseleave={handleLeave}
   role="button"
   tabindex="0"
   onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}
@@ -116,7 +122,7 @@
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
   {/if}
   <path
-    d={lineFunction(dataArray)}
+    d={linePath}
     fill="none"
     stroke="invisible"
     stroke-width={invisibleStrokeWidth}
@@ -124,7 +130,7 @@
   ></path>
   {#if halo}
     <path
-      d={lineFunction(dataArray)}
+      d={linePath}
       fill={pathFillColor}
       stroke={chartBackgroundColor}
       stroke-width={pathStrokeWidth * 1.2}
@@ -133,14 +139,13 @@
     ></path>
   {/if}
   <path
-    d={lineFunction(dataArray)}
+    d={linePath}
     fill={pathFillColor}
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
     pointer-events="none"
   ></path>
-
   <!-- {#if includeMarkers}
     {#each dataArray as marker, i}
       <g

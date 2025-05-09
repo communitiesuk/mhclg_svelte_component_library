@@ -435,7 +435,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
  -->
 {#snippet Component()}
   <div class="p-8">
-<MobileNav {...parametersObject}></MobileNav>
+    <MobileNav {...parametersObject}></MobileNav>
   </div>
 {/snippet}
 

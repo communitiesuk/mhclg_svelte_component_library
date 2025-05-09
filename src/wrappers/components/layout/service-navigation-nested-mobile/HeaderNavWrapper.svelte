@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "Baseline completed",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -46,10 +46,14 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "The <code>HeaderNav</code> component displays the main service navigation header.",
+    "It includes the service name, a set of primary navigation links, and a toggle button for mobile navigation.",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "This component is typically used at the top of every page within a service to provide consistent branding and primary navigation.",
+    "It adapts responsively for different screen sizes, with the navigation links collapsing into a mobile menu on smaller screens.",
   ];
 
   let detailsArray = [
@@ -92,7 +96,7 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import HeaderNav from "$lib/components/layout/service-navigation-nested-mobile/HeaderNav.svelte";
-import Examples from "./header-nav/Examples.svelte";
+  import Examples from "./header-nav/Examples.svelte";
 
   let { data } = $props();
 
@@ -115,6 +119,8 @@ import Examples from "./header-nav/Examples.svelte";
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
+  let mobileNavIsOpen = $state(false);
+  let currentSection = $state("Home");
 
   /**
    * ! Step 3 - Add your props
@@ -157,140 +163,89 @@ import Examples from "./header-nav/Examples.svelte";
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
+        name: "serviceName",
         category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        value: "Svelte Component Library",
         description: {
           markdown: true,
           arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 2,
-      },
-      {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
+            "The name of the service or application, displayed in the header.",
           ],
         },
       },
       {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "jsObjectProp",
+        name: "navigationItems",
         category: "Input props",
         value: [
-          {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
-          },
-          {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
-          },
-          {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
-          },
+          { text: "Home", href: "/", current: true },
+          { text: "Components", href: "/components", current: false },
+          { text: "Patterns", href: "/patterns", current: false },
+          { text: "Community", href: "/community", current: false },
         ],
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
+            "An array of navigation item objects to display.",
+            "Each object should have <code>text</code> (string), <code>href</code> (string), and <code>current</code> (boolean) properties.",
           ],
         },
       },
       {
-        name: "functionProp",
+        name: "currentSection",
+        category: "Input props",
+        isBinded: true,
+        options: ["Home", "Components", "Patterns", "Community"],
+        value: "Home",
+        description: {
+          markdown: true,
+          arr: [
+            "A string indicating the currently active top-level section. This helps highlight the active link.",
+            "Should match one of the <code>text</code> properties in the <code>navigationItems</code>.",
+            "This prop is bindable.",
+          ],
+        },
+      },
+      {
+        name: "mobileNavIsOpen",
+        category: "Input props",
+        isBinded: true,
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            "A boolean state that controls the visibility of the mobile navigation menu.",
+            "Set to <code>true</code> to show the mobile menu, <code>false</code> to hide it.",
+            "This prop is typically bound using <code>bind:mobileNavIsOpen</code>.",
+          ],
+        },
+      },
+      {
+        name: "onToggle",
         category: "Fixed props",
-
+        propType: "fixed",
         isRequired: true,
-        value: function (event, pokemon) {
+        value: function () {
+          mobileNavIsOpen = !mobileNavIsOpen;
           window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
+            `The onToggle function has been triggered. Mobile nav is now ${mobileNavIsOpen ? "open" : "closed"}. Open the 'Input props' panel to see the updated 'mobileNavIsOpen' value.`,
           );
-
           this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
         },
         functionElements: {
-          dataset: { role: null, id: null },
           counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
+          functionAsString: `function () {
+  // This function is called when the mobile menu toggle button is clicked.
+  // It should handle the logic to open or close the mobile navigation.
+  // For example, by updating a reactive state variable:
+  // mobileNavIsOpen = !mobileNavIsOpen;
+  alert("Mobile navigation toggled!");
 }`,
         },
         description: {
           markdown: true,
           arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
+            "An event handler function that is called when the mobile navigation toggle button is clicked.",
+            "It should contain the logic to show or hide the mobile navigation menu.",
           ],
         },
       },
@@ -331,6 +286,50 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
     generateValuesArray(parametersSourceArray, true, {}),
   );
 
+  $effect(() => {
+    const csIndex = parametersSourceArray.findIndex(
+      (p) => p.name === "currentSection",
+    );
+    if (
+      csIndex !== -1 &&
+      statedParametersValuesArray[csIndex] !== currentSection
+    ) {
+      currentSection = statedParametersValuesArray[csIndex];
+    }
+
+    const mnoIndex = parametersSourceArray.findIndex(
+      (p) => p.name === "mobileNavIsOpen",
+    );
+    if (
+      mnoIndex !== -1 &&
+      statedParametersValuesArray[mnoIndex] !== mobileNavIsOpen
+    ) {
+      mobileNavIsOpen = statedParametersValuesArray[mnoIndex];
+    }
+  });
+
+  $effect(() => {
+    const csIndex = parametersSourceArray.findIndex(
+      (p) => p.name === "currentSection",
+    );
+    if (
+      csIndex !== -1 &&
+      currentSection !== statedParametersValuesArray[csIndex]
+    ) {
+      statedParametersValuesArray[csIndex] = currentSection;
+    }
+
+    const mnoIndex = parametersSourceArray.findIndex(
+      (p) => p.name === "mobileNavIsOpen",
+    );
+    if (
+      mnoIndex !== -1 &&
+      mobileNavIsOpen !== statedParametersValuesArray[mnoIndex]
+    ) {
+      statedParametersValuesArray[mnoIndex] = mobileNavIsOpen;
+    }
+  });
+
   /**
    *  !  Step 4 - Define values for derived parameters, and add them to.
    *  CUSTOMISETHIS  Add any additional parameters which are calculated based on other parameters.
@@ -369,12 +368,23 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
    * &&     $effect() is then use to update parametersParsingErrorsObject, which tracks when errors and fixes occur.
    */
 
-  let [parametersObject, parametersParsingErrorsArray] = $derived(
+  let [parametersObjectFromArrays, parametersParsingErrorsArray] = $derived(
     createParametersObject(
       parametersSourceArray,
       statedParametersValuesArray,
       derivedParametersValuesArray,
     ),
+  );
+
+  let parametersObject = $derived(
+    (() => {
+      const {
+        mobileNavIsOpen: _mno,
+        currentSection: _cs,
+        ...rest
+      } = parametersObjectFromArrays;
+      return rest;
+    })(),
   );
 
   let parametersParsingErrorsObject = $state({});
@@ -398,7 +408,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
 
   let copyParametersToClipboardObject = $derived(
     Object.fromEntries(
-      Object.entries(parametersObject).map(([key, value]) => [
+      Object.entries(parametersObjectFromArrays).map(([key, value]) => [
         key,
         typeof value === "function"
           ? parametersSourceArray.find((el) => el.name === key)
@@ -410,7 +420,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
 </script>
 
 <!--
-&&  WrapperNameAndStatus and WrapperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
+&&  WrapperNameAndStatus and WrapperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component.
   -->
 
 {#snippet WrapperNameAndStatus(name, folder, subFolder, homepage)}
@@ -420,7 +430,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
     {subFolder}
     {homepage}
     {statusObject}
-    parentFolder="components-update"
+    parentFolder="components-layout-service-navigation-nested-mobile"
   ></BaseNameAndStatus>
 {/snippet}
 
@@ -429,13 +439,20 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
   ></BaseInformation>
 {/snippet}
 
-<!-- 
+<!--
   !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-8">
-<HeaderNav {...parametersObject}></HeaderNav>
+  <div class="p-0 border border-neutral-300">
+    <HeaderNav
+      {...parametersObject}
+      bind:mobileNavIsOpen
+      bind:currentSection
+    ></HeaderNav>
+    {#if mobileNavIsOpen}
+      <div class="p-4 bg-gray-100">Mobile Menu Area (Simulated)</div>
+    {/if}
   </div>
 {/snippet}
 
@@ -451,7 +468,7 @@ DONOTTOUCH  *
   homepage={false}
 ></WrapperDetailsUpdate>
 
-<!-- 
+<!--
   DONOTTOUCH  *
   &&          Renders toast components based on tracking parsing errors and fixes.
  -->

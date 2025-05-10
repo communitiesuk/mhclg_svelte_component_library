@@ -337,7 +337,7 @@
       <div class="app-pane__body govuk-width-container">
         <div class="app-split-pane">
           <!-- Side navigation - show for Components, Patterns, or Community pages -->
-          {#if currentSection !== "Home" && (currentSection != "Components" || currentPage === "components")}
+          {#if currentSection !== "Home" }
             <aside class="app-split-pane__nav">
               <SideNav
                 title={getSectionTitle(currentSection)}

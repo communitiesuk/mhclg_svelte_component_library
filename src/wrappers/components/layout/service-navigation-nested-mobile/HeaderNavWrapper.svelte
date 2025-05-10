@@ -387,7 +387,7 @@
     {subFolder}
     {homepage}
     {statusObject}
-    parentFolder="components-layout-service-navigation-nested-mobile"
+    parentFolder="components-update"
   ></BaseNameAndStatus>
 {/snippet}
 

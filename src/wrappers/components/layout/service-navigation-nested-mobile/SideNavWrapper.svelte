@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "Baseline completed",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -46,10 +46,18 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "The <code>SideNav</code> component displays a vertical navigation menu, typically used in a sidebar.",
+    "It's designed to show links relevant to the current main section of an application.",
+    "It can display a flat list of items or items grouped under titles.",
+    "Active items can be highlighted, and an active item can also display a nested list of sub-items, often used for in-page navigation (linking to sections with hash URLs like <code>#introduction</code>, <code>#details</code>, etc.).",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Typically used in a two-column or multi-column page layout where one column serves as a contextual navigation area next to the main content.",
+    "The content of the <code>SideNav</code> (its items and groups) often changes dynamically based on the top-level section selected in a primary navigation component (like <code>HeaderNav</code>).",
+    "It works well in conjunction with <code>HeaderNav</code> for main navigation and can share similar navigation structures with <code>MobileNav</code> for consistency across viewports.",
+    "The <code>currentItem</code> prop can be bound and updated based on scroll events or URL changes (e.g., from <code>$page.url.pathname</code> or <code>$page.url.hash</code> in SvelteKit).",
   ];
 
   let detailsArray = [
@@ -70,7 +78,25 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [];
+  let connectedComponentsArray = [
+    {
+      label: "Often Used With / Related To",
+      arr: [
+        {
+          name: "HeaderNav",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+        {
+          name: "MobileNav",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+        {
+          name: "ServiceNavigationNestedMobile",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+      ],
+    },
+  ];
 </script>
 
 <script>
@@ -92,7 +118,7 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
-import Examples from "./side-nav/Examples.svelte";
+  import Examples from "./side-nav/Examples.svelte";
 
   let { data } = $props();
 
@@ -115,182 +141,198 @@ import Examples from "./side-nav/Examples.svelte";
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
+  // Default to the href of the first sample item, or an empty string if no sample items exist.
+  let currentItem = $state(""); // Will be set in $effect based on hash or sampleItems
 
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
-   * && 		parametersSourceArray is where you define any props for the component. All props should be listed in the parametersSourceArray.
-   * &&     Initial values should be provided for all props which either (i) are binded, or (ii) can be modified using the demo UI.
-   * &&     Values should also be provided for functions and svelte snippets - which cannot be modified by the user to prevent security issues.
-   * &&     Some props may be derived from other props. These should still be listed in the parametersSourceArray, but their value should be left empty. Their value can then be defined further down the page.
+  * &&     parametersSourceArray is where you define any props for the 
+   component. All props should be listed in the parametersSourceArray.
+   * &&     Initial values should be provided for all props which either 
+   (i) are binded, or (ii) can be modified using the demo UI.
+   * &&     Values should also be provided for functions and svelte 
+   snippets - which cannot be modified by the user to prevent security 
+   issues.
+   * &&     Some props may be derived from other props. These should still 
+   be listed in the parametersSourceArray, but their value should be left 
+   empty. Their value can then be defined further down the page.
    * ?      For each prop, the following fields are available:
-   * ? 		  <name> (required, must be unique) -  Name of the parameter which is passed to the component. The name can also be referenced in the calculation of derived parameters which depend on this value.
-   * ?      <category> - (required) - Used for separating parameters into different groups.
+   * ?      <name> (required, must be unique) -  Name of the parameter 
+   which is passed to the component. The name can also be referenced in 
+   the calculation of derived parameters which depend on this value.
+   * ?      <category> - (required) - Used for separating parameters into 
+   different groups.
    *
-   * ?      <isBinded> - (optional, default = false) - Should be set to true, if the prop is utilising the bind:directive. Note that for bind to work, the prop must also be defined in step 1 using the $state() rune and passed to the component separately as bindable (e.g. bind:thisProp).
+   * ?      <isBinded> - (optional, default = false) - Should be set to 
+   true, if the prop is utilising the bind:directive. Note that for bind 
+   to work, the prop must also be defined in step 1 using the $state() 
+   rune and passed to the component separately as bindable (e.g. 
+   bind:thisProp).
    *
    *
-   * ?      <options> - (required for $state() props which can be modified using dropwdown or radio inputs). <options> should contain an array of strings. If <value> is null or absent, the initial value will be taken from the first entry in the options array.
-   * ?      <value> - (Should be null or absent for derived props. For all others props it's required, unless there is an options field). Used to set the initial value of the prop.
+   * ?      <options> - (required for $state() props which can be modified 
+   using dropwdown or radio inputs). <options> should contain an array of 
+   strings. If <value> is null or absent, the initial value will be taken 
+   from the first entry in the options array.
+   * ?      <value> - (Should be null or absent for derived props. For all 
+   others props it's required, unless there is an options field). Used to 
+   set the initial value of the prop.
    *
    * ?      <propType> - (optional) - Has two use cases:
    * ?      (i) set to 'fixed' to prevent users editing the value.
-   * ?      (i) set to 'radio' to have options selectable via the radio input (uses dropdown by default).
+   * ?      (i) set to 'radio' to have options selectable via the radio 
+   input (uses dropdown by default).
    *
-   * ?      <visible> - (optional, default = true). Hides prop in the UI if certain conditions are not met. Specify an object with a name - the parameter that you want to check against and a value - the value that the named parameters need to equal for this input to be visible.
-   * ?      The Line component provides an example of the <visible> field in action, showing and hiding props based on <includeMarkers>
-   * ?      If you want the form to be visible only if multiple conditions are met, you can provide an array of conditional objects instead.
+   * ?      <visible> - (optional, default = true). Hides prop in the UI 
+   if certain conditions are not met. Specify an object with a name - the 
+   parameter that you want to check against and a value - the value that 
+   the named parameters need to equal for this input to be visible.
+   * ?      The Line component provides an example of the <visible> field 
+   in action, showing and hiding props based on <includeMarkers>
+   * ?      If you want the form to be visible only if multiple conditions 
+   are met, you can provide an array of conditional objects instead.
    *
-   * ?      <rows> - (optional, default = 1, only use with $state() where typeof value === "string"). Sets the numbers of rows used by the textArea input.
+   * ?      <rows> - (optional, default = 1, only use with $state() where 
+   typeof value === "string"). Sets the numbers of rows used by the 
+   textArea input.
    *
-   * ?      <functionElements> - (optional, only used where typeof value === "function") - <functionElements> can have three optional properties:
-   * ?      (i) 'functionAsString': Should be set as a string copy of the function itself. Used to display the function in the demo UI.
-   * ?      (ii) 'counter': For use with event handler functions. Should be set to 0. Then putting 'this.functionElements.counter += 1;' in the function body will cause the counter to update each time the function is triggered.
-   * ?      (iii) 'dataset': For use with event handler fuctions. Should be an object - then putting 'Object.keys(this.functionElements.dataset).forEach((el) => { this.functionElements.dataset[el] = event.currentTarget.dataset[el]; });' in the function body will cause the object to update each time the function is triggered.
+   * ?      <functionElements> - (optional, only used where typeof value 
+   === "function") - <functionElements> can have three optional properties:
+   * ?      (i) 'functionAsString': Should be set as a string copy of the 
+   function itself. Used to display the function in the demo UI.
+   * ?      (ii) 'counter': For use with event handler functions. Should 
+   be set to 0. Then putting 'this.functionElements.counter += 1;' in the 
+   function body will cause the counter to update each time the function 
+   is triggered.
+   * ?      (iii) 'dataset': For use with event handler fuctions. Should 
+   be an object - then putting 'Object.keys(this.functionElements.dataset).
+   forEach((el) => { this.functionElements.dataset[el] = event.
+   currentTarget.dataset[el]; });' in the function body will cause the 
+   object to update each time the function is triggered.
    *
-   * ?      <description> - (optional, but strongly encouraged). Describes what the parameter does and best practice uses for it. The description can be a string, an object with a markdown field (true or false) and arr field, or a svelte snippet.
+   * ?      <description> - (optional, but strongly encouraged). Describes 
+   what the parameter does and best practice uses for it. The description 
+   can be a string, an object with a markdown field (true or false) and 
+   arr field, or a svelte snippet.
    *
-   * ?      <isProp> - (optional, default = true) - Should be set to false for paramters which are not actually passed to the component.
-   * ?      <isRequired> - (optional, default = false) - Should be set to true for any props which the component will not functionally properly without (e.g. props with no default value, props which will cause erros if undefined).
+   * ?      <isProp> - (optional, default = true) - Should be set to false 
+   for paramters which are not actually passed to the component.
+   * ?      <isRequired> - (optional, default = false) - Should be set to 
+   true for any props which the component will not functionally properly 
+   without (e.g. props with no default value, props which will cause erros 
+   if undefined).
    *
+   */
+  const sampleItems = [
+    {
+      text: "Overview",
+      href: "#overview",
+      subItems: [
+        { text: "Introduction", href: "#overview-intro" },
+        { text: "Key Features", href: "#overview-features" },
+      ],
+    },
+    { text: "Installation", href: "#installation" },
+    { text: "API Reference", href: "#api" },
+  ];
+
+  const sampleGroups = [
+    {
+      title: "Getting Started",
+      items: [
+        {
+          text: "Project Setup",
+          href: "#project-setup",
+          subItems: [{ text: "Requirements", href: "#project-requirements" }],
+        },
+        { text: "First Component", href: "#first-component" },
+      ],
+    },
+    {
+      title: "Advanced Topics",
+      items: [
+        { text: "State Management", href: "#state-management" },
+        { text: "Routing", href: "#routing" },
+      ],
+    },
+  ];
+
+  /**
+   * ! Step 3 - Add your props
    */
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        name: "title",
+        category: "Content & Appearance",
+        value: "Documentation",
         description: {
           markdown: true,
           arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 2,
-      },
-      {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
+            "An accessible title for the navigation block, typically hidden visually but read by screen readers via <code>aria-labelledby</code>.",
+            'Defaults to "Pages in this section" within the component if not provided.',
           ],
         },
       },
       {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
+        name: "items",
+        category: "Content & Structure (Option 1: Flat List)",
+        value: sampleItems,
+        rows: 12,
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
+            "An array of <code>SideNavItem</code> objects for a single, flat list of navigation links.",
+            "Each <code>SideNavItem</code> can have <code>text</code>, <code>href</code>, <code>current</code> (boolean), and optional <code>subItems</code> (array of <code>{ text: string, href: string }</code>).",
+            "Use this if you don\'t need grouped sections. If <code>groups</code> are also provided, <code>items</code> will be rendered first.",
+            "Sub-items are typically used for in-page navigation (e.g., linking to <code>#hash</code> URLs).",
           ],
         },
       },
       {
-        name: "radioProp",
-        category: "Input props",
+        name: "groups",
+        category: "Content & Structure (Option 2: Grouped List)",
+        value: sampleGroups,
+        rows: 18,
+        description: {
+          markdown: true,
+          arr: [
+            "An array of <code>SideNavGroup</code> objects for creating titled sections of navigation links.",
+            "Each <code>SideNavGroup</code> has an optional <code>title</code> and an <code>items</code> array (of <code>SideNavItem</code>).",
+            "<code>SideNavItem</code> within groups can also have <code>subItems</code>.",
+            "Use this for a more structured side navigation. Rendered after the flat <code>items</code> list, if present.",
+          ],
+        },
+      },
+      {
+        name: "currentItem",
+        category: "Stateful & Bindable",
+        isBinded: true,
+        value: currentItem,
+        description: {
+          markdown: true,
+          arr: [
+            "A string that should match the <code>href</code> of the currently active item or sub-item.",
+            "This prop is bindable (<code>bind:currentItem</code>).",
+            "The <code>SideNav</code> component uses this to highlight the active link. It can also internally derive the active item from <code>$page.url.pathname</code> and <code>$page.url.hash</code> from SvelteKit if this prop is not explicitly managed or bound.",
+            "For the demo, select a value to see the highlighting change. The options are generated from the sample <code>items</code> and <code>groups</code> data. Clicking links in the demo will update this value based on the URL hash.",
+          ],
+        },
+      },
+      {
+        name: "activeItemBackgroundColor",
+        category: "Stateful & Bindable",
+        isBinded: false,
+        options: ["transparent", "#f3f2f1", "#e0f2fe", "#fef9c3"], // transparent, gov.uk light grey, light blue, light yellow
+        value: "transparent",
         propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "jsObjectProp",
-        category: "Input props",
-        value: [
-          {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
-          },
-          {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
-          },
-          {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
-          },
-        ],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
-          ],
-        },
-      },
-      {
-        name: "functionProp",
-        category: "Fixed props",
-
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
-        functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
-        },
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
+            "A CSS color string used for the background of the active navigation item.",
+            "This prop is bindable (<code>bind:activeItemBackgroundColor</code>).",
+            "Defaults to <code>transparent</code> within the component.",
           ],
         },
       },
@@ -434,8 +476,14 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-8">
-<SideNav {...parametersObject}></SideNav>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-third">
+      $inspect(SideNav)
+      <SideNav
+        {...parametersObject}
+        bind:currentItem
+      />
+    </div>
   </div>
 {/snippet}
 

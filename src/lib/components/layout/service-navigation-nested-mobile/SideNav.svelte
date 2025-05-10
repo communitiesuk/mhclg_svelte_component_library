@@ -32,17 +32,22 @@
   // Handle URL path to determine current active item
   $effect(() => {
     const path = $page?.url?.pathname || "";
-
-    // Check if currentItem is set or derive from URL path
-    const activeItem = currentItem || path.split("/").pop() || "";
+    // activeItemFromPath is still useful for the legacy path segment matching fallback
+    const activeItemFromPath = path.split("/").pop() || "";
+    const resolvedActiveItemIdentifier = currentItem || activeItemFromPath;
 
     // Update current property on items
     items = items.map((item) => {
-      // More precise path matching to avoid "line" matching in "lines"
+      const isParentOfActiveSubItem = !!(
+        item.subItems && item.subItems.some((sub) => sub.href === currentItem)
+      );
       const isActive =
-        item.href === path || // Exact path match
-        (path.endsWith("/" + activeItem) &&
-          item.text.toLowerCase() === activeItem.toLowerCase()); // Match by last URL segment and item text
+        item.href === currentItem || // 1. Active if its href IS the currentItem
+        isParentOfActiveSubItem || // 2. Active if it OWNS the currentItem
+        item.href === path || // 3. Fallback: Path-based navigation (exact match)
+        (path.endsWith("/" + resolvedActiveItemIdentifier) && // 4. Fallback: Legacy path segment matching
+          item.text.toLowerCase() ===
+            resolvedActiveItemIdentifier.toLowerCase());
       return {
         ...item,
         current: isActive,
@@ -53,11 +58,16 @@
     groups = groups.map((group) => ({
       ...group,
       items: group.items.map((item) => {
-        // More precise path matching to avoid "line" matching in "lines"
+        const isParentOfActiveSubItem = !!(
+          item.subItems && item.subItems.some((sub) => sub.href === currentItem)
+        );
         const isActive =
-          item.href === path || // Exact path match
-          (path.endsWith("/" + activeItem) &&
-            item.text.toLowerCase() === activeItem.toLowerCase()); // Match by last URL segment and item text
+          item.href === currentItem || // 1. Active if its href IS the currentItem
+          isParentOfActiveSubItem || // 2. Active if it OWNS the currentItem
+          item.href === path || // 3. Fallback: Path-based navigation (exact match)
+          (path.endsWith("/" + resolvedActiveItemIdentifier) && // 4. Fallback: Legacy path segment matching
+            item.text.toLowerCase() ===
+              resolvedActiveItemIdentifier.toLowerCase());
         return {
           ...item,
           current: isActive,
@@ -89,6 +99,11 @@
               class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
               href={item.href}
               aria-current={item.current ? "location" : undefined}
+              onclick={() => {
+                if (item.href) {
+                  currentItem = item.href;
+                }
+              }}
             >
               {item.text}
             </a>
@@ -103,6 +118,11 @@
                         "#",
                       )[1] === $page.url.hash.substring(1)}
                       href={subItem.href}
+                      onclick={() => {
+                        if (subItem.href) {
+                          currentItem = subItem.href;
+                        }
+                      }}
                     >
                       {subItem.text}
                     </a>
@@ -134,6 +154,11 @@
               class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
               href={item.href}
               aria-current={item.current ? "location" : undefined}
+              onclick={() => {
+                if (item.href) {
+                  currentItem = item.href;
+                }
+              }}
             >
               {item.text}
             </a>
@@ -148,6 +173,11 @@
                         "#",
                       )[1] === $page.url.hash.substring(1)}
                       href={subItem.href}
+                      onclick={() => {
+                        if (subItem.href) {
+                          currentItem = subItem.href;
+                        }
+                      }}
                     >
                       {subItem.text}
                     </a>

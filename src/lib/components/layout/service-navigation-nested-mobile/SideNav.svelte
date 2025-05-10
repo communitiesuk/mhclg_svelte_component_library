@@ -1,7 +1,6 @@
 <script lang="ts">
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
 
-  // Define the navigation item type
   export type SideNavItem = {
     text: string;
     href: string;
@@ -14,11 +13,10 @@
     items: SideNavItem[];
   };
 
-  // Component props
   let {
     title = "Pages in this section",
-    items = [],
-    groups = [],
+    items = $bindable([] as SideNavItem[]),
+    groups = $bindable([] as SideNavGroup[]),
     currentItem = $bindable(""),
     activeItemBackgroundColor = $bindable("transparent"),
   } = $props<{
@@ -29,53 +27,93 @@
     activeItemBackgroundColor?: string;
   }>();
 
-  // Handle URL path to determine current active item
+  function calculateIsActive(
+    item: SideNavItem,
+    currentHref: string,
+    currentPath: string,
+    resolvedActiveIdentifier: string,
+  ): boolean {
+    const isParentOfActiveSubItem = !!(
+      item.subItems && item.subItems.some((sub) => sub.href === currentHref)
+    );
+    return (
+      item.href === currentHref ||
+      isParentOfActiveSubItem ||
+      item.href === currentPath ||
+      (currentPath.endsWith("/" + resolvedActiveIdentifier) &&
+        item.text.toLowerCase() === resolvedActiveIdentifier.toLowerCase())
+    );
+  }
+
   $effect(() => {
-    const path = $page?.url?.pathname || "";
-    // activeItemFromPath is still useful for the legacy path segment matching fallback
+    const path = page.url.pathname;
     const activeItemFromPath = path.split("/").pop() || "";
     const resolvedActiveItemIdentifier = currentItem || activeItemFromPath;
 
-    // Update current property on items
-    items = items.map((item) => {
-      const isParentOfActiveSubItem = !!(
-        item.subItems && item.subItems.some((sub) => sub.href === currentItem)
-      );
-      const isActive =
-        item.href === currentItem || // 1. Active if its href IS the currentItem
-        isParentOfActiveSubItem || // 2. Active if it OWNS the currentItem
-        item.href === path || // 3. Fallback: Path-based navigation (exact match)
-        (path.endsWith("/" + resolvedActiveItemIdentifier) && // 4. Fallback: Legacy path segment matching
-          item.text.toLowerCase() ===
-            resolvedActiveItemIdentifier.toLowerCase());
-      return {
-        ...item,
-        current: isActive,
-      };
+    const updateItemCurrentState = (item: SideNavItem) => ({
+      ...item,
+      current: calculateIsActive(
+        item,
+        currentItem,
+        path,
+        resolvedActiveItemIdentifier,
+      ),
     });
 
-    // Update current property on grouped items
+    items = items.map(updateItemCurrentState);
+
     groups = groups.map((group) => ({
       ...group,
-      items: group.items.map((item) => {
-        const isParentOfActiveSubItem = !!(
-          item.subItems && item.subItems.some((sub) => sub.href === currentItem)
-        );
-        const isActive =
-          item.href === currentItem || // 1. Active if its href IS the currentItem
-          isParentOfActiveSubItem || // 2. Active if it OWNS the currentItem
-          item.href === path || // 3. Fallback: Path-based navigation (exact match)
-          (path.endsWith("/" + resolvedActiveItemIdentifier) && // 4. Fallback: Legacy path segment matching
-            item.text.toLowerCase() ===
-              resolvedActiveItemIdentifier.toLowerCase());
-        return {
-          ...item,
-          current: isActive,
-        };
-      }),
+      items: group.items.map(updateItemCurrentState),
     }));
   });
 </script>
+
+{#snippet navItem(item: SideNavItem)}
+  <li
+    class="app-subnav__section-item {item.current
+      ? 'app-subnav__section-item--current app-subnav__section-item--bold app-subnav__section-item--top'
+      : ''}"
+    style={item.current
+      ? `background-color: ${activeItemBackgroundColor};`
+      : ""}
+  >
+    <a
+      class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
+      href={item.href}
+      aria-current={item.current ? "location" : undefined}
+      onclick={() => {
+        if (item.href) {
+          currentItem = item.href;
+        }
+      }}
+    >
+      {item.text}
+    </a>
+
+    {#if item.current && item.subItems && item.subItems.length > 0}
+      <ul class="app-subnav__section app-subnav__section--nested">
+        {#each item.subItems as subItem (subItem.href)}
+          <li class="app-subnav__section-item">
+            <a
+              class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
+              class:app-subnav__link--bold={subItem.href.split("#")[1] ===
+                page.url.hash.substring(1)}
+              href={subItem.href}
+              onclick={() => {
+                if (subItem.href) {
+                  currentItem = subItem.href;
+                }
+              }}
+            >
+              {subItem.text}
+            </a>
+          </li>
+        {/each}
+      </ul>
+    {/if}
+  </li>
+{/snippet}
 
 <div class="app-pane__subnav">
   <nav class="app-subnav" aria-labelledby="app-subnav-heading">
@@ -83,109 +121,21 @@
       {title}
     </h2>
 
-    <!-- Single list of items (not grouped) -->
     {#if items.length > 0}
       <ul class="app-subnav__section">
-        {#each items as item}
-          <li
-            class="app-subnav__section-item {item.current
-              ? 'app-subnav__section-item--current app-subnav__section-item--bold app-subnav__section-item--top'
-              : ''}"
-            style={item.current
-              ? `background-color: ${activeItemBackgroundColor};`
-              : ""}
-          >
-            <a
-              class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
-              href={item.href}
-              aria-current={item.current ? "location" : undefined}
-              onclick={() => {
-                if (item.href) {
-                  currentItem = item.href;
-                }
-              }}
-            >
-              {item.text}
-            </a>
-
-            {#if item.current && item.subItems && item.subItems.length > 0}
-              <ul class="app-subnav__section app-subnav__section--nested">
-                {#each item.subItems as subItem}
-                  <li class="app-subnav__section-item">
-                    <a
-                      class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
-                      class:app-subnav__link--bold={subItem.href.split(
-                        "#",
-                      )[1] === $page.url.hash.substring(1)}
-                      href={subItem.href}
-                      onclick={() => {
-                        if (subItem.href) {
-                          currentItem = subItem.href;
-                        }
-                      }}
-                    >
-                      {subItem.text}
-                    </a>
-                  </li>
-                {/each}
-              </ul>
-            {/if}
-          </li>
+        {#each items as item (item.href)}
+          {@render navItem(item)}
         {/each}
       </ul>
     {/if}
 
-    <!-- Grouped items with titles -->
-    {#each groups as group}
+    {#each groups as group (group.title || group.items[0]?.href)}
       {#if group.title}
         <h3 class="app-subnav__theme">{group.title}</h3>
       {/if}
       <ul class="app-subnav__section">
-        {#each group.items as item}
-          <li
-            class="app-subnav__section-item {item.current
-              ? 'app-subnav__section-item--current app-subnav__section-item--bold app-subnav__section-item--top'
-              : ''}"
-            style={item.current
-              ? `background-color: ${activeItemBackgroundColor};`
-              : ""}
-          >
-            <a
-              class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
-              href={item.href}
-              aria-current={item.current ? "location" : undefined}
-              onclick={() => {
-                if (item.href) {
-                  currentItem = item.href;
-                }
-              }}
-            >
-              {item.text}
-            </a>
-
-            {#if item.current && item.subItems && item.subItems.length > 0}
-              <ul class="app-subnav__section app-subnav__section--nested">
-                {#each item.subItems as subItem}
-                  <li class="app-subnav__section-item">
-                    <a
-                      class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
-                      class:app-subnav__link--bold={subItem.href.split(
-                        "#",
-                      )[1] === $page.url.hash.substring(1)}
-                      href={subItem.href}
-                      onclick={() => {
-                        if (subItem.href) {
-                          currentItem = subItem.href;
-                        }
-                      }}
-                    >
-                      {subItem.text}
-                    </a>
-                  </li>
-                {/each}
-              </ul>
-            {/if}
-          </li>
+        {#each group.items as item (item.href)}
+          {@render navItem(item)}
         {/each}
       </ul>
     {/each}
@@ -293,7 +243,6 @@
     padding-left: 20px;
   }
 
-  /* Only apply dash/hyphen to nested items */
   .app-subnav__section--nested .app-subnav__section-item::before {
     margin-left: -20px;
     color: #505a5f;

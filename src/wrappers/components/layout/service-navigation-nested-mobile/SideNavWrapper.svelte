@@ -477,8 +477,7 @@
  -->
 {#snippet Component()}
   <div class="govuk-grid-row">
-    <div class="govuk-grid-column-one-third">
-      $inspect(SideNav)
+    <div class="govuk-grid-column-one-third govuk-!-margin-left-5">
       <SideNav
         {...parametersObject}
         bind:currentItem

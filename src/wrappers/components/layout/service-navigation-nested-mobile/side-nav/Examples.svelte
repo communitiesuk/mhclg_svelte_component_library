@@ -6,11 +6,77 @@
 
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
 
+  // Data for Example 1
+  const example1Data = {
+    groups: [
+      {
+        title: "Football Clubs",
+        items: [
+          { text: "Borussia Dortmund", href: "#borussia-dortmund" },
+          { text: "Liverpool FC", href: "#liverpool-fc" },
+          { text: "SSC Napoli", href: "#ssc-napoli" },
+          { text: "S.L. Benfica", href: "#sl-benfica" },
+        ],
+      },
+    ],
+    currentItem: "#liverpool-fc",
+    activeBgColor: "#fff9c4", // Light yellow
+    title: "Football Clubs Navigation",
+  };
+
+  // Data for Example 2
+  const example2Data = {
+    items: [{ text: "Dashboard Home", href: "#dashboard-home" }],
+    groups: [
+      {
+        title: "User Settings",
+        items: [
+          { text: "Profile", href: "#profile" },
+          {
+            text: "Preferences",
+            href: "#preferences",
+            subItems: [
+              { text: "Theme", href: "#preferences-theme" },
+              { text: "Notifications", href: "#preferences-notifications" },
+            ],
+          },
+        ],
+      },
+      {
+        title: "",
+        items: [{ text: "Analytics Overview", href: "#analytics-overview" }],
+      },
+      {
+        title: "Content Management",
+        items: [
+          { text: "Articles", href: "#articles" },
+          { text: "Categories", href: "#categories" },
+          {
+            text: "Media Library",
+            href: "#media-library",
+            subItems: [
+              { text: "Images", href: "#media-images" },
+              { text: "Videos", href: "#media-videos" },
+            ],
+          },
+        ],
+      },
+    ],
+    currentItem: "#articles",
+    activeBgColor: "#e0f2fe", // Light blue
+    title: "Alternating Flat Items and Groups",
+  };
+
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
+      heading: "1. Example 1 - SideNav with a Single Group",
       content: Example1,
+    },
+    {
+      id: "2",
+      heading: "2. Example 2 - SideNav with Mixed Flat Item and Group",
+      content: Example2,
     },
   ];
 </script>
@@ -37,32 +103,25 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    <SideNav
+      title={example1Data.title}
+      groups={example1Data.groups}
+      currentItem={example1Data.currentItem}
+      activeItemBackgroundColor={example1Data.activeBgColor}
+    />
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example2()}
+  <div class="p-5 bg-white">
+    <SideNav
+      title={example2Data.title}
+      items={example2Data.items}
+      groups={example2Data.groups}
+      currentItem={example2Data.currentItem}
+      activeItemBackgroundColor={example2Data.activeBgColor}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
 {/snippet}

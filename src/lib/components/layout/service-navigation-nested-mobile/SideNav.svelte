@@ -15,9 +15,9 @@
 
   let {
     title = "Pages in this section",
-    items = $bindable([] as SideNavItem[]),
-    groups = $bindable([] as SideNavGroup[]),
-    currentItem = $bindable(""),
+    items = $bindable([] as SideNavItem[]), // For a flat list of navigation items
+    groups = $bindable([] as SideNavGroup[]), // For grouped sections of navigation items
+    currentItem = $bindable(""), // Tracks the href of the currently active item/subItem
     activeItemBackgroundColor = $bindable("transparent"),
   } = $props<{
     title?: string;
@@ -27,6 +27,7 @@
     activeItemBackgroundColor?: string;
   }>();
 
+  // Determines if a navigation item or its sub-item is currently active
   function calculateIsActive(
     item: SideNavItem,
     currentHref: string,
@@ -45,6 +46,7 @@
     );
   }
 
+  // Effect to reactively update the 'current' state of items based on URL or currentItem prop changes
   $effect(() => {
     const path = page.url.pathname;
     const activeItemFromPath = path.split("/").pop() || "";
@@ -70,6 +72,9 @@
 </script>
 
 {#snippet navItem(item: SideNavItem)}
+  <!-- Reusable snippet for rendering a single navigation item and its potential sub-items -->
+  
+  <!-- Represents a single item in the navigation list -->
   <li
     class="app-subnav__section-item {item.current
       ? 'app-subnav__section-item--current app-subnav__section-item--bold app-subnav__section-item--top'
@@ -78,6 +83,7 @@
       ? `background-color: ${activeItemBackgroundColor};`
       : ""}
   >
+    <!-- The clickable link for the navigation item -->
     <a
       class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
       href={item.href}
@@ -92,6 +98,7 @@
     </a>
 
     {#if item.current && item.subItems && item.subItems.length > 0}
+      <!-- Nested list for sub-items of the current active item -->
       <ul class="app-subnav__section app-subnav__section--nested">
         {#each item.subItems as subItem (subItem.href)}
           <li class="app-subnav__section-item">
@@ -116,12 +123,14 @@
 {/snippet}
 
 <div class="app-pane__subnav">
+  <!-- Main container for the side navigation -->
   <nav class="app-subnav" aria-labelledby="app-subnav-heading">
     <h2 class="govuk-visually-hidden" id="app-subnav-heading">
       {title}
     </h2>
 
     {#if items.length > 0}
+      <!-- Renders the flat list of items, if provided -->
       <ul class="app-subnav__section">
         {#each items as item (item.href)}
           {@render navItem(item)}
@@ -130,6 +139,7 @@
     {/if}
 
     {#each groups as group (group.title || group.items[0]?.href)}
+      <!-- Renders grouped sections of items -->
       {#if group.title}
         <h3 class="app-subnav__theme">{group.title}</h3>
       {/if}

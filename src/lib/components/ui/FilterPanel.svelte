@@ -2,6 +2,10 @@
   // Based on GOV.UK Finder Frontend
   // Original: https://github.com/alphagov/finder-frontend
 
+  import Radios from "./Radios.svelte";
+  import CheckBox from "./CheckBox.svelte";
+  import Select from "./Select.svelte";
+
   interface FilterOption {
     value: string;
     label: string;
@@ -174,36 +178,15 @@
             {#if section.type === "radios"}
               {@const radioData = section}
               <div class="govuk-form-group govuk-!-margin-bottom-2">
-                <fieldset class="govuk-fieldset">
-                  <legend
-                    class="govuk-fieldset__legend govuk-fieldset__legend--m govuk-visually-hidden"
-                  >
-                    <span class="govuk-fieldset__heading"
-                      >{radioData.legend}</span
-                    >
-                  </legend>
-                  <div class="govuk-radios govuk-radios--small">
-                    {#each radioData.options as option, optIndex (option.value)}
-                      {@const radioId =
-                        option.id || `${radioData.id}-option-${optIndex}`}
-                      <div class="gem-c-radio govuk-radios__item">
-                        <input
-                          type="radio"
-                          name={radioData.name}
-                          id={radioId}
-                          value={option.value}
-                          class="govuk-radios__input"
-                          checked={option.value === radioData.selectedValue}
-                        />
-                        <label
-                          for={radioId}
-                          class="gem-c-label govuk-label govuk-radios__label"
-                          >{option.label}</label
-                        >
-                      </div>
-                    {/each}
-                  </div>
-                </fieldset>
+                <Radios
+                  name={radioData.name}
+                  legend={radioData.legend}
+                  legendSize="m"
+                  isPageHeading={false}
+                  options={radioData.options.map((opt) => ({ ...opt }))}
+                  selectedValue={radioData.selectedValue}
+                  small={true}
+                />
               </div>
             {:else if section.type === "date"}
               {@const dateData = section}
@@ -369,23 +352,19 @@
                   style={selIdx === 1 ? "display: block;" : undefined}
                   data-ga4-section={selIdx === 1 ? sel.label : undefined}
                 >
-                  <label class="govuk-label" for={sel.id}>{sel.label}</label>
-                  <select
-                    name={sel.name}
+                  <Select
                     id={sel.id}
-                    class={`govuk-select ${sel.fullWidth ? "gem-c-select__select--full-width" : ""}`}
-                    disabled={sel.disabled}
-                  >
-                    {#each sel.options as option (option.value)}
-                      <option
-                        value={option.value}
-                        selected={option.value === sel.value}
-                        disabled={option.disabled}
-                      >
-                        {option.label}
-                      </option>
-                    {/each}
-                  </select>
+                    name={sel.name}
+                    label={sel.label}
+                    items={sel.options.map((opt) => ({
+                      value: opt.value,
+                      text: opt.label,
+                      disabled: opt.disabled,
+                    }))}
+                    value={sel.value}
+                    fullWidth={sel.fullWidth}
+                    labelIsPageHeading={false}
+                  />
                 </div>
               {/each}
             {:else if section.type === "checkboxes"}
@@ -395,35 +374,15 @@
                 data-module="gem-checkboxes govuk-checkboxes"
                 class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small"
               >
-                <fieldset class="govuk-fieldset">
-                  <legend
-                    class="govuk-fieldset__legend govuk-fieldset__legend--m gem-c-checkboxes__legend--hidden"
-                    >{checkboxData.legend}</legend
-                  >
-                  <div class="govuk-checkboxes">
-                    {#each checkboxData.options as option, optIdx (option.value)}
-                      {@const checkboxId =
-                        option.id || `${checkboxData.id}-option-${optIdx}`}
-                      <div class="govuk-checkboxes__item">
-                        <input
-                          type="checkbox"
-                          name={checkboxData.name}
-                          id={checkboxId}
-                          value={option.value}
-                          class="govuk-checkboxes__input"
-                          checked={checkboxData.selectedValues?.includes(
-                            option.value,
-                          )}
-                        />
-                        <label
-                          for={checkboxId}
-                          class="govuk-label govuk-checkboxes__label"
-                          >{option.label}</label
-                        >
-                      </div>
-                    {/each}
-                  </div>
-                </fieldset>
+                <CheckBox
+                  name={checkboxData.name}
+                  legend={checkboxData.legend}
+                  legendSize="m"
+                  isPageHeading={false}
+                  options={checkboxData.options.map((opt) => ({ ...opt }))}
+                  selectedValues={checkboxData.selectedValues}
+                  small={true}
+                />
               </div>
             {/if}
           </div>

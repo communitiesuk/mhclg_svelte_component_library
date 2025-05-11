@@ -87,7 +87,7 @@
     ga4BaseEvent?: Record<string, any>;
   }>();
 
-  let sections = $state(sectionsData);
+  let sections = $derived(sectionsData);
 
   // Call $props.id() once at the top level
   const componentId = $props.id();

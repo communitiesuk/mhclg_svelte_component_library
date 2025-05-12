@@ -4,6 +4,7 @@
     data = undefined,
     metaData = undefined,
     caption = undefined,
+    colourScale = undefined,
   } = $props();
 
   let localCopyOfData = $state([...data]);

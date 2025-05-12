@@ -184,6 +184,18 @@
         },
         rows: 2,
       },
+      {
+        name: "colourScale",
+        category: "Input props",
+        propType: "radio",
+        options: ["Colour scale: Off", "Colour scale: On"],
+        description: {
+          markdown: true,
+          arr: [
+            `The colour scale makes it easier to see the relative magnitude of cases within a metric.`,
+          ],
+        },
+      },
     ]),
   );
 

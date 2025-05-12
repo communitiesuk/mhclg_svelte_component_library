@@ -143,19 +143,25 @@
           <tr class="govuk-table__row">
             <td class="govuk-table__cell">{row["areaName"]}</td>
             {#each metrics as metric}
-              {#if metaData[metric].direction === "Higher is better"}
-                <td
-                  class="govuk-table__cell govuk-table__cell--numeric"
-                  style="background-color: {normToColor(
-                    row[metric + '__normalised'],
-                  )}">{row[metric]}</td
-                >
+              {#if colourScale === "On"}
+                {#if metaData[metric].direction === "Higher is better"}
+                  <td
+                    class="govuk-table__cell govuk-table__cell--numeric"
+                    style="background-color: {normToColor(
+                      row[metric + '__normalised'],
+                    )}">{row[metric]}</td
+                  >
+                {:else}
+                  <td
+                    class="govuk-table__cell govuk-table__cell--numeric"
+                    style="background-color: {normToColorReverse(
+                      row[metric + '__normalised'],
+                    )}">{row[metric]}</td
+                  >
+                {/if}
               {:else}
-                <td
-                  class="govuk-table__cell govuk-table__cell--numeric"
-                  style="background-color: {normToColorReverse(
-                    row[metric + '__normalised'],
-                  )}">{row[metric]}</td
+                <td class="govuk-table__cell govuk-table__cell--numeric"
+                  >{row[metric]}</td
                 >
               {/if}
             {/each}

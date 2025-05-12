@@ -188,11 +188,11 @@
         name: "colourScale",
         category: "Input props",
         propType: "radio",
-        options: ["Colour scale: Off", "Colour scale: On"],
+        options: ["Off", "On"],
         description: {
           markdown: true,
           arr: [
-            `The colour scale makes it easier to see the relative magnitude of cases within a metric.`,
+            `Turn the colour scale on if you want to more easily the magnitude of the value relative to highest and lowest values of that metric.`,
           ],
         },
       },

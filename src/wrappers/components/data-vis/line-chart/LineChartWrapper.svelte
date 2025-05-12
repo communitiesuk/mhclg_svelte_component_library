@@ -268,6 +268,12 @@
         value: lineClicked,
       },
       {
+        name: "nothingSelected",
+        category: "lineEvents",
+        isBinded: true,
+        value: nothingSelected,
+      },
+      {
         name: "onClick",
         category: "lineEvents",
         functionElements: {
@@ -469,10 +475,10 @@
             return true;
           }
           if (key === "hover") {
-            return lineHovered == el.areaCode;
+            return [lineHovered, labelHovered].includes(el.areaCode);
           }
           if (key === "clicked") {
-            return lineClicked == el.areaCode;
+            return [lineClicked, labelClicked].includes(el.areaCode);
           }
         },
       },

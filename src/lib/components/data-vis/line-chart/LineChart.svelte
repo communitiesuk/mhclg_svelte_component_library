@@ -35,7 +35,7 @@
     getLine,
     basicLineParams,
     overrideLineParams,
-    nothingSelected,
+    nothingSelected = $bindable(),
     globalTierRules,
   } = $props();
 
@@ -220,7 +220,7 @@
             {showAllData}
             {globalTierRules}
             {chartBackgroundColor}
-            {nothingSelected}
+            bind:nothingSelected
             {getLine}
             {onMouseEnter}
             {onMouseLeave}

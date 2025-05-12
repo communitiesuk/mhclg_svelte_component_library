@@ -220,7 +220,7 @@
                     legend: { text: dateData.fromLegend, isPageHeading: false },
                   }}
                   hint={{ text: dateData.fromHint }}
-                  legendSize="m"
+                  legendSize={undefined}
                 />
               </div>
               <div data-ga4-section="Updated before">
@@ -232,7 +232,7 @@
                     legend: { text: dateData.toLegend, isPageHeading: false },
                   }}
                   hint={{ text: dateData.toHint }}
-                  legendSize="m"
+                  legendSize={undefined}
                 />
               </div>
             {:else if section.type === "select"}
@@ -479,38 +479,21 @@
       line-height: 1.15;
     }
   }
-  .app-c-filter-section {
-    border-bottom: 1px solid #b1b4b6;
-  }
+.app-c-filter-section {
+    border-bottom: 1px solid #b1b4b6
+}
 
-  .app-c-filter-section:last-child {
+.app-c-filter-section:last-child {
     border-bottom: 0;
     margin-bottom: 0;
-    padding-bottom: 0;
-  }
+    padding-bottom: 0
+}
 
-  .app-c-filter-section:first-child {
-    margin-top: 0;
-  }
+.app-c-filter-section:first-child {
+    margin-top: 0
+}
 
-  .app-c-filter-section[open] .app-c-filter-section__summary::before {
-    /* Arrow pointing down when open */
-    -webkit-transform: translateY(30%) rotate(-45deg) scale(1);
-    -ms-transform: translateY(30%) rotate(-45deg) scale(1);
-    transform: translateY(30%) rotate(-45deg) scale(1);
-  }
-
-  .app-c-filter-section__summary {
-    display: flex;
-    align-items: center;
-    width: 100%;
-    cursor: pointer;
-    color: #0b0c0c;
-    list-style: none;
-    padding: 5px 0;
-  }
-
-  .app-c-filter-section__summary::before {
+.app-c-filter-section[open] .app-c-filter-section__summary::before {
     border-style: solid;
     border-width: 2px 2px 0 0;
     content: "";
@@ -522,89 +505,117 @@
     width: 10px;
     border-color: initial;
     clip-path: unset;
-    /* Arrow pointing right by default (when closed) */
-    -webkit-transform: translateY(-25%) rotate(45deg) scale(1);
-    -ms-transform: translateY(-25%) rotate(45deg) scale(1);
-    transform: translateY(-25%) rotate(45deg) scale(1);
-  }
+    -webkit-transform: translateY(-25%) rotate(135deg) scale(1);
+    -ms-transform: translateY(-25%) rotate(135deg) scale(1);
+    transform: translateY(-25%) rotate(135deg) scale(1);
+    -webkit-transform: translateY(30%) rotate(-45deg) scale(1);
+    -ms-transform: translateY(30%) rotate(-45deg) scale(1);
+    transform: translateY(30%) rotate(-45deg) scale(1)
+}
 
-  .app-c-filter-section__summary::marker,
-  .app-c-filter-section__summary::-webkit-details-marker {
-    display: none;
-  }
+.app-c-filter-section__summary {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    cursor: pointer;
+    color: #0b0c0c;
+    list-style: none;
+    padding: 5px 0
+}
 
-  .app-c-filter-section__summary:hover .app-c-filter-section__summary-heading {
+.app-c-filter-section__summary::before {
+    border-style: solid;
+    border-width: 2px 2px 0 0;
+    content: "";
+    display: inline-block;
+    height: 10px;
+    left: 5px;
+    position: relative;
+    vertical-align: middle;
+    width: 10px;
+    border-color: initial;
+    clip-path: unset;
+    -webkit-transform: translateY(-25%) rotate(135deg) scale(1);
+    -ms-transform: translateY(-25%) rotate(135deg) scale(1);
+    transform: translateY(-25%) rotate(135deg) scale(1)
+}
+
+.app-c-filter-section__summary::marker,.app-c-filter-section__summary::-webkit-details-marker {
+    display: none
+}
+
+.app-c-filter-section__summary:hover .app-c-filter-section__summary-heading {
     text-decoration: underline;
-    text-decoration-thickness: max(1px, 0.0625rem);
-    text-underline-offset: 0.1578em;
-    text-decoration-thickness: max(3px, 0.1875rem, 0.12em);
+    text-decoration-thickness: max(1px, .0625rem);
+    text-underline-offset: .1578em;
+    text-decoration-thickness: max(3px, .1875rem, .12em);
     -webkit-text-decoration-skip-ink: none;
     text-decoration-skip-ink: none;
     -webkit-text-decoration-skip: none;
-    text-decoration-skip: none;
-  }
+    text-decoration-skip: none
+}
 
-  .app-c-filter-section__summary:focus .app-c-filter-section__summary-heading {
+.app-c-filter-section__summary:focus .app-c-filter-section__summary-heading {
     background-color: #fd0;
-    outline: 3px solid rgba(0, 0, 0, 0);
+    outline: 3px solid rgba(0,0,0,0);
     color: #0b0c0c;
-    box-shadow:
-      0 -2px #fd0,
-      0 4px #0b0c0c;
+    background-color: #fd0;
+    box-shadow: 0 -2px #fd0,0 4px #0b0c0c;
     text-decoration: none;
     -webkit-box-decoration-break: clone;
-    box-decoration-break: clone;
-  }
+    box-decoration-break: clone
+}
 
-  .app-c-filter-section__summary:focus-visible {
-    outline: none;
-  }
+.app-c-filter-section__summary:focus-visible {
+    outline: none
+}
 
-  .app-c-filter-section__summary-heading {
+.app-c-filter-section__summary-heading {
     margin-left: 15px;
-    font-family: "GDS Transport", arial, sans-serif;
+    font-family: "GDS Transport",arial,sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: 700;
     font-size: 1.1875rem;
-    line-height: 1.3157894737;
-  }
+    line-height: 1.3157894737
+}
 
-  @media print {
+@media print {
     .app-c-filter-section__summary-heading {
-      font-family: sans-serif;
+        font-family: sans-serif
     }
-  }
+}
 
-  @media print {
+@media print {
     .app-c-filter-section__summary-heading {
-      font-size: 14pt;
-      line-height: 1.15;
+        font-size: 14pt;
+        line-height: 1.15
     }
-  }
+}
 
-  .app-c-filter-section__summary-status {
+.app-c-filter-section__summary-status {
     padding-right: 5px;
     flex-grow: 1;
     text-align: right;
-    font-family: "GDS Transport", arial, sans-serif;
+    font-family: "GDS Transport",arial,sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     font-weight: 400;
     font-size: 1rem;
-    line-height: 1.25;
-  }
+    line-height: 1.25
+}
 
-  @media print {
+@media print {
     .app-c-filter-section__summary-status {
-      font-family: sans-serif;
+        font-family: sans-serif
     }
-  }
+}
 
-  @media print {
+@media print {
     .app-c-filter-section__summary-status {
-      font-size: 14pt;
-      line-height: 1.2;
+        font-size: 14pt;
+        line-height: 1.2
     }
-  }
+}
+
 </style>

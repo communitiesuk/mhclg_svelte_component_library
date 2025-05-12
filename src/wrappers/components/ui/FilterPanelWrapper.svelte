@@ -209,6 +209,7 @@
             toLegend: "Published before",
             toNamePrefix: "published_at[to]",
             toHint: "For example, 2023 or 21/11/2023",
+            legendSize: {undefined},
           },
           {
             id: "topic",

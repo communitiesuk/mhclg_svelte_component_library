@@ -53,7 +53,7 @@
     formGroup = {} as FormGroup,
     classes = "", // Classes for the main govuk-date-input container
     attributes = {} as Record<string, unknown>,
-    legendSize = "l" as "l" | "m" | "s", // Added legendSize prop
+    legendSize, // Destructure without default
     dayValue = $bindable<string | number | undefined>(undefined),
     monthValue = $bindable<string | number | undefined>(undefined),
     yearValue = $bindable<string | number | undefined>(undefined),
@@ -75,7 +75,7 @@
     formGroup?: FormGroup;
     classes?: string;
     attributes?: Record<string, unknown>;
-    legendSize?: "l" | "m" | "s"; // Added legendSize prop type
+    legendSize?: "l" | "m" | "s" | undefined; // Type is optional
     dayValue?: string | number | undefined;
     monthValue?: string | number | undefined;
     yearValue?: string | number | undefined;
@@ -85,6 +85,8 @@
       year?: string | number | undefined;
     }) => string | undefined; // Added validate prop type
   } = $props();
+
+  // console.log(`DateInput (${id}): received legendSize =`, legendSize); // Remove console.log
 
   // --- Derived State ---
   // Server/manual error check
@@ -136,7 +138,7 @@
     {#if fieldset?.legend}
       <legend
         class="govuk-fieldset__legend {fieldset.legend.classes ??
-          ''} govuk-fieldset__legend--{legendSize}"
+          ''} {legendSize ? `govuk-fieldset__legend--${legendSize}` : ''}"
       >
         {#if fieldset.legend.isPageHeading}
           <h1 class="govuk-fieldset__heading">

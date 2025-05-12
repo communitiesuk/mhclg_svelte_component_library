@@ -562,7 +562,7 @@
     },
     hover: {
       pathStrokeColor: colors.ochre,
-      pathStrokeWidth: 5,
+      pathStrokeWidth: 6,
       halo: true,
       interactive: true,
       markers: false,

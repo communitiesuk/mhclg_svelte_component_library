@@ -29,8 +29,12 @@
 
   let bounds = $state([0, chartHeight]);
 
+  let significantInteractions = $derived(
+    [lineClicked, lineHovered, labelClicked].every((item) => item == null),
+  );
+
   let transformed = $derived(
-    (nothingSelected
+    (significantInteractions
       ? tieredDataObject.primary
       : [...(tieredDataObject.hover || []), ...(tieredDataObject.clicked || [])]
     )
@@ -95,7 +99,7 @@
 
     <g>
       {#each tieredDataObject[tier] as line, i}
-        {#if (tier === "primary" && nothingSelected) || ["hover", "clicked"].includes(tier)}
+        {#if (tier === "primary" && significantInteractions) || ["hover", "clicked"].includes(tier)}
           <CategoryLabel
             id={`label-${line.areaCode}`}
             bind:labelClicked

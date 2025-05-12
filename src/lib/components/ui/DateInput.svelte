@@ -29,7 +29,7 @@
     id?: string; // Will be automatically generated if not provided
     name: string; // e.g., 'day', 'month', 'year'
     label?: string;
-    value?: string | number;
+    value?: string | number | undefined; // Make value optional
     classes?: string; // Classes for the input element itself
     itemClasses?: string; // Classes for the govuk-date-input__item container
     inputmode?: HTMLInputAttributes["inputmode"]; // Use stricter type
@@ -56,6 +56,9 @@
     classes = "", // Classes for the main govuk-date-input container
     attributes = {} as Record<string, unknown>,
     legendSize = "l" as "l" | "m" | "s", // Added legendSize prop
+    dayValue = $bindable<string | number | undefined>(undefined),
+    monthValue = $bindable<string | number | undefined>(undefined),
+    yearValue = $bindable<string | number | undefined>(undefined),
   }: {
     id: string;
     namePrefix?: string;
@@ -67,6 +70,9 @@
     classes?: string;
     attributes?: Record<string, unknown>;
     legendSize?: "l" | "m" | "s"; // Added legendSize prop type
+    dayValue?: string | number | undefined;
+    monthValue?: string | number | undefined;
+    yearValue?: string | number | undefined;
   } = $props();
 
   // --- Derived State ---
@@ -154,6 +160,32 @@
       {#each items as item (item.name)}
         {@const inputId = getItemId(item)}
         {@const inputName = getItemName(item)}
+
+        {@const handleInput = (event: Event) => {
+          const target = event.target as HTMLInputElement;
+          const newValue = target.value;
+          if (item.name === "day") {
+            dayValue = newValue;
+          } else if (item.name === "month") {
+            monthValue = newValue;
+          } else if (item.name === "year") {
+            yearValue = newValue;
+          }
+        }}
+
+        {@const getCurrentValue = () => {
+          switch (item.name) {
+            case "day":
+              return dayValue;
+            case "month":
+              return monthValue;
+            case "year":
+              return yearValue;
+            default:
+              return item.value; // Fallback to item.value if provided and no bindable prop matches
+          }
+        }}
+
         {@const inputClasses = (() => {
           let classList = ["govuk-input", "govuk-date-input__input"];
           const providedClasses = item.classes || "";
@@ -193,7 +225,8 @@
               id={inputId}
               name={inputName}
               type={item.type || "text"}
-              value={item.value}
+              value={getCurrentValue()}
+              oninput={handleInput}
               inputmode={item.inputmode || "numeric"}
               autocomplete={item.autocomplete}
               pattern={item.pattern || "[0-9]*"}

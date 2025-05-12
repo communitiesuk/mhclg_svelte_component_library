@@ -138,6 +138,9 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
+  let dayValue = $state("");
+  let monthValue = $state("");
+  let yearValue = $state("");
 
   /**
    * ! Step 3 - Add your props
@@ -289,17 +292,14 @@
         value: [
           {
             name: "day",
-            value: "",
             label: "Day",
           },
           {
             name: "month",
-            value: "",
             label: "Month",
           },
           {
             name: "year",
-            value: "",
             label: "Year",
           },
         ],
@@ -322,6 +322,36 @@
           arr: [
             `Controls the size of the fieldset legend (\`l\`, \`m\`, or \`s\`).`,
           ],
+        },
+      },
+      {
+        name: "dayValue",
+        category: "Bindable Values",
+        isBinded: true,
+        value: dayValue,
+        description: {
+          markdown: true,
+          arr: [`Bindable value for the day input.`],
+        },
+      },
+      {
+        name: "monthValue",
+        category: "Bindable Values",
+        isBinded: true,
+        value: monthValue,
+        description: {
+          markdown: true,
+          arr: [`Bindable value for the month input.`],
+        },
+      },
+      {
+        name: "yearValue",
+        category: "Bindable Values",
+        isBinded: true,
+        value: yearValue,
+        description: {
+          markdown: true,
+          arr: [`Bindable value for the year input.`],
         },
       },
     ]),
@@ -465,7 +495,12 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <DateInput {...parametersObject}></DateInput>
+    <DateInput
+      {...parametersObject}
+      bind:dayValue
+      bind:monthValue
+      bind:yearValue
+    ></DateInput>
   </div>
 {/snippet}
 

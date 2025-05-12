@@ -76,21 +76,30 @@
     attributes?: Record<string, unknown>;
   } = $props();
 
+  // Remove these runtime checks
+  // Ensure nested props are objects, not null
+  // if (errorMessage == null) errorMessage = {};
+  // if (hint == null) hint = {};
+  // if (formGroup == null) formGroup = {};
+  // if (fieldset == null) fieldset = {} as Fieldset;
+
   // --- Derived State ---
+  // Use optional chaining (?.) to safely access properties even if errorMessage is null
   let hasError = $derived(
-    errorMessage && (errorMessage.text || errorMessage.html),
+    errorMessage?.text != null || errorMessage?.html != null, // Check for actual content
   );
+  // Use optional chaining and nullish coalescing (??)
   let hintId = $derived(
-    hint.id || (hint.text || hint.html ? `${id}-hint` : undefined),
+    hint?.id ?? (hint?.text || hint?.html ? `${id}-hint` : undefined),
   );
   let errorId = $derived(
-    errorMessage.id || (hasError ? `${id}-error` : undefined),
+    errorMessage?.id ?? (hasError ? `${id}-error` : undefined),
   );
 
+  // Use optional chaining
   let describedBy = $derived(
-    fieldset?.describedBy ||
-      [hintId, errorId].filter(Boolean).join(" ") ||
-      undefined,
+    fieldset?.describedBy ?? // Check fieldset first
+      ([hintId, errorId].filter(Boolean).join(" ") || undefined),
   );
 
   function getItemName(item: DateInputItem): string {
@@ -98,25 +107,25 @@
   }
 
   function getItemId(item: DateInputItem): string {
-    return item.id || `${id}-${item.name}`;
+    return item?.id || `${id}-${item.name}`;
   }
 </script>
 
 <div
-  class="govuk-form-group {formGroup.classes || ''} {hasError
+  class="govuk-form-group {formGroup?.classes ?? ''} {hasError
     ? 'govuk-form-group--error'
     : ''}"
-  {...formGroup.attributes}
+  {...formGroup?.attributes}
 >
   <fieldset
-    class="govuk-fieldset {fieldset.classes || ''}"
-    role={fieldset.role || "group"}
+    class="govuk-fieldset {fieldset?.classes ?? ''}"
+    role={fieldset?.role ?? "group"}
     aria-describedby={describedBy}
-    {...fieldset.attributes}
+    {...fieldset?.attributes}
   >
-    {#if fieldset.legend}
+    {#if fieldset?.legend}
       <legend
-        class="govuk-fieldset__legend {fieldset.legend.classes || ''} {fieldset
+        class="govuk-fieldset__legend {fieldset.legend.classes ?? ''} {fieldset
           .legend.isPageHeading
           ? 'govuk-fieldset__legend--xl' // Example, adjust as needed based on design system specs for heading size
           : ''}"
@@ -137,10 +146,10 @@
       </legend>
     {/if}
 
-    {#if hint.text || hint.html}
+    {#if hint?.text || hint?.html}
       <div
         id={hintId}
-        class="govuk-hint {hint.classes || ''}"
+        class="govuk-hint {hint.classes ?? ''}"
         {...hint.attributes}
       >
         {#if hint.html}
@@ -154,16 +163,16 @@
     {#if hasError}
       <p
         id={errorId}
-        class="govuk-error-message {errorMessage.classes || ''}"
-        {...errorMessage.attributes}
+        class="govuk-error-message {errorMessage?.classes ?? ''}"
+        {...errorMessage?.attributes}
       >
         <span class="govuk-visually-hidden"
-          >{errorMessage.visuallyHiddenText || "Error:"}</span
+          >{errorMessage?.visuallyHiddenText ?? "Error:"}</span
         >
-        {#if errorMessage.html}
+        {#if errorMessage?.html}
           {@html errorMessage.html}
         {:else}
-          {errorMessage.text}
+          {errorMessage?.text}
         {/if}
       </p>
     {/if}
@@ -184,7 +193,7 @@
               id={inputId}
               name={inputName}
               type={item.type || "text"}
-              bind:value={item.value}
+              value={item.value}
               inputmode={item.inputmode || "numeric"}
               autocomplete={item.autocomplete}
               pattern={item.pattern || "[0-9]*"}

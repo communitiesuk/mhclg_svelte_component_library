@@ -4,13 +4,28 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-import DateInput from "$lib/components/ui/DateInput.svelte";
+  import DateInput from "$lib/components/ui/DateInput.svelte";
 
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
-      content: Example1,
+      heading: "1. Basic Date Input",
+      content: BasicDateInput,
+    },
+    {
+      id: "2",
+      heading: "2. Date Input with Errors",
+      content: DateInputWithError,
+    },
+    {
+      id: "3",
+      heading: "3. Date Input with Day and Month Only",
+      content: DateInputDayMonth,
+    },
+    {
+      id: "4",
+      heading: "4. Date Input with Autocomplete",
+      content: DateInputAutocomplete,
     },
   ];
 </script>
@@ -35,34 +50,150 @@ import DateInput from "$lib/components/ui/DateInput.svelte";
   </Accordion>
 </div>
 
-{#snippet Example1()}
+{#snippet BasicDateInput()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
+    <DateInput
+      id="passport-issued"
+      namePrefix="passport-issued"
+      fieldset={{
+        legend: {
+          text: "When was your passport issued?",
+          isPageHeading: true,
+          classes: "govuk-fieldset__legend--l",
         },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
+      }}
+      hint={{
+        text: "For example, 27 3 2007",
+      }}
+      items={[
         {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
+          name: "day",
+          classes: "govuk-input--width-2",
+          value: "",
         },
         {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
+          name: "month",
+          classes: "govuk-input--width-2",
+          value: "",
+        },
+        {
+          name: "year",
+          classes: "govuk-input--width-4",
+          value: "",
         },
       ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    />
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.basicDateInput} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet DateInputWithError()}
+  <div class="p-5 bg-white">
+    <DateInput
+      id="dob-errors"
+      namePrefix="dob"
+      fieldset={{
+        legend: {
+          text: "What is your date of birth?",
+          classes: "govuk-fieldset__legend--m",
+        },
+      }}
+      hint={{
+        text: "For example, 31 3 1980",
+      }}
+      errorMessage={{
+        text: "Date of birth must include a year",
+      }}
+      items={[
+        {
+          name: "day",
+          classes: "govuk-input--width-2",
+          value: "6",
+        },
+        {
+          name: "month",
+          classes: "govuk-input--width-2",
+          value: "3",
+        },
+        {
+          name: "year",
+          classes: "govuk-input--width-4 govuk-input--error",
+          value: "",
+          hasError: true,
+        },
+      ]}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.dateInputWithError} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet DateInputDayMonth()}
+  <div class="p-5 bg-white">
+    <DateInput
+      id="bday"
+      namePrefix="bday"
+      fieldset={{
+        legend: {
+          text: "What is your birthday?",
+          classes: "govuk-fieldset__legend--m",
+        },
+      }}
+      hint={{
+        text: "For example, 5 12",
+      }}
+      items={[
+        {
+          name: "day",
+          classes: "govuk-input--width-2",
+          value: "",
+        },
+        {
+          name: "month",
+          classes: "govuk-input--width-2",
+          value: "",
+        },
+      ]}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.dateInputDayMonth} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet DateInputAutocomplete()}
+  <div class="p-5 bg-white">
+    <DateInput
+      id="dob-autocomplete"
+      namePrefix="dob"
+      fieldset={{
+        legend: {
+          text: "What is your date of birth?",
+          classes: "govuk-fieldset__legend--m",
+        },
+      }}
+      hint={{
+        text: "For example, 31 3 1980",
+      }}
+      items={[
+        {
+          name: "day",
+          classes: "govuk-input--width-2",
+          value: "",
+          autocomplete: "bday-day",
+        },
+        {
+          name: "month",
+          classes: "govuk-input--width-2",
+          value: "",
+          autocomplete: "bday-month",
+        },
+        {
+          name: "year",
+          classes: "govuk-input--width-4",
+          value: "",
+          autocomplete: "bday-year",
+        },
+      ]}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.dateInputAutocomplete} language="svelte"
+  ></CodeBlock>
 {/snippet}

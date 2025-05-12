@@ -26,14 +26,14 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "Baseline completed",
     statusRows: [
       {
-        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
+        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },
         visibleOnHompepage: false,
       },
       {
-        obj: { Reviewed: false, Tested: false },
+        obj: { Reviewed: true, Tested: true },
         visibleOnHomepage: false,
       },
     ],
@@ -46,10 +46,15 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "The date input component helps users enter a memorable date or one they can easily look up.",
+    "It uses text fields for entering day, month, and year numbers, with appropriate validation and error handling.",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Use this component when asking users for a known date, like a birth date, passport issuance date, or appointment date.",
+    "For dates that users might not remember precisely, consider using a more flexible date input approach.",
+    "The component can be configured to collect just day and month, or month and year, depending on what information is needed.",
   ];
 
   let detailsArray = [
@@ -70,7 +75,25 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [];
+  let connectedComponentsArray = [
+    {
+      label: "Related",
+      arr: [
+        {
+          name: "Text Input",
+          link: "/components/ui/text-input",
+        },
+        {
+          name: "Fieldset",
+          link: "/components/ui/fieldset",
+        },
+        {
+          name: "Error Message",
+          link: "/components/ui/error-message",
+        },
+      ],
+    },
+  ];
 </script>
 
 <script>
@@ -91,8 +114,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-import DateInput from "$lib/components/ui/DateInput.svelte";
-import Examples from "./date-input/Examples.svelte";
+  import DateInput from "$lib/components/ui/DateInput.svelte";
+  import Examples from "./date-input/Examples.svelte";
 
   let { data } = $props();
 
@@ -157,140 +180,136 @@ import Examples from "./date-input/Examples.svelte";
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        name: "id",
+        category: "Required props",
+        isRequired: true,
+        value: "date-input-example",
         description: {
           markdown: true,
           arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 2,
-      },
-      {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
+            `Required. This is used for the main component and to compose the ID attribute for each item.`,
           ],
         },
       },
       {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
+        name: "namePrefix",
+        category: "Optional props",
+        value: "date",
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
+            `Optional prefix that is used to prefix each item name, separated by hyphens.`,
           ],
         },
       },
       {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
+        name: "classes",
+        category: "Styling",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [`Classes to add to the date-input container.`],
+        },
+      },
+      {
+        name: "attributes",
+        category: "Optional props",
+        value: {},
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
+            `HTML attributes (for example data attributes) to add to the date input container.`,
           ],
         },
       },
       {
-        name: "jsObjectProp",
-        category: "Input props",
+        name: "formGroup",
+        category: "Form props",
+        value: {
+          classes: "",
+          attributes: {},
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Options for the form group containing the date input component.`,
+          ],
+        },
+      },
+      {
+        name: "fieldset",
+        category: "Structure props",
+        value: {
+          legend: {
+            text: "When was your passport issued?",
+            isPageHeading: false,
+            classes: "govuk-fieldset__legend--m",
+          },
+          role: "group",
+          classes: "",
+          attributes: {},
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Options for the fieldset element that contains the date input component.`,
+          ],
+        },
+      },
+      {
+        name: "hint",
+        category: "Content props",
+        value: {
+          text: "For example, 27 3 2007",
+          classes: "",
+          attributes: {},
+        },
+        description: {
+          markdown: true,
+          arr: [`Hint text that explains the expected format of the date.`],
+        },
+      },
+      {
+        name: "errorMessage",
+        category: "Validation props",
+        value: null,
+        description: {
+          markdown: true,
+          arr: [
+            `Error message to show when there's a validation error. Not displayed if set to a falsy value.`,
+            `Example: { text: "Date must include a year" }`,
+          ],
+        },
+      },
+      {
+        name: "items",
+        category: "Required props",
+        isRequired: true,
         value: [
           {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
+            name: "day",
+            classes: "govuk-input--width-2",
+            value: "",
+            label: "Day",
           },
           {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
+            name: "month",
+            classes: "govuk-input--width-2",
+            value: "",
+            label: "Month",
           },
           {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
+            name: "year",
+            classes: "govuk-input--width-4",
+            value: "",
+            label: "Year",
           },
         ],
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
-          ],
-        },
-      },
-      {
-        name: "functionProp",
-        category: "Fixed props",
-
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
-        functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
-        },
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
+            `Required. Array of input items for the date input (typically day, month, year).`,
+            `Each item should have a name, and can have additional properties like value, classes, label, hasError, etc.`,
           ],
         },
       },
@@ -435,7 +454,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
  -->
 {#snippet Component()}
   <div class="p-8">
-<DateInput {...parametersObject}></DateInput>
+    <DateInput {...parametersObject}></DateInput>
   </div>
 {/snippet}
 

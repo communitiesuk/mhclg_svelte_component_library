@@ -29,7 +29,7 @@
     progress: "Baseline completed",
     statusRows: [
       {
-        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },
+        obj: { Accessible: false, Responsive: true, "Prog. enhanced": false },
         visibleOnHompepage: false,
       },
       {
@@ -49,6 +49,7 @@
   let descriptionArray = [
     "The date input component helps users enter a memorable date or one they can easily look up.",
     "It uses text fields for entering day, month, and year numbers, with appropriate validation and error handling.",
+    'Based on the <a href="https://design-system.service.gov.uk/components/date-input/" target="_blank" rel="noopener noreferrer">GOV.UK Design System date input component</a> pattern.',
   ];
 
   let contextArray = [

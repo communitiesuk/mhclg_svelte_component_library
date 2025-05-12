@@ -27,7 +27,28 @@
       heading: "4. Date Input with Autocomplete",
       content: DateInputAutocomplete,
     },
+    {
+      id: "5",
+      heading: "5. Date Input with Bindable Values",
+      content: DateInputWithBindings,
+    },
   ];
+
+  // For binding example
+  let boundDay = "";
+  let boundMonth = "";
+  let boundYear = "";
+
+  function getFormattedBoundDate() {
+    if (!boundDay || !boundMonth || !boundYear) return "Incomplete date";
+    return `${boundDay}/${boundMonth}/${boundYear}`;
+  }
+
+  function resetBoundValues() {
+    boundDay = "";
+    boundMonth = "";
+    boundYear = "";
+  }
 </script>
 
 <div class="my-20 p-2">
@@ -189,5 +210,40 @@
     />
   </div>
   <CodeBlock code={codeBlocks.dateInputAutocomplete} language="svelte"
+  ></CodeBlock>
+{/snippet}
+
+{#snippet DateInputWithBindings()}
+  <div class="p-5 bg-white">
+    <DateInput
+      id="bound-date-input"
+      namePrefix="bound-date"
+      fieldset={{
+        legend: {
+          text: "Enter a date with bindable values",
+        },
+      }}
+      hint={{
+        text: "Values are bound to variables in the parent component",
+      }}
+      bind:dayValue={boundDay}
+      bind:monthValue={boundMonth}
+      bind:yearValue={boundYear}
+      items={[{ name: "day" }, { name: "month" }, { name: "year" }]}
+    />
+
+    <div class="mt-4 p-3 border border-gray-200 rounded bg-gray-50">
+      <p class="text-sm">
+        Current date value: <strong>{getFormattedBoundDate()}</strong>
+      </p>
+      <button
+        class="mt-2 px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+        on:click={resetBoundValues}
+      >
+        Reset Date
+      </button>
+    </div>
+  </div>
+  <CodeBlock code={codeBlocks.dateInputWithBindings} language="svelte"
   ></CodeBlock>
 {/snippet}

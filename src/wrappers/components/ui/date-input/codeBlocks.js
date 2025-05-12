@@ -171,3 +171,55 @@ export const dateInputAutocomplete = `
     }
   ]}
 />`;
+
+export const dateInputWithBindings = `
+<script>
+  import DateInput from "$lib/components/ui/DateInput.svelte";
+  
+  // Initialize bindable values
+  let day = "";
+  let month = "";
+  let year = "";
+  
+  // Function to format the date for display
+  function getFormattedDate() {
+    if (!day || !month || !year) return "Incomplete date";
+    return \`\${day}/\${month}/\${year}\`;
+  }
+  
+  // Function to reset the values
+  function resetValues() {
+    day = "";
+    month = "";
+    year = "";
+  }
+</script>
+
+<DateInput 
+  id="bound-date-input"
+  namePrefix="bound-date"
+  fieldset={{
+    legend: {
+      text: "Enter a date with bindable values"
+    }
+  }}
+  hint={{
+    text: "Values are bound to variables in the parent component"
+  }}
+  bind:dayValue={day}
+  bind:monthValue={month}
+  bind:yearValue={year}
+  items={[
+    { name: "day" },
+    { name: "month" },
+    { name: "year" }
+  ]}
+/>
+
+<div class="govuk-!-margin-top-4">
+  <p class="govuk-body">Current date value: <strong>{getFormattedDate()}</strong></p>
+  <button class="govuk-button govuk-button--secondary govuk-!-margin-top-2" on:click={resetValues}>
+    Reset Date
+  </button>
+</div>
+`;

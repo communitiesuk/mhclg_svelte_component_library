@@ -42,8 +42,7 @@ export const basicDateInput = `
   fieldset={{
     legend: {
       text: "When was your passport issued?",
-      isPageHeading: true,
-      classes: "govuk-fieldset__legend--l"
+      isPageHeading: true
     }
   }}
   hint={{
@@ -78,8 +77,7 @@ export const dateInputWithError = `
   namePrefix="dob"
   fieldset={{
     legend: {
-      text: "What is your date of birth?",
-      classes: "govuk-fieldset__legend--m"
+      text: "What is your date of birth?"
     }
   }}
   hint={{
@@ -116,8 +114,7 @@ export const dateInputDayMonth = `
   namePrefix="bday"
   fieldset={{
     legend: {
-      text: "What is your birthday?",
-      classes: "govuk-fieldset__legend--m"
+      text: "What is your birthday?"
     }
   }}
   hint={{
@@ -147,8 +144,7 @@ export const dateInputAutocomplete = `
   namePrefix="dob"
   fieldset={{
     legend: {
-      text: "What is your date of birth?",
-      classes: "govuk-fieldset__legend--m"
+      text: "What is your date of birth?"
     }
   }}
   hint={{

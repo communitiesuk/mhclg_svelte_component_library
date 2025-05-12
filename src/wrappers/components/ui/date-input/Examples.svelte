@@ -59,7 +59,6 @@
         legend: {
           text: "When was your passport issued?",
           isPageHeading: true,
-          classes: "govuk-fieldset__legend--l",
         },
       }}
       hint={{
@@ -95,7 +94,6 @@
       fieldset={{
         legend: {
           text: "What is your date of birth?",
-          classes: "govuk-fieldset__legend--m",
         },
       }}
       hint={{
@@ -133,7 +131,6 @@
       fieldset={{
         legend: {
           text: "What is your birthday?",
-          classes: "govuk-fieldset__legend--m",
         },
       }}
       hint={{
@@ -164,7 +161,6 @@
       fieldset={{
         legend: {
           text: "What is your date of birth?",
-          classes: "govuk-fieldset__legend--m",
         },
       }}
       hint={{

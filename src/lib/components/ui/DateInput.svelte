@@ -55,6 +55,7 @@
     formGroup = {} as FormGroup,
     classes = "", // Classes for the main govuk-date-input container
     attributes = {} as Record<string, unknown>,
+    legendSize = "l" as "l" | "m" | "s", // Added legendSize prop
   }: {
     id: string;
     namePrefix?: string;
@@ -65,6 +66,7 @@
     formGroup?: FormGroup;
     classes?: string;
     attributes?: Record<string, unknown>;
+    legendSize?: "l" | "m" | "s"; // Added legendSize prop type
   } = $props();
 
   // --- Derived State ---
@@ -108,10 +110,8 @@
   >
     {#if fieldset?.legend}
       <legend
-        class="govuk-fieldset__legend {fieldset.legend.classes ?? ''} {fieldset
-          .legend.isPageHeading
-          ? 'govuk-fieldset__legend--xl' // Example, adjust as needed based on design system specs for heading size
-          : ''}"
+        class="govuk-fieldset__legend {fieldset.legend.classes ??
+          ''} govuk-fieldset__legend--{legendSize}"
       >
         {#if fieldset.legend.isPageHeading}
           <h1 class="govuk-fieldset__heading">

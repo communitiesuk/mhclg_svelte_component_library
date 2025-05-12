@@ -243,7 +243,7 @@
           legend: {
             text: "When was your passport issued?",
             isPageHeading: false,
-            classes: "govuk-fieldset__legend--m",
+            classes: "",
           },
           role: "group",
           classes: "",
@@ -253,6 +253,7 @@
           markdown: true,
           arr: [
             `Options for the fieldset element that contains the date input component.`,
+            `Example: { text: "Date must include a year" }`,
           ],
         },
       },
@@ -288,19 +289,16 @@
         value: [
           {
             name: "day",
-            classes: "govuk-input--width-2",
             value: "",
             label: "Day",
           },
           {
             name: "month",
-            classes: "govuk-input--width-2",
             value: "",
             label: "Month",
           },
           {
             name: "year",
-            classes: "govuk-input--width-4",
             value: "",
             label: "Year",
           },
@@ -311,6 +309,18 @@
             `Required. Array of input items for the date input (typically day, month, year).`,
             `Each item should have a name, and can have additional properties like value, classes, label, etc. `,
             `Setting \`hasError: true\` on an item will only apply error styling to that specific input if the top-level \`errorMessage\` prop is also set to a non-empty string.`,
+          ],
+        },
+      },
+      {
+        name: "legendSize",
+        category: "UI Options",
+        options: ["l", "m", "s"],
+        value: "m",
+        description: {
+          markdown: true,
+          arr: [
+            `Controls the size of the fieldset legend (\`l\`, \`m\`, or \`s\`).`,
           ],
         },
       },

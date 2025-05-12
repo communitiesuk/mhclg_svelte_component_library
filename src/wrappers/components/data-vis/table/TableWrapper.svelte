@@ -174,6 +174,16 @@
         visible: false,
         value: data.metaData,
       },
+      {
+        name: "caption",
+        category: "Input props",
+        value: `This is the table caption`,
+        description: {
+          markdown: true,
+          arr: [`This is the caption of the table. It sits above the table.`],
+        },
+        rows: 2,
+      },
     ]),
   );
 

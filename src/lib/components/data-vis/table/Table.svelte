@@ -3,6 +3,7 @@
     componentNameProp = undefined,
     data = undefined,
     metaData = undefined,
+    caption = undefined,
   } = $props();
 
   let localCopyOfData = $state([...data]);
@@ -98,9 +99,9 @@
     {/each}
   </div>
 
-  <div class="table-container">
+  <div class="govuk-table table-container" data-module="moj-sortable-table">
     <table class="my-table">
-      <caption></caption>
+      <caption class="govuk-table__caption">{caption}</caption>
       <thead
         ><tr>
           <th class="col-one-header">Area</th>
@@ -164,12 +165,12 @@
     padding: 0px;
   }
 
-  .table-container {
+  /*   .table-container {
     max-height: 85vh;
     overflow-y: auto;
     border: 1px solid black;
     border-radius: 1%;
-  }
+  } */
 
   .ascending {
     background-color: #ff7f7f;
@@ -252,8 +253,8 @@
     background-color: lightgray;
     border-radius: 20%;
   }
-  .col-one-header {
+  /*   .col-one-header {
     text-align: right;
     padding: 5px;
-  }
+  } */
 </style>

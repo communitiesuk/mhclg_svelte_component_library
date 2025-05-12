@@ -29,15 +29,11 @@
 
   let bounds = $state([0, chartHeight]);
 
-  let significantInteractions = $derived(
-    [lineClicked, lineHovered, labelClicked].every((item) => item == null),
-  );
-
   let transformed = $derived(
-    (significantInteractions
-      ? tieredDataObject.primary
-      : [...(tieredDataObject.hover || []), ...(tieredDataObject.clicked || [])]
-    )
+    Object.values(tieredDataObject)
+      .filter(Array.isArray)
+      .flatMap((tier) => tier.filter((item) => item.showLabel === true))
+
       .filter(
         (item, index, self) =>
           self.findIndex((other) => other.areaCode === item.areaCode) === index,
@@ -56,27 +52,6 @@
       (d) => 20 * Math.ceil(d.areaCode.length / 15),
     ),
   );
-
-  function generateLineAttributes(line, defaultLineParams, tier) {
-    const listOfProperties = [
-      ...new Set([
-        ...Object.keys(line),
-        ...Object.keys(defaultLineParams[tier]),
-      ]),
-    ];
-
-    const merged = Object.fromEntries(
-      listOfProperties.map((key) => [
-        key,
-        line[key] ?? defaultLineParams[tier][key],
-      ]),
-    );
-    return {
-      ...merged,
-      dataId: line.areaCode,
-      dataArray: line.data, // rename in the original to avoid this
-    };
-  }
 </script>
 
 {#each Object.keys(tieredDataObject) as tier}
@@ -99,7 +74,7 @@
 
     <g>
       {#each tieredDataObject[tier] as line, i}
-        {#if (tier === "primary" && significantInteractions) || ["hover", "clicked"].includes(tier)}
+        {#if line.showLabel}
           <CategoryLabel
             id={`label-${line.areaCode}`}
             bind:labelClicked

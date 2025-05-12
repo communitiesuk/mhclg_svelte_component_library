@@ -545,6 +545,7 @@
       opacity: 0.05,
       interactive: true,
       markers: false,
+      showLabel: false,
     },
     primary: {
       halo: true,
@@ -552,6 +553,7 @@
       pathStrokeColor: colors.darkgrey,
       interactive: true,
       markers: false,
+      showLabel: !lineClicked && !lineHovered && !labelClicked,
     },
     clicked: {
       pathStrokeColor: colors.ochre,
@@ -559,6 +561,7 @@
       halo: true,
       interactive: true,
       markers: false,
+      showLabel: true,
     },
     hover: {
       pathStrokeColor: colors.ochre,
@@ -566,6 +569,7 @@
       halo: true,
       interactive: true,
       markers: false,
+      showLabel: true,
     },
   });
 

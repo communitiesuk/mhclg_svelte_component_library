@@ -244,16 +244,16 @@
         category: "customisingLines",
         description:
           "Defines how the entire tier should be rendered. Must be valid SVG attributes",
-        value: {
-          otherTier: {},
-          secondary: {
-            opacity: nothingSelected ? 1 : 0.5,
-          },
-          primary: {
-            opacity: nothingSelected ? 1 : 0.4,
-          },
-          hover: { opacity: 1 },
-          clicked: { opacity: 1 },
+        functionElements: {
+          functionAsString: `{otherTier: {},
+    secondary: {
+      opacity: getValue("nothingSelected") ? 1 : 0.5,
+    },
+    primary: {
+      opacity: getValue("nothingSelected") ? 1 : 0.4,
+    },
+    hover: { opacity: 1 },
+    clicked: { opacity: 1 }}`,
         },
       },
       {
@@ -573,6 +573,18 @@
     },
   });
 
+  let globalTierRules = $derived({
+    otherTier: {},
+    secondary: {
+      opacity: getValue("nothingSelected") ? 1 : 0.5,
+    },
+    primary: {
+      opacity: getValue("nothingSelected") ? 1 : 0.4,
+    },
+    hover: { opacity: 1 },
+    clicked: { opacity: 1 },
+  });
+
   let getColor = function (areaCode, i) {
     let colorsArray = [colors.coral, colors.fuschia, colors.purple];
 
@@ -634,6 +646,7 @@
     getColor,
     basicLineParams,
     nothingSelected,
+    globalTierRules,
   });
 
   /**

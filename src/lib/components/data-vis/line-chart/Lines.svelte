@@ -52,6 +52,8 @@
       (d) => 20 * Math.ceil(d.areaCode.length / 15),
     ),
   );
+  $inspect(nothingSelected);
+  $inspect(globalTierRules);
 </script>
 
 {#each Object.keys(tieredDataObject) as tier}

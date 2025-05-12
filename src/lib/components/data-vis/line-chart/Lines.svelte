@@ -20,7 +20,7 @@
     chartHeight,
     globalTierRules,
     chartBackgroundColor = "#fafafa",
-    nothingSelected,
+    nothingSelected = $bindable(),
     getLine,
     onMouseEnter,
     onMouseLeave,
@@ -75,43 +75,10 @@
   }
 </script>
 
-{#snippet categoryLabelSnippet(dataArray, newY)}
-  <CategoryLabel
-    id={`label-${dataArray.areaCode}`}
-    bind:labelClicked
-    bind:labelHovered
-    {chartWidth}
-    {lineFunction}
-    {dataArray}
-    {xFunction}
-    {yFunction}
-    {newY}
-    onClick={function (areaCode) {
-      labelClicked === areaCode
-        ? ((labelClicked = null), (labelHovered = null))
-        : (labelClicked = areaCode);
-    }}
-    onMouseEnter={function onMouseEnter(areaCode) {
-      labelHovered = areaCode;
-    }}
-    onMouseLeave={function onMouseLeave(areaCode) {
-      labelClicked === areaCode
-        ? (labelHovered = null)
-        : (labelHovered = areaCode);
-      labelHovered === areaCode ? (labelHovered = null) : (labelHovered = null);
-    }}
-  ></CategoryLabel>
-{/snippet}
-
 {#each Object.keys(tieredDataObject) as tier}
   <g id={tier}>
     <g {...globalTierRules[tier]}>
       {#each tieredDataObject[tier] as line, i}
-        <!-- {@const lineAttributes = generateLineAttributes(
-          line,
-          defaultLineParams,
-          tier,
-        )} -->
         <Line
           {...line}
           {tier}
@@ -128,7 +95,7 @@
 
     <g>
       {#each tieredDataObject[tier] as line, i}
-        {#if (tier == "primary" && nothingSelected) || ["hover", "clicked"].includes(tier)}
+        {#if (tier === "primary" && nothingSelected) || ["hover", "clicked"].includes(tier)}
           <CategoryLabel
             id={`label-${line.areaCode}`}
             bind:labelClicked
@@ -145,16 +112,13 @@
                 ? ((labelClicked = null), (labelHovered = null))
                 : (labelClicked = areaCode);
             }}
-            onMouseEnter={function onMouseEnter(areaCode) {
+            onMouseEnter={function (areaCode) {
               labelHovered = areaCode;
             }}
-            onMouseLeave={function onMouseLeave(areaCode) {
-              labelClicked === areaCode
-                ? (labelHovered = null)
-                : (labelHovered = areaCode);
-              labelHovered === areaCode
-                ? (labelHovered = null)
-                : (labelHovered = null);
+            onMouseLeave={function (areaCode) {
+              if (labelClicked !== areaCode) {
+                labelHovered = null;
+              }
             }}
           ></CategoryLabel>
         {/if}

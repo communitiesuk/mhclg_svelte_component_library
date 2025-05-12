@@ -99,7 +99,7 @@ export const dateInputWithError = `
     },
     {
       name: "year",
-      classes: "govuk-input--width-4 govuk-input--error",
+      classes: "govuk-input--width-4",
       value: "",
       hasError: true
     }

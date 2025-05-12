@@ -154,6 +154,34 @@
       {#each items as item (item.name)}
         {@const inputId = getItemId(item)}
         {@const inputName = getItemName(item)}
+        {@const inputClasses = (() => {
+          let classList = ["govuk-input", "govuk-date-input__input"];
+          const providedClasses = item.classes || "";
+
+          // Check if a specific width is provided via item.classes
+          if (!providedClasses.includes("govuk-input--width-")) {
+            // Apply default width if none is provided
+            if (item.name === "year") {
+              classList.push("govuk-input--width-4");
+            } else if (item.name === "day" || item.name === "month") {
+              classList.push("govuk-input--width-2");
+            }
+          }
+
+          // Add provided classes (they might override defaults or add others)
+          if (providedClasses) {
+            classList.push(providedClasses);
+          }
+
+          // Add error class conditionally
+          if (hasError && item.hasError) {
+            classList.push("govuk-input--error");
+          }
+
+          // Join classes, removing potential duplicate spaces
+          return classList.join(" ").trim().replace(/\s+/g, " ");
+        })()}
+
         <div class="govuk-date-input__item {item.itemClasses || ''}">
           <div class="govuk-form-group">
             <label class="govuk-label govuk-date-input__label" for={inputId}>
@@ -161,8 +189,7 @@
                 item.name.charAt(0).toUpperCase() + item.name.slice(1)}
             </label>
             <input
-              class="govuk-input govuk-date-input__input {item.classes ||
-                ''} {hasError && item.hasError ? 'govuk-input--error' : ''}"
+              class={inputClasses}
               id={inputId}
               name={inputName}
               type={item.type || "text"}

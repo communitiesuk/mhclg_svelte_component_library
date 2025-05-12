@@ -102,11 +102,15 @@
   <div class="govuk-table table-container" data-module="moj-sortable-table">
     <table class="my-table">
       <caption class="govuk-table__caption">{caption}</caption>
-      <thead
-        ><tr>
-          <th class="col-one-header">Area</th>
+      <thead class="govuk-table__head"
+        ><tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header">Area</th>
           {#each metrics as metric}
-            <th title={metaData[metric].explainer}>
+            <th
+              scope="col"
+              class="govuk-table__header"
+              title={metaData[metric].explainer}
+            >
               <div class="header">
                 <div class="header-top">
                   <div class="metric">{metaData[metric].label}</div>
@@ -133,19 +137,21 @@
           {/each}
         </tr></thead
       >
-      <tbody>
+      <tbody class="govuk-table__body">
         {#each localCopyOfData as row}
-          <tr>
-            <td class="areas">{row["areaName"]}</td>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">{row["areaName"]}</td>
             {#each metrics as metric}
               {#if metaData[metric].direction === "Higher is better"}
                 <td
+                  class="govuk-table__cell govuk-table__cell--numeric"
                   style="background-color: {normToColor(
                     row[metric + '__normalised'],
                   )}">{row[metric]}</td
                 >
               {:else}
                 <td
+                  class="govuk-table__cell govuk-table__cell--numeric"
                   style="background-color: {normToColorReverse(
                     row[metric + '__normalised'],
                   )}">{row[metric]}</td
@@ -231,14 +237,14 @@
     width: 25%;
   }
 
-  .header {
+  /*   .header {
     display: flex;
     flex-direction: column;
     padding: 5px;
     justify-content: flex-start;
-  }
+  } */
 
-  .header-top {
+  /*   .header-top {
     display: flex;
     gap: 0px;
   }
@@ -247,12 +253,12 @@
     display: flex;
     flex-direction: column;
     font-size: 0.8em;
-    line-height: 1; /* removes extra space between lines */
+    line-height: 1; removes extra space between lines
     gap: 3px;
     justify-content: center;
     background-color: lightgray;
     border-radius: 20%;
-  }
+  } */
   /*   .col-one-header {
     text-align: right;
     padding: 5px;

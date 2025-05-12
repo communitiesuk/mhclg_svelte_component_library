@@ -25,15 +25,6 @@
     attributes?: Record<string, unknown>;
   }
 
-  interface ErrorMessage {
-    text?: string;
-    html?: string;
-    id?: string; // Will be automatically generated if not provided
-    visuallyHiddenText?: string;
-    classes?: string;
-    attributes?: Record<string, unknown>;
-  }
-
   interface DateInputItem extends Omit<HTMLInputAttributes, "value"> {
     id?: string; // Will be automatically generated if not provided
     name: string; // e.g., 'day', 'month', 'year'
@@ -60,7 +51,7 @@
     items = [], // Required: Array for day, month, year inputs
     fieldset = {} as Fieldset,
     hint = {} as Hint,
-    errorMessage = {} as ErrorMessage,
+    errorMessage = undefined as string | undefined | null, // Changed type to string | undefined | null
     formGroup = {} as FormGroup,
     classes = "", // Classes for the main govuk-date-input container
     attributes = {} as Record<string, unknown>,
@@ -70,31 +61,23 @@
     items: DateInputItem[];
     fieldset?: Fieldset;
     hint?: Hint;
-    errorMessage?: ErrorMessage;
+    errorMessage?: string | undefined | null; // Changed type here as well
     formGroup?: FormGroup;
     classes?: string;
     attributes?: Record<string, unknown>;
   } = $props();
 
-  // Remove these runtime checks
-  // Ensure nested props are objects, not null
-  // if (errorMessage == null) errorMessage = {};
-  // if (hint == null) hint = {};
-  // if (formGroup == null) formGroup = {};
-  // if (fieldset == null) fieldset = {} as Fieldset;
-
   // --- Derived State ---
-  // Use optional chaining (?.) to safely access properties even if errorMessage is null
+  // Update hasError derivation for string type
   let hasError = $derived(
-    errorMessage?.text != null || errorMessage?.html != null, // Check for actual content
+    typeof errorMessage === "string" && errorMessage.trim() !== "",
   );
   // Use optional chaining and nullish coalescing (??)
   let hintId = $derived(
     hint?.id ?? (hint?.text || hint?.html ? `${id}-hint` : undefined),
   );
-  let errorId = $derived(
-    errorMessage?.id ?? (hasError ? `${id}-error` : undefined),
-  );
+  // Update errorId derivation
+  let errorId = $derived(hasError ? `${id}-error` : undefined);
 
   // Use optional chaining
   let describedBy = $derived(
@@ -161,19 +144,9 @@
     {/if}
 
     {#if hasError}
-      <p
-        id={errorId}
-        class="govuk-error-message {errorMessage?.classes ?? ''}"
-        {...errorMessage?.attributes}
-      >
-        <span class="govuk-visually-hidden"
-          >{errorMessage?.visuallyHiddenText ?? "Error:"}</span
-        >
-        {#if errorMessage?.html}
-          {@html errorMessage.html}
-        {:else}
-          {errorMessage?.text}
-        {/if}
+      <p id={errorId} class="govuk-error-message">
+        <span class="govuk-visually-hidden">Error:</span>
+        {errorMessage}
       </p>
     {/if}
 

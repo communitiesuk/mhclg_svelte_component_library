@@ -272,12 +272,12 @@
       {
         name: "errorMessage",
         category: "Validation props",
-        value: null,
+        value: "",
+        rows: 2,
         description: {
           markdown: true,
           arr: [
-            `Error message to show when there's a validation error. Not displayed if set to a falsy value.`,
-            `Example: { text: "Date must include a year" }`,
+            `Error message text to show when there's a validation error. Not displayed if set to a falsy value (e.g., empty string, null, undefined).`,
           ],
         },
       },
@@ -309,7 +309,8 @@
           markdown: true,
           arr: [
             `Required. Array of input items for the date input (typically day, month, year).`,
-            `Each item should have a name, and can have additional properties like value, classes, label, hasError, etc.`,
+            `Each item should have a name, and can have additional properties like value, classes, label, etc. `,
+            `Setting \`hasError: true\` on an item will only apply error styling to that specific input if the top-level \`errorMessage\` prop is also set to a non-empty string.`,
           ],
         },
       },

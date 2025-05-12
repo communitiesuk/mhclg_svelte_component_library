@@ -85,9 +85,7 @@ export const dateInputWithError = `
   hint={{
     text: "For example, 31 3 1980"
   }}
-  errorMessage={{
-    text: "Date of birth must include a year"
-  }}
+  errorMessage="Date of birth must include a year"
   items={[
     {
       name: "day",

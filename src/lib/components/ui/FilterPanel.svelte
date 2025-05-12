@@ -5,6 +5,7 @@
   import Radios from "./Radios.svelte";
   import CheckBox from "./CheckBox.svelte";
   import Select from "./Select.svelte";
+  import DateInput from "./DateInput.svelte";
 
   interface FilterOption {
     value: string;
@@ -12,12 +13,6 @@
     id?: string; // Optional, can be generated
     checked?: boolean;
   }
-
-  // interface DateField {
-  // 	day: { id: string; name: string; value?: string };
-  // 	month: { id: string; name: string; value?: string };
-  // 	year: { id: string; name: string; value?: string };
-  // }
 
   interface BaseSection {
     id: string; // for unique key in #each, and details element id
@@ -108,6 +103,32 @@
   function getGa4Event(customData: Record<string, any>) {
     return JSON.stringify({ ...ga4BaseEvent, ...customData });
   }
+
+  // Helper to create items for DateInput, now including spellcheck attribute
+  function createDateInputItems(
+    initialValues: { day?: string; month?: string; year?: string } | undefined,
+  ) {
+    return [
+      {
+        name: "day",
+        label: "Day",
+        value: initialValues?.day,
+        attributes: { spellcheck: "false" },
+      },
+      {
+        name: "month",
+        label: "Month",
+        value: initialValues?.month,
+        attributes: { spellcheck: "false" },
+      },
+      {
+        name: "year",
+        label: "Year",
+        value: initialValues?.year,
+        attributes: { spellcheck: "false" },
+      },
+    ];
+  }
 </script>
 
 <div data-module="filter-panel ga4-event-tracker" class="app-c-filter-panel">
@@ -191,158 +212,28 @@
             {:else if section.type === "date"}
               {@const dateData = section}
               <div data-ga4-section="Updated after">
-                <div class="govuk-form-group">
-                  <fieldset
-                    class="govuk-fieldset"
-                    aria-describedby={`hint-from-${dateData.id}`}
-                    role="group"
-                  >
-                    <legend class="govuk-fieldset__legend"
-                      >{dateData.fromLegend}</legend
-                    >
-                    {#if dateData.fromHint}
-                      <div
-                        id={`hint-from-${dateData.id}`}
-                        class="gem-c-hint govuk-hint govuk-!-margin-bottom-2"
-                      >
-                        {dateData.fromHint}
-                      </div>
-                    {/if}
-                    <div
-                      class="gem-c-date-input govuk-date-input"
-                      id={`${dateData.fromNamePrefix}`}
-                    >
-                      <div class="govuk-date-input__item">
-                        <div class="govuk-form-group">
-                          <label
-                            for={`input-${dateData.id}-from-day`}
-                            class="gem-c-label govuk-label">Day</label
-                          >
-                          <input
-                            class="gem-c-input govuk-input govuk-input--width-2"
-                            id={`input-${dateData.id}-from-day`}
-                            inputmode="numeric"
-                            name={`${dateData.fromNamePrefix}[day]`}
-                            spellcheck="false"
-                            type="text"
-                            value={dateData.fromInitialValue?.day ?? ""}
-                          />
-                        </div>
-                      </div>
-                      <div class="govuk-date-input__item">
-                        <div class="govuk-form-group">
-                          <label
-                            for={`input-${dateData.id}-from-month`}
-                            class="gem-c-label govuk-label">Month</label
-                          >
-                          <input
-                            class="gem-c-input govuk-input govuk-input--width-2"
-                            id={`input-${dateData.id}-from-month`}
-                            inputmode="numeric"
-                            name={`${dateData.fromNamePrefix}[month]`}
-                            spellcheck="false"
-                            type="text"
-                            value={dateData.fromInitialValue?.month ?? ""}
-                          />
-                        </div>
-                      </div>
-                      <div class="govuk-date-input__item">
-                        <div class="govuk-form-group">
-                          <label
-                            for={`input-${dateData.id}-from-year`}
-                            class="gem-c-label govuk-label">Year</label
-                          >
-                          <input
-                            class="gem-c-input govuk-input govuk-input--width-4"
-                            id={`input-${dateData.id}-from-year`}
-                            inputmode="numeric"
-                            name={`${dateData.fromNamePrefix}[year]`}
-                            spellcheck="false"
-                            type="text"
-                            value={dateData.fromInitialValue?.year ?? ""}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </fieldset>
-                </div>
+                <DateInput
+                  id={`${dateData.id}-from`}
+                  namePrefix={dateData.fromNamePrefix}
+                  items={createDateInputItems(dateData.fromInitialValue)}
+                  fieldset={{
+                    legend: { text: dateData.fromLegend, isPageHeading: false },
+                  }}
+                  hint={{ text: dateData.fromHint }}
+                  legendSize="m"
+                />
               </div>
               <div data-ga4-section="Updated before">
-                <div class="govuk-form-group">
-                  <fieldset
-                    class="govuk-fieldset"
-                    aria-describedby={`hint-to-${dateData.id}`}
-                    role="group"
-                  >
-                    <legend class="govuk-fieldset__legend"
-                      >{dateData.toLegend}</legend
-                    >
-                    {#if dateData.toHint}
-                      <div
-                        id={`hint-to-${dateData.id}`}
-                        class="gem-c-hint govuk-hint govuk-!-margin-bottom-2"
-                      >
-                        {dateData.toHint}
-                      </div>
-                    {/if}
-                    <div
-                      class="gem-c-date-input govuk-date-input"
-                      id={`${dateData.toNamePrefix}`}
-                    >
-                      <div class="govuk-date-input__item">
-                        <div class="govuk-form-group">
-                          <label
-                            for={`input-${dateData.id}-to-day`}
-                            class="gem-c-label govuk-label">Day</label
-                          >
-                          <input
-                            class="gem-c-input govuk-input govuk-input--width-2"
-                            id={`input-${dateData.id}-to-day`}
-                            inputmode="numeric"
-                            name={`${dateData.toNamePrefix}[day]`}
-                            spellcheck="false"
-                            type="text"
-                            value={dateData.toInitialValue?.day ?? ""}
-                          />
-                        </div>
-                      </div>
-                      <div class="govuk-date-input__item">
-                        <div class="govuk-form-group">
-                          <label
-                            for={`input-${dateData.id}-to-month`}
-                            class="gem-c-label govuk-label">Month</label
-                          >
-                          <input
-                            class="gem-c-input govuk-input govuk-input--width-2"
-                            id={`input-${dateData.id}-to-month`}
-                            inputmode="numeric"
-                            name={`${dateData.toNamePrefix}[month]`}
-                            spellcheck="false"
-                            type="text"
-                            value={dateData.toInitialValue?.month ?? ""}
-                          />
-                        </div>
-                      </div>
-                      <div class="govuk-date-input__item">
-                        <div class="govuk-form-group">
-                          <label
-                            for={`input-${dateData.id}-to-year`}
-                            class="gem-c-label govuk-label">Year</label
-                          >
-                          <input
-                            class="gem-c-input govuk-input govuk-input--width-4"
-                            id={`input-${dateData.id}-to-year`}
-                            inputmode="numeric"
-                            name={`${dateData.toNamePrefix}[year]`}
-                            spellcheck="false"
-                            type="text"
-                            value={dateData.toInitialValue?.year ?? ""}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </fieldset>
-                </div>
+                <DateInput
+                  id={`${dateData.id}-to`}
+                  namePrefix={dateData.toNamePrefix}
+                  items={createDateInputItems(dateData.toInitialValue)}
+                  fieldset={{
+                    legend: { text: dateData.toLegend, isPageHeading: false },
+                  }}
+                  hint={{ text: dateData.toHint }}
+                  legendSize="m"
+                />
               </div>
             {:else if section.type === "select"}
               {@const selectData = section}

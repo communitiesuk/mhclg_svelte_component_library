@@ -113,7 +113,7 @@
   );
 
   function getItemName(item: DateInputItem): string {
-    return namePrefix ? `${namePrefix}-${item.name}` : item.name;
+    return namePrefix ? `${namePrefix}[${item.name}]` : item.name;
   }
 
   function getItemId(item: DateInputItem): string {

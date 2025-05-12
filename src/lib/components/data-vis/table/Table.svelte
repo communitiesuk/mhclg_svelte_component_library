@@ -89,33 +89,65 @@
 {/snippet}
 
 <div class="p-4">
+  <table class="govuk-table">
+    <caption class="govuk-table__caption govuk-table__caption--m"
+      >Dates and amounts</caption
+    >
+    <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header">Date</th>
+        <th scope="col" class="govuk-table__header">Amount</th>
+      </tr>
+    </thead>
+    <tbody class="govuk-table__body">
+      <tr class="govuk-table__row">
+        <th scope="row" class="govuk-table__header">First 6 weeks</th>
+        <td class="govuk-table__cell">£109.80 per week</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th scope="row" class="govuk-table__header">Next 33 weeks</th>
+        <td class="govuk-table__cell">£109.80 per week</td>
+      </tr>
+      <tr class="govuk-table__row">
+        <th scope="row" class="govuk-table__header">Total estimated pay</th>
+        <td class="govuk-table__cell">£4,282.20</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <br />
   <h4>{componentNameProp} component</h4>
 
-  <div class="legend">
-    <div>Colour key:</div>
-    {#each colorKey as key}
-      <div class="good" style="background-color: {normToColor(key[1])}">
-        {key[0]}
-      </div>
-    {/each}
-  </div>
+  {#if colourScale === "On"}
+    <div class="legend">
+      <div>Colour key:</div>
+      {#each colorKey as key}
+        <div class="good" style="background-color: {normToColor(key[1])}">
+          {key[0]}
+        </div>
+      {/each}
+    </div>
+  {/if}
 
-  <div class="govuk-table table-container" data-module="moj-sortable-table">
-    <table class="my-table">
+  <div>
+    <table class="govuk-table" data-module="moj-sortable-table">
       <caption class="govuk-table__caption">{caption}</caption>
       <thead class="govuk-table__head"
         ><tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header">Area</th>
+          <th scope="col" class="govuk-table__header" aria-sort="ascending"
+            >Area</th
+          >
           {#each metrics as metric}
             <th
               scope="col"
-              class="govuk-table__header"
+              class="govuk-table__header govuk-table__header--numeric"
               title={metaData[metric].explainer}
+              aria-sort="none"
             >
               <div class="header">
                 <div class="header-top">
                   <div class="metric">{metaData[metric].label}</div>
-                  <div class="sorting-button">
+                  <!-- <div class="sorting-button">
                     <button
                       onclick={() => {
                         updateSortState(metric, "ascending");
@@ -129,12 +161,13 @@
                       }}>▼</button
                     >
                   </div>
-                </div>
-                <div class="metric-explainer">
+                </div> -->
+                  <!-- <div class="metric-explainer">
                   {metaData[metric].explainer}
+                </div> -->
                 </div>
-              </div>
-            </th>
+              </div></th
+            >
           {/each}
         </tr></thead
       >
@@ -173,10 +206,10 @@
 </div>
 
 <style>
-  * {
+  /* * {
     margin: 0px;
     padding: 0px;
-  }
+  } */
 
   /*   .table-container {
     max-height: 85vh;
@@ -185,13 +218,7 @@
     border-radius: 1%;
   } */
 
-  .ascending {
-    background-color: #ff7f7f;
-  }
-  .descending {
-    background-color: #add8e6;
-  }
-  .buttons-container {
+  /* .buttons-container {
     display: flex;
     gap: 20px;
   }
@@ -200,21 +227,19 @@
     font-size: 13px;
     font-style: italic;
     font-weight: 400;
-  }
+  } */
   .legend {
     display: flex;
     justify-content: center;
     gap: 20px;
     margin: 10px;
-  }
-
-  .legend > * {
     border-radius: 10%;
     padding: 6px;
   }
 
-  td {
+  /* td {
     padding: 0.5rem 0.5rem;
+    text-align: right;
   }
 
   th {
@@ -222,11 +247,8 @@
     font-size: medium;
     vertical-align: top;
   }
-
-  td {
-    text-align: right;
-  }
-  .areas {
+*/
+  /* .areas {
     font-size: medium;
   }
   .my-table {
@@ -242,7 +264,7 @@
   .my-table th:nth-child(n + 2),
   .my-table td:nth-child(n + 2) {
     width: 25%;
-  }
+  } */
 
   /*   .header {
     display: flex;

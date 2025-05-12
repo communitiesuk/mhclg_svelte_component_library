@@ -57,6 +57,14 @@
     dayValue = $bindable<string | number | undefined>(undefined),
     monthValue = $bindable<string | number | undefined>(undefined),
     yearValue = $bindable<string | number | undefined>(undefined),
+    // Client-side validation function
+    validate = undefined as
+      | ((values: {
+          day?: string | number | undefined;
+          month?: string | number | undefined;
+          year?: string | number | undefined;
+        }) => string | undefined)
+      | undefined,
   }: {
     id: string;
     namePrefix?: string;
@@ -71,17 +79,32 @@
     dayValue?: string | number | undefined;
     monthValue?: string | number | undefined;
     yearValue?: string | number | undefined;
+    validate?: (values: {
+      day?: string | number | undefined;
+      month?: string | number | undefined;
+      year?: string | number | undefined;
+    }) => string | undefined; // Added validate prop type
   } = $props();
 
   // --- Derived State ---
-  // Update hasError derivation for string type
-  let hasError = $derived(
+  // Server/manual error check
+  let serverErrorPresent = $derived(
     typeof errorMessage === "string" && errorMessage.trim() !== "",
   );
+  // Client-side validation
+  let validationError = $derived(
+    validate
+      ? validate({ day: dayValue, month: monthValue, year: yearValue })
+      : undefined,
+  );
+  // Combined error state
+  let hasAnyError = $derived(!!validationError || serverErrorPresent);
+  let displayedError = $derived(validationError ?? errorMessage); // Prioritize client error
+
   // Use optional chaining and nullish coalescing (??)
   let hintId = $derived(hint?.id ?? (hint?.text ? `${id}-hint` : undefined));
-  // Update errorId derivation
-  let errorId = $derived(hasError ? `${id}-error` : undefined);
+  // Update errorId derivation based on combined state
+  let errorId = $derived(hasAnyError ? `${id}-error` : undefined);
 
   // Use optional chaining
   let describedBy = $derived(
@@ -99,7 +122,7 @@
 </script>
 
 <div
-  class="govuk-form-group {formGroup?.classes ?? ''} {hasError
+  class="govuk-form-group {formGroup?.classes ?? ''} {hasAnyError
     ? 'govuk-form-group--error'
     : ''}"
   {...formGroup?.attributes}
@@ -135,10 +158,10 @@
       </div>
     {/if}
 
-    {#if hasError}
+    {#if hasAnyError}
       <p id={errorId} class="govuk-error-message">
         <span class="govuk-visually-hidden">Error:</span>
-        {errorMessage}
+        {displayedError}
       </p>
     {/if}
 
@@ -191,8 +214,8 @@
             classList.push(providedClasses);
           }
 
-          // Add error class conditionally
-          if (hasError && item.hasError) {
+          // Add error class conditionally (based on server error + item flag)
+          if (serverErrorPresent && item.hasError) {
             classList.push("govuk-input--error");
           }
 
@@ -217,7 +240,7 @@
               autocomplete={item.autocomplete}
               pattern={item.pattern || "[0-9]*"}
               {...item.attributes}
-              aria-describedby={hasError && item.hasError ? errorId : undefined}
+              aria-describedby={hasAnyError ? errorId : undefined}
             />
           </div>
         </div>

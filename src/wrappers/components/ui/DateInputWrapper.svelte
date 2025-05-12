@@ -75,7 +75,7 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [ ];
+  let connectedComponentsArray = [];
 </script>
 
 <script>
@@ -257,15 +257,16 @@
       },
       {
         name: "errorMessage",
-        category: "Validation props",
+        category: "Error handling",
         value: "",
-        rows: 2,
         description: {
           markdown: true,
           arr: [
-            `Error message text to show when there's a validation error. Not displayed if set to a falsy value (e.g., empty string, null, undefined).`,
+            `Optional error message string, typically used for server-side validation errors. Not displayed if set to a falsy value (e.g., empty string, null, undefined).`,
+            `If the client-side \`validate\` function is also provided and returns an error string, the \`validate\` function's error message will take precedence and be displayed instead of this one.`,
           ],
         },
+        rows: 2,
       },
       {
         name: "items",
@@ -334,6 +335,31 @@
         description: {
           markdown: true,
           arr: [`Bindable value for the year input.`],
+        },
+      },
+      {
+        name: "validate",
+        category: "Error handling",
+        propType: "fixed",
+        value: function (values) {
+          if (!values.day || !values.month || !values.year) {
+            return "Date must include a day, month and year (client-side)";
+          }
+          if (values.year && parseInt(values.year.toString(), 10) < 1900) {
+            return "Year must be after 1900 (client-side)";
+          }
+          return undefined; // No error
+        },
+        functionElements: {
+          functionAsString: `function (values) {\n  if (!values.day || !values.month || !values.year) {\n    return "Date must include a day, month and year (client-side)";\n  }\n  if (values.year && parseInt(values.year.toString(), 10) < 1900) {\n    return "Year must be after 1900 (client-side)";\n  }\n  return undefined; // No error\n}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `A client-side validation function <code>(values: { day?, month?, year? }) => string | undefined</code>.`,
+            `Receives an object with the current day, month, and year values and should return an error message string if invalid, or <code>undefined</code> if valid.`,
+            `This validation runs in the browser and overrides the <code>errorMessage</code> if it returns an error string.`,
+          ],
         },
       },
     ]),

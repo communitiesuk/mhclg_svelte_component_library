@@ -4,7 +4,6 @@
 
   interface FieldsetLegend {
     text?: string;
-    html?: string;
     isPageHeading?: boolean;
     classes?: string;
   }
@@ -19,7 +18,6 @@
 
   interface Hint {
     text?: string;
-    html?: string;
     id?: string; // Will be automatically generated if not provided
     classes?: string;
     attributes?: Record<string, unknown>;
@@ -81,9 +79,7 @@
     typeof errorMessage === "string" && errorMessage.trim() !== "",
   );
   // Use optional chaining and nullish coalescing (??)
-  let hintId = $derived(
-    hint?.id ?? (hint?.text || hint?.html ? `${id}-hint` : undefined),
-  );
+  let hintId = $derived(hint?.id ?? (hint?.text ? `${id}-hint` : undefined));
   // Update errorId derivation
   let errorId = $derived(hasError ? `${id}-error` : undefined);
 
@@ -121,31 +117,21 @@
       >
         {#if fieldset.legend.isPageHeading}
           <h1 class="govuk-fieldset__heading">
-            {#if fieldset.legend.html}
-              {@html fieldset.legend.html}
-            {:else}
-              {fieldset.legend.text}
-            {/if}
+            {fieldset.legend.text}
           </h1>
-        {:else if fieldset.legend.html}
-          {@html fieldset.legend.html}
         {:else}
           {fieldset.legend.text}
         {/if}
       </legend>
     {/if}
 
-    {#if hint?.text || hint?.html}
+    {#if hint?.text}
       <div
         id={hintId}
         class="govuk-hint {hint.classes ?? ''}"
         {...hint.attributes}
       >
-        {#if hint.html}
-          {@html hint.html}
-        {:else}
-          {hint.text}
-        {/if}
+        {hint.text}
       </div>
     {/if}
 
@@ -241,6 +227,4 @@
 </div>
 
 <style>
-  /* Ensure styles are loaded from govuk-frontend or similar */
-  /* No component-specific styles needed if using the design system's CSS */
 </style>

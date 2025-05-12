@@ -166,7 +166,7 @@
     addIndexAndInitalValue([
       {
         name: "id",
-        category: "Required props",
+        category: "Content",
         isRequired: true,
         value: "date-input-example",
         description: {
@@ -178,7 +178,7 @@
       },
       {
         name: "namePrefix",
-        category: "Optional props",
+        category: "Content",
         value: "date",
         description: {
           markdown: true,
@@ -189,7 +189,7 @@
       },
       {
         name: "classes",
-        category: "Styling",
+        category: "Styling & Attributes",
         value: "",
         description: {
           markdown: true,
@@ -198,7 +198,7 @@
       },
       {
         name: "attributes",
-        category: "Optional props",
+        category: "Styling & Attributes",
         value: {},
         description: {
           markdown: true,
@@ -209,7 +209,7 @@
       },
       {
         name: "formGroup",
-        category: "Form props",
+        category: "Content",
         value: {
           classes: "",
           attributes: {},
@@ -223,7 +223,7 @@
       },
       {
         name: "fieldset",
-        category: "Structure props",
+        category: "Content",
         value: {
           legend: {
             text: "When was your passport issued?",
@@ -244,7 +244,7 @@
       },
       {
         name: "hint",
-        category: "Content props",
+        category: "Content",
         value: {
           text: "For example, 27 3 2007",
           classes: "",
@@ -257,7 +257,7 @@
       },
       {
         name: "errorMessage",
-        category: "Error handling",
+        category: "Error Handling",
         value: "",
         description: {
           markdown: true,
@@ -270,7 +270,7 @@
       },
       {
         name: "items",
-        category: "Required props",
+        category: "Content",
         isRequired: true,
         value: [
           {
@@ -297,7 +297,7 @@
       },
       {
         name: "legendSize",
-        category: "UI Options",
+        category: "Styling & Attributes",
         options: ["l", "m", "s"],
         value: "m",
         description: {
@@ -309,7 +309,7 @@
       },
       {
         name: "dayValue",
-        category: "Bindable Values",
+        category: "Content",
         isBinded: true,
         value: dayValue,
         description: {
@@ -319,7 +319,7 @@
       },
       {
         name: "monthValue",
-        category: "Bindable Values",
+        category: "Content",
         isBinded: true,
         value: monthValue,
         description: {
@@ -329,7 +329,7 @@
       },
       {
         name: "yearValue",
-        category: "Bindable Values",
+        category: "Content",
         isBinded: true,
         value: yearValue,
         description: {
@@ -339,7 +339,7 @@
       },
       {
         name: "validate",
-        category: "Error handling",
+        category: "Error Handling",
         propType: "fixed",
         value: function (values) {
           if (!values.day || !values.month || !values.year) {

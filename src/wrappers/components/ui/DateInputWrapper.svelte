@@ -75,25 +75,7 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [
-    {
-      label: "Related",
-      arr: [
-        {
-          name: "Text Input",
-          link: "/components/ui/text-input",
-        },
-        {
-          name: "Fieldset",
-          link: "/components/ui/fieldset",
-        },
-        {
-          name: "Error Message",
-          link: "/components/ui/error-message",
-        },
-      ],
-    },
-  ];
+  let connectedComponentsArray = [ ];
 </script>
 
 <script>

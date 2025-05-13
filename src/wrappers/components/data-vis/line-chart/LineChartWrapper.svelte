@@ -274,7 +274,7 @@
         value: nothingSelected,
       },
       {
-        name: "onClick",
+        name: "onClickLine",
         category: "lineEvents",
         functionElements: {
           functionAsString: `function(event, dataArray, dataId) {
@@ -299,7 +299,51 @@
         value: lineHovered,
       },
       {
-        name: "onMouseEnter",
+        name: "onMouseEnterLabel",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (areaCode) {
+              labelHovered = areaCode;
+            }`,
+        },
+        value: function (areaCode) {
+          labelHovered = areaCode;
+        },
+      },
+      {
+        name: "onMouseLeaveLabel",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (areaCode) {
+              if (labelClicked !== areaCode) {
+                labelHovered = null;
+              }
+            }`,
+        },
+        value: function (areaCode) {
+          if (labelClicked !== areaCode) {
+            labelHovered = null;
+          }
+        },
+      },
+      {
+        name: "onClickLabel",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (areaCode) {
+              labelClicked === areaCode
+                ? ((labelClicked = null), (labelHovered = null))
+                : (labelClicked = areaCode);
+            }`,
+        },
+        value: function (areaCode) {
+          labelClicked === areaCode
+            ? ((labelClicked = null), (labelHovered = null))
+            : (labelClicked = areaCode);
+        },
+      },
+      {
+        name: "onMouseEnterLine",
         category: "lineEvents",
         functionElements: {
           functionAsString: `function(event, dataArray, dataId) {
@@ -315,7 +359,7 @@
         },
       },
       {
-        name: "onMouseLeave",
+        name: "onMouseLeaveLine",
         category: "lineEvents",
         functionElements: {
           functionAsString: `function(event, dataArray, dataId) {

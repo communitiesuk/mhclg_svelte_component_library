@@ -37,9 +37,9 @@
     dataId,
     tier,
     // markersDataId,
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
+    onClickLine,
+    onMouseEnterLine,
+    onMouseLeaveLine,
     halo,
     chartBackgroundColor,
     invisibleStrokeWidth,
@@ -79,9 +79,9 @@
   //   hoveredMarker = null;
   // }
 
-  let handleClick = (e) => onClick(e, dataArray, dataId);
-  let handleEnter = (e) => onMouseEnter(e, dataArray, dataId);
-  let handleLeave = (e) => onMouseLeave(e, dataArray, dataId);
+  let handleClick = (e) => onClickLine(e, dataArray, dataId);
+  let handleEnter = (e) => onMouseEnterLine(e, dataArray, dataId);
+  let handleLeave = (e) => onMouseLeaveLine(e, dataArray, dataId);
 
   let linePath = lineFunction(dataArray);
 </script>

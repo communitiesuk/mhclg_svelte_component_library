@@ -22,9 +22,12 @@
     chartBackgroundColor = "#fafafa",
     nothingSelected = $bindable(),
     getLine,
-    onMouseEnter,
-    onMouseLeave,
-    onClick,
+    onMouseEnterLine,
+    onMouseLeaveLine,
+    onClickLine,
+    onMouseEnterLabel,
+    onMouseLeaveLabel,
+    onClickLabel,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
@@ -65,9 +68,9 @@
           {tier}
           {chartBackgroundColor}
           {lineFunction}
-          {onMouseEnter}
-          {onMouseLeave}
-          {onClick}
+          {onMouseEnterLine}
+          {onMouseLeaveLine}
+          {onClickLine}
           bind:lineClicked
           bind:lineHovered
         />
@@ -88,19 +91,9 @@
             {yFunction}
             newY={labelsPlaced.find((el) => el.datum.areaCode === line.areaCode)
               ?.y}
-            onClick={function (areaCode) {
-              labelClicked === areaCode
-                ? ((labelClicked = null), (labelHovered = null))
-                : (labelClicked = areaCode);
-            }}
-            onMouseEnter={function (areaCode) {
-              labelHovered = areaCode;
-            }}
-            onMouseLeave={function (areaCode) {
-              if (labelClicked !== areaCode) {
-                labelHovered = null;
-              }
-            }}
+            {onClickLabel}
+            {onMouseEnterLabel}
+            {onMouseLeaveLabel}
           ></CategoryLabel>
         {/if}
       {/each}

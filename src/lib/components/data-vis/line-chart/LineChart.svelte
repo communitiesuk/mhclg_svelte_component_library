@@ -20,9 +20,12 @@
     labelClicked = $bindable(),
     labelHovered = $bindable(),
     svgWidth = $bindable(500),
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
+    onClickLine,
+    onMouseEnterLine,
+    onMouseLeaveLine,
+    onClickLabel,
+    onMouseEnterLabel,
+    onMouseLeaveLabel,
     svgHeight = 500,
     paddingTop = 50,
     paddingBottom = 50,
@@ -222,9 +225,12 @@
             {chartBackgroundColor}
             bind:nothingSelected
             {getLine}
-            {onMouseEnter}
-            {onMouseLeave}
-            {onClick}
+            {onMouseEnterLine}
+            {onMouseLeaveLine}
+            {onClickLine}
+            {onClickLabel}
+            {onMouseEnterLabel}
+            {onMouseLeaveLabel}
           ></Lines>
         </g>
         <g data-role="y-axis">

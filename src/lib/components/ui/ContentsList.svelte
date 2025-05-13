@@ -1,12 +1,14 @@
-<script lang="ts">
-  import { clsx } from "clsx";
-
-  type ContentItem = {
+<script context="module" lang="ts">
+  export type ContentItem = {
     href?: string;
     text: string;
     active?: boolean;
     items?: ContentItem[];
   };
+</script>
+
+<script lang="ts">
+  import { clsx } from "clsx";
 
   type Props = {
     contents: ContentItem[];

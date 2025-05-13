@@ -451,6 +451,161 @@ export const actions = {
 */
 `;
 
+// Server form example WITH BASIC use:enhance (no custom callback)
+export const serverFormWithBasicEnhanceCode = `
+<script>
+  import FilterPanel from '$lib/components/ui/FilterPanel.svelte';
+  import { page } from '$app/state';
+  import { enhance } from "$app/forms"; // Added for use:enhance
+
+  // Accept form prop from parent (server form submission response)
+  let { form } = $props();
+
+  // Sample filter sections (typically derived from your data)
+  // This would usually come from a load function or be defined based on page.data
+  const filterSections = [
+    {
+      id: "metrics",
+      type: "select",
+      title: "Metrics",
+      ga4Section: "metrics_filter",
+      ga4IndexSection: 1,
+      ga4IndexSectionCount: 3,
+      selects: [
+        {
+          id: "metric-select",
+          name: "metric",
+          label: "Select metric",
+          options: [
+            { value: "", label: "All metrics", disabled: false },
+            { value: "metric1", label: "Metric 1" },
+            { value: "metric2", label: "Metric 2" }
+          ],
+          fullWidth: true
+        }
+      ]
+    },
+    {
+      id: "areas",
+      type: "checkboxes",
+      title: "Areas",
+      ga4Section: "areas_filter",
+      ga4IndexSection: 2,
+      ga4IndexSectionCount: 3,
+      name: "areas[]",
+      legend: "Select areas",
+      options: [
+        { value: "area1", label: "Area 1" },
+        { value: "area2", label: "Area 2" },
+        { value: "area3", label: "Area 3" }
+      ]
+    },
+    {
+      id: "years",
+      type: "radios",
+      title: "Years",
+      ga4Section: "years_filter",
+      ga4IndexSection: 3,
+      ga4IndexSectionCount: 3,
+      name: "year",
+      legend: "Select year",
+      options: [
+        { value: "all", label: "All years" },
+        { value: "2023", label: "2023" },
+        { value: "2022", label: "2022" }
+      ],
+      selectedValue: "all"
+    }
+  ];
+</script>
+
+<!-- Server form example with basic use:enhance -->
+<form method="POST" use:enhance> {/* use:enhance added here */}
+  <FilterPanel
+    sectionsData={filterSections}
+    resultsCount={form?.filterData?.count !== undefined ? \`\${form.filterData.count} results found\` : "Select filters"}
+    filterButtonText="Filter metrics"
+    applyButtonText="Submit (Enhanced)"
+    ga4BaseEvent={{ event_name: "filter_submit", type: "server_enhanced" }}
+  />
+</form>
+
+<!-- Results displayed using \`form\` prop (updated by SvelteKit automatically) -->
+{#if form?.filterData?.results && form.filterData.results.length > 0}
+  <div class="mt-8 border-t pt-4">
+    <div
+      class="govuk-notification-banner govuk-notification-banner--success"
+      role="alert"
+      aria-labelledby="form-success-enhanced"
+    >
+      <h2 class="govuk-notification-banner__title" id="form-success-enhanced">
+        Form submitted (Enhanced by SvelteKit)
+      </h2>
+      <div class="govuk-notification-banner__content">
+        <p>
+          The server processed your request and found {form.filterData.count} results.
+          (Submitted without full page reload thanks to use:enhance)
+        </p>
+        <p class="mt-2 text-sm italic">
+          Selected Filters: Metric: {form.filterData.metric || "Any"},
+          Areas: {form.filterData["areas[]"]?.length > 0
+            ? form.filterData["areas[]"].join(", ")
+            : "Any"}, Year: {form.filterData.year || "Any"}
+        </p>
+      </div>
+    </div>
+
+    <h4 class="text-lg font-semibold mb-2 mt-4">Results:</h4>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="px-4 py-2 border">Metric</th>
+            <th class="px-4 py-2 border">Area</th>
+            <th class="px-4 py-2 border">Years</th>
+            <th class="px-4 py-2 border">Data Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each form.filterData.results.slice(0, 5) as result}
+            <tr>
+              <td class="px-4 py-2 border">{result.metric}</td>
+              <td class="px-4 py-2 border">{result.areaName}</td>
+              <td class="px-4 py-2 border"
+                >{result.data.map((d) => d.x).join(", ")}</td
+              >
+              <td class="px-4 py-2 border"
+                >{result.data.map((d) => d.y).join(", ")}</td
+              >
+            </tr>
+          {/each}
+          {#if form.filterData.results.length > 5}
+            <tr>
+              <td colspan="4" class="px-4 py-2 border text-center italic">
+                ...and {form.filterData.results.length - 5} more results
+              </td>
+            </tr>
+          {/if}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{:else if form?.filterData?.count === 0 && form?.filterData?.results !== undefined}
+  <div class="mt-8 border-t pt-4">
+    <p class="italic">
+      No results match your filter criteria (processed by server with enhancement).
+    </p>
+  </div>
+{/if}
+
+<!-- 
+  In +page.server.js, the same action as the non-enhanced server form
+  would handle this submission. SvelteKit's 'use:enhance' intercepts
+  the form submission, sends it via fetch, and updates the 'form' prop
+  with the action's return value.
+-->
+`;
+
 // Basic Filter Panel Example
 export const basicExampleCode = `
 <script>

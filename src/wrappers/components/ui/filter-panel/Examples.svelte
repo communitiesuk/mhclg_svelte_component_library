@@ -6,6 +6,7 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import {
     serverFormExampleCode,
+    serverFormWithBasicEnhanceCode,
     enhancedFormExampleCode,
     basicExampleCode,
     advancedExampleCode,
@@ -269,7 +270,12 @@
     },
     {
       id: "4",
-      heading: "4. Progressive Enhancement with use:enhance",
+      heading: "4 Server Submission with Basic use:enhance for progressive enhancement",
+      content: ServerFormBasicEnhanceExample,
+    },
+    {
+      id: "5",
+      heading: "5. Progressive Enhancement with use:enhance to cancel form submission and process client-side, server-side submission as fallback",
       content: EnhancedFormExample,
     },
   ];
@@ -426,6 +432,112 @@
   </div>
 
   <CodeBlock code={serverFormExampleCode} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet ServerFormBasicEnhanceExample()}
+  <div class="p-5 bg-white">
+    <h3 class="text-xl font-bold mb-4">
+      Server Submission with Basic use:enhance
+    </h3>
+    <p class="mb-4">
+      This example is identical to the server form submission above, but adds <code
+        >use:enhance</code
+      >
+      to the form. SvelteKit handles the submission via a fetch request, preventing
+      a full page reload and automatically updating the <code>form</code> prop with
+      the server's response.
+    </p>
+
+    <form method="POST" use:enhance>
+      <FilterPanel
+        sectionsData={metricsFilterSections}
+        resultsCount={form?.filterData?.count !== undefined
+          ? `${form.filterData.count} results found`
+          : "Select filters"}
+        filterButtonText="Filter metrics"
+        applyButtonText="Submit (Enhanced)"
+        ga4BaseEvent={{
+          event_name: "filter_data",
+          type: "server_enhanced_submit",
+        }}
+      />
+    </form>
+
+    <!-- Display results returned from the server via the form prop (updated by use:enhance) -->
+    {#if form?.filterData?.results && form.filterData.results.length > 0}
+      <div class="mt-8 border-t pt-4">
+        <div
+          class="govuk-notification-banner govuk-notification-banner--success"
+          role="alert"
+          aria-labelledby="form-success-basic-enhance"
+        >
+          <h2
+            class="govuk-notification-banner__title"
+            id="form-success-basic-enhance"
+          >
+            Form submitted (Enhanced by SvelteKit)
+          </h2>
+          <div class="govuk-notification-banner__content">
+            <p>
+              The server processed your request and found {form.filterData
+                .count} results. (Submitted without full page reload.)
+            </p>
+            <p class="mt-2 text-sm italic">
+              Selected Filters: Metric: {form.filterData.metric || "Any"},
+              Areas: {form.filterData["areas[]"]?.length > 0
+                ? form.filterData["areas[]"].join(", ")
+                : "Any"}, Year: {form.filterData.year || "Any"}
+            </p>
+          </div>
+        </div>
+
+        <h4 class="text-lg font-semibold mb-2 mt-4">Results:</h4>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white border">
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="px-4 py-2 border">Metric</th>
+                <th class="px-4 py-2 border">Area</th>
+                <th class="px-4 py-2 border">Years</th>
+                <th class="px-4 py-2 border">Data Points</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each form.filterData.results.slice(0, 5) as result}
+                <tr>
+                  <td class="px-4 py-2 border">{result.metric}</td>
+                  <td class="px-4 py-2 border">{result.areaName}</td>
+                  <td class="px-4 py-2 border"
+                    >{result.data.map((d) => d.x).join(", ")}</td
+                  >
+                  <td class="px-4 py-2 border"
+                    >{result.data.map((d) => d.y).join(", ")}</td
+                  >
+                </tr>
+              {/each}
+              {#if form.filterData.results.length > 5}
+                <tr>
+                  <td colspan="4" class="px-4 py-2 border text-center italic">
+                    ...and {form.filterData.results.length - 5} more results
+                  </td>
+                </tr>
+              {/if}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {:else if form?.filterData?.count === 0 && form?.filterData?.results !== undefined}
+      <div class="mt-8 border-t pt-4">
+        <p class="italic">
+          No results match your filter criteria (processed by server with
+          enhancement).
+        </p>
+      </div>
+    {/if}
+  </div>
+
+  <CodeBlock code={serverFormWithBasicEnhanceCode} language="svelte"
+  ></CodeBlock>
 {/snippet}
 
 {#snippet EnhancedFormExample()}

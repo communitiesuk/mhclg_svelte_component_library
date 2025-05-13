@@ -26,7 +26,7 @@
   } from "./mapUtils.js";
   import NonStandardControls from "./NonStandardControls.svelte";
 
-  import { joinData } from "./dataJoin.ts";
+  import { joinData } from "./dataJoin";
 
   let {
     data,

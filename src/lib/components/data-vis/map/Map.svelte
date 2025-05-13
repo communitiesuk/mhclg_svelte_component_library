@@ -26,6 +26,8 @@
   } from "./mapUtils.js";
   import NonStandardControls from "./NonStandardControls.svelte";
 
+  import { joinData } from "./dataJoin.ts";
+
   let {
     data,
     cooperativeGestures,
@@ -39,6 +41,7 @@
     scaleControl,
     scaleControlPosition = "bottom-left",
     scaleControlUnit = "metric",
+    styleSheet = "Carto-light",
     colorPalette = "YlGnBu",
     showBorder = false,
     maxBorderWidth = 1.5,
@@ -55,6 +58,14 @@
     center = [-2.5, 53],
     zoom = 5,
   } = $props();
+
+  let styleLookup = {
+    "Carto-light":
+      "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+    "Carto-dark":
+      "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
+  };
+  let style = $derived(styleLookup[styleSheet] ?? styleSheet);
 
   let mapData = $derived(data?.filter((d) => d.year == year)[0]?.data);
 
@@ -80,7 +91,7 @@
 
   let loaded = $state(false);
   let textLayers: maplibregl.LayerSpecification[] = $derived(
-    map && loaded
+    map && loaded && styleSheet
       ? map.getStyle().layers.filter((layer) => {
           return layer.type === "symbol" && layer["source-layer"] === "place";
         })
@@ -89,6 +100,25 @@
 
   let colors = $derived(fillColor.map((d) => contrastingColor(d)));
   $effect(() => {
+    //Things can get out of sync when changing source
+    //this section makes sure that the geojson layers end up below the text layers
+    let geoJsonLayerIds = map
+      ?.getStyle()
+      ?.layers.filter((layer) => {
+        return layer.source == "areas";
+      })
+      .map((d) => d.id);
+    const labelLayerId = map
+      ?.getStyle()
+      ?.layers.find(
+        (layer) => layer.type === "symbol" && layer["source-layer"] === "place",
+      )?.id;
+    if (geoJsonLayerIds && labelLayerId) {
+      for (let layer of geoJsonLayerIds) {
+        map.moveLayer(layer, labelLayerId);
+      }
+    }
+
     for (let layer of textLayers) {
       //Hard coded to first color for testing
       map?.setPaintProperty(layer.id, "text-color", colors[0].textColor);
@@ -125,45 +155,9 @@
     }),
   );
 
-  //Joining the data to the GeoJSON
-  let obj2Map = $derived(
-    dataWithColor?.reduce((map, item) => {
-      map[item.areaCode] = item; // Use 'areaCode' as the key for the second map
-      return map;
-    }, {}),
-  );
+  let merged = $derived(joinData(filteredGeoJsonData, dataWithColor));
 
-  let obj1Map = $derived(
-    filteredGeoJsonData.features.reduce((map, item) => {
-      map[item.properties.areacd] = item; // Use 'areacd' from properties as the key for the first map
-      return map;
-    }, {}),
-  );
-
-  // Merge both datasets
-  let merged = $derived({
-    type: "FeatureCollection",
-    features: filteredGeoJsonData.features.map((item1) => {
-      // Get the matching item from obj2Map based on the areaCode
-      const match = obj2Map[item1.properties.areacd];
-
-      // If a match exists, merge the 'metric' and 'color' into the 'properties' of item1
-      if (match) {
-        return {
-          ...item1, // Keep all properties of the feature
-          properties: {
-            ...item1.properties, // Keep the existing properties (like areaCode, etc.)
-            metric: +match?.metric, // Add metric from the match
-            color: match?.color, // Add color from the match
-          },
-        };
-      }
-
-      // If no match, just return the feature as is
-      return item1;
-    }),
-    crs: { properties: { name: "EPSG:4326" }, type: "name" },
-  });
+  $inspect(merged);
 
   let hoveredArea = $state();
   let hoveredAreaData = $state();
@@ -198,7 +192,7 @@
 <MapLibre
   bind:map
   bind:loaded
-  style="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+  {style}
   class="map"
   {standardControls}
   {center}

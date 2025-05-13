@@ -46,10 +46,19 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "A collapsible filter panel component that allows users to refine search results or content listings. <a href='https://github.com/alphagov/finder-frontend/blob/main/spec/javascripts/components/filter-panel-spec.js' target='_blank' rel='noopener noreferrer'>Based on the GOV.UK Finder Frontend component</a>, it supports various filter types including radio buttons, date inputs, dropdowns, and checkboxes.",
+    "The component includes built-in GA4 event tracking, responsive design, and accessibility features like ARIA labels and keyboard navigation.",
+    "An example of the original component in use can be seen on the <a href='https://www.gov.uk/search/all?keywords=tax&order=relevance' target='_blank' rel='noopener noreferrer'>GOV.UK search page</a>.",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Use this component on pages where users need to filter through large sets of content or search results.",
+    "Common use cases include:",
+    "- Document or publication finders",
+    "- Search results refinement",
+    "- Content listing pages with multiple filter options",
+    "- Any interface where users need to narrow down a large dataset using multiple criteria",
   ];
 
   let detailsArray = [
@@ -62,7 +71,7 @@
     {
       label: "Context",
       arr: contextArray,
-      visibleOnHomepage: false,
+      visibleOnHomepage: true,
       markdown: true,
     },
   ];
@@ -77,7 +86,6 @@
   //@ts-nocheck
   import { page } from "$app/state";
   import { browser } from "$app/environment";
-  import { tick } from "svelte";
 
   import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
   import ParsingErrorToastsContainer from "$lib/package-wrapping/ParsingErrorToastsContainer.svelte";
@@ -92,17 +100,10 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import LineChart from "$lib/components/data-vis/line-chart/LineChart.svelte";
-  import Examples from "./line-chart/Examples.svelte";
+  import FilterPanel from "$lib/components/ui/FilterPanel.svelte";
+  import Examples from "./filter-panel/Examples.svelte";
 
-  import { scaleLinear } from "d3-scale";
-  import { curveLinear, line, area } from "d3-shape";
-
-  let { data } = $props();
-
-  let selectedAreaCode = $state("E09000033");
-  let englandMedian = $state("E06000040");
-  let similarAreas = $state("E07000224");
+  let { data, form } = $props();
 
   /**
    * DONOTTOUCH *
@@ -123,29 +124,6 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let colors = $state({
-    teal: "#408A7B",
-    lightblue: "#509EC8",
-    darkblue: "#335F91",
-    ochre: "#BA7F30",
-    coral: "#E46B6C",
-    fuschia: "#BB2765",
-    purple: "#736CAC",
-    lightgrey: "#A0A0A0",
-    darkgrey: "#636363",
-    black: "#161616",
-  });
-
-  let lineClicked = $state();
-  let lineHovered = $state();
-  let labelClicked = $state();
-  let labelHovered = $state();
-  let svgWidth = $state(500);
-  let nothingSelected = $derived(
-    [lineClicked, lineHovered, labelClicked, labelHovered].every(
-      (item) => item == null,
-    ),
-  );
 
   /**
    * ! Step 3 - Add your props
@@ -185,353 +163,140 @@
    * ?      <isRequired> - (optional, default = false) - Should be set to true for any props which the component will not functionally properly without (e.g. props with no default value, props which will cause erros if undefined).
    *
    */
-
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "basicLineParams",
-        category: "customisingLines",
-        description: "Parameters that shared by all lines.",
-      },
-      {
-        name: "tieredLineParams",
-        category: "customisingLines",
-        description:
-          "Parameters that apply to specific tiers. Takes priority over `basicLineParams`",
-      },
-      {
-        name: "overrideLineParams",
-        category: "customisingLines",
-        description:
-          "Parameters that are specific to particular lines. Takes priority over `basicLineParams` and tieredLineParams",
-        functionElements: {
-          functionAsString: `function (key, el) {
-            return {
-              pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
-                ? getColor(
-                    el.areaCode,
-                    [
-                      "E07000224",
-                      "E07000225",
-                      "E07000226",
-                      "E07000228",
-                    ].indexOf(el.areaCode),
-                  )
-                : null,
-            };
-          }`,
-        },
-        value: function (key, el) {
-          return {
-            pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
-              ? getColor(
-                  el.areaCode,
-                  [
-                    "E07000224",
-                    "E07000225",
-                    "E07000226",
-                    "E07000228",
-                    englandMedian,
-                    similarAreas,
-                  ].indexOf(el.areaCode),
-                )
-              : null,
-          };
+        name: "resultsCount",
+        category: "Display props",
+        value: "125 results",
+        description: {
+          markdown: true,
+          arr: [
+            "The total number of results to display in the header. Usually updated when filters change.",
+          ],
         },
       },
       {
-        name: "globalTierRules",
-        category: "customisingLines",
-        description:
-          "Defines how the entire tier should be rendered. Must be valid SVG attributes",
-        functionElements: {
-          functionAsString: `{otherTier: {},
-    secondary: {
-      opacity: getValue("nothingSelected") ? 1 : 0.5,
-    },
-    primary: {
-      opacity: getValue("nothingSelected") ? 1 : 0.4,
-    },
-    hover: { opacity: 1 },
-    clicked: { opacity: 1 }}`,
-        },
-      },
-      {
-        name: "colors",
-        category: "customisingLines",
-        value: colors,
-      },
-      {
-        name: "lineClicked",
-        category: "lineEvents",
-        isBinded: true,
-        value: lineClicked,
-      },
-      {
-        name: "nothingSelected",
-        category: "lineEvents",
-        isBinded: true,
-        value: nothingSelected,
-      },
-      {
-        name: "onClickLine",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function(event, dataArray, dataId) {
-    lineClicked = dataId;
-  };`,
-        },
-        value: function (event, dataArray, dataId) {
-          if (lineClicked === dataId) {
-            lineClicked = null;
-          } else {
-            lineClicked = null;
-            tick().then(() => {
-              lineClicked = dataId;
-            });
-          }
-        },
-      },
-      {
-        name: "lineHovered",
-        category: "lineEvents",
-        isBinded: true,
-        value: lineHovered,
-      },
-      {
-        name: "onMouseEnterLabel",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function (areaCode) {
-              labelHovered = areaCode;
-            }`,
-        },
-        value: function (areaCode) {
-          labelHovered = areaCode;
-        },
-      },
-      {
-        name: "onMouseLeaveLabel",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function (areaCode) {
-              if (labelClicked !== areaCode) {
-                labelHovered = null;
-              }
-            }`,
-        },
-        value: function (areaCode) {
-          if (labelClicked !== areaCode) {
-            labelHovered = null;
-          }
-        },
-      },
-      {
-        name: "onClickLabel",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function (areaCode) {
-              labelClicked === areaCode
-                ? ((labelClicked = null), (labelHovered = null))
-                : (labelClicked = areaCode);
-            }`,
-        },
-        value: function (areaCode) {
-          labelClicked === areaCode
-            ? ((labelClicked = null), (labelHovered = null))
-            : (labelClicked = areaCode);
-        },
-      },
-      {
-        name: "onMouseEnterLine",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function(event, dataArray, dataId) {
-    if (lineHovered !== dataId) {
-      lineHovered = dataId;
-    }
-  };`,
-        },
-        value: function (event, dataArray, dataId) {
-          if (lineHovered !== dataId) {
-            lineHovered = dataId;
-          }
-        },
-      },
-      {
-        name: "onMouseLeaveLine",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function(event, dataArray, dataId) {
-    if (lineHovered === dataId) {
-      lineHovered = null;
-    }
-  };`,
-        },
-        value: function (event, dataArray, dataId) {
-          if (lineHovered === dataId) {
-            lineHovered = null;
-          }
-        },
-      },
-
-      {
-        name: "getColor",
-        category: "customisingLines",
-        functionElements: {
-          functionAsString: `function (areaCode, i) {
-    let colorsArray = [colors.coral, colors.fuschia, colors.purple];
-
-    return (
-      {
-        [englandMedian]: colors.lightblue,
-        [selectedAreaCode]: colors.teal,
-        [similarAreas]: colors.darkblue,
-      }[areaCode] ?? colorsArray[i % colorsArray.length]
-    );
-  };`,
-        },
-        value: function (areaCode, i) {
-          let colorsArray = [colors.coral, colors.fuschia, colors.purple];
-
-          return (
-            {
-              [englandMedian]: colors.lightblue,
-              [selectedAreaCode]: colors.teal,
-              [similarAreas]: colors.darkblue,
-            }[areaCode] ?? colorsArray[i % colorsArray.length]
-          );
-        },
-      },
-
-      {
-        name: "paddingTop",
-        category: "dimensions",
-        value: 50,
-      },
-      {
-        name: "paddingRight",
-        category: "dimensions",
-        value: 150,
-      },
-      {
-        name: "paddingBottom",
-        category: "dimensions",
-        value: 50,
-      },
-      {
-        name: "paddingLeft",
-        category: "dimensions",
-        value: 50,
-      },
-      {
-        name: "svgHeight",
-        category: "dimensions",
-        value: 500,
-      },
-      {
-        name: "svgWidth",
-        category: "dimensions",
-        value: svgWidth,
-      },
-      {
-        name: "selectedMetric",
-        category: "Data",
-        visible: true,
-        options: [
-          "Household waste recycling rate",
-          "Recycling contamination rate",
-          "Residual household waste",
+        name: "sectionsData",
+        category: "Content props",
+        value: [
+          {
+            id: "document-type",
+            type: "radios",
+            title: "Document type",
+            ga4Section: "document_type",
+            ga4IndexSection: 1,
+            ga4IndexSectionCount: 4,
+            name: "document_type",
+            legend: "Select document type",
+            options: [
+              { value: "all", label: "All document types" },
+              { value: "policy", label: "Policy papers" },
+              { value: "guidance", label: "Guidance" },
+              { value: "news", label: "News and communications" },
+            ],
+            selectedValue: "all",
+          },
+          {
+            id: "date-range",
+            type: "date",
+            title: "Date published",
+            ga4Section: "date_published",
+            ga4IndexSection: 2,
+            ga4IndexSectionCount: 4,
+            fromLegend: "Published after",
+            fromNamePrefix: "published_at[from]",
+            fromHint: "For example, 2020 or 21/11/2020",
+            toLegend: "Published before",
+            toNamePrefix: "published_at[to]",
+            toHint: "For example, 2023 or 21/11/2023",
+            legendSize: { undefined },
+          },
+          {
+            id: "topic",
+            type: "select",
+            title: "Topic",
+            ga4Section: "topic",
+            ga4IndexSection: 3,
+            ga4IndexSectionCount: 4,
+            selects: [
+              {
+                id: "level-one",
+                name: "topics[]",
+                label: "All topics",
+                options: [
+                  { value: "", label: "Please select", disabled: true },
+                  { value: "business", label: "Business and industry" },
+                  { value: "health", label: "Health and social care" },
+                  { value: "education", label: "Education" },
+                ],
+                fullWidth: true,
+              },
+            ],
+          },
+          {
+            id: "organisations",
+            type: "checkboxes",
+            title: "Organisations",
+            ga4Section: "organisations",
+            ga4IndexSection: 4,
+            ga4IndexSectionCount: 4,
+            name: "organisations[]",
+            legend: "Select organisations",
+            options: [
+              { value: "cabinet-office", label: "Cabinet Office" },
+              { value: "dfe", label: "Department for Education" },
+              { value: "dhsc", label: "Department of Health and Social Care" },
+            ],
+          },
         ],
-      },
-      {
-        name: "lineChartData",
-        category: "Data",
-        visible: false,
-        isProp: true,
-      },
-
-      {
-        name: "chartBackgroundColor",
-        category: "Aesthetics",
-        visible: true,
-        isProp: true,
-        value: "#f5f5f5",
-        description:
-          "Background color of the chart. Also used for the 'halo' outline given to lines.",
-      },
-      {
-        name: "xFunction",
-        category: "xScale",
-        value: function (number) {
-          return scaleLinear()
-            .domain([2015, 2022])
-            .range([
-              0,
-              svgWidth - getValue("paddingLeft") - getValue("paddingRight"),
-            ])(number);
+        description: {
+          markdown: true,
+          arr: [
+            "An array of filter sections. Each section can be one of four types:",
+            "- `radios`: Single-select options with radio buttons",
+            "- `date`: Date range inputs with from/to fields",
+            "- `select`: Dropdown select menus",
+            "- `checkboxes`: Multi-select options with checkboxes",
+            "Each section type has its own required properties and optional configurations.",
+          ],
         },
       },
       {
-        name: "yFunction",
-        category: "yScale",
-      },
-      {
-        name: "lineFunction",
-        category: "lineFunction",
-      },
-      {
-        name: "getLine",
-        category: "customisingLines",
-        functionElements: {
-          functionAsString: `function (key, el, param) {
-          let primaryLines = [
-            "E07000224",
-            "E07000225",
-            "E07000226",
-            "E07000228",
-            englandMedian,
-            similarAreas,
-          ];
-          if (key === "primary") {
-            return primaryLines.includes(el.areaCode);
-          }
-          if (key === "secondary" && !primaryLines.includes(el.areaCode)) {
-            return true;
-          }
-          if (key === "hover") {
-            return [lineHovered, labelHovered].includes(el.areaCode);
-          }
-          if (key === "clicked") {
-            return [lineClicked, labelClicked].includes(el.areaCode);
-          }
-        },`,
+        name: "filterButtonText",
+        category: "Display props",
+        value: "Filter and sort",
+        description: {
+          markdown: true,
+          arr: ["The text to display on the main filter toggle button."],
         },
-        value: function (key, el, param) {
-          let primaryLines = [
-            "E07000224",
-            "E07000225",
-            "E07000226",
-            "E07000228",
-            englandMedian,
-            similarAreas,
-          ];
-          if (key === "primary") {
-            return primaryLines.includes(el.areaCode);
-          }
-          if (key === "secondary" && !primaryLines.includes(el.areaCode)) {
-            return true;
-          }
-          if (key === "hover") {
-            return [lineHovered, labelHovered].includes(el.areaCode);
-          }
-          if (key === "clicked") {
-            return [lineClicked, labelClicked].includes(el.areaCode);
-          }
+      },
+      {
+        name: "applyButtonText",
+        category: "Display props",
+        value: "Apply filters",
+        description: {
+          markdown: true,
+          arr: [
+            "The text to display on the apply button at the bottom of the filter panel.",
+          ],
+        },
+      },
+      {
+        name: "ga4BaseEvent",
+        category: "Analytics props",
+        propType: "fixed",
+        value: { event_name: "select_content", type: "finder" },
+        description: {
+          markdown: true,
+          arr: [
+            "Base GA4 event data that will be merged with section-specific data for analytics tracking.",
+          ],
         },
       },
     ]),
   );
+
   /**
    * DONOTTOUCH *
    * && 		Defining functions. generateValuesArray is used to create our arrays which track the $state() and $derived() props. getValue can used to access a reactive value from the $state() based on the prop name.
@@ -578,128 +343,8 @@
    *  &&    You must then also combine them into the derivedParametersObject below so that they are passed to the component.
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
-  let lineChartData = $derived(
-    data.dataInFormatForLineChart.find(
-      (el) => el.metric === getValue("selectedMetric"),
-    ),
-  );
 
-  let tieredLineParams = $derived({
-    otherTier: {},
-    secondary: {
-      halo: false,
-      pathStrokeColor: colors.black,
-      pathStrokeWidth: 1,
-      opacity: 0.05,
-      interactive: true,
-      markers: false,
-      showLabel: false,
-      lineEnding: null,
-    },
-    primary: {
-      halo: true,
-      pathStrokeWidth: 5,
-      pathStrokeColor: colors.darkgrey,
-      interactive: true,
-      markers: false,
-      showLabel: !lineClicked && !lineHovered && !labelClicked,
-      lineEnding: "arrow",
-    },
-    clicked: {
-      pathStrokeColor: colors.ochre,
-      pathStrokeWidth: 7,
-      halo: true,
-      interactive: true,
-      markers: false,
-      showLabel: true,
-      lineEnding: "arrow",
-    },
-    hover: {
-      pathStrokeColor: colors.ochre,
-      pathStrokeWidth: 6,
-      halo: true,
-      interactive: true,
-      markers: false,
-      showLabel: true,
-      lineEnding: "arrow",
-    },
-  });
-
-  let globalTierRules = $derived({
-    otherTier: {},
-    secondary: {
-      opacity: nothingSelected ? 1 : 0.5,
-    },
-    primary: {
-      opacity: nothingSelected ? 1 : 0.4,
-    },
-    hover: { opacity: 1 },
-    clicked: { opacity: 1 },
-  });
-
-  let getColor = function (areaCode, i) {
-    let colorsArray = [colors.coral, colors.fuschia, colors.purple];
-
-    return (
-      {
-        [englandMedian]: colors.lightblue,
-        [selectedAreaCode]: colors.teal,
-        [similarAreas]: colors.darkblue,
-      }[areaCode] ?? colorsArray[i % colorsArray.length]
-    );
-  };
-
-  let xFunction = $derived(function (number) {
-    return scaleLinear()
-      .domain([2015, 2022])
-      .range([
-        0,
-        svgWidth - getValue("paddingLeft") - getValue("paddingRight"),
-      ])(number);
-  });
-
-  let yFunction = $derived(function (number) {
-    return scaleLinear()
-      .domain([0, 100])
-      .range([
-        getValue("svgHeight") -
-          getValue("paddingTop") -
-          getValue("paddingBottom"),
-        0,
-      ])(number);
-  });
-
-  let lineFunction = $derived(
-    line()
-      .x((d) => xFunction(d.x))
-      .y((d) => yFunction(d.y))
-      .curve(curveLinear),
-  );
-
-  let basicLineParams = $derived({
-    // functions in this object aren't passed to the child because generateValuesArray turns editable variables to null
-    xFunction,
-    yFunction,
-    lineFunction,
-    /* onClick,
-    areaFunction: areaFunction,
-    onMouseEnter: onMouseEnter,
-    onMouseLeave: onMouseLeave,*/
-    haloColor: getValue("chartBackgroundColor"),
-    invisibleStrokeWidth: 20,
-  });
-
-  let derivedParametersObject = $derived({
-    xFunction,
-    yFunction,
-    lineFunction,
-    lineChartData,
-    tieredLineParams,
-    getColor,
-    basicLineParams,
-    nothingSelected,
-    globalTierRules,
-  });
+  let derivedParametersObject = $derived({});
 
   /**
    * DONOTTOUCH *
@@ -711,7 +356,7 @@
 
   /**
    * DONOTTOUCH *
-   * && 		parametersValuesArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
+   * && 		parametersVisibleArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
    */
   let parametersVisibleArray = $derived(
     trackVisibleParameters(parametersSourceArray, statedParametersValuesArray),
@@ -789,15 +434,8 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-8" b>
-    <LineChart
-      {...parametersObject}
-      bind:lineClicked
-      bind:lineHovered
-      bind:labelClicked
-      bind:labelHovered
-      bind:svgWidth
-    ></LineChart>
+  <div class="p-8">
+    <FilterPanel {...parametersObject}></FilterPanel>
   </div>
 {/snippet}
 
@@ -844,5 +482,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section" class="px-5">
-  <Examples></Examples>
+  <Examples {form}></Examples>
 </div>

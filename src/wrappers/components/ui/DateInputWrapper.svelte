@@ -26,14 +26,14 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "In progress",
+    progress: "Baseline completed",
     statusRows: [
       {
-        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
+        obj: { Accessible: false, Responsive: true, "Prog. enhanced": false },
         visibleOnHompepage: false,
       },
       {
-        obj: { Reviewed: false, Tested: false },
+        obj: { Reviewed: true, Tested: true },
         visibleOnHomepage: false,
       },
     ],
@@ -46,10 +46,16 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "The date input component helps users enter a memorable date or one they can easily look up.",
+    "It uses text fields for entering day, month, and year numbers, with appropriate validation and error handling.",
+    'Based on the <a href="https://design-system.service.gov.uk/components/date-input/" target="_blank" rel="noopener noreferrer">GOV.UK Design System date input component</a> pattern.',
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Use this component when asking users for a known date, like a birth date, passport issuance date, or appointment date.",
+    "For dates that users might not remember precisely, consider using a more flexible date input approach.",
+    "The component can be configured to collect just day and month, or month and year, depending on what information is needed.",
   ];
 
   let detailsArray = [
@@ -70,12 +76,7 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [
-    {
-      label: "Child components",
-      arr: [{ name: "Line", folder: "line-chart" }],
-    },
-  ];
+  let connectedComponentsArray = [];
 </script>
 
 <script>
@@ -96,17 +97,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
-  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
-  import {
-    curveBasis,
-    curveCardinal,
-    curveLinear,
-    curveLinearClosed,
-    curveMonotoneX,
-    curveStep,
-    line,
-  } from "d3-shape";
+  import DateInput from "$lib/components/ui/DateInput.svelte";
+  import Examples from "./date-input/Examples.svelte";
 
   let { data } = $props();
 
@@ -129,9 +121,9 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let labelClicked = $state();
-
-  let svgWidth = $state(demoScreenWidth);
+  let dayValue = $state("");
+  let monthValue = $state("");
+  let yearValue = $state("");
 
   /**
    * ! Step 3 - Add your props
@@ -174,212 +166,202 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "svgHeight",
-        category: "dimensions",
-        isProp: false,
-        value: 500,
-      },
-      {
-        name: "svgWidth",
-        category: "dimensions",
-        isProp: false,
-        value: svgWidth,
-      },
-      {
-        name: "paddingTop",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingRight",
-        category: "dimensions",
-        isProp: false,
-        value: 150,
-      },
-      {
-        name: "paddingBottom",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "paddingLeft",
-        category: "dimensions",
-        isProp: false,
-        value: 50,
-      },
-      {
-        name: "chartHeight",
-        category: "dimensions",
-      },
-      {
-        name: "chartWidth",
-        category: "dimensions",
-      },
-      {
-        name: "metric",
-        category: "data",
-        isProp: false,
-        options: data.metrics,
-      },
-      {
-        name: "dataArray",
-        category: "data",
-      },
-      {
-        name: "xDomainLowerBound",
-        category: "xScale",
-        isProp: false,
-        value: Math.min(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.x),
-        ),
-      },
-      {
-        name: "xDomainUpperBound",
-        category: "xScale",
-        isProp: false,
-        value: Math.max(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.x),
-        ),
-      },
-      {
-        name: "xScaleType",
-        category: "xScale",
-        isProp: false,
-        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
-      },
-      {
-        name: "xFunction",
-        category: "xScale",
-        functionElements: {
-          functionAsString: `function (number) {
-  return {
-    "scaleLinear()": scaleLinear(),
-    "scaleLog()": scaleLog(),
-    "scaleTime()": scaleTime(),
-  }[getValue("xScaleType")]
-    .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
-    .range([
-      0,
-      demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
-    ])(number);
-});`,
+        name: "id",
+        category: "Content",
+        isRequired: true,
+        value: "date-input-example",
+        description: {
+          markdown: true,
+          arr: [
+            `Required. This is used for the main component and to compose the ID attribute for each item.`,
+          ],
         },
       },
       {
-        name: "yDomainLowerBound",
-        category: "yScale",
-        isProp: false,
-        value: Math.min(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.y),
-        ),
-      },
-      {
-        name: "yDomainUpperBound",
-        category: "yScale",
-        isProp: false,
-        value: Math.max(
-          ...data.dataInFormatForLineChart[0].lines
-            .map((el) => el.data)
-            .flat()
-            .map((el) => el.y),
-        ),
-      },
-      {
-        name: "yScaleType",
-        category: "yScale",
-        isProp: false,
-        options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
-      },
-      {
-        name: "yFunction",
-        category: "yScale",
-        functionElements: {
-          functionAsString: `function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("yScaleType")]
-      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
-      .range([
-        getValue("svgHeight") -
-          getValue("paddingTop") -
-          getValue("paddingBottom"),
-        0,
-      ])(number);
-  });`,
+        name: "namePrefix",
+        category: "Content",
+        value: "date",
+        description: {
+          markdown: true,
+          arr: [
+            `Optional prefix that is used to prefix each item name, separated by hyphens.`,
+          ],
         },
       },
       {
-        name: "curveFunction",
-        category: "lineFunction",
-        isProp: false,
-        options: [
-          "curveLinear",
-          "curveLinearClosed",
-          "curveCardinal",
-          "curveBasis",
-          "curveStep",
-          "curveMonotoneX",
+        name: "classes",
+        category: "Styling & Attributes",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [`Classes to add to the date-input container.`],
+        },
+      },
+      {
+        name: "attributes",
+        category: "Styling & Attributes",
+        value: {},
+        description: {
+          markdown: true,
+          arr: [
+            `HTML attributes (for example data attributes) to add to the date input container.`,
+          ],
+        },
+      },
+      {
+        name: "formGroup",
+        category: "Content",
+        value: {
+          classes: "",
+          attributes: {},
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Options for the form group containing the date input component.`,
+          ],
+        },
+      },
+      {
+        name: "fieldset",
+        category: "Content",
+        value: {
+          legend: {
+            text: "When was your passport issued?",
+            isPageHeading: false,
+            classes: "",
+          },
+          role: "group",
+          classes: "",
+          attributes: {},
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Options for the fieldset element that contains the date input component.`,
+            `Example: { text: "Date must include a year" }`,
+          ],
+        },
+      },
+      {
+        name: "hint",
+        category: "Content",
+        value: {
+          text: "For example, 27 3 2007",
+          classes: "",
+          attributes: {},
+        },
+        description: {
+          markdown: true,
+          arr: [`Hint text that explains the expected format of the date.`],
+        },
+      },
+      {
+        name: "errorMessage",
+        category: "Error Handling",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Optional error message string, typically used for server-side validation errors. Not displayed if set to a falsy value (e.g., empty string, null, undefined).`,
+            `If the client-side \`validate\` function is also provided and returns an error string, the \`validate\` function's error message will take precedence and be displayed instead of this one.`,
+          ],
+        },
+        rows: 2,
+      },
+      {
+        name: "items",
+        category: "Content",
+        isRequired: true,
+        value: [
+          {
+            name: "day",
+            label: "Day",
+          },
+          {
+            name: "month",
+            label: "Month",
+          },
+          {
+            name: "year",
+            label: "Year",
+          },
         ],
-      },
-      {
-        name: "lineFunction",
-        category: "lineFunction",
-        functionElements: {
-          functionAsString: `function (dataArray) {
-    return line()
-      .x((d) => xFunction(d.x))
-      .y((d) => yFunction(d.y))
-      .curve(
-        {
-          curveLinear: curveLinear,
-          curveLinearClosed: curveLinearClosed,
-          curveCardinal: curveCardinal,
-          curveBasis: curveBasis,
-          curveStep: curveStep,
-          curveMonotoneX: curveMonotoneX,
-        }[getValue("curveFunction")],
-      )(dataObject);
-  });`,
+        description: {
+          markdown: true,
+          arr: [
+            `Required. Array of input items for the date input (typically day, month, year).`,
+            `Each item should have a name, and can have additional properties like value, classes, label, etc. `,
+            `Setting \`hasError: true\` on an item will only apply error styling to that specific input if the top-level \`errorMessage\` prop is also set to a non-empty string.`,
+          ],
         },
       },
       {
-        name: "selectedAreaCode",
-        category: "specifyingLines",
-        value: "E07000223",
+        name: "legendSize",
+        category: "Styling & Attributes",
+        options: ["l", "m", "s"],
+        value: "m",
+        description: {
+          markdown: true,
+          arr: [
+            `Controls the size of the fieldset legend (\`l\`, \`m\`, or \`s\`).`,
+          ],
+        },
       },
       {
-        name: "showAllData",
-        category: "specifyingLines",
-        value: true,
-      },
-      {
-        name: "additionalKeyLines",
-        category: "specifyingLines",
-        value: ["E07000222", "E07000224"],
-      },
-      {
-        name: "colors",
-        category: "specifyingLines",
-        value: ["red", "blue", "green", "orange", "purple", "cyan"],
-      },
-      {
-        name: "labelClicked",
-        category: "lineEvents",
+        name: "dayValue",
+        category: "Content",
         isBinded: true,
-        value: labelClicked,
+        value: dayValue,
+        description: {
+          markdown: true,
+          arr: [`Bindable value for the day input.`],
+        },
+      },
+      {
+        name: "monthValue",
+        category: "Content",
+        isBinded: true,
+        value: monthValue,
+        description: {
+          markdown: true,
+          arr: [`Bindable value for the month input.`],
+        },
+      },
+      {
+        name: "yearValue",
+        category: "Content",
+        isBinded: true,
+        value: yearValue,
+        description: {
+          markdown: true,
+          arr: [`Bindable value for the year input.`],
+        },
+      },
+      {
+        name: "validate",
+        category: "Error Handling",
+        propType: "fixed",
+        value: function (values) {
+          if (!values.day || !values.month || !values.year) {
+            return "Date must include a day, month and year (client-side)";
+          }
+          if (values.year && parseInt(values.year.toString(), 10) < 1900) {
+            return "Year must be after 1900 (client-side)";
+          }
+          return undefined; // No error
+        },
+        functionElements: {
+          functionAsString: `function (values) {\n  if (!values.day || !values.month || !values.year) {\n    return "Date must include a day, month and year (client-side)";\n  }\n  if (values.year && parseInt(values.year.toString(), 10) < 1900) {\n    return "Year must be after 1900 (client-side)";\n  }\n  return undefined; // No error\n}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `A client-side validation function <code>(values: { day?, month?, year? }) => string | undefined</code>.`,
+            `Receives an object with the current day, month, and year values and should return an error message string if invalid, or <code>undefined</code> if valid.`,
+            `This validation runs in the browser and overrides the <code>errorMessage</code> if it returns an error string.`,
+          ],
+        },
       },
     ]),
   );
@@ -431,72 +413,7 @@
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
 
-  let dataArray = $derived(
-    data.dataInFormatForLineChart.find((el) => el.metric === getValue("metric"))
-      .lines,
-  );
-
-  let chartHeight = $derived(
-    getValue("svgHeight") - getValue("paddingTop") - getValue("paddingBottom"),
-  );
-  let chartWidth = $derived(
-    getValue("svgWidth") - getValue("paddingLeft") - getValue("paddingRight"),
-  );
-
-  let xFunction = $derived(function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("xScaleType")]
-      .domain([getValue("xDomainLowerBound"), getValue("xDomainUpperBound")])
-      .range([
-        0,
-        getValue("svgWidth") -
-          getValue("paddingLeft") -
-          getValue("paddingRight"),
-      ])(number);
-  });
-
-  let yFunction = $derived(function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("yScaleType")]
-      .domain([getValue("yDomainLowerBound"), getValue("yDomainUpperBound")])
-      .range([
-        getValue("svgHeight") -
-          getValue("paddingTop") -
-          getValue("paddingBottom"),
-        0,
-      ])(number);
-  });
-
-  let lineFunction = $derived(function (dataArray) {
-    return line()
-      .x((d) => xFunction(d.x))
-      .y((d) => yFunction(d.y))
-      .curve(
-        {
-          curveLinear: curveLinear,
-          curveLinearClosed: curveLinearClosed,
-          curveCardinal: curveCardinal,
-          curveBasis: curveBasis,
-          curveStep: curveStep,
-          curveMonotoneX: curveMonotoneX,
-        }[getValue("curveFunction")],
-      )(dataArray);
-  });
-
-  let derivedParametersObject = $derived({
-    dataArray,
-    chartHeight,
-    chartWidth,
-    xFunction,
-    yFunction,
-    lineFunction,
-  });
+  let derivedParametersObject = $derived({});
 
   /**
    * DONOTTOUCH *
@@ -586,39 +503,13 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div bind:clientWidth={svgWidth}>
-    <svg
-      width={getValue("svgWidth")}
-      height={getValue("svgHeight")}
-      style="background-color: #f5f5f5"
-    >
-      {#if getValue("svgWidth")}
-        <g
-          transform="translate({getValue('paddingLeft')},{getValue(
-            'paddingTop',
-          )})"
-        >
-          <g data-role="y-axis">
-            <path
-              d="M0 0 l0 {getValue('chartHeight')}"
-              stroke="black"
-              stroke-width="2px"
-            ></path>
-          </g>
-          <g data-role="x-axis">
-            <path
-              d="M0 {getValue('chartHeight')} l{getValue('chartWidth')} 0"
-              stroke="black"
-              stroke-width="2px"
-            ></path>
-          </g>
-
-          <g data-role="lines-group">
-            <Lines {...parametersObject} bind:labelClicked></Lines>
-          </g>
-        </g>
-      {/if}
-    </svg>
+  <div class="p-8">
+    <DateInput
+      {...parametersObject}
+      bind:dayValue
+      bind:monthValue
+      bind:yearValue
+    ></DateInput>
   </div>
 {/snippet}
 
@@ -664,4 +555,6 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5"></div>
+<div id="examples" data-role="examples-section" class="px-5">
+  <Examples></Examples>
+</div>

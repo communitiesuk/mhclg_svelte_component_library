@@ -1,6 +1,6 @@
 <script lang="ts">
   import Footer from "$lib/components/ui/Footer.svelte";
-  import InternalHeader from "$lib/components/ui/InternalHeader.svelte";
+  import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
   import HeaderNav from "$lib/components/layout/service-navigation-nested-mobile/HeaderNav.svelte";
   import MobileNav from "$lib/components/layout/service-navigation-nested-mobile/MobileNav.svelte";
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
@@ -337,7 +337,7 @@
       <div class="app-pane__body govuk-width-container">
         <div class="app-split-pane">
           <!-- Side navigation - show for Components, Patterns, or Community pages -->
-          {#if currentSection !== "Home" }
+          {#if currentSection !== "Home"}
             <aside class="app-split-pane__nav">
               <SideNav
                 title={getSectionTitle(currentSection)}

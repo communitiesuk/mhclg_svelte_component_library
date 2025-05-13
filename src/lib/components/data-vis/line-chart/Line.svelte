@@ -30,16 +30,12 @@
     markerStrokeWidth = 3,
     lineFunction,
     areaFunction,
-    curveFunction,
-    xFunction,
-    lineEnding = null,
-    yFunction,
+    lineEnding,
     dataId,
-    tier,
     // markersDataId,
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
+    onClickLine,
+    onMouseEnterLine,
+    onMouseLeaveLine,
     halo,
     chartBackgroundColor,
     invisibleStrokeWidth,
@@ -52,9 +48,9 @@
     // labelText,
     // labelColor,
     // labelTextColor,
+    lineClicked = $bindable(),
+    lineHovered = $bindable(),
   } = $props();
-
-  let hoveredMarker = $state();
 
   function makeList(inputValue) {
     let items = inputValue.split("\\n").map((item) => item.trim());
@@ -69,54 +65,52 @@
     return mappedItems;
   }
 
-  function onMouseEnterMarker(i) {
-    hoveredMarker = i;
-  }
+  let handleClick = (e) => onClickLine(e, dataArray, dataId);
+  let handleEnter = (e) => onMouseEnterLine(e, dataArray, dataId);
+  let handleLeave = (e) => onMouseLeaveLine(e, dataArray, dataId);
 
-  function onMouseLeaveMarker(i) {
-    hoveredMarker = null;
-  }
+  let linePath = lineFunction(dataArray);
 </script>
 
 <defs>
   <marker
     id={`arrow-${pathStrokeColor}`}
-    markerWidth="6"
-    markerHeight="4"
-    refX="4"
-    refY="2"
+    markerWidth="4"
+    markerHeight="3"
+    refX="2.7"
+    refY="1.5"
     orient="auto-start-reverse"
   >
-    <polygon points="0 0, 6 2, 0 4" style="fill: {pathStrokeColor}"></polygon>
+    <polygon points="0 0, 4 1.5, 0 3" style="fill: {pathStrokeColor}"></polygon>
   </marker>
 
   <marker
     id={`circle-${pathStrokeColor}`}
     markerWidth="14"
     markerHeight="14"
-    refX="7"
-    refY="7"
+    refX="5"
+    refY="5"
     orient="auto"
   >
-    <circle cx="7" cy="7" r="1.5" style="fill: {pathStrokeColor}"></circle>
+    <circle cx="5" cy="5" r="1.5" style="fill: {pathStrokeColor}"></circle>
   </marker>
 </defs>
 
 <g
   data-id={dataId}
-  onclick={(event) => onClick(event, dataArray, dataId)}
-  onmouseenter={(event) => onMouseEnter(event, dataArray, dataId)}
-  onmouseleave={(event) => onMouseLeave(event, dataArray, dataId)}
+  onclick={handleClick}
+  onmouseenter={handleEnter}
+  onmouseleave={handleLeave}
   role="button"
   tabindex="0"
-  onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}
+  onkeydown={(e) => e.key === "Enter" && onClickLine(e, dataArray)}
   {opacity}
 >
   {#if includeArea}
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
   {/if}
   <path
-    d={lineFunction(dataArray)}
+    d={linePath}
     fill="none"
     stroke="invisible"
     stroke-width={invisibleStrokeWidth}
@@ -124,7 +118,7 @@
   ></path>
   {#if halo}
     <path
-      d={lineFunction(dataArray)}
+      d={linePath}
       fill={pathFillColor}
       stroke={chartBackgroundColor}
       stroke-width={pathStrokeWidth * 1.2}
@@ -133,14 +127,14 @@
     ></path>
   {/if}
   <path
-    d={lineFunction(dataArray)}
+    d={linePath}
     fill={pathFillColor}
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
     pointer-events="none"
+    marker-start={`url(#${lineEnding}-${pathStrokeColor})`}
   ></path>
-
   <!-- {#if includeMarkers}
     {#each dataArray as marker, i}
       <g

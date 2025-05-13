@@ -1,21 +1,25 @@
 <script>
   import { AccordionItem, Accordion } from "flowbite-svelte";
   import { page } from "$app/state";
+  import { enhance } from "$app/forms";
 
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
   import FilterPanel from "$lib/components/ui/FilterPanel.svelte";
 
-  // Get metrics data from page store
+  // Accept form prop from parent (runes mode)
+  let { form } = $props();
+
+  // Get metrics data from page store (used for defining filter sections)
   let metrics = $derived(page.data.metrics || []);
   let areas = $derived(page.data.areas || []);
   let years = $derived(page.data.years || []);
 
-  // For tracking filtered results
-  let filteredResults = $state([]);
-  let resultsCount = $state("0 results found");
-  let formSubmitted = $state(false);
+  // For enhanced client-side form example
+  let clientFilteredResults = $state([]);
+  let clientResultsCount = $state("Ready to filter");
+  let clientFormSubmitted = $state(false);
 
   // Create filter sections based on metrics data
   let metricsFilterSections = $derived([
@@ -76,17 +80,8 @@
     },
   ]);
 
-  // Handle form submission
-  function handleFilter(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-
-    // Get filter values
-    const selectedMetric = formData.get("metric") || null;
-    const selectedAreas = formData.getAll("areas[]");
-    const selectedYear = formData.get("year");
-
-    // Filter the data
+  // Client-side helper function to filter data (used by enhanced example)
+  function filterData(metric, areas, year) {
     let results = [];
 
     if (page.data.dataInFormatForLineChart) {
@@ -94,30 +89,25 @@
       let filteredData = [...page.data.dataInFormatForLineChart];
 
       // Filter by metric if selected
-      if (selectedMetric) {
-        filteredData = filteredData.filter(
-          (item) => item.metric === selectedMetric,
-        );
+      if (metric && metric !== "all") {
+        // Check if metric is not 'all' or empty
+        filteredData = filteredData.filter((item) => item.metric === metric);
       }
 
       // For each metric grouping
       filteredData.forEach((metricGroup) => {
         // Filter lines by selected areas or use all if none selected
         const areaLines =
-          selectedAreas.length > 0
-            ? metricGroup.lines.filter((line) =>
-                selectedAreas.includes(line.areaCode),
-              )
+          areas.length > 0
+            ? metricGroup.lines.filter((line) => areas.includes(line.areaCode))
             : metricGroup.lines;
 
         // Filter by year if not "all"
         areaLines.forEach((line) => {
           const yearData =
-            selectedYear === "all"
+            year === "all" || !year // Check if year is 'all' or empty
               ? line.data
-              : line.data.filter(
-                  (point) => point.x.toString() === selectedYear,
-                );
+              : line.data.filter((point) => point.x.toString() === year);
 
           if (yearData.length > 0) {
             results.push({
@@ -132,30 +122,25 @@
       });
     }
 
-    // Update results state
-    filteredResults = results;
-    resultsCount = `${results.length} results found`;
-    formSubmitted = true;
+    return results;
   }
 
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
-      content: Example1,
+      heading: "1. Server Form Submission (Full Page Reload)",
+      content: ServerFormExample,
     },
     {
       id: "2",
-      heading: "2. Filtering Local Authority Metrics Data",
-      content: LAMetricsExample,
+      heading: "2. Progressive Enhancement with use:enhance",
+      content: EnhancedFormExample,
     },
   ];
 </script>
 
 <div class="my-20 p-2">
-  <h5 class="underline underline-offset-4 my-6">
-    Examples of specific use cases
-  </h5>
+  <h5 class="underline underline-offset-4 my-6">Form Submission Examples</h5>
   <Accordion
     activeClass="text-[#EA580C] focus:ring-2 focus:ring-[#EA580C]"
     inactiveClass="text-gray-500 dark:text-gray-400 hover:bg-slate-100"
@@ -172,60 +157,184 @@
   </Accordion>
 </div>
 
-{#snippet Example1()}
+{#snippet ServerFormExample()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
-  </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
-{/snippet}
-
-{#snippet LAMetricsExample()}
-  <div class="p-5 bg-white">
-    <h3 class="text-xl font-bold mb-4">Local Authority Metrics Filter</h3>
+    <h3 class="text-xl font-bold mb-4">Server-side Form Submission</h3>
     <p class="mb-4">
-      This example demonstrates using the FilterPanel to filter Local Authority
-      metrics data:
+      This example demonstrates a traditional form submission that sends data to
+      the server (`+page.server.ts`) and causes a full page reload. The results
+      are passed back via the `form` prop.
     </p>
 
-    <form method="POST" onsubmit={handleFilter}>
+    <form method="POST">
       <FilterPanel
         sectionsData={metricsFilterSections}
-        {resultsCount}
+        resultsCount={form?.filterData?.count !== undefined
+          ? `${form.filterData.count} results found`
+          : "Select filters"}
         filterButtonText="Filter metrics"
-        applyButtonText="Apply filters"
-        ga4BaseEvent={{ event_name: "filter_data", type: "la_metrics" }}
+        applyButtonText="Submit to server"
+        ga4BaseEvent={{ event_name: "filter_data", type: "server_submit" }}
+      />
+    </form>
+
+    <!-- Display results returned from the server via the form prop -->
+    {#if form?.filterData?.results}
+      <div class="mt-8 border-t pt-4">
+        <div
+          class="govuk-notification-banner govuk-notification-banner--success"
+          role="region"
+          aria-labelledby="form-success"
+        >
+          <h2 class="govuk-notification-banner__title" id="form-success">
+            Form submitted to server
+          </h2>
+          <div class="govuk-notification-banner__content">
+            <p>
+              The server processed your request and found {form.filterData
+                .count} results.
+            </p>
+            <p class="mt-2 text-sm italic">
+              Selected Filters: Metric: {form.filterData.metric || "Any"},
+              Areas: {form.filterData["areas[]"]?.length > 0
+                ? form.filterData["areas[]"].join(", ")
+                : "Any"}, Year: {form.filterData.year || "Any"}
+            </p>
+          </div>
+        </div>
+
+        <h4 class="text-lg font-semibold mb-2 mt-4">Results:</h4>
+        <div class="overflow-x-auto">
+          <table class="min-w-full bg-white border">
+            <!-- Table headers -->
+            <thead>
+              <tr class="bg-gray-100">
+                <th class="px-4 py-2 border">Metric</th>
+                <th class="px-4 py-2 border">Area</th>
+                <th class="px-4 py-2 border">Year</th>
+                <th class="px-4 py-2 border">Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              {#each form.filterData.results.slice(0, 5) as result}
+                <tr>
+                  <td class="px-4 py-2 border">{result.metric}</td>
+                  <td class="px-4 py-2 border">{result.area}</td>
+                  <td class="px-4 py-2 border">{result.year}</td>
+                  <td class="px-4 py-2 border">{result.value}</td>
+                </tr>
+              {/each}
+              {#if form.filterData.results.length > 5}
+                <tr>
+                  <td colspan="4" class="px-4 py-2 border text-center italic">
+                    ...and {form.filterData.results.length - 5} more results
+                  </td>
+                </tr>
+              {/if}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    {:else if form?.filterData?.count === 0}
+      <div class="mt-8 border-t pt-4">
+        <p class="italic">
+          No results match your filter criteria (processed by server).
+        </p>
+      </div>
+    {/if}
+  </div>
+
+  <CodeBlock
+    code={`<!-- Server form example -->
+<form method="POST">
+  <FilterPanel
+    sectionsData={filterSections}
+    resultsCount={form?.filterData?.count !== undefined ? \`\\\${form.filterData.count} results found\` : "Select filters"}
+    filterButtonText="Filter metrics"
+    applyButtonText="Submit to server"
+    ga4BaseEvent={{ event_name: "filter_submit", type: "server" }}
+  />
+</form>
+
+<!-- Results displayed using \`form\` prop -->
+{#if form?.filterData?.results}\n  <!-- ... results table ... -->\n{/if}\n
+
+<!-- In +page.server.ts -->
+export const actions = {\n  default: async ({ request }) => {\n    const formData = await request.formData();\n    \n    // Extract form data\n    const metric = formData.get('metric');\n    const areas = formData.getAll('areas[]');\n    const year = formData.get('year');\n    \n    // Process filters on the server (e.g. database query)\n    // const serverResults = await db.query(...)\n    \n    // Return the form data and results\n    return {\n      filterData: { // IMPORTANT: Wrap results in a key\n        metric,\n        \'areas[]\': areas,\n        year,\n        results: serverResults,\n        count: serverResults.length\n      }\n    };\n  }\n};`}
+    language="svelte"
+  ></CodeBlock>
+{/snippet}
+
+{#snippet EnhancedFormExample()}
+  <div class="p-5 bg-white">
+    <h3 class="text-xl font-bold mb-4">
+      Progressive Enhancement with use:enhance
+    </h3>
+    <p class="mb-4">
+      This example demonstrates progressive enhancement with <code
+        >use:enhance</code
+      > - it works without JavaScript (falling back to the server action above),
+      but when JavaScript is available, it provides a better user experience by processing
+      client-side without page reloads.
+    </p>
+
+    <form
+      method="POST"
+      use:enhance={({ formData, cancel }) => {
+        // Get filter values
+        const selectedMetric = formData.get("metric") || null;
+        const selectedAreas = Array.from(formData.getAll("areas[]"));
+        const selectedYear = formData.get("year");
+
+        // Process client-side (prevents server submission)
+        cancel();
+
+        // Filter data client-side using helper function
+        const results = filterData(selectedMetric, selectedAreas, selectedYear);
+
+        // Update client state
+        clientFilteredResults = results;
+        clientResultsCount = `${results.length} results found`;
+        clientFormSubmitted = true;
+
+        // Return nothing - no server update needed
+        return;
+      }}
+    >
+      <FilterPanel
+        sectionsData={metricsFilterSections}
+        resultsCount={clientResultsCount}
+        filterButtonText="Filter metrics"
+        applyButtonText="Apply with enhancement"
+        ga4BaseEvent={{ event_name: "filter_data", type: "enhanced" }}
       />
 
-      {#if formSubmitted && filteredResults.length > 0}
+      {#if clientFormSubmitted && clientFilteredResults.length > 0}
         <div class="mt-8 border-t pt-4">
-          <h4 class="text-lg font-semibold mb-2">Filtered Results:</h4>
+          <div
+            class="govuk-notification-banner govuk-notification-banner--success"
+            role="alert"
+            aria-labelledby="enhance-success"
+          >
+            <h2 class="govuk-notification-banner__title" id="enhance-success">
+              Enhanced Form Processing (Client-side)
+            </h2>
+            <div class="govuk-notification-banner__content">
+              <p>
+                Client-side processing completed with {clientFilteredResults.length}
+                results.
+              </p>
+              <p class="italic text-sm mt-2">
+                (With JavaScript disabled, this would have been processed by the
+                server instead.)
+              </p>
+            </div>
+          </div>
+
+          <h4 class="text-lg font-semibold mb-2 mt-4">Results:</h4>
           <div class="overflow-x-auto">
             <table class="min-w-full bg-white border">
+              <!-- Table headers -->
               <thead>
                 <tr class="bg-gray-100">
                   <th class="px-4 py-2 border">Metric</th>
@@ -234,19 +343,22 @@
                 </tr>
               </thead>
               <tbody>
-                {#each filteredResults.slice(0, 5) as result}
+                {#each clientFilteredResults.slice(0, 5) as result}
                   <tr>
                     <td class="px-4 py-2 border">{result.metric}</td>
                     <td class="px-4 py-2 border">{result.areaName}</td>
-                    <td class="px-4 py-2 border">
-                      {result.data.map((d) => `${d.x}: ${d.y}`).join(", ")}
-                    </td>
+                    <td class="px-4 py-2 border"
+                      >{result.data.map((d) => d.x).join(", ")}</td
+                    >
+                    <td class="px-4 py-2 border"
+                      >{result.data.map((d) => d.y).join(", ")}</td
+                    >
                   </tr>
                 {/each}
-                {#if filteredResults.length > 5}
+                {#if clientFilteredResults.length > 5}
                   <tr>
-                    <td colspan="3" class="px-4 py-2 border text-center italic">
-                      ...and {filteredResults.length - 5} more results
+                    <td colspan="4" class="px-4 py-2 border text-center italic">
+                      ...and {clientFilteredResults.length - 5} more results
                     </td>
                   </tr>
                 {/if}
@@ -254,112 +366,18 @@
             </table>
           </div>
         </div>
-      {:else if formSubmitted}
+      {:else if clientFormSubmitted}
         <div class="mt-8 border-t pt-4">
-          <p class="italic">No results match your filter criteria.</p>
+          <p class="italic">
+            No results match your filter criteria (processed client-side).
+          </p>
         </div>
       {/if}
     </form>
   </div>
 
   <CodeBlock
-    code={`<script>
-  import { page } from "$app/state";
-  import FilterPanel from "$lib/components/ui/FilterPanel.svelte";
-  
-  // Get metrics data from page store
-  let metrics = $derived(page.data.metrics || []);
-  let areas = $derived(page.data.areas || []);
-  let years = $derived(page.data.years || []);
-  
-  // For tracking filtered results
-  let filteredResults = $state([]);
-  let resultsCount = $state('0 results found');
-  
-  // Create filter sections based on metrics data
-  let metricsFilterSections = $derived([
-    {
-      id: "metrics",
-      type: "select",
-      title: "Metrics",
-      ga4Section: "metrics_filter",
-      ga4IndexSection: 1,
-      ga4IndexSectionCount: 3,
-      selects: [{
-        id: "metric-select",
-        name: "metric",
-        label: "Select metric",
-        options: [
-          { value: "", label: "All metrics" },
-          ...metrics.map(metric => ({ 
-            value: metric, 
-            label: metric 
-          }))
-        ],
-        fullWidth: true,
-      }]
-    },
-    // Additional filters for areas and years...
-  ]);
-
-  // Handle form submission
-  function handleFilter(event) {
-    event.preventDefault();
-    const formData = new FormData(event.target);
-    
-    // Get filter values
-    const selectedMetric = formData.get('metric') || null;
-    const selectedAreas = formData.getAll('areas[]');
-    const selectedYear = formData.get('year');
-    
-    // Filter the data...
-    filteredResults = results;
-    resultsCount = \`\${results.length} results found\`;
-  }
-</script>
-
-<form method="POST" onsubmit={handleFilter}>
-  <FilterPanel 
-    sectionsData={metricsFilterSections}
-    resultsCount={resultsCount}
-    filterButtonText="Filter metrics"
-    applyButtonText="Apply filters"
-    ga4BaseEvent={{ event_name: "filter_data", type: "la_metrics" }}
-  />
-  
-  <!-- Display filtered results -->
-</form>`}
+    code={`<script>\n  import { enhance } from "$app/forms";\n  import { page } from "$app/state";\n  import FilterPanel from "$lib/components/ui/FilterPanel.svelte";\n  \n  // For tracking filtered results client-side\n  let clientResults = $state([]);\n  let resultsCount = $state("Ready to filter");\n  \n  // Filter helper function (client-side implementation)\n  function filterData(metric, areas, year) {\n    // Filter logic here using available page.data...\n    return results;\n  }\n</script>\n\n<form\n  method="POST"\n  use:enhance={({ formData, cancel }) => {\n    // Get filter values\n    const metric = formData.get("metric");\n    const areas = formData.getAll("areas[]"); \n    const year = formData.get("year");\n    \n    // Cancel server submission and process client-side\n    cancel();\n    \n    // Filter data\n    const results = filterData(metric, areas, year);\n    \n    // Update state variables\n    clientResults = results;\n    resultsCount = \`\\\${results.length} results found\`;\n    \n    // No server action needed\n    return;\n  }}\n>\n  <FilterPanel\n    sectionsData={filterSections}\n    resultsCount={resultsCount} // Use client-side count\n    filterButtonText="Filter metrics"\n    applyButtonText="Apply with enhancement"\n    ga4BaseEvent={{ event_name: "filter_data", type: "enhanced" }}\n  />\n  \n  <!-- Display clientResults -->\n  {#if clientResults.length > 0}\n     <!-- ... results table ... -->\n  {/if}\n</form>\n\n<!-- In +page.server.ts (handles non-JS fallback) -->\nexport const actions = {\n  default: async ({ request }) => {\n    const formData = await request.formData();\n    // Process server-side when JavaScript is disabled\n    // ...\n    return { filterData: { /* results */ } }; // Remember to wrap!\n  }\n};`}
     language="svelte"
-  ></CodeBlock>
-
-  <CodeBlock
-    code={`// Server-side implementation in +page.server.ts
-export const actions = {
-  default: async ({ request }) => {
-    const formData = await request.formData();
-    
-    // Extract filter parameters
-    const metric = formData.get('metric');
-    const selectedAreas = formData.getAll('areas[]');
-    const year = formData.get('year');
-    
-    // Filter data (could be from a database query)
-    const filteredData = await filterMetricsData(metric, selectedAreas, year);
-    
-    // Return filtered results
-    return {
-      success: true,
-      count: filteredData.length,
-      results: filteredData
-    };
-  },
-};
-
-// Example of how this could be used in a page with form:
-// <form method="POST" action="?/filter">
-//   <FilterPanel ... />
-// </form>
-`}
-    language="javascript"
   ></CodeBlock>
 {/snippet}

@@ -102,7 +102,7 @@
   import FilterPanel from "$lib/components/ui/FilterPanel.svelte";
   import Examples from "./filter-panel/Examples.svelte";
 
-  let { data } = $props();
+  let { data, form } = $props();
 
   /**
    * DONOTTOUCH *
@@ -209,7 +209,7 @@
             toLegend: "Published before",
             toNamePrefix: "published_at[to]",
             toHint: "For example, 2023 or 21/11/2023",
-            legendSize: {undefined},
+            legendSize: { undefined },
           },
           {
             id: "topic",
@@ -481,5 +481,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section" class="px-5">
-  <Examples></Examples>
+  <Examples {form}></Examples>
 </div>

@@ -1,15 +1,28 @@
-<script>
+<script lang="ts">
   import { AccordionItem, Accordion } from "flowbite-svelte";
   import { page } from "$app/state";
   import { enhance } from "$app/forms";
 
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
-  import * as codeBlocks from "./codeBlocks.js";
+  import {
+    serverFormExampleCode,
+    enhancedFormExampleCode,
+    basicExampleCode,
+    advancedExampleCode,
+  } from "./codeBlocks.js";
 
   import FilterPanel from "$lib/components/ui/FilterPanel.svelte";
 
   // Accept form prop from parent (runes mode)
   let { form } = $props();
+
+  // Define types for filtered results
+  interface FilteredResult {
+    metric: string;
+    areaCode: string;
+    areaName: string;
+    data: { x: string | number; y: string | number }[];
+  }
 
   // Get metrics data from page store (used for defining filter sections)
   let metrics = $derived(page.data.metrics || []);
@@ -17,15 +30,124 @@
   let years = $derived(page.data.years || []);
 
   // For enhanced client-side form example
-  let clientFilteredResults = $state([]);
+  let clientFilteredResults = $state<FilteredResult[]>([]);
   let clientResultsCount = $state("Ready to filter");
   let clientFormSubmitted = $state(false);
+
+  // Basic filter sections for use in examples
+  const basicFilterSections = [
+    {
+      id: "categories",
+      type: "checkboxes" as "checkboxes",
+      title: "Categories",
+      ga4Section: "categories_filter",
+      ga4IndexSection: 1,
+      ga4IndexSectionCount: 2,
+      name: "categories[]",
+      legend: "Select categories",
+      options: [
+        { value: "food", label: "Food & Drink" },
+        { value: "travel", label: "Travel" },
+        { value: "tech", label: "Technology" },
+      ],
+    },
+    {
+      id: "rating",
+      type: "radios" as "radios",
+      title: "Rating",
+      ga4Section: "rating_filter",
+      ga4IndexSection: 2,
+      ga4IndexSectionCount: 2,
+      name: "rating",
+      legend: "Select minimum rating",
+      options: [
+        { value: "any", label: "Any rating" },
+        { value: "3", label: "3 stars & above" },
+        { value: "4", label: "4 stars & above" },
+        { value: "5", label: "5 stars only" },
+      ],
+      selectedValue: "any",
+    },
+  ];
+
+  // Advanced filter sections for use in examples
+  const advancedFilterSections = [
+    {
+      id: "location",
+      type: "select" as "select",
+      title: "Location",
+      ga4Section: "location_filter",
+      ga4IndexSection: 1,
+      ga4IndexSectionCount: 3,
+      selects: [
+        {
+          id: "region-select",
+          name: "region",
+          label: "Select region",
+          options: [
+            { value: "", label: "All regions", disabled: false },
+            { value: "north", label: "North" },
+            { value: "south", label: "South" },
+            { value: "east", label: "East" },
+            { value: "west", label: "West" },
+          ],
+          fullWidth: true,
+        },
+        {
+          id: "city-select",
+          name: "city",
+          label: "Select city (optional)",
+          options: [
+            { value: "", label: "All cities", disabled: false },
+            { value: "london", label: "London" },
+            { value: "manchester", label: "Manchester" },
+            { value: "birmingham", label: "Birmingham" },
+            { value: "leeds", label: "Leeds" },
+          ],
+          fullWidth: true,
+        },
+      ],
+    },
+    {
+      id: "price",
+      type: "radios" as "radios",
+      title: "Price Range",
+      ga4Section: "price_filter",
+      ga4IndexSection: 2,
+      ga4IndexSectionCount: 3,
+      name: "price",
+      legend: "Select price range",
+      options: [
+        { value: "any", label: "Any price" },
+        { value: "low", label: "£ (Budget)" },
+        { value: "medium", label: "££ (Mid-range)" },
+        { value: "high", label: "£££ (Premium)" },
+      ],
+      selectedValue: "any",
+    },
+    {
+      id: "features",
+      type: "checkboxes" as "checkboxes",
+      title: "Features",
+      ga4Section: "features_filter",
+      ga4IndexSection: 3,
+      ga4IndexSectionCount: 3,
+      name: "features[]",
+      legend: "Select desired features",
+      options: [
+        { value: "wifi", label: "Free Wi-Fi" },
+        { value: "parking", label: "Parking" },
+        { value: "accessible", label: "Wheelchair accessible" },
+        { value: "pets", label: "Pet friendly" },
+      ],
+    },
+  ];
 
   // Create filter sections based on metrics data
   let metricsFilterSections = $derived([
     {
       id: "metrics",
-      type: "select",
+      type: "select" as "select",
       title: "Metrics",
       ga4Section: "metrics_filter",
       ga4IndexSection: 1,
@@ -48,7 +170,7 @@
     },
     {
       id: "areas",
-      type: "checkboxes",
+      type: "checkboxes" as "checkboxes",
       title: "Local Authorities",
       ga4Section: "areas_filter",
       ga4IndexSection: 2,
@@ -62,7 +184,7 @@
     },
     {
       id: "years",
-      type: "radios",
+      type: "radios" as "radios",
       title: "Years",
       ga4Section: "years_filter",
       ga4IndexSection: 3,
@@ -81,8 +203,12 @@
   ]);
 
   // Client-side helper function to filter data (used by enhanced example)
-  function filterData(metric, areas, year) {
-    let results = [];
+  function filterData(
+    metric: string | null,
+    areas: string[],
+    year: string,
+  ): FilteredResult[] {
+    let results: FilteredResult[] = [];
 
     if (page.data.dataInFormatForLineChart) {
       // Start with all line chart data
@@ -128,12 +254,22 @@
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Server Form Submission (Full Page Reload)",
-      content: ServerFormExample,
+      heading: "1. Basic Filter Panel Example",
+      content: BasicFilterExample,
     },
     {
       id: "2",
-      heading: "2. Progressive Enhancement with use:enhance",
+      heading: "2. Advanced Filter Panel with Multiple Select and Options",
+      content: AdvancedFilterExample,
+    },
+    {
+      id: "3",
+      heading: "3. Server Form Submission (Full Page Reload)",
+      content: ServerFormExample,
+    },
+    {
+      id: "4",
+      heading: "4. Progressive Enhancement with use:enhance",
       content: EnhancedFormExample,
     },
   ];
@@ -156,6 +292,47 @@
     {/each}
   </Accordion>
 </div>
+
+{#snippet BasicFilterExample()}
+  <div class="p-5 bg-white">
+    <h3 class="text-xl font-bold mb-4">Basic Filter Panel</h3>
+    <p class="mb-4">
+      This example demonstrates a simple filter panel with checkboxes and radio
+      buttons for category and rating filters.
+    </p>
+
+    <FilterPanel
+      sectionsData={basicFilterSections}
+      resultsCount={"26 results found"}
+      filterButtonText="Show filters"
+      applyButtonText="Apply filters"
+      ga4BaseEvent={{ event_name: "filter_items", type: "basic" }}
+    />
+  </div>
+
+  <CodeBlock code={basicExampleCode} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet AdvancedFilterExample()}
+  <div class="p-5 bg-white">
+    <h3 class="text-xl font-bold mb-4">Advanced Filter Panel</h3>
+    <p class="mb-4">
+      This example demonstrates a more complex filter panel with select
+      dropdowns, radio buttons, and checkboxes for location, price, and feature
+      filters.
+    </p>
+
+    <FilterPanel
+      sectionsData={advancedFilterSections}
+      resultsCount="56 results found"
+      filterButtonText="View filters"
+      applyButtonText="Update results"
+      ga4BaseEvent={{ event_name: "filter_listings", type: "advanced" }}
+    />
+  </div>
+
+  <CodeBlock code={advancedExampleCode} language="svelte"></CodeBlock>
+{/snippet}
 
 {#snippet ServerFormExample()}
   <div class="p-5 bg-white">
@@ -244,25 +421,7 @@
     {/if}
   </div>
 
-  <CodeBlock
-    code={`<!-- Server form example -->
-<form method="POST">
-  <FilterPanel
-    sectionsData={filterSections}
-    resultsCount={form?.filterData?.count !== undefined ? \`\\\${form.filterData.count} results found\` : "Select filters"}
-    filterButtonText="Filter metrics"
-    applyButtonText="Submit to server"
-    ga4BaseEvent={{ event_name: "filter_submit", type: "server" }}
-  />
-</form>
-
-<!-- Results displayed using \`form\` prop -->
-{#if form?.filterData?.results}\n  <!-- ... results table ... -->\n{/if}\n
-
-<!-- In +page.server.ts -->
-export const actions = {\n  default: async ({ request }) => {\n    const formData = await request.formData();\n    \n    // Extract form data\n    const metric = formData.get('metric');\n    const areas = formData.getAll('areas[]');\n    const year = formData.get('year');\n    \n    // Process filters on the server (e.g. database query)\n    // const serverResults = await db.query(...)\n    \n    // Return the form data and results\n    return {\n      filterData: { // IMPORTANT: Wrap results in a key\n        metric,\n        \'areas[]\': areas,\n        year,\n        results: serverResults,\n        count: serverResults.length\n      }\n    };\n  }\n};`}
-    language="svelte"
-  ></CodeBlock>
+  <CodeBlock code={serverFormExampleCode} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet EnhancedFormExample()}
@@ -282,14 +441,16 @@ export const actions = {\n  default: async ({ request }) => {\n    const formDat
       method="POST"
       use:enhance={({ formData, cancel }) => {
         // Get filter values
-        const selectedMetric = formData.get("metric") || null;
-        const selectedAreas = Array.from(formData.getAll("areas[]"));
-        const selectedYear = formData.get("year");
+        const selectedMetric = formData.get("metric")?.toString() || null;
+        const selectedAreas = Array.from(formData.getAll("areas[]")).map(
+          (value) => value.toString(),
+        );
+        const selectedYear = formData.get("year")?.toString() || "all";
 
         // Process client-side (prevents server submission)
         cancel();
 
-        // Filter data client-side using helper function
+        // Filter data
         const results = filterData(selectedMetric, selectedAreas, selectedYear);
 
         // Update client state
@@ -376,8 +537,5 @@ export const actions = {\n  default: async ({ request }) => {\n    const formDat
     </form>
   </div>
 
-  <CodeBlock
-    code={`<script>\n  import { enhance } from "$app/forms";\n  import { page } from "$app/state";\n  import FilterPanel from "$lib/components/ui/FilterPanel.svelte";\n  \n  // For tracking filtered results client-side\n  let clientResults = $state([]);\n  let resultsCount = $state("Ready to filter");\n  \n  // Filter helper function (client-side implementation)\n  function filterData(metric, areas, year) {\n    // Filter logic here using available page.data...\n    return results;\n  }\n</script>\n\n<form\n  method="POST"\n  use:enhance={({ formData, cancel }) => {\n    // Get filter values\n    const metric = formData.get("metric");\n    const areas = formData.getAll("areas[]"); \n    const year = formData.get("year");\n    \n    // Cancel server submission and process client-side\n    cancel();\n    \n    // Filter data\n    const results = filterData(metric, areas, year);\n    \n    // Update state variables\n    clientResults = results;\n    resultsCount = \`\\\${results.length} results found\`;\n    \n    // No server action needed\n    return;\n  }}\n>\n  <FilterPanel\n    sectionsData={filterSections}\n    resultsCount={resultsCount} // Use client-side count\n    filterButtonText="Filter metrics"\n    applyButtonText="Apply with enhancement"\n    ga4BaseEvent={{ event_name: "filter_data", type: "enhanced" }}\n  />\n  \n  <!-- Display clientResults -->\n  {#if clientResults.length > 0}\n     <!-- ... results table ... -->\n  {/if}\n</form>\n\n<!-- In +page.server.ts (handles non-JS fallback) -->\nexport const actions = {\n  default: async ({ request }) => {\n    const formData = await request.formData();\n    // Process server-side when JavaScript is disabled\n    // ...\n    return { filterData: { /* results */ } }; // Remember to wrap!\n  }\n};`}
-    language="svelte"
-  ></CodeBlock>
+  <CodeBlock code={enhancedFormExampleCode} language="svelte"></CodeBlock>
 {/snippet}

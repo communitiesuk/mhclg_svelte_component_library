@@ -500,6 +500,7 @@
                 <tr class="bg-gray-100">
                   <th class="px-4 py-2 border">Metric</th>
                   <th class="px-4 py-2 border">Area</th>
+                  <th class="px-4 py-2 border">Years</th>
                   <th class="px-4 py-2 border">Data Points</th>
                 </tr>
               </thead>

@@ -281,17 +281,17 @@ export const enhancedFormExampleCode = `
           <tr class="bg-gray-100">
             <th>Metric</th>
             <th>Area</th>
-            <th>Year</th>
-            <th>Value</th>
+            <th>Years</th>
+            <th>Data Points</th>
           </tr>
         </thead>
         <tbody>
           {#each clientResults as result}
             <tr>
               <td>{result.metric}</td>
-              <td>{result.area}</td>
-              <td>{result.year}</td>
-              <td>{result.value}</td>
+              <td>{result.areaName}</td>
+              <td>{result.data.map((d) => d.x).join(", ")}</td>
+              <td>{result.data.map((d) => d.y).join(", ")}</td>
             </tr>
           {/each}
         </tbody>

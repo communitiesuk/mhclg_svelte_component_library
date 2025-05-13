@@ -30,12 +30,8 @@
     markerStrokeWidth = 3,
     lineFunction,
     areaFunction,
-    curveFunction,
-    xFunction,
     lineEnding = null,
-    yFunction,
     dataId,
-    tier,
     // markersDataId,
     onClickLine,
     onMouseEnterLine,
@@ -68,16 +64,6 @@
     );
     return mappedItems;
   }
-
-  // let hoveredMarker = $state();
-
-  // function onMouseEnterMarker(i) {
-  //   hoveredMarker = i;
-  // }
-
-  // function onMouseLeaveMarker(i) {
-  //   hoveredMarker = null;
-  // }
 
   let handleClick = (e) => onClickLine(e, dataArray, dataId);
   let handleEnter = (e) => onMouseEnterLine(e, dataArray, dataId);

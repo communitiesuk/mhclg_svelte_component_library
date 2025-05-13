@@ -34,7 +34,7 @@
   onmouseleave={() => onMouseLeaveLabel(dataArray.areaCode)}
   role="button"
   tabindex="0"
-  onkeydown={(e) => e.key === "Enter" && onClick(dataArray.areaCode)}
+  onkeydown={(e) => e.key === "Enter" && onClickLabel(dataArray.areaCode)}
 >
   <path
     d="M 0, {oldY}  H 10  V {newY}  H 20"

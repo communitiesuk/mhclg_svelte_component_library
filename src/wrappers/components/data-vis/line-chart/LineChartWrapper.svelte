@@ -146,6 +146,8 @@
       (item) => item == null,
     ),
   );
+  let checkMarkerInteraction = $state();
+  $inspect(checkMarkerInteraction);
 
   /**
    * ! Step 3 - Add your props
@@ -340,6 +342,46 @@
           labelClicked === areaCode
             ? ((labelClicked = null), (labelHovered = null))
             : (labelClicked = areaCode);
+        },
+      },
+      {
+        name: "onMouseEnterMarker",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (event, dataArray, dataId) {
+              labelHovered = areaCode;
+            }`,
+        },
+        value: function (event, dataArray, dataId) {
+          checkMarkerInteraction = "enter";
+        },
+      },
+      {
+        name: "onMouseLeaveMarker",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (event, dataArray, dataId) {
+              if (labelClicked !== areaCode) {
+                labelHovered = null;
+              }
+            }`,
+        },
+        value: function (event, dataArray, dataId) {
+          checkMarkerInteraction = "left";
+        },
+      },
+      {
+        name: "onClickMarker",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (event, dataArray, dataId) {
+              labelClicked === areaCode
+                ? ((labelClicked = null), (labelHovered = null))
+                : (labelClicked = areaCode);
+            }`,
+        },
+        value: function (event, dataArray, dataId) {
+          checkMarkerInteraction = "clicked";
         },
       },
       {
@@ -591,37 +633,37 @@
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
-      interactive: true,
+      interactive: false,
       markers: false,
       showLabel: false,
-      lineEnding: null,
     },
     primary: {
       halo: true,
       pathStrokeWidth: 5,
       pathStrokeColor: colors.darkgrey,
-      interactive: true,
+      interactive: false,
       markers: false,
       showLabel: !lineClicked && !lineHovered && !labelClicked,
-      lineEnding: "arrow",
+      lineEnding: null,
+      markers: true,
     },
     clicked: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 7,
       halo: true,
-      interactive: true,
+      interactive: false,
       markers: false,
       showLabel: true,
-      lineEnding: "arrow",
+      lineEnding: null,
     },
     hover: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 6,
       halo: true,
-      interactive: true,
+      interactive: false,
       markers: false,
       showLabel: true,
-      lineEnding: "arrow",
+      lineEnding: null,
     },
   });
 

@@ -27,6 +27,9 @@
     onMouseEnterLabel,
     onMouseLeaveLabel,
     onClickLabel,
+    onMouseEnterMarker,
+    onMouseLeaveMarker,
+    onClickMarker,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
@@ -67,9 +70,14 @@
           {tier}
           {chartBackgroundColor}
           {lineFunction}
+          {xFunction}
+          {yFunction}
           {onMouseEnterLine}
           {onMouseLeaveLine}
           {onClickLine}
+          {onMouseEnterMarker}
+          {onMouseLeaveMarker}
+          {onClickMarker}
           bind:lineClicked
           bind:lineHovered
         />

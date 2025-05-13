@@ -26,6 +26,9 @@
     onClickLabel,
     onMouseEnterLabel,
     onMouseLeaveLabel,
+    onClickMarker,
+    onMouseEnterMarker,
+    onMouseLeaveMarker,
     svgHeight = 500,
     paddingTop = 50,
     paddingBottom = 50,
@@ -153,6 +156,9 @@
             {onClickLabel}
             {onMouseEnterLabel}
             {onMouseLeaveLabel}
+            {onClickMarker}
+            {onMouseEnterMarker}
+            {onMouseLeaveMarker}
           ></Lines>
         </g>
         <g data-role="y-axis">

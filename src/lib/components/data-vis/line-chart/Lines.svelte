@@ -21,7 +21,6 @@
     globalTierRules,
     chartBackgroundColor = "#fafafa",
     nothingSelected = $bindable(),
-    getLine,
     onMouseEnterLine,
     onMouseLeaveLine,
     onClickLine,

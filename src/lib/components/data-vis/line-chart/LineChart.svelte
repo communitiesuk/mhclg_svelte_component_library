@@ -147,7 +147,6 @@
             {globalTierRules}
             {chartBackgroundColor}
             bind:nothingSelected
-            {getLine}
             {onMouseEnterLine}
             {onMouseLeaveLine}
             {onClickLine}

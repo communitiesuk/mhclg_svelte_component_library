@@ -445,7 +445,7 @@ export const actions = {
     const formData = await request.formData();
     // Process server-side when JavaScript is disabled
     // ... (this should mirror the logic in the client-side filterData and server-side data loading)
-    return { filterData: { // results } }; // Remember to wrap!
+    return { filterData: { // results } };
   }
 };
 */
@@ -520,7 +520,7 @@ export const serverFormWithBasicEnhanceCode = `
 </script>
 
 <!-- Server form example with basic use:enhance -->
-<form method="POST" use:enhance> {/* use:enhance added here */}
+<form method="POST" use:enhance>
   <FilterPanel
     sectionsData={filterSections}
     resultsCount={form?.filterData?.count !== undefined ? \`\${form.filterData.count} results found\` : "Select filters"}

@@ -24,7 +24,7 @@
   }
 
   interface RadioSection extends BaseSection {
-    type: "radios";
+    type: string;
     name: string;
     legend: string;
     options: FilterOption[];
@@ -32,7 +32,7 @@
   }
 
   interface DateSection extends BaseSection {
-    type: "date";
+    type: string;
     fromLegend: string;
     fromNamePrefix: string; // e.g., "public_timestamp[from]"
     fromHint?: string;
@@ -57,12 +57,12 @@
     disabled?: boolean;
   }
   interface SelectSection extends BaseSection {
-    type: "select";
+    type: string;
     selects: SelectField[];
   }
 
   interface CheckboxSection extends BaseSection {
-    type: "checkboxes";
+    type: string;
     name: string; // e.g., "content_purpose_supergroup[]"
     legend: string;
     options: FilterOption[];

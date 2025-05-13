@@ -576,10 +576,10 @@
   let globalTierRules = $derived({
     otherTier: {},
     secondary: {
-      opacity: getValue("nothingSelected") ? 1 : 0.5,
+      opacity: nothingSelected ? 1 : 0.5,
     },
     primary: {
-      opacity: getValue("nothingSelected") ? 1 : 0.4,
+      opacity: nothingSelected ? 1 : 0.4,
     },
     hover: { opacity: 1 },
     clicked: { opacity: 1 },

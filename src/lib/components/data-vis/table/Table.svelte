@@ -95,7 +95,7 @@
     <div class="legend">
       <div>Colour key:</div>
       {#each colorKey as key}
-        <div class="good" style="background-color: {normToColor(key[1])}">
+        <div class="color-keys" style="background-color: {normToColor(key[1])}">
           {key[0]}
         </div>
       {/each}
@@ -120,7 +120,7 @@
               <div class="header">
                 <div class="header-top">
                   <div class="metric">{metaData[metric].label}</div>
-                  <!-- <div class="sorting-button">
+                  <div class="sorting-button">
                     <button
                       onclick={() => {
                         updateSortState(metric, "ascending");
@@ -134,11 +134,10 @@
                       }}>▼</button
                     >
                   </div>
-                </div> -->
-                  <!-- <div class="metric-explainer">
+                </div>
+                <!-- <div class="metric-explainer">
                   {metaData[metric].explainer}
                 </div> -->
-                </div>
               </div></th
             >
           {/each}
@@ -209,6 +208,8 @@
     justify-content: center;
     gap: 20px;
     margin: 10px;
+  }
+  .color-keys {
     border-radius: 10%;
     padding: 6px;
   }

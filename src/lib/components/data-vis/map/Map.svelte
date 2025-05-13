@@ -25,8 +25,10 @@
     quantileBreaks,
   } from "./mapUtils.js";
   import NonStandardControls from "./NonStandardControls.svelte";
+  import { replaceState } from "$app/navigation";
 
   import { joinData } from "./dataJoin";
+  import { page } from "$app/state";
 
   let {
     data,
@@ -57,6 +59,10 @@
     hoverOpacity = 0.8,
     center = [-2.5, 53],
     zoom = 5,
+    hash = false,
+    updateHash = (u) => {
+      replaceState(u, page.state);
+    },
     mapHeight = 200,
   } = $props();
 
@@ -188,6 +194,9 @@
       ]);
     }
   }
+  //Even if hash is false, if the page is loaded with a location hash use that as the initial settings, rather than than the values passed to the component
+  const initialLocationHash = page.url.hash.replace("#", "").split("/");
+  const useLocationHash = initialLocationHash.length >= 3 ? true : false;
 </script>
 
 <div style="height: {mapHeight}px;">
@@ -196,8 +205,12 @@
     bind:loaded
     {style}
     {standardControls}
-    {center}
-    {zoom}
+    center={useLocationHash
+      ? [initialLocationHash[2], initialLocationHash[1]]
+      : center}
+    zoom={useLocationHash ? initialLocationHash[0] : zoom}
+    {hash}
+    {updateHash}
     class="map"
   >
     {#if !standardControls}

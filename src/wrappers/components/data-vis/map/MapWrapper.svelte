@@ -489,6 +489,14 @@
         value: 5,
         description: "The initial zoom level",
       },
+      {
+        name: "hash",
+        isProp: true,
+        description:
+          "Set to true to track the map viewport in the URL hash. If the URL hash is set, that overrides initial viewport settings.",
+        category: "View",
+        value: false,
+      },
     ]),
   );
 

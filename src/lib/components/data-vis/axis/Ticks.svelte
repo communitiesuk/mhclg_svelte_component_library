@@ -21,13 +21,13 @@
 
   $inspect(ticksArray);
 
-  function generateTicks(data, numTicks, minTick, maxTick) {
+  function generateTicks(data, numTicks, minTick, maxTick, generateTicksNum) {
     let minVal =
-      minTick !== null
+      generateTicksNum !== true
         ? new Decimal(minTick)
         : Decimal.min(...data.map((val) => new Decimal(val)));
     let maxVal =
-      maxTick !== null
+      generateTicksNum !== true
         ? new Decimal(maxTick)
         : Decimal.max(...data.map((val) => new Decimal(val)));
     let rangeVal = maxVal.minus(minVal);
@@ -64,8 +64,17 @@
 
   numberOfTicks = tickCount(chartWidth);
 
-  ticksArray = generateTicks(values, numberOfTicks, minTick, maxTick);
+  ticksArray = generateTicks(
+    values,
+    numberOfTicks,
+    minTick,
+    maxTick,
+    generateTicksNum,
+  );
   let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
+
+  // Calculate font size based on the number of ticks
+  let fontSize = Math.max(12, 20 - ticksArray.length);
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
@@ -96,7 +105,7 @@
           : orientation.position === 'top'
             ? -10
             : 23})"
-        font-size="19"
+        font-size={fontSize}
         text-anchor={orientation.axis === "x"
           ? "middle"
           : orientation.position === "left"

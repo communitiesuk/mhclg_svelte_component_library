@@ -484,24 +484,28 @@
         name: "getLine",
         category: "customisingLines",
         functionElements: {
-          functionAsString: `function getLine(key, el, param) {
-    if (key === "primary") {
-      return primaryLines.includes(el.areaCode);
-    }
-    if (
-      key === "secondary" &&
-      showAllData &&
-      !primaryLines.includes(el.areaCode)
-    ) {
-      return true;
-    }
-    if (key === "hover") {
-      return lineHovered == el.areaCode;
-    }
-    if (key === "clicked") {
-      return lineClicked == el.areaCode;
-    }
-  }`,
+          functionAsString: `function (key, el, param) {
+          let primaryLines = [
+            "E07000224",
+            "E07000225",
+            "E07000226",
+            "E07000228",
+            englandMedian,
+            similarAreas,
+          ];
+          if (key === "primary") {
+            return primaryLines.includes(el.areaCode);
+          }
+          if (key === "secondary" && !primaryLines.includes(el.areaCode)) {
+            return true;
+          }
+          if (key === "hover") {
+            return [lineHovered, labelHovered].includes(el.areaCode);
+          }
+          if (key === "clicked") {
+            return [lineClicked, labelClicked].includes(el.areaCode);
+          }
+        },`,
         },
         value: function (key, el, param) {
           let primaryLines = [
@@ -590,6 +594,7 @@
       interactive: true,
       markers: false,
       showLabel: false,
+      lineEnding: null,
     },
     primary: {
       halo: true,
@@ -598,6 +603,7 @@
       interactive: true,
       markers: false,
       showLabel: !lineClicked && !lineHovered && !labelClicked,
+      lineEnding: "arrow",
     },
     clicked: {
       pathStrokeColor: colors.ochre,
@@ -606,6 +612,7 @@
       interactive: true,
       markers: false,
       showLabel: true,
+      lineEnding: "arrow",
     },
     hover: {
       pathStrokeColor: colors.ochre,
@@ -614,6 +621,7 @@
       interactive: true,
       markers: false,
       showLabel: true,
+      lineEnding: "arrow",
     },
   });
 

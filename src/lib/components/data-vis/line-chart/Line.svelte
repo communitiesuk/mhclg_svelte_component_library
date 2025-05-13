@@ -30,7 +30,7 @@
     markerStrokeWidth = 3,
     lineFunction,
     areaFunction,
-    lineEnding = null,
+    lineEnding,
     dataId,
     // markersDataId,
     onClickLine,
@@ -75,24 +75,24 @@
 <defs>
   <marker
     id={`arrow-${pathStrokeColor}`}
-    markerWidth="6"
-    markerHeight="4"
-    refX="4"
-    refY="2"
+    markerWidth="4"
+    markerHeight="3"
+    refX="2.7"
+    refY="1.5"
     orient="auto-start-reverse"
   >
-    <polygon points="0 0, 6 2, 0 4" style="fill: {pathStrokeColor}"></polygon>
+    <polygon points="0 0, 4 1.5, 0 3" style="fill: {pathStrokeColor}"></polygon>
   </marker>
 
   <marker
     id={`circle-${pathStrokeColor}`}
     markerWidth="14"
     markerHeight="14"
-    refX="7"
-    refY="7"
+    refX="5"
+    refY="5"
     orient="auto"
   >
-    <circle cx="7" cy="7" r="1.5" style="fill: {pathStrokeColor}"></circle>
+    <circle cx="5" cy="5" r="1.5" style="fill: {pathStrokeColor}"></circle>
   </marker>
 </defs>
 
@@ -103,7 +103,7 @@
   onmouseleave={handleLeave}
   role="button"
   tabindex="0"
-  onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}
+  onkeydown={(e) => e.key === "Enter" && onClickLine(e, dataArray)}
   {opacity}
 >
   {#if includeArea}
@@ -133,6 +133,7 @@
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
     pointer-events="none"
+    marker-start={`url(#${lineEnding}-${pathStrokeColor})`}
   ></path>
   <!-- {#if includeMarkers}
     {#each dataArray as marker, i}

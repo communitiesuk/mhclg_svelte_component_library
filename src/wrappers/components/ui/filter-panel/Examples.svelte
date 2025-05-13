@@ -270,12 +270,14 @@
     },
     {
       id: "4",
-      heading: "4 Server Submission with Basic use:enhance for progressive enhancement",
+      heading:
+        "4 Server Submission with Basic use:enhance for progressive enhancement",
       content: ServerFormBasicEnhanceExample,
     },
     {
       id: "5",
-      heading: "5. Progressive Enhancement with use:enhance to cancel form submission and process client-side, server-side submission as fallback",
+      heading:
+        "5. Progressive Enhancement with use:enhance to cancel form submission and process client-side, server-side submission as fallback",
       content: EnhancedFormExample,
     },
   ];

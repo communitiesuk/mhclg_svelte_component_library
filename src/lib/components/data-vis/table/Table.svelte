@@ -89,31 +89,88 @@
 {/snippet}
 
 <div class="p-4">
-  <table class="govuk-table">
-    <caption class="govuk-table__caption govuk-table__caption--m"
-      >Dates and amounts</caption
-    >
-    <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-        <th scope="col" class="govuk-table__header">Date</th>
-        <th scope="col" class="govuk-table__header">Amount</th>
-      </tr>
-    </thead>
-    <tbody class="govuk-table__body">
-      <tr class="govuk-table__row">
-        <th scope="row" class="govuk-table__header">First 6 weeks</th>
-        <td class="govuk-table__cell">£109.80 per week</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <th scope="row" class="govuk-table__header">Next 33 weeks</th>
-        <td class="govuk-table__cell">£109.80 per week</td>
-      </tr>
-      <tr class="govuk-table__row">
-        <th scope="row" class="govuk-table__header">Total estimated pay</th>
-        <td class="govuk-table__cell">£4,282.20</td>
-      </tr>
-    </tbody>
-  </table>
+  <div
+    class="govuk-accordion"
+    data-module="govuk-accordion"
+    id="accordion-default"
+  >
+    <div class="govuk-accordion__section">
+      <div class="govuk-accordion__section-header">
+        <h2 class="govuk-accordion__section-heading">
+          <span
+            class="govuk-accordion__section-button"
+            id="accordion-default-heading-1"
+          >
+            Writing well for the web
+          </span>
+        </h2>
+      </div>
+      <div
+        id="accordion-default-content-1"
+        class="govuk-accordion__section-content"
+      >
+        <p class="govuk-body">
+          This is the content for Writing well for the web.
+        </p>
+      </div>
+    </div>
+    <div class="govuk-accordion__section">
+      <div class="govuk-accordion__section-header">
+        <h2 class="govuk-accordion__section-heading">
+          <span
+            class="govuk-accordion__section-button"
+            id="accordion-default-heading-2"
+          >
+            Writing well for specialists
+          </span>
+        </h2>
+      </div>
+      <div
+        id="accordion-default-content-2"
+        class="govuk-accordion__section-content"
+      >
+        <p class="govuk-body">
+          This is the content for Writing well for specialists.
+        </p>
+      </div>
+    </div>
+    <div class="govuk-accordion__section">
+      <div class="govuk-accordion__section-header">
+        <h2 class="govuk-accordion__section-heading">
+          <span
+            class="govuk-accordion__section-button"
+            id="accordion-default-heading-3"
+          >
+            Know your audience
+          </span>
+        </h2>
+      </div>
+      <div
+        id="accordion-default-content-3"
+        class="govuk-accordion__section-content"
+      >
+        <p class="govuk-body">This is the content for Know your audience.</p>
+      </div>
+    </div>
+    <div class="govuk-accordion__section">
+      <div class="govuk-accordion__section-header">
+        <h2 class="govuk-accordion__section-heading">
+          <span
+            class="govuk-accordion__section-button"
+            id="accordion-default-heading-4"
+          >
+            How people read
+          </span>
+        </h2>
+      </div>
+      <div
+        id="accordion-default-content-4"
+        class="govuk-accordion__section-content"
+      >
+        <p class="govuk-body">This is the content for How people read.</p>
+      </div>
+    </div>
+  </div>
 
   <br />
   <h4>{componentNameProp} component</h4>
@@ -182,19 +239,22 @@
                     class="govuk-table__cell govuk-table__cell--numeric"
                     style="background-color: {normToColor(
                       row[metric + '__normalised'],
-                    )}">{row[metric]}</td
+                    )}"
+                    data-sort-value="42">{row[metric]}</td
                   >
                 {:else}
                   <td
                     class="govuk-table__cell govuk-table__cell--numeric"
                     style="background-color: {normToColorReverse(
                       row[metric + '__normalised'],
-                    )}">{row[metric]}</td
+                    )}"
+                    data-sort-value="42">{row[metric]}</td
                   >
                 {/if}
               {:else}
-                <td class="govuk-table__cell govuk-table__cell--numeric"
-                  >{row[metric]}</td
+                <td
+                  class="govuk-table__cell govuk-table__cell--numeric"
+                  data-sort-value="42">{row[metric]}</td
                 >
               {/if}
             {/each}

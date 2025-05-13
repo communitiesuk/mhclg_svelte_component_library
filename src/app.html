@@ -24,6 +24,11 @@
           ? " govuk-frontend-supported"
           : "");
     </script>
+    <script src="%sveltekit.assets%/js/moj-frontend.min.js"></script>
+    <script>
+      window.MOJFrontend?.initAll?.();
+    </script>
+    
     <div>%sveltekit.body%</div>
   </body>
 </html>

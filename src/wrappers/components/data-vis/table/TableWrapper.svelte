@@ -192,7 +192,7 @@
         description: {
           markdown: true,
           arr: [
-            `Turn the colour scale on if you want to more easily the magnitude of the value relative to highest and lowest values of that metric.`,
+            `Turn the colour scale on if you want to more easily gauge the magnitude of the value relative to highest and lowest values of that metric.`,
           ],
         },
       },

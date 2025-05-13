@@ -71,7 +71,7 @@
     {
       label: "Context",
       arr: contextArray,
-      visibleOnHomepage: true,
+      visibleOnHomepage: false,
       markdown: true,
     },
   ];

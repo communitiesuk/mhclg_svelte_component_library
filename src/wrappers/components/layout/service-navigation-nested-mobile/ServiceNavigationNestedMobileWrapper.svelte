@@ -30,7 +30,7 @@
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
-        visibleOnHompepage: false,
+        visibleOnHompepage: true,
       },
       {
         obj: { Reviewed: false, Tested: false },
@@ -47,18 +47,13 @@
    *
    */
   let descriptionArray = [
-    "A collapsible filter panel component that allows users to refine search results or content listings. <a href='https://github.com/alphagov/finder-frontend/blob/main/spec/javascripts/components/filter-panel-spec.js' target='_blank' rel='noopener noreferrer'>Based on the GOV.UK Finder Frontend component</a>, it supports various filter types including radio buttons, date inputs, dropdowns, and checkboxes.",
-    "The component includes built-in GA4 event tracking, responsive design, and accessibility features like ARIA labels and keyboard navigation.",
-    "An example of the original component in use can be seen on the <a href='https://www.gov.uk/search/all?keywords=tax&order=relevance' target='_blank' rel='noopener noreferrer'>GOV.UK search page</a>.",
+    "Combines the HeaderNav and MobileNav components to create a responsive service navigation.",
+    "Manages the open/closed state of the mobile menu and synchronizes the current section based on the active route.",
   ];
 
   let contextArray = [
-    "Use this component on pages where users need to filter through large sets of content or search results.",
-    "Common use cases include:",
-    "- Document or publication finders",
-    "- Search results refinement",
-    "- Content listing pages with multiple filter options",
-    "- Any interface where users need to narrow down a large dataset using multiple criteria",
+    "Use this component as the primary navigation structure within the main layout (`+layout.svelte`) of an application requiring both desktop top navigation and a nested mobile flyout menu.",
+    "It replaces the individual logic previously needed in the layout to manage these two navigation components.",
   ];
 
   let detailsArray = [
@@ -100,10 +95,10 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import FilterPanel from "$lib/components/ui/FilterPanel.svelte";
-  import Examples from "./filter-panel/Examples.svelte";
+  import ServiceNavigationNestedMobile from "$lib/components/layout/service-navigation-nested-mobile/ServiceNavigationNestedMobile.svelte";
+  import Examples from "./service-navigation-nested-mobile/Examples.svelte";
 
-  let { data, form } = $props();
+  let { data } = $props();
 
   /**
    * DONOTTOUCH *
@@ -166,133 +161,78 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "resultsCount",
-        category: "Display props",
-        value: "125 results",
-        description: {
-          markdown: true,
-          arr: [
-            "The total number of results to display in the header. Usually updated when filters change.",
-          ],
-        },
+        name: "serviceName",
+        category: "Content",
+        value: "My Application",
+        description: "The name of the service displayed in the header.",
+        rows: 1,
       },
       {
-        name: "sectionsData",
-        category: "Content props",
+        name: "homeHref",
+        category: "Content",
+        value: "/",
+        description: "The link for the service name (usually the homepage).",
+        rows: 1,
+      },
+      {
+        name: "navigationItems",
+        category: "Content",
+        value: [
+          { text: "Home", href: "/", current: true },
+          { text: "Components", href: "/components", current: false },
+          { text: "Patterns", href: "/patterns", current: false },
+        ],
+        description: "Array of objects for the main desktop navigation links.",
+        rows: 5,
+      },
+      {
+        name: "mobileNavSections",
+        category: "Content",
         value: [
           {
-            id: "document-type",
-            type: "radios",
-            title: "Document type",
-            ga4Section: "document_type",
-            ga4IndexSection: 1,
-            ga4IndexSectionCount: 4,
-            name: "document_type",
-            legend: "Select document type",
-            options: [
-              { value: "all", label: "All document types" },
-              { value: "policy", label: "Policy papers" },
-              { value: "guidance", label: "Guidance" },
-              { value: "news", label: "News and communications" },
-            ],
-            selectedValue: "all",
+            title: "Home",
+            href: "/",
+            current: true,
+            items: [{ text: "Overview", href: "/" }],
           },
           {
-            id: "date-range",
-            type: "date",
-            title: "Date published",
-            ga4Section: "date_published",
-            ga4IndexSection: 2,
-            ga4IndexSectionCount: 4,
-            fromLegend: "Published after",
-            fromNamePrefix: "published_at[from]",
-            fromHint: "For example, 2020 or 21/11/2020",
-            toLegend: "Published before",
-            toNamePrefix: "published_at[to]",
-            toHint: "For example, 2023 or 21/11/2023",
-            legendSize: { undefined },
-          },
-          {
-            id: "topic",
-            type: "select",
-            title: "Topic",
-            ga4Section: "topic",
-            ga4IndexSection: 3,
-            ga4IndexSectionCount: 4,
-            selects: [
+            title: "Components",
+            href: "/components",
+            current: false,
+            items: [
               {
-                id: "level-one",
-                name: "topics[]",
-                label: "All topics",
-                options: [
-                  { value: "", label: "Please select", disabled: true },
-                  { value: "business", label: "Business and industry" },
-                  { value: "health", label: "Health and social care" },
-                  { value: "education", label: "Education" },
+                title: "Forms",
+                items: [
+                  { text: "Button", href: "/components/ui/button" },
+                  { text: "Checkbox", href: "/components/ui/checkbox" },
                 ],
-                fullWidth: true,
+              },
+              {
+                title: "Layout",
+                items: [
+                  {
+                    text: "Internal Header",
+                    href: "/components/layout/internal-header",
+                  },
+                ],
               },
             ],
           },
           {
-            id: "organisations",
-            type: "checkboxes",
-            title: "Organisations",
-            ga4Section: "organisations",
-            ga4IndexSection: 4,
-            ga4IndexSectionCount: 4,
-            name: "organisations[]",
-            legend: "Select organisations",
-            options: [
-              { value: "cabinet-office", label: "Cabinet Office" },
-              { value: "dfe", label: "Department for Education" },
-              { value: "dhsc", label: "Department of Health and Social Care" },
+            title: "Patterns",
+            href: "/patterns",
+            current: false,
+            items: [
+              {
+                title: "Common patterns",
+                items: [{ text: "Forms", href: "/patterns/forms" }],
+              },
             ],
           },
         ],
-        description: {
-          markdown: true,
-          arr: [
-            "An array of filter sections. Each section can be one of four types:",
-            "- `radios`: Single-select options with radio buttons",
-            "- `date`: Date range inputs with from/to fields",
-            "- `select`: Dropdown select menus",
-            "- `checkboxes`: Multi-select options with checkboxes",
-            "Each section type has its own required properties and optional configurations.",
-          ],
-        },
-      },
-      {
-        name: "filterButtonText",
-        category: "Display props",
-        value: "Filter and sort",
-        description: {
-          markdown: true,
-          arr: ["The text to display on the main filter toggle button."],
-        },
-      },
-      {
-        name: "applyButtonText",
-        category: "Display props",
-        value: "Apply filters",
-        description: {
-          markdown: true,
-          arr: [
-            "The text to display on the apply button at the bottom of the filter panel.",
-          ],
-        },
-      },
-      {
-        name: "ga4BaseEvent",
-        category: "Analytics props",
-        propType: "fixed",
-        value: { event_name: "select_content", type: "finder" },
-        description: {
-          markdown: true,
-          arr: [
-            "Base GA4 event data that will be merged with section-specific data for analytics tracking.",
-          ],
-        },
+        description:
+          "Array of section objects for the nested mobile navigation menu.",
+        rows: 15,
       },
     ]),
   );
@@ -356,7 +296,7 @@
 
   /**
    * DONOTTOUCH *
-   * && 		parametersVisibleArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
+   * && 		parametersValuesArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
    */
   let parametersVisibleArray = $derived(
     trackVisibleParameters(parametersSourceArray, statedParametersValuesArray),
@@ -435,7 +375,8 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <FilterPanel {...parametersObject}></FilterPanel>
+    <ServiceNavigationNestedMobile {...parametersObject}
+    ></ServiceNavigationNestedMobile>
   </div>
 {/snippet}
 
@@ -482,5 +423,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section" class="px-5">
-  <Examples {form}></Examples>
+  <Examples></Examples>
 </div>

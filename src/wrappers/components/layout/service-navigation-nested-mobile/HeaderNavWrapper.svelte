@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "In progress",
+    progress: "Baseline completed",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -47,18 +47,14 @@
    *
    */
   let descriptionArray = [
-    "A collapsible filter panel component that allows users to refine search results or content listings. <a href='https://github.com/alphagov/finder-frontend/blob/main/spec/javascripts/components/filter-panel-spec.js' target='_blank' rel='noopener noreferrer'>Based on the GOV.UK Finder Frontend component</a>, it supports various filter types including radio buttons, date inputs, dropdowns, and checkboxes.",
-    "The component includes built-in GA4 event tracking, responsive design, and accessibility features like ARIA labels and keyboard navigation.",
-    "An example of the original component in use can be seen on the <a href='https://www.gov.uk/search/all?keywords=tax&order=relevance' target='_blank' rel='noopener noreferrer'>GOV.UK search page</a>.",
+    "The <code>HeaderNav</code> component displays the main service navigation header.",
+    "It includes the service name, a set of primary navigation links, and a toggle button for mobile navigation.",
+    "This component is essentially the same as the <code>Service Navigation</code> component, but allows you too plugin your own mobile nav link flyout panel and monitor the current section. Both of these features are useful when used in conjunction with the MobileNav and SideNav components to synchronise the expanded state and use more advanced navigation patterns / layouts.",
   ];
 
   let contextArray = [
-    "Use this component on pages where users need to filter through large sets of content or search results.",
-    "Common use cases include:",
-    "- Document or publication finders",
-    "- Search results refinement",
-    "- Content listing pages with multiple filter options",
-    "- Any interface where users need to narrow down a large dataset using multiple criteria",
+    "This component is typically used at the top of every page within a service to provide consistent branding and primary navigation.",
+    "It adapts responsively for different screen sizes, with the navigation links collapsing into a mobile menu on smaller screens.",
   ];
 
   let detailsArray = [
@@ -100,10 +96,10 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import FilterPanel from "$lib/components/ui/FilterPanel.svelte";
-  import Examples from "./filter-panel/Examples.svelte";
+  import HeaderNav from "$lib/components/layout/service-navigation-nested-mobile/HeaderNav.svelte";
+  import Examples from "./header-nav/Examples.svelte";
 
-  let { data, form } = $props();
+  let { data } = $props();
 
   /**
    * DONOTTOUCH *
@@ -124,6 +120,8 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
+  let mobileNavIsOpen = $state(false);
+  let currentSection = $state("Home");
 
   /**
    * ! Step 3 - Add your props
@@ -166,131 +164,89 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "resultsCount",
-        category: "Display props",
-        value: "125 results",
+        name: "serviceName",
+        category: "Content & Appearance",
+        value: "Svelte Component Library",
         description: {
           markdown: true,
           arr: [
-            "The total number of results to display in the header. Usually updated when filters change.",
+            "The name of the service or application, displayed in the header.",
           ],
         },
       },
       {
-        name: "sectionsData",
-        category: "Content props",
+        name: "navigationItems",
+        category: "Content & Appearance",
         value: [
-          {
-            id: "document-type",
-            type: "radios",
-            title: "Document type",
-            ga4Section: "document_type",
-            ga4IndexSection: 1,
-            ga4IndexSectionCount: 4,
-            name: "document_type",
-            legend: "Select document type",
-            options: [
-              { value: "all", label: "All document types" },
-              { value: "policy", label: "Policy papers" },
-              { value: "guidance", label: "Guidance" },
-              { value: "news", label: "News and communications" },
-            ],
-            selectedValue: "all",
-          },
-          {
-            id: "date-range",
-            type: "date",
-            title: "Date published",
-            ga4Section: "date_published",
-            ga4IndexSection: 2,
-            ga4IndexSectionCount: 4,
-            fromLegend: "Published after",
-            fromNamePrefix: "published_at[from]",
-            fromHint: "For example, 2020 or 21/11/2020",
-            toLegend: "Published before",
-            toNamePrefix: "published_at[to]",
-            toHint: "For example, 2023 or 21/11/2023",
-            legendSize: { undefined },
-          },
-          {
-            id: "topic",
-            type: "select",
-            title: "Topic",
-            ga4Section: "topic",
-            ga4IndexSection: 3,
-            ga4IndexSectionCount: 4,
-            selects: [
-              {
-                id: "level-one",
-                name: "topics[]",
-                label: "All topics",
-                options: [
-                  { value: "", label: "Please select", disabled: true },
-                  { value: "business", label: "Business and industry" },
-                  { value: "health", label: "Health and social care" },
-                  { value: "education", label: "Education" },
-                ],
-                fullWidth: true,
-              },
-            ],
-          },
-          {
-            id: "organisations",
-            type: "checkboxes",
-            title: "Organisations",
-            ga4Section: "organisations",
-            ga4IndexSection: 4,
-            ga4IndexSectionCount: 4,
-            name: "organisations[]",
-            legend: "Select organisations",
-            options: [
-              { value: "cabinet-office", label: "Cabinet Office" },
-              { value: "dfe", label: "Department for Education" },
-              { value: "dhsc", label: "Department of Health and Social Care" },
-            ],
-          },
+          { text: "Home", href: "/", current: true },
+          { text: "Components", href: "/components", current: false },
+          { text: "Patterns", href: "/patterns", current: false },
+          { text: "Community", href: "/community", current: false },
         ],
         description: {
           markdown: true,
           arr: [
-            "An array of filter sections. Each section can be one of four types:",
-            "- `radios`: Single-select options with radio buttons",
-            "- `date`: Date range inputs with from/to fields",
-            "- `select`: Dropdown select menus",
-            "- `checkboxes`: Multi-select options with checkboxes",
-            "Each section type has its own required properties and optional configurations.",
+            "An array of navigation item objects to display.",
+            "Each object should have <code>text</code> (string), <code>href</code> (string), and <code>current</code> (boolean) properties.",
           ],
         },
       },
       {
-        name: "filterButtonText",
-        category: "Display props",
-        value: "Filter and sort",
-        description: {
-          markdown: true,
-          arr: ["The text to display on the main filter toggle button."],
-        },
-      },
-      {
-        name: "applyButtonText",
-        category: "Display props",
-        value: "Apply filters",
+        name: "currentSection",
+        category: "Stateful & Bindable",
+        isBinded: true,
+        options: ["Home", "Components", "Patterns", "Community"],
+        value: "Home",
         description: {
           markdown: true,
           arr: [
-            "The text to display on the apply button at the bottom of the filter panel.",
+            "A string indicating the currently active top-level section. This helps highlight the active link.",
+            "Should match one of the <code>text</code> properties in the <code>navigationItems</code>.",
+            "This prop is bindable.",
           ],
         },
       },
       {
-        name: "ga4BaseEvent",
-        category: "Analytics props",
+        name: "mobileNavIsOpen",
+        category: "Stateful & Bindable",
+        isBinded: true,
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            "A boolean state that controls the visibility of the mobile navigation menu.",
+            "Set to <code>true</code> to show the mobile menu, <code>false</code> to hide it.",
+            "This prop is typically bound using <code>bind:mobileNavIsOpen</code>.",
+          ],
+        },
+      },
+      {
+        name: "onToggle",
+        category: "Event Handlers",
         propType: "fixed",
-        value: { event_name: "select_content", type: "finder" },
+        isRequired: true,
+        value: function () {
+          mobileNavIsOpen = !mobileNavIsOpen;
+          window.alert(
+            `The onToggle function has been triggered. Mobile nav is now ${mobileNavIsOpen ? "open" : "closed"}. Open the Stateful & Bindable and Event Handlers panels to see the updated mobileNavIsOpen and onToggle function values.`,
+          );
+          this.functionElements.counter += 1;
+        },
+        functionElements: {
+          counter: 0,
+          functionAsString: `function () {
+  // This function is called when the mobile menu toggle button is clicked.
+  // It should handle the logic to open or close the mobile navigation.
+  // For example, by updating a reactive state variable:
+  // mobileNavIsOpen = !mobileNavIsOpen;
+  alert("Mobile navigation toggled!");
+}`,
+        },
         description: {
           markdown: true,
           arr: [
-            "Base GA4 event data that will be merged with section-specific data for analytics tracking.",
+            "An event handler function that is called when the mobile navigation toggle button is clicked.",
+            "It should contain the logic to show or hide the mobile navigation menu.",
           ],
         },
       },
@@ -356,7 +312,7 @@
 
   /**
    * DONOTTOUCH *
-   * && 		parametersVisibleArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
+   * && 		parametersValuesArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
    */
   let parametersVisibleArray = $derived(
     trackVisibleParameters(parametersSourceArray, statedParametersValuesArray),
@@ -369,12 +325,23 @@
    * &&     $effect() is then use to update parametersParsingErrorsObject, which tracks when errors and fixes occur.
    */
 
-  let [parametersObject, parametersParsingErrorsArray] = $derived(
+  let [parametersObjectFromArrays, parametersParsingErrorsArray] = $derived(
     createParametersObject(
       parametersSourceArray,
       statedParametersValuesArray,
       derivedParametersValuesArray,
     ),
+  );
+
+  let parametersObject = $derived(
+    (() => {
+      const {
+        mobileNavIsOpen: _mno,
+        currentSection: _cs,
+        ...rest
+      } = parametersObjectFromArrays;
+      return rest;
+    })(),
   );
 
   let parametersParsingErrorsObject = $state({});
@@ -398,7 +365,7 @@
 
   let copyParametersToClipboardObject = $derived(
     Object.fromEntries(
-      Object.entries(parametersObject).map(([key, value]) => [
+      Object.entries(parametersObjectFromArrays).map(([key, value]) => [
         key,
         typeof value === "function"
           ? parametersSourceArray.find((el) => el.name === key)
@@ -410,7 +377,7 @@
 </script>
 
 <!--
-&&  WrapperNameAndStatus and WrapperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 
+&&  WrapperNameAndStatus and WrapperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component.
   -->
 
 {#snippet WrapperNameAndStatus(name, folder, subFolder, homepage)}
@@ -429,13 +396,20 @@
   ></BaseInformation>
 {/snippet}
 
-<!-- 
+<!--
   !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-8">
-    <FilterPanel {...parametersObject}></FilterPanel>
+  <p class="govuk-body">
+    To test the mobile menu, please reduce your screen width to below a typical
+    mobile breakpoint.
+  </p>
+  <div>
+    <HeaderNav {...parametersObject} bind:mobileNavIsOpen bind:currentSection />
+    {#if mobileNavIsOpen}
+      <div class="p-4 bg-gray-100">Mobile Menu Area (Simulated)</div>
+    {/if}
   </div>
 {/snippet}
 
@@ -451,7 +425,7 @@ DONOTTOUCH  *
   homepage={false}
 ></WrapperDetailsUpdate>
 
-<!-- 
+<!--
   DONOTTOUCH  *
   &&          Renders toast components based on tracking parsing errors and fixes.
  -->
@@ -482,5 +456,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section" class="px-5">
-  <Examples {form}></Examples>
+  <Examples></Examples>
 </div>

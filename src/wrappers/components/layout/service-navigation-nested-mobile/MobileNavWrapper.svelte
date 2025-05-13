@@ -47,18 +47,16 @@
    *
    */
   let descriptionArray = [
-    "A collapsible filter panel component that allows users to refine search results or content listings. <a href='https://github.com/alphagov/finder-frontend/blob/main/spec/javascripts/components/filter-panel-spec.js' target='_blank' rel='noopener noreferrer'>Based on the GOV.UK Finder Frontend component</a>, it supports various filter types including radio buttons, date inputs, dropdowns, and checkboxes.",
-    "The component includes built-in GA4 event tracking, responsive design, and accessibility features like ARIA labels and keyboard navigation.",
-    "An example of the original component in use can be seen on the <a href='https://www.gov.uk/search/all?keywords=tax&order=relevance' target='_blank' rel='noopener noreferrer'>GOV.UK search page</a>.",
+    "The <code>MobileNav</code> component provides a mobile-specific navigation panel.",
+    "It typically appears as a fly-out or full-screen menu, triggered by a toggle button in a primary header (like <code>HeaderNav</code>).",
+    "It displays a structured list of navigation sections and items, allowing users to navigate the application on smaller screens.",
+    "This component is often managed by the <code>ServiceNavigationNestedMobile</code> component, which coordinates its state and interactions with <code>HeaderNav</code>.",
   ];
 
   let contextArray = [
-    "Use this component on pages where users need to filter through large sets of content or search results.",
-    "Common use cases include:",
-    "- Document or publication finders",
-    "- Search results refinement",
-    "- Content listing pages with multiple filter options",
-    "- Any interface where users need to narrow down a large dataset using multiple criteria",
+    "This component is used in responsive web designs to offer a compact and accessible navigation solution for mobile users.",
+    "It works in conjunction with a main header component that handles its visibility (e.g., <code>HeaderNav</code>'s mobile menu toggle), often orchestrated by <code>ServiceNavigationNestedMobile</code>.",
+    "The structure of the navigation links (<code>sections</code> prop) can be tailored to match the application's information architecture and should usually match the nav items in <code>SideNav</code>.",
   ];
 
   let detailsArray = [
@@ -79,7 +77,35 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [];
+  let connectedComponentsArray = [
+    {
+      label: "Orchestrating Parent",
+      arr: [
+        {
+          name: "ServiceNavigationNestedMobile",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+      ],
+    },
+    {
+      label: "Sibling Component (Controls Visibility)",
+      arr: [
+        {
+          name: "HeaderNav",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+      ],
+    },
+    {
+      label: "Related Component (Part of Navigation Pattern)",
+      arr: [
+        {
+          name: "SideNav",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+      ],
+    },
+  ];
 </script>
 
 <script>
@@ -100,10 +126,10 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import FilterPanel from "$lib/components/ui/FilterPanel.svelte";
-  import Examples from "./filter-panel/Examples.svelte";
+  import MobileNav from "$lib/components/layout/service-navigation-nested-mobile/MobileNav.svelte";
+  import Examples from "./mobile-nav/Examples.svelte";
 
-  let { data, form } = $props();
+  let { data } = $props();
 
   /**
    * DONOTTOUCH *
@@ -116,7 +142,7 @@
    * DONOTTOUCH *
    * ? 		demoScreenWidth is a reactive variable which tracks which screen size the user has selected for demoing the component
    */
-  let demoScreenWidth = $state(defaultScreenWidthBreakpoints.md);
+  let demoScreenWidth = $state(defaultScreenWidthBreakpoints.sm);
 
   /**
    * ! Step 2 - Adding binded props
@@ -166,131 +192,155 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "resultsCount",
-        category: "Display props",
-        value: "125 results",
+        name: "isOpen",
+        category: "State & Behavior",
+        value: true,
         description: {
           markdown: true,
           arr: [
-            "The total number of results to display in the header. Usually updated when filters change.",
+            "Controls the visibility of the mobile navigation panel. Set to <code>true</code> to show, <code>false</code> to hide.",
+            "This is typically controlled by a parent component (e.g., a toggle button in <code>HeaderNav</code>).",
           ],
         },
       },
       {
-        name: "sectionsData",
-        category: "Content props",
+        name: "sections",
+        category: "Content & Structure",
+        rows: 20,
         value: [
           {
-            id: "document-type",
-            type: "radios",
-            title: "Document type",
-            ga4Section: "document_type",
-            ga4IndexSection: 1,
-            ga4IndexSectionCount: 4,
-            name: "document_type",
-            legend: "Select document type",
-            options: [
-              { value: "all", label: "All document types" },
-              { value: "policy", label: "Policy papers" },
-              { value: "guidance", label: "Guidance" },
-              { value: "news", label: "News and communications" },
-            ],
-            selectedValue: "all",
+            title: "Home",
+            href: "/#home-wrapper",
+            current: true,
+            items: [{ text: "Overview", href: "/#home-overview-wrapper" }],
           },
           {
-            id: "date-range",
-            type: "date",
-            title: "Date published",
-            ga4Section: "date_published",
-            ga4IndexSection: 2,
-            ga4IndexSectionCount: 4,
-            fromLegend: "Published after",
-            fromNamePrefix: "published_at[from]",
-            fromHint: "For example, 2020 or 21/11/2020",
-            toLegend: "Published before",
-            toNamePrefix: "published_at[to]",
-            toHint: "For example, 2023 or 21/11/2023",
-            legendSize: { undefined },
-          },
-          {
-            id: "topic",
-            type: "select",
-            title: "Topic",
-            ga4Section: "topic",
-            ga4IndexSection: 3,
-            ga4IndexSectionCount: 4,
-            selects: [
+            title: "Components",
+            href: "/#components-wrapper",
+            current: false,
+            items: [
               {
-                id: "level-one",
-                name: "topics[]",
-                label: "All topics",
-                options: [
-                  { value: "", label: "Please select", disabled: true },
-                  { value: "business", label: "Business and industry" },
-                  { value: "health", label: "Health and social care" },
-                  { value: "education", label: "Education" },
+                title: "Layout",
+                items: [
+                  {
+                    text: "HeaderNav",
+                    href: "/components/layout/service-navigation-nested-mobile/header-nav",
+                  },
+                  {
+                    text: "MobileNav",
+                    href: "/components/layout/service-navigation-nested-mobile/mobile-nav",
+                  },
+                  {
+                    text: "SideNav",
+                    href: "/components/layout/service-navigation-nested-mobile/side-nav",
+                  },
                 ],
-                fullWidth: true,
               },
+              { text: "Button", href: "/components/ui/button" },
             ],
           },
           {
-            id: "organisations",
-            type: "checkboxes",
-            title: "Organisations",
-            ga4Section: "organisations",
-            ga4IndexSection: 4,
-            ga4IndexSectionCount: 4,
-            name: "organisations[]",
-            legend: "Select organisations",
-            options: [
-              { value: "cabinet-office", label: "Cabinet Office" },
-              { value: "dfe", label: "Department for Education" },
-              { value: "dhsc", label: "Department of Health and Social Care" },
+            title: "Patterns",
+            href: "/#patterns-wrapper",
+            current: false,
+            items: [
+              { text: "Forms", href: "/patterns/forms" },
+              { text: "Tables", href: "/patterns/tables" },
+            ],
+          },
+          {
+            title: "Community",
+            href: "/#community-wrapper",
+            current: false,
+            items: [
+              { text: "Updates", href: "/community/updates" },
+              { text: "Contributing", href: "/community/contributing" },
             ],
           },
         ],
         description: {
           markdown: true,
           arr: [
-            "An array of filter sections. Each section can be one of four types:",
-            "- `radios`: Single-select options with radio buttons",
-            "- `date`: Date range inputs with from/to fields",
-            "- `select`: Dropdown select menus",
-            "- `checkboxes`: Multi-select options with checkboxes",
-            "Each section type has its own required properties and optional configurations.",
+            "An array of <code>NavSection</code> objects that define the structure and content of the mobile navigation.",
+            "Each section object has a <code>title</code>, <code>href</code>, optional <code>current</code> status, and an <code>items</code> array.",
+            "The <code>items</code> array can contain <code>SubNavItem</code> objects (with <code>text</code>, <code>href</code>, <code>current</code>) or nested group objects (with <code>title</code> and an <code>items</code> array of <code>SubNavItem</code>).",
+            "Use hashed hrefs (e.g. <code>/#some-id</code>) if you want to test navigation within this wrapper page without full page reloads.",
           ],
         },
       },
       {
-        name: "filterButtonText",
-        category: "Display props",
-        value: "Filter and sort",
-        description: {
-          markdown: true,
-          arr: ["The text to display on the main filter toggle button."],
-        },
-      },
-      {
-        name: "applyButtonText",
-        category: "Display props",
-        value: "Apply filters",
+        name: "currentSection",
+        category: "State & Behavior",
+        options: [
+          "Home",
+          "Components",
+          "Patterns",
+          "Community",
+          "Other Section",
+        ],
+        value: "Home",
         description: {
           markdown: true,
           arr: [
-            "The text to display on the apply button at the bottom of the filter panel.",
+            "A string indicating the currently active top-level section (e.g., 'Home', 'Components').",
+            "This helps highlight the relevant section in the mobile navigation and can be used by the component to determine which section is initially expanded.",
+            "Should match one of the <code>title</code> properties in the <code>sections</code> array for intended behavior.",
           ],
         },
       },
       {
-        name: "ga4BaseEvent",
-        category: "Analytics props",
+        name: "onNavigate",
+        category: "Event Handlers",
         propType: "fixed",
-        value: { event_name: "select_content", type: "finder" },
+        isRequired: true,
+        value: function (href, event) {
+          if (event && typeof event.preventDefault === "function") {
+            event.preventDefault();
+          }
+          if (this && this.functionElements) {
+            window.alert(
+              `MobileNav demo: Navigating to ${href}. Default navigation PREVENTED. In a real app, this would trigger page navigation and likely close the mobile menu.`,
+            );
+            this.functionElements.counter += 1;
+            if (this.functionElements.dataset) {
+              this.functionElements.dataset.lastHref = href;
+            }
+          } else {
+            window.alert(
+              `MobileNav demo: Navigating to ${href}. Default navigation PREVENTED. (Standard function call)`,
+            );
+          }
+        },
+        functionElements: {
+          counter: 0,
+          dataset: { lastHref: null },
+          functionAsString: `'''function (href, event) {
+  // event parameter is passed by MobileNav.svelte
+  if (event && typeof event.preventDefault === 'function') {
+    event.preventDefault(); // Prevent default browser navigation for demo purposes
+  }
+
+  // This function is called when a navigation link (SubNavItem)
+  // inside the mobile menu is clicked.
+  // It receives the 'href' of the clicked link as an argument.
+  // Example implementation:
+  // import { goto } from '$app/navigation';
+  // import { getContext } from 'svelte';
+  // const mobileMenuStore = getContext('mobileMenuStore'); // Or manage state via props/context
+  // mobileMenuStore.close(); // Assuming a method to close the menu
+  // goto(href);
+  alert("MobileNav: Navigating to " + href + ". Default navigation prevented.");
+}'''`,
+        },
         description: {
           markdown: true,
           arr: [
-            "Base GA4 event data that will be merged with section-specific data for analytics tracking.",
+            "An event handler function that is called when a navigable item within the mobile menu is clicked.",
+            "It receives the <code>href</code> (string) of the clicked item and the original <code>MouseEvent</code> as arguments.",
+            "Access to the <code>MouseEvent</code> allows for more advanced control, such as:",
+            "<ul><li>Checking for modifier keys (e.g., <code>event.ctrlKey</code>, <code>event.metaKey</code>) to alter behavior (like opening in a new tab).</li><li>Conditionally calling <code>event.preventDefault()</code> to stop the default link navigation based on specific logic.</li></ul>",
+            "The main purpose is to implement the desired navigation logic (e.g., using SvelteKit's <code>goto</code>) and potentially close the mobile menu.",
+            "For this demo, <code>event.preventDefault()</code> is called unconditionally to stop the browser from following the link directly and allow observation of the callback.",
           ],
         },
       },
@@ -356,7 +406,7 @@
 
   /**
    * DONOTTOUCH *
-   * && 		parametersVisibleArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
+   * && 		parametersValuesArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
    */
   let parametersVisibleArray = $derived(
     trackVisibleParameters(parametersSourceArray, statedParametersValuesArray),
@@ -430,12 +480,27 @@
 {/snippet}
 
 <!-- 
-  !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
-  CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
+  !   Step 5 - Create a context for the component
  -->
 {#snippet Component()}
-  <div class="p-8">
-    <FilterPanel {...parametersObject}></FilterPanel>
+  <p class="govuk-body p-4">
+    This demo attempts to keep the navigation panel visible even on wider
+    screens for easier inspection. In a real application,
+    <code>MobileNav</code> would typically only appear on mobile viewports due
+    to its internal styling, and its <code>isOpen</code> state would be
+    controlled by a component like <code>HeaderNav</code>.
+  </p>
+  <div
+    class="border border-neutral-300 min-h-[400px] bg-gray-50 demo-mobile-nav-container"
+  >
+    {#if parametersObject.isOpen}
+      <MobileNav {...parametersObject}></MobileNav>
+    {:else}
+      <p class="p-4 text-gray-500 italic">
+        MobileNav is currently closed (<code>isOpen</code> is false). Toggle it via
+        the prop in the "State & Behavior" panel to see it.
+      </p>
+    {/if}
   </div>
 {/snippet}
 
@@ -482,5 +547,13 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section" class="px-5">
-  <Examples {form}></Examples>
+  <Examples></Examples>
 </div>
+
+<style>
+  /* Force MobileNav to be visible in the demo on wider screens if isOpen is true */
+  .demo-mobile-nav-container
+    :global(nav.app-mobile-nav.app-mobile-nav--active) {
+    display: block !important;
+  }
+</style>

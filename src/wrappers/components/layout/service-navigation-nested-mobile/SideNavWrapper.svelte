@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "In progress",
+    progress: "Baseline completed",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -47,18 +47,17 @@
    *
    */
   let descriptionArray = [
-    "A collapsible filter panel component that allows users to refine search results or content listings. <a href='https://github.com/alphagov/finder-frontend/blob/main/spec/javascripts/components/filter-panel-spec.js' target='_blank' rel='noopener noreferrer'>Based on the GOV.UK Finder Frontend component</a>, it supports various filter types including radio buttons, date inputs, dropdowns, and checkboxes.",
-    "The component includes built-in GA4 event tracking, responsive design, and accessibility features like ARIA labels and keyboard navigation.",
-    "An example of the original component in use can be seen on the <a href='https://www.gov.uk/search/all?keywords=tax&order=relevance' target='_blank' rel='noopener noreferrer'>GOV.UK search page</a>.",
+    "The <code>SideNav</code> component displays a vertical navigation menu, typically used in a sidebar.",
+    "It's designed to show links relevant to the current main section of an application.",
+    "It can display a flat list of items or items grouped under titles.",
+    "Active items can be highlighted, and an active item can also display a nested list of sub-items, often used for in-page navigation (linking to sections with hash URLs like <code>#introduction</code>, <code>#details</code>, etc.).",
   ];
 
   let contextArray = [
-    "Use this component on pages where users need to filter through large sets of content or search results.",
-    "Common use cases include:",
-    "- Document or publication finders",
-    "- Search results refinement",
-    "- Content listing pages with multiple filter options",
-    "- Any interface where users need to narrow down a large dataset using multiple criteria",
+    "Typically used in a two-column or multi-column page layout where one column serves as a contextual navigation area next to the main content.",
+    "The content of the <code>SideNav</code> (its items and groups) often changes dynamically based on the top-level section selected in a primary navigation component (like <code>HeaderNav</code>).",
+    "It works well in conjunction with <code>HeaderNav</code> for main navigation and can share similar navigation structures with <code>MobileNav</code> for consistency across viewports.",
+    "The <code>currentItem</code> prop can be bound and updated based on scroll events or URL changes (e.g., from <code>$page.url.pathname</code> or <code>$page.url.hash</code> in SvelteKit).",
   ];
 
   let detailsArray = [
@@ -79,7 +78,25 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [];
+  let connectedComponentsArray = [
+    {
+      label: "Often Used With / Related To",
+      arr: [
+        {
+          name: "HeaderNav",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+        {
+          name: "MobileNav",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+        {
+          name: "ServiceNavigationNestedMobile",
+          folder: "layout/service-navigation-nested-mobile",
+        },
+      ],
+    },
+  ];
 </script>
 
 <script>
@@ -100,10 +117,10 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import FilterPanel from "$lib/components/ui/FilterPanel.svelte";
-  import Examples from "./filter-panel/Examples.svelte";
+  import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
+  import Examples from "./side-nav/Examples.svelte";
 
-  let { data, form } = $props();
+  let { data } = $props();
 
   /**
    * DONOTTOUCH *
@@ -124,173 +141,198 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
+  // Default to the href of the first sample item, or an empty string if no sample items exist.
+  let currentItem = $state(""); // Will be set in $effect based on hash or sampleItems
 
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
-   * && 		parametersSourceArray is where you define any props for the component. All props should be listed in the parametersSourceArray.
-   * &&     Initial values should be provided for all props which either (i) are binded, or (ii) can be modified using the demo UI.
-   * &&     Values should also be provided for functions and svelte snippets - which cannot be modified by the user to prevent security issues.
-   * &&     Some props may be derived from other props. These should still be listed in the parametersSourceArray, but their value should be left empty. Their value can then be defined further down the page.
+  * &&     parametersSourceArray is where you define any props for the 
+   component. All props should be listed in the parametersSourceArray.
+   * &&     Initial values should be provided for all props which either 
+   (i) are binded, or (ii) can be modified using the demo UI.
+   * &&     Values should also be provided for functions and svelte 
+   snippets - which cannot be modified by the user to prevent security 
+   issues.
+   * &&     Some props may be derived from other props. These should still 
+   be listed in the parametersSourceArray, but their value should be left 
+   empty. Their value can then be defined further down the page.
    * ?      For each prop, the following fields are available:
-   * ? 		  <name> (required, must be unique) -  Name of the parameter which is passed to the component. The name can also be referenced in the calculation of derived parameters which depend on this value.
-   * ?      <category> - (required) - Used for separating parameters into different groups.
+   * ?      <name> (required, must be unique) -  Name of the parameter 
+   which is passed to the component. The name can also be referenced in 
+   the calculation of derived parameters which depend on this value.
+   * ?      <category> - (required) - Used for separating parameters into 
+   different groups.
    *
-   * ?      <isBinded> - (optional, default = false) - Should be set to true, if the prop is utilising the bind:directive. Note that for bind to work, the prop must also be defined in step 1 using the $state() rune and passed to the component separately as bindable (e.g. bind:thisProp).
+   * ?      <isBinded> - (optional, default = false) - Should be set to 
+   true, if the prop is utilising the bind:directive. Note that for bind 
+   to work, the prop must also be defined in step 1 using the $state() 
+   rune and passed to the component separately as bindable (e.g. 
+   bind:thisProp).
    *
    *
-   * ?      <options> - (required for $state() props which can be modified using dropwdown or radio inputs). <options> should contain an array of strings. If <value> is null or absent, the initial value will be taken from the first entry in the options array.
-   * ?      <value> - (Should be null or absent for derived props. For all others props it's required, unless there is an options field). Used to set the initial value of the prop.
+   * ?      <options> - (required for $state() props which can be modified 
+   using dropwdown or radio inputs). <options> should contain an array of 
+   strings. If <value> is null or absent, the initial value will be taken 
+   from the first entry in the options array.
+   * ?      <value> - (Should be null or absent for derived props. For all 
+   others props it's required, unless there is an options field). Used to 
+   set the initial value of the prop.
    *
    * ?      <propType> - (optional) - Has two use cases:
    * ?      (i) set to 'fixed' to prevent users editing the value.
-   * ?      (i) set to 'radio' to have options selectable via the radio input (uses dropdown by default).
+   * ?      (i) set to 'radio' to have options selectable via the radio 
+   input (uses dropdown by default).
    *
-   * ?      <visible> - (optional, default = true). Hides prop in the UI if certain conditions are not met. Specify an object with a name - the parameter that you want to check against and a value - the value that the named parameters need to equal for this input to be visible.
-   * ?      The Line component provides an example of the <visible> field in action, showing and hiding props based on <includeMarkers>
-   * ?      If you want the form to be visible only if multiple conditions are met, you can provide an array of conditional objects instead.
+   * ?      <visible> - (optional, default = true). Hides prop in the UI 
+   if certain conditions are not met. Specify an object with a name - the 
+   parameter that you want to check against and a value - the value that 
+   the named parameters need to equal for this input to be visible.
+   * ?      The Line component provides an example of the <visible> field 
+   in action, showing and hiding props based on <includeMarkers>
+   * ?      If you want the form to be visible only if multiple conditions 
+   are met, you can provide an array of conditional objects instead.
    *
-   * ?      <rows> - (optional, default = 1, only use with $state() where typeof value === "string"). Sets the numbers of rows used by the textArea input.
+   * ?      <rows> - (optional, default = 1, only use with $state() where 
+   typeof value === "string"). Sets the numbers of rows used by the 
+   textArea input.
    *
-   * ?      <functionElements> - (optional, only used where typeof value === "function") - <functionElements> can have three optional properties:
-   * ?      (i) 'functionAsString': Should be set as a string copy of the function itself. Used to display the function in the demo UI.
-   * ?      (ii) 'counter': For use with event handler functions. Should be set to 0. Then putting 'this.functionElements.counter += 1;' in the function body will cause the counter to update each time the function is triggered.
-   * ?      (iii) 'dataset': For use with event handler fuctions. Should be an object - then putting 'Object.keys(this.functionElements.dataset).forEach((el) => { this.functionElements.dataset[el] = event.currentTarget.dataset[el]; });' in the function body will cause the object to update each time the function is triggered.
+   * ?      <functionElements> - (optional, only used where typeof value 
+   === "function") - <functionElements> can have three optional properties:
+   * ?      (i) 'functionAsString': Should be set as a string copy of the 
+   function itself. Used to display the function in the demo UI.
+   * ?      (ii) 'counter': For use with event handler functions. Should 
+   be set to 0. Then putting 'this.functionElements.counter += 1;' in the 
+   function body will cause the counter to update each time the function 
+   is triggered.
+   * ?      (iii) 'dataset': For use with event handler fuctions. Should 
+   be an object - then putting 'Object.keys(this.functionElements.dataset).
+   forEach((el) => { this.functionElements.dataset[el] = event.
+   currentTarget.dataset[el]; });' in the function body will cause the 
+   object to update each time the function is triggered.
    *
-   * ?      <description> - (optional, but strongly encouraged). Describes what the parameter does and best practice uses for it. The description can be a string, an object with a markdown field (true or false) and arr field, or a svelte snippet.
+   * ?      <description> - (optional, but strongly encouraged). Describes 
+   what the parameter does and best practice uses for it. The description 
+   can be a string, an object with a markdown field (true or false) and 
+   arr field, or a svelte snippet.
    *
-   * ?      <isProp> - (optional, default = true) - Should be set to false for paramters which are not actually passed to the component.
-   * ?      <isRequired> - (optional, default = false) - Should be set to true for any props which the component will not functionally properly without (e.g. props with no default value, props which will cause erros if undefined).
+   * ?      <isProp> - (optional, default = true) - Should be set to false 
+   for paramters which are not actually passed to the component.
+   * ?      <isRequired> - (optional, default = false) - Should be set to 
+   true for any props which the component will not functionally properly 
+   without (e.g. props with no default value, props which will cause erros 
+   if undefined).
    *
+   */
+  const sampleItems = [
+    {
+      text: "Overview",
+      href: "#overview",
+      subItems: [
+        { text: "Introduction", href: "#overview-intro" },
+        { text: "Key Features", href: "#overview-features" },
+      ],
+    },
+    { text: "Installation", href: "#installation" },
+    { text: "API Reference", href: "#api" },
+  ];
+
+  const sampleGroups = [
+    {
+      title: "Getting Started",
+      items: [
+        {
+          text: "Project Setup",
+          href: "#project-setup",
+          subItems: [{ text: "Requirements", href: "#project-requirements" }],
+        },
+        { text: "First Component", href: "#first-component" },
+      ],
+    },
+    {
+      title: "Advanced Topics",
+      items: [
+        { text: "State Management", href: "#state-management" },
+        { text: "Routing", href: "#routing" },
+      ],
+    },
+  ];
+
+  /**
+   * ! Step 3 - Add your props
    */
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "resultsCount",
-        category: "Display props",
-        value: "125 results",
+        name: "title",
+        category: "Content & Appearance",
+        value: "Documentation",
         description: {
           markdown: true,
           arr: [
-            "The total number of results to display in the header. Usually updated when filters change.",
+            "An accessible title for the navigation block, typically hidden visually but read by screen readers via <code>aria-labelledby</code>.",
+            'Defaults to "Pages in this section" within the component if not provided.',
           ],
         },
       },
       {
-        name: "sectionsData",
-        category: "Content props",
-        value: [
-          {
-            id: "document-type",
-            type: "radios",
-            title: "Document type",
-            ga4Section: "document_type",
-            ga4IndexSection: 1,
-            ga4IndexSectionCount: 4,
-            name: "document_type",
-            legend: "Select document type",
-            options: [
-              { value: "all", label: "All document types" },
-              { value: "policy", label: "Policy papers" },
-              { value: "guidance", label: "Guidance" },
-              { value: "news", label: "News and communications" },
-            ],
-            selectedValue: "all",
-          },
-          {
-            id: "date-range",
-            type: "date",
-            title: "Date published",
-            ga4Section: "date_published",
-            ga4IndexSection: 2,
-            ga4IndexSectionCount: 4,
-            fromLegend: "Published after",
-            fromNamePrefix: "published_at[from]",
-            fromHint: "For example, 2020 or 21/11/2020",
-            toLegend: "Published before",
-            toNamePrefix: "published_at[to]",
-            toHint: "For example, 2023 or 21/11/2023",
-            legendSize: { undefined },
-          },
-          {
-            id: "topic",
-            type: "select",
-            title: "Topic",
-            ga4Section: "topic",
-            ga4IndexSection: 3,
-            ga4IndexSectionCount: 4,
-            selects: [
-              {
-                id: "level-one",
-                name: "topics[]",
-                label: "All topics",
-                options: [
-                  { value: "", label: "Please select", disabled: true },
-                  { value: "business", label: "Business and industry" },
-                  { value: "health", label: "Health and social care" },
-                  { value: "education", label: "Education" },
-                ],
-                fullWidth: true,
-              },
-            ],
-          },
-          {
-            id: "organisations",
-            type: "checkboxes",
-            title: "Organisations",
-            ga4Section: "organisations",
-            ga4IndexSection: 4,
-            ga4IndexSectionCount: 4,
-            name: "organisations[]",
-            legend: "Select organisations",
-            options: [
-              { value: "cabinet-office", label: "Cabinet Office" },
-              { value: "dfe", label: "Department for Education" },
-              { value: "dhsc", label: "Department of Health and Social Care" },
-            ],
-          },
-        ],
+        name: "items",
+        category: "Content & Structure (Option 1: Flat List)",
+        value: sampleItems,
+        rows: 12,
         description: {
           markdown: true,
           arr: [
-            "An array of filter sections. Each section can be one of four types:",
-            "- `radios`: Single-select options with radio buttons",
-            "- `date`: Date range inputs with from/to fields",
-            "- `select`: Dropdown select menus",
-            "- `checkboxes`: Multi-select options with checkboxes",
-            "Each section type has its own required properties and optional configurations.",
+            "An array of <code>SideNavItem</code> objects for a single, flat list of navigation links.",
+            "Each <code>SideNavItem</code> can have <code>text</code>, <code>href</code>, <code>current</code> (boolean), and optional <code>subItems</code> (array of <code>{ text: string, href: string }</code>).",
+            "Use this if you don\'t need grouped sections. If <code>groups</code> are also provided, <code>items</code> will be rendered first.",
+            "Sub-items are typically used for in-page navigation (e.g., linking to <code>#hash</code> URLs).",
           ],
         },
       },
       {
-        name: "filterButtonText",
-        category: "Display props",
-        value: "Filter and sort",
-        description: {
-          markdown: true,
-          arr: ["The text to display on the main filter toggle button."],
-        },
-      },
-      {
-        name: "applyButtonText",
-        category: "Display props",
-        value: "Apply filters",
+        name: "groups",
+        category: "Content & Structure (Option 2: Grouped List)",
+        value: sampleGroups,
+        rows: 18,
         description: {
           markdown: true,
           arr: [
-            "The text to display on the apply button at the bottom of the filter panel.",
+            "An array of <code>SideNavGroup</code> objects for creating titled sections of navigation links.",
+            "Each <code>SideNavGroup</code> has an optional <code>title</code> and an <code>items</code> array (of <code>SideNavItem</code>).",
+            "<code>SideNavItem</code> within groups can also have <code>subItems</code>.",
+            "Use this for a more structured side navigation. Rendered after the flat <code>items</code> list, if present.",
           ],
         },
       },
       {
-        name: "ga4BaseEvent",
-        category: "Analytics props",
-        propType: "fixed",
-        value: { event_name: "select_content", type: "finder" },
+        name: "currentItem",
+        category: "Stateful & Bindable",
+        isBinded: true,
+        value: currentItem,
         description: {
           markdown: true,
           arr: [
-            "Base GA4 event data that will be merged with section-specific data for analytics tracking.",
+            "A string that should match the <code>href</code> of the currently active item or sub-item.",
+            "This prop is bindable (<code>bind:currentItem</code>).",
+            "The <code>SideNav</code> component uses this to highlight the active link. It can also internally derive the active item from <code>$page.url.pathname</code> and <code>$page.url.hash</code> from SvelteKit if this prop is not explicitly managed or bound.",
+            "For the demo, select a value to see the highlighting change. The options are generated from the sample <code>items</code> and <code>groups</code> data. Clicking links in the demo will update this value based on the URL hash.",
+          ],
+        },
+      },
+      {
+        name: "activeItemBackgroundColor",
+        category: "Stateful & Bindable",
+        isBinded: false,
+        options: ["transparent", "#f3f2f1", "#e0f2fe", "#fef9c3"], // transparent, gov.uk light grey, light blue, light yellow
+        value: "transparent",
+        propType: "radio",
+        description: {
+          markdown: true,
+          arr: [
+            "A CSS color string used for the background of the active navigation item.",
+            "This prop is bindable (<code>bind:activeItemBackgroundColor</code>).",
+            "Defaults to <code>transparent</code> within the component.",
           ],
         },
       },
@@ -356,7 +398,7 @@
 
   /**
    * DONOTTOUCH *
-   * && 		parametersVisibleArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
+   * && 		parametersValuesArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
    */
   let parametersVisibleArray = $derived(
     trackVisibleParameters(parametersSourceArray, statedParametersValuesArray),
@@ -434,8 +476,13 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-8">
-    <FilterPanel {...parametersObject}></FilterPanel>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-third govuk-!-margin-left-5">
+      <SideNav
+        {...parametersObject}
+        bind:currentItem
+      />
+    </div>
   </div>
 {/snippet}
 
@@ -482,5 +529,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section" class="px-5">
-  <Examples {form}></Examples>
+  <Examples></Examples>
 </div>

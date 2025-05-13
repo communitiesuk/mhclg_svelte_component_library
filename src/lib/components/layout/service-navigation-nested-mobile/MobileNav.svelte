@@ -31,7 +31,7 @@
     isOpen?: boolean;
     sections: NavSection[];
     currentSection?: string;
-    onNavigate: (href: string) => void; // Define prop type
+    onNavigate: (href: string, event: MouseEvent) => void; // Update prop type to include event
   }>();
 
   // Track which sections are expanded
@@ -41,7 +41,7 @@
   function toggleSection(sectionTitle: string) {
     expandedSections[sectionTitle] = !expandedSections[sectionTitle];
   }
-  
+
   // Initialise expanded sections based on current section
   $effect(() => {
     if (currentSection) {
@@ -71,7 +71,7 @@
     // Only handle clicks if not prevented already (e.g. by router)
     if (!event.defaultPrevented) {
       // dispatch("navigate", href); // Remove dispatch
-      onNavigate(href); // Call the prop instead
+      onNavigate(href, event); // Call the prop instead, passing the event
     }
   }
 </script>

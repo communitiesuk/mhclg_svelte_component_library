@@ -29,12 +29,12 @@
     progress: "In progress",
     statusRows: [
       {
-        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },
-        visibleOnHompepage: true,
+        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
+        visibleOnHompepage: false,
       },
       {
         obj: { Reviewed: false, Tested: false },
-        visibleOnHomepage: true,
+        visibleOnHomepage: false,
       },
     ],
   };

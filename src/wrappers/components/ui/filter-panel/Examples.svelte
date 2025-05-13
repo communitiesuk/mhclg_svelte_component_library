@@ -356,7 +356,7 @@
     </form>
 
     <!-- Display results returned from the server via the form prop -->
-    {#if form?.filterData?.results}
+    {#if form?.filterData?.results && form.filterData.results.length > 0}
       <div class="mt-8 border-t pt-4">
         <div
           class="govuk-notification-banner govuk-notification-banner--success"
@@ -388,17 +388,21 @@
               <tr class="bg-gray-100">
                 <th class="px-4 py-2 border">Metric</th>
                 <th class="px-4 py-2 border">Area</th>
-                <th class="px-4 py-2 border">Year</th>
-                <th class="px-4 py-2 border">Value</th>
+                <th class="px-4 py-2 border">Years</th>
+                <th class="px-4 py-2 border">Data Points</th>
               </tr>
             </thead>
             <tbody>
               {#each form.filterData.results.slice(0, 5) as result}
                 <tr>
                   <td class="px-4 py-2 border">{result.metric}</td>
-                  <td class="px-4 py-2 border">{result.area}</td>
-                  <td class="px-4 py-2 border">{result.year}</td>
-                  <td class="px-4 py-2 border">{result.value}</td>
+                  <td class="px-4 py-2 border">{result.areaName}</td>
+                  <td class="px-4 py-2 border"
+                    >{result.data.map((d) => d.x).join(", ")}</td
+                  >
+                  <td class="px-4 py-2 border"
+                    >{result.data.map((d) => d.y).join(", ")}</td
+                  >
                 </tr>
               {/each}
               {#if form.filterData.results.length > 5}
@@ -412,7 +416,7 @@
           </table>
         </div>
       </div>
-    {:else if form?.filterData?.count === 0}
+    {:else if form?.filterData?.count === 0 && form?.filterData?.results !== undefined}
       <div class="mt-8 border-t pt-4">
         <p class="italic">
           No results match your filter criteria (processed by server).

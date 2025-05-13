@@ -76,59 +76,173 @@ export const serverFormExampleCode = `
 </form>
 
 <!-- Results displayed using \`form\` prop -->
-{#if form?.filterData?.results}
-  <!-- Results table -->
-  <table>
-    <thead>
-      <tr>
-        <th>Metric</th>
-        <th>Area</th>
-        <th>Year</th>
-        <th>Value</th>
-      </tr>
-    </thead>
-    <tbody>
-      {#each form.filterData.results as result}
-        <tr>
-          <td>{result.metric}</td>
-          <td>{result.area}</td>
-          <td>{result.year}</td>
-          <td>{result.value}</td>
-        </tr>
-      {/each}
-    </tbody>
-  </table>
+{#if form?.filterData?.results && form.filterData.results.length > 0}
+  <div class="mt-8 border-t pt-4">
+    <div
+      class="govuk-notification-banner govuk-notification-banner--success"
+      role="alert"
+      aria-labelledby="form-success"
+    >
+      <h2 class="govuk-notification-banner__title" id="form-success">
+        Form submitted to server
+      </h2>
+      <div class="govuk-notification-banner__content">
+        <p>
+          The server processed your request and found {form.filterData
+            .count} results.
+        </p>
+        <p class="mt-2 text-sm italic">
+          Selected Filters: Metric: {form.filterData.metric || "Any"},
+          Areas: {form.filterData["areas[]"]?.length > 0
+            ? form.filterData["areas[]"].join(", ")
+            : "Any"}, Year: {form.filterData.year || "Any"}
+        </p>
+      </div>
+    </div>
+
+    <h4 class="text-lg font-semibold mb-2 mt-4">Results:</h4>
+    <div class="overflow-x-auto">
+      <table class="min-w-full bg-white border">
+        <!-- Table headers -->
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="px-4 py-2 border">Metric</th>
+            <th class="px-4 py-2 border">Area</th>
+            <th class="px-4 py-2 border">Years</th>
+            <th class="px-4 py-2 border">Data Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each form.filterData.results.slice(0, 5) as result}
+            <tr>
+              <td class="px-4 py-2 border">{result.metric}</td>
+              <td class="px-4 py-2 border">{result.areaName}</td>
+              <td class="px-4 py-2 border"
+                >{result.data.map((d) => d.x).join(", ")}</td
+              >
+              <td class="px-4 py-2 border"
+                >{result.data.map((d) => d.y).join(", ")}</td
+              >
+            </tr>
+          {/each}
+          {#if form.filterData.results.length > 5}
+            <tr>
+              <td colspan="4" class="px-4 py-2 border text-center italic">
+                ...and {form.filterData.results.length - 5} more results
+              </td>
+            </tr>
+          {/if}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{:else if form?.filterData?.count === 0 && form?.filterData?.results !== undefined}
+  <div class="mt-8 border-t pt-4">
+    <p class="italic">
+      No results match your filter criteria (processed by server).
+    </p>
+  </div>
 {/if}
 
 <!-- In +page.server.js -->
+// Example implementation (should read and filter actual data)
+/*
+import { fail } from '@sveltejs/kit';
+import { read } from '$app/server'; // Import the read function
+
+// Define types for filtered results (mirroring the client-side definition)
+interface FilteredResult {
+	metric: string;
+	areaCode: string;
+	areaName: string;
+	data: { x: string | number; y: string | number }[];
+}
+
+
 export const actions = {
   default: async ({ request }) => {
     const formData = await request.formData();
-    
-    // Extract form data
-    const metric = formData.get('metric');
-    const areas = formData.getAll('areas[]');
-    const year = formData.get('year');
-    
-    // Process filters on the server (e.g. database query)
-    // const serverResults = await db.query(...);
-    const serverResults = [
-      { metric: "metric1", area: "area1", year: "2023", value: 123 },
-      // More results...
-    ];
-    
-    // Return the form data and results
+
+    const metric = formData.get("metric")?.toString() || null;
+    const areas = Array.from(formData.getAll("areas[]")).map(value => value.toString());
+    const year = formData.get("year")?.toString() || "all";
+
+		// --- Server-side Data Loading and Transformation ---
+		// Read the testData.json file
+		let testData;
+		try {
+			const dataContent = await read('static/data/testData.json');
+			testData = JSON.parse(dataContent.toString());
+		} catch (e) {
+			console.error("Failed to read testData.json:", e);
+			return fail(500, { message: "Failed to load data." });
+		}
+
+		// Replicate data transformation to get dataInFormatForLineChart
+		const metrics = [...new Set(testData.flatMetricData.map(d => d.metric))];
+		const areaCodes = [...new Set(testData.flatMetricData.map(el => el.areaCode))];
+
+		let dataInFormatForLineChart = metrics.map(m => ({
+			metric: m,
+			lines: areaCodes.map(a => ({
+				areaCode: a,
+				data: testData.flatMetricData.filter(el => el.areaCode === a && el.metric === m),
+			})),
+		}));
+		// --- End Data Loading and Transformation ---
+
+
+		// --- Replicate Client-side Filtering Logic ---
+		let results: FilteredResult[] = [];
+
+		if (dataInFormatForLineChart) {
+			// Start with all line chart data
+			let filteredData = [...dataInFormatForLineChart];
+
+			// Filter by metric if selected
+			if (metric && metric !== "all") { // Check if metric is not 'all' or empty
+				filteredData = filteredData.filter(item => item.metric === metric);
+			}
+
+			// For each metric grouping
+			filteredData.forEach(metricGroup => {
+				// Filter lines by selected areas or use all if none selected
+				const areaLines = areas.length > 0
+					? metricGroup.lines.filter(line => areas.includes(line.areaCode))
+					: metricGroup.lines;
+
+				// Filter by year if not "all"
+				areaLines.forEach(line => {
+					const yearData = year === "all" || !year // Check if year is 'all' or empty
+						? line.data
+						: line.data.filter(point => point.x.toString() === year);
+
+					if (yearData.length > 0) {
+						results.push({
+							metric: metricGroup.metric,
+							areaCode: line.areaCode,
+							areaName: testData.areaCodeLookup?.[line.areaCode] || line.areaCode,
+							data: yearData,
+						});
+					}
+				});
+			});
+		}
+		// --- End Filtering Logic ---
+
+
     return {
-      filterData: { // IMPORTANT: Wrap results in a key
+      filterData: {
         metric,
         'areas[]': areas,
         year,
-        results: serverResults,
-        count: serverResults.length
+        results,
+        count: results.length
       }
     };
   }
 };
+*/
 `;
 
 // Enhanced form example with client-side processing
@@ -201,33 +315,50 @@ export const enhancedFormExampleCode = `
   
   // Filter helper function (client-side implementation)
   function filterData(metric, areas, year) {
-    // Sample data for demonstration
+    // Sample data for demonstration - IN A REAL APP, THIS WOULD COME FROM A SHARED SOURCE OR PAGE DATA
     const allData = [
-      { metric: "metric1", area: "area1", year: "2023", value: 123 },
-      { metric: "metric1", area: "area2", year: "2023", value: 456 },
-      { metric: "metric2", area: "area1", year: "2022", value: 789 },
-      { metric: "metric2", area: "area3", year: "2022", value: 321 }
+      { metric: "metric1", areaCode: "area1", areaName: "Area One", data: [{x: "2023", y: 123}, {x: "2022", y: 100}] },
+      { metric: "metric1", areaCode: "area2", areaName: "Area Two", data: [{x: "2023", y: 456}] },
+      { metric: "metric2", areaCode: "area1", areaName: "Area One", data: [{x: "2022", y: 789}] },
+      { metric: "metric2", areaCode: "area3", areaName: "Area Three", data: [{x: "2022", y: 321}, {x:"2021", y:300}] }
     ];
     
-    // Filter logic
-    return allData.filter(item => {
-      // Filter by metric if specified
-      if (metric && metric !== "") {
-        if (item.metric !== metric) return false;
-      }
-      
-      // Filter by areas if any selected
-      if (areas && areas.length > 0) {
-        if (!areas.includes(item.area)) return false;
-      }
-      
-      // Filter by year if not "all"
-      if (year && year !== "all") {
-        if (item.year !== year) return false;
-      }
-      
-      return true;
-    });
+    let results = [];
+
+		if (allData) { // Assuming allData is structured like dataInFormatForLineChart
+			let filteredDataSource = [...allData]; // Use a more descriptive name
+
+			// Filter by metric if selected
+			if (metric && metric !== "all" && metric !== "") {
+				filteredDataSource = filteredDataSource.filter(item => item.metric === metric);
+			}
+
+			// For each item in the (potentially metric-filtered) data source
+			filteredDataSource.forEach(item => {
+				let itemMatchesArea = true;
+				if (areas && areas.length > 0) {
+					if (!areas.includes(item.areaCode)) {
+						itemMatchesArea = false;
+					}
+				}
+
+				if (itemMatchesArea) {
+					const yearDataPoints = (year && year !== "all" && year !== "")
+						? item.data.filter(point => point.x.toString() === year)
+						: item.data;
+
+					if (yearDataPoints.length > 0) {
+						results.push({
+							metric: item.metric,
+							areaCode: item.areaCode,
+							areaName: item.areaName,
+							data: yearDataPoints,
+						});
+					}
+				}
+			});
+		}
+		return results;
   }
 </script>
 
@@ -235,9 +366,9 @@ export const enhancedFormExampleCode = `
   method="POST"
   use:enhance={({ formData, cancel }) => {
     // Get filter values
-    const metric = formData.get("metric");
-    const areas = formData.getAll("areas[]"); 
-    const year = formData.get("year");
+    const metric = formData.get("metric")?.toString() || null; // Ensure toString for safety
+    const areas = Array.from(formData.getAll("areas[]")).map(value => value.toString()); 
+    const year = formData.get("year")?.toString() || "all"; // Ensure toString
     
     // Cancel server submission and process client-side
     cancel();
@@ -279,21 +410,24 @@ export const enhancedFormExampleCode = `
       <table class="min-w-full bg-white border">
         <thead>
           <tr class="bg-gray-100">
-            <th>Metric</th>
-            <th>Area</th>
-            <th>Years</th>
-            <th>Data Points</th>
+            <th class="px-4 py-2 border">Metric</th>
+            <th class="px-4 py-2 border">Area</th>
+            <th class="px-4 py-2 border">Years</th>
+            <th class="px-4 py-2 border">Data Points</th>
           </tr>
         </thead>
         <tbody>
-          {#each clientResults as result}
+          {#each clientResults.slice(0,5) as result}
             <tr>
-              <td>{result.metric}</td>
-              <td>{result.areaName}</td>
-              <td>{result.data.map((d) => d.x).join(", ")}</td>
-              <td>{result.data.map((d) => d.y).join(", ")}</td>
+              <td class="px-4 py-2 border">{result.metric}</td>
+              <td class="px-4 py-2 border">{result.areaName}</td>
+              <td class="px-4 py-2 border">{result.data.map((d) => d.x).join(", ")}</td>
+              <td class="px-4 py-2 border">{result.data.map((d) => d.y).join(", ")}</td>
             </tr>
           {/each}
+          {#if clientResults.length > 5}
+             <tr><td colspan="4" class="text-center italic p-2 border">...and {clientResults.length - 5} more results</td></tr>
+          {/if}
         </tbody>
       </table>
     </div>
@@ -305,14 +439,16 @@ export const enhancedFormExampleCode = `
 </form>
 
 <!-- In +page.server.js (handles non-JS fallback) -->
+/*
 export const actions = {
   default: async ({ request }) => {
     const formData = await request.formData();
     // Process server-side when JavaScript is disabled
-    // ...
-    return { filterData: { /* results */ } }; // Remember to wrap!
+    // ... (this should mirror the logic in the client-side filterData and server-side data loading)
+    return { filterData: { // results } }; // Remember to wrap!
   }
 };
+*/
 `;
 
 // Basic Filter Panel Example

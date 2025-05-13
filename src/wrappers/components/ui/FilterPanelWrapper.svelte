@@ -47,8 +47,9 @@
    *
    */
   let descriptionArray = [
-    "A collapsible filter panel component that allows users to refine search results or content listings. Based on the GOV.UK Finder Frontend component, it supports various filter types including radio buttons, date inputs, dropdowns, and checkboxes.",
+    "A collapsible filter panel component that allows users to refine search results or content listings. <a href='https://github.com/alphagov/finder-frontend/blob/main/spec/javascripts/components/filter-panel-spec.js' target='_blank' rel='noopener noreferrer'>Based on the GOV.UK Finder Frontend component</a>, it supports various filter types including radio buttons, date inputs, dropdowns, and checkboxes.",
     "The component includes built-in GA4 event tracking, responsive design, and accessibility features like ARIA labels and keyboard navigation.",
+    "An example of the original component in use can be seen on the <a href='https://www.gov.uk/search/all?keywords=tax&order=relevance' target='_blank' rel='noopener noreferrer'>GOV.UK search page</a>.",
   ];
 
   let contextArray = [
@@ -355,7 +356,7 @@
 
   /**
    * DONOTTOUCH *
-   * && 		parametersValuesArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
+   * && 		parametersVisibleArray's is a one-to-one mapping to the source array which tracks whether a parameter should be visible in the demo UI.
    */
   let parametersVisibleArray = $derived(
     trackVisibleParameters(parametersSourceArray, statedParametersValuesArray),

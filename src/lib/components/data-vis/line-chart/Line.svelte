@@ -66,7 +66,7 @@
     return mappedItems;
   }
 
-  let linePath = lineFunction(dataArray);
+  let linePath = $derived(lineFunction(dataArray));
 </script>
 
 <defs>

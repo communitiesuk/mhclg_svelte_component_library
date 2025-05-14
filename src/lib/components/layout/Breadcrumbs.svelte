@@ -1,6 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
 
   /**
    * Breadcrumbs component
@@ -48,19 +48,12 @@
     }
   });
 
-  // Add support detection
-  let isSupported = $state(false);
-  onMount(() => {
-    isSupported =
-      document.body?.classList.contains("govuk-frontend-supported") ?? false;
-  });
-
   // State variable to hold the current breadcrumb items
   let breadcrumbItems = $state<BreadcrumbItem[]>([]);
 
   // Effect to update breadcrumb items when dependencies change
   $effect(() => {
-    breadcrumbItems = items || generateBreadcrumbItems($page, routeModules);
+    breadcrumbItems = items || generateBreadcrumbItems(page, routeModules);
   });
 
   // Generate breadcrumb items from the current route

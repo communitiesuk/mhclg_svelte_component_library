@@ -3,7 +3,7 @@
   import { page } from "$app/state";
   import { kebabToPascalCase } from "$lib/utils/text-string-conversion/textStringConversion.js";
 
-  let { data } = $props();
+  let { data, form } = $props();
 
   /**
    * &&   Splits the URL into parts, then takes the last two entries, which are used for locating the relevant wrapper svelte file.
@@ -45,7 +45,7 @@
 </script>
 
 {#if Component}
-  <svelte:component this={Component} {data}></svelte:component>
+  <svelte:component this={Component} {data} {form}></svelte:component>
 {:else if errorImportingComponent}
   <div class="g-top-level-container">
     <h3>Failed to import componnet</h3>

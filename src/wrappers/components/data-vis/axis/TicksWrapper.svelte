@@ -166,6 +166,7 @@
         name: "ticksArray",
         category: "data",
         isBinded: true,
+        value: ticksArray,
       },
       {
         name: "values",
@@ -250,17 +251,17 @@
 
       {
         name: "prefix",
-        category: "customisations",
-        value: "number of",
+        category: "formattingTick",
+        value: "",
       },
       {
         name: "suffix",
-        category: "customisations",
-        value: "%",
+        category: "formattingTick",
+        value: "",
       },
-      { name: "baseline", category: "customisations", value: 0 },
-      { name: "setMax", category: "customisations", value: 100 },
-      { name: "yearsInput", category: "customisations", value: false },
+      { name: "floor", category: "formatting", value: 0 },
+      { name: "ceiling", category: "formatting", value: 100 },
+      { name: "yearsInput", category: "formattingTick", value: false },
       {
         name: "orientationAxis",
         category: "customisations",
@@ -278,6 +279,16 @@
       {
         name: "orientation",
         category: "customisations",
+      },
+      {
+        name: "yearFormating",
+        category: "formattingTick",
+        value: function (ticks) {
+          return ticks.map((tick) => "FY {tick % 100}-{(tick % 100) + 1}");
+        },
+        functionElements: {
+          functionAsString: `function yearsFormat(ticks) {return ticks.map((tick) => "FY {tick % 100}-{(tick % 100) + 1}");}`,
+        },
       },
     ]),
   );
@@ -355,7 +366,7 @@
       "scaleLinear()": scaleLinear(),
       "scaleLog()": scaleLog(),
       "scaleTime()": scaleTime(),
-    }[getValue("yScaleType")]
+    }[getValue("xyScaleType")]
       .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
       .range([
         getValue("svgHeight") -

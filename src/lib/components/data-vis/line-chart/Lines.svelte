@@ -10,31 +10,44 @@
     tieredDataObject,
     dataArray,
     lineFunction,
-    selectedAreaCode,
     chartWidth,
     xFunction,
     yFunction,
-    areaFunction,
     labelClicked = $bindable(),
-    areaCodeHover = $bindable(),
+    labelHovered = $bindable(),
+    lineHovered = $bindable(),
+    lineClicked = $bindable(),
     chartHeight,
-    colors,
-    showAllData,
-    defaultLineParams,
     globalTierRules,
-    chartBackgroundColor,
+    chartBackgroundColor = "#fafafa",
+    nothingSelected = $bindable(),
+    onMouseEnterLine,
+    onMouseLeaveLine,
+    onClickLine,
+    onMouseEnterLabel,
+    onMouseLeaveLabel,
+    onClickLabel,
+    onMouseEnterMarker,
+    onMouseLeaveMarker,
+    onClickMarker,
+    activeMarkerId,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
 
-  let labelHovered = $state();
-  let selectedLine = $derived([labelHovered, labelClicked]);
-
   let transformed = $derived(
-    tieredDataObject[areaCodeHover ? "hover" : "primary"].map((item) => {
-      let lastY = yFunction(item.data[0].y);
-      return { areaCode: item.areaCode, lastY };
-    }),
+    Object.values(tieredDataObject)
+      .filter(Array.isArray)
+      .flatMap((tier) => tier.filter((item) => item.showLabel === true))
+
+      .filter(
+        (item, index, self) =>
+          self.findIndex((other) => other.areaCode === item.areaCode) === index,
+      )
+      .map((item) => ({
+        areaCode: item.areaCode,
+        lastY: yFunction(item.data[0].y),
+      })),
   );
 
   let labelsPlaced = $derived(
@@ -47,68 +60,50 @@
   );
 </script>
 
-{#snippet categoryLabelSnippet(dataArray, newY)}
-  <CategoryLabel
-    id={`label-${dataArray.areaCode}`}
-    bind:labelClicked
-    bind:labelHovered
-    {chartWidth}
-    {lineFunction}
-    {dataArray}
-    {xFunction}
-    {yFunction}
-    {newY}
-    onClick={function (areaCode) {
-      labelClicked === areaCode
-        ? ((labelClicked = null), (labelHovered = null))
-        : (labelClicked = areaCode);
-    }}
-    onMouseEnter={function onMouseEnter(areaCode) {
-      labelHovered = areaCode;
-    }}
-    onMouseLeave={function onMouseLeave(areaCode) {
-      labelClicked === areaCode
-        ? (labelHovered = null)
-        : (labelHovered = areaCode);
-      labelHovered === areaCode ? (labelHovered = null) : (labelHovered = null);
-    }}
-  ></CategoryLabel>
-{/snippet}
-
 {#each Object.keys(tieredDataObject) as tier}
-  <g opacity={globalTierRules[tier].opacity} id={tier}>
-    {#each tieredDataObject[tier] as line, i}
-      <Line
-        {lineFunction}
-        {xFunction}
-        {yFunction}
-        {areaFunction}
-        dataArray={line.data}
-        pathStrokeColor={line.color}
-        pathStrokeWidth={defaultLineParams[tier].pathStrokeWidth}
-        dataId={line.areaCode}
-        halo={defaultLineParams[tier].halo}
-        onClick={function (event, dataArray, dataId) {
-          areaCodeHover = dataId;
-        }}
-        onMouseEnter={function (event, dataArray, dataId) {
-          areaCodeHover = dataId;
-        }}
-        onMouseMove={function (event, dataArray, dataId) {
-          areaCodeHover = dataId;
-        }}
-        onMouseLeave={function (event, dataArray, dataId) {
-          areaCodeHover = null;
-        }}
-        {...defaultLineParams}
-        {chartBackgroundColor}
-      ></Line>
-      {#if (!areaCodeHover && tier === "primary") || (areaCodeHover && tier === "hover")}
-        {@render categoryLabelSnippet(
-          line,
-          labelsPlaced.find((el) => el.datum.areaCode === line.areaCode).y,
-        )}
-      {/if}
-    {/each}
+  <g id={tier}>
+    <g {...globalTierRules[tier]}>
+      {#each tieredDataObject[tier] as line, i}
+        <Line
+          {...line}
+          {tier}
+          {chartBackgroundColor}
+          {lineFunction}
+          {xFunction}
+          {yFunction}
+          {onMouseEnterLine}
+          {onMouseLeaveLine}
+          {onClickLine}
+          {onMouseEnterMarker}
+          {onMouseLeaveMarker}
+          {onClickMarker}
+          bind:lineClicked
+          bind:lineHovered
+          {activeMarkerId}
+        />
+      {/each}
+    </g>
+
+    <g>
+      {#each tieredDataObject[tier] as line, i}
+        {#if line.showLabel}
+          <CategoryLabel
+            id={`label-${line.areaCode}`}
+            bind:labelClicked
+            bind:labelHovered
+            {chartWidth}
+            {lineFunction}
+            dataArray={line}
+            {xFunction}
+            {yFunction}
+            newY={labelsPlaced.find((el) => el.datum.areaCode === line.areaCode)
+              ?.y}
+            {onClickLabel}
+            {onMouseEnterLabel}
+            {onMouseLeaveLabel}
+          ></CategoryLabel>
+        {/if}
+      {/each}
+    </g>
   </g>
 {/each}

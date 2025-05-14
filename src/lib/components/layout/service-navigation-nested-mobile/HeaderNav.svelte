@@ -14,14 +14,14 @@
     homeHref = "/",
     navigationItems = [],
     currentSection = $bindable(""),
-    mobileNavIsOpen = false, // Receive open state from parent
+    mobileNavIsOpen = $bindable(false), // Make this prop bindable
     onToggle, // Callback function prop
   } = $props<{
     serviceName?: string;
     homeHref?: string;
     navigationItems: NavigationItem[];
     currentSection?: string;
-    mobileNavIsOpen?: boolean; // Prop to receive state
+    mobileNavIsOpen?: boolean;
     onToggle: () => void; // Callback function prop
   }>();
 

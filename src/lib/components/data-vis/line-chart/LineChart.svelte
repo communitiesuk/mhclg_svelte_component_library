@@ -17,10 +17,18 @@
     lineFunction,
     lineClicked = $bindable(),
     lineHovered = $bindable(),
+    labelClicked = $bindable(),
+    labelHovered = $bindable(),
     svgWidth = $bindable(500),
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
+    onClickLine,
+    onMouseEnterLine,
+    onMouseLeaveLine,
+    onClickLabel,
+    onMouseEnterLabel,
+    onMouseLeaveLabel,
+    onClickMarker,
+    onMouseEnterMarker,
+    onMouseLeaveMarker,
     svgHeight = 500,
     paddingTop = 50,
     paddingBottom = 50,
@@ -33,24 +41,10 @@
     getLine,
     basicLineParams,
     overrideLineParams,
-    nothingSelected,
+    nothingSelected = $bindable(),
     globalTierRules,
+    activeMarkerId,
   } = $props();
-
-  /*let svgWidth = $state(),
-    svgHeight = 600;*/
-
-  /*let staticMargin = { top: 10, right: 20, bottom: 20, left: 10 };
-  let dynamicMargin = $derived({ top: 0, right: 0, bottom: 0, left: 0 });
-  let totalMargin = $derived({
-    top: staticMargin.top + dynamicMargin.top,
-    right: staticMargin.right + dynamicMargin.right,
-    bottom: staticMargin.bottom + dynamicMargin.bottom,
-    left: staticMargin.left + dynamicMargin.left,
-  });*/
-
-  /*let chartWidth = $derived(svg - totalMargin.left - totalMargin.right);
-  let chartHeight = $derived(svgHeight - totalMargin.top - totalMargin.bottom);*/
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
   let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
@@ -63,8 +57,6 @@
       .curve(curveLinear),
   );
 
-  let labelHovered = $state();
-  let labelClicked = $state();
   let selectedLine = $derived([
     lineHovered,
     lineClicked,
@@ -81,18 +73,6 @@
       lineClicked = null;
     }
   }
-
-  // let basicLineParams = $derived({
-  //   lineFunction: lineFunction,
-  //   xFunction: xFunction,
-  //   yFunction: yFunction,
-  //   areaFunction: areaFunction,
-  //   onClick: onClick,
-  //   onMouseEnter: onMouseEnter,
-  //   onMouseLeave: onMouseLeave,
-  //   haloColor: chartBackgroundColor,
-  //   invisibleStrokeWidth: 20,
-  // });
 
   function generateLineAttributes(
     line,
@@ -143,56 +123,6 @@
       return acc;
     }, {}),
   );
-
-  // function generateLineAttributes(line, defaultLineParams, tier) {
-  //   const listOfProperties = [
-  //     ...new Set([
-  //       ...Object.keys(line),
-  //       ...Object.keys(defaultLineParams[tier]),
-  //     ]),
-  //   ];
-
-  //   const merged = Object.fromEntries(
-  //     listOfProperties.map((key) => [
-  //       key,
-  //       line[key] ?? defaultLineParams[tier][key],
-  //     ]),
-  //   );
-  //   return {
-  //     ...merged,
-  //     dataId: line.areaCode,
-  //     dataArray: line.data, // rename in the original to avoid this
-  //   };
-  // }
-
-  // let tieredDataObject = $derived(
-  //   ([tieredLineParams, basicLineParams, lineChartData]) => {
-  //     return Object.entries(tieredLineParams).reduce(
-  //       (acc, [groupKey, groupOverrides]) => {
-  //         acc[groupKey] = lineChartData.lines
-  //           .filter((line) => getLine(groupKey, line))
-  //           .map((line) => ({
-  //             ...basicLineParams, // base defaults
-  //             ...groupOverrides, // group-level overrides
-  //             ...line, // original line data (e.g. id, x/y)
-  //             ...overrideDefaultStyles(groupKey, line), // final per-line overrides
-  //           }));
-  //         return acc;
-  //       },
-  //     );
-  //   },
-  // );
-
-  // function getLineAttributes(line, basicLineParams, groupOverrides, groupKey) {
-  //   return {
-  //     ...basicLineParams,
-  //     ...groupOverrides,
-  //     ...line,
-  //     ...overrideDefaultStyles(groupKey, line),
-  //     dataId: line.areaCode,
-  //     dataArray: line.data,
-  //   };
-  // }
 </script>
 
 <div bind:clientWidth={svgWidth}>
@@ -220,11 +150,17 @@
             {showAllData}
             {globalTierRules}
             {chartBackgroundColor}
-            {nothingSelected}
-            {getLine}
-            {onMouseEnter}
-            {onMouseLeave}
-            {onClick}
+            bind:nothingSelected
+            {onMouseEnterLine}
+            {onMouseLeaveLine}
+            {onClickLine}
+            {onClickLabel}
+            {onMouseEnterLabel}
+            {onMouseLeaveLabel}
+            {onClickMarker}
+            {onMouseEnterMarker}
+            {onMouseLeaveMarker}
+            {activeMarkerId}
           ></Lines>
         </g>
         <g data-role="y-axis">

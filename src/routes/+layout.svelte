@@ -1,20 +1,27 @@
 <script lang="ts">
   import Footer from "$lib/components/ui/Footer.svelte";
-  import InternalHeader from "$lib/components/ui/InternalHeader.svelte";
-  import HeaderNav from "$lib/components/ui/HeaderNav.svelte";
-  import MobileNav from "$lib/components/ui/MobileNav.svelte";
-  import SideNav from "$lib/components/ui/SideNav.svelte";
+  import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
+  import HeaderNav from "$lib/components/layout/service-navigation-nested-mobile/HeaderNav.svelte";
+  import MobileNav from "$lib/components/layout/service-navigation-nested-mobile/MobileNav.svelte";
+  import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
   import "../app.css";
   import type {
     SideNavGroup,
     SideNavItem,
-  } from "$lib/components/ui/SideNav.svelte";
+  } from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
   import type { ComponentItem } from "./+layout.server";
   import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import PhaseBanner from "$lib/components/layout/PhaseBanner.svelte";
 
   let { children, data } = $props();
+
+  // Determine if the current page is the special demo page
+  let isDemoPage = $derived(
+    $page.url.pathname.startsWith(
+      "/components/layout/service-navigation-nested-mobile/mobile-demo",
+    ),
+  );
 
   // Current section for navigation
   let currentSection = $state("Home"); // Default to Home
@@ -296,59 +303,64 @@
   }
 </script>
 
-<div class="min-h-screen flex flex-col">
-  <div class="flex-grow">
-    <InternalHeader
-      homepageUrl="/"
-      organisationName="MHCLG Digital Design & Development Team"
-    />
+{#if !isDemoPage}
+  <div class="min-h-screen flex flex-col">
+    <div class="flex-grow">
+      <InternalHeader
+        homepageUrl="/"
+        organisationName="MHCLG Digital Design & Development Team"
+      />
 
-    <!-- Navigation with logo and mobile menu -->
-    <HeaderNav
-      serviceName="Svelte Component Library"
-      {navigationItems}
-      {currentSection}
-      mobileNavIsOpen={isMobileNavOpen}
-      onToggle={handleToggleMobileNav}
-    />
+      <!-- Navigation with logo and mobile menu -->
+      <HeaderNav
+        serviceName="Svelte Component Library"
+        {navigationItems}
+        {currentSection}
+        mobileNavIsOpen={isMobileNavOpen}
+        onToggle={handleToggleMobileNav}
+      />
 
-    <!-- Mobile navigation -->
-    <MobileNav
-      isOpen={isMobileNavOpen}
-      sections={mobileNavSections}
-      {currentSection}
-      onNavigate={handleMobileNavigation}
-    />
+      <!-- Mobile navigation -->
+      <MobileNav
+        isOpen={isMobileNavOpen}
+        sections={mobileNavSections}
+        {currentSection}
+        onNavigate={handleMobileNavigation}
+      />
 
-    <!-- Add Phase Banner here -->
-    <PhaseBanner
-      tagText="Alpha"
-      linkHref="mailto:dataexplorerfeedback@communities.gov.uk"
-    />
+      <!-- Add Phase Banner here -->
+      <PhaseBanner
+        tagText="Alpha"
+        linkHref="mailto:dataexplorerfeedback@communities.gov.uk"
+      />
 
-    <div class="app-pane__body govuk-width-container">
-      <div class="app-split-pane">
-        <!-- Side navigation - show for Components, Patterns, or Community pages -->
-        {#if currentSection !== "Home" && (currentSection != "Components" || currentPage === "components")}
-          <aside class="app-split-pane__nav">
-            <SideNav
-              title={getSectionTitle(currentSection)}
-              groups={getNavGroupsForSection(currentSection)}
-              currentItem={currentPage}
-            />
-          </aside>
-        {/if}
+      <div class="app-pane__body govuk-width-container">
+        <div class="app-split-pane">
+          <!-- Side navigation - show for Components, Patterns, or Community pages -->
+          {#if currentSection !== "Home"}
+            <aside class="app-split-pane__nav">
+              <SideNav
+                title={getSectionTitle(currentSection)}
+                groups={getNavGroupsForSection(currentSection)}
+                currentItem={currentPage}
+              />
+            </aside>
+          {/if}
 
-        <!-- Main content area -->
-        <div class="app-split-pane__content app-content">
-          {@render children()}
+          <!-- Main content area -->
+          <div class="app-split-pane__content app-content">
+            {@render children()}
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <Footer />
-</div>
+    <Footer />
+  </div>
+{:else}
+  <!-- For demo page, render children directly without any layout chrome -->
+  {@render children()}
+{/if}
 
 <style>
   /* Add styles to support the app-pane layout */

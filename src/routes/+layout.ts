@@ -84,6 +84,32 @@ export const load: LayoutLoad = async (event) => {
       ),
     }));
 
+    let dataInFormatForTable = testData.flatMetricData
+      .map(item => ({
+        ...item,
+        y: Math.round(parseFloat(item.y)),
+      }))  
+      .map(d => ({
+      ...d,
+      areaName: testData.areaCodeLookup[d.areaCode]
+    })) 
+        .map(({areaCode, xLabel, ...rest }) => rest)
+        .filter((el) => el.x === 2022)
+        .map(({ x, ...rest }) => rest)
+     
+    let groupedTableData = {}
+
+    for (let row of dataInFormatForTable) {
+      if(!groupedTableData[row.areaName]) {
+        groupedTableData[row.areaName] = {areaName: row.areaName}
+      }
+      groupedTableData[row.areaName][row.metric] = row.y
+    }
+
+    let tableData = Object.values(groupedTableData);
+
+    let metaData = testData.metaData
+
   return {
     metrics,
     areas,
@@ -91,11 +117,14 @@ export const load: LayoutLoad = async (event) => {
     dataInFormatForLineChart,
     dataInFormatForBarChart,
     dataInFormatForMap,
+    dataInFormatForTable,
+    tableData,
     areaCodeLookup: testData.areaCodeLookup,
     svgFontDimensions,
     componentSections,
     componentDirectories,
     uiComponents,
     componentTree,
+    metaData,
   };
 };

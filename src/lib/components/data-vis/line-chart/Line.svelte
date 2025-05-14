@@ -22,7 +22,7 @@
     pathStrokeDashArray = "none",
     areaFillColor,
     includeArea = false,
-    includeMarkers = false,
+    markers,
     markerShape = "circle",
     markerRadius = 5,
     markerFill = "grey",
@@ -30,28 +30,27 @@
     markerStrokeWidth = 3,
     lineFunction,
     areaFunction,
-    curveFunction,
     xFunction,
-    lineEnding = null,
     yFunction,
+    lineEnding,
     dataId,
-    tier,
-    // markersDataId,
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
+    onClickLine,
+    onMouseEnterLine,
+    onMouseLeaveLine,
     halo,
     chartBackgroundColor,
     invisibleStrokeWidth,
     interactive,
-    // onClickMarker,
-    // onMouseEnterMarker,
-    // onMouseLeaveMarker,
-    // onMouseMoveMarker,
+    onClickMarker,
+    onMouseEnterMarker,
+    onMouseLeaveMarker,
     // includeLabels,
     // labelText,
     // labelColor,
     // labelTextColor,
+    lineClicked = $bindable(),
+    lineHovered = $bindable(),
+    activeMarkerId,
   } = $props();
 
   function makeList(inputValue) {
@@ -67,55 +66,41 @@
     return mappedItems;
   }
 
-  // let hoveredMarker = $state();
-
-  // function onMouseEnterMarker(i) {
-  //   hoveredMarker = i;
-  // }
-
-  // function onMouseLeaveMarker(i) {
-  //   hoveredMarker = null;
-  // }
-
-  let handleClick = (e) => onClick(e, dataArray, dataId);
-  let handleEnter = (e) => onMouseEnter(e, dataArray, dataId);
-  let handleLeave = (e) => onMouseLeave(e, dataArray, dataId);
-
   let linePath = lineFunction(dataArray);
 </script>
 
 <defs>
   <marker
     id={`arrow-${pathStrokeColor}`}
-    markerWidth="6"
-    markerHeight="4"
-    refX="4"
-    refY="2"
+    markerWidth="4"
+    markerHeight="3"
+    refX="2.7"
+    refY="1.5"
     orient="auto-start-reverse"
   >
-    <polygon points="0 0, 6 2, 0 4" style="fill: {pathStrokeColor}"></polygon>
+    <polygon points="0 0, 4 1.5, 0 3" style="fill: {pathStrokeColor}"></polygon>
   </marker>
 
   <marker
     id={`circle-${pathStrokeColor}`}
     markerWidth="14"
     markerHeight="14"
-    refX="7"
-    refY="7"
+    refX="5"
+    refY="5"
     orient="auto"
   >
-    <circle cx="7" cy="7" r="1.5" style="fill: {pathStrokeColor}"></circle>
+    <circle cx="5" cy="5" r="1.5" style="fill: {pathStrokeColor}"></circle>
   </marker>
 </defs>
 
 <g
   data-id={dataId}
-  onclick={handleClick}
-  onmouseenter={handleEnter}
-  onmouseleave={handleLeave}
+  onclick={(e) => onClickLine(e, dataArray, dataId)}
+  onmouseenter={(e) => onMouseEnterLine(e, dataArray, dataId)}
+  onmouseleave={(e) => onMouseLeaveLine(e, dataArray, dataId)}
   role="button"
   tabindex="0"
-  onkeydown={(e) => e.key === "Enter" && onClick(e, dataArray)}
+  onkeydown={(e) => e.key === "Enter" && onClickLine(e, dataArray)}
   {opacity}
 >
   {#if includeArea}
@@ -145,15 +130,15 @@
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
     pointer-events="none"
+    marker-start={`url(#${lineEnding}-${pathStrokeColor})`}
   ></path>
-  <!-- {#if includeMarkers}
+  {#if false}
     {#each dataArray as marker, i}
       <g
-        data-id={markersDataId + "-" + i}
-        onclick={(event) => onClickMarker(event, marker)}
-        onmouseenter={(event) => onMouseEnterMarker(i)}
-        onmouseleave={(event) => onMouseLeaveMarker(i)}
-        onmousemove={(event) => onMouseMove(event, marker)}
+        data-id={"marker-" + marker.areaCode + marker.x}
+        onclick={(event) => onClickMarker(event, marker, dataId)}
+        onmouseenter={(event) => onMouseEnterMarker(event, marker, dataId)}
+        onmouseleave={(event) => onMouseLeaveMarker(event, marker, dataId)}
         transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
         role="button"
         tabindex="0"
@@ -186,31 +171,17 @@
             stroke-width={markerStrokeWidth}
           ></polygon>
         {/if}
-        {#if includeLabels}
-          {#if i == hoveredMarker}
+        {#if true}
+          {#if activeMarkerId == `marker-${marker.areaCode}${marker.x}`}
             <ValueLabel
               {marker}
-              {labelColor}
-              {labelTextColor}
-              textContent={parseInput(marker, labelText)}
+              labelColor="grey"
+              labelTextColor="black"
+              textContent={parseInput(marker, marker.y)}
             ></ValueLabel>
           {/if}
         {/if}
       </g>
     {/each}
-  {/if}-->
+  {/if}
 </g>
-
-<!-- <path
-  d={pathFunction(dataArray)}
-  fill="none"
-  stroke={color}
-  stroke-width={strokeWidth}
-></path>
-
-{#if markers}
-  {#each dataArray as marker}
-    <circle cx={x(marker.x)} cy={y(marker.y)} r="6" stroke="white" fill={color}>
-    </circle>
-  {/each}
-{/if} -->

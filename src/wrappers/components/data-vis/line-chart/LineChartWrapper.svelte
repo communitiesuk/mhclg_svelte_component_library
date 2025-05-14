@@ -77,6 +77,7 @@
   //@ts-nocheck
   import { page } from "$app/state";
   import { browser } from "$app/environment";
+  import { tick } from "svelte";
 
   import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
   import ParsingErrorToastsContainer from "$lib/package-wrapping/ParsingErrorToastsContainer.svelte";
@@ -137,10 +138,16 @@
 
   let lineClicked = $state();
   let lineHovered = $state();
+  let labelClicked = $state();
+  let labelHovered = $state();
   let svgWidth = $state(500);
   let nothingSelected = $derived(
-    [lineClicked, lineHovered].every((item) => item == null),
+    [lineClicked, lineHovered, labelClicked, labelHovered].every(
+      (item) => item == null,
+    ),
   );
+  let activeMarkerId = $state();
+  $inspect(activeMarkerId);
 
   /**
    * ! Step 3 - Add your props
@@ -239,16 +246,16 @@
         category: "customisingLines",
         description:
           "Defines how the entire tier should be rendered. Must be valid SVG attributes",
-        value: {
-          otherTier: {},
-          secondary: {
-            opacity: nothingSelected ? 1 : 0.5,
-          },
-          primary: {
-            opacity: nothingSelected ? 1 : 0.4,
-          },
-          hover: { opacity: 1 },
-          clicked: { opacity: 1 },
+        functionElements: {
+          functionAsString: `{otherTier: {},
+    secondary: {
+      opacity: getValue("nothingSelected") ? 1 : 0.5,
+    },
+    primary: {
+      opacity: getValue("nothingSelected") ? 1 : 0.4,
+    },
+    hover: { opacity: 1 },
+    clicked: { opacity: 1 }}`,
         },
       },
       {
@@ -263,7 +270,13 @@
         value: lineClicked,
       },
       {
-        name: "onClick",
+        name: "nothingSelected",
+        category: "lineEvents",
+        isBinded: true,
+        value: nothingSelected,
+      },
+      {
+        name: "onClickLine",
         category: "lineEvents",
         functionElements: {
           functionAsString: `function(event, dataArray, dataId) {
@@ -271,7 +284,14 @@
   };`,
         },
         value: function (event, dataArray, dataId) {
-          lineClicked = dataId;
+          if (lineClicked === dataId) {
+            lineClicked = null;
+          } else {
+            lineClicked = null;
+            tick().then(() => {
+              lineClicked = dataId;
+            });
+          }
         },
       },
       {
@@ -281,7 +301,91 @@
         value: lineHovered,
       },
       {
-        name: "onMouseEnter",
+        name: "onMouseEnterLabel",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (areaCode) {
+              labelHovered = areaCode;
+            }`,
+        },
+        value: function (areaCode) {
+          labelHovered = areaCode;
+        },
+      },
+      {
+        name: "onMouseLeaveLabel",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (areaCode) {
+              if (labelClicked !== areaCode) {
+                labelHovered = null;
+              }
+            }`,
+        },
+        value: function (areaCode) {
+          if (labelClicked !== areaCode) {
+            labelHovered = null;
+          }
+        },
+      },
+      {
+        name: "onClickLabel",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (areaCode) {
+              labelClicked === areaCode
+                ? ((labelClicked = null), (labelHovered = null))
+                : (labelClicked = areaCode);
+            }`,
+        },
+        value: function (areaCode) {
+          labelClicked === areaCode
+            ? ((labelClicked = null), (labelHovered = null))
+            : (labelClicked = areaCode);
+        },
+      },
+      {
+        name: "onMouseEnterMarker",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (event, dataArray, dataId) {
+              labelHovered = areaCode;
+            }`,
+        },
+        value: function (event, marker, dataId) {
+          activeMarkerId = event;
+        },
+      },
+      {
+        name: "onMouseLeaveMarker",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (event, dataArray, dataId) {
+              if (labelClicked !== areaCode) {
+                labelHovered = null;
+              }
+            }`,
+        },
+        value: function (event, marker, dataId) {
+          activeMarkerId = null;
+        },
+      },
+      {
+        name: "onClickMarker",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: `function (event, dataArray, dataId) {
+              labelClicked === areaCode
+                ? ((labelClicked = null), (labelHovered = null))
+                : (labelClicked = areaCode);
+            }`,
+        },
+        value: function (event, marker, dataId) {
+          activeMarkerId = event;
+        },
+      },
+      {
+        name: "onMouseEnterLine",
         category: "lineEvents",
         functionElements: {
           functionAsString: `function(event, dataArray, dataId) {
@@ -297,7 +401,7 @@
         },
       },
       {
-        name: "onMouseLeave",
+        name: "onMouseLeaveLine",
         category: "lineEvents",
         functionElements: {
           functionAsString: `function(event, dataArray, dataId) {
@@ -328,6 +432,17 @@
       }[areaCode] ?? colorsArray[i % colorsArray.length]
     );
   };`,
+        },
+        value: function (areaCode, i) {
+          let colorsArray = [colors.coral, colors.fuschia, colors.purple];
+
+          return (
+            {
+              [englandMedian]: colors.lightblue,
+              [selectedAreaCode]: colors.teal,
+              [similarAreas]: colors.darkblue,
+            }[areaCode] ?? colorsArray[i % colorsArray.length]
+          );
         },
       },
 
@@ -411,24 +526,28 @@
         name: "getLine",
         category: "customisingLines",
         functionElements: {
-          functionAsString: `function getLine(key, el, param) {
-    if (key === "primary") {
-      return primaryLines.includes(el.areaCode);
-    }
-    if (
-      key === "secondary" &&
-      showAllData &&
-      !primaryLines.includes(el.areaCode)
-    ) {
-      return true;
-    }
-    if (key === "hover") {
-      return lineHovered == el.areaCode;
-    }
-    if (key === "clicked") {
-      return lineClicked == el.areaCode;
-    }
-  }`,
+          functionAsString: `function (key, el, param) {
+          let primaryLines = [
+            "E07000224",
+            "E07000225",
+            "E07000226",
+            "E07000228",
+            englandMedian,
+            similarAreas,
+          ];
+          if (key === "primary") {
+            return primaryLines.includes(el.areaCode);
+          }
+          if (key === "secondary" && !primaryLines.includes(el.areaCode)) {
+            return true;
+          }
+          if (key === "hover") {
+            return [lineHovered, labelHovered].includes(el.areaCode);
+          }
+          if (key === "clicked") {
+            return [lineClicked, labelClicked].includes(el.areaCode);
+          }
+        },`,
         },
         value: function (key, el, param) {
           let primaryLines = [
@@ -446,10 +565,10 @@
             return true;
           }
           if (key === "hover") {
-            return lineHovered == el.areaCode;
+            return [lineHovered, labelHovered].includes(el.areaCode);
           }
           if (key === "clicked") {
-            return lineClicked == el.areaCode;
+            return [lineClicked, labelClicked].includes(el.areaCode);
           }
         },
       },
@@ -514,30 +633,50 @@
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
-      interactive: true,
+      interactive: false,
       markers: false,
+      showLabel: false,
     },
     primary: {
       halo: true,
       pathStrokeWidth: 5,
       pathStrokeColor: colors.darkgrey,
-      interactive: true,
+      interactive: false,
       markers: false,
+      showLabel: !lineClicked && !lineHovered && !labelClicked,
+      lineEnding: null,
+      markers: true,
     },
     clicked: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 7,
       halo: true,
-      interactive: true,
+      interactive: false,
       markers: false,
+      showLabel: true,
+      lineEnding: null,
     },
     hover: {
       pathStrokeColor: colors.ochre,
-      pathStrokeWidth: 5,
+      pathStrokeWidth: 6,
       halo: true,
-      interactive: true,
+      interactive: false,
       markers: false,
+      showLabel: true,
+      lineEnding: null,
     },
+  });
+
+  let globalTierRules = $derived({
+    otherTier: {},
+    secondary: {
+      opacity: nothingSelected ? 1 : 0.5,
+    },
+    primary: {
+      opacity: nothingSelected ? 1 : 0.4,
+    },
+    hover: { opacity: 1 },
+    clicked: { opacity: 1 },
   });
 
   let getColor = function (areaCode, i) {
@@ -601,6 +740,7 @@
     getColor,
     basicLineParams,
     nothingSelected,
+    globalTierRules,
   });
 
   /**
@@ -696,6 +836,8 @@
       {...parametersObject}
       bind:lineClicked
       bind:lineHovered
+      bind:labelClicked
+      bind:labelHovered
       bind:svgWidth
     ></LineChart>
   </div>

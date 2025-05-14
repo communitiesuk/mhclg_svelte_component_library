@@ -11,25 +11,36 @@
     axisFunction,
     values,
     numberOfTicks,
-    minTick,
-    maxTick,
+    floor,
+    ceiling,
     orientation,
     yearsInput,
-    generateTicksNum,
     yearFormating,
   } = $props();
 
   $inspect(ticksArray);
 
-  function generateTicks(data, numTicks, minTick, maxTick) {
-    let minVal =
-      minTick !== null
+  function generateTicks(data, numTicks, floor, ceiling) {
+    let minValueFromData = Decimal.min(...data);
+
+    let minVal = floor
+      ? Decimal.max(floor, minValueFromData)
+      : minValueFromData;
+
+    let maxValueFromData = Decimal.max(...data);
+
+    let maxVal = ceiling
+      ? Decimal.min(ceiling, maxValueFromData)
+      : maxValueFromData;
+
+    /*let minVal =
+      generateTicksNum !== true
         ? new Decimal(minTick)
         : Decimal.min(...data.map((val) => new Decimal(val)));
     let maxVal =
       maxTick !== null
         ? new Decimal(maxTick)
-        : Decimal.max(...data.map((val) => new Decimal(val)));
+        : Decimal.max(...data.map((val) => new Decimal(val)));*/
     let rangeVal = maxVal.minus(minVal);
 
     let roughStep = rangeVal.div(numTicks - 1);
@@ -54,17 +65,18 @@
     return ticks;
   }
 
-  function tickCount(chartWidth) {
-    return Math.floor(chartWidth / 50);
+  function tickCount(chartWidth, chartHeight) {
+    let tickNum = orientation.axis === "y" ? chartHeight / 50 : chartWidth / 50;
+    return tickNum;
   }
 
   function yearsFormat(ticks) {
     return ticks.map((tick) => `FY ${tick % 100}-${(tick % 100) + 1}`);
   }
 
-  numberOfTicks = tickCount(chartWidth);
+  numberOfTicks = tickCount(chartWidth, chartHeight);
 
-  ticksArray = generateTicks(values, numberOfTicks, minTick, maxTick);
+  ticksArray = generateTicks(values, numberOfTicks, floor, ceiling);
   let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 </script>
 

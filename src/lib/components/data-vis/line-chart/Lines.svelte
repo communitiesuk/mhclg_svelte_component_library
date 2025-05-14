@@ -20,20 +20,26 @@
     chartHeight,
     globalTierRules,
     chartBackgroundColor = "#fafafa",
-    nothingSelected,
-    getLine,
-    onMouseEnter,
-    onMouseLeave,
-    onClick,
+    nothingSelected = $bindable(),
+    onMouseEnterLine,
+    onMouseLeaveLine,
+    onClickLine,
+    onMouseEnterLabel,
+    onMouseLeaveLabel,
+    onClickLabel,
+    onMouseEnterMarker,
+    onMouseLeaveMarker,
+    onClickMarker,
+    activeMarkerId,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
 
   let transformed = $derived(
-    (nothingSelected
-      ? tieredDataObject.primary
-      : [...(tieredDataObject.hover || []), ...(tieredDataObject.clicked || [])]
-    )
+    Object.values(tieredDataObject)
+      .filter(Array.isArray)
+      .flatMap((tier) => tier.filter((item) => item.showLabel === true))
+
       .filter(
         (item, index, self) =>
           self.findIndex((other) => other.areaCode === item.areaCode) === index,
@@ -52,85 +58,50 @@
       (d) => 20 * Math.ceil(d.areaCode.length / 15),
     ),
   );
-
-  function generateLineAttributes(line, defaultLineParams, tier) {
-    const listOfProperties = [
-      ...new Set([
-        ...Object.keys(line),
-        ...Object.keys(defaultLineParams[tier]),
-      ]),
-    ];
-
-    const merged = Object.fromEntries(
-      listOfProperties.map((key) => [
-        key,
-        line[key] ?? defaultLineParams[tier][key],
-      ]),
-    );
-    return {
-      ...merged,
-      dataId: line.areaCode,
-      dataArray: line.data, // rename in the original to avoid this
-    };
-  }
 </script>
-
-{#snippet categoryLabelSnippet(dataArray, newY)}
-  <CategoryLabel
-    id={`label-${dataArray.areaCode}`}
-    bind:labelClicked
-    bind:labelHovered
-    {chartWidth}
-    {lineFunction}
-    {dataArray}
-    {xFunction}
-    {yFunction}
-    {newY}
-    onClick={function (areaCode) {
-      labelClicked === areaCode
-        ? ((labelClicked = null), (labelHovered = null))
-        : (labelClicked = areaCode);
-    }}
-    onMouseEnter={function onMouseEnter(areaCode) {
-      labelHovered = areaCode;
-    }}
-    onMouseLeave={function onMouseLeave(areaCode) {
-      labelClicked === areaCode
-        ? (labelHovered = null)
-        : (labelHovered = areaCode);
-      labelHovered === areaCode ? (labelHovered = null) : (labelHovered = null);
-    }}
-  ></CategoryLabel>
-{/snippet}
 
 {#each Object.keys(tieredDataObject) as tier}
   <g id={tier}>
     <g {...globalTierRules[tier]}>
       {#each tieredDataObject[tier] as line, i}
-        <!-- {@const lineAttributes = generateLineAttributes(
-          line,
-          defaultLineParams,
-          tier,
-        )} -->
         <Line
           {...line}
           {tier}
           {chartBackgroundColor}
           {lineFunction}
-          {onMouseEnter}
-          {onMouseLeave}
-          {onClick}
+          {xFunction}
+          {yFunction}
+          {onMouseEnterLine}
+          {onMouseLeaveLine}
+          {onClickLine}
+          {onMouseEnterMarker}
+          {onMouseLeaveMarker}
+          {onClickMarker}
+          bind:lineClicked
+          bind:lineHovered
+          {activeMarkerId}
         />
       {/each}
     </g>
 
     <g>
       {#each tieredDataObject[tier] as line, i}
-        {#if (tier == "primary" && nothingSelected) || ["hover", "clicked"].includes(tier)}
-          {@render categoryLabelSnippet(
-            line,
-            labelsPlaced.find((el) => el.datum.areaCode === line.areaCode)?.y,
-          )}
+        {#if line.showLabel}
+          <CategoryLabel
+            id={`label-${line.areaCode}`}
+            bind:labelClicked
+            bind:labelHovered
+            {chartWidth}
+            {lineFunction}
+            dataArray={line}
+            {xFunction}
+            {yFunction}
+            newY={labelsPlaced.find((el) => el.datum.areaCode === line.areaCode)
+              ?.y}
+            {onClickLabel}
+            {onMouseEnterLabel}
+            {onMouseLeaveLabel}
+          ></CategoryLabel>
         {/if}
       {/each}
     </g>

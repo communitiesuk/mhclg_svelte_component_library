@@ -52542,5 +52542,24 @@
     "E07000052": "West Dorset",
     "E07000191": "West Somerset",
     "E07000053": "Weymouth and Portland"
+    },
+    "metaData" : {
+        
+            "Household waste recycling rate": {
+              "direction": "Higher is better",
+              "explainer": "Percentage of household waste sent for recycling.",
+              "label": "Household recycling rate (%)"
+            },
+            "Recycling contamination rate": {
+              "direction": "Lower is better",
+              "explainer":
+                "Percentage of recycling that is contaminated and cannot be processed.",
+              "label": "Recycling contamination rate (%)"
+            },
+            "Residual household waste": {
+              "direction": "Lower is better",
+              "explainer": "Amount of non-recyclable waste per household (kg/year).",
+              "label": "Household waste (kg)"
+            }
+          }
     }
-}

@@ -31,7 +31,7 @@
       data-module="govuk-button"
       onclick={buttonFunction}
     >
-      Start now
+      {textContent}
       <svg
         class="govuk-button__start-icon"
         xmlns="http://www.w3.org/2000/svg"
@@ -55,6 +55,29 @@
     >
       {textContent}
     </button>
+  {:else if buttonType === "table header"}
+    <button type="button" class="text-header">
+      {textContent}
+      <svg
+        width="22"
+        height="22"
+        focusable="false"
+        aria-hidden="true"
+        role="img"
+        viewBox="0 0 22 22"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <path
+          d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
+          fill="currentColor"
+        ></path>
+        <path
+          d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
+          fill="currentColor"
+        ></path>
+      </svg>
+    </button>
   {:else}
     <button
       type="submit"
@@ -68,4 +91,8 @@
 </div>
 
 <style>
+  .text-header {
+    display: flex;
+    color: #005ea5;
+  }
 </style>

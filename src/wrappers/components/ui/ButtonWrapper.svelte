@@ -189,6 +189,7 @@
           "warning",
           "dark background",
           "disabled",
+          "table header",
         ],
         description: {
           markdown: true,

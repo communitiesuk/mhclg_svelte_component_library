@@ -68,7 +68,7 @@
       label: "Context",
       arr: contextArray,
       visibleOnHomepage: false,
-      markdown: false,
+      markdown: true,
     },
   ];
 
@@ -97,6 +97,7 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import Button from "$lib/components/ui/Button.svelte";
+  import Examples from "./button/Examples.svelte";
 
   let { data } = $props();
 
@@ -161,14 +162,59 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
+        name: "componentNameProp",
+        category: "Input props",
+        propType: "fixed",
+        value: pageName,
+      },
+      {
         name: "textContent",
-        category: "content",
-        value: "Click me",
+        category: "Input props",
+        value: `Click me`,
+        description: {
+          markdown: true,
+          arr: [
+            `This is the text that you want to appear on the <code>${pageName}</code>.`,
+          ],
+        },
+        rows: 2,
       },
       {
         name: "buttonType",
-        category: "content",
-        options: ["default", "secondary"],
+        category: "Input props",
+        options: [
+          "default",
+          "secondary",
+          "start",
+          "warning",
+          "dark background",
+          "disabled",
+          "table header",
+        ],
+        description: {
+          markdown: true,
+          arr: [`This is the type of <code>${pageName}</code> you want.`],
+        },
+        rows: 5,
+      },
+      {
+        name: "buttonFunction",
+        category: "Input props",
+        value: function () {
+          window.alert(`The button function has been triggered.`);
+        },
+        functionElements: {
+          functionAsString: `function () {
+          window.alert('The button function has been triggered.');
+        }`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a function to the <code>${pageName}</code> component that is executed when the button is clicked`,
+          ],
+        },
+        rows: 5,
       },
     ]),
   );
@@ -309,10 +355,9 @@
   !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
+
 {#snippet Component()}
-  <div class="p-5">
-    <Button {...parametersObject}></Button>
-  </div>
+  <Button {...parametersObject}></Button>
 {/snippet}
 
 <!--
@@ -357,4 +402,6 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5"></div>
+<div id="examples" data-role="examples-section" class="px-5">
+  <Examples></Examples>
+</div>

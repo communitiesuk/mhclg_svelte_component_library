@@ -1,3 +1,7 @@
+<script module>
+  export const pageTitle = "My Custom Test Title";
+</script>
+
 <script>
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";

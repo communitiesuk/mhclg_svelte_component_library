@@ -166,6 +166,7 @@
         name: "ticksArray",
         category: "data",
         isBinded: true,
+        value: ticksArray,
       },
       {
         name: "values",
@@ -250,18 +251,17 @@
 
       {
         name: "prefix",
-        category: "customisations",
+        category: "formattingTick",
         value: "",
       },
       {
         name: "suffix",
-        category: "customisations",
+        category: "formattingTick",
         value: "",
       },
-      { name: "minTick", category: "formatting", value: 0 },
-      { name: "maxTick", category: "formatting", value: 100 },
-      { name: "generateTicksNum", category: "customisations", value: false },
-      { name: "yearsInput", category: "customisations", value: false },
+      { name: "floor", category: "formatting", value: 0 },
+      { name: "ceiling", category: "formatting", value: 100 },
+      { name: "yearsInput", category: "formattingTick", value: false },
       {
         name: "orientationAxis",
         category: "customisations",
@@ -282,7 +282,10 @@
       },
       {
         name: "yearFormating",
-        category: "formatting",
+        category: "formattingTick",
+        value: function (ticks) {
+          return ticks.map((tick) => "FY {tick % 100}-{(tick % 100) + 1}");
+        },
         functionElements: {
           functionAsString: `function yearsFormat(ticks) {return ticks.map((tick) => "FY {tick % 100}-{(tick % 100) + 1}");}`,
         },
@@ -382,16 +385,11 @@
     orientation?.axis === "x" ? xFunction : yFunction,
   );
 
-  let yearFormating = $derived(function yearsFormat(ticks) {
-    return ticks;
-  });
-
   let derivedParametersObject = $derived({
     chartWidth,
     chartHeight,
     orientation,
     axisFunction,
-    yearFormating,
   });
   /**
    * DONOTTOUCH *

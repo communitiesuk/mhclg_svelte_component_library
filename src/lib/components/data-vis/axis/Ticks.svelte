@@ -11,25 +11,36 @@
     axisFunction,
     values,
     numberOfTicks,
-    minTick,
-    maxTick,
+    floor,
+    ceiling,
     orientation,
     yearsInput,
-    generateTicksNum,
     yearFormating,
   } = $props();
 
   $inspect(ticksArray);
 
-  function generateTicks(data, numTicks, minTick, maxTick, generateTicksNum) {
-    let minVal =
+  function generateTicks(data, numTicks, floor, ceiling) {
+    let minValueFromData = Decimal.min(...data);
+
+    let minVal = floor
+      ? Decimal.max(floor, minValueFromData)
+      : minValueFromData;
+
+    let maxValueFromData = Decimal.max(...data);
+
+    let maxVal = ceiling
+      ? Decimal.min(ceiling, maxValueFromData)
+      : maxValueFromData;
+
+    /*let minVal =
       generateTicksNum !== true
         ? new Decimal(minTick)
         : Decimal.min(...data.map((val) => new Decimal(val)));
     let maxVal =
       generateTicksNum !== true
         ? new Decimal(maxTick)
-        : Decimal.max(...data.map((val) => new Decimal(val)));
+        : Decimal.max(...data.map((val) => new Decimal(val)));*/
     let rangeVal = maxVal.minus(minVal);
 
     let roughStep = rangeVal.div(numTicks - 1);
@@ -64,13 +75,7 @@
 
   numberOfTicks = tickCount(chartWidth);
 
-  ticksArray = generateTicks(
-    values,
-    numberOfTicks,
-    minTick,
-    maxTick,
-    generateTicksNum,
-  );
+  ticksArray = generateTicks(values, numberOfTicks, floor, ceiling);
   let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 
   // Calculate font size based on the number of ticks

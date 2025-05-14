@@ -1,4 +1,6 @@
 <script>
+  import Button from "$lib/components/ui/Button.svelte";
+
   let {
     componentNameProp = undefined,
     data = undefined,
@@ -89,6 +91,8 @@
 {/snippet}
 
 <div class="p-4">
+  <Button textContent={"recycling"} buttonType={"table header"} buttonFunction
+  ></Button>
   <h4>{componentNameProp} component</h4>
 
   {#if colourScale === "On"}

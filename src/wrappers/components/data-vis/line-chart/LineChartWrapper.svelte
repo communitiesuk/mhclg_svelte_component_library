@@ -146,8 +146,8 @@
       (item) => item == null,
     ),
   );
-  let checkMarkerInteraction = $state();
-  $inspect(checkMarkerInteraction);
+  let activeMarkerId = $state();
+  $inspect(activeMarkerId);
 
   /**
    * ! Step 3 - Add your props
@@ -352,8 +352,8 @@
               labelHovered = areaCode;
             }`,
         },
-        value: function (event, dataArray, dataId) {
-          checkMarkerInteraction = "enter";
+        value: function (event, marker, dataId) {
+          activeMarkerId = event;
         },
       },
       {
@@ -366,8 +366,8 @@
               }
             }`,
         },
-        value: function (event, dataArray, dataId) {
-          checkMarkerInteraction = "left";
+        value: function (event, marker, dataId) {
+          activeMarkerId = null;
         },
       },
       {
@@ -380,8 +380,8 @@
                 : (labelClicked = areaCode);
             }`,
         },
-        value: function (event, dataArray, dataId) {
-          checkMarkerInteraction = "clicked";
+        value: function (event, marker, dataId) {
+          activeMarkerId = event;
         },
       },
       {

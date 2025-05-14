@@ -50,6 +50,7 @@
     // labelTextColor,
     lineClicked = $bindable(),
     lineHovered = $bindable(),
+    activeMarkerId,
   } = $props();
 
   function makeList(inputValue) {
@@ -131,13 +132,13 @@
     pointer-events="none"
     marker-start={`url(#${lineEnding}-${pathStrokeColor})`}
   ></path>
-  {#if markers}
+  {#if false}
     {#each dataArray as marker, i}
       <g
-        data-id={"marker-" + i}
-        onclick={(event) => onClickMarker(event, marker)}
-        onmouseenter={(event) => onMouseEnterMarker(event, marker)}
-        onmouseleave={(event) => onMouseLeaveMarker(event, marker)}
+        data-id={"marker-" + marker.areaCode + marker.x}
+        onclick={(event) => onClickMarker(event, marker, dataId)}
+        onmouseenter={(event) => onMouseEnterMarker(event, marker, dataId)}
+        onmouseleave={(event) => onMouseLeaveMarker(event, marker, dataId)}
         transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
         role="button"
         tabindex="0"
@@ -170,8 +171,8 @@
             stroke-width={markerStrokeWidth}
           ></polygon>
         {/if}
-        {#if false}
-          {#if i == 1}
+        {#if true}
+          {#if activeMarkerId == `marker-${marker.areaCode}${marker.x}`}
             <ValueLabel
               {marker}
               labelColor="grey"
@@ -184,17 +185,3 @@
     {/each}
   {/if}
 </g>
-
-<!-- <path
-  d={pathFunction(dataArray)}
-  fill="none"
-  stroke={color}
-  stroke-width={strokeWidth}
-></path> -->
-
-<!-- {#if true}
-  {#each dataArray as marker}
-    <circle cx={marker.x} cy={marker.y} r="6" stroke="white" fill="black">
-    </circle>
-  {/each}
-{/if} -->

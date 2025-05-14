@@ -43,6 +43,7 @@
     overrideLineParams,
     nothingSelected = $bindable(),
     globalTierRules,
+    activeMarkerId,
   } = $props();
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
@@ -159,6 +160,7 @@
             {onClickMarker}
             {onMouseEnterMarker}
             {onMouseLeaveMarker}
+            {activeMarkerId}
           ></Lines>
         </g>
         <g data-role="y-axis">

@@ -1,5 +1,6 @@
 <script lang="ts">
   import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import Breadcrumbs from "$lib/components/ui/Breadcrumbs.svelte";
   import "../app.css";
   let { children, data } = $props();
 
@@ -20,6 +21,10 @@
       <DividerLine margin="1rem 0rem"></DividerLine>
     </div>
   </a>
+
+  <div class="g-top-level-container mb-6">
+    <Breadcrumbs collapseOnMobile={true} />
+  </div>
 
   {@render children()}
 </div>

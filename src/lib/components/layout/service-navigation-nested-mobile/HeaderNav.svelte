@@ -12,7 +12,7 @@
     serviceName = "Service Name",
     homeHref = "/",
     navigationItems = [] as NavigationItem[],
-    activeItemHref = "", // Used to highlight the active top-level nav item
+    activeItemHref = $bindable(""), // Used to highlight the active top-level nav item
     isMobileNavOpen = $bindable(false), // Bound from parent, for toggling mobile nav
     onToggle = () => {},
   }: {

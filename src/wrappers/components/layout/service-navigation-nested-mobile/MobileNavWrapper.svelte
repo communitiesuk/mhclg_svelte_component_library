@@ -209,7 +209,25 @@
   this.functionElements.counter += 1;
   this.functionElements.dataset.lastHref = href;
   activeDetailHref = href;
-  // (Optional) logic to update activeSectionHref based on href
+  try {
+    const currentSections = JSON.parse(getValue('sections'));
+    const parentSection = currentSections.find(section => {
+      if (!section.items) return false;
+      return section.items.some(item => {
+        if ('items' in item && Array.isArray(item.items)) {
+          return item.items.some(subItem => subItem.href === href);
+        } else if ('href' in item) {
+          return item.href === href;
+        }
+        return false;
+      });
+    });
+    if (parentSection && parentSection.href) {
+      activeSectionHref = parentSection.href;
+    }
+  } catch (e) {
+    console.error('Error finding parent section:', e);
+  }
 }`,
   });
 
@@ -223,7 +241,8 @@
           markdown: true,
           arr: [
             "Controls the visibility of the mobile navigation panel. Set to <code>true</code> to show, <code>false</code> to hide.",
-            "This is typically controlled by a parent component (e.g., a toggle button in <code>HeaderNav</code>).",
+            "This prop is typically controlled by a parent component (e.g., a toggle button in <code>HeaderNav</code>).",
+            "When <code>false</code>, the navigation panel is hidden from view and <code>aria-hidden</code> is set to true.",
           ],
         },
       },
@@ -282,10 +301,10 @@
           markdown: true,
           arr: [
             "An array of <code>NavSection</code> objects that define the structure and content of the mobile navigation.",
-            "Each section object has a <code>title</code>, optional <code>href</code>, and an <code>items</code> array.",
-            "The <code>items</code> array can contain <code>SubNavItem</code> objects (with <code>text</code>, <code>href</code>) or nested group objects (with <code>title</code> and an <code>items</code> array of <code>SubNavItem</code>).",
-            "The 'current' status of items is now determined by <code>activeSectionHref</code> and <code>activeDetailHref</code>.",
-            "Use hashed hrefs (e.g. <code>/#some-id</code>) if you want to test navigation within this wrapper page without full page reloads.",
+            "Each section object has a <code>title</code>, optional <code>href</code> (for the section header link), and an <code>items</code> array.",
+            "The <code>items</code> array can contain <code>SubNavItem</code> objects (with <code>text</code> and <code>href</code>) or group objects (with <code>title</code> and an <code>items</code> array of <code>SubNavItem</code>).",
+            "The active state of sections and items is determined by <code>activeSectionHref</code> and <code>activeDetailHref</code> props, not by a <code>current</code> property.",
+            "Use hash-based hrefs (e.g. <code>#some-id</code>) for in-page navigation or demo purposes.",
           ],
         },
       },
@@ -293,13 +312,14 @@
         name: "activeSectionHref",
         category: "State & Behavior",
         isBinded: true,
-        value: activeSectionHref, // Use the $state variable directly
+        value: activeSectionHref,
         description: {
           markdown: true,
           arr: [
-            "The <code>href</code> of the currently active main section (e.g., a top-level category like '/components').",
-            "This is used to highlight the active section header and determines which section might be initially expanded if no user interaction has occurred.",
+            "The <code>href</code> of the currently active main section (e.g., a top-level category like <code>'/components'</code> or <code>'#components'</code>).",
+            "This highlights the active section header and determines which section is initially expanded if the user hasn't toggled any section.",
             "Should match the <code>href</code> of one of the <code>NavSection</code> objects in the <code>sections</code> array.",
+            "If the user toggles a section, that explicit state takes precedence over this prop for expansion.",
           ],
         },
       },
@@ -307,13 +327,14 @@
         name: "activeDetailHref",
         category: "State & Behavior",
         isBinded: true,
-        value: activeDetailHref, // Use the $state variable directly
+        value: activeDetailHref,
         description: {
           markdown: true,
           arr: [
-            "The <code>href</code> of the currently active specific navigation item (e.g., a link to a specific component page like '/components/layout/mobile-nav').",
-            "This is used to highlight the specific active link within an expanded section.",
+            "The <code>href</code> of the currently active navigation item (e.g., a link to a specific page or component).",
+            "This highlights the specific active link within an expanded section.",
             "Should match the <code>href</code> of a <code>SubNavItem</code> within the <code>sections</code> array.",
+            "This prop is used for visual highlighting only; navigation is handled by the <code>onNavigate</code> event handler.",
           ],
         },
       },
@@ -361,10 +382,12 @@
         description: {
           markdown: true,
           arr: [
-            "An event handler function that is called when a navigation link (SubNavItem) within the mobile menu is clicked.",
-            "It receives the <code>href</code> of the clicked item and the original <code>MouseEvent</code> as arguments.",
-            "The function updates <code>activeDetailHref</code> to the clicked item's href and finds the appropriate parent section to update <code>activeSectionHref</code>.",
-            "In a real app, this would typically also handle actual navigation (e.g., using SvelteKit's <code>goto</code>) and potentially close the mobile menu.",
+            "Event handler called when a navigation link (<code>SubNavItem</code>) is clicked in the mobile menu.",
+            "Receives the <code>href</code> of the clicked item and the original <code>MouseEvent</code> as arguments.",
+            "By default, updates <code>activeDetailHref</code> to the clicked item's href, and finds and updates <code>activeSectionHref</code> to the parent section's href.",
+            "In a real app, this handler would handle actual navigation to another location (e.g., using SvelteKit's <code>goto</code>) and may close the mobile menu.",
+            "If <code>event.preventDefault()</code> is called, default browser navigation is prevented.",
+            "The demo implementation also increments a counter and tracks the last href for demonstration purposes.",
           ],
         },
       },
@@ -469,8 +492,8 @@
    * DONOTTOUCH *
    * && 		copyParametersToClipboard simply takes the set of props being passed to the component, and replaces any function with their functionAsString property. This is necessary because actual functions cannot be written to parsed into a string, and therefore can't be copied to the clipboard.
    */
-  
-   let copyParametersToClipboardObject = $derived(
+
+  let copyParametersToClipboardObject = $derived(
     Object.fromEntries(
       Object.entries(parametersObject).map(([key, value]) => [
         key,
@@ -481,7 +504,7 @@
       ]),
     ),
   );
-  </script>
+</script>
 
 <!--
 &&  WrapperNameAndStatus and WrapperInformation are passed to the WrapperDetails component. They are also exported and then imported on the homepage, and then used (again by the WrapperDetails component) to provide a link and info to this component. 

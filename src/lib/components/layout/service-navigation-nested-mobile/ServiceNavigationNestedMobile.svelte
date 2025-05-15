@@ -15,40 +15,30 @@
   // --- Props ---
   let {
     serviceName = "Service Name",
-    homeHref = "/",
-    // Used for the top desktop navigation and determining the current section
-    navigationItems = [],
+    homeHref,
+    // Used for the top desktop navigation
+    navigationItems,
     // Used for the detailed structure within the mobile flyout menu
-    mobileNavSections = [],
-  } = $props<{
+    mobileNavSections,
+    currentSection, // Text for the current section, e.g., "Components"
+    activeSectionHref, // Path of the active section, e.g. "/components"
+    activeDetailHref, // Path of the specific active item, e.g. "/components/forms/button#examples"
+  }: {
     serviceName?: string;
-    homeHref?: string;
+    homeHref: string;
     navigationItems: NavigationItem[];
     mobileNavSections: NavSection[];
-  }>();
+    currentSection: string;
+    activeSectionHref: string;
+    activeDetailHref: string;
+  } = $props();
 
   // --- State ---
-  let isMobileNavOpen = $state(false); // State for mobile menu visibility - reinstated $state
-  let currentSection = $state(""); // Tracks the active top-level section - reinstated $state
+  let isMobileNavOpen = $state(false);
 
   // --- Effects ---
-  // Update current section based on route changes
-  $effect(() => {
-    const path = $page.url.pathname;
-
-    // Find the matching top-level navigation item based on the current path
-    const activeItem = navigationItems.find((item) =>
-      path === "/"
-        ? item.href === "/"
-        : item.href !== "/" && path.startsWith(item.href),
-    );
-
-    currentSection = activeItem
-      ? activeItem.text
-      : path === "/"
-        ? navigationItems[0]?.text || ""
-        : "";
-  });
+  // Internal logic for deriving currentSection is removed.
+  // The component now relies on the currentSection prop passed from the parent.
 
   // --- Handlers ---
   // Toggle the mobile nav open/closed state
@@ -57,28 +47,31 @@
   }
 
   // Handle navigation request from mobile menu
-  function handleMobileNavigation(href: string) {
-    isMobileNavOpen = false; // Close the menu
-    if (typeof window !== "undefined") {
-      goto(href); // Navigate using SvelteKit's router
-    }
+  function handleMobileNavigation() {
+    isMobileNavOpen = false;
   }
 </script>
 
-<!-- Render the HeaderNav -->
-<HeaderNav
-  {serviceName}
-  {homeHref}
-  {navigationItems}
-  {currentSection}
-  mobileNavIsOpen={isMobileNavOpen}
-  onToggle={handleToggleMobileNav}
-/>
+<div>
+  {#if navigationItems && navigationItems.length > 0}
+    <HeaderNav
+      {serviceName}
+      {homeHref}
+      {navigationItems}
+      bind:isMobileNavOpen
+      activeItemHref={activeSectionHref}
+      onToggle={handleToggleMobileNav}
+    />
+  {/if}
+</div>
 
-<!-- Render the MobileNav -->
-<MobileNav
-  isOpen={isMobileNavOpen}
-  sections={mobileNavSections}
-  {currentSection}
-  onNavigate={handleMobileNavigation}
-/>
+{#if isMobileNavOpen}
+  <MobileNav
+    sections={mobileNavSections}
+    {currentSection}
+    {activeSectionHref}
+    {activeDetailHref}
+    onNavigate={handleMobileNavigation}
+    isOpen={isMobileNavOpen}
+  />
+{/if}

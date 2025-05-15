@@ -1,16 +1,14 @@
 <script lang="ts">
   import Footer from "$lib/components/ui/Footer.svelte";
   import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
-  import HeaderNav from "$lib/components/layout/service-navigation-nested-mobile/HeaderNav.svelte";
-  import MobileNav from "$lib/components/layout/service-navigation-nested-mobile/MobileNav.svelte";
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
+  import ServiceNavigationNestedMobile from "$lib/components/layout/service-navigation-nested-mobile/ServiceNavigationNestedMobile.svelte";
   import "../app.css";
   import type {
     SideNavGroup,
     SideNavItem,
   } from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
   import type { ComponentItem } from "./+layout.server";
-  import { goto } from "$app/navigation";
   import { page } from "$app/stores";
   import PhaseBanner from "$lib/components/layout/PhaseBanner.svelte";
 
@@ -24,19 +22,14 @@
   );
 
   // Current section for navigation
-  let currentSection = $state("Home"); // Default to Home
+  let currentSection = $state(""); // Default to Home
+  let sideNavCurrentItem = $state(""); // State for SideNav's currentItem
+  let activeSectionHref = $state(""); // Renamed from topNavActiveHref
+  let activeDetailHref = $state(""); // New state for specific item path + hash
 
-  // --- Central Mobile Navigation State ---
-
-  // Mobile navigation state
-  let isMobileNavOpen = $state(false);
-
-  // Current page for side navigation
-  let currentPage = $state("");
-
-  // Top navigation items
+  // Top navigation items - .current flag will be set based on activeSectionHref
   let navigationItems = $state([
-    { text: "Home", href: "/", current: true },
+    { text: "Home", href: "/", current: false },
     { text: "Components", href: "/components", current: false },
     { text: "Patterns", href: "/patterns", current: false },
     { text: "Community", href: "/community", current: false },
@@ -148,12 +141,12 @@
       ? createMobileItems(componentTree)
       : fallbackMobileItems;
 
-  // Mobile navigation sections
+  // Mobile navigation sections - .current flag will be ignored, MobileNav will use activeSectionHref (via its parent)
   const mobileNavSections = $state([
     {
       title: "Home",
       href: "/",
-      current: true,
+      current: false,
       items: [{ text: "Overview", href: "/" }],
     },
     {
@@ -187,20 +180,6 @@
     },
   ]);
 
-  // --- Mobile Navigation Handlers ---
-  // Toggle the mobile nav open/closed state
-  function handleToggleMobileNav() {
-    isMobileNavOpen = !isMobileNavOpen;
-  }
-
-  // Handle navigation request from mobile menu
-  function handleMobileNavigation(href: string) {
-    isMobileNavOpen = false; // Close the menu
-    if (typeof window !== "undefined") {
-      goto(href); // Navigate
-    }
-  }
-
   // Update current section based on route changes (using the page store)
   $effect(() => {
     if (typeof window === "undefined") return;
@@ -210,45 +189,43 @@
   });
 
   // Use the page store to track route changes and update the active section
+  // Also updates sideNavCurrentItem for SideNav and activeSectionHref/activeDetailHref for navigation
   $effect(() => {
-    // Get current path from the page store (reactive)
     const path = $page.url.pathname;
+    const hash = $page.url.hash;
+    sideNavCurrentItem = path + hash; // Update sideNavCurrentItem based on full URL
+    activeDetailHref = path + hash; // Set activeDetailHref to full path + hash
 
-    // Reset all navigation items to not current
+    // Reset all current flags
     for (let i = 0; i < navigationItems.length; i++) {
       navigationItems[i].current = false;
     }
-
-    // Update mobile sections to all not current
     for (let i = 0; i < mobileNavSections.length; i++) {
       mobileNavSections[i].current = false;
     }
 
-    // Set current section based on path
+    // Determine currentSection and activeSectionHref
     if (path.startsWith("/components")) {
       currentSection = "Components";
+      activeSectionHref = "/components";
       navigationItems[1].current = true;
-      mobileNavSections[1].current = true;
+      mobileNavSections[1].current = true; // Highlight "Components" section header
     } else if (path.startsWith("/patterns")) {
       currentSection = "Patterns";
+      activeSectionHref = "/patterns";
       navigationItems[2].current = true;
-      mobileNavSections[2].current = true;
+      mobileNavSections[2].current = true; // Highlight "Patterns" section header
     } else if (path.startsWith("/community")) {
       currentSection = "Community";
+      activeSectionHref = "/community";
       navigationItems[3].current = true;
-      mobileNavSections[3].current = true;
-    } else {
-      // Root or any other path
+      mobileNavSections[3].current = true; // Highlight "Community" section header
+    } else if (path.startsWith("/")) {
       currentSection = "Home";
+      activeSectionHref = "/";
       navigationItems[0].current = true;
-      mobileNavSections[0].current = true;
+      mobileNavSections[0].current = true; // Highlight "Home" section header
     }
-  });
-
-  $effect(() => {
-    if (typeof window === "undefined") return;
-    // Set current page based on path
-    currentPage = $page.url.pathname.split("/").pop() || "";
   });
 
   // Function to get the appropriate nav groups based on current section
@@ -311,21 +288,15 @@
         organisationName="MHCLG Digital Design & Development Team"
       />
 
-      <!-- Navigation with logo and mobile menu -->
-      <HeaderNav
+      <!-- Use ServiceNavigationNestedMobile component -->
+      <ServiceNavigationNestedMobile
         serviceName="Svelte Component Library"
+        homeHref="/"
         {navigationItems}
+        {mobileNavSections}
         {currentSection}
-        mobileNavIsOpen={isMobileNavOpen}
-        onToggle={handleToggleMobileNav}
-      />
-
-      <!-- Mobile navigation -->
-      <MobileNav
-        isOpen={isMobileNavOpen}
-        sections={mobileNavSections}
-        {currentSection}
-        onNavigate={handleMobileNavigation}
+        {activeSectionHref}
+        {activeDetailHref}
       />
 
       <!-- Add Phase Banner here -->
@@ -333,7 +304,6 @@
         tagText="Alpha"
         linkHref="mailto:dataexplorerfeedback@communities.gov.uk"
       />
-
       <div class="app-pane__body govuk-width-container">
         <div class="app-split-pane">
           <!-- Side navigation - show for Components, Patterns, or Community pages -->
@@ -342,11 +312,10 @@
               <SideNav
                 title={getSectionTitle(currentSection)}
                 groups={getNavGroupsForSection(currentSection)}
-                currentItem={currentPage}
+                currentItem={activeDetailHref}
               />
             </aside>
           {/if}
-
           <!-- Main content area -->
           <div class="app-split-pane__content app-content">
             {@render children()}

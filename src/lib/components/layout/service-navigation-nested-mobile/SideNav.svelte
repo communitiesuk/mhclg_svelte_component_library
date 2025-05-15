@@ -15,65 +15,74 @@
 
   let {
     title = "Pages in this section",
-    items = $bindable([] as SideNavItem[]), // For a flat list of navigation items
-    groups = $bindable([] as SideNavGroup[]), // For grouped sections of navigation items
-    currentItem = $bindable(""), // Tracks the href of the currently active item/subItem
+    items = $bindable([] as SideNavItem[]),
+    groups = $bindable([] as SideNavGroup[]),
+    currentItem = $bindable(""), // This prop is the SOLE driver for active state
     activeItemBackgroundColor = $bindable("transparent"),
   } = $props<{
     title?: string;
     items?: SideNavItem[];
     groups?: SideNavGroup[];
-    currentItem?: string;
+    currentItem?: string; // Value from parent, or updated by internal clicks
     activeItemBackgroundColor?: string;
   }>();
 
-  // Determines if a navigation item or its sub-item is currently active
+  // Simplified calculateIsActive: relies only on the item and the currentItem prop
   function calculateIsActive(
     item: SideNavItem,
-    currentHref: string,
-    currentPath: string,
-    resolvedActiveIdentifier: string,
+    activePropValue: string | undefined,
   ): boolean {
-    const isParentOfActiveSubItem = !!(
-      item.subItems && item.subItems.some((sub) => sub.href === currentHref)
-    );
-    return (
-      item.href === currentHref ||
-      isParentOfActiveSubItem ||
-      item.href === currentPath ||
-      (currentPath.endsWith("/" + resolvedActiveIdentifier) &&
-        item.text.toLowerCase() === resolvedActiveIdentifier.toLowerCase())
-    );
+    if (!activePropValue) {
+      return false; // If currentItem prop is not set, nothing is active by it
+    }
+
+    // Check 1: Direct match with item's href
+    if (item.href === activePropValue) {
+      return true;
+    }
+
+    // Check 2: If activePropValue is a sub-item of this item
+    if (item.subItems) {
+      for (const subItem of item.subItems) {
+        if (subItem.href === activePropValue) {
+          return true; // Parent item is active because its sub-item is the active one
+        }
+      }
+    }
+
+    // Check 3: If item.href is the base path of activePropValue (when activePropValue has a hash)
+    // e.g., activePropValue="/page#section1", item.href="/page"
+    const activePropBasePath = activePropValue.split("#")[0];
+    if (item.href === activePropBasePath && activePropValue.includes("#")) {
+      return true;
+    }
+
+    return false;
   }
 
-  // Effect to reactively update the 'current' state of items based on URL or currentItem prop changes
+  // Effect to update the .current status of items whenever the currentItem prop changes.
   $effect(() => {
-    const path = page.url.pathname;
-    const activeItemFromPath = path.split("/").pop() || "";
-    const resolvedActiveItemIdentifier = currentItem || activeItemFromPath;
-
     const updateItemCurrentState = (item: SideNavItem) => ({
       ...item,
-      current: calculateIsActive(
-        item,
-        currentItem,
-        path,
-        resolvedActiveItemIdentifier,
-      ),
+      current: calculateIsActive(item, currentItem), // Pass the currentItem prop directly
     });
 
-    items = items.map(updateItemCurrentState);
+    if (items && items.length > 0) {
+      items = items.map(updateItemCurrentState);
+    }
 
-    groups = groups.map((group) => ({
-      ...group,
-      items: group.items.map(updateItemCurrentState),
-    }));
+    if (groups && groups.length > 0) {
+      groups = groups.map((group) => ({
+        ...group,
+        items: group.items.map(updateItemCurrentState),
+      }));
+    }
   });
 </script>
 
 {#snippet navItem(item: SideNavItem)}
   <!-- Reusable snippet for rendering a single navigation item and its potential sub-items -->
-  
+
   <!-- Represents a single item in the navigation list -->
   <li
     class="app-subnav__section-item {item.current
@@ -90,7 +99,7 @@
       aria-current={item.current ? "location" : undefined}
       onclick={() => {
         if (item.href) {
-          currentItem = item.href;
+          currentItem = item.href; // Internal click updates the bindable currentItem state
         }
       }}
     >
@@ -104,12 +113,11 @@
           <li class="app-subnav__section-item">
             <a
               class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
-              class:app-subnav__link--bold={subItem.href.split("#")[1] ===
-                page.url.hash.substring(1)}
+              class:app-subnav__link--bold={subItem.href === currentItem}
               href={subItem.href}
               onclick={() => {
                 if (subItem.href) {
-                  currentItem = subItem.href;
+                  currentItem = subItem.href; // Internal click updates the bindable currentItem state
                 }
               }}
             >

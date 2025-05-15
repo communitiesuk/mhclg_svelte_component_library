@@ -10,29 +10,27 @@
 
   // Component props
   let {
-    serviceName = "Service name",
+    serviceName = "Service Name",
     homeHref = "/",
-    navigationItems = [],
-    currentSection = $bindable(""),
-    mobileNavIsOpen = $bindable(false), // Make this prop bindable
-    onToggle, // Callback function prop
-  } = $props<{
+    navigationItems = [] as NavigationItem[],
+    activeItemHref = "", // Used to highlight the active top-level nav item
+    isMobileNavOpen = $bindable(false), // Bound from parent, for toggling mobile nav
+    onToggle = () => {},
+  }: {
     serviceName?: string;
     homeHref?: string;
-    navigationItems: NavigationItem[];
-    currentSection?: string;
-    mobileNavIsOpen?: boolean;
-    onToggle: () => void; // Callback function prop
-  }>();
+    navigationItems?: NavigationItem[];
+    activeItemHref?: string;
+    isMobileNavOpen?: boolean;
+    onToggle?: () => void;
+  } = $props();
 
-  // Check whether current section is set
+  // Reactive statement to update .current status based on activeItemHref
   $effect(() => {
-    // Update current property on nav items when currentSection changes
-    if (currentSection) {
-      navigationItems = navigationItems.map((item) => ({
-        ...item,
-        current: item.text === currentSection,
-      }));
+    if (navigationItems && navigationItems.length > 0) {
+      for (let i = 0; i < navigationItems.length; i++) {
+        navigationItems[i].current = navigationItems[i].href === activeItemHref;
+      }
     }
   });
 </script>
@@ -49,8 +47,9 @@
       <!-- Desktop navigation -->
       <ul class="govuk-service-navigation__list">
         {#each navigationItems as item}
+          {@const isCurrent = item.href === activeItemHref}
           <li
-            class="govuk-service-navigation__item {item.current
+            class="govuk-service-navigation__item {isCurrent
               ? 'govuk-service-navigation__item--active'
               : ''}"
           >
@@ -58,7 +57,7 @@
               class="govuk-service-navigation__link"
               href={item.href}
               data-topnav={item.text}
-              aria-current={item.current ? "page" : undefined}
+              aria-current={isCurrent ? "page" : undefined}
             >
               {item.text}
             </a>
@@ -71,7 +70,7 @@
         type="button"
         class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
         aria-controls="app-mobile-nav"
-        aria-expanded={mobileNavIsOpen}
+        aria-expanded={isMobileNavOpen}
         onclick={onToggle}
       >
         Menu

@@ -12,7 +12,6 @@
     {
       title: "Dashboard",
       href: "#/dashboard",
-      current: true,
       items: [
         { text: "Overview", href: "#/dashboard/overview" },
         { text: "Analytics", href: "#/dashboard/analytics" },
@@ -21,7 +20,6 @@
     {
       title: "Settings",
       href: "#/settings",
-      current: false,
       items: [
         { text: "Profile", href: "#/settings/profile" },
         { text: "Account", href: "#/settings/account" },
@@ -40,24 +38,32 @@
     {
       title: "Help",
       href: "#/help",
-      current: false,
       items: [
         { text: "FAQ", href: "#/help/faq" },
         { text: "Support", href: "#/help/support" },
       ],
     },
   ];
-  let ex1CurrentSection = $state("Dashboard");
+  let ex1ActiveSectionHref = $state("#/dashboard");
+  let ex1ActiveDetailHref = $state("#/dashboard/overview");
 
   function ex1ToggleMobileNav() {
     ex1IsOpen = !ex1IsOpen;
   }
 
-  function ex1HandleNavigate(href: string, event: MouseEvent) {
+  function ex1HandleNavigate(href: string, event?: MouseEvent) {
     if (event && typeof event.preventDefault === "function") {
       event.preventDefault();
     }
     alert(`Example 1: Navigating to ${href}. Default navigation prevented.`);
+    const newActiveSection = ex1Sections.find((section) =>
+      href.startsWith(section.href || "@@@no-href@@@"),
+    );
+    if (newActiveSection && newActiveSection.href) {
+      ex1ActiveSectionHref = newActiveSection.href;
+    }
+    ex1ActiveDetailHref = href;
+
     // In a real app, you might close the nav here: ex1IsOpen = false;
     // And then use SvelteKit's goto(href);
   }
@@ -109,7 +115,8 @@
         <MobileNav
           isOpen={ex1IsOpen}
           sections={ex1Sections}
-          currentSection={ex1CurrentSection}
+          activeSectionHref={ex1ActiveSectionHref}
+          activeDetailHref={ex1ActiveDetailHref}
           onNavigate={ex1HandleNavigate}
         />
       {:else}

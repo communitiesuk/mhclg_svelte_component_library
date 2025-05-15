@@ -33,8 +33,8 @@
   let {
     isOpen = false,
     sections = [] as NavSection[],
-    activeSectionHref = "", // Href for the active section header, e.g. /components
-    activeDetailHref = "", // Href for the detailed active item, e.g. /components/x/y#z
+    activeSectionHref = $bindable(""), // Href for the active section header, e.g. /components
+    activeDetailHref = $bindable(""), // Href for the detailed active item, e.g. /components/x/y#z
     onNavigate = (href: string, event?: MouseEvent) => {},
   } = $props<{
     isOpen?: boolean;

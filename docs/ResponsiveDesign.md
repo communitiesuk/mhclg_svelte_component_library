@@ -1,8 +1,8 @@
 # Introduction
 
-Plain HTML will work on any screen. Therefore, failure to display content properly on different screen sizes is generally caused by CSS [^1]. 
+Plain HTML will work on any screen. Therefore, failure to display content properly on different screen sizes is generally caused by CSS.[^1]
 
-[^1] [Responsive columns without media queries](https://medium.com/@hayavuk/responsive-columns-without-media-queries-1dd92dc0f5e6)
+[^1]:[Responsive columns without media queries](https://medium.com/@hayavuk/responsive-columns-without-media-queries-1dd92dc0f5e6)
 
 # Breakpoints and media queries
 

@@ -4,13 +4,13 @@
   export type SideNavItem = {
     text: string;
     href: string;
-    current?: boolean;
+    // current?: boolean; // This can be removed from the type if not set from outside
     subItems?: { text: string; href: string }[];
   };
 
   export type SideNavGroup = {
     title?: string;
-    items: SideNavItem[];
+    items: SideNavItem[]; // Items here won't have their .current property mutated by this component
   };
 
   let {
@@ -29,7 +29,7 @@
 
   // Simplified calculateIsActive: relies only on the item and the currentItem prop
   function calculateIsActive(
-    item: SideNavItem,
+    item: { href: string; subItems?: { href: string }[] }, // Simplified type for this function's direct needs
     activePropValue: string | undefined,
   ): boolean {
     if (!activePropValue) {
@@ -59,44 +59,20 @@
 
     return false;
   }
-
-  // Effect to update the .current status of items whenever the currentItem prop changes.
-  $effect(() => {
-    const updateItemCurrentState = (item: SideNavItem) => ({
-      ...item,
-      current: calculateIsActive(item, currentItem), // Pass the currentItem prop directly
-    });
-
-    if (items && items.length > 0) {
-      items = items.map(updateItemCurrentState);
-    }
-
-    if (groups && groups.length > 0) {
-      groups = groups.map((group) => ({
-        ...group,
-        items: group.items.map(updateItemCurrentState),
-      }));
-    }
-  });
 </script>
 
-{#snippet navItem(item: SideNavItem)}
-  <!-- Reusable snippet for rendering a single navigation item and its potential sub-items -->
-
-  <!-- Represents a single item in the navigation list -->
+{#snippet navItem(item: SideNavItem, activeGlobalItem: string)}
+  {@const isActive = calculateIsActive(item, activeGlobalItem)}
   <li
-    class="app-subnav__section-item {item.current
+    class="app-subnav__section-item {isActive
       ? 'app-subnav__section-item--current app-subnav__section-item--bold app-subnav__section-item--top'
       : ''}"
-    style={item.current
-      ? `background-color: ${activeItemBackgroundColor};`
-      : ""}
+    style={isActive ? `background-color: ${activeItemBackgroundColor};` : ""}
   >
-    <!-- The clickable link for the navigation item -->
     <a
       class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
       href={item.href}
-      aria-current={item.current ? "location" : undefined}
+      aria-current={isActive ? "location" : undefined}
       onclick={() => {
         if (item.href) {
           currentItem = item.href; // Internal click updates the bindable currentItem state
@@ -106,14 +82,15 @@
       {item.text}
     </a>
 
-    {#if item.current && item.subItems && item.subItems.length > 0}
+    {#if isActive && item.subItems && item.subItems.length > 0}
       <!-- Nested list for sub-items of the current active item -->
       <ul class="app-subnav__section app-subnav__section--nested">
         {#each item.subItems as subItem (subItem.href)}
+          {@const isSubActive = subItem.href === activeGlobalItem}
           <li class="app-subnav__section-item">
             <a
               class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
-              class:app-subnav__link--bold={subItem.href === currentItem}
+              class:app-subnav__link--bold={isSubActive}
               href={subItem.href}
               onclick={() => {
                 if (subItem.href) {
@@ -141,7 +118,7 @@
       <!-- Renders the flat list of items, if provided -->
       <ul class="app-subnav__section">
         {#each items as item (item.href)}
-          {@render navItem(item)}
+          {@render navItem(item, currentItem)}
         {/each}
       </ul>
     {/if}
@@ -153,7 +130,7 @@
       {/if}
       <ul class="app-subnav__section">
         {#each group.items as item (item.href)}
-          {@render navItem(item)}
+          {@render navItem(item, currentItem)}
         {/each}
       </ul>
     {/each}

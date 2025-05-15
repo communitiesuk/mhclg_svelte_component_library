@@ -21,10 +21,10 @@
     ),
   );
 
-  // Current section for navigation
-  let currentSection = $state(""); // Default to Home
-  let activeSectionHref = $state(""); // Renamed from topNavActiveHref
-  let activeDetailHref = $state(""); // New state for specific item path + hash
+  // State for navigation
+  let currentSection = $state(""); // Still needed for SideNav logic
+  let activeSectionHref = $state("");
+  let activeDetailHref = $state("");
 
   // Top navigation items - .current flag will be set based on activeSectionHref
   let navigationItems = $state([
@@ -194,7 +194,7 @@
     const hash = $page.url.hash;
     activeDetailHref = path + hash; // Set activeDetailHref to full path + hash
 
-    // Reset all current flags
+    // Reset all current flags for top navigation and mobile section headers
     for (let i = 0; i < navigationItems.length; i++) {
       navigationItems[i].current = false;
     }
@@ -202,27 +202,28 @@
       mobileNavSections[i].current = false;
     }
 
-    // Determine currentSection and activeSectionHref
+    // Determine currentSection (for SideNav) and activeSectionHref (for HeaderNav/MobileNav section header)
     if (path.startsWith("/components")) {
       currentSection = "Components";
       activeSectionHref = "/components";
       navigationItems[1].current = true;
-      mobileNavSections[1].current = true; // Highlight "Components" section header
+      mobileNavSections[1].current = true;
     } else if (path.startsWith("/patterns")) {
       currentSection = "Patterns";
       activeSectionHref = "/patterns";
       navigationItems[2].current = true;
-      mobileNavSections[2].current = true; // Highlight "Patterns" section header
+      mobileNavSections[2].current = true;
     } else if (path.startsWith("/community")) {
       currentSection = "Community";
       activeSectionHref = "/community";
       navigationItems[3].current = true;
-      mobileNavSections[3].current = true; // Highlight "Community" section header
+      mobileNavSections[3].current = true;
     } else if (path.startsWith("/")) {
+      // Ensure this is generic enough for home
       currentSection = "Home";
       activeSectionHref = "/";
       navigationItems[0].current = true;
-      mobileNavSections[0].current = true; // Highlight "Home" section header
+      mobileNavSections[0].current = true;
     }
   });
 
@@ -276,6 +277,36 @@
   function getSectionTitle(section: string): string {
     return section;
   }
+
+  // Logic to hide side nav on mobile demo page
+  $effect(() => {
+    if (typeof window !== "undefined") {
+      const sideNavElement = document.querySelector(
+        ".app-navigation-layout__nav",
+      ) as HTMLElement | null;
+      const mainContentElement = document.querySelector(
+        ".app-navigation-layout__main",
+      ) as HTMLElement | null;
+
+      if (isDemoPage) {
+        if (sideNavElement) {
+          sideNavElement.style.display = "none";
+        }
+        if (mainContentElement) {
+          mainContentElement.style.marginLeft = "0";
+          mainContentElement.style.width = "100%";
+        }
+      } else {
+        if (sideNavElement) {
+          sideNavElement.style.display = ""; // Revert to default
+        }
+        if (mainContentElement) {
+          mainContentElement.style.marginLeft = ""; // Revert to default
+          mainContentElement.style.width = ""; // Revert to default
+        }
+      }
+    }
+  });
 </script>
 
 {#if !isDemoPage}
@@ -292,7 +323,6 @@
         homeHref="/"
         {navigationItems}
         {mobileNavSections}
-        {currentSection}
         {activeSectionHref}
         {activeDetailHref}
       />

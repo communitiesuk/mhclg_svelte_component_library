@@ -20,7 +20,6 @@
     navigationItems,
     // Used for the detailed structure within the mobile flyout menu
     mobileNavSections,
-    currentSection, // Text for the current section, e.g., "Components"
     activeSectionHref, // Path of the active section, e.g. "/components"
     activeDetailHref, // Path of the specific active item, e.g. "/components/forms/button#examples"
   }: {
@@ -28,7 +27,6 @@
     homeHref: string;
     navigationItems: NavigationItem[];
     mobileNavSections: NavSection[];
-    currentSection: string;
     activeSectionHref: string;
     activeDetailHref: string;
   } = $props();
@@ -68,7 +66,6 @@
 {#if isMobileNavOpen}
   <MobileNav
     sections={mobileNavSections}
-    {currentSection}
     {activeSectionHref}
     {activeDetailHref}
     onNavigate={handleMobileNavigation}

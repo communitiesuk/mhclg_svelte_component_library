@@ -35,14 +35,12 @@
     sections = [] as NavSection[],
     activeSectionHref = "", // Href for the active section header, e.g. /components
     activeDetailHref = "", // Href for the detailed active item, e.g. /components/x/y#z
-    currentSection = "", // Text name for initial expansion
     onNavigate = (href: string, event?: MouseEvent) => {},
   } = $props<{
     isOpen?: boolean;
     sections?: NavSection[];
     activeSectionHref?: string;
     activeDetailHref?: string;
-    currentSection?: string;
     onNavigate?: (href: string, event?: MouseEvent) => void;
   }>();
 
@@ -54,15 +52,14 @@
     expandedSections[sectionTitle] = !expandedSections[sectionTitle];
   }
 
-  // Initialise expanded sections based on currentSection prop (text match)
+  // Initialise expanded sections based on activeSectionHref prop (href match)
   $effect(() => {
-    if (currentSection) {
-      const newExpandedState: Record<string, boolean> = {};
-      for (const section of sections) {
-        newExpandedState[section.title] = section.title === currentSection;
-      }
-      expandedSections = newExpandedState;
+    const newExpandedState: Record<string, boolean> = {};
+    for (const section of sections) {
+      newExpandedState[section.title] =
+        !!section.href && section.href === activeSectionHref;
     }
+    expandedSections = newExpandedState;
   });
 
   // Effect to update .current states based on href props

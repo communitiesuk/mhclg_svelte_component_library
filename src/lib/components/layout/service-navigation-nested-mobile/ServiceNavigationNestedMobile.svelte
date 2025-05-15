@@ -3,10 +3,6 @@
   managing the shared state and interactions for nested mobile navigation.
 -->
 <script lang="ts">
-  // Removed import for $effect and $state as they are globals in Svelte 5
-  import { page } from "$app/stores";
-  import { goto } from "$app/navigation";
-
   import HeaderNav from "./HeaderNav.svelte";
   import MobileNav from "./MobileNav.svelte";
   import type { NavigationItem } from "./HeaderNav.svelte";
@@ -33,10 +29,6 @@
 
   // --- State ---
   let isMobileNavOpen = $state(false);
-
-  // --- Effects ---
-  // Internal logic for deriving currentSection is removed.
-  // The component now relies on the currentSection prop passed from the parent.
 
   // --- Handlers ---
   // Toggle the mobile nav open/closed state

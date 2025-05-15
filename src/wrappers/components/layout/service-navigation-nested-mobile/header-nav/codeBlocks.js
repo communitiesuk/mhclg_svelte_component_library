@@ -1,34 +1,54 @@
 export const codeBlock1 = `
 <script lang="ts">
   import HeaderNav from "$lib/components/layout/service-navigation-nested-mobile/HeaderNav.svelte";
+  import { onMount } from "svelte";
 
   let serviceName = "My Application";
+  let homeHref = "#/";
   let navigationItems = [
-    { text: "Home", href: "/home", current: true },
-    { text: "Features", href: "/features", current: false },
-    { text: "Pricing", href: "/pricing", current: false },
-    { text: "Contact", href: "/contact", current: false },
+    { text: "Home", href: "#/home" },
+    { text: "Features", href: "#/features" },
+    { text: "Pricing", href: "#/pricing" },
+    { text: "Contact", href: "#/contact" },
   ];
   
-  // currentSection can be a reactive $state variable if you need to bind it
-  let currentSection = $state("Home");
-  let mobileNavOpen = $state(false);
+  let activeItemHref = $state("#/home");
+  let isMobileNavOpen = $state(false);
 
   function toggleMobileNav() {
-    mobileNavOpen = !mobileNavOpen;
+    isMobileNavOpen = !isMobileNavOpen;
   }
 
+  function updateActiveItemFromHash() {
+    const hash = window.location.hash;
+    const matched = navigationItems.find(item => hash.startsWith(item.href));
+    activeItemHref = matched ? matched.href : "#/home";
+    isMobileNavOpen = false;
+  }
+
+  onMount(updateActiveItemFromHash);
 </script>
+
+<svelte:window on:hashchange={updateActiveItemFromHash}/>
 
 <HeaderNav 
   {serviceName} 
+  {homeHref}
   {navigationItems} 
-  bind:currentSection={currentSection} 
-  bind:mobileNavIsOpen={mobileNavOpen} 
+  {activeItemHref} 
+  bind:isMobileNavOpen={isMobileNavOpen} 
   onToggle={toggleMobileNav} 
 />
 
-{#if mobileNavOpen}
+<div class="py-2">
+  <p>Current activeItemHref (from URL hash): {activeItemHref}</p>
+  <p>isMobileNavOpen: {isMobileNavOpen}</p>
+  <p><em>Clicking desktop links or links in the simulated mobile menu below will update the URL hash, driving the active state.</em></p>
+  <a class="govuk-button govuk-button--secondary mr-2" href="#/features">Set Features Active</a>
+  <a class="govuk-button govuk-button--secondary" href="#/pricing">Set Pricing Active</a>
+</div>
+
+{#if isMobileNavOpen}
   <div style="padding: 1rem; background-color: #f0f0f0; border-top: 1px solid #ccc;" class="mt-2">
     <p>Mobile navigation menu would appear here.</p>
     <ul>

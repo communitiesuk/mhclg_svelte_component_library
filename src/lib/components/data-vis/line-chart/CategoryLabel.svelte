@@ -12,15 +12,14 @@
     onClickLabel,
     onMouseEnterLabel,
     onMouseLeaveLabel,
+    labelText,
   } = $props();
-
-  let areaCode = $derived(dataArray.areaCode);
 
   let oldY = $derived(yFunction(dataArray.data[0].y));
 
   let opacity = $derived(
     (labelHovered || labelClicked) &&
-      ![labelHovered, labelClicked].includes(areaCode)
+      ![labelHovered, labelClicked].includes(dataArray.areaCode)
       ? 0.3
       : 1,
   );
@@ -51,6 +50,6 @@
     x={20}
     y={newY}
   >
-    {areaCode}
+    {labelText(dataArray)}
   </text>
 </g>

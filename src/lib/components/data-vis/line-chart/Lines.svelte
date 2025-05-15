@@ -15,8 +15,8 @@
     yFunction,
     labelClicked = $bindable(),
     labelHovered = $bindable(),
-    lineHovered = $bindable(),
-    lineClicked = $bindable(),
+    lineHovered,
+    lineClicked,
     chartHeight,
     globalTierRules,
     chartBackgroundColor = "#fafafa",
@@ -31,6 +31,7 @@
     onMouseLeaveMarker,
     onClickMarker,
     activeMarkerId,
+    labelText,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
@@ -77,8 +78,8 @@
           {onMouseEnterMarker}
           {onMouseLeaveMarker}
           {onClickMarker}
-          bind:lineClicked
-          bind:lineHovered
+          lineClicked
+          lineHovered
           {activeMarkerId}
         />
       {/each}
@@ -101,6 +102,7 @@
             {onClickLabel}
             {onMouseEnterLabel}
             {onMouseLeaveLabel}
+            {labelText}
           ></CategoryLabel>
         {/if}
       {/each}

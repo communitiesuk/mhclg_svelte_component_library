@@ -15,8 +15,8 @@
     xFunction,
     yFunction,
     lineFunction,
-    lineClicked = $bindable(),
-    lineHovered = $bindable(),
+    lineClicked,
+    lineHovered,
     labelClicked = $bindable(),
     labelHovered = $bindable(),
     svgWidth = $bindable(500),
@@ -36,7 +36,6 @@
     paddingRight = 150,
     lineChartData,
     interactiveLines,
-    showAllData,
     chartBackgroundColor,
     getLine,
     basicLineParams,
@@ -44,11 +43,11 @@
     nothingSelected = $bindable(),
     globalTierRules,
     activeMarkerId,
+    labelText,
   } = $props();
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
   let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
-
   let areaFunction = $derived(
     area()
       .y0((d) => yFunction(0))
@@ -144,10 +143,9 @@
             {yFunction}
             bind:labelClicked
             bind:labelHovered
-            bind:lineHovered
-            bind:lineClicked
+            lineHovered
+            lineClicked
             {chartHeight}
-            {showAllData}
             {globalTierRules}
             {chartBackgroundColor}
             bind:nothingSelected
@@ -161,6 +159,7 @@
             {onMouseEnterMarker}
             {onMouseLeaveMarker}
             {activeMarkerId}
+            {labelText}
           ></Lines>
         </g>
         <g data-role="y-axis">

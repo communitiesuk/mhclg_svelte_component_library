@@ -140,7 +140,7 @@
   let lineHovered = $state();
   let labelClicked = $state();
   let labelHovered = $state();
-  let svgWidth = $state(500);
+  let svgWidth = $state(700);
   let nothingSelected = $derived(
     [lineClicked, lineHovered, labelClicked, labelHovered].every(
       (item) => item == null,
@@ -225,6 +225,12 @@
         },
         value: function (key, el) {
           return {
+            showLabel:
+              "hover" === key
+                ? el.areaCode === lineClicked
+                  ? false
+                  : undefined
+                : undefined,
             pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
               ? getColor(
                   el.areaCode,
@@ -287,10 +293,7 @@
           if (lineClicked === dataId) {
             lineClicked = null;
           } else {
-            lineClicked = null;
-            tick().then(() => {
-              lineClicked = dataId;
-            });
+            lineClicked = dataId;
           }
         },
       },
@@ -353,7 +356,7 @@
             }`,
         },
         value: function (event, marker, dataId) {
-          activeMarkerId = event;
+          activeMarkerId = marker;
         },
       },
       {
@@ -381,7 +384,7 @@
             }`,
         },
         value: function (event, marker, dataId) {
-          activeMarkerId = event;
+          activeMarkerId = dataId;
         },
       },
       {
@@ -475,6 +478,14 @@
         name: "svgWidth",
         category: "dimensions",
         value: svgWidth,
+      },
+      {
+        name: "labelText",
+        category: "labels",
+        value: function (dataArray) {
+          return dataArray.areaCode;
+        },
+        isProp: true,
       },
       {
         name: "selectedMetric",
@@ -633,7 +644,7 @@
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
-      interactive: false,
+      interactive: true,
       markers: false,
       showLabel: false,
     },
@@ -641,7 +652,7 @@
       halo: true,
       pathStrokeWidth: 5,
       pathStrokeColor: colors.darkgrey,
-      interactive: false,
+      interactive: true,
       markers: false,
       showLabel: !lineClicked && !lineHovered && !labelClicked,
       lineEnding: null,
@@ -651,7 +662,7 @@
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 7,
       halo: true,
-      interactive: false,
+      interactive: true,
       markers: false,
       showLabel: true,
       lineEnding: null,
@@ -660,7 +671,7 @@
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 6,
       halo: true,
-      interactive: false,
+      interactive: true,
       markers: false,
       showLabel: true,
       lineEnding: null,

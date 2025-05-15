@@ -48,8 +48,8 @@
     // labelText,
     // labelColor,
     // labelTextColor,
-    lineClicked = $bindable(),
-    lineHovered = $bindable(),
+    lineClicked,
+    lineHovered,
     activeMarkerId,
   } = $props();
 
@@ -172,7 +172,7 @@
           ></polygon>
         {/if}
         {#if true}
-          {#if activeMarkerId == `marker-${marker.areaCode}${marker.x}`}
+          {#if activeMarkerId == marker}
             <ValueLabel
               {marker}
               labelColor="grey"

@@ -9,6 +9,8 @@
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
   import Axis from "../axis/Axis.svelte";
 
+  import Decimal from "decimal.js";
+
   let {
     getColor,
     tieredLineParams,
@@ -50,8 +52,6 @@
     floor,
     ceiling,
   } = $props();
-
-  //$inspect(lineChartData);
 
   let ticksArrayX = $state();
   let ticksArrayY = $state();
@@ -133,12 +133,15 @@
     }, {}),
   );
 
+  // let allYValues = [2000, 222, 1, 2];
+
   let allYValues = lineChartData.lines.flatMap((line) =>
-    line.data.map((point) => point.y),
+    line.data.map((point) => new Decimal(point.y)),
   );
-  let allXValues = lineChartData.lines.flatMap((line) =>
-    line.data.map((point) => point.x),
-  );
+
+  // let allXValues = lineChartData.lines.flatMap(
+  //   (line) => (point) => new Decimal(point.x),
+  // );
 
   $inspect(allXValues);
 

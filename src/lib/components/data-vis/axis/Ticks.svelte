@@ -16,6 +16,8 @@
     yearsInput,
   } = $props();
 
+  $inspect(ticksArray);
+
   function generateTicks(data, numTicks, floor, ceiling) {
     let minValueFromData = Decimal.min(...data);
 
@@ -67,11 +69,12 @@
   ticksArray = generateTicks(values, numberOfTicks, floor, ceiling);
   let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 
-  $inspect(ticksArray);
+  $inspect(values);
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
   {#each ticksArray as tick, index}
+    {console.log(axisFunction(tick))}
     <g
       transform="translate({orientation.axis === 'x'
         ? axisFunction(tick)
@@ -106,7 +109,7 @@
             : "start"}
         fill="black"
       >
-        {yearsInput ? yearTicks[index] : prefix + tick + suffix}
+        {tick}
       </text>
     </g>
   {/each}

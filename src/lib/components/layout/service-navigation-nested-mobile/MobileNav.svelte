@@ -5,20 +5,20 @@
   export type SubNavItem = {
     text: string;
     href: string;
-    current?: boolean; // Will be determined by activeDetailHref
+    // current?: boolean; // Will no longer be set by this component's effect
   };
 
   export type NavItem = {
     text: string;
     href: string;
-    current?: boolean; // Will be set based on activeDetailHref
+    // current?: boolean; // Will no longer be set by this component's effect
     description?: string;
   };
 
   export type NavSection = {
     title: string;
     href?: string; // Optional: Href for the main section link itself
-    current?: boolean; // Will be determined by activeSectionHref
+    // current?: boolean; // Will no longer be set by this component's effect
     items: (
       | SubNavItem
       | {
@@ -52,43 +52,16 @@
     expandedSections[sectionTitle] = !expandedSections[sectionTitle];
   }
 
-  // Initialise expanded sections based on activeSectionHref prop (href match)
-  $effect(() => {
-    const newExpandedState: Record<string, boolean> = {};
-    for (const section of sections) {
-      newExpandedState[section.title] =
-        !!section.href && section.href === activeSectionHref;
-    }
-    expandedSections = newExpandedState;
-  });
-
-  // Effect to update .current states based on href props
-  $effect(() => {
-    for (const section of sections) {
-      // Highlight section header if its href matches activeSectionHref
-      section.current = !!section.href && section.href === activeSectionHref;
-
-      for (const item of section.items) {
-        if ("items" in item && Array.isArray(item.items)) {
-          // This is a group of SubNavItems
-          for (const subItem of item.items) {
-            subItem.current = subItem.href === activeDetailHref;
-          }
-        } else if ("href" in item) {
-          // This is a direct SubNavItem
-          (item as SubNavItem).current =
-            (item as SubNavItem).href === activeDetailHref;
-        }
-      }
-    }
-    // To ensure reactivity when sections array itself changes structure or items are added/removed.
-    // This is a common pattern to trigger updates if the array reference changes.
-    sections = [...sections];
-  });
-
-  // Function to determine if a section is expanded
+  /**
+   * Determines if a section is expanded:
+   * - If the user has toggled a section explicitly (in expandedSections), use that.
+   * - Otherwise, expand the section whose href matches activeSectionHref.
+   */
   function isSectionExpanded(sectionTitle: string): boolean {
-    return !!expandedSections[sectionTitle];
+    const explicit = expandedSections[sectionTitle];
+    if (explicit !== undefined) return explicit;
+    const section = sections.find((s) => s.title === sectionTitle);
+    return !!section?.href && section.href === activeSectionHref;
   }
 
   // When a navigation happens, call the onNavigate prop
@@ -115,7 +88,8 @@
             <a
               href={section.href || "#"}
               class="app-mobile-nav__section-link"
-              class:app-mobile-nav__section-link--current={section.current}
+              class:app-mobile-nav__section-link--current={section.href &&
+                section.href === activeSectionHref}
               onclick={(event) => {
                 event.preventDefault();
                 toggleSection(section.title);
@@ -141,10 +115,12 @@
                   {/if}
                   <ul class="app-mobile-nav__list">
                     {#each item.items as subItem, k (k)}
+                      {@const isSubItemCurrent =
+                        subItem.href === activeDetailHref}
                       <li>
                         <a
                           class="app-mobile-nav__link"
-                          class:app-mobile-nav__link--current={subItem.current}
+                          class:app-mobile-nav__link--current={isSubItemCurrent}
                           href={subItem.href}
                           onclick={(e) => handleNavigate(subItem.href, e)}
                         >
@@ -157,10 +133,11 @@
               {:else if "href" in item && "text" in item}
                 <!-- Single navigation item -->
                 {@const navItem = item as SubNavItem}
+                {@const isNavItemCurrent = navItem.href === activeDetailHref}
                 <li>
                   <a
                     class="app-mobile-nav__link"
-                    class:app-mobile-nav__link--current={navItem.current}
+                    class:app-mobile-nav__link--current={isNavItemCurrent}
                     href={navItem.href}
                     onclick={(e) => handleNavigate(navItem.href, e)}
                   >

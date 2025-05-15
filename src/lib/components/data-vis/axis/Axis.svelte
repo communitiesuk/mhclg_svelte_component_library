@@ -9,6 +9,8 @@
     axisFunction,
     values,
     orientation,
+    ceiling,
+    floor,
   } = $props();
 </script>
 
@@ -35,6 +37,8 @@
       {values}
       {numberOfTicks}
       {orientation}
+      {ceiling}
+      {floor}
     ></Ticks>
   {/key}
 </g>

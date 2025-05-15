@@ -529,6 +529,18 @@
         name: "yFunction",
         category: "yScale",
       },
+      { name: "yearsInputX", category: "formattingTick", value: false },
+      { name: "yearsInputY", category: "formattingTick", value: false },
+      {
+        name: "prefix",
+        category: "formattingTick",
+        value: "",
+      },
+      {
+        name: "suffix",
+        category: "formattingTick",
+        value: "",
+      },
       {
         name: "lineFunction",
         category: "lineFunction",

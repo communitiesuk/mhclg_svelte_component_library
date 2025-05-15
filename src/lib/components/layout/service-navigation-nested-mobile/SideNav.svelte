@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { page } from "$app/state";
-
   export type SideNavItem = {
     text: string;
     href: string;
-    // current?: boolean; // This can be removed from the type if not set from outside
     subItems?: { text: string; href: string }[];
   };
 

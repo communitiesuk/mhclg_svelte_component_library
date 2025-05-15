@@ -23,7 +23,6 @@
 
   // Current section for navigation
   let currentSection = $state(""); // Default to Home
-  let sideNavCurrentItem = $state(""); // State for SideNav's currentItem
   let activeSectionHref = $state(""); // Renamed from topNavActiveHref
   let activeDetailHref = $state(""); // New state for specific item path + hash
 
@@ -189,11 +188,10 @@
   });
 
   // Use the page store to track route changes and update the active section
-  // Also updates sideNavCurrentItem for SideNav and activeSectionHref/activeDetailHref for navigation
+  // Also updates activeSectionHref/activeDetailHref for navigation
   $effect(() => {
     const path = $page.url.pathname;
     const hash = $page.url.hash;
-    sideNavCurrentItem = path + hash; // Update sideNavCurrentItem based on full URL
     activeDetailHref = path + hash; // Set activeDetailHref to full path + hash
 
     // Reset all current flags

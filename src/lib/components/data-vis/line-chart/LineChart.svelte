@@ -7,6 +7,7 @@
   import { curveLinear, line, area } from "d3-shape";
   import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
+  import Axis from "../axis/Axis.svelte";
 
   let {
     getColor,
@@ -44,7 +45,16 @@
     globalTierRules,
     activeMarkerId,
     labelText,
+    yearsInputY,
+    yearsInputX,
+    floor,
+    ceiling,
   } = $props();
+
+  //$inspect(lineChartData);
+
+  let ticksArrayX = $state();
+  let ticksArrayY = $state();
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
   let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
@@ -122,6 +132,17 @@
       return acc;
     }, {}),
   );
+
+  let allYValues = lineChartData.lines.flatMap((line) =>
+    line.data.map((point) => point.y),
+  );
+  let allXValues = lineChartData.lines.flatMap((line) =>
+    line.data.map((point) => point.x),
+  );
+
+  $inspect(allXValues);
+
+  //$inspect(allYValues);
 </script>
 
 <div bind:clientWidth={svgWidth}>
@@ -162,17 +183,30 @@
             {labelText}
           ></Lines>
         </g>
-        <g data-role="y-axis">
-          <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
-          ></path>
-        </g>
-        <g data-role="x-axis">
-          <path
-            d="M0 {chartHeight} l{chartWidth} 0"
-            stroke="black"
-            stroke-width="2px"
-          ></path>
-        </g>
+        <!--Y axis-->
+        <Axis
+          {chartHeight}
+          {chartWidth}
+          ticksArray={ticksArrayY}
+          axisFunction={yFunction}
+          values={allYValues}
+          orientation={{ axis: "y", position: "left" }}
+          yearInput={yearsInputY}
+          {floor}
+          {ceiling}
+        ></Axis>
+        <!-- X axis-->
+        <!-- <Axis
+          {chartHeight}
+          {chartWidth}
+          ticksArray={ticksArrayX}
+          axisFunction={xFunction}
+          values={allXValues}
+          orientation={{ axis: "x", position: "bottom" }}
+          yearInput={yearsInputX}
+          {floor}
+          {ceiling}
+        ></Axis> -->
       </g>
     {/if}
   </svg>

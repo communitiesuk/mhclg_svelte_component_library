@@ -5,7 +5,6 @@
   export type NavigationItem = {
     text: string;
     href: string;
-    current?: boolean;
   };
 
   // Component props
@@ -24,15 +23,6 @@
     isMobileNavOpen?: boolean;
     onToggle?: () => void;
   } = $props();
-
-  // Reactive statement to update .current status based on activeItemHref
-  $effect(() => {
-    if (navigationItems && navigationItems.length > 0) {
-      for (let i = 0; i < navigationItems.length; i++) {
-        navigationItems[i].current = navigationItems[i].href === activeItemHref;
-      }
-    }
-  });
 </script>
 
 <nav class="govuk-service-navigation" aria-label="main">

@@ -7,7 +7,6 @@
   import "../app.css";
   import type {
     SideNavGroup,
-    SideNavItem,
   } from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
   import { page } from "$app/stores";
   import PhaseBanner from "$lib/components/layout/PhaseBanner.svelte";

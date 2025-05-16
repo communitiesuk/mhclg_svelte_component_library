@@ -278,35 +278,6 @@
     return section;
   }
 
-  // Logic to hide side nav on mobile demo page
-  $effect(() => {
-    if (typeof window !== "undefined") {
-      const sideNavElement = document.querySelector(
-        ".app-navigation-layout__nav",
-      ) as HTMLElement | null;
-      const mainContentElement = document.querySelector(
-        ".app-navigation-layout__main",
-      ) as HTMLElement | null;
-
-      if (isDemoPage) {
-        if (sideNavElement) {
-          sideNavElement.style.display = "none";
-        }
-        if (mainContentElement) {
-          mainContentElement.style.marginLeft = "0";
-          mainContentElement.style.width = "100%";
-        }
-      } else {
-        if (sideNavElement) {
-          sideNavElement.style.display = ""; // Revert to default
-        }
-        if (mainContentElement) {
-          mainContentElement.style.marginLeft = ""; // Revert to default
-          mainContentElement.style.width = ""; // Revert to default
-        }
-      }
-    }
-  });
 </script>
 
 {#if !isDemoPage}

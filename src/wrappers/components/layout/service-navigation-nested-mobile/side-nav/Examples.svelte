@@ -1,5 +1,6 @@
 <script>
   import { AccordionItem, Accordion } from "flowbite-svelte";
+  import { onMount } from "svelte";
 
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
@@ -79,7 +80,15 @@
       content: Example2,
     },
   ];
+
+  let currentItem = $state(window.location.hash);
+  function syncCurrentItemToHash() {
+    currentItem = window.location.hash;
+  }
+  onMount(syncCurrentItemToHash);
 </script>
+
+<svelte:window on:hashchange={syncCurrentItemToHash} />
 
 <div class="my-20 p-2">
   <h5 class="underline underline-offset-4 my-6">
@@ -103,10 +112,11 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
+    <!-- currentItem is synced to the URL hash for demo simplicity -->
     <SideNav
       title={example1Data.title}
       groups={example1Data.groups}
-      currentItem={example1Data.currentItem}
+      {currentItem}
       activeItemBackgroundColor={example1Data.activeBgColor}
     />
   </div>
@@ -115,11 +125,12 @@
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
+    <!-- currentItem is synced to the URL hash for demo simplicity -->
     <SideNav
       title={example2Data.title}
       items={example2Data.items}
       groups={example2Data.groups}
-      currentItem={example2Data.currentItem}
+      {currentItem}
       activeItemBackgroundColor={example2Data.activeBgColor}
     />
   </div>

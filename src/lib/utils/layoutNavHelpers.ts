@@ -63,7 +63,7 @@ export function getSectionTitle(section: string): string {
 }
 
 // Helper function specifically for processing items within a component group to add sub-items
-export function processComponentGroupItems(
+export function addStandardSubItemsToActiveComponentLink(
   groupItems: SideNavItem[],
   currentPath: string,
 ): SideNavItem[] {

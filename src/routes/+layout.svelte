@@ -16,7 +16,7 @@
     mapComponentItemsToSideNavItems,
     createMobileItems,
     getSectionTitle,
-    processComponentGroupItems,
+    addStandardSubItemsToActiveComponentLink,
   } from "$lib/utils/layoutNavHelpers";
 
   // --- Props ---
@@ -99,7 +99,7 @@
       case "Components":
         return componentNavGroups.map((group) => ({
           ...group,
-          items: processComponentGroupItems(group.items, currentPath),
+          items: addStandardSubItemsToActiveComponentLink(group.items, currentPath,),
         }));
       case "Patterns":
         return patternNavGroups;

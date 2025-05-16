@@ -61,3 +61,28 @@ export function createMobileItems(tree: ComponentItem[]) {
 export function getSectionTitle(section: string): string {
   return section;
 }
+
+// Helper function specifically for processing items within a component group to add sub-items
+export function processComponentGroupItems(
+  groupItems: SideNavItem[],
+  currentPath: string,
+): SideNavItem[] {
+  return groupItems.map((item) => {
+    const basePath = item.href.split("#")[0];
+    const needsSubItems = basePath === currentPath || item.href === currentPath;
+    return {
+      ...item,
+      subItems: needsSubItems
+        ? [
+            { text: "Description", href: `${basePath}#description` },
+            { text: "Context", href: `${basePath}#context` },
+            {
+              text: "Component Demo",
+              href: `${basePath}#component-demo`,
+            },
+            { text: "Examples", href: `${basePath}#examples` },
+          ]
+        : item.subItems, // Preserve existing subItems
+    };
+  });
+}

@@ -1,4 +1,5 @@
 <script lang="ts">
+  // --- Imports ---
   import Footer from "$lib/components/ui/Footer.svelte";
   import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
@@ -15,21 +16,23 @@
     mapComponentItemsToSideNavItems,
     createMobileItems,
     getSectionTitle,
+    processComponentGroupItems,
   } from "$lib/utils/layoutNavHelpers";
 
+  // --- Props ---
   let { children, data } = $props();
 
-  // --- Derived State from Page URL ---
+  // --- Core URL-Derived State ---
   let currentPath = $derived($page.url.pathname);
   let currentHash = $derived($page.url.hash);
   let activeDetailHref = $derived(currentPath + currentHash);
-
   let isDemoPage = $derived(
     currentPath.startsWith(
       "/components/layout/service-navigation-nested-mobile/mobile-demo",
     ),
   );
 
+  // --- Section-Level Derived State ---
   let activeSectionInfo = $derived.by(() => {
     if (currentPath.startsWith("/components")) {
       return { sectionName: "Components", sectionHref: "/components" };
@@ -42,11 +45,10 @@
     }
     return { sectionName: "Home", sectionHref: "/" }; // Default
   });
-
   let currentSection = $derived(activeSectionInfo.sectionName);
   let activeSectionHref = $derived(activeSectionInfo.sectionHref);
 
-  // --- Static Navigation Structures ---
+  // --- Static Data & Server Data ---
   // Top navigation items (HeaderNav relies on activeSectionHref to mark active)
   const navigationItems = [
     { text: "Home", href: "/" },
@@ -54,10 +56,10 @@
     { text: "Patterns", href: "/patterns" },
     { text: "Community", href: "/community" },
   ];
-
   // Get component data from server
   const componentTree = data.componentTree || [];
 
+  // --- SideNav Related Data Construction ---
   const componentNavGroups: SideNavGroup[] =
     componentTree.length > 0
       ? componentTree.map((category) => ({
@@ -89,6 +91,27 @@
     },
   ];
 
+  // --- Dynamic Side Navigation Groups --- get the appropriate nav groups based on current section
+  const navGroupsForCurrentSection = $derived.by(() => {
+    const section = currentSection;
+
+    switch (section) {
+      case "Components":
+        return componentNavGroups.map((group) => ({
+          ...group,
+          items: processComponentGroupItems(group.items, currentPath),
+        }));
+      case "Patterns":
+        return patternNavGroups;
+      case "Community":
+        return communityNavGroups;
+      default:
+        return [];
+    }
+  });
+
+  // --- MobileNav Related Data Construction ---
+  // Create structured component items for mobile navigation
   const structuredComponentItems =
     componentTree.length > 0 ? createMobileItems(componentTree) : [];
 
@@ -131,43 +154,6 @@
   $effect(() => {
     if (typeof window === "undefined") return;
     document.body.classList.add("js-enabled");
-  });
-
-  // --- Dynamic Side Navigation Groups --- get the appropriate nav groups based on current section
-  const navGroupsForCurrentSection = $derived.by(() => {
-    const section = currentSection;
-    const path = currentPath;
-
-    switch (section) {
-      case "Components":
-        return componentNavGroups.map((group) => ({
-          ...group,
-          items: group.items.map((item) => {
-            const basePath = item.href.split("#")[0];
-            const needsSubItems = basePath === path || item.href === path;
-            return {
-              ...item,
-              subItems: needsSubItems
-                ? [
-                    { text: "Description", href: `${basePath}#description` },
-                    { text: "Context", href: `${basePath}#context` },
-                    {
-                      text: "Component Demo",
-                      href: `${basePath}#component-demo`,
-                    },
-                    { text: "Examples", href: `${basePath}#examples` },
-                  ]
-                : item.subItems, // Preserve existing subItems if any (though mapComponentItemsToSideNavItems doesn't add them)
-            };
-          }),
-        }));
-      case "Patterns":
-        return patternNavGroups;
-      case "Community":
-        return communityNavGroups;
-      default:
-        return [];
-    }
   });
 </script>
 

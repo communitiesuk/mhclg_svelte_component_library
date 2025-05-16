@@ -70,11 +70,6 @@
       class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
       href={item.href}
       aria-current={isActive ? "location" : undefined}
-      onclick={() => {
-        if (item.href) {
-          currentItem = item.href; // Internal click updates the bindable currentItem state
-        }
-      }}
     >
       {item.text}
     </a>

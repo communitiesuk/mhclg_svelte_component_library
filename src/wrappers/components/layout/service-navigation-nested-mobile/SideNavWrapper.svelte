@@ -103,6 +103,7 @@
   //@ts-nocheck
   import { page } from "$app/state";
   import { browser } from "$app/environment";
+  import { onMount } from "svelte";
 
   import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
   import ParsingErrorToastsContainer from "$lib/package-wrapping/ParsingErrorToastsContainer.svelte";
@@ -141,8 +142,14 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  // Default to the href of the first sample item, or an empty string if no sample items exist.
-  let currentItem = $state(""); // Will be set in $effect based on hash or sampleItems
+  let currentItem = $state("");
+
+  // logic to sync currentItem state with the external window current URL hash changes
+  function syncCurrentItemToHash() {
+    currentItem = window.location.hash;
+  }
+
+  onMount(syncCurrentItemToHash);
 
   /**
    * ! Step 3 - Add your props
@@ -222,8 +229,8 @@
    true for any props which the component will not functionally properly 
    without (e.g. props with no default value, props which will cause erros 
    if undefined).
-   *
    */
+
   const sampleItems = [
     {
       text: "Overview",
@@ -258,9 +265,6 @@
     },
   ];
 
-  /**
-   * ! Step 3 - Add your props
-   */
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
@@ -284,9 +288,8 @@
           markdown: true,
           arr: [
             "An array of <code>SideNavItem</code> objects for a single, flat list of navigation links.",
-            "Each <code>SideNavItem</code> can have <code>text</code>, <code>href</code>, <code>current</code> (boolean), and optional <code>subItems</code> (array of <code>{ text: string, href: string }</code>).",
-            "Use this if you don\'t need grouped sections. If <code>groups</code> are also provided, <code>items</code> will be rendered first.",
-            "Sub-items are typically used for in-page navigation (e.g., linking to <code>#hash</code> URLs).",
+            "Each <code>SideNavItem</code> can have <code>text</code>, <code>href</code>, and optional <code>subItems</code> (array of <code>{ text: string, href: string }</code>) for in-page navigation (e.g., linking to URLs).",
+            "If <code>groups</code> are also provided, <code>items</code> will be rendered first.",
           ],
         },
       },
@@ -300,7 +303,7 @@
           arr: [
             "An array of <code>SideNavGroup</code> objects for creating titled sections of navigation links.",
             "Each <code>SideNavGroup</code> has an optional <code>title</code> and an <code>items</code> array (of <code>SideNavItem</code>).",
-            "<code>SideNavItem</code> within groups can also have <code>subItems</code>.",
+            "<code>SideNavItem</code> within groups can also have <code>subItems</code> for in-page navigation.",
             "Use this for a more structured side navigation. Rendered after the flat <code>items</code> list, if present.",
           ],
         },
@@ -315,7 +318,8 @@
           arr: [
             "A string that should match the <code>href</code> of the currently active item or sub-item.",
             "This prop is bindable (<code>bind:currentItem</code>).",
-            "The <code>SideNav</code> component uses this to highlight the active link. It can also internally derive the active item from <code>$page.url.pathname</code> and <code>$page.url.hash</code> from SvelteKit if this prop is not explicitly managed or bound.",
+            "This is the <strong>sole driver</strong> for active link state in the <code>SideNav</code> component.",
+            "In this demo, <code>currentItem</code> is always set to the current URL hash (e.g. <code>#section</code>), so navigation state stays in sync with the browser's address bar.",
             "For the demo, select a value to see the highlighting change. The options are generated from the sample <code>items</code> and <code>groups</code> data. Clicking links in the demo will update this value based on the URL hash.",
           ],
         },
@@ -330,8 +334,7 @@
         description: {
           markdown: true,
           arr: [
-            "A CSS color string used for the background of the active navigation item.",
-            "This prop is bindable (<code>bind:activeItemBackgroundColor</code>).",
+            "A CSS color string used for the background of the active navigation item only.",
             "Defaults to <code>transparent</code> within the component.",
           ],
         },
@@ -475,13 +478,18 @@
   !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
+
+<!--
+  Listen for changes to the URL hash (e.g. when a user clicks a navigation link or uses the browser's back/forward buttons).
+  When the hash changes, call syncCurrentItemToHash() to update the currentItem state.
+  This ensures the SideNav's active state always reflects the current URL hash, even if navigation happens outside the component.
+-->
+<svelte:window on:hashchange={syncCurrentItemToHash} />
+
 {#snippet Component()}
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-third govuk-!-margin-left-5">
-      <SideNav
-        {...parametersObject}
-        bind:currentItem
-      />
+      <SideNav {...parametersObject} bind:currentItem />
     </div>
   </div>
 {/snippet}

@@ -186,10 +186,6 @@
           <!-- Side navigation - show for Components, Patterns, or Community pages -->
           {#if currentSection !== "Home"}
             <aside class="app-split-pane__nav">
-              <!-- getSectionTitle:
-                   What it does: Returns the input string, intended as the title for the current navigation section.
-                   Input (currentSection): e.g., "Components"
-                   Output: e.g., "Components" -->
               <SideNav
                 title={getSectionTitle(currentSection)}
                 groups={navGroupsForCurrentSection}

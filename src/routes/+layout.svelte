@@ -42,7 +42,7 @@
   let activeSectionHref = $derived(activeSectionInfo.sectionHref);
 
   // --- Static Navigation Structures ---
-  // Top navigation items (HeaderNav relies on activeSectionHref to mark active, .current is not needed here)
+  // Top navigation items (HeaderNav relies on activeSectionHref to mark active)
   const navigationItems = [
     { text: "Home", href: "/" },
     { text: "Components", href: "/components" },
@@ -141,8 +141,6 @@
     return result;
   }
 
-
-
   // Create structured component items for mobile navigation
   const structuredComponentItems =
     componentTree.length > 0 ? createMobileItems(componentTree) : [];
@@ -229,7 +227,6 @@
   function getSectionTitle(section: string): string {
     return section;
   }
-
 </script>
 
 {#if !isDemoPage}

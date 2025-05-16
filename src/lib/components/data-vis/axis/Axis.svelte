@@ -11,6 +11,9 @@
     orientation,
     ceiling,
     floor,
+    prefix,
+    suffix,
+    yearsInput,
   } = $props();
 </script>
 
@@ -39,6 +42,9 @@
       {orientation}
       {ceiling}
       {floor}
+      {prefix}
+      {suffix}
+      {yearsInput}
     ></Ticks>
   {/key}
 </g>

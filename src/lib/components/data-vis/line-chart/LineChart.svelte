@@ -51,6 +51,8 @@
     yearsInputX,
     floor,
     ceiling,
+    prefix,
+    suffix,
   } = $props();
 
   let ticksArrayX = $state();
@@ -194,9 +196,11 @@
           axisFunction={yFunction}
           values={allYValues}
           orientation={{ axis: "y", position: "left" }}
-          yearInput={yearsInputY}
+          yearsInput={yearsInputY}
           {floor}
           {ceiling}
+          {prefix}
+          {suffix}
         ></Axis>
         <!-- X axis-->
         <!-- <Axis

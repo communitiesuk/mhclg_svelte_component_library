@@ -57,7 +57,7 @@
     "Typically used in a two-column or multi-column page layout where one column serves as a contextual navigation area next to the main content.",
     "The content of the <code>SideNav</code> (its items and groups) often changes dynamically based on the top-level section selected in a primary navigation component (like <code>HeaderNav</code>).",
     "It works well in conjunction with <code>HeaderNav</code> for main navigation and can share similar navigation structures with <code>MobileNav</code> for consistency across viewports.",
-    "The <code>currentItem</code> prop can be bound and updated based on scroll events or URL changes (e.g., from <code>$page.url.pathname</code> or <code>$page.url.hash</code> in SvelteKit).",
+    "The <code>currentItem</code> prop dictates the active link and is bindable. The <code>SideNav</code> component displays an item as active if its <code>href</code> matches <code>currentItem</code>, but it does <strong>not</strong> internally update this prop. The parent component (like this wrapper) is fully responsible for managing <code>currentItem</code>, for instance, by syncing it with URL changes (e.g., <code>window.location.hash</code> or SvelteKit's <code>$page.url</code> stores).",
   ];
 
   let detailsArray = [

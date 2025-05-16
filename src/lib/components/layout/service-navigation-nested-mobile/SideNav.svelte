@@ -84,11 +84,6 @@
               class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
               class:app-subnav__link--bold={isSubActive}
               href={subItem.href}
-              onclick={() => {
-                if (subItem.href) {
-                  currentItem = subItem.href; // Internal click updates the bindable currentItem state
-                }
-              }}
             >
               {subItem.text}
             </a>

@@ -1,5 +1,4 @@
 <script>
-  import { tick } from "svelte";
   import Decimal from "decimal.js";
 
   let {
@@ -15,7 +14,6 @@
     ceiling,
     orientation,
     yearsInput,
-    yearFormating,
   } = $props();
 
   $inspect(ticksArray);
@@ -33,14 +31,6 @@
       ? Decimal.min(ceiling, maxValueFromData)
       : maxValueFromData;
 
-    /*let minVal =
-      generateTicksNum !== true
-        ? new Decimal(minTick)
-        : Decimal.min(...data.map((val) => new Decimal(val)));
-    let maxVal =
-      maxTick !== null
-        ? new Decimal(maxTick)
-        : Decimal.max(...data.map((val) => new Decimal(val)));*/
     let rangeVal = maxVal.minus(minVal);
 
     let roughStep = rangeVal.div(numTicks - 1);

@@ -245,6 +245,19 @@
         value: 5,
       },
       {
+        name: "prefix",
+        category: "formattingTick",
+        value: "",
+      },
+      {
+        name: "suffix",
+        category: "formattingTick",
+        value: "",
+      },
+      { name: "floor", category: "formatting", value: 0 },
+      { name: "ceiling", category: "formatting", value: 100 },
+      { name: "yearsInput", category: "formattingTick", value: false },
+      {
         name: "orientationAxis",
         category: "customisations",
         isProp: false,

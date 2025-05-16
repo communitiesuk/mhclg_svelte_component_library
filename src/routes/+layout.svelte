@@ -13,7 +13,7 @@
   import { page } from "$app/stores";
   import PhaseBanner from "$lib/components/layout/PhaseBanner.svelte";
   import {
-    mapComponentItemsToSideNavItems,
+    extractLinkableComponentNavItems,
     createMobileItems,
     getSectionTitle,
     addStandardSubItemsToActiveComponentLink,
@@ -66,7 +66,10 @@
           title: category.name,
           items:
             category.children && category.children.length > 0
-              ? mapComponentItemsToSideNavItems(category.children)
+              ? // What it does: Converts a nested ComponentItem[] into a flat SideNavItem[] containing only linkable component pages (where hasWrapper is true).
+                // Input (category.children): e.g., [{ name: "SubGroup", children: [{ name: "ActualButton", path:"components/core/button", hasWrapper:true }] }, { name: "ActualCard", path:"components/core/card", hasWrapper:true }]
+                // Output: e.g., [{ text: "ActualButton", href: "/components/core/button" }, { text: "ActualCard", href: "/components/core/card" }]
+                extractLinkableComponentNavItems(category.children)
               : [],
         }))
       : [];
@@ -99,7 +102,14 @@
       case "Components":
         return componentNavGroups.map((group) => ({
           ...group,
-          items: addStandardSubItemsToActiveComponentLink(group.items, currentPath,),
+          // What it does: Adds a predefined list of in-page section links (e.g., to #description) as 'subItems' to the SideNavItem that matches the currentPath.
+          // Input (group.items): e.g., [{ text: "Button", href: "/components/core/button" }, { text: "Card", href: "/components/core/card" }]
+          // Input (currentPath): e.g., "/components/core/button"
+          // Output: e.g., [{ text: "Button", href: "/components/core/button", subItems: [{ text: "Description", href: "/components/core/button#description" }, /* ...other sections */] }, { text: "Card", href: "/components/core/card" }]
+          items: addStandardSubItemsToActiveComponentLink(
+            group.items,
+            currentPath,
+          ),
         }));
       case "Patterns":
         return patternNavGroups;
@@ -113,6 +123,9 @@
   // --- MobileNav Related Data Construction ---
   // Create structured component items for mobile navigation
   const structuredComponentItems =
+    // What it does: Transforms the raw componentTree into a structure suitable for mobile navigation, grouping components under their categories or listing direct links.
+    // Input (componentTree): e.g., [{ name: "Core Components", children: [{ name: "Button", path:"components/core/button", hasWrapper:true }] }, { name: "Info Page", path:"info", hasWrapper:true}]
+    // Output: e.g., [{ title: "Core Components", items: [{ text: "Button", href: "/components/core/button" }] }, { text: "Info Page", href: "/info" }]
     componentTree.length > 0 ? createMobileItems(componentTree) : [];
 
   // Mobile navigation sections (MobileNav relies on activeSectionHref & activeDetailHref)
@@ -185,6 +198,10 @@
           <!-- Side navigation - show for Components, Patterns, or Community pages -->
           {#if currentSection !== "Home"}
             <aside class="app-split-pane__nav">
+              <!-- getSectionTitle:
+                   What it does: Returns the input string, intended as the title for the current navigation section.
+                   Input (currentSection): e.g., "Components"
+                   Output: e.g., "Components" -->
               <SideNav
                 title={getSectionTitle(currentSection)}
                 groups={navGroupsForCurrentSection}

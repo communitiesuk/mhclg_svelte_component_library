@@ -532,12 +532,22 @@
       { name: "yearsInputX", category: "formattingTick", value: false },
       { name: "yearsInputY", category: "formattingTick", value: false },
       {
-        name: "prefix",
+        name: "prefixX",
         category: "formattingTick",
         value: "",
       },
       {
-        name: "suffix",
+        name: "suffixX",
+        category: "formattingTick",
+        value: "",
+      },
+      {
+        name: "prefixY",
+        category: "formattingTick",
+        value: "",
+      },
+      {
+        name: "suffixY",
         category: "formattingTick",
         value: "",
       },

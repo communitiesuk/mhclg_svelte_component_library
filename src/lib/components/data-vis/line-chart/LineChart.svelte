@@ -51,8 +51,10 @@
     yearsInputX,
     floor,
     ceiling,
-    prefix,
-    suffix,
+    prefixX,
+    suffixX,
+    prefixY,
+    suffixY,
   } = $props();
 
   let ticksArrayX = $state();
@@ -141,9 +143,9 @@
     line.data.map((point) => new Decimal(point.y)),
   );
 
-  // let allXValues = lineChartData.lines.flatMap(
-  //   (line) => (point) => new Decimal(point.x),
-  // );
+  let allXValues = lineChartData.lines.flatMap((line) =>
+    line.data.map((point) => new Decimal(point.x)),
+  );
 
   $inspect(allXValues);
 
@@ -199,11 +201,11 @@
           yearsInput={yearsInputY}
           {floor}
           {ceiling}
-          {prefix}
-          {suffix}
+          prefix={prefixY}
+          suffix={suffixY}
         ></Axis>
         <!-- X axis-->
-        <!-- <Axis
+        <Axis
           {chartHeight}
           {chartWidth}
           ticksArray={ticksArrayX}
@@ -213,7 +215,9 @@
           yearInput={yearsInputX}
           {floor}
           {ceiling}
-        ></Axis> -->
+          suffix={suffixX}
+          prefix={prefixX}
+        ></Axis>
       </g>
     {/if}
   </svg>

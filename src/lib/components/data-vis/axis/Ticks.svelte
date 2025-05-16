@@ -3,8 +3,6 @@
 
   let {
     ticksArray = $bindable(),
-    prefix,
-    suffix,
     chartWidth,
     chartHeight,
     axisFunction,
@@ -13,7 +11,9 @@
     floor,
     ceiling,
     orientation,
-    yearsInput,
+    tickFormattingFunction = function (tick) {
+      return tick;
+    },
   } = $props();
 
   $inspect(ticksArray);
@@ -67,7 +67,6 @@
   numberOfTicks = tickCount(chartWidth, chartHeight);
 
   ticksArray = generateTicks(values, numberOfTicks, floor, ceiling);
-  let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 
   $inspect(values);
 </script>
@@ -109,7 +108,7 @@
             : "start"}
         fill="black"
       >
-        {tick}
+        {tickFormattingFunction(tick)}
       </text>
     </g>
   {/each}

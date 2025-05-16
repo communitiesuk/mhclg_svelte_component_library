@@ -97,7 +97,6 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import Button from "$lib/components/ui/Button.svelte";
-  import Examples from "./button/Examples.svelte";
 
   let { data } = $props();
 
@@ -402,6 +401,4 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5">
-  <Examples></Examples>
-</div>
+<div id="examples" data-role="examples-section" class="px-5"></div>

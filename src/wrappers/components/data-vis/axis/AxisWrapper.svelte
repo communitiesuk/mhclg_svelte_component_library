@@ -167,7 +167,7 @@
       {
         name: "values",
         category: "data",
-        value: [0, 100],
+        value: [-100, 100],
       },
       {
         name: "svgHeight",
@@ -240,6 +240,10 @@
         },
       },
       {
+        name: "zeroTranslationValue",
+        category: "axisFunctions",
+      },
+      {
         name: "numberOfTicks",
         category: "customisations",
         value: 5,
@@ -255,7 +259,7 @@
         name: "orientationPosition",
         category: "customisations",
         isProp: false,
-        options: ["top", "bottom", "left", "right"],
+        options: ["top", "bottom", "left", "right", "zero"],
         propType: "radio",
       },
       {
@@ -357,11 +361,16 @@
     orientation?.axis === "x" ? xFunction : yFunction,
   );
 
+  let zeroTranslationValue = $derived(
+    ticksArray ? (orientation?.axis === "x" ? yFunction(0) : yFunction(0)) : 0,
+  );
+
   let derivedParametersObject = $derived({
     chartWidth,
     chartHeight,
     orientation,
     axisFunction,
+    zeroTranslationValue,
   });
 
   /**

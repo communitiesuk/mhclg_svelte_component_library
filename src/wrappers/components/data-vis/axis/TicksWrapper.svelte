@@ -98,6 +98,7 @@
   import Ticks from "$lib/components/data-vis/axis/Ticks.svelte";
   import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
   import CategoryLabel from "$lib/components/data-vis/line-chart/CategoryLabel.svelte";
+  import { tick } from "svelte";
 
   let { data } = $props();
 
@@ -253,15 +254,16 @@
         name: "prefix",
         category: "formattingTick",
         value: "",
+        isProp: false,
       },
       {
         name: "suffix",
         category: "formattingTick",
         value: "",
+        isProp: false,
       },
       { name: "floor", category: "formatting", value: 0 },
       { name: "ceiling", category: "formatting", value: 100 },
-      { name: "yearsInput", category: "formattingTick", value: false },
       {
         name: "orientationAxis",
         category: "customisations",
@@ -281,13 +283,12 @@
         category: "customisations",
       },
       {
-        name: "yearFormating",
+        name: "tickFormattingFunction",
         category: "formattingTick",
-        value: function (ticks) {
-          return ticks.map((tick) => "FY {tick % 100}-{(tick % 100) + 1}");
-        },
         functionElements: {
-          functionAsString: `function yearsFormat(ticks) {return ticks.map((tick) => "FY {tick % 100}-{(tick % 100) + 1}");}`,
+          functionAsString: `function (tick, index) {
+    return getValue("prefix") + tick + getValue("suffix");
+  }`,
         },
       },
     ]),
@@ -385,11 +386,16 @@
     orientation?.axis === "x" ? xFunction : yFunction,
   );
 
+  let tickFormattingFunction = $derived(function (tick, index) {
+    return getValue("prefix") + tick + getValue("suffix");
+  });
+
   let derivedParametersObject = $derived({
     chartWidth,
     chartHeight,
     orientation,
     axisFunction,
+    tickFormattingFunction,
   });
   /**
    * DONOTTOUCH *

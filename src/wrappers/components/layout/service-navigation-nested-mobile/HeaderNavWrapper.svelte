@@ -123,41 +123,18 @@
    */
   let isMobileNavOpen = $state(false);
   let homeHref = $state("/");
-  let activeItemHref = $state("/");
+  // activeItemHref is always synced to the current URL hash for demo simplicity
 
-  // Function to update activeItemHref based on the URL hash for the wrapper demo
-  function updateActiveItemFromHashInWrapper() {
-    if (browser) {
-      const hash = window.location.hash;
-      // Get navigationItems from the source array for checking against the hash
-      const navItemsSource = parametersSourceArray.find(
-        (p) => p.name === "navigationItems",
-      );
-      const navItemsForDemo = navItemsSource ? navItemsSource.value : [];
+  let activeItemHref = $state(window.location.hash);
 
-      const matched = navItemsForDemo.find((item) =>
-        hash.startsWith(item.href),
-      );
-
-      let newActiveHref = homeHref; // Default to the wrapper's homeHref state
-      if (matched) {
-        newActiveHref = matched.href;
-      } else if (hash === "" || hash === "#/") {
-        const homeItem = navItemsForDemo.find((item) => item.text === "Home");
-        newActiveHref = homeItem ? homeItem.href : homeHref;
-      }
-
-      if (activeItemHref !== newActiveHref) {
-        activeItemHref = newActiveHref;
-      }
-    }
+  function syncActiveItemHrefToHash() {
+    activeItemHref =
+      window.location.hash ||
+      parametersSourceArray.find((item) => item.name === "navigationItems")
+        .value[0].href;
   }
 
-  onMount(() => {
-    if (browser) {
-      updateActiveItemFromHashInWrapper();
-    }
-  });
+  onMount(syncActiveItemHrefToHash);
 
   /**
    * ! Step 3 - Add your props
@@ -441,6 +418,9 @@
   !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
+
+<svelte:window on:hashchange={syncActiveItemHrefToHash} />
+
 {#snippet Component()}
   <p class="govuk-body">
     To test the mobile menu, please reduce your screen width to below a typical
@@ -504,5 +484,3 @@ DONOTTOUCH  *
 <div id="examples" data-role="examples-section" class="px-5">
   <Examples></Examples>
 </div>
-
-<svelte:window on:hashchange={updateActiveItemFromHashInWrapper} />

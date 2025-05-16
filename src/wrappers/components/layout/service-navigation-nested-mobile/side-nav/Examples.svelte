@@ -81,7 +81,9 @@
     },
   ];
 
-  let currentItem = $state(window.location.hash);
+  let currentItem = $state(
+    window.location.hash
+  );
   function syncCurrentItemToHash() {
     currentItem = window.location.hash;
   }

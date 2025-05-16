@@ -146,7 +146,9 @@
 
   // logic to sync currentItem state with the external window current URL hash changes
   function syncCurrentItemToHash() {
-    currentItem = window.location.hash;
+    currentItem =
+      window.location.hash ||
+      parametersSourceArray.find((item) => item.name === "items").value[0].href;
   }
 
   onMount(syncCurrentItemToHash);

@@ -11,6 +11,11 @@
   import type { ComponentItem } from "./+layout.server";
   import { page } from "$app/stores";
   import PhaseBanner from "$lib/components/layout/PhaseBanner.svelte";
+  import {
+    mapComponentItemsToSideNavItems,
+    createMobileItems,
+    getSectionTitle,
+  } from "$lib/utils/layoutNavHelpers";
 
   let { children, data } = $props();
 
@@ -53,32 +58,6 @@
   // Get component data from server
   const componentTree = data.componentTree || [];
 
-  // Helper to recursively extract actual component wrappers into a flat SideNavItem list
-  function mapComponentItemsToSideNavItems(
-    items: ComponentItem[],
-  ): SideNavItem[] {
-    let navItems: SideNavItem[] = [];
-    for (const item of items) {
-      if (item.hasWrapper) {
-        // If it's a wrapper, add it directly
-        navItems.push({
-          text: item.name,
-          href: `/${item.path}`,
-          // subItems: undefined, // Explicitly no sub-items for direct wrappers here
-        });
-      }
-      // If it's a folder (hasWrapper is false or undefined) AND has children, process children
-      if (!item.hasWrapper && item.children && item.children.length > 0) {
-        // Recursively get nav items from children and add them to the list
-        navItems = navItems.concat(
-          mapComponentItemsToSideNavItems(item.children),
-        );
-      }
-    }
-    return navItems;
-  }
-
-  // Convert component tree to side nav groups using the helper
   const componentNavGroups: SideNavGroup[] =
     componentTree.length > 0
       ? componentTree.map((category) => ({
@@ -110,38 +89,6 @@
     },
   ];
 
-  // Create items for the mobile navigation
-  function createMobileItems(tree: ComponentItem[]) {
-    const result: (SideNavItem | { title: string; items: SideNavItem[] })[] =
-      [];
-    tree.forEach((category) => {
-      // Check if the category itself is a direct link (hasWrapper)
-      if (category.hasWrapper) {
-        result.push({
-          text: category.name,
-          href: `/${category.path}`,
-        });
-      }
-      // If the category has children, process them
-      else if (category.children && category.children.length > 0) {
-        // Use the existing helper to get a flat list of wrappers within this category
-        const flattenedItems = mapComponentItemsToSideNavItems(
-          category.children,
-        );
-
-        // If there are any actual components within this category, add it as a group
-        if (flattenedItems.length > 0) {
-          result.push({
-            title: category.name, // e.g., "Data Vis", "Layout"
-            items: flattenedItems, // The already flattened list of {text, href} items
-          });
-        }
-      }
-    });
-    return result;
-  }
-
-  // Create structured component items for mobile navigation
   const structuredComponentItems =
     componentTree.length > 0 ? createMobileItems(componentTree) : [];
 
@@ -222,11 +169,6 @@
         return [];
     }
   });
-
-  // Function to get the appropriate section title for the side navigation
-  function getSectionTitle(section: string): string {
-    return section;
-  }
 </script>
 
 {#if !isDemoPage}

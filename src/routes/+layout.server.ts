@@ -1,6 +1,7 @@
 import { readdir, stat } from "fs/promises";
 import { resolve, join } from "path";
 import type { LayoutServerLoad } from "./$types.js";
+import { dev } from "$app/environment";
 
 // Helper function to format directory name into display name
 function formatDirName(dirName: string): string {
@@ -18,6 +19,8 @@ export interface ComponentItem {
   children?: ComponentItem[];
   hasWrapper?: boolean;
 }
+
+let cachedComponentTree: ComponentItem[] | undefined = undefined;
 
 // Helper function to recursively scan directories and build tree
 async function scanWrapperDir(
@@ -118,16 +121,25 @@ async function scanWrapperDir(
 }
 
 export const load: LayoutServerLoad = async () => {
+  // In development, or if the cache is not populated yet in production, generate the tree.
+  // In production, if the cache is populated, return it.
+  if (!dev && cachedComponentTree) {
+    return {
+      componentTree: cachedComponentTree,
+    };
+  }
+
   try {
     const baseWrappersPath = resolve("src/wrappers/components");
-    const componentTree = await scanWrapperDir(baseWrappersPath, []);
+    const tree = await scanWrapperDir(baseWrappersPath, []); // Renamed to 'tree' to avoid conflict before caching
 
-
-    // Flattening might not be needed directly if Nav components handle the tree
-    // const componentSections = flattenComponentTree(componentTree);
+    // Cache the generated tree in production
+    if (!dev) {
+      cachedComponentTree = tree;
+    }
 
     return {
-      componentTree,
+      componentTree: tree, // Return the newly generated or existing tree
     };
   } catch (error) {
     console.error("Error in layout.server.ts load function:", error);

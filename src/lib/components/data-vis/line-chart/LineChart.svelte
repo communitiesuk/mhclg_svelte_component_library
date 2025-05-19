@@ -146,10 +146,6 @@
   let allXValues = lineChartData.lines.flatMap((line) =>
     line.data.map((point) => new Decimal(point.x)),
   );
-
-  $inspect(allXValues);
-
-  //$inspect(allYValues);
 </script>
 
 <div bind:clientWidth={svgWidth}>

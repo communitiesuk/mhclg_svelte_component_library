@@ -95,9 +95,13 @@
 
 <g
   data-id={dataId}
-  onclick={(e) => onClickLine(e, dataArray, dataId)}
-  onmouseenter={(e) => onMouseEnterLine(e, dataArray, dataId)}
-  onmouseleave={(e) => onMouseLeaveLine(e, dataArray, dataId)}
+  onclick={interactive ? (e) => onClickLine(e, dataArray, dataId) : null}
+  onmouseenter={interactive
+    ? (e) => onMouseEnterLine(e, dataArray, dataId)
+    : null}
+  onmouseleave={interactive
+    ? (e) => onMouseLeaveLine(e, dataArray, dataId)
+    : null}
   role="button"
   tabindex="0"
   onkeydown={(e) => e.key === "Enter" && onClickLine(e, dataArray)}
@@ -132,13 +136,14 @@
     pointer-events="none"
     marker-start={`url(#${lineEnding}-${pathStrokeColor})`}
   ></path>
-  {#if false}
+  {#if markers}
     {#each dataArray as marker, i}
+      {@const markerId = "marker-" + marker.areaCode + marker.x}
       <g
-        data-id={"marker-" + marker.areaCode + marker.x}
-        onclick={(event) => onClickMarker(event, marker, dataId)}
-        onmouseenter={(event) => onMouseEnterMarker(event, marker, dataId)}
-        onmouseleave={(event) => onMouseLeaveMarker(event, marker, dataId)}
+        data-id={markerId}
+        onclick={(event) => onClickMarker(event, marker, markerId)}
+        onmouseenter={(event) => onMouseEnterMarker(event, marker, markerId)}
+        onmouseleave={(event) => onMouseLeaveMarker(event, marker, markerId)}
         transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
         role="button"
         tabindex="0"
@@ -172,7 +177,7 @@
           ></polygon>
         {/if}
         {#if true}
-          {#if activeMarkerId == marker}
+          {#if activeMarkerId === markerId}
             <ValueLabel
               {marker}
               labelColor="grey"

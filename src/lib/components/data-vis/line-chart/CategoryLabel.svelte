@@ -49,7 +49,7 @@
     text-anchor="start"
     x={20}
     y={newY}
-    stroke-width={labelClicked ? 0.8 : 0}
+    stroke-width={labelClicked ? 0.7 : 0}
     stroke="black"
   >
     {labelText(dataArray)}

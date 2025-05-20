@@ -147,7 +147,6 @@
     ),
   );
   let activeMarkerId = $state();
-  $inspect(activeMarkerId);
 
   /**
    * ! Step 3 - Add your props
@@ -191,6 +190,24 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
+        name: "x",
+        category: "data",
+        value: "x",
+        description: "Data variable to be plotted on the x axis",
+      },
+      {
+        name: "y",
+        category: "data",
+        value: "y",
+        description: "Data variable to be plotted on the y axis",
+      },
+      {
+        name: "series",
+        category: "data",
+        value: "areaCode",
+        description: "Data variable used to distinguish between lines",
+      },
+      {
         name: "basicLineParams",
         category: "customisingLines",
         description: "Parameters that shared by all lines.",
@@ -232,6 +249,19 @@
                   : undefined
                 : undefined,
             pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
+              ? getColor(
+                  el.areaCode,
+                  [
+                    "E07000224",
+                    "E07000225",
+                    "E07000226",
+                    "E07000228",
+                    englandMedian,
+                    similarAreas,
+                  ].indexOf(el.areaCode),
+                )
+              : null,
+            markerFill: ["primary", "hover", "clicked"].includes(key)
               ? getColor(
                   el.areaCode,
                   [
@@ -304,6 +334,11 @@
         value: lineHovered,
       },
       {
+        name: "activeMarkerId",
+        category: "markerEvents",
+        value: activeMarkerId,
+      },
+      {
         name: "onMouseEnterLabel",
         category: "lineEvents",
         functionElements: {
@@ -355,8 +390,8 @@
               labelHovered = areaCode;
             }`,
         },
-        value: function (event, marker, dataId) {
-          activeMarkerId = marker;
+        value: function (event, marker, markerId) {
+          activeMarkerId = markerId;
         },
       },
       {
@@ -383,8 +418,8 @@
                 : (labelClicked = areaCode);
             }`,
         },
-        value: function (event, marker, dataId) {
-          activeMarkerId = dataId;
+        value: function (event, marker, markerId) {
+          activeMarkerId = markerId;
         },
       },
       {
@@ -644,7 +679,7 @@
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
-      interactive: true,
+      interactive: false,
       markers: false,
       showLabel: false,
     },
@@ -652,17 +687,17 @@
       halo: true,
       pathStrokeWidth: 5,
       pathStrokeColor: colors.darkgrey,
-      interactive: true,
-      markers: false,
+      interactive: false,
       showLabel: !lineClicked && !lineHovered && !labelClicked,
       lineEnding: null,
       markers: true,
+      markerStrokeWidth: 1,
     },
     clicked: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 7,
       halo: true,
-      interactive: true,
+      interactive: false,
       markers: false,
       showLabel: true,
       lineEnding: null,
@@ -671,7 +706,7 @@
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 6,
       halo: true,
-      interactive: true,
+      interactive: false,
       markers: false,
       showLabel: true,
       lineEnding: null,
@@ -850,6 +885,7 @@
       bind:labelClicked
       bind:labelHovered
       bind:svgWidth
+      bind:activeMarkerId
     ></LineChart>
   </div>
 {/snippet}

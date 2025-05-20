@@ -20,6 +20,7 @@
     labelClicked = $bindable(),
     labelHovered = $bindable(),
     svgWidth = $bindable(500),
+    activeMarkerId,
     onClickLine,
     onMouseEnterLine,
     onMouseLeaveLine,
@@ -42,7 +43,6 @@
     overrideLineParams,
     nothingSelected = $bindable(),
     globalTierRules,
-    activeMarkerId,
     labelText,
   } = $props();
 

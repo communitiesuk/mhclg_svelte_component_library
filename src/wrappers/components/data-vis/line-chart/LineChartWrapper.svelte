@@ -100,6 +100,8 @@
 
   let { data } = $props();
 
+  let series = $state("areaCode");
+
   let selectedAreaCode = $state("E09000033");
   let englandMedian = $state("E06000040");
   let similarAreas = $state("E07000224");
@@ -204,7 +206,6 @@
       {
         name: "series",
         category: "data",
-        value: "areaCode",
         description: "Data variable used to distinguish between lines",
       },
       {
@@ -228,13 +229,13 @@
             return {
               pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
                 ? getColor(
-                    el.areaCode,
+                    el[series],
                     [
                       "E07000224",
                       "E07000225",
                       "E07000226",
                       "E07000228",
-                    ].indexOf(el.areaCode),
+                    ].indexOf(el[series]),
                   )
                 : null,
             };
@@ -244,13 +245,13 @@
           return {
             showLabel:
               "hover" === key
-                ? el.areaCode === lineClicked
+                ? el[series] === lineClicked
                   ? false
                   : undefined
                 : undefined,
             pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
               ? getColor(
-                  el.areaCode,
+                  el[series],
                   [
                     "E07000224",
                     "E07000225",
@@ -258,12 +259,12 @@
                     "E07000228",
                     englandMedian,
                     similarAreas,
-                  ].indexOf(el.areaCode),
+                  ].indexOf(el[series]),
                 )
               : null,
             markerFill: ["primary", "hover", "clicked"].includes(key)
               ? getColor(
-                  el.areaCode,
+                  el[series],
                   [
                     "E07000224",
                     "E07000225",
@@ -271,7 +272,7 @@
                     "E07000228",
                     englandMedian,
                     similarAreas,
-                  ].indexOf(el.areaCode),
+                  ].indexOf(el[series]),
                 )
               : null,
           };
@@ -342,26 +343,26 @@
         name: "onMouseEnterLabel",
         category: "lineEvents",
         functionElements: {
-          functionAsString: `function (areaCode) {
-              labelHovered = areaCode;
+          functionAsString: `function (series) {
+              labelHovered = series;
             }`,
         },
-        value: function (areaCode) {
-          labelHovered = areaCode;
+        value: function (series) {
+          labelHovered = series;
         },
       },
       {
         name: "onMouseLeaveLabel",
         category: "lineEvents",
         functionElements: {
-          functionAsString: `function (areaCode) {
-              if (labelClicked !== areaCode) {
+          functionAsString: `function (series) {
+              if (labelClicked !== series) {
                 labelHovered = null;
               }
             }`,
         },
-        value: function (areaCode) {
-          if (labelClicked !== areaCode) {
+        value: function (series) {
+          if (labelClicked !== series) {
             labelHovered = null;
           }
         },
@@ -370,16 +371,16 @@
         name: "onClickLabel",
         category: "lineEvents",
         functionElements: {
-          functionAsString: `function (areaCode) {
-              labelClicked === areaCode
+          functionAsString: `function (series) {
+              labelClicked === series
                 ? ((labelClicked = null), (labelHovered = null))
-                : (labelClicked = areaCode);
+                : (labelClicked = series);
             }`,
         },
-        value: function (areaCode) {
-          labelClicked === areaCode
+        value: function (series) {
+          labelClicked === series
             ? ((labelClicked = null), (labelHovered = null))
-            : (labelClicked = areaCode);
+            : (labelClicked = series);
         },
       },
       {
@@ -387,7 +388,7 @@
         category: "lineEvents",
         functionElements: {
           functionAsString: `function (event, dataArray, dataId) {
-              labelHovered = areaCode;
+              labelHovered = series;
             }`,
         },
         value: function (event, marker, markerId) {
@@ -399,7 +400,7 @@
         category: "lineEvents",
         functionElements: {
           functionAsString: `function (event, dataArray, dataId) {
-              if (labelClicked !== areaCode) {
+              if (labelClicked !== series) {
                 labelHovered = null;
               }
             }`,
@@ -413,9 +414,9 @@
         category: "lineEvents",
         functionElements: {
           functionAsString: `function (event, dataArray, dataId) {
-              labelClicked === areaCode
+              labelClicked === series
                 ? ((labelClicked = null), (labelHovered = null))
-                : (labelClicked = areaCode);
+                : (labelClicked = series);
             }`,
         },
         value: function (event, marker, markerId) {
@@ -459,7 +460,7 @@
         name: "getColor",
         category: "customisingLines",
         functionElements: {
-          functionAsString: `function (areaCode, i) {
+          functionAsString: `function (series, i) {
     let colorsArray = [colors.coral, colors.fuschia, colors.purple];
 
     return (
@@ -467,11 +468,11 @@
         [englandMedian]: colors.lightblue,
         [selectedAreaCode]: colors.teal,
         [similarAreas]: colors.darkblue,
-      }[areaCode] ?? colorsArray[i % colorsArray.length]
+      }[series] ?? colorsArray[i % colorsArray.length]
     );
   };`,
         },
-        value: function (areaCode, i) {
+        value: function (series, i) {
           let colorsArray = [colors.coral, colors.fuschia, colors.purple];
 
           return (
@@ -479,7 +480,7 @@
               [englandMedian]: colors.lightblue,
               [selectedAreaCode]: colors.teal,
               [similarAreas]: colors.darkblue,
-            }[areaCode] ?? colorsArray[i % colorsArray.length]
+            }[series] ?? colorsArray[i % colorsArray.length]
           );
         },
       },
@@ -518,7 +519,7 @@
         name: "labelText",
         category: "labels",
         value: function (dataArray) {
-          return dataArray.areaCode;
+          return dataArray[series];
         },
         isProp: true,
       },
@@ -582,16 +583,16 @@
             similarAreas,
           ];
           if (key === "primary") {
-            return primaryLines.includes(el.areaCode);
+            return primaryLines.includes(el[series]);
           }
-          if (key === "secondary" && !primaryLines.includes(el.areaCode)) {
+          if (key === "secondary" && !primaryLines.includes(el[series])) {
             return true;
           }
           if (key === "hover") {
-            return [lineHovered, labelHovered].includes(el.areaCode);
+            return [lineHovered, labelHovered].includes(el[series]);
           }
           if (key === "clicked") {
-            return [lineClicked, labelClicked].includes(el.areaCode);
+            return [lineClicked, labelClicked].includes(el[series]);
           }
         },`,
         },
@@ -605,16 +606,16 @@
             similarAreas,
           ];
           if (key === "primary") {
-            return primaryLines.includes(el.areaCode);
+            return primaryLines.includes(el[series]);
           }
-          if (key === "secondary" && !primaryLines.includes(el.areaCode)) {
+          if (key === "secondary" && !primaryLines.includes(el[series])) {
             return true;
           }
           if (key === "hover") {
-            return [lineHovered, labelHovered].includes(el.areaCode);
+            return [lineHovered, labelHovered].includes(el[series]);
           }
           if (key === "clicked") {
-            return [lineClicked, labelClicked].includes(el.areaCode);
+            return [lineClicked, labelClicked].includes(el[series]);
           }
         },
       },
@@ -725,7 +726,7 @@
     clicked: { opacity: 1 },
   });
 
-  let getColor = function (areaCode, i) {
+  let getColor = function (series, i) {
     let colorsArray = [colors.coral, colors.fuschia, colors.purple];
 
     return (
@@ -733,7 +734,7 @@
         [englandMedian]: colors.lightblue,
         [selectedAreaCode]: colors.teal,
         [similarAreas]: colors.darkblue,
-      }[areaCode] ?? colorsArray[i % colorsArray.length]
+      }[series] ?? colorsArray[i % colorsArray.length]
     );
   };
 

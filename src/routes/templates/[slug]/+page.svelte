@@ -70,7 +70,7 @@
   </div>
 {:else if errorImportingComponent}
   <div class="g-top-level-container">
-    <h3>Failed to import componnet</h3>
+    <h3>Failed to import component</h3>
     <p>
       Oops...we've returned an error when trying to import the component wrapper
       associated with this URL.

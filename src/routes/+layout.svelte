@@ -6,7 +6,7 @@
   import ServiceNavigationNestedMobile from "$lib/components/layout/service-navigation-nested-mobile/ServiceNavigationNestedMobile.svelte";
   import "../app.css";
   import type { SideNavGroup } from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
   import PhaseBanner from "$lib/components/layout/PhaseBanner.svelte";
   import {
     extractLinkableComponentNavItems,
@@ -19,8 +19,8 @@
   let { children, data } = $props();
 
   // --- Core URL-Derived State ---
-  let currentPath = $derived($page.url.pathname);
-  let currentHash = $derived($page.url.hash);
+  let currentPath = $derived(page.url.pathname);
+  let currentHash = $derived(page.url.hash);
   let activeDetailHref = $derived(currentPath + currentHash);
   let isDemoPage = $derived(
     currentPath.startsWith(

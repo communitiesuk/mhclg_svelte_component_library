@@ -5,20 +5,17 @@
   export type SubNavItem = {
     text: string;
     href: string;
-    // current?: boolean; // Will no longer be set by this component's effect
   };
 
   export type NavItem = {
     text: string;
     href: string;
-    // current?: boolean; // Will no longer be set by this component's effect
     description?: string;
   };
 
   export type NavSection = {
     title: string;
     href?: string; // Optional: Href for the main section link itself
-    // current?: boolean; // Will no longer be set by this component's effect
     items: (
       | SubNavItem
       | {

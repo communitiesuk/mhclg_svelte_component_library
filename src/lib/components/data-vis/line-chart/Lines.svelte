@@ -32,6 +32,9 @@
     onClickMarker,
     activeMarkerId,
     labelText,
+    series,
+    y,
+    x,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
@@ -43,11 +46,11 @@
 
       .filter(
         (item, index, self) =>
-          self.findIndex((other) => other.areaCode === item.areaCode) === index,
+          self.findIndex((other) => other[series] === item[series]) === index,
       )
       .map((item) => ({
-        areaCode: item.areaCode,
-        lastY: yFunction(item.data[0].y),
+        [series]: item[series],
+        lastY: yFunction(item.data[0][y]),
       })),
   );
 
@@ -56,7 +59,7 @@
       transformed,
       bounds,
       (d) => d.lastY,
-      (d) => 20 * Math.ceil(d.areaCode.length / 15),
+      (d) => 20 * Math.ceil(d[series].length / 15),
     ),
   );
 </script>
@@ -81,6 +84,9 @@
           lineClicked
           lineHovered
           {activeMarkerId}
+          {series}
+          {y}
+          {x}
         />
       {/each}
     </g>
@@ -88,8 +94,11 @@
     <g>
       {#each tieredDataObject[tier] as line, i}
         {#if line.showLabel}
+          {@const newY = labelsPlaced.find(
+            (el) => el.datum[series] === line[series],
+          )?.[y]}
           <CategoryLabel
-            id={`label-${line.areaCode}`}
+            id={`label-${line[series]}`}
             bind:labelClicked
             bind:labelHovered
             {chartWidth}
@@ -97,8 +106,7 @@
             dataArray={line}
             {xFunction}
             {yFunction}
-            newY={labelsPlaced.find((el) => el.datum.areaCode === line.areaCode)
-              ?.y}
+            {newY}
             {onClickLabel}
             {onMouseEnterLabel}
             {onMouseLeaveLabel}

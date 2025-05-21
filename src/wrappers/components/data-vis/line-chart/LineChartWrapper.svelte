@@ -887,6 +887,7 @@
       bind:labelHovered
       bind:svgWidth
       bind:activeMarkerId
+      bind:series
     ></LineChart>
   </div>
 {/snippet}

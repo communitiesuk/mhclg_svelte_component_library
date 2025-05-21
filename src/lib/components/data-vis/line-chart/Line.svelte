@@ -51,6 +51,9 @@
     lineClicked,
     lineHovered,
     activeMarkerId,
+    series,
+    y,
+    x,
   } = $props();
 
   function makeList(inputValue) {
@@ -138,13 +141,13 @@
   ></path>
   {#if markers}
     {#each dataArray as marker, i}
-      {@const markerId = "marker-" + marker.areaCode + marker.x}
+      {@const markerId = "marker-" + marker[series] + marker[x]}
       <g
         data-id={markerId}
         onclick={(event) => onClickMarker(event, marker, markerId)}
         onmouseenter={(event) => onMouseEnterMarker(event, marker, markerId)}
         onmouseleave={(event) => onMouseLeaveMarker(event, marker, markerId)}
-        transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
+        transform="translate({xFunction(marker[x])},{yFunction(marker[y])})"
         role="button"
         tabindex="0"
         onkeydown={(e) => e.key === "Enter" && onClickMarker(e, marker)}
@@ -182,7 +185,7 @@
               {marker}
               labelColor="grey"
               labelTextColor="black"
-              textContent={parseInput(marker, marker.y)}
+              textContent={parseInput(marker, marker[y])}
             ></ValueLabel>
           {/if}
         {/if}

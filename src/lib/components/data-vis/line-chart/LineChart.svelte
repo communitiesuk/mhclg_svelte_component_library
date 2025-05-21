@@ -44,17 +44,22 @@
     nothingSelected = $bindable(),
     globalTierRules,
     labelText,
+    series,
+    y,
+    x,
   } = $props();
+
+  $inspect({ y });
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
   let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
-  let areaFunction = $derived(
-    area()
-      .y0((d) => yFunction(0))
-      .x((d) => xFunction(d.x))
-      .y1((d) => yFunction(d.y))
-      .curve(curveLinear),
-  );
+  // let areaFunction = $derived(
+  //   area()
+  //     .y0((d) => yFunction(0))
+  //     .x((d) => xFunction(d.x))
+  //     .y1((d) => yFunction(d.y))
+  //     .curve(curveLinear),
+  // );
 
   let selectedLine = $derived([
     lineHovered,
@@ -100,7 +105,7 @@
     return {
       ...merged,
       ...line,
-      dataId: line.areaCode,
+      dataId: line[series],
       dataArray: line.data,
     };
   }
@@ -160,6 +165,9 @@
             {onMouseLeaveMarker}
             {activeMarkerId}
             {labelText}
+            {series}
+            {y}
+            {x}
           ></Lines>
         </g>
         <g data-role="y-axis">

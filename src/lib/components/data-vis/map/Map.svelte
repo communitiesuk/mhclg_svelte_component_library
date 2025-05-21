@@ -57,8 +57,7 @@
     hoverOpacity = 0.8,
     center = [-2.5, 53],
     zoom = 5,
-    hardcodedHegith,
-    hardcodedWidth,
+    mapHeight = 200,
   } = $props();
 
   let styleLookup = {
@@ -191,17 +190,15 @@
   }
 </script>
 
-<div
-  style="width: {hardcodedWidth}px; height: {hardcodedHegith}px; background-color: lightblue;"
->
+<div style="height: {mapHeight}px;">
   <MapLibre
     bind:map
     bind:loaded
     {style}
-    class="map"
     {standardControls}
     {center}
     {zoom}
+    class="map"
   >
     {#if !standardControls}
       <NonStandardControls
@@ -276,14 +273,11 @@
 </div>
 
 <style>
-  :global(.map) {
-    height: 100%;
-  }
-
   :global(.maplibregl-ctrl-group button.reset-button) {
     /* margin: 10px; */
     width: fit-content;
     padding: 0px 10px;
     font-size: 16px;
+    height: 100%;
   }
 </style>

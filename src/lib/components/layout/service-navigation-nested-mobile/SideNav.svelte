@@ -7,7 +7,7 @@
 
   export type SideNavGroup = {
     title?: string;
-    items: SideNavItem[]; // Items here won't have their .current property mutated by this component
+    items: SideNavItem[];
   };
 
   let {
@@ -20,13 +20,13 @@
     title?: string;
     items?: SideNavItem[];
     groups?: SideNavGroup[];
-    currentItem?: string; // Value from parent, or updated by internal clicks
+    currentItem?: string; // Value from parent
     activeItemBackgroundColor?: string;
   }>();
 
-  // Simplified calculateIsActive: relies only on the item and the currentItem prop
+
   function calculateIsActive(
-    item: { href: string; subItems?: { href: string }[] }, // Simplified type for this function's direct needs
+    item: { href: string; subItems?: { href: string }[] },
     activePropValue: string | undefined,
   ): boolean {
     if (!activePropValue) {

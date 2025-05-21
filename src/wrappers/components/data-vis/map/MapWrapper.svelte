@@ -265,6 +265,16 @@
         ],
       },
       {
+        name: "hardcodedHegith",
+        isProp: true,
+        value: 400,
+      },
+      {
+        name: "hardcodedWidth",
+        isProp: true,
+        value: 400,
+      },
+      {
         name: "styleSheet",
         isProp: true,
         description: {

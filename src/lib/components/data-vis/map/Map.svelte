@@ -57,6 +57,8 @@
     hoverOpacity = 0.8,
     center = [-2.5, 53],
     zoom = 5,
+    hardcodedHegith,
+    hardcodedWidth,
   } = $props();
 
   let styleLookup = {
@@ -189,89 +191,93 @@
   }
 </script>
 
-<MapLibre
-  bind:map
-  bind:loaded
-  {style}
-  class="map"
-  {standardControls}
-  {center}
-  {zoom}
+<div
+  style="width: {hardcodedWidth}px; height: {hardcodedHegith}px; background-color: lightblue;"
 >
-  {#if !standardControls}
-    <NonStandardControls
-      {navigationControl}
-      {navigationControlPosition}
-      {geolocateControl}
-      {geolocateControlPosition}
-      {fullscreenControl}
-      {fullscreenControlPosition}
-      {scaleControl}
-      {scaleControlPosition}
-      {scaleControlUnit}
-    />
-  {/if}
-
-  <Control>
-    <ControlGroup>
-      <button
-        class="reset-button"
-        onclick={() => {
-          map.flyTo({
-            center: center,
-            zoom: zoom,
-          });
-        }}>Reset view</button
-      ></ControlGroup
-    >
-  </Control>
-
-  <GeoJSON id="areas" data={merged} promoteId="areanm">
-    <FillLayer
-      paint={{
-        //Get the color property of the area, or lightgrey if that's undefined
-        "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
-        "fill-opacity": changeOpacityOnHover
-          ? hoverStateFilter(fillOpacity, hoverOpacity) //setting the fill-opacity based on whether the area is hovered
-          : fillOpacity,
-      }}
-      beforeLayerType="symbol"
-      manageHoverState
-      onclick={(e) => zoomToArea(e)}
-      onmousemove={(e) => {
-        hoveredArea = e.features[0].id;
-        hoveredAreaData = e.features[0].properties.metric;
-        currentMousePosition = e.event.point;
-      }}
-      onmouseleave={(e) => {
-        (hoveredArea = null), (hoveredAreaData = null);
-      }}
-    />
-    {#if showBorder}
-      <LineLayer
-        layout={{ "line-cap": "round", "line-join": "round" }}
-        paint={{
-          "line-color": hoverStateFilter(borderColor, "orange"), //setting the colour based on whether the area is hovered
-          "line-width": zoomTransition(3, 0, 12, maxBorderWidth), //setting the line-width based on the zoom level
-        }}
-        beforeLayerType="symbol"
+  <MapLibre
+    bind:map
+    bind:loaded
+    {style}
+    class="map"
+    {standardControls}
+    {center}
+    {zoom}
+  >
+    {#if !standardControls}
+      <NonStandardControls
+        {navigationControl}
+        {navigationControlPosition}
+        {geolocateControl}
+        {geolocateControlPosition}
+        {fullscreenControl}
+        {fullscreenControlPosition}
+        {scaleControl}
+        {scaleControlPosition}
+        {scaleControlUnit}
       />
     {/if}
-  </GeoJSON>
-  {#if tooltip}
-    <Tooltip
-      {currentMousePosition}
-      {hoveredArea}
-      {hoveredAreaData}
-      {year}
-      {metric}
-    />
-  {/if}
-</MapLibre>
+
+    <Control>
+      <ControlGroup>
+        <button
+          class="reset-button"
+          onclick={() => {
+            map.flyTo({
+              center: center,
+              zoom: zoom,
+            });
+          }}>Reset view</button
+        ></ControlGroup
+      >
+    </Control>
+
+    <GeoJSON id="areas" data={merged} promoteId="areanm">
+      <FillLayer
+        paint={{
+          //Get the color property of the area, or lightgrey if that's undefined
+          "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
+          "fill-opacity": changeOpacityOnHover
+            ? hoverStateFilter(fillOpacity, hoverOpacity) //setting the fill-opacity based on whether the area is hovered
+            : fillOpacity,
+        }}
+        beforeLayerType="symbol"
+        manageHoverState
+        onclick={(e) => zoomToArea(e)}
+        onmousemove={(e) => {
+          hoveredArea = e.features[0].id;
+          hoveredAreaData = e.features[0].properties.metric;
+          currentMousePosition = e.event.point;
+        }}
+        onmouseleave={(e) => {
+          (hoveredArea = null), (hoveredAreaData = null);
+        }}
+      />
+      {#if showBorder}
+        <LineLayer
+          layout={{ "line-cap": "round", "line-join": "round" }}
+          paint={{
+            "line-color": hoverStateFilter(borderColor, "orange"), //setting the colour based on whether the area is hovered
+            "line-width": zoomTransition(3, 0, 12, maxBorderWidth), //setting the line-width based on the zoom level
+          }}
+          beforeLayerType="symbol"
+        />
+      {/if}
+    </GeoJSON>
+    {#if tooltip}
+      <Tooltip
+        {currentMousePosition}
+        {hoveredArea}
+        {hoveredAreaData}
+        {year}
+        {metric}
+      />
+    {/if}
+  </MapLibre>
+</div>
 
 <style>
   :global(.map) {
-    height: 500px;
+    height: 100%;
   }
 
   :global(.maplibregl-ctrl-group button.reset-button) {

@@ -5,16 +5,24 @@
   export type SubNavItem = {
     text: string;
     href: string;
-    current?: boolean;
+    // current?: boolean; // Will no longer be set by this component's effect
+  };
+
+  export type NavItem = {
+    text: string;
+    href: string;
+    // current?: boolean; // Will no longer be set by this component's effect
+    description?: string;
   };
 
   export type NavSection = {
     title: string;
-    href: string;
-    current?: boolean;
+    href?: string; // Optional: Href for the main section link itself
+    // current?: boolean; // Will no longer be set by this component's effect
     items: (
       | SubNavItem
       | {
+          // Represents a group within a section
           title?: string;
           items: SubNavItem[];
         }
@@ -23,15 +31,17 @@
 
   // Component props
   let {
-    isOpen = false, // Use isOpen directly, no binding
-    sections = [],
-    currentSection = "",
-    onNavigate, // Add onNavigate prop
+    isOpen = false,
+    sections = [] as NavSection[],
+    activeSectionHref = $bindable(""), // Href for the active section header, e.g. /components
+    activeDetailHref = $bindable(""), // Href for the detailed active item, e.g. /components/x/y#z
+    onNavigate = (href: string, event?: MouseEvent) => {},
   } = $props<{
     isOpen?: boolean;
-    sections: NavSection[];
-    currentSection?: string;
-    onNavigate: (href: string, event: MouseEvent) => void; // Update prop type to include event
+    sections?: NavSection[];
+    activeSectionHref?: string;
+    activeDetailHref?: string;
+    onNavigate?: (href: string, event?: MouseEvent) => void;
   }>();
 
   // Track which sections are expanded
@@ -42,60 +52,46 @@
     expandedSections[sectionTitle] = !expandedSections[sectionTitle];
   }
 
-  // Initialise expanded sections based on current section
-  $effect(() => {
-    if (currentSection) {
-      sections.forEach((section) => {
-        if (section.title === currentSection) {
-          expandedSections[section.title] = true;
-        } else {
-          // Ensure other sections are collapsed when the current section changes
-          expandedSections[section.title] = false;
-        }
-      });
-    }
-  });
-
-  // Function to determine if a section is expanded
+  /**
+   * Determines if a section is expanded:
+   * - If the user has toggled a section explicitly (in expandedSections), use that.
+   * - Otherwise, expand the section whose href matches activeSectionHref.
+   */
   function isSectionExpanded(sectionTitle: string): boolean {
-    return !!expandedSections[sectionTitle];
+    const explicit = expandedSections[sectionTitle];
+    if (explicit !== undefined) return explicit;
+    const section = sections.find((s) => s.title === sectionTitle);
+    return !!section?.href && section.href === activeSectionHref;
   }
 
-  // Check if a section or item is the current one
-  function isCurrent(item: { title?: string; current?: boolean }): boolean {
-    return !!item.current || item.title === currentSection;
-  }
-
-  // When a navigation happens, dispatch event - MODIFIED
+  // When a navigation happens, call the onNavigate prop
   function handleNavigate(href: string, event: MouseEvent) {
-    // Only handle clicks if not prevented already (e.g. by router)
     if (!event.defaultPrevented) {
-      // dispatch("navigate", href); // Remove dispatch
-      onNavigate(href, event); // Call the prop instead, passing the event
+      onNavigate(href, event);
     }
   }
 </script>
 
 <nav
   id="app-mobile-nav"
-  class="app-mobile-nav js-app-mobile-nav {isOpen
-    ? 'app-mobile-nav--active'
-    : ''}"
+  class:app-mobile-nav={true}
+  class:js-app-mobile-nav={true}
+  class:app-mobile-nav--active={isOpen}
   aria-label="mobile navigation"
   aria-hidden={!isOpen}
 >
   <div class="app-mobile-nav__wrapper">
     <ul class="app-mobile-nav__list">
-      {#each sections as section}
+      {#each sections as section (section.title)}
         <li class="app-mobile-nav__section">
           <div class="app-mobile-nav__section-header">
             <a
-              href={section.href}
-              class="app-mobile-nav__section-link {section.current
-                ? 'app-mobile-nav__section-link--current'
-                : ''}"
+              href={section.href || "#"}
+              class="app-mobile-nav__section-link"
+              class:app-mobile-nav__section-link--current={section.href &&
+                section.href === activeSectionHref}
               onclick={(event) => {
-                event.preventDefault(); // Call preventDefault explicitly
+                event.preventDefault();
                 toggleSection(section.title);
               }}
             >
@@ -104,27 +100,27 @@
           </div>
 
           <ul
-            class="app-mobile-nav__list app-mobile-nav__section-items {isSectionExpanded(
+            class="app-mobile-nav__list app-mobile-nav__section-items"
+            class:app-mobile-nav__section-items--active={isSectionExpanded(
               section.title,
-            )
-              ? 'app-mobile-nav__section-items--active'
-              : ''}"
+            )}
             aria-label={section.title}
           >
-            {#each section.items as item}
-              {#if "title" in item && "items" in item && Array.isArray(item.items)}
+            {#each section.items as item, i (i)}
+              {#if "items" in item && Array.isArray(item.items)}
                 <!-- Grouped items with title -->
                 <li class="app-mobile-nav__group">
                   {#if item.title}
                     <h2 class="app-mobile-nav__group-title">{item.title}</h2>
                   {/if}
                   <ul class="app-mobile-nav__list">
-                    {#each item.items as subItem}
+                    {#each item.items as subItem, k (k)}
+                      {@const isSubItemCurrent =
+                        subItem.href === activeDetailHref}
                       <li>
                         <a
-                          class="app-mobile-nav__link {isCurrent(subItem)
-                            ? 'app-mobile-nav__link--current'
-                            : ''}"
+                          class="app-mobile-nav__link"
+                          class:app-mobile-nav__link--current={isSubItemCurrent}
                           href={subItem.href}
                           onclick={(e) => handleNavigate(subItem.href, e)}
                         >
@@ -136,15 +132,16 @@
                 </li>
               {:else if "href" in item && "text" in item}
                 <!-- Single navigation item -->
+                {@const navItem = item as SubNavItem}
+                {@const isNavItemCurrent = navItem.href === activeDetailHref}
                 <li>
                   <a
-                    class="app-mobile-nav__link {isCurrent(item)
-                      ? 'app-mobile-nav__link--current'
-                      : ''}"
-                    href={item.href}
-                    onclick={(e) => handleNavigate(item.href, e)}
+                    class="app-mobile-nav__link"
+                    class:app-mobile-nav__link--current={isNavItemCurrent}
+                    href={navItem.href}
+                    onclick={(e) => handleNavigate(navItem.href, e)}
                   >
-                    {item.text}
+                    {navItem.text}
                   </a>
                 </li>
               {/if}
@@ -202,7 +199,7 @@
   }
 
   .app-mobile-nav__section-link--current {
-    border-left: 4px solid #1d70b8;
+    /* border-left: 4px solid #1d70b8; */
     padding-left: 11px;
   }
 
@@ -225,7 +222,7 @@
   .app-mobile-nav__link--current {
     border-left: 4px solid #1d70b8;
     padding-left: 11px;
-    background-color: #f3f2f1;
+    /* background-color: #f3f2f1; */
   }
 
   .app-mobile-nav__group-title {

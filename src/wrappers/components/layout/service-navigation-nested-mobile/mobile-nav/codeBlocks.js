@@ -9,7 +9,6 @@ export const codeBlock1 = `
     {
       title: "Dashboard",
       href: "#/dashboard",
-      current: true,
       items: [
         { text: "Overview", href: "#/dashboard/overview" },
         { text: "Analytics", href: "#/dashboard/analytics" },
@@ -18,7 +17,6 @@ export const codeBlock1 = `
     {
       title: "Settings",
       href: "#/settings",
-      current: false,
       items: [
         { text: "Profile", href: "#/settings/profile" },
         { text: "Account", href: "#/settings/account" },
@@ -34,24 +32,30 @@ export const codeBlock1 = `
     {
       title: "Help",
       href: "#/help",
-      current: false,
       items: [
         { text: "FAQ", href: "#/help/faq" },
         { text: "Support", href: "#/help/support" },
       ],
     },
   ];
-  let currentSection = $state("Dashboard");
+  let activeSectionHref = $state("#/dashboard");
+  let activeDetailHref = $state("#/dashboard/overview");
 
   function toggleMobileNav() {
     isOpen = !isOpen;
   }
 
-  function handleNavigate(href: string, event: MouseEvent) {
+  function handleNavigate(href: string, event?: MouseEvent) { // Make event optional
     if (event && typeof event.preventDefault === 'function') {
       event.preventDefault();
     }
     alert("Navigating to: " + href + ". Default navigation prevented.");
+    // Update active states for the example upon navigation
+    activeDetailHref = href;
+    const newActiveSection = sections.find(section => href.startsWith(section.href || '@@@no-href@@@'));
+    if (newActiveSection && newActiveSection.href) {
+        activeSectionHref = newActiveSection.href;
+    }
     // Potentially close nav: isOpen = false;
     // Potentially navigate: goto(href);
   }
@@ -66,7 +70,8 @@ export const codeBlock1 = `
     <MobileNav
       {isOpen} 
       {sections}
-      {currentSection}
+      {activeSectionHref}
+      {activeDetailHref}
       {onNavigate}
     />
     <p class="text-xs text-gray-500 mt-2">Container for MobileNav (panel might be positioned absolutely)</p>

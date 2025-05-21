@@ -111,6 +111,8 @@
             {onMouseEnterLabel}
             {onMouseLeaveLabel}
             {labelText}
+            {series}
+            {y}
           ></SeriesLabel>
         {/if}
       {/each}

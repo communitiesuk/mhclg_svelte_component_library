@@ -13,13 +13,15 @@
     onMouseEnterLabel,
     onMouseLeaveLabel,
     labelText,
+    series,
+    y,
   } = $props();
 
-  let oldY = $derived(yFunction(dataArray.data[0].y));
+  let oldY = $derived(yFunction(dataArray.data[0][y]));
 
   let opacity = $derived(
     (labelHovered || labelClicked) &&
-      ![labelHovered, labelClicked].includes(dataArray.areaCode)
+      ![labelHovered, labelClicked].includes(dataArray[series])
       ? 0.3
       : 1,
   );
@@ -28,12 +30,12 @@
 <g
   {id}
   transform="translate({chartWidth + 8},{0})"
-  onclick={() => onClickLabel(dataArray.areaCode)}
-  onmouseenter={() => onMouseEnterLabel(dataArray.areaCode)}
-  onmouseleave={() => onMouseLeaveLabel(dataArray.areaCode)}
+  onclick={() => onClickLabel(dataArray[series])}
+  onmouseenter={() => onMouseEnterLabel(dataArray[series])}
+  onmouseleave={() => onMouseLeaveLabel(dataArray[series])}
   role="button"
   tabindex="0"
-  onkeydown={(e) => e.key === "Enter" && onClickLabel(dataArray.areaCode)}
+  onkeydown={(e) => e.key === "Enter" && onClickLabel(dataArray[series])}
 >
   <path
     d="M 0, {oldY}  H 10  V {newY}  H 20"

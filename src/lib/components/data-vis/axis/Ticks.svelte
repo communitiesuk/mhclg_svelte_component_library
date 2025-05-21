@@ -1,5 +1,6 @@
 <script>
   import Decimal from "decimal.js";
+  import { register } from "module";
 
   let {
     ticksArray = $bindable(),
@@ -16,7 +17,9 @@
     },
   } = $props();
 
-  $inspect(ticksArray);
+  let currentFontSize = $state(10);
+  const minFontSize = 10;
+  let textElements = $state([]);
 
   function generateTicks(data, numTicks, floor, ceiling) {
     let minValueFromData = Decimal.min(...data);
@@ -60,20 +63,62 @@
     return tickNum;
   }
 
-  function yearsFormat(ticks) {
-    return ticks.map((tick) => `FY ${tick % 100}-${(tick % 100) + 1}`);
+  function registerElement(el) {
+    if (el && !textElements.includes(el)) {
+      textElements = [...textElements, el];
+    }
   }
+
+  function checkOverlapAndAdjustFont() {
+    let hasOverlap = false;
+
+    for (let i = 0; i < textElements.length; i++) {
+      const boxA = textElements[i]?.getBBox?.();
+      if (!boxA) continue;
+
+      for (let j = i + 1; j < textElements.length; j++) {
+        const boxB = textElements[j]?.getBBox?.();
+        if (!boxB) continue;
+
+        const overlap =
+          boxA.x < boxB.x + boxB.width &&
+          boxA.x + boxA.width > boxB.x &&
+          boxA.y < boxB.y + boxB.height &&
+          boxA.y + boxA.height > boxB.y;
+
+        if (overlap) {
+          hasOverlap = true;
+          break;
+        }
+      }
+
+      if (hasOverlap) break;
+    }
+
+    if (hasOverlap && currentFontSize > minFontSize) {
+      currentFontSize -= 1;
+      requestAnimationFrame(() => {
+        textElements.forEach((el) => {
+          if (el) el.setAttribute("font-size", currentFontSize);
+        });
+        checkOverlapAndAdjustFont();
+      });
+    }
+  }
+
+  $effect(() => {
+    if (ticksArray.length > 0) {
+      checkOverlapAndAdjustFont();
+    }
+  });
 
   numberOfTicks = tickCount(chartWidth, chartHeight);
 
   ticksArray = generateTicks(values, numberOfTicks, floor, ceiling);
-
-  $inspect(values);
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
-  {#each ticksArray as tick, index}
-    {console.log(axisFunction(tick))}
+  {#each ticksArray as tick}
     <g
       transform="translate({orientation.axis === 'x'
         ? axisFunction(tick)
@@ -91,6 +136,7 @@
         stroke-width="2px"
       ></path>
       <text
+        bind:this={registerElement}
         transform="translate({orientation.axis === 'x'
           ? 0
           : orientation.position === 'left'

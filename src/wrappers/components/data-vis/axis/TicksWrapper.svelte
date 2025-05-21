@@ -97,7 +97,7 @@
 
   import Ticks from "$lib/components/data-vis/axis/Ticks.svelte";
   import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
-  import CategoryLabel from "$lib/components/data-vis/line-chart/CategoryLabel.svelte";
+  import SeriesLabel from "$lib/components/data-vis/line-chart/SeriesLabel.svelte";
 
   let { data } = $props();
 

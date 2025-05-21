@@ -1,6 +1,6 @@
 <script>
   // @ts-nocheck
-  import CategoryLabel from "$lib/components/data-vis/line-chart/CategoryLabel.svelte";
+  import SeriesLabel from "$lib/components/data-vis/line-chart/SeriesLabel.svelte";
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
 
   import { scaleLinear } from "d3-scale";

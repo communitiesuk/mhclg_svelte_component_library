@@ -1,6 +1,6 @@
 <script>
   import Line from "./Line.svelte";
-  import CategoryLabel from "./CategoryLabel.svelte";
+  import SeriesLabel from "./SeriesLabel.svelte";
   import labelplacer from "labelplacer";
   import { onMount } from "svelte";
   import { derived } from "svelte/store";
@@ -97,7 +97,7 @@
           {@const newY = labelsPlaced.find(
             (el) => el.datum[series] === line[series],
           )?.[y]}
-          <CategoryLabel
+          <SeriesLabel
             id={`label-${line[series]}`}
             bind:labelClicked
             bind:labelHovered
@@ -111,7 +111,7 @@
             {onMouseEnterLabel}
             {onMouseLeaveLabel}
             {labelText}
-          ></CategoryLabel>
+          ></SeriesLabel>
         {/if}
       {/each}
     </g>

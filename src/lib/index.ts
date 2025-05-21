@@ -5,7 +5,7 @@ export { default as InsetText } from './components/content/InsetText.svelte';
 export { default as WarningText } from './components/content/WarningText.svelte';
 export { default as Axis } from './components/data-vis/axis/Axis.svelte';
 export { default as Ticks } from './components/data-vis/axis/Ticks.svelte';
-export { default as CategoryLabel } from './components/data-vis/line-chart/CategoryLabel.svelte';
+export { default as SeriesLabel } from './components/data-vis/line-chart/SeriesLabel.svelte';
 export { default as Line } from './components/data-vis/line-chart/Line.svelte';
 export { default as Lines } from './components/data-vis/line-chart/Lines.svelte';
 export { default as ValueLabel } from './components/data-vis/line-chart/ValueLabel.svelte';

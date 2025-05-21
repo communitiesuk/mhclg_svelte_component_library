@@ -70,3 +70,9 @@ code {
   color: #27272a;
   background-color: #f1f5f9;
 }
+
+.maplibregl-map {
+  width: fit-content;
+  height: 100%;
+  width: 100%;
+}

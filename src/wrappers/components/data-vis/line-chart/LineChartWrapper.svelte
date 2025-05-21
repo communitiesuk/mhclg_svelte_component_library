@@ -760,8 +760,8 @@
 
   let lineFunction = $derived(
     line()
-      .x((d) => xFunction(d.x))
-      .y((d) => yFunction(d.y))
+      .x((d) => xFunction(d[getValue("x")]))
+      .y((d) => yFunction(d[getValue("y")]))
       .curve(curveLinear),
   );
 

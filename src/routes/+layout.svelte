@@ -5,9 +5,7 @@
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
   import ServiceNavigationNestedMobile from "$lib/components/layout/service-navigation-nested-mobile/ServiceNavigationNestedMobile.svelte";
   import "../app.css";
-  import type {
-    SideNavGroup,
-  } from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
+  import type { SideNavGroup } from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
   import { page } from "$app/stores";
   import PhaseBanner from "$lib/components/layout/PhaseBanner.svelte";
   import {
@@ -46,14 +44,7 @@
   let currentSection = $derived(activeSectionInfo.sectionName);
   let activeSectionHref = $derived(activeSectionInfo.sectionHref);
 
-  // --- Static Data & Server Data ---
-  // Top navigation items (HeaderNav relies on activeSectionHref to mark active)
-  const navigationItems = [
-    { text: "Home", href: "/" },
-    { text: "Components", href: "/components" },
-    { text: "Patterns", href: "/patterns" },
-    { text: "Community", href: "/community" },
-  ];
+  // --- Server Data ---
   // Get component data from server
   const componentTree = data.componentTree || [];
 
@@ -170,7 +161,6 @@
       <ServiceNavigationNestedMobile
         serviceName="Svelte Component Library"
         homeHref="/"
-        {navigationItems}
         {mobileNavSections}
         {activeSectionHref}
         {activeDetailHref}

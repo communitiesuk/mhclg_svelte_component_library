@@ -12,16 +12,12 @@
   let {
     serviceName = "Service Name",
     homeHref,
-    // Used for the top desktop navigation
-    navigationItems,
-    // Used for the detailed structure within the mobile flyout menu
     mobileNavSections,
     activeSectionHref, // Path of the active section, e.g. "/components"
     activeDetailHref, // Path of the specific active item, e.g. "/components/forms/button#examples"
   }: {
     serviceName?: string;
     homeHref: string;
-    navigationItems: NavigationItem[];
     mobileNavSections: NavSection[];
     activeSectionHref: string;
     activeDetailHref: string;
@@ -29,6 +25,14 @@
 
   // --- State ---
   let isMobileNavOpen = $state(false);
+
+  // --- Derived headerNavigationItems for HeaderNav ---
+  let headerNavigationItems = $derived(
+    mobileNavSections.map(({ title, href }) => ({
+      text: title,
+      href: href ?? "",
+    })),
+  );
 
   // --- Handlers ---
   // Toggle the mobile nav open/closed state
@@ -43,11 +47,11 @@
 </script>
 
 <div>
-  {#if navigationItems && navigationItems.length > 0}
+  {#if headerNavigationItems && headerNavigationItems.length > 0}
     <HeaderNav
       {serviceName}
       {homeHref}
-      {navigationItems}
+      navigationItems={headerNavigationItems}
       bind:isMobileNavOpen
       activeItemHref={activeSectionHref}
       onToggle={handleToggleMobileNav}

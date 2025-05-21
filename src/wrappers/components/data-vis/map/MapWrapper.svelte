@@ -265,12 +265,7 @@
         ],
       },
       {
-        name: "hardcodedHegith",
-        isProp: true,
-        value: 400,
-      },
-      {
-        name: "hardcodedWidth",
+        name: "mapHeight",
         isProp: true,
         value: 400,
       },

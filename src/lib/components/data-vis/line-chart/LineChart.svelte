@@ -49,8 +49,6 @@
     x,
   } = $props();
 
-  $inspect({ y });
-
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
   let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
   // let areaFunction = $derived(

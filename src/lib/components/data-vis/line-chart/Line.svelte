@@ -1,5 +1,6 @@
 <script>
   import ValueLabel from "./ValueLabel.svelte";
+  import Marker from "./Marker.svelte";
   import {
     curveBasis,
     curveCardinal,
@@ -12,6 +13,7 @@
   } from "d3-shape";
 
   import { scaleLinear } from "d3-scale";
+  import LineChart from "../../../../routes/playground/create-a-reactive-line-chart-camilla/local-lib/LineChart.svelte";
 
   let {
     dataArray,
@@ -22,12 +24,6 @@
     pathStrokeDashArray = "none",
     areaFillColor,
     includeArea = false,
-    markers,
-    markerShape = "circle",
-    markerRadius = 5,
-    markerFill = "grey",
-    markerStroke = "white",
-    markerStrokeWidth = 3,
     lineFunction,
     areaFunction,
     xFunction,
@@ -54,20 +50,13 @@
     series,
     y,
     x,
+    markers,
+    markerFill,
+    markerRadius,
+    markerShape,
+    markerStroke,
+    markerStrokeWidth,
   } = $props();
-
-  function makeList(inputValue) {
-    let items = inputValue.split("\\n").map((item) => item.trim());
-    return items;
-  }
-
-  function parseInput(marker, inputValue) {
-    let items = makeList(inputValue);
-    let mappedItems = items.map((item) =>
-      item.replace(/\{(\w+)\}/g, (_, key) => marker[key] ?? `{${key}}`),
-    );
-    return mappedItems;
-  }
 
   let linePath = $derived(lineFunction(dataArray));
 </script>
@@ -140,56 +129,22 @@
     marker-start={`url(#${lineEnding}-${pathStrokeColor})`}
   ></path>
   {#if markers}
-    {#each dataArray as marker, i}
-      {@const markerId = "marker-" + marker[series] + marker[x]}
-      <g
-        data-id={markerId}
-        onclick={(event) => onClickMarker(event, marker, markerId)}
-        onmouseenter={(event) => onMouseEnterMarker(event, marker, markerId)}
-        onmouseleave={(event) => onMouseLeaveMarker(event, marker, markerId)}
-        transform="translate({xFunction(marker[x])},{yFunction(marker[y])})"
-        role="button"
-        tabindex="0"
-        onkeydown={(e) => e.key === "Enter" && onClickMarker(e, marker)}
-      >
-        {#if markerShape === "circle"}
-          <circle
-            r={markerRadius}
-            stroke={markerStroke}
-            fill={markerFill}
-            stroke-width={markerStrokeWidth}
-          ></circle>
-        {:else if ["square", "diamond"].includes(markerShape)}
-          <rect
-            transform="rotate({markerShape === 'diamond' ? 45 : 0})"
-            x={-markerRadius}
-            y={-markerRadius}
-            width={markerRadius * 2}
-            height={markerRadius * 2}
-            stroke={markerStroke}
-            fill={markerFill}
-            stroke-width={markerStrokeWidth}
-          ></rect>
-        {:else if markerShape === "triangle"}
-          <polygon
-            points="0,{-markerRadius * 2} {markerRadius *
-              1.733},{markerRadius} {-markerRadius * 1.733},{markerRadius}"
-            stroke={markerStroke}
-            fill={markerFill}
-            stroke-width={markerStrokeWidth}
-          ></polygon>
-        {/if}
-        {#if true}
-          {#if activeMarkerId === markerId}
-            <ValueLabel
-              {marker}
-              labelColor="grey"
-              labelTextColor="black"
-              textContent={parseInput(marker, marker[y])}
-            ></ValueLabel>
-          {/if}
-        {/if}
-      </g>
-    {/each}
+    <Marker
+      {dataArray}
+      {markerFill}
+      {markerRadius}
+      {markerShape}
+      {markerStroke}
+      {markerStrokeWidth}
+      {x}
+      {y}
+      {series}
+      {xFunction}
+      {yFunction}
+      {onMouseEnterMarker}
+      {onMouseLeaveMarker}
+      {onClickMarker}
+      {activeMarkerId}
+    ></Marker>
   {/if}
 </g>

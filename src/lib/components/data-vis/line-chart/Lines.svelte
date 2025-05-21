@@ -1,5 +1,6 @@
 <script>
   import Line from "./Line.svelte";
+  import Marker from "./Marker.svelte";
   import SeriesLabel from "./SeriesLabel.svelte";
   import labelplacer from "labelplacer";
   import { onMount } from "svelte";
@@ -78,17 +79,27 @@
           {onMouseEnterLine}
           {onMouseLeaveLine}
           {onClickLine}
-          {onMouseEnterMarker}
-          {onMouseLeaveMarker}
-          {onClickMarker}
           lineClicked
           lineHovered
-          {activeMarkerId}
           {series}
           {y}
           {x}
+          {onMouseEnterMarker}
+          {onMouseLeaveMarker}
+          {onClickMarker}
+          {activeMarkerId}
         />
       {/each}
+      {#if tier == "hover"}
+        {#if true}
+          <!-- <ValueLabel
+            {marker}
+            labelColor="grey"
+            labelTextColor="black"
+            textContent={parseInput(marker, marker[y])}
+          ></ValueLabel> -->
+        {/if}
+      {/if}
     </g>
 
     <g>

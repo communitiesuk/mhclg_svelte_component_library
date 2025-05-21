@@ -91,10 +91,6 @@
 {/snippet}
 
 <div class="p-4">
-  <Button textContent={"recycling"} buttonType={"table header"} buttonFunction
-  ></Button>
-  <h4>{componentNameProp} component</h4>
-
   {#if colourScale === "On"}
     <div class="legend">
       <div>Colour key:</div>
@@ -106,7 +102,7 @@
     </div>
   {/if}
 
-  <div>
+  <div class="table-container">
     <table class="govuk-table" data-module="moj-sortable-table">
       <caption class="govuk-table__caption">{caption}</caption>
       <thead class="govuk-table__head"
@@ -122,26 +118,20 @@
               aria-sort="none"
             >
               <div class="header">
-                <div class="header-top">
-                  <div class="metric">{metaData[metric].label}</div>
-                  <div class="sorting-button">
-                    <button
-                      onclick={() => {
-                        updateSortState(metric, "ascending");
-                        sortFunction();
-                      }}>▲</button
-                    >
-                    <button
-                      onclick={() => {
-                        updateSortState(metric, "descending");
-                        sortFunction();
-                      }}>▼</button
-                    >
-                  </div>
-                </div>
-                <!-- <div class="metric-explainer">
-                  {metaData[metric].explainer}
-                </div> -->
+                <Button
+                  textContent={metaData[metric].shortLabel}
+                  buttonType={"table header"}
+                  onClickFunction={() => {
+                    const newDirection =
+                      sortState.column === metric &&
+                      sortState.order === "ascending"
+                        ? "descending"
+                        : "ascending";
+
+                    updateSortState(metric, newDirection);
+                    sortFunction();
+                  }}
+                ></Button>
               </div></th
             >
           {/each}
@@ -185,28 +175,18 @@
 </div>
 
 <style>
-  /* * {
-    margin: 0px;
-    padding: 0px;
-  } */
-
-  /*   .table-container {
-    max-height: 85vh;
+  .table-container {
+    max-height: 80vh;
     overflow-y: auto;
-    border: 1px solid black;
-    border-radius: 1%;
-  } */
-
-  /* .buttons-container {
-    display: flex;
-    gap: 20px;
   }
 
-  .metric-explainer {
-    font-size: 13px;
-    font-style: italic;
-    font-weight: 400;
-  } */
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: white;
+  }
+
   .legend {
     display: flex;
     justify-content: center;
@@ -217,60 +197,4 @@
     border-radius: 10%;
     padding: 6px;
   }
-
-  /* td {
-    padding: 0.5rem 0.5rem;
-    text-align: right;
-  }
-
-  th {
-    text-align: left;
-    font-size: medium;
-    vertical-align: top;
-  }
-*/
-  /* .areas {
-    font-size: medium;
-  }
-  .my-table {
-    table-layout: fixed;
-    width: 100%;
-  }
-
-  .my-table th:first-child,
-  .my-table td:first-child {
-    width: 25%;
-  }
-
-  .my-table th:nth-child(n + 2),
-  .my-table td:nth-child(n + 2) {
-    width: 25%;
-  } */
-
-  /*   .header {
-    display: flex;
-    flex-direction: column;
-    padding: 5px;
-    justify-content: flex-start;
-  } */
-
-  /*   .header-top {
-    display: flex;
-    gap: 0px;
-  }
-
-  .sorting-button {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.8em;
-    line-height: 1; removes extra space between lines
-    gap: 3px;
-    justify-content: center;
-    background-color: lightgray;
-    border-radius: 20%;
-  } */
-  /*   .col-one-header {
-    text-align: right;
-    padding: 5px;
-  } */
 </style>

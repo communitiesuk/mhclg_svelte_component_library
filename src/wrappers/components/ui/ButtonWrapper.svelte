@@ -97,7 +97,7 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import Button from "$lib/components/ui/Button.svelte";
-  // import Examples from "./button/Examples.svelte";
+  import Examples from "./button/Examples.svelte";
 
   let { data } = $props();
 

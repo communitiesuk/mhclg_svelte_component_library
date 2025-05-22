@@ -502,6 +502,16 @@
         description: "The initial centre of the map, in [lng, lat] form",
       },
       {
+        name: "maxBounds",
+        isProp: true,
+        category: "View",
+        value: [
+          [-23.899, 47.5943],
+          [13.421, 59.8988],
+        ],
+        description: "The initial centre of the map, in [lng, lat] form",
+      },
+      {
         name: "zoom",
         isProp: true,
         category: "View",

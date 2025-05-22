@@ -28,6 +28,9 @@
   import { page } from "$app/state";
   import { joinData } from "./dataJoin.js";
 
+  import type { LngLatBoundsLike } from "maplibre-gl";
+  import { LngLatBounds } from "maplibre-gl";
+
   let {
     data,
     cooperativeGestures = true,
@@ -59,6 +62,7 @@
     zoom = 5,
     minZoom,
     maxZoom,
+    maxBounds,
     hash = false,
     updateHash = (u) => {
       replaceState(u, page.state);
@@ -96,12 +100,13 @@
     zoom?: number;
     minZoom?: number;
     maxZoom?: number;
+    maxBounds: [number, number][];
     hash?: boolean;
     updateHash?: (URL) => void;
     useInitialHash?: boolean;
     mapHeight?: number;
   } = $props();
-  $inspect(data);
+  $inspect(maxBounds);
   let styleLookup = {
     "Carto-light":
       "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -208,6 +213,17 @@
   let hoveredAreaData = $state();
   let currentMousePosition = $state();
 
+  function convertToLngLatBounds(coords: [number, number][]): LngLatBoundsLike {
+    const bounds = new LngLatBounds(coords[0], coords[0]);
+
+    for (let i = 1; i < coords.length; i++) {
+      bounds.extend(coords[i]);
+    }
+
+    return bounds;
+  }
+
+  let boundary = convertToLngLatBounds(maxBounds);
   function zoomToArea(e) {
     if (clickToZoom) {
       let coordArray =
@@ -259,6 +275,7 @@
     {zoom}
     {maxZoom}
     {minZoom}
+    maxBounds={boundary}
     {hash}
     {updateHash}
     class="map"

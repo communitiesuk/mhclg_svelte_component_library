@@ -497,6 +497,14 @@
         category: "View",
         value: false,
       },
+      {
+        name: "useInitialHash",
+        isProp: true,
+        description:
+          "If the URL has a valid hash that will override initial viewport settings, even if hash is false. Recommended.",
+        value: true,
+        category: "View",
+      },
     ]),
   );
 

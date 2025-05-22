@@ -1,6 +1,4 @@
 <script lang="ts">
-  //@ts-nocheck
-
   import {
     MapLibre,
     GeoJSON,
@@ -11,10 +9,11 @@
     ControlButton,
     ControlGroup,
   } from "svelte-maplibre";
-  import { contrastingColor } from "./colors";
+  import { contrastingColor } from "./colors.js";
   import { colorbrewer } from "./colorbrewer.js";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
-  import type { maplibregl, ExpressionSpecification } from "maplibre-gl";
+  import type { LngLatLike } from "maplibre-gl";
+  import type { FeatureCollection } from "geojson";
   import fullTopo from "./fullTopo.json";
   import * as topojson from "topojson-client";
   import Tooltip from "./Tooltip.svelte";
@@ -26,13 +25,12 @@
   } from "./mapUtils.js";
   import NonStandardControls from "./NonStandardControls.svelte";
   import { replaceState } from "$app/navigation";
-
-  import { joinData } from "./dataJoin";
   import { page } from "$app/state";
+  import { joinData } from "./dataJoin.js";
 
   let {
     data,
-    cooperativeGestures,
+    cooperativeGestures = true,
     standardControls = true,
     navigationControl,
     navigationControlPosition = "top-left",
@@ -52,7 +50,7 @@
     geoType,
     year,
     metric,
-    breaksType,
+    breaksType = "quantile",
     numberOfBreaks = 5,
     fillOpacity = 0.5,
     changeOpacityOnHover = true,
@@ -63,9 +61,43 @@
     updateHash = (u) => {
       replaceState(u, page.state);
     },
+    useInitialHash = true,
     mapHeight = 200,
+  }: {
+    data: object[];
+    cooperativeGestures?: boolean;
+    standardControls?: boolean;
+    navigationControl?: boolean;
+    navigationControlPosition?: string;
+    geolocateControl?: boolean;
+    geolocateControlPosition?: string;
+    fullscreenControl?: boolean;
+    fullscreenControlPosition?: string;
+    scaleControl?: boolean;
+    scaleControlPosition?: string;
+    scaleControlUnit?: string;
+    styleSheet?: string | URL | object;
+    colorPalette?: string;
+    showBorder?: boolean;
+    maxBorderWidth?: number;
+    tooltip?: boolean;
+    clickToZoom?: boolean;
+    geoType?: string;
+    year?: string | number;
+    metric?: string;
+    breaksType?: string;
+    numberOfBreaks?: number;
+    fillOpacity?: number;
+    changeOpacityOnHover: boolean;
+    hoverOpacity?: number;
+    center?: LngLatLike | undefined;
+    zoom?: number;
+    hash?: boolean;
+    updateHash?: (URL) => void;
+    useInitialHash?: boolean;
+    mapHeight?: number;
   } = $props();
-
+  $inspect(data);
   let styleLookup = {
     "Carto-light":
       "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -74,7 +106,7 @@
   };
   let style = $derived(styleLookup[styleSheet] ?? styleSheet);
 
-  let mapData = $derived(data?.filter((d) => d.year == year)[0]?.data);
+  let mapData = $derived(data?.filter((d) => d["year"] == year)[0]?.data);
 
   let filteredMapData = $derived(
     mapData.map((el) => ({
@@ -84,13 +116,15 @@
     })),
   );
 
-  const geojsonData = $derived(
+  const geojsonData: FeatureCollection = $derived(
     topojson.feature(fullTopo, fullTopo.objects[geoType]),
   );
 
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
 
-  let fillColor = $derived(colorbrewer[colorPalette][numberOfBreaks]);
+  let fillColors: string[] = $derived(
+    colorbrewer[colorPalette][numberOfBreaks],
+  );
 
   let borderColor = "#003300";
 
@@ -105,7 +139,7 @@
       : [],
   );
 
-  let colors = $derived(fillColor.map((d) => contrastingColor(d)));
+  let colors = $derived(fillColors.map((d) => contrastingColor(d)));
   $effect(() => {
     //Things can get out of sync when changing source
     //this section makes sure that the geojson layers end up below the text layers
@@ -122,7 +156,7 @@
       )?.id;
     if (geoJsonLayerIds && labelLayerId) {
       for (let layer of geoJsonLayerIds) {
-        map.moveLayer(layer, labelLayerId);
+        map?.moveLayer(layer, labelLayerId);
       }
     }
 
@@ -157,7 +191,7 @@
     filteredMapData.map((d) => {
       return {
         ...d,
-        color: getColor(d.metric, breaks, fillColor),
+        color: getColor(d.metric, breaks, fillColors),
       };
     }),
   );
@@ -194,9 +228,21 @@
       ]);
     }
   }
-  //Even if hash is false, if the page is loaded with a location hash use that as the initial settings, rather than than the values passed to the component
+  //When useInitialHash is true, even if hash is false, if the page is loaded with a location hash use that as the initial settings, rather than the values passed to the component
   const initialLocationHash = page.url.hash.replace("#", "").split("/");
   const useLocationHash = initialLocationHash.length >= 3 ? true : false;
+
+  center = useInitialHash
+    ? useLocationHash
+      ? [+initialLocationHash[2], +initialLocationHash[1]]
+      : center
+    : center;
+
+  zoom = useInitialHash
+    ? useLocationHash
+      ? +initialLocationHash[0]
+      : zoom
+    : zoom;
 </script>
 
 <div style="height: {mapHeight}px;">
@@ -205,10 +251,8 @@
     bind:loaded
     {style}
     {standardControls}
-    center={useLocationHash
-      ? [initialLocationHash[2], initialLocationHash[1]]
-      : center}
-    zoom={useLocationHash ? initialLocationHash[0] : zoom}
+    {center}
+    {zoom}
     {hash}
     {updateHash}
     class="map"

@@ -198,7 +198,7 @@
         rows: 5,
       },
       {
-        name: "buttonFunction",
+        name: "onClickFunction",
         category: "Input props",
         value: function () {
           window.alert(`The button function has been triggered.`);

@@ -1,8 +1,12 @@
 <script>
+  import Button from "$lib/components/ui/Button.svelte";
+
   let {
     componentNameProp = undefined,
     data = undefined,
     metaData = undefined,
+    caption = undefined,
+    colourScale = undefined,
   } = $props();
 
   let localCopyOfData = $state([...data]);
@@ -87,67 +91,79 @@
 {/snippet}
 
 <div class="p-4">
-  <h4>{componentNameProp} component</h4>
-
-  <div class="legend">
-    <div>Colour key:</div>
-    {#each colorKey as key}
-      <div class="good" style="background-color: {normToColor(key[1])}">
-        {key[0]}
-      </div>
-    {/each}
-  </div>
+  {#if colourScale === "On"}
+    <div class="legend">
+      <div>Colour key:</div>
+      {#each colorKey as key}
+        <div class="color-keys" style="background-color: {normToColor(key[1])}">
+          {key[0]}
+        </div>
+      {/each}
+    </div>
+  {/if}
 
   <div class="table-container">
-    <table class="my-table">
-      <caption></caption>
-      <thead
-        ><tr>
-          <th class="col-one-header">Area</th>
+    <table class="govuk-table" data-module="moj-sortable-table">
+      <caption class="govuk-table__caption">{caption}</caption>
+      <thead class="govuk-table__head"
+        ><tr class="govuk-table__row">
+          <th scope="col" class="govuk-table__header" aria-sort="ascending"
+            >Area</th
+          >
           {#each metrics as metric}
-            <th title={metaData[metric].explainer}>
+            <th
+              scope="col"
+              class="govuk-table__header govuk-table__header--numeric"
+              title={metaData[metric].explainer}
+              aria-sort="none"
+            >
               <div class="header">
-                <div class="header-top">
-                  <div class="metric">{metaData[metric].label}</div>
-                  <div class="sorting-button">
-                    <button
-                      onclick={() => {
-                        updateSortState(metric, "ascending");
-                        sortFunction();
-                      }}>▲</button
-                    >
-                    <button
-                      onclick={() => {
-                        updateSortState(metric, "descending");
-                        sortFunction();
-                      }}>▼</button
-                    >
-                  </div>
-                </div>
-                <div class="metric-explainer">
-                  {metaData[metric].explainer}
-                </div>
-              </div>
-            </th>
+                <Button
+                  textContent={metaData[metric].shortLabel}
+                  buttonType={"table header"}
+                  onClickFunction={() => {
+                    const newDirection =
+                      sortState.column === metric &&
+                      sortState.order === "ascending"
+                        ? "descending"
+                        : "ascending";
+
+                    updateSortState(metric, newDirection);
+                    sortFunction();
+                  }}
+                ></Button>
+              </div></th
+            >
           {/each}
         </tr></thead
       >
-      <tbody>
+      <tbody class="govuk-table__body">
         {#each localCopyOfData as row}
-          <tr>
-            <td class="areas">{row["areaName"]}</td>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell">{row["areaName"]}</td>
             {#each metrics as metric}
-              {#if metaData[metric].direction === "Higher is better"}
-                <td
-                  style="background-color: {normToColor(
-                    row[metric + '__normalised'],
-                  )}">{row[metric]}</td
-                >
+              {#if colourScale === "On"}
+                {#if metaData[metric].direction === "Higher is better"}
+                  <td
+                    class="govuk-table__cell govuk-table__cell--numeric"
+                    style="background-color: {normToColor(
+                      row[metric + '__normalised'],
+                    )}"
+                    data-sort-value="42">{row[metric]}</td
+                  >
+                {:else}
+                  <td
+                    class="govuk-table__cell govuk-table__cell--numeric"
+                    style="background-color: {normToColorReverse(
+                      row[metric + '__normalised'],
+                    )}"
+                    data-sort-value="42">{row[metric]}</td
+                  >
+                {/if}
               {:else}
                 <td
-                  style="background-color: {normToColorReverse(
-                    row[metric + '__normalised'],
-                  )}">{row[metric]}</td
+                  class="govuk-table__cell govuk-table__cell--numeric"
+                  data-sort-value="42">{row[metric]}</td
                 >
               {/if}
             {/each}
@@ -159,101 +175,26 @@
 </div>
 
 <style>
-  * {
-    margin: 0px;
-    padding: 0px;
-  }
-
   .table-container {
-    max-height: 85vh;
+    max-height: 80vh;
     overflow-y: auto;
-    border: 1px solid black;
-    border-radius: 1%;
   }
 
-  .ascending {
-    background-color: #ff7f7f;
-  }
-  .descending {
-    background-color: #add8e6;
-  }
-  .buttons-container {
-    display: flex;
-    gap: 20px;
+  th {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    background-color: white;
   }
 
-  .metric-explainer {
-    font-size: 13px;
-    font-style: italic;
-    font-weight: 400;
-  }
   .legend {
     display: flex;
     justify-content: center;
     gap: 20px;
     margin: 10px;
   }
-
-  .legend > * {
+  .color-keys {
     border-radius: 10%;
     padding: 6px;
-  }
-
-  td {
-    padding: 0.5rem 0.5rem;
-  }
-
-  th {
-    text-align: left;
-    font-size: medium;
-    vertical-align: top;
-  }
-
-  td {
-    text-align: right;
-  }
-  .areas {
-    font-size: medium;
-  }
-  .my-table {
-    table-layout: fixed;
-    width: 100%;
-  }
-
-  .my-table th:first-child,
-  .my-table td:first-child {
-    width: 25%;
-  }
-
-  .my-table th:nth-child(n + 2),
-  .my-table td:nth-child(n + 2) {
-    width: 25%;
-  }
-
-  .header {
-    display: flex;
-    flex-direction: column;
-    padding: 5px;
-    justify-content: flex-start;
-  }
-
-  .header-top {
-    display: flex;
-    gap: 0px;
-  }
-
-  .sorting-button {
-    display: flex;
-    flex-direction: column;
-    font-size: 0.8em;
-    line-height: 1; /* removes extra space between lines */
-    gap: 3px;
-    justify-content: center;
-    background-color: lightgray;
-    border-radius: 20%;
-  }
-  .col-one-header {
-    text-align: right;
-    padding: 5px;
   }
 </style>

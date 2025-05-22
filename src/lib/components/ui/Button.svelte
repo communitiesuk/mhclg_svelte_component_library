@@ -3,7 +3,7 @@
     textContent = undefined,
     buttonType,
     componentNameProp = undefined,
-    buttonFunction,
+    onClickFunction = undefined,
   } = $props();
 
   let buttonClass = $derived(
@@ -20,8 +20,6 @@
 </script>
 
 <div class="p-4">
-  <h4>{componentNameProp} component</h4>
-  <br />
   {#if buttonType === "start"}
     <a
       href="#"
@@ -29,7 +27,7 @@
       draggable="false"
       class="govuk-button govuk-button--start"
       data-module="govuk-button"
-      onclick={buttonFunction}
+      onclick={onClickFunction}
     >
       {textContent}
       <svg
@@ -51,12 +49,12 @@
       aria-disabled="true"
       class="govuk-button"
       data-module="govuk-button"
-      onclick={buttonFunction}
+      onclick={onClickFunction}
     >
       {textContent}
     </button>
   {:else if buttonType === "table header"}
-    <button type="button" class="text-header">
+    <button type="button" class="text-header" onclick={onClickFunction}>
       {textContent}
       <svg
         width="22"
@@ -83,7 +81,7 @@
       type="submit"
       class={buttonClass}
       data-module="govuk-button"
-      onclick={buttonFunction}
+      onclick={onClickFunction}
     >
       {textContent}
     </button>

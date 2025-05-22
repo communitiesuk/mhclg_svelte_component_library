@@ -52548,18 +52548,21 @@
             "Household waste recycling rate": {
               "direction": "Higher is better",
               "explainer": "Percentage of household waste sent for recycling.",
-              "label": "Household recycling rate (%)"
+              "label": "Household recycling rate (%)",
+              "shortLabel": "Recycling"
             },
             "Recycling contamination rate": {
               "direction": "Lower is better",
               "explainer":
                 "Percentage of recycling that is contaminated and cannot be processed.",
-              "label": "Recycling contamination rate (%)"
+              "label": "Recycling contamination rate (%)",
+              "shortLabel": "Contamination"
             },
             "Residual household waste": {
               "direction": "Lower is better",
               "explainer": "Amount of non-recyclable waste per household (kg/year).",
-              "label": "Household waste (kg)"
+              "label": "Household waste (kg)",
+              "shortLabel": "Waste"
             }
           }
     }

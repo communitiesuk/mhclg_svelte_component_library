@@ -174,6 +174,28 @@
         visible: false,
         value: data.metaData,
       },
+      {
+        name: "caption",
+        category: "Input props",
+        value: `This is the table caption`,
+        description: {
+          markdown: true,
+          arr: [`This is the caption of the table. It sits above the table.`],
+        },
+        rows: 2,
+      },
+      {
+        name: "colourScale",
+        category: "Input props",
+        propType: "radio",
+        options: ["Off", "On"],
+        description: {
+          markdown: true,
+          arr: [
+            `Turn the colour scale on if you want to more easily gauge the magnitude of the value relative to highest and lowest values of that metric.`,
+          ],
+        },
+      },
     ]),
   );
 

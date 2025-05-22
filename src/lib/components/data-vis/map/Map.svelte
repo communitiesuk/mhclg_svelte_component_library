@@ -57,6 +57,8 @@
     hoverOpacity = 0.8,
     center = [-2.5, 53],
     zoom = 5,
+    minZoom,
+    maxZoom,
     hash = false,
     updateHash = (u) => {
       replaceState(u, page.state);
@@ -92,6 +94,8 @@
     hoverOpacity?: number;
     center?: LngLatLike | undefined;
     zoom?: number;
+    minZoom?: number;
+    maxZoom?: number;
     hash?: boolean;
     updateHash?: (URL) => void;
     useInitialHash?: boolean;
@@ -253,6 +257,8 @@
     {standardControls}
     {center}
     {zoom}
+    {maxZoom}
+    {minZoom}
     {hash}
     {updateHash}
     class="map"

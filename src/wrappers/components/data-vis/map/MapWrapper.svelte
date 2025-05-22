@@ -181,6 +181,24 @@
         visible: { name: "standardControls", value: false },
       },
       {
+        name: "maxZoom",
+        isProp: true,
+        description:
+          "Add zoom in and out, and 'reset bearing to north' buttons",
+        value: 10,
+        category: "UI",
+        visible: { name: "standardControls", value: false },
+      },
+      {
+        name: "minZoom",
+        isProp: true,
+        description:
+          "Add zoom in and out, and 'reset bearing to north' buttons",
+        value: 0,
+        category: "UI",
+        visible: { name: "standardControls", value: false },
+      },
+      {
         name: "navigationControlPosition",
         isProp: true,
         description: "The location of the navigation control",
@@ -266,6 +284,7 @@
       },
       {
         name: "mapHeight",
+        category: "Styling",
         isProp: true,
         value: 400,
       },

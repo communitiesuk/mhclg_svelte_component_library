@@ -1,10 +1,6 @@
 <script>
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
-  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
-  import { foldersLookup } from "$lib/config.js";
-  import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
 
-  let { data } = $props();
 
   // Keep only playground wrappers for the homepage
   const wrappersPlaygroundsObject = import.meta.glob(
@@ -42,7 +38,7 @@ TODO
 <>		
 -->
 
-<div class="g-top-level-container">
+<div class="govuk-width-container govuk-main-wrapper govuk-main-wrapper--l">
   <div class="flex flex-col gap-6">
     <div>
       <h1 class="govuk-heading-xl mb-6">Introduction</h1>
@@ -84,11 +80,7 @@ TODO
 </div>
 
 <style>
-  /**
-	* &&		
-	* ?			
-	* !			
-	* TODO		
-	* <>		
-	*/
+  /* .app-content {
+    padding: 30px 0px 30px 30px;
+  } */
 </style>

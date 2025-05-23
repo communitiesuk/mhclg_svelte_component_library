@@ -485,7 +485,7 @@
   </div>
 {/snippet}
 
-<div class="my-20">
+<div>
   <h5 class="underline underline-offset-4 my-6">
     Examples of specific use cases
   </h5>

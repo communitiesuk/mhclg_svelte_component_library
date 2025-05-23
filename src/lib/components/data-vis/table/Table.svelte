@@ -51,10 +51,9 @@
 
   $inspect("columns array is ", columns);
 
-  const metrics = Object.keys(localCopyOfData[0]).slice(
-    1,
-    localCopyOfData[0].length,
-  );
+  const metrics = columns
+    .filter((column) => column.dataType === "number")
+    .map((column) => column.key);
 
   $inspect("metrics is", metrics);
 
@@ -145,13 +144,10 @@
       <caption class="govuk-table__caption">{caption}</caption>
       <thead class="govuk-table__head"
         ><tr class="govuk-table__row">
-          <!-- <th scope="col" class="govuk-table__header" aria-sort="ascending"
-            >Area</th
-          > -->
           {#each columns as column}
             <th
               scope="col"
-              class="govuk-table__header govuk-table__header--numeric"
+              class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
               title={metaData[column.key].explainer}
               aria-sort="none"
             >

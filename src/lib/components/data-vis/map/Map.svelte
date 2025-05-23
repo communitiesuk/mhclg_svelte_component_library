@@ -28,9 +28,10 @@
   import { page } from "$app/state";
   import { joinData } from "./dataJoin.js";
 
-  import type { LngLatBoundsLike } from "maplibre-gl";
-  import { LngLatBounds } from "maplibre-gl";
+  import maplibregl from "maplibre-gl";
+  const { LngLatBounds } = maplibregl;
 
+  import type { LngLatBoundsLike } from "maplibre-gl";
   let {
     data,
     cooperativeGestures = true,

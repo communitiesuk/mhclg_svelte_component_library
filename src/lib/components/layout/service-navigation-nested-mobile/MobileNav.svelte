@@ -121,7 +121,7 @@
                           href={subItem.href}
                           onclick={(e) => handleNavigate(subItem.href, e)}
                         >
-                          {subItem.text}
+                          {@html subItem.text}
                         </a>
                       </li>
                     {/each}
@@ -138,7 +138,7 @@
                     href={navItem.href}
                     onclick={(e) => handleNavigate(navItem.href, e)}
                   >
-                    {navItem.text}
+                    {@html navItem.text}
                   </a>
                 </li>
               {/if}

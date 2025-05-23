@@ -24,7 +24,6 @@
     activeItemBackgroundColor?: string;
   }>();
 
-
   function calculateIsActive(
     item: { href: string; subItems?: { href: string }[] },
     activePropValue: string | undefined,
@@ -71,7 +70,7 @@
       href={item.href}
       aria-current={isActive ? "location" : undefined}
     >
-      {item.text}
+      {@html item.text}
     </a>
 
     {#if isActive && item.subItems && item.subItems.length > 0}
@@ -85,7 +84,7 @@
               class:app-subnav__link--bold={isSubActive}
               href={subItem.href}
             >
-              {subItem.text}
+              {@html subItem.text}
             </a>
           </li>
         {/each}
@@ -170,6 +169,8 @@
     font-weight: 400;
     font-size: 0.875rem;
     line-height: 1.14286;
+
+    overflow-wrap: break-word;
   }
 
   @media print {

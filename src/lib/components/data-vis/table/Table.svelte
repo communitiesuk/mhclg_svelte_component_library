@@ -22,17 +22,30 @@
     return true; // All values are unique
   }
 
-  $inspect(localCopyOfData[0]);
+  // $inspect(
+  //   localCopyOfData[0].areaName,
+  //   "data type is",
+  //   typeof localCopyOfData[0].areaName,
+  // );
+  // $inspect(
+  //   localCopyOfData[0]["Household waste recycling rate"],
+  //   "data type is",
+  //   typeof localCopyOfData[0]["Household waste recycling rate"],
+  // );
 
   let columns = [];
 
-  for (const key in localCopyOfData[0]) {
+  for (const column in localCopyOfData[0]) {
     // create a variable to store whether the key is unique or not
-    const keyIsUnique = hasUniqueValues(localCopyOfData, key);
-    console.log(keyIsUnique);
-
+    const keyIsUnique = hasUniqueValues(localCopyOfData, column);
+    // get data type of each column
+    const columnDataType = typeof localCopyOfData[0][column];
     // for each one create an object and push it into the array
-    const columnObject = { key: key, isUnique: keyIsUnique };
+    const columnObject = {
+      key: column,
+      isUnique: keyIsUnique,
+      dataType: columnDataType,
+    };
     columns.push(columnObject);
   }
 
@@ -42,6 +55,8 @@
     1,
     localCopyOfData[0].length,
   );
+
+  $inspect("metrics is", metrics);
 
   let sortState = $state({ column: "sortedColumn", order: "ascending" });
 
@@ -109,13 +124,9 @@
   }
 
   const colorKey = Object.entries({ Good: 1, Ok: 0.5, Bad: 0 });
-</script>
 
-{#snippet propNameAndValue(marginTW, paddingTW, text)}
-  <span class="bg-slate-100 inline-block italic {marginTW} {paddingTW} rounded"
-    >{text}</span
-  >
-{/snippet}
+  $inspect("the first column key is", columns[0].key);
+</script>
 
 <div class="p-4">
   {#if colourScale === "On"}
@@ -134,28 +145,28 @@
       <caption class="govuk-table__caption">{caption}</caption>
       <thead class="govuk-table__head"
         ><tr class="govuk-table__row">
-          <th scope="col" class="govuk-table__header" aria-sort="ascending"
+          <!-- <th scope="col" class="govuk-table__header" aria-sort="ascending"
             >Area</th
-          >
-          {#each metrics as metric}
+          > -->
+          {#each columns as column}
             <th
               scope="col"
               class="govuk-table__header govuk-table__header--numeric"
-              title={metaData[metric].explainer}
+              title={metaData[column.key].explainer}
               aria-sort="none"
             >
               <div class="header">
                 <Button
-                  textContent={metaData[metric].shortLabel}
+                  textContent={metaData[column.key].shortLabel}
                   buttonType={"table header"}
                   onClickFunction={() => {
                     const newDirection =
-                      sortState.column === metric &&
+                      sortState.column === column.key &&
                       sortState.order === "ascending"
                         ? "descending"
                         : "ascending";
 
-                    updateSortState(metric, newDirection);
+                    updateSortState(column.key, newDirection);
                     sortFunction();
                   }}
                 ></Button>
@@ -167,31 +178,34 @@
       <tbody class="govuk-table__body">
         {#each localCopyOfData as row}
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell">{row["areaName"]}</td>
-            {#each metrics as metric}
-              {#if colourScale === "On"}
-                {#if metaData[metric].direction === "Higher is better"}
-                  <td
-                    class="govuk-table__cell govuk-table__cell--numeric"
-                    style="background-color: {normToColor(
-                      row[metric + '__normalised'],
-                    )}"
-                    data-sort-value="42">{row[metric]}</td
-                  >
+            {#each columns as column}
+              {#if column.dataType === "number"}
+                {#if colourScale === "On"}
+                  {#if metaData[column.key].direction === "Higher is better"}
+                    <td
+                      class="govuk-table__cell govuk-table__cell--numeric"
+                      style="background-color: {normToColor(
+                        row[column.key + '__normalised'],
+                      )}"
+                      data-sort-value="42">{row[column.key]}</td
+                    >
+                  {:else}
+                    <td
+                      class="govuk-table__cell govuk-table__cell--numeric"
+                      style="background-color: {normToColorReverse(
+                        row[column.key + '__normalised'],
+                      )}"
+                      data-sort-value="42">{row[column.key]}</td
+                    >
+                  {/if}
                 {:else}
                   <td
                     class="govuk-table__cell govuk-table__cell--numeric"
-                    style="background-color: {normToColorReverse(
-                      row[metric + '__normalised'],
-                    )}"
-                    data-sort-value="42">{row[metric]}</td
+                    data-sort-value="42">{row[column.key]}</td
                   >
                 {/if}
               {:else}
-                <td
-                  class="govuk-table__cell govuk-table__cell--numeric"
-                  data-sort-value="42">{row[metric]}</td
-                >
+                <td class="govuk-table__cell">{row[column.key]}</td>
               {/if}
             {/each}
           </tr>

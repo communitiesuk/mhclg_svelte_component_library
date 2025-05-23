@@ -52545,6 +52545,12 @@
     },
     "metaData" : {
         
+            "areaName": {
+              "direction": "none",
+              "explainer": "Local authorities",
+              "label": "Local Authority",
+              "shortLabel": "Local Authority"
+            },
             "Household waste recycling rate": {
               "direction": "Higher is better",
               "explainer": "Percentage of household waste sent for recycling.",

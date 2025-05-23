@@ -11,6 +11,33 @@
 
   let localCopyOfData = $state([...data]);
 
+  function hasUniqueValues(array, key) {
+    const seen = new Set();
+    for (const obj of array) {
+      if (seen.has(obj[key])) {
+        return false; // Duplicate found
+      }
+      seen.add(obj[key]);
+    }
+    return true; // All values are unique
+  }
+
+  $inspect(localCopyOfData[0]);
+
+  let columns = [];
+
+  for (const key in localCopyOfData[0]) {
+    // create a variable to store whether the key is unique or not
+    const keyIsUnique = hasUniqueValues(localCopyOfData, key);
+    console.log(keyIsUnique);
+
+    // for each one create an object and push it into the array
+    const columnObject = { key: key, isUnique: keyIsUnique };
+    columns.push(columnObject);
+  }
+
+  $inspect("columns array is ", columns);
+
   const metrics = Object.keys(localCopyOfData[0]).slice(
     1,
     localCopyOfData[0].length,

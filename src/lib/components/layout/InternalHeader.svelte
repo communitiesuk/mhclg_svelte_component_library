@@ -32,7 +32,7 @@ This component provides a MHCLG branded header for internal-facing services. -->
   style:border-bottom={headerBorder}
   style:background-color={backgroundColor}
 >
-  <div class="moj-header__container">
+  <div class="govuk-width-container">
     <div class="moj-header__logo">
       <div class="svg-wrapper">
         <svg
@@ -270,6 +270,7 @@ This component provides a MHCLG branded header for internal-facing services. -->
   }
   .moj-header__content {
     padding-bottom: 10px;
+    margin-left: 1%;
   }
   @media (min-width: 48.0625em) {
     .moj-header__content {
@@ -585,7 +586,7 @@ This component provides a MHCLG branded header for internal-facing services. -->
   @media (min-width: 48.0625em) {
     :global(.moj-header__container) {
       margin: 0px auto !important;
-      padding-left: 10px;
+      padding-left: 0px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -613,7 +614,6 @@ This component provides a MHCLG branded header for internal-facing services. -->
     /* Allow proper spacing for the nav elements */
     :global(.moj-header__content) {
       padding: 0px 0px 10px !important;
-      margin-right: 30px;
       float: none !important;
       display: flex;
       align-items: center;

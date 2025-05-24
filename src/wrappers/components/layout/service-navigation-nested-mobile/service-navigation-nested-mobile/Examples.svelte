@@ -85,14 +85,14 @@
   ];
 </script>
 
-<div class="my-20 p-2">
+<div>
   <h5 class="underline underline-offset-4 my-6">
     Examples of specific use cases
   </h5>
   <Accordion
     activeClass="text-[#EA580C] focus:ring-2 focus:ring-[#EA580C]"
     inactiveClass="text-gray-500 dark:text-gray-400 hover:bg-slate-100"
-    defaultClass=""
+    defaultClass="w-full"
   >
     {#each accordionSnippetSections as section}
       <AccordionItem>
@@ -146,10 +146,13 @@
   .mobile-example {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     background: white;
+    min-width: 0; /* Ensure it can shrink */
   }
 
   .mobile-frame {
     /* Mobile device simulation */
     border-radius: 2px;
+    max-width: 100%; /* Ensure it doesn't overflow parent */
+    overflow: hidden; /* Hide any content that might overflow */
   }
 </style>

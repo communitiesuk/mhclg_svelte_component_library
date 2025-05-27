@@ -264,19 +264,4 @@
       margin-bottom: 3.125rem;
     }
   }
-
-  /* GOV.UK Spacing Utilities - Scoped to our component with high specificity */
-  .app-masthead .govuk-\!-margin-top-6.govuk-\!-margin-top-6 {
-    margin-top: 20px;
-  }
-
-  @media (min-width: 40.0625em) {
-    .app-masthead .govuk-\!-margin-top-6.govuk-\!-margin-top-6 {
-      margin-top: 30px;
-    }
-  }
-
-  .app-masthead .govuk-\!-margin-bottom-0.govuk-\!-margin-bottom-0 {
-    margin-bottom: 0;
-  }
 </style>

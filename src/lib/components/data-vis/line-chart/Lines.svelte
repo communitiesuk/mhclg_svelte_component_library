@@ -1,6 +1,7 @@
 <script>
   import Line from "./Line.svelte";
   import Marker from "./Marker.svelte";
+  import ValueLabel from "./ValueLabel.svelte";
   import SeriesLabel from "./SeriesLabel.svelte";
   import labelplacer from "labelplacer";
   import { onMount } from "svelte";
@@ -14,8 +15,8 @@
     chartWidth,
     xFunction,
     yFunction,
-    labelClicked = $bindable(),
-    labelHovered = $bindable(),
+    labelClicked,
+    labelHovered,
     lineHovered,
     lineClicked,
     chartHeight,
@@ -90,43 +91,52 @@
           {activeMarkerId}
         />
       {/each}
-      {#if tier == "hover"}
-        {#if true}
-          <!-- <ValueLabel
-            {marker}
-            labelColor="grey"
-            labelTextColor="black"
-            textContent={parseInput(marker, marker[y])}
-          ></ValueLabel> -->
-        {/if}
-      {/if}
     </g>
 
     <g>
       {#each tieredDataObject[tier] as line, i}
         {#if line.showLabel}
-          {@const newY = labelsPlaced.find(
-            (el) => el.datum[series] === line[series],
-          )?.[y]}
-          <SeriesLabel
-            id={`label-${line[series]}`}
-            bind:labelClicked
-            bind:labelHovered
-            {chartWidth}
-            {lineFunction}
-            dataArray={line}
-            {xFunction}
-            {yFunction}
-            {newY}
-            {onClickLabel}
-            {onMouseEnterLabel}
-            {onMouseLeaveLabel}
-            {labelText}
-            {series}
-            {y}
-          ></SeriesLabel>
+          {console.log("@", labelClicked == line[series])}
+          {#if !labelClicked || (labelClicked && line[series] == labelClicked)}
+            {@const newY = labelsPlaced.find(
+              (el) => el.datum[series] === line[series],
+            )?.[y]}
+            <SeriesLabel
+              id={`label-${line[series]}`}
+              {labelClicked}
+              {labelHovered}
+              {chartWidth}
+              {lineFunction}
+              dataArray={line}
+              {xFunction}
+              {yFunction}
+              {newY}
+              {onClickLabel}
+              {onMouseEnterLabel}
+              {onMouseLeaveLabel}
+              {labelText}
+              {series}
+              {y}
+            ></SeriesLabel>
+          {/if}
         {/if}
       {/each}
     </g>
   </g>
 {/each}
+
+{#if activeMarkerId}
+  <ValueLabel
+    {activeMarkerId}
+    labelColor="grey"
+    labelTextColor="black"
+    textContent={`this string contains some <strong>HTML!!!</strong>`}
+    {xFunction}
+    {yFunction}
+    {x}
+    {y}
+  ></ValueLabel>
+{/if}
+
+<!-- if markerhovered get the id render the tooltip find in the tieredDataObject gets
+the data for that line -->

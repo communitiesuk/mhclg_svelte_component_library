@@ -15,26 +15,11 @@
     markerFill = "grey",
     markerStroke = "white",
     markerStrokeWidth = 1,
-    activeMarkerId,
   } = $props();
-
-  function makeList(inputValue) {
-    let items = inputValue.split("\\n").map((item) => item.trim());
-    return items;
-  }
-
-  function parseInput(marker, inputValue) {
-    let items = makeList(inputValue);
-    let mappedItems = items.map((item) =>
-      item.replace(/\{(\w+)\}/g, (_, key) => marker[key] ?? `{${key}}`),
-    );
-    return mappedItems;
-  }
 </script>
 
 {#each dataArray as marker, i}
   {@const markerId = "marker-" + marker[series] + marker[x]}
-  {console.log(markerId)}
   <g
     data-id={markerId}
     onclick={(event) => onClickMarker(event, marker, markerId)}
@@ -72,15 +57,5 @@
         stroke-width={markerStrokeWidth}
       ></polygon>
     {/if}
-    <!-- {#if true}
-      {#if activeMarkerId === markerId}
-        <ValueLabel
-          {marker}
-          labelColor="grey"
-          labelTextColor="black"
-          textContent={parseInput(marker, marker[y])}
-        ></ValueLabel>
-      {/if}
-    {/if} -->
   </g>
 {/each}

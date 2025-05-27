@@ -9,6 +9,7 @@
     buttonHref = "/get-started/",
     imageSrc = homepageIllustration,
     imageAlt = "",
+    backgroundColor = "#1d70b8", // GOV.UK blue by default
   } = $props<{
     title?: string;
     description?: string;
@@ -16,11 +17,15 @@
     buttonHref?: string;
     imageSrc?: string;
     imageAlt?: string;
+    backgroundColor?: string;
   }>();
 </script>
 
-<div class="app-masthead">
-  <div class="app-width-container">
+<div
+  class="app-masthead"
+  style="background-color: {backgroundColor}; border-bottom-color: {backgroundColor};"
+>
+  <div class="govuk-width-container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds-from-desktop">
         <h1 class="govuk-heading-xl app-masthead__title">{@html title}</h1>
@@ -67,12 +72,12 @@
     padding-top: 20px;
     /* @include govuk-responsive-padding(6, "bottom"); */
     padding-bottom: 20px;
-    /* border-bottom: 1px solid govuk-colour("blue"); */
-    border-bottom: 1px solid #1d70b8;
+    /* border-bottom: 1px solid govuk-colour("blue"); - now set via inline style */
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
     /* color: govuk-colour("white"); */
     color: #ffffff;
-    /* background-color: govuk-colour("blue"); */
-    background-color: #1d70b8;
+    /* background-color: govuk-colour("blue"); - now set via inline style */
   }
 
   @media (min-width: 40.0625em) {
@@ -127,45 +132,12 @@
     }
   }
 
-  /* GOV.UK Grid System Classes - Scoped to our component with high specificity */
-  .app-masthead .app-width-container.app-width-container {
-    max-width: 960px;
-    margin: 0 auto;
-    padding: 0 15px;
-  }
 
-  @media (min-width: 40.0625em) {
-    .app-masthead .app-width-container.app-width-container {
-      padding: 0 30px;
-    }
-  }
 
-  .app-masthead .govuk-grid-row.govuk-grid-row {
-    display: flex;
-    flex-wrap: wrap;
-    margin: 0 -15px;
-  }
 
-  .app-masthead
-    .govuk-grid-column-two-thirds-from-desktop.govuk-grid-column-two-thirds-from-desktop,
-  .app-masthead
-    .govuk-grid-column-one-third-from-desktop.govuk-grid-column-one-third-from-desktop {
-    box-sizing: border-box;
-    width: 100%;
-    padding: 0 15px;
-  }
 
-  @media (min-width: 48.0625em) {
-    .app-masthead
-      .govuk-grid-column-two-thirds-from-desktop.govuk-grid-column-two-thirds-from-desktop {
-      width: 66.6666%;
-    }
 
-    .app-masthead
-      .govuk-grid-column-one-third-from-desktop.govuk-grid-column-one-third-from-desktop {
-      width: 33.3333%;
-    }
-  }
+
 
   /* GOV.UK Button Styles - Scoped to our component with high specificity */
   .app-masthead .govuk-button.govuk-button {

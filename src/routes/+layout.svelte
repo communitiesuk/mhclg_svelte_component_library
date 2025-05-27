@@ -171,7 +171,10 @@
         tagText="Alpha"
         linkHref="mailto:dataexplorerfeedback@communities.gov.uk"
       />
-      <div class="app-pane__body govuk-width-container">
+      <div
+        class="app-pane__body"
+        class:govuk-width-container={currentSection !== "Home"}
+      >
         <div class={currentSection !== "Home" ? "app-split-pane" : ""}>
           <!-- Side navigation - only shown if not Home -->
           {#if currentSection !== "Home"}

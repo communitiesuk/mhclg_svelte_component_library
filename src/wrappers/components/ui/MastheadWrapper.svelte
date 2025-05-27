@@ -257,6 +257,18 @@
           ],
         },
       },
+      {
+        name: "backgroundColor",
+        category: "Visual",
+        value: "#1d70b8",
+        description: {
+          markdown: true,
+          arr: [
+            "The background color of the masthead section.",
+            "Use GOV.UK blue (#1d70b8) by default, or customise to match your service branding. Ensure sufficient contrast with white text.",
+          ],
+        },
+      },
     ]),
   );
 

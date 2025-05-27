@@ -17,8 +17,8 @@
     lineFunction,
     lineClicked,
     lineHovered,
-    labelClicked = $bindable(),
-    labelHovered = $bindable(),
+    labelClicked,
+    labelHovered,
     svgWidth = $bindable(500),
     activeMarkerId,
     onClickLine,
@@ -47,6 +47,7 @@
     series,
     y,
     x,
+    seriesLabels = $bindable(),
   } = $props();
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
@@ -125,6 +126,12 @@
       return acc;
     }, {}),
   );
+
+  function hasShowLabel(objOfArrays) {
+    return Object.values(objOfArrays).some((array) =>
+      array.some((obj) => obj.showLabel === true),
+    );
+  }
 </script>
 
 <div bind:clientWidth={svgWidth}>

@@ -1,21 +1,75 @@
 <script lang="ts">
-  // Define types for news items
+  /**
+   * Represents a single news item in the What's New section
+   */
   interface NewsItem {
+    /** The date of the news item (e.g., "June 2025") */
     date: string;
+    /** The main content/description of the news item */
     content: string;
+    /** Optional URL to release notes or more information */
     releaseNotesUrl?: string;
+    /** Optional version number for releases (e.g., "v0.1.16") */
     releaseVersion?: string;
+    /** Optional array of component links to display as a bulleted list */
     componentLinks?: Array<{
+      /** Display text for the link */
       text: string;
+      /** URL/href for the link */
       href: string;
     }>;
   }
 
+  /**
+   * WhatsNew Component
+   *
+   * A flexible component for displaying news, updates, and release information.
+   * Commonly used on homepages or documentation sites to communicate recent changes,
+   * new features, or important announcements to users.
+   *
+   * @example
+   * ```svelte
+   * <!-- Basic usage with defaults -->
+   * <WhatsNew />
+   *
+   * <!-- Custom usage -->
+   * <WhatsNew
+   *   title="Latest Updates"
+   *   titleId="updates"
+   *   componentLinksIntroText="New components available:"
+   *   newsItems={[
+   *     {
+   *       date: "June 2025",
+   *       content: "Released new component library",
+   *       releaseNotesUrl: "https://github.com/example/releases/tag/v1.0.0",
+   *       releaseVersion: "v1.0.0",
+   *       componentLinks: [
+   *         { text: "Button component", href: "/components/button" }
+   *       ]
+   *     }
+   *   ]}
+   * />
+   * ```
+   */
+
   // Define component props with types and default values
   let {
+    /** The main heading text for the news section */
     title = "What's new",
+    /** The HTML id attribute for the heading element (useful for anchor links) */
     titleId = "whats-new",
+    /**
+     * Introductory text that appears before component links lists.
+     * Set to empty string to hide this text entirely.
+     */
     componentLinksIntroText = "This the first step to refresh the GOV.UK brand. It includes updates to the:",
+    /**
+     * Array of news items to display. Each item can include:
+     * - date: When the news occurred
+     * - content: Main description
+     * - releaseNotesUrl & releaseVersion: For linking to release notes
+     * - componentLinks: For displaying related component links
+     */
     newsItems = [
       {
         date: "15 May 2025",

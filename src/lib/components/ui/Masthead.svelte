@@ -132,13 +132,6 @@
     }
   }
 
-
-
-
-
-
-
-
   /* GOV.UK Button Styles - Scoped to our component with high specificity */
   .app-masthead .govuk-button.govuk-button {
     /* @include govuk-font($size: 19, $line-height: 19px); */

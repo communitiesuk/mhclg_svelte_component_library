@@ -1,6 +1,7 @@
 <script>
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import Masthead from "$lib/components/ui/Masthead.svelte";
+  import mastheadIllustration from "$lib/assets/images/masthead-illustration.svg";
 
   // Keep only playground wrappers for the homepage
   const wrappersPlaygroundsObject = import.meta.glob(
@@ -44,6 +45,8 @@ TODO
     description="Bring your service or page to life with dynamic content, layout, UI, charts, maps and data visualisations. The well tested and trusted GDS components are coded here in Svelte for data rich digital products."
     buttonHref="/components"
     backgroundColor="#00625E"
+    imageSrc={mastheadIllustration}
+    imageAlt="MHCLG Svelte Component Library"
   />
 
   <div class="govuk-width-container govuk-main-wrapper govuk-main-wrapper--l">

@@ -4,13 +4,23 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-import WhatsNew from "$lib/components/ui/WhatsNew.svelte";
+  import WhatsNew from "$lib/components/ui/WhatsNew.svelte";
 
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
+      heading: "1. Basic usage with default content",
       content: Example1,
+    },
+    {
+      id: "2",
+      heading: "2. Custom title and simple news items",
+      content: Example2,
+    },
+    {
+      id: "3",
+      heading: "3. Complex news items with release notes and component links",
+      content: Example3,
     },
   ];
 </script>
@@ -37,32 +47,67 @@ import WhatsNew from "$lib/components/ui/WhatsNew.svelte";
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    <WhatsNew />
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example2()}
+  <div class="p-5 bg-white">
+    <WhatsNew
+      title="Latest Updates"
+      titleId="updates"
+      newsItems={[
+        {
+          date: "March 2025",
+          content:
+            "We've improved the performance of our data visualization components by 40%.",
+        },
+        {
+          date: "February 2025",
+          content:
+            "New accessibility features have been added to all form components.",
+        },
+      ]}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example3()}
+  <div class="p-5 bg-white">
+    <WhatsNew
+      title="Component Library Updates"
+      titleId="component-updates"
+      componentLinksIntroText="This release includes updates to the following components:"
+      newsItems={[
+        {
+          date: "April 2025",
+          content:
+            "Released version 2.1.0 with enhanced chart components and improved TypeScript support.",
+          releaseNotesUrl: "https://github.com/example/releases/tag/v2.1.0",
+          releaseVersion: "v2.1.0",
+          componentLinks: [
+            {
+              text: "Line Chart component",
+              href: "/components/charts/line-chart",
+            },
+            {
+              text: "Bar Chart component",
+              href: "/components/charts/bar-chart",
+            },
+            { text: "Data Table component", href: "/components/ui/data-table" },
+          ],
+        },
+        {
+          date: "March 2025",
+          content:
+            "Minor bug fixes and accessibility improvements across all components.",
+          releaseNotesUrl: "https://github.com/example/releases/tag/v2.0.1",
+          releaseVersion: "v2.0.1",
+        },
+      ]}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
 {/snippet}

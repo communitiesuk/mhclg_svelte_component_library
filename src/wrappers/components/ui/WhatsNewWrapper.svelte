@@ -26,15 +26,15 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "Baseline completed",
     statusRows: [
       {
-        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
-        visibleOnHompepage: false,
+        obj: { Accessible: false, Responsive: true, "Prog. enhanced": false },
+        visibleOnHompepage: true,
       },
       {
         obj: { Reviewed: false, Tested: false },
-        visibleOnHomepage: false,
+        visibleOnHomepage: true,
       },
     ],
   };
@@ -46,10 +46,16 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "The WhatsNew component displays news, updates, and release information in a structured format. It's designed to communicate recent changes, new features, or important announcements to users.",
+    "The component supports flexible content including dates, descriptions, release notes links, and related component links displayed as bulleted lists.",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Use the WhatsNew component on homepages or documentation sites to highlight recent updates and changes.",
+    "Include it in service dashboards to communicate new features or important announcements to users.",
+    "Use it in component libraries to showcase new components or updates to existing ones.",
+    "Consider using it in admin interfaces to keep users informed about system updates and improvements.",
   ];
 
   let detailsArray = [
@@ -70,7 +76,26 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [];
+  let connectedComponentsArray = [
+    {
+      label: "Related UI Components",
+      arr: [
+        {
+          name: "Masthead",
+          folder: "ui",
+        },
+      ],
+    },
+    {
+      label: "Layout Components",
+      arr: [
+        {
+          name: "Header",
+          folder: "layout",
+        },
+      ],
+    },
+  ];
 </script>
 
 <script>
@@ -91,8 +116,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-import WhatsNew from "$lib/components/ui/WhatsNew.svelte";
-import Examples from "./whats-new/Examples.svelte";
+  import WhatsNew from "$lib/components/ui/WhatsNew.svelte";
+  import Examples from "./whats-new/Examples.svelte";
 
   let { data } = $props();
 
@@ -157,142 +182,77 @@ import Examples from "./whats-new/Examples.svelte";
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        name: "title",
+        category: "Content",
+        value: "What's new",
         description: {
           markdown: true,
           arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 2,
-      },
-      {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
+            "The main heading text for the news section.",
+            "This appears as an h2 element at the top of the component.",
           ],
         },
       },
       {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
+        name: "titleId",
+        category: "Content",
+        value: "whats-new",
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
+            "The HTML id attribute for the heading element.",
+            "Useful for anchor links and accessibility purposes.",
           ],
         },
       },
       {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
+        name: "componentLinksIntroText",
+        category: "Content",
+        value:
+          "This initial alpha release includes foundational components for building government services:",
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
+            "Introductory text that appears before component links lists.",
+            "Set to empty string to hide this text entirely.",
+            "Only displays when news items have componentLinks arrays.",
           ],
         },
+        rows: 3,
       },
       {
-        name: "jsObjectProp",
-        category: "Input props",
+        name: "newsItems",
+        category: "Content",
         value: [
           {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
+            date: "June 2025",
+            content:
+              "We launched the MHCLG Svelte Component Library alpha version. This library provides Svelte 5 implementations of GOV.UK Design System components, specifically tailored for data-rich digital products and services.",
+            releaseNotesUrl:
+              "https://github.com/communitiesuk/oflog_svelte_component_library/releases/tag/v0.1.16",
+            releaseVersion: "v0.1.16",
           },
           {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
-          },
-          {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
+            date: "January 2025",
+            content:
+              "Development began on the component library infrastructure, establishing the foundation for reusable Svelte components that maintain GOV.UK Design System compliance.",
+            componentLinks: [
+              { text: "Masthead component", href: "/components/ui/masthead" },
+              { text: "Button component", href: "/components/ui/button" },
+            ],
           },
         ],
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
+            "Array of news items to display. Each item can include:",
+            "• <strong>date</strong>: When the news occurred (required)",
+            "• <strong>content</strong>: Main description (required)",
+            "• <strong>releaseNotesUrl & releaseVersion</strong>: For linking to release notes (optional)",
+            "• <strong>componentLinks</strong>: Array of related component links (optional)",
           ],
         },
-      },
-      {
-        name: "functionProp",
-        category: "Fixed props",
-
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
-        functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
-        },
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
-          ],
-        },
+        rows: 10,
       },
     ]),
   );
@@ -435,7 +395,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
  -->
 {#snippet Component()}
   <div class="p-8">
-<WhatsNew {...parametersObject}></WhatsNew>
+    <WhatsNew {...parametersObject}></WhatsNew>
   </div>
 {/snippet}
 

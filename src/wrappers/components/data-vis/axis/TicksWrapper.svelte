@@ -167,7 +167,7 @@
         name: "ticksArray",
         category: "data",
         isBinded: true,
-        value: ticksArray,
+        value: undefined,
       },
       {
         name: "values",

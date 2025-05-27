@@ -1,6 +1,6 @@
 <script>
   import Decimal from "decimal.js";
-  import { register } from "module";
+  import { tick } from "svelte";
 
   let {
     ticksArray = $bindable(),
@@ -20,6 +20,38 @@
   let currentFontSize = $state(10);
   const minFontSize = 10;
   let textElements = $state([]);
+
+  let tickArrayDimensions = $state([]);
+
+  let temporaryArrayForCalculationChecking = $derived(
+    tickArrayDimensions.map((el, i) => {
+      if (el != undefined) {
+        return [
+          axisFunction(ticksArray[i]) - el.width / 2,
+          axisFunction(ticksArray[i]) + el.width / 2,
+        ];
+      }
+    }),
+  );
+
+  let checkForOverlap = $derived(
+    temporaryArrayForCalculationChecking
+      .filter((el, i) => i < temporaryArrayForCalculationChecking.length - 1)
+      .map(
+        (el, i) =>
+          temporaryArrayForCalculationChecking[i][1] <=
+          temporaryArrayForCalculationChecking[i + 1][0],
+      )
+      .every((el) => el === true),
+  );
+
+  let checkForOverlap2 = $state(true);
+
+  $effect(() => {
+    if (!checkForOverlap) checkForOverlap2 = false;
+  });
+
+  $inspect(checkForOverlap);
 
   function generateTicks(data, numTicks, floor, ceiling) {
     let minValueFromData = Decimal.min(...data);
@@ -63,13 +95,13 @@
     return tickNum;
   }
 
-  function registerElement(el) {
+  /*function registerElement(el) {
     if (el && !textElements.includes(el)) {
       textElements = [...textElements, el];
     }
-  }
+  }*/
 
-  function checkOverlapAndAdjustFont() {
+  /*function checkOverlapAndAdjustFont() {
     let hasOverlap = false;
 
     for (let i = 0; i < textElements.length; i++) {
@@ -104,13 +136,13 @@
         checkOverlapAndAdjustFont();
       });
     }
-  }
+  }*/
 
-  $effect(() => {
+  /*$effect(() => {
     if (ticksArray.length > 0) {
       checkOverlapAndAdjustFont();
     }
-  });
+  });*/
 
   numberOfTicks = tickCount(chartWidth, chartHeight);
 
@@ -118,7 +150,7 @@
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
-  {#each ticksArray as tick}
+  {#each ticksArray as tick, i}
     <g
       transform="translate({orientation.axis === 'x'
         ? axisFunction(tick)
@@ -135,27 +167,28 @@
         stroke="black"
         stroke-width="2px"
       ></path>
-      <text
-        bind:this={registerElement}
-        transform="translate({orientation.axis === 'x'
-          ? 0
-          : orientation.position === 'left'
-            ? -10
-            : 10}, {orientation.axis === 'y'
-          ? 5
-          : orientation.position === 'top'
-            ? -10
-            : 23})"
-        font-size="19"
-        text-anchor={orientation.axis === "x"
-          ? "middle"
-          : orientation.position === "left"
-            ? "end"
-            : "start"}
-        fill="black"
-      >
-        {tickFormattingFunction(tick)}
-      </text>
+      <g bind:contentRect={tickArrayDimensions[i]}>
+        <text
+          transform="translate({orientation.axis === 'x'
+            ? 0
+            : orientation.position === 'left'
+              ? -10
+              : 10}, {orientation.axis === 'y'
+            ? 5
+            : orientation.position === 'top'
+              ? -10
+              : 23})"
+          font-size={checkForOverlap2 ? "19px" : "14px"}
+          text-anchor={orientation.axis === "x"
+            ? "middle"
+            : orientation.position === "left"
+              ? "end"
+              : "start"}
+          fill="black"
+        >
+          {tickFormattingFunction(tick)}
+        </text>
+      </g>
     </g>
   {/each}
 {/if}

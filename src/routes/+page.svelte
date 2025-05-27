@@ -1,6 +1,6 @@
 <script>
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
-
+  import Masthead from "$lib/components/ui/Masthead.svelte";
 
   // Keep only playground wrappers for the homepage
   const wrappersPlaygroundsObject = import.meta.glob(
@@ -37,6 +37,13 @@
 TODO		
 <>		
 -->
+
+<Masthead
+  title="MHCLG Component Library"
+  description="A comprehensive collection of reusable UI components designed for consistency, accessibility, and ease of use across MHCLG's digital products."
+  buttonText="Browse Components"
+  buttonHref="/components"
+/>
 
 <div class="govuk-width-container govuk-main-wrapper govuk-main-wrapper--l">
   <div class="flex flex-col gap-6">

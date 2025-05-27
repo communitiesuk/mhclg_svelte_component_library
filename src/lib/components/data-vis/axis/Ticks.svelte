@@ -1,6 +1,5 @@
 <script>
   import Decimal from "decimal.js";
-  import { tick } from "svelte";
 
   let {
     ticksArray = $bindable(),
@@ -17,11 +16,9 @@
     },
   } = $props();
 
-  let currentFontSize = $state(10);
-  const minFontSize = 10;
-  let textElements = $state([]);
-
   let tickArrayDimensions = $state([]);
+
+  let overlapFlag = $state(true);
 
   let temporaryArrayForCalculationChecking = $derived(
     tickArrayDimensions.map((el, i) => {
@@ -45,13 +42,9 @@
       .every((el) => el === true),
   );
 
-  let checkForOverlap2 = $state(true);
-
   $effect(() => {
-    if (!checkForOverlap) checkForOverlap2 = false;
+    if (!checkForOverlap) overlapFlag = false;
   });
-
-  $inspect(checkForOverlap);
 
   function generateTicks(data, numTicks, floor, ceiling) {
     let minValueFromData = Decimal.min(...data);
@@ -95,55 +88,6 @@
     return tickNum;
   }
 
-  /*function registerElement(el) {
-    if (el && !textElements.includes(el)) {
-      textElements = [...textElements, el];
-    }
-  }*/
-
-  /*function checkOverlapAndAdjustFont() {
-    let hasOverlap = false;
-
-    for (let i = 0; i < textElements.length; i++) {
-      const boxA = textElements[i]?.getBBox?.();
-      if (!boxA) continue;
-
-      for (let j = i + 1; j < textElements.length; j++) {
-        const boxB = textElements[j]?.getBBox?.();
-        if (!boxB) continue;
-
-        const overlap =
-          boxA.x < boxB.x + boxB.width &&
-          boxA.x + boxA.width > boxB.x &&
-          boxA.y < boxB.y + boxB.height &&
-          boxA.y + boxA.height > boxB.y;
-
-        if (overlap) {
-          hasOverlap = true;
-          break;
-        }
-      }
-
-      if (hasOverlap) break;
-    }
-
-    if (hasOverlap && currentFontSize > minFontSize) {
-      currentFontSize -= 1;
-      requestAnimationFrame(() => {
-        textElements.forEach((el) => {
-          if (el) el.setAttribute("font-size", currentFontSize);
-        });
-        checkOverlapAndAdjustFont();
-      });
-    }
-  }*/
-
-  /*$effect(() => {
-    if (ticksArray.length > 0) {
-      checkOverlapAndAdjustFont();
-    }
-  });*/
-
   numberOfTicks = tickCount(chartWidth, chartHeight);
 
   ticksArray = generateTicks(values, numberOfTicks, floor, ceiling);
@@ -178,7 +122,7 @@
             : orientation.position === 'top'
               ? -10
               : 23})"
-          font-size={checkForOverlap2 ? "19px" : "14px"}
+          font-size={overlapFlag ? "19px" : "14px"}
           text-anchor={orientation.axis === "x"
             ? "middle"
             : orientation.position === "left"

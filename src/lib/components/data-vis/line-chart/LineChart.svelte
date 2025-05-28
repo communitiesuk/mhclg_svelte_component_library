@@ -51,13 +51,11 @@
     yearsInputX,
     floor,
     ceiling,
-    prefixX,
-    suffixX,
-    prefixY,
-    suffixY,
     series,
     y,
     x,
+    tickFormattingFunctionY,
+    tickFormattingFunctionX,
   } = $props();
 
   let ticksArrayX = $state();
@@ -140,8 +138,6 @@
     }, {}),
   );
 
-  // let allYValues = [2000, 222, 1, 2];
-
   let allYValues = lineChartData.lines.flatMap((line) =>
     line.data.map((point) => new Decimal(point.y)),
   );
@@ -203,8 +199,7 @@
           yearsInput={yearsInputY}
           {floor}
           {ceiling}
-          prefix={prefixY}
-          suffix={suffixY}
+          tickFormattingFunction={tickFormattingFunctionY}
         ></Axis>
         <!-- X axis-->
         <Axis
@@ -217,8 +212,7 @@
           yearInput={yearsInputX}
           {floor}
           {ceiling}
-          suffix={suffixX}
-          prefix={prefixX}
+          tickFormattingFunction={tickFormattingFunctionX}
         ></Axis>
       </g>
     {/if}

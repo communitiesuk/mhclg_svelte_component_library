@@ -16,6 +16,8 @@
     },
   } = $props();
 
+  $inspect(ticksArray);
+
   let tickArrayDimensions = $state([]);
 
   let overlapFlag = $state(true);

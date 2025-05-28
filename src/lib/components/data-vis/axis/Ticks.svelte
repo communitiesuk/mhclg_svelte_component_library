@@ -3,8 +3,6 @@
 
   let {
     ticksArray = $bindable(),
-    prefix,
-    suffix,
     chartWidth,
     chartHeight,
     axisFunction,
@@ -13,10 +11,41 @@
     floor,
     ceiling,
     orientation,
+    tickFormattingFunction = function (tick) {
+      return tick;
+    },
     yearsInput,
   } = $props();
 
-  $inspect(ticksArray);
+  let tickArrayDimensions = $state([]);
+
+  let overlapFlag = $state(true);
+
+  let temporaryArrayForCalculationChecking = $derived(
+    tickArrayDimensions.map((el, i) => {
+      if (el != undefined) {
+        return [
+          axisFunction(ticksArray[i]) - el.width / 2,
+          axisFunction(ticksArray[i]) + el.width / 2,
+        ];
+      }
+    }),
+  );
+
+  let checkForOverlap = $derived(
+    temporaryArrayForCalculationChecking
+      .filter((el, i) => i < temporaryArrayForCalculationChecking.length - 1)
+      .map(
+        (el, i) =>
+          temporaryArrayForCalculationChecking[i][1] <=
+          temporaryArrayForCalculationChecking[i + 1][0],
+      )
+      .every((el) => el === true),
+  );
+
+  $effect(() => {
+    if (!checkForOverlap) overlapFlag = false;
+  });
 
   function generateTicks(data, numTicks, floor, ceiling) {
     let minValueFromData = Decimal.min(...data);
@@ -60,18 +89,13 @@
     return tickNum;
   }
 
-  function yearsFormat(ticks) {
-    return ticks.map((tick) => `FY ${tick % 100}-${(tick % 100) + 1}`);
-  }
-
   numberOfTicks = tickCount(chartWidth, chartHeight);
 
   ticksArray = generateTicks(values, numberOfTicks, floor, ceiling);
-  let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
-  {#each ticksArray as tick, index}
+  {#each ticksArray as tick, i}
     <g
       transform="translate({orientation.axis === 'x'
         ? axisFunction(tick)
@@ -88,26 +112,28 @@
         stroke="black"
         stroke-width="2px"
       ></path>
-      <text
-        transform="translate({orientation.axis === 'x'
-          ? 0
-          : orientation.position === 'left'
-            ? -10
-            : 10}, {orientation.axis === 'y'
-          ? 5
-          : orientation.position === 'top'
-            ? -10
-            : 23})"
-        font-size="19"
-        text-anchor={orientation.axis === "x"
-          ? "middle"
-          : orientation.position === "left"
-            ? "end"
-            : "start"}
-        fill="black"
-      >
-        {yearsInput ? yearTicks[index] : prefix + tick + suffix}
-      </text>
+      <g bind:contentRect={tickArrayDimensions[i]}>
+        <text
+          transform="translate({orientation.axis === 'x'
+            ? 0
+            : orientation.position === 'left'
+              ? -10
+              : 10}, {orientation.axis === 'y'
+            ? 5
+            : orientation.position === 'top'
+              ? -10
+              : 23})"
+          font-size={overlapFlag ? "19px" : "14px"}
+          text-anchor={orientation.axis === "x"
+            ? "middle"
+            : orientation.position === "left"
+              ? "end"
+              : "start"}
+          fill="black"
+        >
+          {tickFormattingFunction(tick)}
+        </text>
+      </g>
     </g>
   {/each}
 {/if}

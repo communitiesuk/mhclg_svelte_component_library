@@ -10,19 +10,35 @@
     axisFunction,
     values,
     orientation,
+    ceiling,
+    floor,
     prefix,
     suffix,
-    floor,
-    ceiling,
     yearsInput,
+    zeroTranslationValue,
+
   } = $props();
+
+  $inspect(
+    orientation.position === "zero",
+    orientation.axis === "y",
+    zeroTranslationValue,
+    orientation.position === "zero" && orientation.axis === "y",
+  );
 </script>
 
 <g
   data-role="{orientation.axis}-axis"
-  transform="translate({orientation.position != 'right'
-    ? 0
-    : chartWidth},{orientation.position === 'bottom' ? chartHeight : 0})"
+  transform="translate({orientation.position === 'zero' &&
+  orientation.axis === 'y'
+    ? zeroTranslationValue
+    : orientation.position != 'right'
+      ? 0
+      : chartWidth},{orientation.position === 'zero' && orientation.axis === 'x'
+    ? zeroTranslationValue
+    : orientation.position === 'bottom'
+      ? chartHeight
+      : 0})"
 >
   <line
     x1="0"

@@ -1,6 +1,6 @@
 <script>
   // @ts-nocheck
-  import CategoryLabel from "$lib/components/data-vis/line-chart/CategoryLabel.svelte";
+  import SeriesLabel from "$lib/components/data-vis/line-chart/SeriesLabel.svelte";
   import Line from "$lib/components/data-vis/line-chart/Line.svelte";
 
   import { scaleLinear } from "d3-scale";
@@ -23,6 +23,7 @@
     labelClicked = $bindable(),
     labelHovered = $bindable(),
     svgWidth = $bindable(500),
+    activeMarkerId,
     onClickLine,
     onMouseEnterLine,
     onMouseLeaveLine,
@@ -45,7 +46,6 @@
     overrideLineParams,
     nothingSelected = $bindable(),
     globalTierRules,
-    activeMarkerId,
     labelText,
     yearsInputY,
     yearsInputX,
@@ -55,6 +55,9 @@
     suffixX,
     prefixY,
     suffixY,
+    series,
+    y,
+    x,
   } = $props();
 
   let ticksArrayX = $state();
@@ -62,13 +65,13 @@
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
   let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
-  let areaFunction = $derived(
-    area()
-      .y0((d) => yFunction(0))
-      .x((d) => xFunction(d.x))
-      .y1((d) => yFunction(d.y))
-      .curve(curveLinear),
-  );
+  // let areaFunction = $derived(
+  //   area()
+  //     .y0((d) => yFunction(0))
+  //     .x((d) => xFunction(d.x))
+  //     .y1((d) => yFunction(d.y))
+  //     .curve(curveLinear),
+  // );
 
   let selectedLine = $derived([
     lineHovered,
@@ -114,7 +117,7 @@
     return {
       ...merged,
       ...line,
-      dataId: line.areaCode,
+      dataId: line[series],
       dataArray: line.data,
     };
   }
@@ -184,6 +187,9 @@
             {onMouseLeaveMarker}
             {activeMarkerId}
             {labelText}
+            {series}
+            {y}
+            {x}
           ></Lines>
         </g>
         <!--Y axis-->

@@ -4,7 +4,7 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-  import LineChart from "$lib/components/data-vis/line-chart/LineChart.svelte";
+import Button from "$lib/components/ui/Button.svelte";
 
   let accordionSnippetSections = [
     {
@@ -15,14 +15,14 @@
   ];
 </script>
 
-<div>
+<div class="my-20 p-2">
   <h5 class="underline underline-offset-4 my-6">
     Examples of specific use cases
   </h5>
   <Accordion
     activeClass="text-[#EA580C] focus:ring-2 focus:ring-[#EA580C]"
     inactiveClass="text-gray-500 dark:text-gray-400 hover:bg-slate-100"
-    defaultClass="w-full"
+    defaultClass=""
   >
     {#each accordionSnippetSections as section}
       <AccordionItem>

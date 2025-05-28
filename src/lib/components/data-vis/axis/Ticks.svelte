@@ -14,6 +14,7 @@
     tickFormattingFunction = function (tick) {
       return tick;
     },
+    yearsInput,
   } = $props();
 
   let tickArrayDimensions = $state([]);

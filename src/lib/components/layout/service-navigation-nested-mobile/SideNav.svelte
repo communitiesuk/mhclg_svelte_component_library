@@ -1,10 +1,7 @@
 <script lang="ts">
-  import { page } from "$app/state";
-
   export type SideNavItem = {
     text: string;
     href: string;
-    current?: boolean;
     subItems?: { text: string; href: string }[];
   };
 
@@ -15,105 +12,79 @@
 
   let {
     title = "Pages in this section",
-    items = $bindable([] as SideNavItem[]), // For a flat list of navigation items
-    groups = $bindable([] as SideNavGroup[]), // For grouped sections of navigation items
-    currentItem = $bindable(""), // Tracks the href of the currently active item/subItem
+    items = $bindable([] as SideNavItem[]),
+    groups = $bindable([] as SideNavGroup[]),
+    currentItem = $bindable(""), // This prop is the SOLE driver for active state
     activeItemBackgroundColor = $bindable("transparent"),
   } = $props<{
     title?: string;
     items?: SideNavItem[];
     groups?: SideNavGroup[];
-    currentItem?: string;
+    currentItem?: string; // Value from parent
     activeItemBackgroundColor?: string;
   }>();
 
-  // Determines if a navigation item or its sub-item is currently active
   function calculateIsActive(
-    item: SideNavItem,
-    currentHref: string,
-    currentPath: string,
-    resolvedActiveIdentifier: string,
+    item: { href: string; subItems?: { href: string }[] },
+    activePropValue: string | undefined,
   ): boolean {
-    const isParentOfActiveSubItem = !!(
-      item.subItems && item.subItems.some((sub) => sub.href === currentHref)
-    );
-    return (
-      item.href === currentHref ||
-      isParentOfActiveSubItem ||
-      item.href === currentPath ||
-      (currentPath.endsWith("/" + resolvedActiveIdentifier) &&
-        item.text.toLowerCase() === resolvedActiveIdentifier.toLowerCase())
-    );
+    if (!activePropValue) {
+      return false; // If currentItem prop is not set, nothing is active by it
+    }
+
+    // Check 1: Direct match with item's href
+    if (item.href === activePropValue) {
+      return true;
+    }
+
+    // Check 2: If activePropValue is a sub-item of this item
+    if (item.subItems) {
+      for (const subItem of item.subItems) {
+        if (subItem.href === activePropValue) {
+          return true; // Parent item is active because its sub-item is the active one
+        }
+      }
+    }
+
+    // Check 3: If item.href is the base path of activePropValue (when activePropValue has a hash)
+    // e.g., activePropValue="/page#section1", item.href="/page"
+    const activePropBasePath = activePropValue.split("#")[0];
+    if (item.href === activePropBasePath && activePropValue.includes("#")) {
+      return true;
+    }
+
+    return false;
   }
-
-  // Effect to reactively update the 'current' state of items based on URL or currentItem prop changes
-  $effect(() => {
-    const path = page.url.pathname;
-    const activeItemFromPath = path.split("/").pop() || "";
-    const resolvedActiveItemIdentifier = currentItem || activeItemFromPath;
-
-    const updateItemCurrentState = (item: SideNavItem) => ({
-      ...item,
-      current: calculateIsActive(
-        item,
-        currentItem,
-        path,
-        resolvedActiveItemIdentifier,
-      ),
-    });
-
-    items = items.map(updateItemCurrentState);
-
-    groups = groups.map((group) => ({
-      ...group,
-      items: group.items.map(updateItemCurrentState),
-    }));
-  });
 </script>
 
-{#snippet navItem(item: SideNavItem)}
-  <!-- Reusable snippet for rendering a single navigation item and its potential sub-items -->
-  
-  <!-- Represents a single item in the navigation list -->
+{#snippet navItem(item: SideNavItem, activeGlobalItem: string)}
+  {@const isActive = calculateIsActive(item, activeGlobalItem)}
   <li
-    class="app-subnav__section-item {item.current
+    class="app-subnav__section-item {isActive
       ? 'app-subnav__section-item--current app-subnav__section-item--bold app-subnav__section-item--top'
       : ''}"
-    style={item.current
-      ? `background-color: ${activeItemBackgroundColor};`
-      : ""}
+    style={isActive ? `background-color: ${activeItemBackgroundColor};` : ""}
   >
-    <!-- The clickable link for the navigation item -->
     <a
       class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
       href={item.href}
-      aria-current={item.current ? "location" : undefined}
-      onclick={() => {
-        if (item.href) {
-          currentItem = item.href;
-        }
-      }}
+      aria-current={isActive ? "location" : undefined}
     >
-      {item.text}
+      {@html item.text}
     </a>
 
-    {#if item.current && item.subItems && item.subItems.length > 0}
+    {#if isActive && item.subItems && item.subItems.length > 0}
       <!-- Nested list for sub-items of the current active item -->
       <ul class="app-subnav__section app-subnav__section--nested">
         {#each item.subItems as subItem (subItem.href)}
+          {@const isSubActive = subItem.href === activeGlobalItem}
           <li class="app-subnav__section-item">
             <a
               class="govuk-link govuk-link--no-visited-state govuk-link--no-underline app-subnav__link"
-              class:app-subnav__link--bold={subItem.href.split("#")[1] ===
-                page.url.hash.substring(1)}
+              class:app-subnav__link--bold={isSubActive}
               href={subItem.href}
-              onclick={() => {
-                if (subItem.href) {
-                  currentItem = subItem.href;
-                }
-              }}
             >
-              {subItem.text}
+              {@html subItem.text}
             </a>
           </li>
         {/each}
@@ -133,7 +104,7 @@
       <!-- Renders the flat list of items, if provided -->
       <ul class="app-subnav__section">
         {#each items as item (item.href)}
-          {@render navItem(item)}
+          {@render navItem(item, currentItem)}
         {/each}
       </ul>
     {/if}
@@ -145,7 +116,7 @@
       {/if}
       <ul class="app-subnav__section">
         {#each group.items as item (item.href)}
-          {@render navItem(item)}
+          {@render navItem(item, currentItem)}
         {/each}
       </ul>
     {/each}
@@ -198,6 +169,8 @@
     font-weight: 400;
     font-size: 0.875rem;
     line-height: 1.14286;
+
+    overflow-wrap: break-word;
   }
 
   @media print {

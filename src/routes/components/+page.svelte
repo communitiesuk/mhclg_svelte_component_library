@@ -65,7 +65,7 @@
   }
 </script>
 
-<div class="mt-10">
+<div class="">
   <div class="flex flex-col">
     <div>
       <h1 class="govuk-heading-xl">Components</h1>
@@ -86,7 +86,7 @@
       <div class="flex flex-col">
         {#each [...new Set(wrappersArray.map((el) => el.subFolder))] as subFolder, index}
           {#if index != 0}<DividerLine margin="2rem 0rem"></DividerLine>{/if}
-          <div class={subFolder != null ? "mx-4" : ""}>
+          <div class={subFolder != null ? "" : ""}>
             {#if subFolder != null}
               <h3 class="govuk-heading-m">
                 {subFolder}

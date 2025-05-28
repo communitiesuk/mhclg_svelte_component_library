@@ -8,72 +8,47 @@
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Basic HeaderNav Example with Hash Navigation",
+      heading: "1. Basic HeaderNav Example with Hash-Driven Active State",
       content: Example1,
     },
   ];
 
   // Props for Example 1
   let ex1ServiceName = "My Application";
-  let ex1NavigationItems = $state([
-    { text: "Home", href: "#/home", current: true },
-    { text: "Features", href: "#/features", current: false },
-    { text: "Pricing", href: "#/pricing", current: false },
-    { text: "Contact", href: "#/contact", current: false },
-  ]);
-  let ex1CurrentSection = $state("Home");
-  let ex1MobileNavOpen = $state(false);
+  let ex1HomeHref = "#/";
+  let ex1NavigationItems = [
+    { text: "Home", href: "#/home" },
+    { text: "Features", href: "#/features" },
+    { text: "Pricing", href: "#/pricing" },
+    { text: "Contact", href: "#/contact" },
+  ];
+  let ex1ActiveItemHref = $state("#/home");
+  let ex1IsMobileNavOpen = $state(false);
 
   function ex1ToggleMobileNav() {
-    ex1MobileNavOpen = !ex1MobileNavOpen;
+    ex1IsMobileNavOpen = !ex1IsMobileNavOpen;
   }
 
-  function updateSectionFromHash() {
-    if (typeof window !== "undefined") {
-      const hash = window.location.hash;
-      let section = "Home"; // Default section
-      if (hash.startsWith("#/features")) {
-        section = "Features";
-      } else if (hash.startsWith("#/pricing")) {
-        section = "Pricing";
-      } else if (hash.startsWith("#/contact")) {
-        section = "Contact";
-      } else if (hash.startsWith("#/home")) {
-        section = "Home";
-      }
-      ex1CurrentSection = section;
-      // Also update the current status in navigationItems for visual feedback if HeaderNav doesn't do it automatically based on currentSection prop alone
-      ex1NavigationItems = ex1NavigationItems.map((item) => ({
-        ...item,
-        current: item.text === section,
-      }));
-      // Optionally close mobile nav on navigation
-      if (ex1MobileNavOpen) {
-        ex1MobileNavOpen = false;
-      }
-    }
+  function updateActiveItemFromHash() {
+    const hash = window.location.hash;
+    const matched = ex1NavigationItems.find((item) =>
+      hash.startsWith(item.href),
+    );
+    ex1ActiveItemHref = matched ? matched.href : "#/home";
+    ex1IsMobileNavOpen = false;
   }
 
-  onMount(() => {
-    if (typeof window !== "undefined") {
-      // Initial update based on current hash, if any
-      updateSectionFromHash();
-      window.addEventListener("hashchange", updateSectionFromHash);
-      return () => {
-        window.removeEventListener("hashchange", updateSectionFromHash);
-      };
-    }
-  });
+  onMount(updateActiveItemFromHash);
 </script>
 
-<div class="my-20 p-2">
+<div>
   <h5 class="underline underline-offset-4 my-6">
     Examples of specific use cases
   </h5>
   <Accordion
     activeClass="text-[#EA580C] focus:ring-2 focus:ring-[#EA580C]"
     inactiveClass="text-gray-500 dark:text-gray-400 hover:bg-slate-100"
-    defaultClass=""
+    defaultClass="w-full"
   >
     {#each accordionSnippetSections as section}
       <AccordionItem>
@@ -93,18 +68,19 @@
       typical mobile breakpoint.
     </p>
     <p class="mb-2 text-sm text-gray-600">
-      Current simulated section: <strong class="text-orange-600"
-        >{ex1CurrentSection}</strong
-      > (Click links below)
+      Current active link (driven by ex1ActiveItemHref/URL Hash): <strong
+        class="text-orange-600">{ex1ActiveItemHref}</strong
+      >
     </p>
     <HeaderNav
       serviceName={ex1ServiceName}
+      homeHref={ex1HomeHref}
       navigationItems={ex1NavigationItems}
-      bind:currentSection={ex1CurrentSection}
-      bind:mobileNavIsOpen={ex1MobileNavOpen}
+      activeItemHref={ex1ActiveItemHref}
+      bind:isMobileNavOpen={ex1IsMobileNavOpen}
       onToggle={ex1ToggleMobileNav}
     />
-    {#if ex1MobileNavOpen}
+    {#if ex1IsMobileNavOpen}
       <div class="p-4 bg-gray-100 mt-2">
         <p class="font-semibold mb-2">Mobile Menu (Simulated)</p>
         <ul>
@@ -121,3 +97,5 @@
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
+
+<svelte:window on:hashchange={updateActiveItemFromHash} />

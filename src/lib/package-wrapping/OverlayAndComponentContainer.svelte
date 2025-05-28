@@ -120,15 +120,23 @@
 {/snippet}
 
 <div data-role="component-and-overlay-container">
+  <!-- === OVERLAY LAYER === -->
+  <!-- Absolutely positioned overlay that appears over the component when parameters are being edited -->
+  <!-- OVERLAY POSITIONING STRATEGY:
+       - position: absolute within relative container (component-and-overlay-container)
+       - Dynamically sized to match component dimensions (componentWidth/Height)
+       - z-index: 2 ensures it appears above component (z-index: 1)
+       - overflow-scroll handles content that exceeds overlay bounds
+       - Opacity coordination: overlay opaque, component dimmed when overlay active -->
   {#if overlayOpen && selectedCategory > -1}
     <div
       data-role="overlay-container"
-      class="absolute z-[2] p-0 my-0 ml-0 mr-20 overflow-scroll"
-      style="min-width: {Math.max(
-        768,
-        componentWidth + 2,
-      )}px; height: {componentHeight}px; opacity: {1.1 - 2 * componentOpacity}"
+      class="absolute z-[2] p-0 my-0 ml-0 overflow-scroll overflow-x-auto"
+      style="left: 0; right: 0; top: 0; height: {componentHeight}px; width: 100%; max-width: {componentWidth +
+        2}px; opacity: {1.1 - 2 * componentOpacity}"
     >
+      <!-- Sticky header: stays visible while scrolling through parameters -->
+      <!-- FLEX LAYOUT: space-between pushes title left and close button right -->
       <div class="p-5 flex flex-row justify-between bg-white sticky top-0">
         <h6 class="underline underline-offset-4">
           {parameterCategories.find((el, i) => i === selectedCategory)?.name}
@@ -146,7 +154,15 @@
         ></DoubleChevronButton>
       </div>
       <DividerLine></DividerLine>
+
+      <!-- Parameter grid: responsive 3-column layout for parameter editing -->
+      <!-- GRID LAYOUT STRATEGY:
+           - Column 1 (auto): Parameter names - sizes to content, constrained by responsive max-widths
+           - Column 2 (auto): Input values - sizes to content, constrained by responsive max-widths  
+           - Column 3 (1fr): Descriptions - takes remaining space, can shrink due to min-width: 0
+           - Works with ComponentDemo's flex-1 min-w-0 constraint to prevent horizontal overflow -->
       <div data-role="grid-container" class="m-2 p-5 text-base">
+        <!-- Grid headers: establish column structure -->
         <div data-role="item" class="font-bold">Parameter</div>
         <div data-role="item" class="font-bold">Value</div>
         <div data-role="item" class="font-bold">Description</div>
@@ -155,6 +171,10 @@
             <div class="col-span-full">
               <DividerLine></DividerLine>
             </div>
+            <!-- RESPONSIVE COLUMN CONSTRAINTS: 
+                 - data-width attribute triggers CSS max-width based on demoScreenWidth
+                 - Prevents parameter names from becoming too wide on any screen size
+                 - hyphens-auto + break-words handle text overflow within constraints -->
             <div
               data-role="item"
               data-width={demoScreenWidth < 1024
@@ -165,6 +185,8 @@
               class="m-1 hyphens-auto break-words"
             >
               {parameter.name}
+              <!-- FLEX LAYOUT: parameter type indicators (prop/required/binded pills) -->
+              <!-- flex-row gap-0.5 creates horizontal row with minimal spacing -->
               <div class="flex flex-row gap-0.5">
                 {#each [{ check: parameter.isProp, color: "#ba029b", yAdj: 0, label: "p" }, { check: parameter.isRequired, color: "#00695c", yAdj: 0.75, label: "r" }, { check: parameter.isBinded, color: "#1B4079", yAdj: 1.25, label: "b" }] as pill}
                   {#if pill.check}
@@ -243,6 +265,8 @@
                 {/each}
               </div>
             </div>
+            <!-- VALUE INPUT COLUMN: responsive width constraints for input components -->
+            <!-- GRID BEHAVIOR: auto-sizing column with max-width constraints prevents inputs from becoming too wide -->
             <div
               data-role="item"
               data-width={demoScreenWidth < 1024
@@ -258,6 +282,8 @@
                 {parameter}
               ></InputForParameterUpdated>
             </div>
+            <!-- DESCRIPTION COLUMN: flexible width (1fr) that shrinks when needed -->
+            <!-- OVERFLOW HANDLING: inherits min-width: 0 from grid-container, allows text wrapping -->
             <div data-role="item" class="m-1">
               {#if typeof parameter.description === "string"}
                 {parameter.description}
@@ -288,13 +314,16 @@
     </div>
   {/if}
 
+  <!-- === COMPONENT CONTAINER === -->
+  <!-- Main container for the component being demonstrated, with responsive width constraints -->
   <div
     data-role="component-container-centered"
     class="px-0 py-5 rounded-md {overlayOpen
       ? ''
-      : 'border border-solid border-[#d1d5db]}'}"
-    style="width: {demoScreenWidth}px;"
+      : 'border border-solid border-[#d1d5db]'}"
+    style="width: 100%; max-width: {demoScreenWidth}px;"
   >
+    <!-- Component wrapper: provides minimum height and opacity control for overlay interaction -->
     <div
       class="z-[1]"
       style="z-index: 1; min-height: 600px; opacity: {overlayOpen
@@ -303,6 +332,7 @@
       bind:clientWidth={componentWidth}
       bind:clientHeight={componentHeight}
     >
+      <!-- Actual component rendering with error boundary -->
       {#if !Object.values(parametersParsingErrorsObject).includes(true)}
         {@render Component()}
       {:else}
@@ -313,25 +343,38 @@
 </div>
 
 <style>
+  /* === POSITIONING CONTEXT === */
   [data-role="component-and-overlay-container"] {
-    display: inline-block;
+    position: relative; /* Creates positioning context for absolutely positioned overlay */
+    display: block;
+    width: 100%; /* Takes full width of parent container */
   }
 
+  /* === OVERLAY STYLING === */
   [data-role="overlay-container"] {
-    border: solid #d1d5db 1px;
-    border-radius: 5px;
+    border: solid #d1d5db 1px; /* Visual boundary for overlay */
+    border-radius: 5px; /* Rounded corners to match component container */
   }
 
+  /* === RESPONSIVE PARAMETER GRID === */
   [data-role="grid-container"] {
     display: grid;
-    grid-template-columns: auto auto 1fr;
-    gap: 20px;
+    grid-template-columns: auto auto 1fr; /* Parameter name | Value input | Description */
+    gap: 20px; /* Spacing between grid items */
+    min-width: 0; /* Critical: allows grid to shrink and prevents overflow */
+    /* CONSTRAINT HIERARCHY:
+       1. ComponentDemo provides flex-1 min-w-0 (parent constraint)
+       2. This grid inherits that constraint and can shrink below content width
+       3. Individual columns use max-width + auto/1fr to distribute space efficiently
+       4. Text wrapping (break-words, hyphens-auto) handles content overflow within columns */
   }
 
+  /* === GRID ITEM STYLING === */
   [data-role="item"] {
-    color: #6b7280;
+    color: #6b7280; /* Consistent text color for all grid items */
   }
 
+  /* Remove default margins from first/last paragraphs in grid items */
   [data-role="item"] p:first-of-type {
     margin-top: 0px;
     padding-top: 0px;
@@ -341,31 +384,43 @@
     margin-bottom: 0px;
     padding-bottom: 0px;
   }
+
+  /* === RESPONSIVE COLUMN WIDTHS === */
+  /* RESPONSIVE STRATEGY: 
+     - Applied via data-width attributes based on demoScreenWidth breakpoints
+     - Works with CSS Grid auto-sizing: columns size to content up to max-width limit
+     - Prevents columns from becoming too wide/narrow at different screen sizes
+     - Coordinates with ComponentDemo's width constraints for optimal space usage */
+
+  /* Small screens: Compact parameter names and values */
   [data-width="col1Sm"] {
-    max-width: 150px;
-  }
-
-  [data-width="col1Md"] {
-    max-width: 225px;
-  }
-
-  [data-width="col1Lg"] {
-    max-width: 300px;
+    max-width: 150px; /* Parameter name column - small screens */
   }
 
   [data-width="col2Sm"] {
-    max-width: 350px;
+    max-width: 350px; /* Value input column - small screens */
+  }
+
+  /* Medium screens: More space for readability */
+  [data-width="col1Md"] {
+    max-width: 225px; /* Parameter name column - medium screens */
   }
 
   [data-width="col2Md"] {
-    max-width: 450px;
+    max-width: 450px; /* Value input column - medium screens */
+  }
+
+  /* Large screens: Maximum space for comfortable editing */
+  [data-width="col1Lg"] {
+    max-width: 300px; /* Parameter name column - large screens */
   }
 
   [data-width="col2Lg"] {
-    max-width: 550px;
+    max-width: 550px; /* Value input column - large screens */
   }
 
+  /* === SVG ICON STYLING === */
   svg {
-    overflow: visible;
+    overflow: visible; /* Ensures SVG icons don't get clipped at container edges */
   }
 </style>

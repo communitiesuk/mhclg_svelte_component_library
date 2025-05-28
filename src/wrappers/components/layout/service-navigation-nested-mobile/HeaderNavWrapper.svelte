@@ -82,6 +82,7 @@
   //@ts-nocheck
   import { page } from "$app/state";
   import { browser } from "$app/environment";
+  import { onMount } from "svelte";
 
   import WrapperDetailsUpdate from "$lib/package-wrapping/WrapperDetailsUpdate.svelte";
   import ParsingErrorToastsContainer from "$lib/package-wrapping/ParsingErrorToastsContainer.svelte";
@@ -120,8 +121,20 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let mobileNavIsOpen = $state(false);
-  let currentSection = $state("Home");
+  let isMobileNavOpen = $state(false);
+  let homeHref = $state("/");
+  // activeItemHref is always synced to the current URL hash for demo simplicity
+
+  let activeItemHref = $state(window.location.hash);
+
+  function syncActiveItemHrefToHash() {
+    activeItemHref =
+      window.location.hash ||
+      parametersSourceArray.find((item) => item.name === "navigationItems")
+        .value[0].href;
+  }
+
+  onMount(syncActiveItemHrefToHash);
 
   /**
    * ! Step 3 - Add your props
@@ -178,37 +191,42 @@
         name: "navigationItems",
         category: "Content & Appearance",
         value: [
-          { text: "Home", href: "/", current: true },
-          { text: "Components", href: "/components", current: false },
-          { text: "Patterns", href: "/patterns", current: false },
-          { text: "Community", href: "/community", current: false },
+          { text: "Home", href: "#home" },
+          { text: "Components", href: "#components" },
+          { text: "Patterns", href: "#patterns" },
+          { text: "Community", href: "#community" },
         ],
         description: {
           markdown: true,
           arr: [
             "An array of navigation item objects to display.",
-            "Each object should have <code>text</code> (string), <code>href</code> (string), and <code>current</code> (boolean) properties.",
+            "Each object should have <code>text</code> (string) and <code>href</code> (string) properties.",
+            "The active item is controlled by the <code>activeItemHref</code> prop.",
           ],
         },
       },
       {
-        name: "currentSection",
-        category: "Stateful & Bindable",
-        isBinded: true,
-        options: ["Home", "Components", "Patterns", "Community"],
-        value: "Home",
+        name: "homeHref",
+        category: "Navigation",
+        value: "/",
         description: {
           markdown: true,
-          arr: [
-            "A string indicating the currently active top-level section. This helps highlight the active link.",
-            "Should match one of the <code>text</code> properties in the <code>navigationItems</code>.",
-            "This prop is bindable.",
-          ],
+          arr: ["The URL that the service name/logo links to."],
         },
       },
       {
-        name: "mobileNavIsOpen",
-        category: "Stateful & Bindable",
+        name: "activeItemHref",
+        category: "Navigation",
+        isBinded: true,
+        value: activeItemHref,
+        description: {
+          markdown: true,
+          arr: ["The href of the currently active top-level navigation item."],
+        },
+      },
+      {
+        name: "isMobileNavOpen",
+        category: "Menu State",
         isBinded: true,
         value: false,
         description: {
@@ -216,7 +234,7 @@
           arr: [
             "A boolean state that controls the visibility of the mobile navigation menu.",
             "Set to <code>true</code> to show the mobile menu, <code>false</code> to hide it.",
-            "This prop is typically bound using <code>bind:mobileNavIsOpen</code>.",
+            "This prop is typically bound using <code>bind:isMobileNavOpen</code>.",
           ],
         },
       },
@@ -226,9 +244,9 @@
         propType: "fixed",
         isRequired: true,
         value: function () {
-          mobileNavIsOpen = !mobileNavIsOpen;
+          isMobileNavOpen = !isMobileNavOpen;
           window.alert(
-            `The onToggle function has been triggered. Mobile nav is now ${mobileNavIsOpen ? "open" : "closed"}. Open the Stateful & Bindable and Event Handlers panels to see the updated mobileNavIsOpen and onToggle function values.`,
+            `The onToggle function has been triggered. Mobile nav is now ${isMobileNavOpen ? "open" : "closed"}. Open the Stateful & Bindable and Event Handlers panels to see the updated isMobileNavOpen and onToggle function values.`,
           );
           this.functionElements.counter += 1;
         },
@@ -238,7 +256,7 @@
   // This function is called when the mobile menu toggle button is clicked.
   // It should handle the logic to open or close the mobile navigation.
   // For example, by updating a reactive state variable:
-  // mobileNavIsOpen = !mobileNavIsOpen;
+  // isMobileNavOpen = !isMobileNavOpen;
   alert("Mobile navigation toggled!");
 }`,
         },
@@ -400,14 +418,22 @@
   !   Step 5 - Create a context for the component and pass in any binded props using the bind:directive
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
+
+<svelte:window on:hashchange={syncActiveItemHrefToHash} />
+
 {#snippet Component()}
   <p class="govuk-body">
     To test the mobile menu, please reduce your screen width to below a typical
     mobile breakpoint.
   </p>
   <div>
-    <HeaderNav {...parametersObject} bind:mobileNavIsOpen bind:currentSection />
-    {#if mobileNavIsOpen}
+    <HeaderNav
+      {...parametersObject}
+      {homeHref}
+      bind:activeItemHref
+      bind:isMobileNavOpen
+    />
+    {#if isMobileNavOpen}
       <div class="p-4 bg-gray-100">Mobile Menu Area (Simulated)</div>
     {/if}
   </div>
@@ -455,6 +481,6 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5">
+<div id="examples" data-role="examples-section">
   <Examples></Examples>
 </div>

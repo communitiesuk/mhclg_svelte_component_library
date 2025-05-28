@@ -1,4 +1,10 @@
-export function getColor(value, breaks, colors) {
+import type { FeatureCollection } from "geojson";
+
+export function getColor(
+  value: number,
+  breaks: number[],
+  colors: string[],
+): string {
   let color;
   let found = false;
   let i = 1;
@@ -13,7 +19,7 @@ export function getColor(value, breaks, colors) {
   return color ? color : "lightgrey";
 }
 
-export function filterGeo(geo, year) {
+export function filterGeo(geo: FeatureCollection, year: number | string) {
   let filtered = JSON.parse(JSON.stringify(geo));
   filtered.features = filtered.features
     .filter((f) => {
@@ -93,13 +99,13 @@ export function jenksBreaks(data, numBreaks) {
   return breaks;
 }
 
-export function quantileBreaks(data, numBreaks) {
+export function quantileBreaks(data: number[], numBreaks: number): number[] {
   // Sort the data array
   data = data.sort((a, b) => a - b);
 
   let len = data.length;
 
-  let breaks = [
+  let breaks: number[] = [
     //   data[0]
     //   data[Math.floor(len * 0.2)],
     //   data[Math.floor(len * 0.4)],

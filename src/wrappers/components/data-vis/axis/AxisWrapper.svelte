@@ -249,6 +249,19 @@
         value: 5,
       },
       {
+        name: "prefix",
+        category: "formattingTick",
+        value: "",
+      },
+      {
+        name: "suffix",
+        category: "formattingTick",
+        value: "",
+      },
+      { name: "floor", category: "formatting", value: 0 },
+      { name: "ceiling", category: "formatting", value: 100 },
+      { name: "yearsInput", category: "formattingTick", value: false },
+      {
         name: "orientationAxis",
         category: "customisations",
         isProp: false,
@@ -518,4 +531,4 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5"></div>
+<div id="examples" data-role="examples-section"></div>

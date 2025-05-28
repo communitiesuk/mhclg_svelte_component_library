@@ -54,3 +54,33 @@ export function kebabToPascalCase(str) {
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1)) // Capitalize first letter
     .join(""); // Join without spaces
 }
+
+/**
+ * Forces a line break before the third capital letter in a string
+ * @param {string} text - The text to process
+ * @returns {string} - The text with <br> inserted before the third capital letter
+ */
+export function forceWrapAtThirdCapital(text) {
+  if (!text || typeof text !== "string") return text;
+
+  let capitalCount = 0;
+  let result = "";
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+
+    // Check if current character is uppercase
+    if (char >= "A" && char <= "Z") {
+      capitalCount++;
+
+      // Insert forced line break before the third capital letter
+      if (capitalCount === 3) {
+        result += "<br>";
+      }
+    }
+
+    result += char;
+  }
+
+  return result;
+}

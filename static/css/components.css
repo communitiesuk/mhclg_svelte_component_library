@@ -31,7 +31,7 @@
   }
 
   [data-role="examples-section"] {
-    @apply max-w-screen-lg mx-auto my-0;
+    @apply max-w-screen-lg my-0;
   }
   [data-role="demo-section"] {
     @apply max-w-screen-lg mx-auto my-0;

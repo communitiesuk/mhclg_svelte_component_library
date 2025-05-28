@@ -151,6 +151,11 @@
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
 
+  let activeSectionHref = $state("#components");
+  let activeDetailHref = $state(
+    "/components/layout/service-navigation-nested-mobile/mobile-nav",
+  );
+
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -189,6 +194,43 @@
    * ?      <isRequired> - (optional, default = false) - Should be set to true for any props which the component will not functionally properly without (e.g. props with no default value, props which will cause erros if undefined).
    *
    */
+
+  // Persistent state for onNavigate's functionElements
+  let onNavigateFunctionElementsData = $state({
+    counter: 0,
+    dataset: { lastHref: null },
+    functionAsString: `function (href, event) {
+  window.alert(
+    'The onNavigate function has been triggered. Open the \'Event Handlers\' panel to see updated values.'
+  );
+  if (event && typeof event.preventDefault === 'function') {
+    event.preventDefault();
+  }
+  this.functionElements.counter += 1;
+  this.functionElements.dataset.lastHref = href;
+  activeDetailHref = href;
+  try {
+    const currentSections = JSON.parse(getValue('sections'));
+    const parentSection = currentSections.find(section => {
+      if (!section.items) return false;
+      return section.items.some(item => {
+        if ('items' in item && Array.isArray(item.items)) {
+          return item.items.some(subItem => subItem.href === href);
+        } else if ('href' in item) {
+          return item.href === href;
+        }
+        return false;
+      });
+    });
+    if (parentSection && parentSection.href) {
+      activeSectionHref = parentSection.href;
+    }
+  } catch (e) {
+    console.error('Error finding parent section:', e);
+  }
+}`,
+  });
+
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
@@ -199,7 +241,8 @@
           markdown: true,
           arr: [
             "Controls the visibility of the mobile navigation panel. Set to <code>true</code> to show, <code>false</code> to hide.",
-            "This is typically controlled by a parent component (e.g., a toggle button in <code>HeaderNav</code>).",
+            "This prop is typically controlled by a parent component (e.g., a toggle button in <code>HeaderNav</code>).",
+            "When <code>false</code>, the navigation panel is hidden from view and <code>aria-hidden</code> is set to true.",
           ],
         },
       },
@@ -210,14 +253,12 @@
         value: [
           {
             title: "Home",
-            href: "/#home-wrapper",
-            current: true,
+            href: "#home",
             items: [{ text: "Overview", href: "/#home-overview-wrapper" }],
           },
           {
             title: "Components",
-            href: "/#components-wrapper",
-            current: false,
+            href: "#components",
             items: [
               {
                 title: "Layout",
@@ -242,7 +283,6 @@
           {
             title: "Patterns",
             href: "/#patterns-wrapper",
-            current: false,
             items: [
               { text: "Forms", href: "/patterns/forms" },
               { text: "Tables", href: "/patterns/tables" },
@@ -251,7 +291,6 @@
           {
             title: "Community",
             href: "/#community-wrapper",
-            current: false,
             items: [
               { text: "Updates", href: "/community/updates" },
               { text: "Contributing", href: "/community/contributing" },
@@ -262,29 +301,40 @@
           markdown: true,
           arr: [
             "An array of <code>NavSection</code> objects that define the structure and content of the mobile navigation.",
-            "Each section object has a <code>title</code>, <code>href</code>, optional <code>current</code> status, and an <code>items</code> array.",
-            "The <code>items</code> array can contain <code>SubNavItem</code> objects (with <code>text</code>, <code>href</code>, <code>current</code>) or nested group objects (with <code>title</code> and an <code>items</code> array of <code>SubNavItem</code>).",
-            "Use hashed hrefs (e.g. <code>/#some-id</code>) if you want to test navigation within this wrapper page without full page reloads.",
+            "Each section object has a <code>title</code>, optional <code>href</code> (for the section header link), and an <code>items</code> array.",
+            "The <code>items</code> array can contain <code>SubNavItem</code> objects (with <code>text</code> and <code>href</code>) or group objects (with <code>title</code> and an <code>items</code> array of <code>SubNavItem</code>).",
+            "The active state of sections and items is determined by <code>activeSectionHref</code> and <code>activeDetailHref</code> props, not by a <code>current</code> property.",
+            "Use hash-based hrefs (e.g. <code>#some-id</code>) for in-page navigation or demo purposes.",
           ],
         },
       },
       {
-        name: "currentSection",
+        name: "activeSectionHref",
         category: "State & Behavior",
-        options: [
-          "Home",
-          "Components",
-          "Patterns",
-          "Community",
-          "Other Section",
-        ],
-        value: "Home",
+        isBinded: true,
+        value: activeSectionHref,
         description: {
           markdown: true,
           arr: [
-            "A string indicating the currently active top-level section (e.g., 'Home', 'Components').",
-            "This helps highlight the relevant section in the mobile navigation and can be used by the component to determine which section is initially expanded.",
-            "Should match one of the <code>title</code> properties in the <code>sections</code> array for intended behavior.",
+            "The <code>href</code> of the currently active main section (e.g., a top-level category like <code>'/components'</code> or <code>'#components'</code>).",
+            "This highlights the active section header and determines which section is initially expanded if the user hasn't toggled any section.",
+            "Should match the <code>href</code> of one of the <code>NavSection</code> objects in the <code>sections</code> array.",
+            "If the user toggles a section, that explicit state takes precedence over this prop for expansion.",
+          ],
+        },
+      },
+      {
+        name: "activeDetailHref",
+        category: "State & Behavior",
+        isBinded: true,
+        value: activeDetailHref,
+        description: {
+          markdown: true,
+          arr: [
+            "The <code>href</code> of the currently active navigation item (e.g., a link to a specific page or component).",
+            "This highlights the specific active link within an expanded section.",
+            "Should match the <code>href</code> of a <code>SubNavItem</code> within the <code>sections</code> array.",
+            "This prop is used for visual highlighting only; navigation is handled by the <code>onNavigate</code> event handler.",
           ],
         },
       },
@@ -294,53 +344,50 @@
         propType: "fixed",
         isRequired: true,
         value: function (href, event) {
+          window.alert(
+            `The onNavigate function has been triggered. Open the 'Event Handlers' panel to see updated values.`,
+          );
+
           if (event && typeof event.preventDefault === "function") {
             event.preventDefault();
           }
-          if (this && this.functionElements) {
-            window.alert(
-              `MobileNav demo: Navigating to ${href}. Default navigation PREVENTED. In a real app, this would trigger page navigation and likely close the mobile menu.`,
-            );
-            this.functionElements.counter += 1;
-            if (this.functionElements.dataset) {
-              this.functionElements.dataset.lastHref = href;
+
+          // Mutate the persistent $state object for counter and dataset
+          onNavigateFunctionElementsData.counter += 1;
+          onNavigateFunctionElementsData.dataset.lastHref = href;
+
+          activeDetailHref = href;
+          try {
+            const currentSections = JSON.parse(getValue("sections"));
+            const parentSection = currentSections.find((section) => {
+              if (!section.items) return false;
+              return section.items.some((item) => {
+                if ("items" in item && Array.isArray(item.items)) {
+                  return item.items.some((subItem) => subItem.href === href);
+                } else if ("href" in item) {
+                  return item.href === href;
+                }
+                return false;
+              });
+            });
+
+            if (parentSection && parentSection.href) {
+              activeSectionHref = parentSection.href;
             }
-          } else {
-            window.alert(
-              `MobileNav demo: Navigating to ${href}. Default navigation PREVENTED. (Standard function call)`,
-            );
+          } catch (e) {
+            console.error("Error finding parent section:", e);
           }
         },
-        functionElements: {
-          counter: 0,
-          dataset: { lastHref: null },
-          functionAsString: `'''function (href, event) {
-  // event parameter is passed by MobileNav.svelte
-  if (event && typeof event.preventDefault === 'function') {
-    event.preventDefault(); // Prevent default browser navigation for demo purposes
-  }
-
-  // This function is called when a navigation link (SubNavItem)
-  // inside the mobile menu is clicked.
-  // It receives the 'href' of the clicked link as an argument.
-  // Example implementation:
-  // import { goto } from '$app/navigation';
-  // import { getContext } from 'svelte';
-  // const mobileMenuStore = getContext('mobileMenuStore'); // Or manage state via props/context
-  // mobileMenuStore.close(); // Assuming a method to close the menu
-  // goto(href);
-  alert("MobileNav: Navigating to " + href + ". Default navigation prevented.");
-}'''`,
-        },
+        functionElements: onNavigateFunctionElementsData,
         description: {
           markdown: true,
           arr: [
-            "An event handler function that is called when a navigable item within the mobile menu is clicked.",
-            "It receives the <code>href</code> (string) of the clicked item and the original <code>MouseEvent</code> as arguments.",
-            "Access to the <code>MouseEvent</code> allows for more advanced control, such as:",
-            "<ul><li>Checking for modifier keys (e.g., <code>event.ctrlKey</code>, <code>event.metaKey</code>) to alter behavior (like opening in a new tab).</li><li>Conditionally calling <code>event.preventDefault()</code> to stop the default link navigation based on specific logic.</li></ul>",
-            "The main purpose is to implement the desired navigation logic (e.g., using SvelteKit's <code>goto</code>) and potentially close the mobile menu.",
-            "For this demo, <code>event.preventDefault()</code> is called unconditionally to stop the browser from following the link directly and allow observation of the callback.",
+            "Event handler called when a navigation link (<code>SubNavItem</code>) is clicked in the mobile menu.",
+            "Receives the <code>href</code> of the clicked item and the original <code>MouseEvent</code> as arguments.",
+            "By default, updates <code>activeDetailHref</code> to the clicked item's href, and finds and updates <code>activeSectionHref</code> to the parent section's href.",
+            "In a real app, this handler would handle actual navigation to another location (e.g., using SvelteKit's <code>goto</code>) and may close the mobile menu.",
+            "If <code>event.preventDefault()</code> is called, default browser navigation is prevented.",
+            "The demo implementation also increments a counter and tracks the last href for demonstration purposes.",
           ],
         },
       },
@@ -494,7 +541,11 @@
     class="border border-neutral-300 min-h-[400px] bg-gray-50 demo-mobile-nav-container"
   >
     {#if parametersObject.isOpen}
-      <MobileNav {...parametersObject}></MobileNav>
+      <MobileNav
+        {...parametersObject}
+        bind:activeSectionHref
+        bind:activeDetailHref
+      ></MobileNav>
     {:else}
       <p class="p-4 text-gray-500 italic">
         MobileNav is currently closed (<code>isOpen</code> is false). Toggle it via
@@ -546,7 +597,7 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5">
+<div id="examples" data-role="examples-section">
   <Examples></Examples>
 </div>
 

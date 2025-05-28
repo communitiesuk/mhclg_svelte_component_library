@@ -181,6 +181,24 @@
         visible: { name: "standardControls", value: false },
       },
       {
+        name: "maxZoom",
+        isProp: true,
+        description:
+          "Add zoom in and out, and 'reset bearing to north' buttons",
+        value: 10,
+        category: "UI",
+        visible: { name: "standardControls", value: false },
+      },
+      {
+        name: "minZoom",
+        isProp: true,
+        description:
+          "Add zoom in and out, and 'reset bearing to north' buttons",
+        value: 0,
+        category: "UI",
+        visible: { name: "standardControls", value: false },
+      },
+      {
         name: "navigationControlPosition",
         isProp: true,
         description: "The location of the navigation control",
@@ -263,6 +281,12 @@
           { name: "standardControls", value: false },
           { name: "scaleControl", value: true },
         ],
+      },
+      {
+        name: "mapHeight",
+        category: "Styling",
+        isProp: true,
+        value: 400,
       },
       {
         name: "styleSheet",
@@ -478,11 +502,37 @@
         description: "The initial centre of the map, in [lng, lat] form",
       },
       {
+        name: "maxBounds",
+        isProp: true,
+        category: "View",
+        value: [
+          [-23.899, 47.5943],
+          [13.421, 59.8988],
+        ],
+        description: "The initial centre of the map, in [lng, lat] form",
+      },
+      {
         name: "zoom",
         isProp: true,
         category: "View",
         value: 5,
         description: "The initial zoom level",
+      },
+      {
+        name: "hash",
+        isProp: true,
+        description:
+          "Set to true to track the map viewport in the URL hash. If the URL hash is set, that overrides initial viewport settings.",
+        category: "View",
+        value: false,
+      },
+      {
+        name: "useInitialHash",
+        isProp: true,
+        description:
+          "If the URL has a valid hash that will override initial viewport settings, even if hash is false. Recommended.",
+        value: true,
+        category: "View",
       },
     ]),
   );
@@ -669,4 +719,4 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5"></div>
+<div id="examples" data-role="examples-section"></div>

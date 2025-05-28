@@ -2,6 +2,7 @@ export const codeBlock1 = `
 <script>
   // Import the SideNav component
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
+  import { onMount } from "svelte";
 
   // Sample data for Example 1: A single group of items
   const example1Groups = [
@@ -15,12 +16,21 @@ export const codeBlock1 = `
       ],
     },
   ];
+
+  // Sync currentItem to the URL hash for demo simplicity
+  let currentItem = $state(window.location.hash);
+  function syncCurrentItemToHash() {
+    currentItem = window.location.hash;
+  }
+  onMount(syncCurrentItemToHash);
 </script>
+
+<svelte:window on:hashchange={syncCurrentItemToHash} />
 
 <SideNav
   title="Football Clubs Navigation"
   groups={example1Groups}
-  currentItem="#liverpool-fc"
+  {currentItem}
   activeItemBackgroundColor="#fff9c4"
 />
 `;
@@ -28,6 +38,7 @@ export const codeBlock1 = `
 export const codeBlock2 = `
 <script>
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
+  import { onMount } from "svelte";
 
   // Sample data for Example 2: Alternating flat items and groups
   const example2Items = [ // First flat item
@@ -71,13 +82,22 @@ export const codeBlock2 = `
       ]
     }
   ];
+
+  // Sync currentItem to the URL hash for demo simplicity
+  let currentItem = $state(window.location.hash);
+  function syncCurrentItemToHash() {
+    currentItem = window.location.hash;
+  }
+  onMount(syncCurrentItemToHash);
 </script>
+
+<svelte:window on:hashchange={syncCurrentItemToHash} />
 
 <SideNav
   title="Alternating Flat Items and Groups"
   items={example2Items}
   groups={example2Groups}
-  currentItem="#articles" // Updated currentItem
+  {currentItem}
   activeItemBackgroundColor="#e0f2fe"
 />
 `;

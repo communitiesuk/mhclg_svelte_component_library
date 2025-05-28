@@ -174,6 +174,28 @@
         visible: false,
         value: data.metaData,
       },
+      {
+        name: "caption",
+        category: "Input props",
+        value: `This is the table caption`,
+        description: {
+          markdown: true,
+          arr: [`This is the caption of the table. It sits above the table.`],
+        },
+        rows: 2,
+      },
+      {
+        name: "colourScale",
+        category: "Input props",
+        propType: "radio",
+        options: ["Off", "On"],
+        description: {
+          markdown: true,
+          arr: [
+            `Turn the colour scale on if you want to more easily gauge the magnitude of the value relative to highest and lowest values of that metric.`,
+          ],
+        },
+      },
     ]),
   );
 
@@ -361,6 +383,6 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5">
+<div id="examples" data-role="examples-section">
   <Examples></Examples>
 </div>

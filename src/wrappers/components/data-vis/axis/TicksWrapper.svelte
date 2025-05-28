@@ -97,8 +97,9 @@
 
   import Ticks from "$lib/components/data-vis/axis/Ticks.svelte";
   import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
-  import CategoryLabel from "$lib/components/data-vis/line-chart/CategoryLabel.svelte";
   import { tick } from "svelte";
+  import SeriesLabel from "$lib/components/data-vis/line-chart/SeriesLabel.svelte";
+
 
   let { data } = $props();
 
@@ -542,4 +543,4 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5"></div>
+<div id="examples" data-role="examples-section"></div>

@@ -1,5 +1,4 @@
 <script>
-  import { FolderArrowRightSolid } from "flowbite-svelte-icons";
   import Ticks from "./Ticks.svelte";
 
   let {
@@ -12,19 +11,9 @@
     orientation,
     ceiling,
     floor,
-    prefix,
-    suffix,
-    yearsInput,
+    tickFormattingFunction,
     zeroTranslationValue,
-
   } = $props();
-
-  $inspect(
-    orientation.position === "zero",
-    orientation.axis === "y",
-    zeroTranslationValue,
-    orientation.position === "zero" && orientation.axis === "y",
-  );
 </script>
 
 <g
@@ -58,10 +47,8 @@
       {numberOfTicks}
       {orientation}
       {floor}
+      {tickFormattingFunction}
       {ceiling}
-      {yearsInput}
-      {suffix}
-      {prefix}
     ></Ticks>
   {/key}
 </g>

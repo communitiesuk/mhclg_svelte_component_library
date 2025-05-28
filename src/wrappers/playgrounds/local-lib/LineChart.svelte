@@ -77,7 +77,7 @@
       labelClicked = null;
     }
   }
-
+  $inspect(tickFormattingFunctionY);
   // $inspect(
   //   primaryAreas,
   //   data.dataInFormatForLineChart
@@ -130,6 +130,7 @@
             values={yearsMinMax}
             bind:ticksArray={ticksXArray}
             orientation={{ axis: "x", position: "bottom" }}
+            tickFormattingFunction={tickFormattingFunctionX}
           ></Axis>
 
           <Axis
@@ -140,6 +141,7 @@
             values={allValues}
             bind:ticksArray={ticksYArray}
             orientation={{ axis: "y", position: "left" }}
+            tickFormattingFunction={tickFormattingFunctionY}
           ></Axis>
         {/key}
 

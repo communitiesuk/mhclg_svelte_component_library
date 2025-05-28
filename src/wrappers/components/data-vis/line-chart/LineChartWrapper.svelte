@@ -150,6 +150,13 @@
   );
   let activeMarkerId = $state();
 
+  let tickFormattingFunctionY = $derived(function (tick, index) {
+    return getValue("prefixY") + tick + getValue("suffixY");
+  });
+
+  let tickFormattingFunctionX = $derived(function (tick, index) {
+    return getValue("prefixX") + tick + getValue("suffixX");
+  });
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -565,8 +572,6 @@
         name: "yFunction",
         category: "yScale",
       },
-      { name: "yearsInputX", category: "formattingTick", value: false },
-      { name: "yearsInputY", category: "formattingTick", value: false },
       {
         name: "prefixX",
         category: "formattingTick",
@@ -586,6 +591,24 @@
         name: "suffixY",
         category: "formattingTick",
         value: "",
+      },
+      {
+        name: "tickFormattingFunctionY",
+        category: "formattingTick",
+        functionElements: {
+          functionAsString: `function (tick, index) {
+    return getValue("prefix") + tick + getValue("suffix");
+  }`,
+        },
+      },
+      {
+        name: "tickFormattingFunctionX",
+        category: "formattingTick",
+        functionElements: {
+          functionAsString: `function (tick, index) {
+    return getValue("prefix") + tick + getValue("suffix");
+  }`,
+        },
       },
       {
         name: "lineFunction",
@@ -809,6 +832,8 @@
     basicLineParams,
     nothingSelected,
     globalTierRules,
+    tickFormattingFunctionY,
+    tickFormattingFunctionX,
   });
 
   /**

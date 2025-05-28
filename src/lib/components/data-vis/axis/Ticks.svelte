@@ -14,14 +14,13 @@
     tickFormattingFunction = function (tick) {
       return tick;
     },
-    yearsInput,
   } = $props();
 
   let tickArrayDimensions = $state([]);
 
   let overlapFlag = $state(true);
 
-  let temporaryArrayForCalculationChecking = $derived(
+  let checkCalArray = $derived(
     tickArrayDimensions.map((el, i) => {
       if (el != undefined) {
         return [
@@ -33,13 +32,9 @@
   );
 
   let checkForOverlap = $derived(
-    temporaryArrayForCalculationChecking
-      .filter((el, i) => i < temporaryArrayForCalculationChecking.length - 1)
-      .map(
-        (el, i) =>
-          temporaryArrayForCalculationChecking[i][1] <=
-          temporaryArrayForCalculationChecking[i + 1][0],
-      )
+    checkCalArray
+      .filter((el, i) => i < checkCalArray.length - 1)
+      .map((el, i) => checkCalArray[i][1] <= checkCalArray[i + 1][0])
       .every((el) => el === true),
   );
 

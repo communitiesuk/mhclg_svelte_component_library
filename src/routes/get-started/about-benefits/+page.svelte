@@ -243,52 +243,52 @@
     </ul>
 
     <h2 class="govuk-heading-l govuk-!-margin-top-8">
-        Government Design Principles & Standards
+      Government Design Principles & Standards
     </h2>
 
     <p class="govuk-body">
-    The MHCLG Svelte Component Library helps teams that work on government
-    services follow the <a
+      The MHCLG Svelte Component Library helps teams that work on government
+      services follow the <a
         class="govuk-link"
         href="https://www.gov.uk/guidance/government-design-principles"
         >Government Design Principles</a
-    >
-    and
-    <a class="govuk-link" href="https://www.gov.uk/service-manual"
+      >
+      and
+      <a class="govuk-link" href="https://www.gov.uk/service-manual"
         >GOV.UK Service Manual</a
-    >. This library also follows the
-    <a class="govuk-link" href="https://www.gov.uk/guidance/style-guide"
+      >. This library also follows the
+      <a class="govuk-link" href="https://www.gov.uk/guidance/style-guide"
         >GOV.UK style guide</a
-    >
-    and
-    <a class="govuk-link" href="https://www.gov.uk/guidance/content-design"
+      >
+      and
+      <a class="govuk-link" href="https://www.gov.uk/guidance/content-design"
         >GOV.UK content design guidance</a
-    >.
+      >.
     </p>
 
     <p class="govuk-body">
-    By using our components, you can be confident that your service will:
+      By using our components, you can be confident that your service will:
     </p>
 
     <ul class="govuk-list govuk-list--bullet">
-    <li>
+      <li>
         <strong>Meet government standards</strong> - All components are built to
         comply with established government design and content guidelines
-    </li>
-    <li>
+      </li>
+      <li>
         <strong>Follow proven patterns</strong> - Based on research and testing from
         across government, ensuring consistency with user expectations
-    </li>
-    <li>
-        <strong>Maintain brand consistency</strong> - Mostly consistent with the GOV.UK
-        visual identity and interaction pattern principles, but with a focus on data-rich interfaces where appropriate based on user research.
-    </li>
-    <li>
+      </li>
+      <li>
+        <strong>Maintain brand consistency</strong> - Mostly consistent with the
+        GOV.UK visual identity and interaction pattern principles, but with a focus
+        on data-rich interfaces where appropriate based on user research.
+      </li>
+      <li>
         <strong>Support service teams</strong> - Reduces the burden on teams to interpret
         and implement design guidance from scratch
-    </li>
+      </li>
     </ul>
-
 
     <h2 class="govuk-heading-l govuk-!-margin-top-8">
       Interactive Documentation & Examples

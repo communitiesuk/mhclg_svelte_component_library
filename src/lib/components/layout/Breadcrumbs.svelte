@@ -56,12 +56,16 @@
   });
 
   // State variable to hold the current breadcrumb items
-  let breadcrumbItems = $state<BreadcrumbItem[]>([]);
+  /*let breadcrumbItems = $state<BreadcrumbItem[]>([]);
 
   // Effect to update breadcrumb items when dependencies change
   $effect(() => {
     breadcrumbItems = items || generateBreadcrumbItems($page, routeModules);
-  });
+  });*/
+
+  let breadcrumbItems = $derived(
+    items || generateBreadcrumbItems($page, routeModules),
+  );
 
   // Generate breadcrumb items from the current route
   function generateBreadcrumbItems(page, modules): BreadcrumbItem[] {

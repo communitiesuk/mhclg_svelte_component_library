@@ -1,7 +1,6 @@
 <script>
   import { tick } from "svelte";
   import Decimal from "decimal.js";
-  import { generateTicks } from "./Ticks-utils";
 
   let {
     ticksArray = $bindable(),
@@ -12,15 +11,49 @@
     axisFunction,
     values,
     numberOfTicks,
-    minTick,
-    maxTick,
+    minTick = null,
+    maxTick = null,
     orientation,
-    yearsInput,
-    generateTicksNum,
-    yearFormating,
+    convertToYearFormat,
+    useShortYearFormat,
+    decimalPlaces,
+    formattingFunction,
   } = $props();
 
   $inspect(ticksArray);
+
+  function generateTicks(data, numTicks, minTick, maxTick) {
+    let minVal =
+      minTick !== null
+        ? new Decimal(minTick)
+        : Decimal.min(...data.map((val) => new Decimal(val)));
+    let maxVal =
+      maxTick !== null
+        ? new Decimal(maxTick)
+        : Decimal.max(...data.map((val) => new Decimal(val)));
+    let rangeVal = maxVal.minus(minVal);
+
+    let roughStep = rangeVal.div(numTicks - 1);
+    let normalizedSteps = [1, 2, 5, 10];
+
+    let stepPower = Decimal.pow(
+      10,
+      -Math.floor(Math.log10(roughStep.toNumber())),
+    );
+    let normalizedStep = roughStep.mul(stepPower);
+    let optimalStep = new Decimal(
+      normalizedSteps.find((step) => step >= normalizedStep.toNumber()),
+    ).div(stepPower);
+
+    let scaleMin = minVal.div(optimalStep).floor().mul(optimalStep);
+    let scaleMax = maxVal.div(optimalStep).ceil().mul(optimalStep);
+
+    let ticks = [];
+    for (let i = scaleMin; i.lte(scaleMax); i = i.plus(optimalStep)) {
+      ticks.push(i.toNumber());
+    }
+    return ticks;
+  }
 
   function tickCount(chartWidth) {
     return Math.floor(chartWidth / 50);
@@ -32,8 +65,9 @@
 
   numberOfTicks = tickCount(chartWidth);
 
-  ticksArray = generateTicks(values, numberOfTicks, minTick, maxTick);
-  let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
+  //ticksArray = generateTicks(values, numberOfTicks, minTick, maxTick);
+
+  ticksArray = [2010, 2015, 2020, 2025];
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
@@ -72,7 +106,7 @@
             : "start"}
         fill="black"
       >
-        {yearsInput ? yearTicks[index] : prefix + tick + suffix}
+        {formattingFunction(tick, index)}
       </text>
     </g>
   {/each}

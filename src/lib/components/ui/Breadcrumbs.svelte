@@ -33,6 +33,8 @@
     ariaLabel?: string;
   }>();
 
+  $inspect(items, "itemsCheck");
+
   // Load all page modules for route detection
   const routeModules = $state<Record<string, any>>({});
 

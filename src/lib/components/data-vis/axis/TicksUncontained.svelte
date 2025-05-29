@@ -1,10 +1,9 @@
 <script>
   import { tick } from "svelte";
   import Decimal from "decimal.js";
-  import { generateTicks } from "./Ticks-utils";
 
   let {
-    ticksArray = $bindable(),
+    ticksArray,
     prefix,
     suffix,
     chartWidth,
@@ -20,8 +19,6 @@
     yearFormating,
   } = $props();
 
-  $inspect(ticksArray);
-
   function tickCount(chartWidth) {
     return Math.floor(chartWidth / 50);
   }
@@ -32,7 +29,6 @@
 
   numberOfTicks = tickCount(chartWidth);
 
-  ticksArray = generateTicks(values, numberOfTicks, minTick, maxTick);
   let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
 </script>
 

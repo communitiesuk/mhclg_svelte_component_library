@@ -35,6 +35,11 @@
       {values}
       {numberOfTicks}
       {orientation}
+      minTick="0"
+      maxTick="100"
+      prefix=""
+      suffix=""
+      yearsInput=""
     ></Ticks>
   {/key}
 </g>

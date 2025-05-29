@@ -113,10 +113,42 @@ TODO
           >
         </p>
       </div>
+      <div
+        class="govuk-grid-column-one-third-from-desktop govuk-!-margin-bottom-8"
+      >
+        <h2 class="govuk-heading-l">Community</h2>
+        <p class="govuk-body">
+          Join our growing community of developers and designers working on
+          government services. Help improve the library through discussions,
+          events and collaborative design sessions.
+        </p>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+          <a href="/community/" class="govuk-link govuk-!-font-weight-bold"
+            >Join our community</a
+          >
+        </p>
+      </div>
 
       <div class="govuk-grid-column-full">
         <hr
-          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl govuk-!-margin-top-0"
+          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl"
+        />
+      </div>
+
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-l">Roadmap</h2>
+        <p class="govuk-body">
+          See what the Component Library team at MHCLG is planning to work on
+          over the next 12 months in the
+          <a href="/community/roadmap/" class="govuk-link"
+            >MHCLG Svelte Component Library Roadmap</a
+          >.
+        </p>
+      </div>
+
+      <div class="govuk-grid-column-full">
+        <hr
+          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl"
         />
       </div>
 
@@ -159,38 +191,6 @@ TODO
       </div>
 
       <div class="govuk-grid-column-two-thirds-from-desktop">
-        <h2 id="community" class="govuk-heading-l">Community</h2>
-        <p class="govuk-body">
-          The MHCLG Svelte Component Library is for everyone that works on
-          government services, with a growing community of developers and
-          designers. It brings together the latest research, design and
-          development from across MHCLG and government to make sure it's
-          representative and relevant for data-rich digital products.
-        </p>
-
-        <p class="govuk-body">
-          You can help improve the Component Library by <a
-            class="govuk-link"
-            href="/community/"
-            >joining our discussions, events and co-design collaborations</a
-          >.
-        </p>
-
-        <p class="govuk-body">
-          Also see <a
-            href="/community/upcoming-components-patterns/"
-            class="govuk-link">upcoming components and patterns</a
-          > we're working on and how you can help.
-        </p>
-      </div>
-
-      <div class="govuk-grid-column-full">
-        <hr
-          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl"
-        />
-      </div>
-
-      <div class="govuk-grid-column-two-thirds-from-desktop">
         <h2 id="support" class="govuk-heading-l">Support</h2>
         <p class="govuk-body">
           The MHCLG Svelte Component Library is <a
@@ -204,23 +204,6 @@ TODO
           See <a class="govuk-link" href="/community/blogs-talks-podcasts/"
             >blog posts, video talks, and podcasts about Svelte development and
             the Component Library</a
-          >.
-        </p>
-      </div>
-
-      <div class="govuk-grid-column-full">
-        <hr
-          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl"
-        />
-      </div>
-
-      <div class="govuk-grid-column-two-thirds">
-        <h2 class="govuk-heading-l">Roadmap</h2>
-        <p class="govuk-body">
-          See what the Component Library team at MHCLG is planning to work on
-          over the next 12 months in the
-          <a href="/community/roadmap/" class="govuk-link"
-            >MHCLG Svelte Component Library Roadmap</a
           >.
         </p>
       </div>
@@ -241,7 +224,7 @@ TODO
         </p> -->
         <DividerLine margin="1rem 0rem"></DividerLine>
       </div>
-<!-- 
+      <!-- 
       <div>
         <h2 class="govuk-heading-l mb-6 mt-10">Components</h2>
         <p class="govuk-body">

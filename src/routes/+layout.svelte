@@ -30,6 +30,9 @@
 
   // --- Section-Level Derived State ---
   let activeSectionInfo = $derived.by(() => {
+    if (currentPath.startsWith("/get-started")) {
+      return { sectionName: "Get started", sectionHref: "/get-started" };
+    }
     if (currentPath.startsWith("/components")) {
       return { sectionName: "Components", sectionHref: "/components" };
     }
@@ -80,11 +83,20 @@
     },
   ];
 
+  const getStartedNavGroups: SideNavGroup[] = [
+    {
+      title: "Setup guides",
+      items: [{ text: "Installation and usage", href: "/get-started" }],
+    },
+  ];
+
   // --- Dynamic Side Navigation Groups --- get the appropriate nav groups based on current section
   const navGroupsForCurrentSection = $derived.by(() => {
     const section = currentSection;
 
     switch (section) {
+      case "Get started":
+        return getStartedNavGroups;
       case "Components":
         return componentNavGroups.map((group) => ({
           ...group,
@@ -110,10 +122,15 @@
   // Mobile navigation sections (MobileNav relies on activeSectionHref & activeDetailHref)
   const mobileNavSections = [
     {
-      title: "Home",
-      href: "/",
-      items: [{ text: "Overview", href: "/" }],
+      title: "Get started",
+      href: "/get-started",
+      items: [{ text: "Installation and usage", href: "/get-started" }],
     },
+    // {
+    //   title: "Home",
+    //   href: "/",
+    //   items: [{ text: "Overview", href: "/" }],
+    // },
     {
       title: "Components",
       href: "/components",
@@ -173,11 +190,11 @@
       />
       <div
         class="app-pane__body"
-        class:govuk-width-container={currentSection !== "Home"}
+        class:govuk-width-container={currentPath !== "/"}
       >
-        <div class={currentSection !== "Home" ? "app-split-pane" : ""}>
+        <div class={currentPath !== "/" ? "app-split-pane" : ""}>
           <!-- Side navigation - only shown if not Home -->
-          {#if currentSection !== "Home"}
+          {#if currentPath !== "/"}
             <aside class="app-split-pane__nav">
               <SideNav
                 title={getSectionTitle(currentSection)}
@@ -188,8 +205,8 @@
           {/if}
           <!-- Main content area -->
           <div
-            class:app-split-pane__content={currentSection !== "Home"}
-            class:app-content={currentSection !== "Home"}
+            class:app-split-pane__content={currentPath !== "/"}
+            class:app-content={currentPath !== "/"}
           >
             {@render children()}
           </div>

@@ -86,7 +86,10 @@
   const getStartedNavGroups: SideNavGroup[] = [
     {
       title: "Setup guides",
-      items: [{ text: "Installation and usage", href: "/get-started" }],
+      items: [
+        { text: "About & Benefits", href: "/get-started/about-benefits" },
+        { text: "Installation and usage", href: "/get-started" },
+      ],
     },
   ];
 
@@ -124,7 +127,10 @@
     {
       title: "Get started",
       href: "/get-started",
-      items: [{ text: "Installation and usage", href: "/get-started" }],
+      items: [
+        { text: "Installation and usage", href: "/get-started" },
+        { text: "About & Benefits", href: "/get-started/about-benefits" },
+      ],
     },
     // {
     //   title: "Home",

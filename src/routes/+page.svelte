@@ -44,7 +44,7 @@ TODO
   <Masthead
     title="MHCLG Svelte Component Library"
     description="Bring your service or page to life with dynamic content, layout, UI, charts, maps and data visualisations. The well tested and trusted GDS components are coded here in Svelte for data rich digital products."
-    buttonHref="/components"
+    buttonHref="/get-started"
     backgroundColor="#00625E"
     imageSrc={mastheadIllustration}
     imageAlt="MHCLG Svelte Component Library"

@@ -70,6 +70,162 @@ TODO
   />
 
   <div class="govuk-width-container govuk-main-wrapper govuk-main-wrapper--l">
+    <div class="govuk-grid-row">
+      <!-- <div
+        class="govuk-grid-column-one-third-from-desktop govuk-!-margin-bottom-8"
+      >
+        <h2 class="govuk-heading-l govuk-!-font-weight-bold">Styles</h2>
+        <p class="govuk-body">
+          Make government services look like GOV.UK with Svelte implementations
+          of layout, typography, colour and image guidelines.
+        </p>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+          <a href="/styles/" class="govuk-link govuk-!-font-weight-bold"
+            >Browse our styles</a
+          >
+        </p>
+      </div> -->
+      <div
+        class="govuk-grid-column-one-third-from-desktop govuk-!-margin-bottom-8"
+      >
+        <h2 class="govuk-heading-l">Components</h2>
+        <p class="govuk-body">
+          Save time with reusable, accessible Svelte components for forms,
+          navigation, panels, tables, charts and data visualisations.
+        </p>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+          <a href="/components/" class="govuk-link govuk-!-font-weight-bold"
+            >Browse our components</a
+          >
+        </p>
+      </div>
+      <div
+        class="govuk-grid-column-one-third-from-desktop govuk-!-margin-bottom-8"
+      >
+        <h2 class="govuk-heading-l">Patterns</h2>
+        <p class="govuk-body">
+          Help users complete common tasks like entering data, filling in forms,
+          and creating interactive dashboards with proven design patterns.
+        </p>
+        <p class="govuk-body govuk-!-margin-bottom-0">
+          <a href="/patterns/" class="govuk-link govuk-!-font-weight-bold"
+            >Browse our patterns</a
+          >
+        </p>
+      </div>
+
+      <div class="govuk-grid-column-full">
+        <hr
+          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl govuk-!-margin-top-0"
+        />
+      </div>
+
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-l">Principles we follow</h2>
+        <p class="govuk-body">
+          The MHCLG Svelte Component Library helps teams that work on government
+          services follow the <a
+            class="govuk-link"
+            href="https://www.gov.uk/guidance/government-design-principles"
+            >Government Design Principles</a
+          >
+          and
+          <a class="govuk-link" href="https://www.gov.uk/service-manual"
+            >GOV.UK Service Manual</a
+          >. This library also follows the
+          <a class="govuk-link" href="https://www.gov.uk/guidance/style-guide"
+            >GOV.UK style guide</a
+          >
+          and
+          <a
+            class="govuk-link"
+            href="https://www.gov.uk/guidance/content-design"
+            >GOV.UK content design guidance</a
+          >.
+        </p>
+
+        <p class="govuk-body">
+          <a class="govuk-link" href="/accessibility/accessibility-strategy/"
+            >Our accessibility strategy</a
+          > outlines our principles and work to improve accessibility within the
+          Svelte Component Library.
+        </p>
+      </div>
+
+      <div class="govuk-grid-column-full">
+        <hr
+          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl"
+        />
+      </div>
+
+      <div class="govuk-grid-column-two-thirds-from-desktop">
+        <h2 id="community" class="govuk-heading-l">Community</h2>
+        <p class="govuk-body">
+          The MHCLG Svelte Component Library is for everyone that works on
+          government services, with a growing community of developers and
+          designers. It brings together the latest research, design and
+          development from across MHCLG and government to make sure it's
+          representative and relevant for data-rich digital products.
+        </p>
+
+        <p class="govuk-body">
+          You can help improve the Component Library by <a
+            class="govuk-link"
+            href="/community/"
+            >joining our discussions, events and co-design collaborations</a
+          >.
+        </p>
+
+        <p class="govuk-body">
+          Also see <a
+            href="/community/upcoming-components-patterns/"
+            class="govuk-link">upcoming components and patterns</a
+          > we're working on and how you can help.
+        </p>
+      </div>
+
+      <div class="govuk-grid-column-full">
+        <hr
+          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl"
+        />
+      </div>
+
+      <div class="govuk-grid-column-two-thirds-from-desktop">
+        <h2 id="support" class="govuk-heading-l">Support</h2>
+        <p class="govuk-body">
+          The MHCLG Svelte Component Library is <a
+            class="govuk-link"
+            href="/design-system-team/"
+            >maintained by the Digital, Design and Development team at MHCLG</a
+          >. If you've got a question, idea or suggestion, you can
+          <a class="govuk-link" href="/get-in-touch/">contact the team</a>.
+        </p>
+        <p class="govuk-body">
+          See <a class="govuk-link" href="/community/blogs-talks-podcasts/"
+            >blog posts, video talks, and podcasts about Svelte development and
+            the Component Library</a
+          >.
+        </p>
+      </div>
+
+      <div class="govuk-grid-column-full">
+        <hr
+          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl"
+        />
+      </div>
+
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-l">Roadmap</h2>
+        <p class="govuk-body">
+          See what the Component Library team at MHCLG is planning to work on
+          over the next 12 months in the
+          <a href="/community/roadmap/" class="govuk-link"
+            >MHCLG Svelte Component Library Roadmap</a
+          >.
+        </p>
+      </div>
+    </div>
+
     <div class="flex flex-col gap-6">
       <div>
         <!-- <h1 class="govuk-heading-xl mb-6">Introduction</h1>
@@ -85,7 +241,7 @@ TODO
         </p> -->
         <DividerLine margin="1rem 0rem"></DividerLine>
       </div>
-
+<!-- 
       <div>
         <h2 class="govuk-heading-l mb-6 mt-10">Components</h2>
         <p class="govuk-body">
@@ -97,7 +253,7 @@ TODO
           library.
         </p>
         <DividerLine margin="1rem 0rem"></DividerLine>
-      </div>
+      </div> -->
 
       <!-- <div>
         <h2 class="govuk-heading-l mb-6 mt-10">Playground</h2>

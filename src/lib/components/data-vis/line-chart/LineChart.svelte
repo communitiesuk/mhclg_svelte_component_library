@@ -192,7 +192,7 @@
         <Axis
           {chartHeight}
           {chartWidth}
-          ticksArray={ticksArrayY}
+          bind:ticksArray={ticksArrayY}
           axisFunction={yFunction}
           values={allYValues}
           orientation={{ axis: "y", position: "left" }}
@@ -205,7 +205,7 @@
         <Axis
           {chartHeight}
           {chartWidth}
-          ticksArray={ticksArrayX}
+          bind:ticksArray={ticksArrayX}
           axisFunction={xFunction}
           values={allXValues}
           orientation={{ axis: "x", position: "bottom" }}

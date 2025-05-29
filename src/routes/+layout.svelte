@@ -91,6 +91,12 @@
         { text: "Installation and usage", href: "/get-started" },
       ],
     },
+    {
+      title: "Component library usage guides",
+      items: [
+        { text: "Component statuses", href: "/get-started/component-statuses" },
+      ],
+    },
   ];
 
   // --- Dynamic Side Navigation Groups --- get the appropriate nav groups based on current section
@@ -130,6 +136,7 @@
       items: [
         { text: "Installation and usage", href: "/get-started" },
         { text: "About & Benefits", href: "/get-started/about-benefits" },
+        { text: "Component statuses", href: "/get-started/component-statuses" },
       ],
     },
     // {

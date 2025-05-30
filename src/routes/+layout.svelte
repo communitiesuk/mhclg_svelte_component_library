@@ -64,13 +64,13 @@
       : [];
 
   const patternNavGroups: SideNavGroup[] = [
-    {
-      title: "Common patterns",
-      items: [
-        { text: "Forms", href: "/patterns/forms" },
-        { text: "Tables", href: "/patterns/tables" },
-      ],
-    },
+    // {
+    //   title: "Common patterns",
+    //   items: [
+    //     { text: "Forms", href: "/patterns/forms" },
+    //     { text: "Tables", href: "/patterns/tables" },
+    //   ],
+    // },
   ];
 
   const communityNavGroups: SideNavGroup[] = [
@@ -153,13 +153,13 @@
       title: "Patterns",
       href: "/patterns",
       items: [
-        {
-          title: "Common patterns",
-          items: [
-            { text: "Forms", href: "/patterns/forms" },
-            { text: "Tables", href: "/patterns/tables" },
-          ],
-        },
+        // {
+        //   title: "Common patterns",
+        //   items: [
+        //     { text: "Forms", href: "/patterns/forms" },
+        //     { text: "Tables", href: "/patterns/tables" },
+        //   ],
+        // },
       ],
     },
     {

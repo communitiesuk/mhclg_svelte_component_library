@@ -138,17 +138,26 @@
     black: "#161616",
   });
 
-  let lineClicked = $state();
-  let lineHovered = $state();
-  let labelClicked = $state();
-  let labelHovered = $state();
   let svgWidth = $state(700);
+
   let nothingSelected = $derived(
-    [lineClicked, lineHovered, labelClicked, labelHovered].every(
-      (item) => item == null,
-    ),
+    [clickedSeries, hoveredSeries].every((item) => item == null),
   );
   let activeMarkerId = $state();
+  let seriesLabels = $state(false);
+  let hoveredSeries = $state();
+  let clickedSeries = $state();
+
+  let lineData = $state();
+  let hoveredTier = $state();
+  let clickedTier = $state();
+
+  $inspect({ hoveredSeries, clickedSeries, hoveredTier, clickedTier });
+  $inspect(
+    [hoveredSeries, clickedSeries].includes("E06000040") ||
+      ("primary" === "primary" &&
+        (nothingSelected || [hoveredTier, clickedTier].includes("primary"))),
+  );
 
   /**
    * ! Step 3 - Add your props
@@ -241,15 +250,18 @@
             };
           }`,
         },
-        value: function (key, el) {
+        value: function (tier, el) {
           return {
+            placeLabel:
+              [hoveredSeries, clickedSeries].includes(el[series]) ||
+              (tier === "primary" &&
+                (nothingSelected ||
+                  [hoveredTier, clickedTier].includes("primary"))),
             showLabel:
-              "hover" === key
-                ? el[series] === lineClicked
-                  ? false
-                  : undefined
-                : undefined,
-            pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
+              [hoveredSeries, clickedSeries].includes(el[series]) ||
+              (tier === "primary" &&
+                (nothingSelected || [hoveredTier].includes("primary"))),
+            pathStrokeColor: ["primary", "hover", "clicked"].includes(tier)
               ? getColor(
                   el[series],
                   [
@@ -262,7 +274,7 @@
                   ].indexOf(el[series]),
                 )
               : null,
-            markerFill: ["primary", "hover", "clicked"].includes(key)
+            markerFill: ["primary", "hover", "clicked"].includes(tier)
               ? getColor(
                   el[series],
                   [
@@ -301,10 +313,10 @@
         value: colors,
       },
       {
-        name: "lineClicked",
+        name: "clickedSeries",
         category: "lineEvents",
         isBinded: true,
-        value: lineClicked,
+        value: clickedSeries,
       },
       {
         name: "nothingSelected",
@@ -313,26 +325,10 @@
         value: nothingSelected,
       },
       {
-        name: "onClickLine",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function(event, dataArray, dataId) {
-    lineClicked = dataId;
-  };`,
-        },
-        value: function (event, dataArray, dataId) {
-          if (lineClicked === dataId) {
-            lineClicked = null;
-          } else {
-            lineClicked = dataId;
-          }
-        },
-      },
-      {
-        name: "lineHovered",
+        name: "hoveredSeries",
         category: "lineEvents",
         isBinded: true,
-        value: lineHovered,
+        value: hoveredSeries,
       },
       {
         name: "activeMarkerId",
@@ -340,47 +336,47 @@
         value: activeMarkerId,
       },
       {
-        name: "onMouseEnterLabel",
+        name: "onClickSeries",
         category: "lineEvents",
         functionElements: {
-          functionAsString: `function (series) {
-              labelHovered = series;
-            }`,
+          functionAsString: ``,
         },
-        value: function (series) {
-          labelHovered = series;
-        },
-      },
-      {
-        name: "onMouseLeaveLabel",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function (series) {
-              if (labelClicked !== series) {
-                labelHovered = null;
-              }
-            }`,
-        },
-        value: function (series) {
-          if (labelClicked !== series) {
-            labelHovered = null;
+        value: function (series, tier) {
+          if (clickedSeries === series) {
+            clickedSeries = null;
+            hoveredSeries = null;
+          } else {
+            clickedSeries = series;
+            clickedTier = tier;
+            hoveredSeries = series;
+            hoveredTier = tier;
           }
         },
       },
       {
-        name: "onClickLabel",
+        name: "onMouseEnterSeries",
         category: "lineEvents",
         functionElements: {
-          functionAsString: `function (series) {
-              labelClicked === series
-                ? ((labelClicked = null), (labelHovered = null))
-                : (labelClicked = series);
-            }`,
+          functionAsString: ``,
         },
-        value: function (series) {
-          labelClicked === series
-            ? ((labelClicked = null), (labelHovered = null))
-            : (labelClicked = series);
+        value: function (series, tier) {
+          if (hoveredSeries !== series) {
+            hoveredSeries = series;
+            hoveredTier = tier;
+          }
+        },
+      },
+      {
+        name: "onMouseLeaveSeries",
+        category: "lineEvents",
+        functionElements: {
+          functionAsString: ``,
+        },
+        value: function (series, tier) {
+          if (hoveredSeries === series) {
+            hoveredSeries = null;
+            hoveredTier = null;
+          }
         },
       },
       {
@@ -392,7 +388,7 @@
             }`,
         },
         value: function (event, marker, markerId) {
-          activeMarkerId = markerId;
+          activeMarkerId = marker;
         },
       },
       {
@@ -420,42 +416,9 @@
             }`,
         },
         value: function (event, marker, markerId) {
-          activeMarkerId = markerId;
+          activeMarkerSId = marker;
         },
       },
-      {
-        name: "onMouseEnterLine",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function(event, dataArray, dataId) {
-    if (lineHovered !== dataId) {
-      lineHovered = dataId;
-    }
-  };`,
-        },
-        value: function (event, dataArray, dataId) {
-          if (lineHovered !== dataId) {
-            lineHovered = dataId;
-          }
-        },
-      },
-      {
-        name: "onMouseLeaveLine",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function(event, dataArray, dataId) {
-    if (lineHovered === dataId) {
-      lineHovered = null;
-    }
-  };`,
-        },
-        value: function (event, dataArray, dataId) {
-          if (lineHovered === dataId) {
-            lineHovered = null;
-          }
-        },
-      },
-
       {
         name: "getColor",
         category: "customisingLines",
@@ -570,6 +533,11 @@
         category: "lineFunction",
       },
       {
+        name: "tooltipContent",
+        category: "interactions",
+        value: "Here's some content for a tooltip",
+      },
+      {
         name: "getLine",
         category: "customisingLines",
         functionElements: {
@@ -592,11 +560,11 @@
             return [lineHovered, labelHovered].includes(el[series]);
           }
           if (key === "clicked") {
-            return [lineClicked, labelClicked].includes(el[series]);
+            return [clickedSeries, clickedSeries].includes(el[series]);
           }
         },`,
         },
-        value: function (key, el, param) {
+        value: function (key, el) {
           let primaryLines = [
             "E07000224",
             "E07000225",
@@ -612,10 +580,10 @@
             return true;
           }
           if (key === "hover") {
-            return [lineHovered, labelHovered].includes(el[series]);
+            return [hoveredSeries, hoveredSeries].includes(el[series]);
           }
           if (key === "clicked") {
-            return [lineClicked, labelClicked].includes(el[series]);
+            return [clickedSeries, clickedSeries].includes(el[series]);
           }
         },
       },
@@ -680,7 +648,7 @@
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
-      interactive: false,
+      interactive: true,
       markers: false,
       showLabel: false,
     },
@@ -688,8 +656,7 @@
       halo: true,
       pathStrokeWidth: 5,
       pathStrokeColor: colors.darkgrey,
-      interactive: false,
-      showLabel: !lineClicked && !lineHovered && !labelClicked,
+      interactive: true,
       lineEnding: null,
       markers: true,
     },
@@ -699,7 +666,6 @@
       halo: true,
       interactive: false,
       markers: true,
-      showLabel: true,
       lineEnding: null,
     },
     hover: {
@@ -708,7 +674,6 @@
       halo: true,
       interactive: false,
       markers: true,
-      showLabel: true,
       lineEnding: null,
     },
   });
@@ -880,10 +845,8 @@
   <div class="p-8" b>
     <LineChart
       {...parametersObject}
-      bind:lineClicked
-      bind:lineHovered
-      bind:labelClicked
-      bind:labelHovered
+      bind:clickedSeries
+      bind:hoveredSeries
       bind:svgWidth
       bind:activeMarkerId
       bind:series

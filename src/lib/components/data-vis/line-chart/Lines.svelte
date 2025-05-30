@@ -15,20 +15,15 @@
     chartWidth,
     xFunction,
     yFunction,
-    labelClicked,
-    labelHovered,
-    lineHovered,
-    lineClicked,
+    clickedSeries,
+    hoveredSeries,
     chartHeight,
     globalTierRules,
     chartBackgroundColor = "#fafafa",
-    nothingSelected = $bindable(),
-    onMouseEnterLine,
-    onMouseLeaveLine,
-    onClickLine,
-    onMouseEnterLabel,
-    onMouseLeaveLabel,
-    onClickLabel,
+    nothingSelected,
+    onMouseEnterSeries,
+    onMouseLeaveSeries,
+    onClickSeries,
     onMouseEnterMarker,
     onMouseLeaveMarker,
     onClickMarker,
@@ -37,6 +32,7 @@
     series,
     y,
     x,
+    tooltipContent,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
@@ -44,7 +40,7 @@
   let transformed = $derived(
     Object.values(tieredDataObject)
       .filter(Array.isArray)
-      .flatMap((tier) => tier.filter((item) => item.showLabel === true))
+      .flatMap((tier) => tier.filter((item) => item.placeLabel === true))
 
       .filter(
         (item, index, self) =>
@@ -72,16 +68,17 @@
       {#each tieredDataObject[tier] as line, i}
         <Line
           {...line}
+          id={`line-${line[series]}`}
           {tier}
           {chartBackgroundColor}
           {lineFunction}
           {xFunction}
           {yFunction}
-          {onMouseEnterLine}
-          {onMouseLeaveLine}
-          {onClickLine}
-          lineClicked
-          lineHovered
+          {onMouseEnterSeries}
+          {onMouseLeaveSeries}
+          {onClickSeries}
+          {clickedSeries}
+          {hoveredSeries}
           {series}
           {y}
           {x}
@@ -96,29 +93,28 @@
     <g>
       {#each tieredDataObject[tier] as line, i}
         {#if line.showLabel}
-          {console.log("@", labelClicked == line[series])}
-          {#if !labelClicked || (labelClicked && line[series] == labelClicked)}
-            {@const newY = labelsPlaced.find(
-              (el) => el.datum[series] === line[series],
-            )?.[y]}
-            <SeriesLabel
-              id={`label-${line[series]}`}
-              {labelClicked}
-              {labelHovered}
-              {chartWidth}
-              {lineFunction}
-              dataArray={line}
-              {xFunction}
-              {yFunction}
-              {newY}
-              {onClickLabel}
-              {onMouseEnterLabel}
-              {onMouseLeaveLabel}
-              {labelText}
-              {series}
-              {y}
-            ></SeriesLabel>
-          {/if}
+          {@const newY = labelsPlaced.find(
+            (el) => el.datum[series] === line[series],
+          )?.[y]}
+          <SeriesLabel
+            interactive={line.interactive}
+            id={`label-${line[series]}`}
+            {clickedSeries}
+            {hoveredSeries}
+            {chartWidth}
+            {lineFunction}
+            dataArray={line}
+            {xFunction}
+            {yFunction}
+            {newY}
+            {onClickSeries}
+            {onMouseEnterSeries}
+            {onMouseLeaveSeries}
+            {labelText}
+            {series}
+            {y}
+            {tier}
+          ></SeriesLabel>
         {/if}
       {/each}
     </g>
@@ -130,7 +126,7 @@
     {activeMarkerId}
     labelColor="grey"
     labelTextColor="black"
-    textContent={`this string contains some <strong>HTML!!!</strong>`}
+    {tooltipContent}
     {xFunction}
     {yFunction}
     {x}

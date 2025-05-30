@@ -9,45 +9,85 @@
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
 
   let {
-    getColor,
-    tieredLineParams,
-    colors,
-    xFunction,
-    yFunction,
-    lineFunction,
-    lineClicked,
-    lineHovered,
-    labelClicked,
-    labelHovered,
-    svgWidth = $bindable(500),
-    activeMarkerId,
-    onClickLine,
-    onMouseEnterLine,
-    onMouseLeaveLine,
-    onClickLabel,
-    onMouseEnterLabel,
-    onMouseLeaveLabel,
+    // Required
+    series,
+    y,
+    x,
+    lineChartData,
+
+    // ask
+    xFunction = (number) => {
+      return scaleLinear()
+        .domain([2015, 2022])
+        .range([0, svgWidth - paddingLeft - paddingRight])(number);
+    },
+    yFunction = (number) => {
+      return scaleLinear()
+        .domain([0, 100])
+        .range([svgHeight - paddingTop - paddingBottom, 0])(number);
+    },
+    lineFunction = line()
+      .x((d) => xFunction(d[x]))
+      .y((d) => yFunction(d[y]))
+      .curve(curveLinear),
+    labelText,
+
+    basicLineParams, // contains functions
+    tooltipContent, // snippet
+
+    onClickSeries = (series, tier) => {
+      if (clickedSeries === dataId) {
+        clickedSeries = null;
+      } else {
+        clickedSeries = series;
+        clickedTier = tier;
+      }
+    },
+    onMouseLeaveSeries = (series, tier) => {
+      if (hoveredSeries === series) {
+        hoveredSeries = null;
+        hoveredTier = null;
+      }
+    },
+    onMouseEnterSeries = (series, tier) => {
+      if (hoveredSeries !== series) {
+        hoveredSeries = series;
+        hoveredTier = tier;
+      }
+    },
     onClickMarker,
     onMouseEnterMarker,
     onMouseLeaveMarker,
+
+    // Optional
+    clickedSeries = $bindable(undefined),
+    hoveredSeries = undefined,
+    overrideLineParams = () => ({}),
+    getLine = () => true,
+    nothingSelected = true,
+    svgWidth = $bindable(500),
     svgHeight = 500,
     paddingTop = 50,
     paddingBottom = 50,
     paddingLeft = 50,
     paddingRight = 150,
-    lineChartData,
-    interactiveLines,
-    chartBackgroundColor,
-    getLine,
-    basicLineParams,
-    overrideLineParams,
-    nothingSelected = $bindable(),
-    globalTierRules,
-    labelText,
-    series,
-    y,
-    x,
-    seriesLabels = $bindable(),
+    activeMarkerId = undefined,
+    chartBackgroundColor = "#f5f5f5",
+    seriesLabels = $bindable(false),
+    globalTierRules = {
+      otherTier: {},
+      secondary: {
+        opacity: nothingSelected ? 1 : 0.5,
+      },
+      primary: {
+        opacity: nothingSelected ? 1 : 0.4,
+      },
+      hover: { opacity: 1 },
+      clicked: { opacity: 1 },
+    },
+    tieredLineParams = {
+      all: {},
+    },
   } = $props();
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
@@ -61,19 +101,19 @@
   // );
 
   let selectedLine = $derived([
-    lineHovered,
-    lineClicked,
-    labelHovered,
-    labelClicked,
+    hoveredSeries,
+    clickedSeries,
+    hoveredSeries,
+    clickedSeries,
   ]);
 
   function handleClickOutside(event) {
     if (
-      lineClicked != event.target.parentElement.dataset.id ||
-      (labelClicked && !event.target.closest('[id^="label"]'))
+      clickedSeries &&
+      !event.target.closest('[id^="line"]') &&
+      !event.target.closest('[id^="label"]')
     ) {
-      labelClicked = null;
-      lineClicked = null;
+      clickedSeries = null;
     }
   }
 
@@ -151,20 +191,15 @@
             {chartWidth}
             {xFunction}
             {yFunction}
-            bind:labelClicked
-            bind:labelHovered
-            lineHovered
-            lineClicked
+            {hoveredSeries}
+            {clickedSeries}
             {chartHeight}
             {globalTierRules}
             {chartBackgroundColor}
-            bind:nothingSelected
-            {onMouseEnterLine}
-            {onMouseLeaveLine}
-            {onClickLine}
-            {onClickLabel}
-            {onMouseEnterLabel}
-            {onMouseLeaveLabel}
+            {nothingSelected}
+            {onMouseEnterSeries}
+            {onClickSeries}
+            {onMouseLeaveSeries}
             {onClickMarker}
             {onMouseEnterMarker}
             {onMouseLeaveMarker}
@@ -173,6 +208,7 @@
             {series}
             {y}
             {x}
+            {tooltipContent}
           ></Lines>
         </g>
         <g data-role="y-axis">

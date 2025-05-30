@@ -3,7 +3,7 @@
     activeMarkerId,
     labelColor,
     labelTextColor,
-    textContent,
+    tooltipContent,
     xFunction,
     yFunction,
     x,
@@ -14,15 +14,6 @@
   let lineSpacing = $state(20);
   let verticalPadding = $state(8);
   let horizontalPadding = $derived(verticalPadding * 2);
-
-  $inspect(activeMarkerId);
-
-  let widthWithPadding = $derived(
-    textDimensions ? textDimensions.width + horizontalPadding : 10,
-  );
-  let heightWithPadding = $derived(
-    textDimensions ? textDimensions.height + verticalPadding : 10,
-  );
 </script>
 
 <svg>
@@ -31,23 +22,6 @@
       activeMarkerId[y],
     )})"
   >
-    {#if !textDimensions}
-      <foreignObject
-        x="0"
-        y="0"
-        width="1000"
-        height="1000"
-        style="visibility: hidden"
-      >
-        <div
-          xmlns="http://www.w3.org/1999/xhtml"
-          bind:contentRect={textDimensions}
-          style="display: inline-block"
-        >
-          {@html textContent}
-        </div>
-      </foreignObject>
-    {/if}
     {#if textDimensions}
       <rect
         height={textDimensions.height + verticalPadding}
@@ -57,17 +31,15 @@
         width={textDimensions.width + horizontalPadding}
       ></rect>
     {/if}
-  </g>
-  {#key textDimensions}
-    <foreignObject
-      x={xFunction(activeMarkerId[x])}
-      y={yFunction(activeMarkerId[y])}
-      width={widthWithPadding}
-      height={heightWithPadding}
+    <text
+      x={horizontalPadding / 2}
+      y={(textDimensions?.height + verticalPadding) / 2}
+      dominant-baseline="middle"
+      font-size="16"
+      fill={labelTextColor}
+      bind:contentRect={textDimensions}
     >
-      <div xmlns="http://www.w3.org/1999/xhtml" style="display: inline-block">
-        {@html textContent}
-      </div>
-    </foreignObject>
-  {/key}
+      {tooltipContent}
+    </text>
+  </g>
 </svg>

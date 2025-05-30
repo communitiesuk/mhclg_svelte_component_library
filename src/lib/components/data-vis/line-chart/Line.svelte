@@ -30,9 +30,9 @@
     yFunction,
     lineEnding,
     dataId,
-    onClickLine,
-    onMouseEnterLine,
-    onMouseLeaveLine,
+    onClickSeries,
+    onMouseEnterSeries,
+    onMouseLeaveSeries,
     halo,
     chartBackgroundColor,
     invisibleStrokeWidth,
@@ -44,11 +44,12 @@
     // labelText,
     // labelColor,
     // labelTextColor,
-    lineClicked,
-    lineHovered,
+    clickedSeries,
+    hoveredSeries,
     activeMarkerId,
     series,
     y,
+    id,
     x,
     markers,
     markerFill,
@@ -56,6 +57,7 @@
     markerShape,
     markerStroke,
     markerStrokeWidth,
+    tier,
   } = $props();
 
   let linePath = $derived(lineFunction(dataArray));
@@ -87,17 +89,15 @@
 
 <g
   data-id={dataId}
-  onclick={interactive ? (e) => onClickLine(e, dataArray, dataId) : null}
-  onmouseenter={interactive
-    ? (e) => onMouseEnterLine(e, dataArray, dataId)
-    : null}
-  onmouseleave={interactive
-    ? (e) => onMouseLeaveLine(e, dataArray, dataId)
-    : null}
+  {id}
+  onclick={interactive ? (e) => onClickSeries(dataId, tier) : null}
+  onmouseenter={interactive ? (e) => onMouseEnterSeries(dataId, tier) : null}
+  onmouseleave={interactive ? (e) => onMouseLeaveSeries(dataId, tier) : null}
   role="button"
   tabindex="0"
-  onkeydown={(e) => e.key === "Enter" && onClickLine(e, dataArray)}
+  onkeydown={(e) => e.key === "Enter" && onClickSeries(e, dataArray)}
   {opacity}
+  pointer-events={interactive ? null : "none"}
 >
   {#if includeArea}
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>

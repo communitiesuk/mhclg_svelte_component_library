@@ -75,10 +75,47 @@
 
   const communityNavGroups: SideNavGroup[] = [
     {
-      title: "Community",
+      title: "What we're working on",
+      items: [{ text: "Roadmap", href: "/community/roadmap" }],
+    },
+    {
+      title: "Ways to get involved",
       items: [
-        { text: "Updates", href: "/community/updates" },
-        { text: "Contributing", href: "/community/contributing" },
+        {
+          text: "Share findings about your users",
+          href: "/community/share-findings",
+        },
+        {
+          text: "Propose a component or pattern",
+          href: "/community/propose-component",
+        },
+        {
+          text: "Develop a component or pattern",
+          href: "/community/develop-component",
+        },
+        {
+          text: "Propose a content change using GitHub",
+          href: "/community/propose-content-change",
+        },
+      ],
+    },
+    {
+      title: "How we work",
+      items: [
+        {
+          text: "Our team and delivery approach",
+          href: "/community/team-approach",
+        },
+        { text: "Projects", href: "/community/projects" },
+        { text: "Community principles", href: "/community/principles" },
+        {
+          text: "Contribution approach",
+          href: "/community/contribution-approach",
+        },
+        {
+          text: "Blog posts, videos and podcasts",
+          href: "/community/blog-posts",
+        },
       ],
     },
   ];
@@ -175,8 +212,50 @@
       title: "Community",
       href: "/community",
       items: [
-        { text: "Updates", href: "/community/updates" },
-        { text: "Contributing", href: "/community/contributing" },
+        {
+          title: "What we're working on",
+          items: [{ text: "Roadmap", href: "/community/roadmap" }],
+        },
+        {
+          title: "Ways to get involved",
+          items: [
+            {
+              text: "Share findings about your users",
+              href: "/community/share-findings",
+            },
+            {
+              text: "Propose a component or pattern",
+              href: "/community/propose-component",
+            },
+            {
+              text: "Develop a component or pattern",
+              href: "/community/develop-component",
+            },
+            {
+              text: "Propose a content change using GitHub",
+              href: "/community/propose-content-change",
+            },
+          ],
+        },
+        {
+          title: "How we work",
+          items: [
+            {
+              text: "Our team and delivery approach",
+              href: "/community/team-approach",
+            },
+            { text: "Projects", href: "/community/projects" },
+            { text: "Community principles", href: "/community/principles" },
+            {
+              text: "Contribution approach",
+              href: "/community/contribution-approach",
+            },
+            {
+              text: "Blog posts, videos and podcasts",
+              href: "/community/blog-posts",
+            },
+          ],
+        },
       ],
     },
   ];

@@ -259,8 +259,10 @@
                   [hoveredTier, clickedTier].includes("primary"))),
             showLabel:
               [hoveredSeries, clickedSeries].includes(el[series]) ||
-              (tier === "primary" &&
-                (nothingSelected || [hoveredTier].includes("primary"))),
+              (tier === "primary" && nothingSelected) ||
+              (!clickedSeries &&
+                hoveredTier === "primary" &&
+                tier === "primary"),
             pathStrokeColor: ["primary", "hover", "clicked"].includes(tier)
               ? getColor(
                   el[series],

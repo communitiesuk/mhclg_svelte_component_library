@@ -1,25 +1,6 @@
 <script lang="ts">
   import InsetText from "$lib/components/content/InsetText.svelte";
   import WarningText from "$lib/components/content/WarningText.svelte";
-  import RelatedContent from "$lib/components/ui/RelatedContent.svelte";
-  import type { RelatedContentSection } from "$lib/components/ui/RelatedContent.svelte";
-
-  const relatedSections: RelatedContentSection[] = [
-    {
-      type: "main",
-      id: "related-main",
-      title: "Related",
-      links: [
-        { title: "Get started guide", base_path: "/get-started/" },
-        { title: "Browse components", base_path: "/components/" },
-        { title: "View patterns", base_path: "/patterns/" },
-        {
-          title: "About & Benefits",
-          base_path: "/get-started/about-benefits/",
-        },
-      ],
-    },
-  ];
 </script>
 
 {#snippet ContributingSnippet()}
@@ -41,7 +22,7 @@
 </svelte:head>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-xl">Community</h1>
 
     <p class="govuk-body-l">
@@ -49,7 +30,6 @@
       community. We work together to create, test, and improve components and
       patterns that help teams build better digital services.
     </p>
-
 
     <WarningText
       text="This community section is currently being developed. Some pages may not be available yet, but we're working to add comprehensive guidance and resources."
@@ -106,6 +86,12 @@
 
     <div class="govuk-grid-row govuk-!-margin-top-6">
       <div class="govuk-grid-column-one-half">
+        <img
+          src="/assets/images/undraw_collaborators_rgw4.svg"
+          alt="Illustration of people sharing knowledge and research findings"
+          class="govuk-!-margin-bottom-4"
+          style="width: 100%; max-width: 200px; height: 150px; object-fit: contain;"
+        />
         <h3 class="govuk-heading-s">Share your research</h3>
         <p class="govuk-body-s">
           Help us understand user needs by sharing research findings, usability
@@ -118,6 +104,12 @@
         </p>
       </div>
       <div class="govuk-grid-column-one-half">
+        <img
+          src="/assets/images/undraw_approved-wireframe_odf4.svg"
+          alt="Illustration of design feedback and proposing new solutions"
+          class="govuk-!-margin-bottom-4"
+          style="width: 100%; max-width: 200px; height: 150px; object-fit: contain;"
+        />
         <h3 class="govuk-heading-s">Propose new solutions</h3>
         <p class="govuk-body-s">
           Suggest new components or patterns based on common problems you've
@@ -133,6 +125,12 @@
 
     <div class="govuk-grid-row govuk-!-margin-top-4">
       <div class="govuk-grid-column-one-half">
+        <img
+          src="/assets/images/undraw_pull-request_zlsu.svg"
+          alt="Illustration of pull requests and component development"
+          class="govuk-!-margin-bottom-4"
+          style="width: 100%; max-width: 200px; height: 150px; object-fit: contain;"
+        />
         <h3 class="govuk-heading-s">Develop components</h3>
         <p class="govuk-body-s">
           Contribute code, help with testing, or improve existing components
@@ -145,6 +143,12 @@
         </p>
       </div>
       <div class="govuk-grid-column-one-half">
+        <img
+          src="/assets/images/undraw_reviewed-docs_g0cg.svg"
+          alt="Illustration of reviewing and improving documentation"
+          class="govuk-!-margin-bottom-4"
+          style="width: 100%; max-width: 200px; height: 150px; object-fit: contain;"
+        />
         <h3 class="govuk-heading-s">Improve documentation</h3>
         <p class="govuk-body-s">
           Help make our guidance clearer by suggesting improvements to
@@ -249,11 +253,5 @@
         > to connect with other teams using the library
       </li>
     </ol>
-
-
-  </div>
-
-  <div class="govuk-grid-column-one-third">
-    <RelatedContent sections={relatedSections} />
   </div>
 </div>

@@ -123,6 +123,15 @@
     }
   });
 
+  // Check if there are any navigation items to show
+  const hasNavigationItems = $derived.by(() => {
+    const groups = navGroupsForCurrentSection;
+    if (!groups || groups.length === 0) return false;
+
+    // Check if any group has items
+    return groups.some((group) => group.items && group.items.length > 0);
+  });
+
   // --- MobileNav Related Data Construction ---
   // Create structured component items for mobile navigation
   const structuredComponentItems =
@@ -206,8 +215,8 @@
         class:govuk-width-container={currentPath !== "/"}
       >
         <div class={currentPath !== "/" ? "app-split-pane" : ""}>
-          <!-- Side navigation - only shown if not Home -->
-          {#if currentPath !== "/"}
+          <!-- Side navigation - only shown if not Home and has navigation items -->
+          {#if currentPath !== "/" && hasNavigationItems}
             <aside class="app-split-pane__nav">
               <SideNav
                 title={getSectionTitle(currentSection)}
@@ -218,7 +227,8 @@
           {/if}
           <!-- Main content area -->
           <div
-            class:app-split-pane__content={currentPath !== "/"}
+            class:app-split-pane__content={currentPath !== "/" &&
+              hasNavigationItems}
             class:app-content={currentPath !== "/"}
           >
             {@render children()}

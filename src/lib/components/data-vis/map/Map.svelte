@@ -28,11 +28,13 @@
   import { page } from "$app/state";
   import { joinData } from "./dataJoin.js";
 
-  import type { LngLatBoundsLike } from "maplibre-gl";
-  import { LngLatBounds } from "maplibre-gl";
+  import maplibregl from "maplibre-gl";
+  const { LngLatBounds } = maplibregl;
 
+  import type { LngLatBoundsLike } from "maplibre-gl";
   let {
     data,
+    customPallet,
     cooperativeGestures = true,
     standardControls = true,
     navigationControl,
@@ -69,8 +71,10 @@
     },
     useInitialHash = true,
     mapHeight = 200,
+    setMaxBounds,
   }: {
     data: object[];
+    customPallet: object[] | undefined;
     cooperativeGestures?: boolean;
     standardControls?: boolean;
     navigationControl?: boolean;
@@ -98,9 +102,10 @@
     hoverOpacity?: number;
     center?: LngLatLike | undefined;
     zoom?: number;
-    minZoom?: number;
-    maxZoom?: number;
-    maxBounds: [number, number][];
+    minZoom?: number | undefined;
+    maxZoom?: number | undefined;
+    maxBounds?: [number, number][];
+    setMaxBounds?: boolean;
     hash?: boolean;
     updateHash?: (URL) => void;
     useInitialHash?: boolean;
@@ -132,7 +137,9 @@
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
 
   let fillColors: string[] = $derived(
-    colorbrewer[colorPalette][numberOfBreaks],
+    customPallet !== undefined
+      ? customPallet
+      : colorbrewer[colorPalette][numberOfBreaks],
   );
 
   let borderColor = "#003300";
@@ -223,7 +230,9 @@
     return bounds;
   }
 
-  let boundary = convertToLngLatBounds(maxBounds);
+  if (setMaxBounds) {
+    let boundary = convertToLngLatBounds(maxBounds);
+  }
   function zoomToArea(e) {
     if (clickToZoom) {
       let coordArray =
@@ -275,7 +284,7 @@
     {zoom}
     {maxZoom}
     {minZoom}
-    maxBounds={boundary}
+    {...setMaxBounds ? { maxBounds: boundary } : {}}
     {hash}
     {updateHash}
     class="map"

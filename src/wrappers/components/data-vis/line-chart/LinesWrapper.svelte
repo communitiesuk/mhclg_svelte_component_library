@@ -3,16 +3,9 @@
   import BaseInformation from "$lib/package-wrapping/BaseInformation.svelte";
   export { WrapperNameAndStatus, WrapperInformation };
 
-  let lineHovered = $state();
-  let lineClicked = $state();
-  let labelHovered = $state();
-  let labelClicked = $state();
-  let selectedLine = $derived([
-    lineHovered,
-    lineClicked,
-    labelHovered,
-    labelClicked,
-  ]);
+  let hoveredSeries = $state();
+  let clickedSeries = $state();
+  let selectedLine = $derived([hoveredSeries, clickedSeries]);
   let nothingSelected = $derived(selectedLine.every((item) => item == null));
 
   let selectedAreaCode = $state("E09000033");
@@ -22,11 +15,10 @@
 
   function handleClickOutside(event) {
     if (
-      lineClicked != event.target.parentElement.dataset.id ||
-      (labelClicked && !event.target.closest('[id^="label"]'))
+      clickedSeries != event.target.parentElement.dataset.id ||
+      (clickedSeries && !event.target.closest('[id^="label"]'))
     ) {
-      labelClicked = null;
-      lineClicked = null;
+      clickedSeries = null;
     }
   }
 
@@ -48,16 +40,16 @@
   });
 
   let onClick = (event, dataArray, dataId) => {
-    lineClicked = dataId;
+    clickedSeries = dataId;
   };
   let onMouseEnter = (event, dataArray, dataId) => {
-    if (lineHovered !== dataId) {
-      lineHovered = dataId;
+    if (hoveredSeries !== dataId) {
+      hoveredSeries = dataId;
     }
   };
   let onMouseLeave = (event, dataArray, dataId) => {
-    if (lineHovered === dataId) {
-      lineHovered = null;
+    if (hoveredSeries === dataId) {
+      hoveredSeries = null;
     }
   };
 
@@ -250,11 +242,6 @@
           similarAreas,
           selectedAreaCode,
         ],
-      },
-      {
-        name: "interactiveLines",
-        category: "data",
-        value: ["primary", "secondary"],
       },
       {
         name: "customDataArray",
@@ -523,9 +510,9 @@
   let dataArray = $derived(
     derivedDataArray.lines.map((el, i) => {
       const tiers = [];
-      el.areaCode == lineClicked
+      el.areaCode == clickedSeries
         ? tiers.push("clicked")
-        : el.areaCode == lineHovered
+        : el.areaCode == hoveredSeries
           ? tiers.push("hover")
           : getValue("primaryLines").includes(el.areaCode)
             ? tiers.push("primary")
@@ -544,13 +531,11 @@
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
-      interactive: getValue("interactiveLines").includes("secondary"),
     },
     primary: {
       halo: true,
       pathStrokeWidth: 5,
       pathStrokeColor: colors.darkgrey,
-      interactive: getValue("interactiveLines").includes("primary"),
     },
     clicked: {
       pathStrokeColor: colors.ochre,
@@ -650,10 +635,10 @@
             return true;
           }
           if (key === "hover") {
-            return lineHovered == el.areaCode;
+            return hoveredSeries == el.areaCode;
           }
           if (key === "clicked") {
-            return lineClicked == el.areaCode;
+            return clickedSeries == el.areaCode;
           }
         })
         .map((el) => ({
@@ -830,4 +815,4 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5"></div>
+<div id="examples" data-role="examples-section"></div>

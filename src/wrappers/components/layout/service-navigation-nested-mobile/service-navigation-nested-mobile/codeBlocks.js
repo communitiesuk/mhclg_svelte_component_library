@@ -43,7 +43,7 @@ export const codeBlock1 = `
 
 export const codeBlock2 = `
 <!-- Mobile demo approach using an iframe -->
-<div class="border border-dashed border-gray-400 mx-auto mobile-example mobile-frame" style="width: 420px; height: 480px;">
+<div class="border border-dashed border-gray-400 mx-auto mobile-example mobile-frame w-full max-w-[420px]" style="height: 480px;">
   <iframe 
     src="/components/layout/service-navigation-nested-mobile/mobile-demo" 
     title="Mobile Navigation Demo" 

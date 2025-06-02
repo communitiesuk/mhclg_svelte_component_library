@@ -11,10 +11,8 @@
 
 <div
   data-role="details-container"
-  class="{homepage
-    ? ''
-    : 'g-top-level-container'} flex flex-col gap-4 px-5 rounded-lg {homepage
-    ? `${backgroundColor} p-5 rounded-lg`
+  class="flex flex-col gap-4 rounded-lg min-w-0 {homepage
+    ? `p-5 ${backgroundColor}`
     : ''}"
 >
   <div data-role="name-and-pill-container">

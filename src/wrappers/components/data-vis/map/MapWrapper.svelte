@@ -346,9 +346,16 @@
           "Set1",
           "Set2",
           "Set3",
+          "custom",
         ],
         value: "YlGnBu",
         category: "Styling",
+      },
+      {
+        name: "customPallet",
+        isProp: true,
+        category: "Styling",
+        value: [[]],
       },
       {
         name: "showBorder",
@@ -501,6 +508,9 @@
         value: [-2.5, 53],
         description: "The initial centre of the map, in [lng, lat] form",
       },
+
+      { name: "setMaxBounds", isProp: true, value: false, category: "View" },
+
       {
         name: "maxBounds",
         isProp: true,
@@ -509,7 +519,8 @@
           [-23.899, 47.5943],
           [13.421, 59.8988],
         ],
-        description: "The initial centre of the map, in [lng, lat] form",
+        visible: { name: "setMaxBounds", value: true },
+        description: "Set the max bounds of the map",
       },
       {
         name: "zoom",
@@ -719,4 +730,4 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section" class="px-5"></div>
+<div id="examples" data-role="examples-section"></div>

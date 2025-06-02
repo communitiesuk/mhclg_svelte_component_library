@@ -10,9 +10,11 @@
   <div data-role="component-information-array-container">
     {#each detailsArray as detail}
       {#if detail.arr && detail.arr.length > 0 && (!homepage || detail.visibleOnHomepage)}
+        <!-- CSS Grid with auto-sizing first column and constrained second column that forces wrapping -->
         <div
           data-role="component-information-detail-grid-container"
           id={detail.label.toLowerCase()}
+          class="grid grid-cols-[auto,minmax(0,1fr)] gap-2 items-baseline"
         >
           {#if detail.label}
             <dt>{detail.label}:</dt>
@@ -36,9 +38,14 @@
   {#each connectedComponentsArray as connectedComponents}
     {#if (!homepage || connectedComponents?.visibleOnHomepage) && connectedComponents.arr.length > 0}
       <DividerLine></DividerLine>
-      <div data-role="component-information-detail-grid-container">
+      <!-- CSS Grid layout for label:content pairs with constrained second column -->
+      <div
+        data-role="component-information-detail-grid-container"
+        class="grid grid-cols-[auto,minmax(0,1fr)] gap-2 items-baseline"
+      >
         <dt>{connectedComponents.label}:</dt>
         <dd>
+          <!-- flex-wrap allows items to wrap to new lines -->
           <ul class="flex flex-row flex-wrap gap-4 gap-y-2">
             {#each connectedComponents.arr as child}
               <li>
@@ -59,3 +66,17 @@
     {/if}
   {/each}
 {/if}
+
+<style>
+  /* Constrain all grid containers and their content to prevent overflow */
+  [data-role="component-information-detail-grid-container"] {
+    max-width: 100%;
+  }
+
+  /* Allow all content within grids to shrink and wrap properly */
+  [data-role="component-information-detail-grid-container"] dd,
+  [data-role="component-information-detail-grid-container"] li {
+    min-width: 0;
+    overflow-wrap: break-word;
+  }
+</style>

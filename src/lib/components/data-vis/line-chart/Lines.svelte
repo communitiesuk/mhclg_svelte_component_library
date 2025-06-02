@@ -1,6 +1,7 @@
 <script>
   import Line from "./Line.svelte";
   import Marker from "./Marker.svelte";
+  import ValueLabel from "./ValueLabel.svelte";
   import SeriesLabel from "./SeriesLabel.svelte";
   import labelplacer from "labelplacer";
   import { onMount } from "svelte";
@@ -14,20 +15,15 @@
     chartWidth,
     xFunction,
     yFunction,
-    labelClicked = $bindable(),
-    labelHovered = $bindable(),
-    lineHovered,
-    lineClicked,
+    clickedSeries,
+    hoveredSeries,
     chartHeight,
     globalTierRules,
     chartBackgroundColor = "#fafafa",
-    nothingSelected = $bindable(),
-    onMouseEnterLine,
-    onMouseLeaveLine,
-    onClickLine,
-    onMouseEnterLabel,
-    onMouseLeaveLabel,
-    onClickLabel,
+    nothingSelected,
+    onMouseEnterSeries,
+    onMouseLeaveSeries,
+    onClickSeries,
     onMouseEnterMarker,
     onMouseLeaveMarker,
     onClickMarker,
@@ -36,6 +32,7 @@
     series,
     y,
     x,
+    tooltipContent,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
@@ -43,7 +40,7 @@
   let transformed = $derived(
     Object.values(tieredDataObject)
       .filter(Array.isArray)
-      .flatMap((tier) => tier.filter((item) => item.showLabel === true))
+      .flatMap((tier) => tier.filter((item) => item.placeLabel === true))
 
       .filter(
         (item, index, self) =>
@@ -71,16 +68,17 @@
       {#each tieredDataObject[tier] as line, i}
         <Line
           {...line}
+          id={`line-${line[series]}`}
           {tier}
           {chartBackgroundColor}
           {lineFunction}
           {xFunction}
           {yFunction}
-          {onMouseEnterLine}
-          {onMouseLeaveLine}
-          {onClickLine}
-          lineClicked
-          lineHovered
+          {onMouseEnterSeries}
+          {onMouseLeaveSeries}
+          {onClickSeries}
+          {clickedSeries}
+          {hoveredSeries}
           {series}
           {y}
           {x}
@@ -90,16 +88,6 @@
           {activeMarkerId}
         />
       {/each}
-      {#if tier == "hover"}
-        {#if true}
-          <!-- <ValueLabel
-            {marker}
-            labelColor="grey"
-            labelTextColor="black"
-            textContent={parseInput(marker, marker[y])}
-          ></ValueLabel> -->
-        {/if}
-      {/if}
     </g>
 
     <g>
@@ -109,24 +97,42 @@
             (el) => el.datum[series] === line[series],
           )?.[y]}
           <SeriesLabel
+            interactive={line.interactive}
             id={`label-${line[series]}`}
-            bind:labelClicked
-            bind:labelHovered
+            {clickedSeries}
+            {hoveredSeries}
             {chartWidth}
             {lineFunction}
             dataArray={line}
             {xFunction}
             {yFunction}
             {newY}
-            {onClickLabel}
-            {onMouseEnterLabel}
-            {onMouseLeaveLabel}
+            {onClickSeries}
+            {onMouseEnterSeries}
+            {onMouseLeaveSeries}
             {labelText}
             {series}
             {y}
+            {tier}
           ></SeriesLabel>
         {/if}
       {/each}
     </g>
   </g>
 {/each}
+
+{#if activeMarkerId}
+  <ValueLabel
+    {activeMarkerId}
+    labelColor="grey"
+    labelTextColor="black"
+    {tooltipContent}
+    {xFunction}
+    {yFunction}
+    {x}
+    {y}
+  ></ValueLabel>
+{/if}
+
+<!-- if markerhovered get the id render the tooltip find in the tieredDataObject gets
+the data for that line -->

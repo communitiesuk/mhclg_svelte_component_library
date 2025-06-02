@@ -171,9 +171,12 @@
         tagText="Alpha"
         linkHref="mailto:dataexplorerfeedback@communities.gov.uk"
       />
-      <div class="app-pane__body govuk-width-container">
-        <div class="app-split-pane">
-          <!-- Side navigation - show for Components, Patterns, or Community pages -->
+      <div
+        class="app-pane__body"
+        class:govuk-width-container={currentSection !== "Home"}
+      >
+        <div class={currentSection !== "Home" ? "app-split-pane" : ""}>
+          <!-- Side navigation - only shown if not Home -->
           {#if currentSection !== "Home"}
             <aside class="app-split-pane__nav">
               <SideNav
@@ -184,7 +187,10 @@
             </aside>
           {/if}
           <!-- Main content area -->
-          <div class="app-split-pane__content app-content">
+          <div
+            class:app-split-pane__content={currentSection !== "Home"}
+            class:app-content={currentSection !== "Home"}
+          >
             {@render children()}
           </div>
         </div>
@@ -203,7 +209,7 @@
   .app-pane__body {
     display: flex;
     flex-direction: column;
-    width: 100%;
+    /* width: 100%; */ /* Removed to let govuk-width-container manage width and margins */
   }
 
   /* Split pane layout */
@@ -213,6 +219,7 @@
       position: relative;
       min-height: 0;
       overflow: inherit;
+      min-width: 0;
     }
   }
 
@@ -249,15 +256,15 @@
     }
   }
 
+  /* Add padding for smaller devices */
   .app-content {
     padding: 15px 0 20px;
   }
 
-  /* Override the govuk-width-container for the app-pane__body */
-  .app-pane__body.govuk-width-container {
-    max-width: 85%; /* Use more of the available width */
-    /* Ensure it remains centered*/
-    margin-left: auto;
-    margin-right: auto;
+  /* Adjust padding for larger devices */
+  @media (min-width: 40.0625em) {
+    .app-content {
+      padding: 30px 0px 30px 30px;
+    }
   }
 </style>

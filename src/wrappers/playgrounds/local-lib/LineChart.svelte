@@ -61,7 +61,7 @@
       : null,
   );
 
-  let labelClicked = $state();
+  let clickedSeries = $state();
 
   let colors = [
     "#206095",
@@ -73,8 +73,8 @@
   ];
 
   function handleClickOutside(event) {
-    if (labelClicked && !event.target.closest('[id^="label"]')) {
-      labelClicked = null;
+    if (clickedSeries && !event.target.closest('[id^="label"]')) {
+      clickedSeries = null;
     }
   }
 
@@ -149,7 +149,7 @@
           {chartWidth}
           {xFunction}
           {yFunction}
-          bind:labelClicked
+          bind:clickedSeries
           {chartHeight}
           {colors}
           {defaultLineParams}

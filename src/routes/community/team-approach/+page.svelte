@@ -53,7 +53,7 @@
       interactive data experiences that users increasingly expect.
     </p>
 
-    <p class="govuk-body">
+    <!-- <p class="govuk-body">
       We have clear evidence of need for sophisticated data products across
       multiple audiences:
     </p>
@@ -75,7 +75,7 @@
         <strong>Citizens and communities</strong> - The public deserves accessible
         insights about their local areas
       </li>
-    </ul>
+    </ul> -->
 
     <!-- <h3 class="govuk-heading-m">Why we build our own components</h3>
 

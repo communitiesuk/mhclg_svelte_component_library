@@ -2,6 +2,7 @@
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import Masthead from "$lib/components/ui/Masthead.svelte";
   import mastheadIllustration from "$lib/assets/images/masthead-illustration.svg";
+  import WhatsNew from "$lib/components/ui/WhatsNew.svelte";
 
   // Keep only playground wrappers for the homepage
   const wrappersPlaygroundsObject = import.meta.glob(
@@ -48,6 +49,25 @@ TODO
     imageSrc={mastheadIllustration}
     imageAlt="MHCLG Svelte Component Library"
   />
+  <WhatsNew
+    title="What's new"
+    componentLinksIntroText="This initial alpha release includes foundational components for building government services."
+    newsItems={[
+      {
+        date: "June 2025",
+        content:
+          "We launched the MHCLG Svelte Component Library alpha version. This library provides Svelte 5 implementations of GOV.UK Design System components, as well as other custom components, specifically tailored for data-rich digital products and services within the Ministry of Housing, Communities and Local Government and beyond.",
+        releaseNotesUrl:
+          "https://github.com/communitiesuk/oflog_svelte_component_library/releases/tag/v0.1.16",
+        releaseVersion: "v0.1.16",
+      },
+      {
+        date: "January 2025",
+        content:
+          "Development began on the component library infrastructure, establishing the foundation for reusable Svelte components that maintain GOV.UK Design System compliance while supporting advanced data visualisation needs.",
+      },
+    ]}
+  />
 
   <div class="govuk-width-container govuk-main-wrapper govuk-main-wrapper--l">
     <div class="flex flex-col gap-6">
@@ -79,7 +99,7 @@ TODO
         <DividerLine margin="1rem 0rem"></DividerLine>
       </div>
 
-      <div>
+      <!-- <div>
         <h2 class="govuk-heading-l mb-6 mt-10">Playground</h2>
         <p class="govuk-body">
           The playground is a sandbox space where developers can test code and
@@ -87,7 +107,7 @@ TODO
         </p>
         <p class="govuk-body">All our playground examples are listed below.</p>
       </div>
-      <DividerLine margin="1rem 0rem"></DividerLine>
+      <DividerLine margin="1rem 0rem"></DividerLine> -->
     </div>
   </div>
 </div>

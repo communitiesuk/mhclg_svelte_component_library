@@ -34,7 +34,7 @@
       },
       {
         obj: { Reviewed: false, Tested: false },
-        visibleOnHomepage: true,
+        visibleOnHomepage: false,
       },
     ],
   };

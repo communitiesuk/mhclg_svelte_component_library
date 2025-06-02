@@ -30,6 +30,9 @@
 
   // --- Section-Level Derived State ---
   let activeSectionInfo = $derived.by(() => {
+    if (currentPath.startsWith("/get-started")) {
+      return { sectionName: "Get started", sectionHref: "/get-started" };
+    }
     if (currentPath.startsWith("/components")) {
       return { sectionName: "Components", sectionHref: "/components" };
     }
@@ -61,21 +64,74 @@
       : [];
 
   const patternNavGroups: SideNavGroup[] = [
-    {
-      title: "Common patterns",
-      items: [
-        { text: "Forms", href: "/patterns/forms" },
-        { text: "Tables", href: "/patterns/tables" },
-      ],
-    },
+    // {
+    //   title: "Common patterns",
+    //   items: [
+    //     { text: "Forms", href: "/patterns/forms" },
+    //     { text: "Tables", href: "/patterns/tables" },
+    //   ],
+    // },
   ];
 
   const communityNavGroups: SideNavGroup[] = [
     {
-      title: "Community",
+      title: "What we're working on",
+      items: [{ text: "Roadmap", href: "/community/roadmap" }],
+    },
+    {
+      title: "Ways to get involved",
       items: [
-        { text: "Updates", href: "/community/updates" },
-        { text: "Contributing", href: "/community/contributing" },
+        {
+          text: "Share findings about your users",
+          href: "/community/share-findings",
+        },
+        {
+          text: "Propose a component or pattern",
+          href: "/community/propose-component",
+        },
+        {
+          text: "Develop a component or pattern",
+          href: "/community/develop-component",
+        },
+        {
+          text: "Propose a content change using GitHub",
+          href: "/community/propose-content-change",
+        },
+      ],
+    },
+    {
+      title: "How we work",
+      items: [
+        {
+          text: "Our team and delivery approach",
+          href: "/community/team-approach",
+        },
+        { text: "Projects", href: "/community/projects" },
+        { text: "Community principles", href: "/community/principles" },
+        {
+          text: "Contribution approach",
+          href: "/community/contribution-approach",
+        },
+        {
+          text: "Blog posts, videos and podcasts",
+          href: "/community/blog-posts",
+        },
+      ],
+    },
+  ];
+
+  const getStartedNavGroups: SideNavGroup[] = [
+    {
+      title: "Setup guides",
+      items: [
+        { text: "About & Benefits", href: "/get-started/about-benefits" },
+        { text: "Installation and usage", href: "/get-started" },
+      ],
+    },
+    {
+      title: "Component library usage guides",
+      items: [
+        { text: "Component statuses", href: "/get-started/component-statuses" },
       ],
     },
   ];
@@ -85,6 +141,8 @@
     const section = currentSection;
 
     switch (section) {
+      case "Get started":
+        return getStartedNavGroups;
       case "Components":
         return componentNavGroups.map((group) => ({
           ...group,
@@ -102,6 +160,15 @@
     }
   });
 
+  // Check if there are any navigation items to show
+  const hasNavigationItems = $derived.by(() => {
+    const groups = navGroupsForCurrentSection;
+    if (!groups || groups.length === 0) return false;
+
+    // Check if any group has items
+    return groups.some((group) => group.items && group.items.length > 0);
+  });
+
   // --- MobileNav Related Data Construction ---
   // Create structured component items for mobile navigation
   const structuredComponentItems =
@@ -110,10 +177,19 @@
   // Mobile navigation sections (MobileNav relies on activeSectionHref & activeDetailHref)
   const mobileNavSections = [
     {
-      title: "Home",
-      href: "/",
-      items: [{ text: "Overview", href: "/" }],
+      title: "Get started",
+      href: "/get-started",
+      items: [
+        { text: "Installation and usage", href: "/get-started" },
+        { text: "About & Benefits", href: "/get-started/about-benefits" },
+        { text: "Component statuses", href: "/get-started/component-statuses" },
+      ],
     },
+    // {
+    //   title: "Home",
+    //   href: "/",
+    //   items: [{ text: "Overview", href: "/" }],
+    // },
     {
       title: "Components",
       href: "/components",
@@ -123,21 +199,63 @@
       title: "Patterns",
       href: "/patterns",
       items: [
-        {
-          title: "Common patterns",
-          items: [
-            { text: "Forms", href: "/patterns/forms" },
-            { text: "Tables", href: "/patterns/tables" },
-          ],
-        },
+        // {
+        //   title: "Common patterns",
+        //   items: [
+        //     { text: "Forms", href: "/patterns/forms" },
+        //     { text: "Tables", href: "/patterns/tables" },
+        //   ],
+        // },
       ],
     },
     {
       title: "Community",
       href: "/community",
       items: [
-        { text: "Updates", href: "/community/updates" },
-        { text: "Contributing", href: "/community/contributing" },
+        {
+          title: "What we're working on",
+          items: [{ text: "Roadmap", href: "/community/roadmap" }],
+        },
+        {
+          title: "Ways to get involved",
+          items: [
+            {
+              text: "Share findings about your users",
+              href: "/community/share-findings",
+            },
+            {
+              text: "Propose a component or pattern",
+              href: "/community/propose-component",
+            },
+            {
+              text: "Develop a component or pattern",
+              href: "/community/develop-component",
+            },
+            {
+              text: "Propose a content change using GitHub",
+              href: "/community/propose-content-change",
+            },
+          ],
+        },
+        {
+          title: "How we work",
+          items: [
+            {
+              text: "Our team and delivery approach",
+              href: "/community/team-approach",
+            },
+            { text: "Projects", href: "/community/projects" },
+            { text: "Community principles", href: "/community/principles" },
+            {
+              text: "Contribution approach",
+              href: "/community/contribution-approach",
+            },
+            {
+              text: "Blog posts, videos and podcasts",
+              href: "/community/blog-posts",
+            },
+          ],
+        },
       ],
     },
   ];
@@ -173,11 +291,11 @@
       />
       <div
         class="app-pane__body"
-        class:govuk-width-container={currentSection !== "Home"}
+        class:govuk-width-container={currentPath !== "/"}
       >
-        <div class={currentSection !== "Home" ? "app-split-pane" : ""}>
-          <!-- Side navigation - only shown if not Home -->
-          {#if currentSection !== "Home"}
+        <div class={currentPath !== "/" ? "app-split-pane" : ""}>
+          <!-- Side navigation - only shown if not Home and has navigation items -->
+          {#if currentPath !== "/" && hasNavigationItems}
             <aside class="app-split-pane__nav">
               <SideNav
                 title={getSectionTitle(currentSection)}
@@ -188,8 +306,9 @@
           {/if}
           <!-- Main content area -->
           <div
-            class:app-split-pane__content={currentSection !== "Home"}
-            class:app-content={currentSection !== "Home"}
+            class:app-split-pane__content={currentPath !== "/" &&
+              hasNavigationItems}
+            class:app-content={currentPath !== "/"}
           >
             {@render children()}
           </div>

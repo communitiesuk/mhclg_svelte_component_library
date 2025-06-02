@@ -35,6 +35,7 @@
   let {
     data,
     customPallet,
+    setCustomPallet,
     cooperativeGestures = true,
     standardControls = true,
     navigationControl,
@@ -56,6 +57,7 @@
     year,
     metric,
     breaksType = "quantile",
+    customBreaks,
     numberOfBreaks = 5,
     fillOpacity = 0.5,
     changeOpacityOnHover = true,
@@ -66,6 +68,7 @@
     maxZoom,
     maxBounds,
     hash = false,
+    interactive,
     updateHash = (u) => {
       replaceState(u, page.state);
     },
@@ -110,8 +113,10 @@
     updateHash?: (URL) => void;
     useInitialHash?: boolean;
     mapHeight?: number;
+    setCustomPallet?: boolean;
+    customBreaks?: number[];
+    interative?: boolean;
   } = $props();
-  $inspect(maxBounds);
   let styleLookup = {
     "Carto-light":
       "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -137,7 +142,7 @@
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
 
   let fillColors: string[] = $derived(
-    customPallet !== undefined
+    setCustomPallet == true
       ? customPallet
       : colorbrewer[colorPalette][numberOfBreaks],
   );
@@ -200,7 +205,9 @@
   let breaks = $derived(
     breaksType == "jenks"
       ? jenksBreaks(vals, numberOfBreaks)
-      : quantileBreaks(vals, numberOfBreaks),
+      : breaksType == "quantile"
+        ? quantileBreaks(vals, numberOfBreaks)
+        : customBreaks,
   );
 
   let dataWithColor = $derived(
@@ -233,6 +240,7 @@
   if (setMaxBounds) {
     let boundary = convertToLngLatBounds(maxBounds);
   }
+
   function zoomToArea(e) {
     if (clickToZoom) {
       let coordArray =
@@ -279,43 +287,45 @@
     bind:map
     bind:loaded
     {style}
-    {standardControls}
     {center}
+    {interactive}
     {zoom}
     {maxZoom}
     {minZoom}
     {...setMaxBounds ? { maxBounds: boundary } : {}}
+    {standardControls}
     {hash}
     {updateHash}
     class="map"
   >
-    {#if !standardControls}
-      <NonStandardControls
-        {navigationControl}
-        {navigationControlPosition}
-        {geolocateControl}
-        {geolocateControlPosition}
-        {fullscreenControl}
-        {fullscreenControlPosition}
-        {scaleControl}
-        {scaleControlPosition}
-        {scaleControlUnit}
-      />
+    {#if interactive}
+      {#if !standardControls}
+        <NonStandardControls
+          {navigationControl}
+          {navigationControlPosition}
+          {geolocateControl}
+          {geolocateControlPosition}
+          {fullscreenControl}
+          {fullscreenControlPosition}
+          {scaleControl}
+          {scaleControlPosition}
+          {scaleControlUnit}
+        />
+        <Control>
+          <ControlGroup>
+            <button
+              class="reset-button"
+              onclick={() => {
+                map.flyTo({
+                  center: center,
+                  zoom: zoom,
+                });
+              }}>Reset view</button
+            ></ControlGroup
+          >
+        </Control>
+      {/if}
     {/if}
-
-    <Control>
-      <ControlGroup>
-        <button
-          class="reset-button"
-          onclick={() => {
-            map.flyTo({
-              center: center,
-              zoom: zoom,
-            });
-          }}>Reset view</button
-        ></ControlGroup
-      >
-    </Control>
 
     <GeoJSON id="areas" data={merged} promoteId="areanm">
       <FillLayer

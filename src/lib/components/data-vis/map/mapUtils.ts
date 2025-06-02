@@ -106,12 +106,6 @@ export function quantileBreaks(data: number[], numBreaks: number): number[] {
   let len = data.length;
 
   let breaks: number[] = [
-    //   data[0]
-    //   data[Math.floor(len * 0.2)],
-    //   data[Math.floor(len * 0.4)],
-    //   data[Math.floor(len * 0.6)],
-    //   data[Math.floor(len * 0.8)],
-    //   data[len - 1],
   ];
   for (let i = 0; i < numBreaks; i++) {
     breaks.push(data[Math.floor(len * (i * (1 / numBreaks)))]);
@@ -120,3 +114,5 @@ export function quantileBreaks(data: number[], numBreaks: number): number[] {
 
   return breaks;
 }
+
+  

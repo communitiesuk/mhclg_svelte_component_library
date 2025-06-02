@@ -156,6 +156,12 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
+        name: "Interactive",
+        category: "UI",
+        value: false,
+        description: "Turn on/off the interactvity funtion for the maps",
+      },
+      {
         name: "cooperativeGestures",
         isProp: true,
         description:
@@ -287,6 +293,7 @@
         category: "Styling",
         isProp: true,
         value: 400,
+        description: "Set height of map",
       },
       {
         name: "styleSheet",
@@ -352,10 +359,20 @@
         category: "Styling",
       },
       {
+        name: "setCustomPallet",
+        isProp: true,
+        category: "Styling",
+        value: false,
+        description: " Set wheather a custom palllet will be used",
+      },
+      {
         name: "customPallet",
         isProp: true,
         category: "Styling",
         value: [[]],
+        visable: { name: "setCustomPallet", value: true },
+        description:
+          "Pass in an array of colours you want to be used in a custom pallet. Write in a hex format",
       },
       {
         name: "showBorder",
@@ -436,8 +453,16 @@
         name: "breaksType",
         isProp: true,
         category: "Data",
-        options: ["quantile", "jenks"],
+        options: ["quantile", "jenks", "custom"],
         description: "The method for splitting your data into groups",
+      },
+      {
+        name: "customBreaks",
+        isProp: true,
+        value: [20, 40, 60, 80, 100],
+        category: "Data",
+        description:
+          "Split the data into you own groups. Breaks must equal or be less the numberOfBreaks",
       },
       {
         name: "numberOfBreaks",
@@ -509,7 +534,14 @@
         description: "The initial centre of the map, in [lng, lat] form",
       },
 
-      { name: "setMaxBounds", isProp: true, value: false, category: "View" },
+      {
+        name: "setMaxBounds",
+        isProp: true,
+        value: false,
+        category: "View",
+        description:
+          "Binds the viewpory to a the area between an NW point and SE point. Write max bounds as [[number,number], [number number]]",
+      },
 
       {
         name: "maxBounds",

@@ -21,6 +21,7 @@
     transform="translate({xFunction(activeMarkerId[x])},{yFunction(
       activeMarkerId[y],
     )})"
+    pointer-events="none"
   >
     {#if textDimensions}
       <rect

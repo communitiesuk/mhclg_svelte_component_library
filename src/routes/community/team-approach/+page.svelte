@@ -26,10 +26,235 @@
       The MHCLG Svelte Component Library is built by a multidisciplinary team of
       specialists working together using agile methodologies. We combine deep
       technical expertise with user-centred design principles to create
-      components that solve real problems for government services.
+      components that solve real problems for government applications.
     </p>
 
     <InsetText content={TeamSnippet} />
+
+    <h2 class="govuk-heading-l">Our vision and mission</h2>
+
+    <p class="govuk-body">
+      As a team, we're trailblazers in creating design patterns and components
+      specifically for data-rich government products. While most design systems
+      focus on traditional services and basic UI components, we're pioneering a
+      comprehensive approach to data visualisation, interactive analytics, and
+      complex data storytelling that meets the highest government standards.
+    </p>
+
+    <h3 class="govuk-heading-m">The problem we're solving</h3>
+
+    <p class="govuk-body">
+      At MHCLG, we own and publish large statistical datasets that provide
+      crucial insights for understanding our communities and informing policy
+      decisions. However, traditional platforms like GOV.UK are limited in their
+      ability to present complex data effectively - you can only create basic
+      tables and simple bar charts, and scaling to many geographical areas isn't
+      feasible.
+    </p>
+
+    <p class="govuk-body">
+      We have clear evidence of need for sophisticated data products across
+      multiple audiences:
+    </p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        <strong>MHCLG analysts and policy professionals</strong> - Need tools to
+        explore and understand departmental data
+      </li>
+      <li>
+        <strong>Other government departments (OGDs)</strong> - Require access to
+        MHCLG insights for cross-government collaboration
+      </li>
+      <li>
+        <strong>Public sector bodies</strong> - Local authorities and agencies need
+        data to inform local decision-making
+      </li>
+      <li>
+        <strong>Citizens and communities</strong> - The public deserves accessible
+        insights about their local areas
+      </li>
+    </ul>
+
+    <!-- <h3 class="govuk-heading-m">Why we build our own components</h3>
+
+    <p class="govuk-body">
+      Off-the-shelf dashboard solutions like PowerBI, Tableau, and RShiny present significant challenges for government use:
+    </p>
+
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+      <div class="govuk-grid-column-one-half">
+        <h4 class="govuk-heading-s">Accessibility limitations</h4>
+        <p class="govuk-body-s">
+          As the Government Analysis Function notes, these tools "are difficult to make accessible" and don't provide sufficient control over UI elements for keyboard and screen reader navigation. Claims of "full accessibility" often don't meet UK legal requirements.
+        </p>
+      </div>
+      <div class="govuk-grid-column-one-half">
+        <h4 class="govuk-heading-s">User experience constraints</h4>
+        <p class="govuk-body-s">
+          Dashboards aren't always the best way to present data insights. Some users are better served by text commentary, interactive narratives, or custom visualisation approaches that off-the-shelf tools can't provide.
+        </p>
+      </div>
+    </div> -->
+
+    <h3 class="govuk-heading-m">Our strategic approach</h3>
+
+    <p class="govuk-body">
+      Rather than building each digital product from scratch - which would be
+      inefficient and face numerous hurdles - we're taking a strategic,
+      component-based approach that creates reusable solutions specifically
+      designed for data-rich government products.
+    </p>
+
+    <div class="govuk-inset-text">
+      <p>
+        <strong>Our vision:</strong> To be the one-stop shop for everything needed
+        to build sophisticated, accessible data products in government - eliminating
+        the need to piece together solutions from multiple sources or compromise
+        on government standards.
+      </p>
+    </div>
+
+    <h4 class="govuk-heading-s">Pioneering data-rich design patterns</h4>
+
+    <p class="govuk-body">
+      While other design systems focus on traditional service patterns (forms,
+      content pages, transactions), we're creating the first comprehensive
+      library specifically for data-rich products:
+    </p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        <strong>Interactive data visualisation components</strong> - Charts, maps,
+        and complex data displays that work seamlessly with assistive technologies
+      </li>
+      <li>
+        <strong>Data exploration patterns</strong> - Search, filtering, and navigation
+        patterns optimised for large datasets
+      </li>
+      <li>
+        <strong>Statistical storytelling components</strong> - Tools for creating
+        compelling data narratives that engage diverse audiences
+      </li>
+      <li>
+        <strong>Geographic data patterns</strong> - Specialised components for location-based
+        insights and mapping
+      </li>
+      <li>
+        <strong>Performance analytics interfaces</strong> - Components designed specifically
+        for government performance data and metrics
+      </li>
+    </ul>
+
+    <h4 class="govuk-heading-s">Modern technology leadership</h4>
+
+    <p class="govuk-body">
+      We're advocates for modern web technologies that deliver superior
+      performance, accessibility, and developer experience while meeting all
+      government standards:
+    </p>
+
+    <div class="govuk-grid-row govuk-!-margin-top-4">
+      <div class="govuk-grid-column-one-half">
+        <h5 class="govuk-heading-s">Svelte and SvelteKit expertise</h5>
+        <p class="govuk-body-s">
+          Our team has deep expertise in Svelte 5 and SvelteKit, technologies
+          that deliver exceptional performance through compile-time
+          optimisation. We champion these modern frameworks over other
+          approaches like PowerBI, Tableau, React SPAs or Plotly Dash applications that often
+          struggle with accessibility and performance at scale.
+        </p>
+      </div>
+      <div class="govuk-grid-column-one-half">
+        <h5 class="govuk-heading-s">Progressive enhancement principles</h5>
+        <p class="govuk-body-s">
+          We build components that work without JavaScript and enhance
+          progressively - ensuring accessibility, resilience, and compliance
+          with government standards. This approach delivers better user
+          experiences than traditional SPA architectures while maintaining
+          modern development practices.
+        </p>
+      </div>
+    </div>
+
+    <h4 class="govuk-heading-s">Best practice knowledge sharing</h4>
+
+    <p class="govuk-body">
+      Beyond building components, we're committed to sharing our expertise and
+      advocating for modern approaches that meet government needs:
+    </p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        <strong>Technical guidance</strong> - Sharing best practices for building
+        accessible, performant data products
+      </li>
+      <li>
+        <strong>Framework advocacy</strong> - Demonstrating how modern technologies
+        can deliver better outcomes than legacy approaches
+      </li>
+      <li>
+        <strong>Standards compliance</strong> - Showing how to meet WCAG 2.1 AA,
+        Government Service Standard, and performance requirements
+      </li>
+      <li>
+        <strong>Community building</strong> - Creating a network of practitioners
+        focused on government data products
+      </li>
+    </ul>
+
+    <!-- <h4 class="govuk-heading-s">Key principles of our approach</h4>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li><strong>Reusability first</strong> - Every component we build can be used across multiple projects and departments</li>
+      <li><strong>Accessibility by design</strong> - All components meet WCAG 2.1 AA standards and work seamlessly with assistive technologies</li>
+      <li><strong>Government Service Standard compliance</strong> - Our solutions help teams meet all 14 points of the standard</li>
+      <li><strong>Performance optimised</strong> - Components are built for speed and efficiency, crucial for large datasets</li>
+      <li><strong>User-centred design</strong> - Every component is based on real user research and tested with actual users</li>
+      <li><strong>Open source collaboration</strong> - We work in the open, sharing our solutions with the wider government community</li>
+    </ul> -->
+
+    <h3 class="govuk-heading-m">Impact and future vision</h3>
+
+    <p class="govuk-body">
+      Our work is establishing new standards for government data products,
+      moving beyond the limitations of traditional dashboard tools and basic
+      service patterns. We're creating infrastructure that enables teams across
+      government to build sophisticated data experiences that rival the best
+      commercial products while exceeding government accessibility and inclusion
+      standards.
+    </p>
+<!-- 
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        <strong>Comprehensive solution</strong> - Everything needed for data-rich
+        products in one place, eliminating the need to cobble together solutions
+        from multiple sources
+      </li>
+      <li>
+        <strong>Modern technology adoption</strong> - Demonstrating how cutting-edge
+        frameworks can deliver better outcomes than legacy approaches
+      </li>
+      <li>
+        <strong>Accessibility leadership</strong> - Setting new benchmarks for accessible
+        data visualisation in government
+      </li>
+      <li>
+        <strong>Performance excellence</strong> - Proving that government products
+        can be fast, responsive, and delightful to use
+      </li>
+      <li>
+        <strong>Cross-government impact</strong> - Enabling departments to build
+        world-class data products without starting from scratch
+      </li>
+    </ul> -->
+
+    <p class="govuk-body">
+      As we continue to develop and refine our component library, we're not just
+      building tools - we're establishing a new blueprint for how government
+      presents and interacts with data, one that puts user needs, accessibility,
+      and modern web standards at the centre of everything we do.
+    </p>
 
     <h2 class="govuk-heading-l">Our team structure</h2>
 

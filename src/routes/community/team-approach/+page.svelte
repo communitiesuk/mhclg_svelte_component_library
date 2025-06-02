@@ -46,10 +46,12 @@
     <p class="govuk-body">
       At MHCLG, we own and publish large statistical datasets that provide
       crucial insights for understanding our communities and informing policy
-      decisions. However, traditional platforms like GOV.UK are limited in their
-      ability to present complex data effectively - you can only create basic
-      tables and simple bar charts, and scaling to many geographical areas isn't
-      feasible.
+      decisions. However, traditional government publishing platforms have
+      significant limitations for presenting complex data effectively. For example, GOV.UK
+      supports basic tables, simple charts and embedded html for custom charts, but these must be individually
+      created on single pages, making it impractical to scale across many
+      geographical areas or create interactive data experiences that users
+      increasingly expect.
     </p>
 
     <p class="govuk-body">
@@ -161,8 +163,9 @@
           Our team has deep expertise in Svelte 5 and SvelteKit, technologies
           that deliver exceptional performance through compile-time
           optimisation. We champion these modern frameworks over other
-          approaches like PowerBI, Tableau, React SPAs or Plotly Dash applications that often
-          struggle with accessibility and performance at scale.
+          approaches like PowerBI, Tableau, React SPAs or Plotly Dash
+          applications that often struggle with accessibility and performance at
+          scale.
         </p>
       </div>
       <div class="govuk-grid-column-one-half">
@@ -224,7 +227,7 @@
       commercial products while exceeding government accessibility and inclusion
       standards.
     </p>
-<!-- 
+    <!-- 
     <ul class="govuk-list govuk-list--bullet">
       <li>
         <strong>Comprehensive solution</strong> - Everything needed for data-rich

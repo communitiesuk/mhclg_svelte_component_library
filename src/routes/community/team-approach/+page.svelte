@@ -1,6 +1,5 @@
 <script lang="ts">
   import InsetText from "$lib/components/content/InsetText.svelte";
-  import WarningText from "$lib/components/content/WarningText.svelte";
 </script>
 
 {#snippet TeamSnippet()}
@@ -47,11 +46,11 @@
       At MHCLG, we own and publish large statistical datasets that provide
       crucial insights for understanding our communities and informing policy
       decisions. However, traditional government publishing platforms have
-      significant limitations for presenting complex data effectively. For example, GOV.UK
-      supports basic tables, simple charts and embedded html for custom charts, but these must be individually
-      created on single pages, making it impractical to scale across many
-      geographical areas or create interactive data experiences that users
-      increasingly expect.
+      significant limitations for presenting complex data effectively. For
+      example, GOV.UK supports basic tables, simple charts and embedded html for
+      custom charts, but these must be individually created on single pages,
+      making it impractical to scale across many geographical areas or create
+      interactive data experiences that users increasingly expect.
     </p>
 
     <p class="govuk-body">

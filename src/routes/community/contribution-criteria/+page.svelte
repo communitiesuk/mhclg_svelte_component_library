@@ -68,12 +68,30 @@
     <h2 class="govuk-heading-l">Essential criteria</h2>
 
     <p class="govuk-body">
-      All contributions must meet these essential criteria to be considered for
-      inclusion:
+      The criteria for contributions vary depending on the stage of development.
+      We follow a two-stage approach similar to other government design systems:
     </p>
 
-    <h3 class="govuk-heading-m">1. Useful</h3>
+    <InsetText>
+      {#snippet content()}
+        <strong>Stage 1:</strong> Criteria for proposing something new (moving
+        from "To be developed" to "In progress")<br />
+        <strong>Stage 2:</strong> Criteria for completing development (moving to
+        "Baseline completed" or "In use")
+      {/snippet}
+    </InsetText>
 
+    <h3 class="govuk-heading-m">
+      Stage 1: Criteria for proposing something new
+    </h3>
+
+    <p class="govuk-body">
+      When you propose a new component or pattern, we'll check your proposal
+      against these criteria before moving it to "In progress" status in our
+      backlog:
+    </p>
+
+    <h4 class="govuk-heading-s">1. Useful</h4>
     <p class="govuk-body">The contribution must:</p>
     <ul class="govuk-list govuk-list--bullet">
       <li>Solve a real user problem that's been identified through research</li>
@@ -81,10 +99,13 @@
         Be needed by multiple teams or services, not just one specific project
       </li>
       <li>Address a gap in the current component library</li>
+      <li>
+        Have evidence that it would be useful for many MHCLG teams, services, or
+        other government departments
+      </li>
     </ul>
 
-    <h3 class="govuk-heading-m">2. Unique</h3>
-
+    <h4 class="govuk-heading-s">2. Unique</h4>
     <p class="govuk-body">The contribution must:</p>
     <ul class="govuk-list govuk-list--bullet">
       <li>Not duplicate functionality that already exists in the library</li>
@@ -96,8 +117,44 @@
       <li>Fill a specific gap in the current component ecosystem</li>
     </ul>
 
-    <h3 class="govuk-heading-m">3. Accessible</h3>
+    <p class="govuk-body">
+      <strong>Evidence needed at this stage:</strong> Screenshots, links, or examples
+      of where the proposed component has been used by other services, along with
+      user research showing the need.
+    </p>
 
+    <h3 class="govuk-heading-m">
+      Stage 2: Criteria for completing development
+    </h3>
+
+    <p class="govuk-body">
+      After your proposal has been prioritised and moved to "In progress", but
+      before it can be published with "Baseline completed" or "In use" status,
+      we review it against these additional criteria:
+    </p>
+
+    <h4 class="govuk-heading-s">3. Usable</h4>
+    <p class="govuk-body">The contribution must:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        Show evidence of user research with a representative sample of users,
+        including people with disabilities
+      </li>
+      <li>Demonstrate that the solution works effectively for real users</li>
+      <li>Include usability testing results</li>
+      <li>Work intuitively without extensive explanation or training</li>
+    </ul>
+
+    <p class="govuk-body">
+      <em
+        >Note: If there isn't enough research yet to show that it's usable, a
+        component can still be published with "In progress" status, but you must
+        show relevant second-hand user research and it must meet the other
+        criteria.</em
+      >
+    </p>
+
+    <h4 class="govuk-heading-s">4. Accessible</h4>
     <p class="govuk-body">The contribution must:</p>
     <ul class="govuk-list govuk-list--bullet">
       <li>Meet WCAG 2.1 AA accessibility standards</li>
@@ -114,8 +171,7 @@
       <li>Work without JavaScript (progressive enhancement)</li>
     </ul>
 
-    <h3 class="govuk-heading-m">4. Consistent</h3>
-
+    <h4 class="govuk-heading-s">5. Consistent</h4>
     <p class="govuk-body">The contribution must:</p>
     <ul class="govuk-list govuk-list--bullet">
       <li>
@@ -128,10 +184,14 @@
       <li>Follow consistent interaction patterns and behaviours</li>
       <li>Align with government design principles and service standards</li>
       <li>Use consistent naming conventions and terminology</li>
+      <li>Follow our content style guide for any guidance or documentation</li>
+      <li>
+        If there is code, it must follow our frontend coding standards and be
+        ready to be merged into the component library
+      </li>
     </ul>
 
-    <h3 class="govuk-heading-m">5. Versatile</h3>
-
+    <h4 class="govuk-heading-s">6. Versatile</h4>
     <p class="govuk-body">The contribution must:</p>
     <ul class="govuk-list govuk-list--bullet">
       <li>Work across different types of government services</li>
@@ -142,6 +202,10 @@
         platforms)
       </li>
       <li>Be configurable for different use cases without breaking</li>
+      <li>
+        Be tested and work with a range of browsers, assistive technologies, and
+        devices
+      </li>
     </ul>
 
     <h2 class="govuk-heading-l">Technical requirements</h2>

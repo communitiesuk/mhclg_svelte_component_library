@@ -118,7 +118,7 @@
     <h3 class="govuk-heading-m">What you don't need at this stage</h3>
     <p class="govuk-body">At the proposal stage, you don't need to provide:</p>
     <ul class="govuk-list govuk-list--bullet">
-      <li>Detailed designs or prototypes</li>
+      <li>Extensive designs or prototypes</li>
       <li>Working code implementations</li>
       <li>Comprehensive accessibility testing</li>
       <li>Full user research studies</li>
@@ -207,7 +207,7 @@
 
     <InsetText>
       {#snippet content()}
-        <strong>Annual prioritisation:</strong> Each year, our community prioritises
+        <strong>Prioritisation:</strong> We and our community prioritises
         which components and patterns to work on. If your proposal isn't immediately
         prioritised, you can choose to develop it yourself or leave it for others
         to work on.
@@ -296,10 +296,10 @@
         <strong>Join community discussions</strong> - Connect with other government
         designers and developers
       </li>
-      <li>
+      <!-- <li>
         <strong>Attend our workshops</strong> - Join our regular community sessions
         for guidance and feedback
-      </li>
+      </li> -->
     </ul>
 
     <p class="govuk-body">

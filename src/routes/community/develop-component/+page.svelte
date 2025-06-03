@@ -17,9 +17,9 @@
     <h1 class="govuk-heading-xl">Develop a component or pattern</h1>
 
     <p class="govuk-body-l">
-      The Design System team focuses on developing prioritised components and
-      patterns with the community. However, anyone can choose to work on
-      something from our community backlog or GitHub discussions.
+      Our team focuses on developing prioritised components and patterns with
+      the community. However, anyone can choose to work on something from our
+      community backlog or GitHub discussions.
     </p>
 
     <WarningText
@@ -81,9 +81,9 @@
         <strong>Join the GitHub discussion</strong> for the component you want to
         work on
       </li>
-      <li>
+      <!-- <li>
         <strong>Mention your interest</strong> in our community channels
-      </li>
+      </li> -->
     </ul>
 
     <h3 class="govuk-heading-m">What happens in the kick-off meeting</h3>
@@ -93,10 +93,10 @@
     </p>
 
     <ul class="govuk-list govuk-list--bullet">
-      <li>
+      <!-- <li>
         <strong>Agree the scope</strong> - Define exactly what the component should
         and shouldn't do
-      </li>
+      </li> -->
       <li>
         <strong>Plan the work</strong> - Identify what design, content, code, and
         guidance needs developing
@@ -113,8 +113,7 @@
         from our team
       </li>
       <li>
-        <strong>Set up regular check-ins</strong> - Schedule weekly catch-ups to
-        track progress
+        <strong>Set up regular check-ins</strong> - Schedule catch-ups to track progress
       </li>
     </ul>
 
@@ -128,34 +127,11 @@
     </h2>
 
     <p class="govuk-body">
-      While developing your component or pattern, follow these principles to
-      ensure it meets our Stage 2 criteria:
+      During development, your component or pattern must meet our
+      <a href="/community/contribution-criteria" class="govuk-link"
+        >Stage 2 contribution criteria</a
+      >. Focus on these key development principles:
     </p>
-
-    <h3 class="govuk-heading-m">Start with what exists</h3>
-
-    <p class="govuk-body">
-      Before creating something new, research existing solutions:
-    </p>
-
-    <ul class="govuk-list govuk-list--bullet">
-      <li>
-        <strong>Government examples</strong> - Ask the government design community
-        for examples of similar components
-      </li>
-      <li>
-        <strong>Other design systems</strong> - Look at how GOV.UK, NHS, MoJ, and
-        other systems solve similar problems
-      </li>
-      <li>
-        <strong>Commercial solutions</strong> - Research how other organisations
-        approach the same user needs
-      </li>
-      <li>
-        <strong>Academic research</strong> - Look for relevant UX research and best
-        practices
-      </li>
-    </ul>
 
     <h3 class="govuk-heading-m">Work with the community</h3>
 
@@ -182,171 +158,47 @@
       </li>
     </ul>
 
-    <h3 class="govuk-heading-m">Follow our technical standards</h3>
+    <h3 class="govuk-heading-m">Follow our standards</h3>
 
     <p class="govuk-body">
-      All components must meet our technical requirements:
-    </p>
-
-    <ul class="govuk-list govuk-list--bullet">
-      <li>
-        <strong>Svelte 5 with runes</strong> - Use modern Svelte syntax and best
-        practices
-      </li>
-      <li>
-        <strong>TypeScript</strong> - Include comprehensive type definitions and
-        JSDoc documentation
-      </li>
-      <li>
-        <strong>Accessibility first</strong> - Build with WCAG 2.1 AA compliance
-        from the start
-      </li>
-      <li>
-        <strong>Progressive enhancement</strong> - Ensure components work without
-        JavaScript
-      </li>
-      <li>
-        <strong>Performance optimised</strong> - Minimise bundle size and runtime
-        overhead
-      </li>
-      <li>
-        <strong>Testing</strong> - Include unit tests and accessibility tests
-      </li>
-    </ul>
-
-    <h3 class="govuk-heading-m">Test for accessibility and usability</h3>
-
-    <p class="govuk-body">
-      Accessibility and usability testing are essential for meeting our Stage 2
+      Your contribution must meet all requirements outlined in our contribution
       criteria:
     </p>
 
-    <div class="govuk-grid-row govuk-!-margin-top-4">
-      <div class="govuk-grid-column-one-half">
-        <h4 class="govuk-heading-s">Accessibility testing</h4>
-        <ul class="govuk-list govuk-list--bullet">
-          <li>Automated testing with tools like axe-core</li>
-          <li>Manual testing with screen readers</li>
-          <li>Keyboard navigation testing</li>
-          <li>Colour contrast verification</li>
-          <li>Testing with real assistive technology users</li>
-        </ul>
-      </div>
-      <div class="govuk-grid-column-one-half">
-        <h4 class="govuk-heading-s">Usability testing</h4>
-        <ul class="govuk-list govuk-list--bullet">
-          <li>Testing with representative users</li>
-          <li>Testing in realistic service contexts</li>
-          <li>Cross-browser and device testing</li>
-          <li>Performance testing with real data</li>
-          <li>Edge case and error state testing</li>
-        </ul>
-      </div>
-    </div>
-
-    <h2 class="govuk-heading-l">Step 3: Regular check-ins and support</h2>
-
-    <p class="govuk-body">
-      Throughout development, our team provides ongoing support:
-    </p>
-
-    <h3 class="govuk-heading-m">Weekly catch-ups</h3>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>Review progress against milestones</li>
-      <li>Discuss any blockers or challenges</li>
-      <li>Get feedback on work in progress</li>
-      <li>Adjust timelines if needed</li>
-      <li>Connect with relevant expertise</li>
-    </ul>
-
-    <h3 class="govuk-heading-m">Design and technical reviews</h3>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>Early design concept reviews</li>
-      <li>Code architecture discussions</li>
-      <li>Accessibility guidance and testing</li>
-      <li>Performance optimisation advice</li>
-      <li>Documentation and guidance review</li>
-    </ul>
-
-    <h2 class="govuk-heading-l">Step 4: Prepare for final review</h2>
-
-    <p class="govuk-body">
-      Before your component can achieve "Baseline completed" status, it must
-      pass our comprehensive Stage 2 review:
-    </p>
-
-    <h3 class="govuk-heading-m">What you'll need to provide</h3>
     <ul class="govuk-list govuk-list--bullet">
       <li>
-        <strong>Working component</strong> - Fully functional code that meets our
-        technical standards
+        <strong
+          ><a
+            href="/community/contribution-criteria#technical-requirements"
+            class="govuk-link">Technical requirements</a
+          ></strong
+        > - Svelte 5, TypeScript, accessibility, performance, and testing standards
       </li>
       <li>
-        <strong>Comprehensive documentation</strong> - Usage guidance, API documentation,
-        and examples
+        <strong
+          ><a
+            href="/community/contribution-criteria#data-visualisation-criteria"
+            class="govuk-link">Data visualisation criteria</a
+          ></strong
+        > - Additional requirements for charts, maps, and data components
       </li>
       <li>
-        <strong>User research evidence</strong> - Testing results showing the component
-        works for users
-      </li>
-      <li>
-        <strong>Accessibility testing results</strong> - Evidence of WCAG 2.1 AA
-        compliance
-      </li>
-      <li>
-        <strong>Cross-browser testing</strong> - Verification that it works across
-        supported browsers and devices
-      </li>
-      <li>
-        <strong>Performance benchmarks</strong> - Evidence that it meets our performance
-        standards
+        <strong>Stage 2 essential criteria</strong> - Usable, Accessible, Consistent,
+        and Versatile requirements
       </li>
     </ul>
-
-    <h3 class="govuk-heading-m">The review process</h3>
-    <p class="govuk-body">
-      Our Stage 2 review typically takes 4-6 weeks and includes:
-    </p>
-    <ol class="govuk-list govuk-list--number">
-      <li>
-        <strong>Technical review</strong> - Code quality, performance, and standards
-        compliance
-      </li>
-      <li>
-        <strong>Design review</strong> - Consistency, usability, and design principles
-        alignment
-      </li>
-      <li>
-        <strong>Accessibility review</strong> - Comprehensive accessibility testing
-        and evaluation
-      </li>
-      <li>
-        <strong>Usability validation</strong> - Review of user research evidence
-      </li>
-      <li>
-        <strong>Versatility assessment</strong> - Testing across different contexts
-        and use cases
-      </li>
-      <li>
-        <strong>Documentation review</strong> - Ensuring all guidance and examples
-        meet our standards
-      </li>
-      <li>
-        <strong>Final decision</strong> - Approval for "Baseline completed" or "In
-        use" status
-      </li>
-    </ol>
 
     <InsetText>
       {#snippet content()}
-        <strong>Collaborative approach:</strong> If your component doesn't initially
-        meet all criteria, we'll work with you to address any issues rather than
-        rejecting it outright. Our goal is to help every contribution reach its full
-        potential.
+        <strong>Detailed requirements:</strong> For comprehensive technical
+        standards, testing requirements, and quality criteria, see our
+        <a href="/community/contribution-criteria" class="govuk-link"
+          >contribution criteria page</a
+        >.
       {/snippet}
     </InsetText>
 
-    <h2 class="govuk-heading-l">Types of development work</h2>
+    <h3 class="govuk-heading-m">Types of development work</h3>
 
     <p class="govuk-body">
       Depending on the component or pattern, development work might include:
@@ -397,6 +249,135 @@
         </ul>
       </div>
     </div>
+
+    <h3 class="govuk-heading-m">Development approach</h3>
+
+    <p class="govuk-body">We recommend an iterative approach to development:</p>
+
+    <ol class="govuk-list govuk-list--number">
+      <li>
+        <strong>Start with research</strong> - Look at existing solutions
+      </li>
+      <li>
+        <strong>Create early prototypes</strong> - Build basic functionality to test
+        concepts
+      </li>
+      <li>
+        <strong>Test early and often</strong> - Get feedback from users and the community
+      </li>
+      <li>
+        <strong>Iterate based on feedback</strong> - Refine your approach based on
+        testing results
+      </li>
+      <li>
+        <strong>Polish for production</strong> - Ensure all criteria are met before
+        final review
+      </li>
+    </ol>
+
+    <h2 class="govuk-heading-l">Step 3: Regular check-ins and support</h2>
+
+    <p class="govuk-body">
+      Throughout development, our team provides ongoing support:
+    </p>
+
+    <h3 class="govuk-heading-m">Catch-ups</h3>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Review progress against milestones</li>
+      <li>Discuss any blockers or challenges</li>
+      <li>Get feedback on work in progress</li>
+      <li>Adjust timelines if needed</li>
+      <li>Connect with relevant expertise</li>
+    </ul>
+
+    <h3 class="govuk-heading-m">Design and technical reviews</h3>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Early design concept reviews</li>
+      <li>Code architecture discussions</li>
+      <li>Accessibility guidance and testing</li>
+      <li>Performance optimisation advice</li>
+      <li>Documentation and guidance review</li>
+    </ul>
+
+    <h2 class="govuk-heading-l">Step 4: Prepare for final review</h2>
+
+    <p class="govuk-body">
+      Before your component can achieve "Baseline completed" status, it must
+      pass our comprehensive Stage 2 review:
+    </p>
+
+    <h3 class="govuk-heading-m">What you'll need to provide</h3>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        <strong>Working component</strong> - Fully functional code that meets our
+        technical standards
+      </li>
+      <li>
+        <strong>Comprehensive documentation</strong> - Usage guidance, API documentation,
+        and examples
+      </li>
+      <!-- <li>
+        <strong>User research evidence</strong> - Testing results showing the component
+        works for users
+      </li> -->
+      <!-- <li>
+        <strong>Accessibility testing results</strong> - Evidence of WCAG 2.1 AA
+        compliance
+      </li> -->
+      <!-- <li>
+        <strong>Cross-browser testing</strong> - Verification that it works across
+        supported browsers and devices
+      </li> -->
+      <!-- <li>
+        <strong>Performance benchmarks</strong> - Evidence that it meets our performance
+        standards
+      </li> -->
+    </ul>
+
+    <h3 class="govuk-heading-m">The review process</h3>
+    <p class="govuk-body">
+      Our Stage 2 review typically takes 4-6 weeks and includes:
+    </p>
+    <ol class="govuk-list govuk-list--number">
+      <li>
+        <strong>Technical review</strong> - Code quality, performance, and standards
+        compliance
+      </li>
+      <li>
+        <strong>Design review</strong> - Consistency, usability, and design principles
+        alignment
+      </li>
+      <li>
+        <strong>Accessibility review</strong> - Comprehensive accessibility testing
+        and evaluation
+      </li>
+      <li>
+        <strong>Usability validation</strong> - Review of user research evidence
+      </li>
+      <li>
+        <strong>Versatility assessment</strong> - Testing across different contexts
+        and use cases
+      </li>
+      <li>
+        <strong>Documentation review</strong> - Ensuring all guidance and examples
+        meet our standards
+      </li>
+      <li>
+        <strong>Final decision</strong> - Approval for "Baseline completed" or "In
+        use" status
+      </li>
+    </ol>
+
+    <InsetText>
+      {#snippet content()}
+        <strong>Collaborative approach:</strong> If your component doesn't initially
+        meet all criteria, we'll work with you to address any issues rather than
+        rejecting it outright. Our goal is to help every contribution reach its full
+        potential.
+      {/snippet}
+    </InsetText>
+
+
 
     <h2 class="govuk-heading-l">Get help and support</h2>
 

@@ -111,7 +111,7 @@
           href: "/community/team-approach",
         },
         { text: "Projects", href: "/community/projects" },
-        { text: "Community principles", href: "/community/principles" },
+        // { text: "Community principles", href: "/community/principles" },
         {
           text: "Blog posts, videos and podcasts",
           href: "/community/blog-posts",

@@ -96,6 +96,8 @@
 
   let { data } = $props();
 
+  $inspect("data is ", data);
+
   /**
    * DONOTTOUCH *
    * ? 		uses the page url to identify the name of the component and the folder it belongs to (folder is only used by snippets exported to the homepage to link back to this page).
@@ -336,7 +338,7 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-8">
+  <div>
     <Table {...parametersObject}></Table>
   </div>
 {/snippet}

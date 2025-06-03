@@ -2,7 +2,6 @@
   import Button from "$lib/components/ui/Button.svelte";
 
   let {
-    componentNameProp = undefined,
     data = undefined,
     metaData = undefined,
     caption = undefined,
@@ -212,10 +211,40 @@
 </div>
 
 <style>
-  .table-container {
-    max-height: 80vh;
-    overflow-y: auto;
+  :root {
+    --column-width: 150px;
   }
+
+  .table-container {
+    max-height: 85vh;
+    overflow-y: auto;
+    border: solid grey 1px;
+    width: 100%;
+    overflow-x: auto;
+    max-width: calc(var(--column-width) * 2);
+  }
+
+  .govuk-table {
+    min-width: max-content;
+    border-collapse: collapse;
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  .responsive-table th:nth-child(1),
+  .responsive-table td:nth-child(1) {
+    max-width: 150px;
+    width: 150px;
+    white-space: normal; /* allow wrapping */
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Base: Mobile-first — show only first 2 columns */
+  /* .govuk-table th:nth-child(n + 3),
+  .govuk-table td:nth-child(n + 3) {
+    display: none;
+  } */
 
   th {
     position: sticky;

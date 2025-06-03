@@ -109,8 +109,8 @@
         { text: "Projects", href: "/community/projects" },
         { text: "Community principles", href: "/community/principles" },
         {
-          text: "Contribution approach",
-          href: "/community/contribution-approach",
+          text: "Contribution criteria",
+          href: "/community/contribution-criteria",
         },
         {
           text: "Blog posts, videos and podcasts",
@@ -246,6 +246,10 @@
             },
             { text: "Projects", href: "/community/projects" },
             { text: "Community principles", href: "/community/principles" },
+            {
+              text: "Contribution criteria",
+              href: "/community/contribution-criteria",
+            },
             {
               text: "Contribution approach",
               href: "/community/contribution-approach",

@@ -156,7 +156,7 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "Interactive",
+        name: "interactive",
         category: "UI",
         value: false,
         description: "Turn on/off the interactvity funtion for the maps",
@@ -369,7 +369,7 @@
         name: "customPallet",
         isProp: true,
         category: "Styling",
-        value: [[]],
+        value: ["#979e4f"],
         visable: { name: "setCustomPallet", value: true },
         description:
           "Pass in an array of colours you want to be used in a custom pallet. Write in a hex format",
@@ -544,7 +544,7 @@
       },
 
       {
-        name: "maxBounds",
+        name: "maxBoundsCoords",
         isProp: true,
         category: "View",
         value: [

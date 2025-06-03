@@ -66,9 +66,8 @@
     zoom = 5,
     minZoom,
     maxZoom,
-    maxBounds,
+    maxBoundsCoords,
     hash = false,
-    interactive,
     updateHash = (u) => {
       replaceState(u, page.state);
     },
@@ -107,7 +106,7 @@
     zoom?: number;
     minZoom?: number | undefined;
     maxZoom?: number | undefined;
-    maxBounds?: [number, number][];
+    maxBoundsCoords?: [number, number][];
     setMaxBounds?: boolean;
     hash?: boolean;
     updateHash?: (URL) => void;
@@ -115,8 +114,9 @@
     mapHeight?: number;
     setCustomPallet?: boolean;
     customBreaks?: number[];
-    interative?: boolean;
+    interative: boolean;
   } = $props();
+  $inspect(setMaxBounds);
   let styleLookup = {
     "Carto-light":
       "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -124,6 +124,13 @@
       "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
   };
   let style = $derived(styleLookup[styleSheet] ?? styleSheet);
+
+  $inspect(customBreaks);
+
+  let breakCount = $derived(
+    breaksType == "custom" ? customBreaks.length : numberOfBreaks,
+  );
+  $inspect(breakCount);
 
   let mapData = $derived(data?.filter((d) => d["year"] == year)[0]?.data);
 
@@ -144,7 +151,7 @@
   let fillColors: string[] = $derived(
     setCustomPallet == true
       ? customPallet
-      : colorbrewer[colorPalette][numberOfBreaks],
+      : colorbrewer[colorPalette][breakCount],
   );
 
   let borderColor = "#003300";
@@ -204,9 +211,9 @@
 
   let breaks = $derived(
     breaksType == "jenks"
-      ? jenksBreaks(vals, numberOfBreaks)
+      ? jenksBreaks(vals, breakCount)
       : breaksType == "quantile"
-        ? quantileBreaks(vals, numberOfBreaks)
+        ? quantileBreaks(vals, breakCount)
         : customBreaks,
   );
 
@@ -235,10 +242,6 @@
     }
 
     return bounds;
-  }
-
-  if (setMaxBounds) {
-    let boundary = convertToLngLatBounds(maxBounds);
   }
 
   function zoomToArea(e) {
@@ -280,25 +283,30 @@
       ? +initialLocationHash[0]
       : zoom
     : zoom;
+
+  let bounds = $derived(
+    setMaxBounds ? convertToLngLatBounds(maxBoundsCoords) : {},
+  );
+
+  // let displayBounds = $derived(bounds.map((b) => b.toFixed(4)).join(", "));
+  // $inspect(displayBounds);
 </script>
 
 <div style="height: {mapHeight}px;">
-  <MapLibre
-    bind:map
-    bind:loaded
-    {style}
-    {center}
-    {interactive}
-    {zoom}
-    {maxZoom}
-    {minZoom}
-    {...setMaxBounds ? { maxBounds: boundary } : {}}
-    {standardControls}
-    {hash}
-    {updateHash}
-    class="map"
-  >
-    {#if interactive}
+  {#key bounds}
+    <MapLibre
+      bind:map
+      bind:loaded
+      {style}
+      {center}
+      {zoom}
+      {maxZoom}
+      {minZoom}
+      {standardControls}
+      {hash}
+      {updateHash}
+      class="map"
+    >
       {#if !standardControls}
         <NonStandardControls
           {navigationControl}
@@ -325,50 +333,50 @@
           >
         </Control>
       {/if}
-    {/if}
 
-    <GeoJSON id="areas" data={merged} promoteId="areanm">
-      <FillLayer
-        paint={{
-          //Get the color property of the area, or lightgrey if that's undefined
-          "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
-          "fill-opacity": changeOpacityOnHover
-            ? hoverStateFilter(fillOpacity, hoverOpacity) //setting the fill-opacity based on whether the area is hovered
-            : fillOpacity,
-        }}
-        beforeLayerType="symbol"
-        manageHoverState
-        onclick={(e) => zoomToArea(e)}
-        onmousemove={(e) => {
-          hoveredArea = e.features[0].id;
-          hoveredAreaData = e.features[0].properties.metric;
-          currentMousePosition = e.event.point;
-        }}
-        onmouseleave={(e) => {
-          (hoveredArea = null), (hoveredAreaData = null);
-        }}
-      />
-      {#if showBorder}
-        <LineLayer
-          layout={{ "line-cap": "round", "line-join": "round" }}
+      <GeoJSON id="areas" data={merged} promoteId="areanm">
+        <FillLayer
           paint={{
-            "line-color": hoverStateFilter(borderColor, "orange"), //setting the colour based on whether the area is hovered
-            "line-width": zoomTransition(3, 0, 12, maxBorderWidth), //setting the line-width based on the zoom level
+            //Get the color property of the area, or lightgrey if that's undefined
+            "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
+            "fill-opacity": changeOpacityOnHover
+              ? hoverStateFilter(fillOpacity, hoverOpacity) //setting the fill-opacity based on whether the area is hovered
+              : fillOpacity,
           }}
           beforeLayerType="symbol"
+          manageHoverState
+          onclick={(e) => zoomToArea(e)}
+          onmousemove={(e) => {
+            hoveredArea = e.features[0].id;
+            hoveredAreaData = e.features[0].properties.metric;
+            currentMousePosition = e.event.point;
+          }}
+          onmouseleave={(e) => {
+            (hoveredArea = null), (hoveredAreaData = null);
+          }}
+        />
+        {#if showBorder}
+          <LineLayer
+            layout={{ "line-cap": "round", "line-join": "round" }}
+            paint={{
+              "line-color": hoverStateFilter(borderColor, "orange"), //setting the colour based on whether the area is hovered
+              "line-width": zoomTransition(3, 0, 12, maxBorderWidth), //setting the line-width based on the zoom level
+            }}
+            beforeLayerType="symbol"
+          />
+        {/if}
+      </GeoJSON>
+      {#if tooltip}
+        <Tooltip
+          {currentMousePosition}
+          {hoveredArea}
+          {hoveredAreaData}
+          {year}
+          {metric}
         />
       {/if}
-    </GeoJSON>
-    {#if tooltip}
-      <Tooltip
-        {currentMousePosition}
-        {hoveredArea}
-        {hoveredAreaData}
-        {year}
-        {metric}
-      />
-    {/if}
-  </MapLibre>
+    </MapLibre>
+  {/key}
 </div>
 
 <style>

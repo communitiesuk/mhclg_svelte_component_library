@@ -1,16 +1,40 @@
 <script>
   import { AccordionItem, Accordion } from "flowbite-svelte";
+  import Template from "$lib/package-wrapping/templates/Template.svelte";
 
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
   import LineChart from "$lib/components/data-vis/line-chart/LineChart.svelte";
 
+  let { data } = $props();
+  const lineChartData = (() => {
+    const found = data.dataInFormatForLineChart.find(
+      (el) => el.metric === "Household waste recycling rate",
+    );
+    return found ? { ...found, lines: found.lines.slice(0, 5) } : null;
+  })();
+
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
+      heading: "1. Static line chart",
       content: Example1,
+    },
+    {
+      id: "2",
+      heading: "2. Interactive line chart",
+      content: Example2,
+    },
+    {
+      id: "3",
+      heading: "3. Chart with different tiers",
+      content: Example3,
+    },
+    {
+      id: "4",
+      heading: "4. Chart with markers",
+      content: Example4,
     },
   ];
 </script>
@@ -37,32 +61,34 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    <LineChart {lineChartData} x="x" y="y" series="areaCode"></LineChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example2()}
+  <div class="p-5 bg-white">
+    <LineChart {lineChartData} x="x" y="y" series="areaCode"></LineChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example3()}
+  <div class="p-5 bg-white">
+    <LineChart {lineChartData} x="x" y="y" series="areaCode"></LineChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example4()}
+  <div class="p-5 bg-white">
+    <LineChart
+      {lineChartData}
+      x="x"
+      y="y"
+      series="areaCode"
+      basicLineParams={{ markers: true, interactive: true }}
+    ></LineChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}

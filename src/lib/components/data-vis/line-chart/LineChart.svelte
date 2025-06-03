@@ -30,10 +30,9 @@
       .x((d) => xFunction(d[x]))
       .y((d) => yFunction(d[y]))
       .curve(curveLinear),
-    labelText,
+    labelText = "labelText",
 
-    basicLineParams, // contains functions
-    tooltipContent, // snippet
+    tooltipContent = "tooltipContent",
 
     onClickSeries = (series, tier) => {
       if (clickedSeries === dataId) {
@@ -55,15 +54,23 @@
         hoveredTier = tier;
       }
     },
-    onClickMarker,
-    onMouseEnterMarker,
-    onMouseLeaveMarker,
+    onClickMarker = (event, marker, markerId) => {
+      activeMarkerId = marker;
+    },
+    onMouseEnterMarker = (event, marker, markerId) => {
+      activeMarkerId = marker;
+    },
+    onMouseLeaveMarker = (event, marker, dataId) => {
+      activeMarkerId = null;
+    },
 
     // Optional
     clickedSeries = $bindable(undefined),
     hoveredSeries = undefined,
     overrideLineParams = () => ({}),
-    getLine = () => true,
+    getLine = (key, el) => {
+      return true;
+    },
     nothingSelected = true,
     svgWidth = $bindable(500),
     svgHeight = 500,
@@ -88,7 +95,23 @@
     tieredLineParams = {
       all: {},
     },
+
+    basicLineParams = {},
   } = $props();
+
+  let defaultLineParams = $derived({
+    xFunction,
+    yFunction,
+    lineFunction,
+    onClickSeries,
+    onMouseEnterSeries,
+    onMouseLeaveSeries,
+    onClickMarker,
+    onMouseEnterMarker,
+    onMouseLeaveMarker,
+    haloColor: chartBackgroundColor,
+    invisibleStrokeWidth: 20,
+  });
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
   let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
@@ -100,12 +123,7 @@
   //     .curve(curveLinear),
   // );
 
-  let selectedLine = $derived([
-    hoveredSeries,
-    clickedSeries,
-    hoveredSeries,
-    clickedSeries,
-  ]);
+  let selectedLine = $derived([hoveredSeries, clickedSeries]);
 
   function handleClickOutside(event) {
     if (
@@ -123,10 +141,12 @@
     overrideLineParams,
     tieredLineParams,
     basicLineParams,
+    defaultLineParams,
   ) {
     const listOfProperties = [
       ...new Set([
-        ...Object.keys(basicLineParams),
+        ...Object.keys(defaultLineParams),
+        ...Object.keys(basicLineParams ?? {}),
         ...Object.keys(tieredLineParams[tier] ?? {}),
         ...Object.keys(overrideLineParams(tier, line)),
       ]),
@@ -137,7 +157,8 @@
         key,
         overrideLineParams(tier, line)[key] ??
           tieredLineParams[tier]?.[key] ??
-          basicLineParams[key],
+          basicLineParams[key] ??
+          defaultLineParams[key],
       ]),
     );
 
@@ -160,9 +181,9 @@
             overrideLineParams,
             tieredLineParams,
             basicLineParams,
+            defaultLineParams,
           ),
         );
-
       return acc;
     }, {}),
   );

@@ -899,5 +899,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section">
-  <Examples></Examples>
+  <Examples {data}></Examples>
 </div>

@@ -320,18 +320,53 @@
     <h2 class="govuk-heading-l">Review process</h2>
 
     <p class="govuk-body">
-      Once you've submitted a contribution, our team will review it against
-      these criteria:
+      Our review process follows the two-stage approach outlined above, with
+      different levels of review depending on the stage of your contribution:
+    </p>
+
+    <h3 class="govuk-heading-m">Stage 1: Initial proposal review</h3>
+
+    <p class="govuk-body">
+      When you first propose a component or pattern, we'll conduct a lightweight
+      review to determine if it should move to "In progress" status:
     </p>
 
     <ol class="govuk-list govuk-list--number">
       <li>
-        <strong>Initial assessment</strong> - We'll check if the contribution meets
-        the basic criteria and requirements
+        <strong>Proposal assessment</strong> - We'll check if the contribution meets
+        the "Useful" and "Unique" criteria
       </li>
       <li>
+        <strong>Evidence review</strong> - We'll evaluate the user research and examples
+        you've provided
+      </li>
+      <li>
+        <strong>Backlog prioritisation</strong> - If accepted, we'll add it to our
+        community backlog and assign priority
+      </li>
+      <li>
+        <strong>Status update</strong> - The component will move from "To be developed"
+        to "In progress" status
+      </li>
+    </ol>
+
+    <p class="govuk-body">
+      <strong>Timeline:</strong> Initial proposal reviews typically take 1-2 weeks.
+      We'll provide feedback on whether your proposal meets the Stage 1 criteria
+      and guidance on next steps.
+    </p>
+
+    <h3 class="govuk-heading-m">Stage 2: Development completion review</h3>
+
+    <p class="govuk-body">
+      Once development is complete and before a component can achieve "Baseline
+      completed" or "In use" status, we conduct a comprehensive review:
+    </p>
+
+    <ol class="govuk-list govuk-list--number">
+      <li>
         <strong>Technical review</strong> - Our developers will review the code quality,
-        performance, and technical implementation
+        performance, and technical implementation against our coding standards
       </li>
       <li>
         <strong>Design review</strong> - Our designers will assess consistency, usability,
@@ -339,43 +374,75 @@
       </li>
       <li>
         <strong>Accessibility review</strong> - We'll conduct thorough accessibility
-        testing and evaluation
+        testing and evaluation, including assistive technology testing
       </li>
       <li>
-        <strong>User research validation</strong> - We may conduct additional research
-        to validate the solution
+        <strong>Usability validation</strong> - We'll review user research evidence
+        and may conduct additional research to validate the solution
+      </li>
+      <li>
+        <strong>Versatility assessment</strong> - We'll test the component across
+        different contexts, browsers, and devices
+      </li>
+      <li>
+        <strong>Documentation review</strong> - We'll ensure all documentation, examples,
+        and guidance meet our standards
       </li>
       <li>
         <strong>Final decision</strong> - The design system team will make a final
-        decision on inclusion
+        decision on moving to "Baseline completed" or "In use" status
       </li>
     </ol>
 
-    <h3 class="govuk-heading-m">Timeline expectations</h3>
     <p class="govuk-body">
-      The review process typically takes 4-6 weeks, depending on the complexity
-      of the contribution and our current workload. We'll keep you updated
-      throughout the process and provide feedback at each stage.
+      <strong>Timeline:</strong> Development completion reviews typically take 4-6
+      weeks, depending on the complexity of the contribution and our current workload.
+      We'll keep you updated throughout the process and provide feedback at each
+      stage.
     </p>
 
-    <h2 class="govuk-heading-l">What happens if criteria aren't met</h2>
+    <h3 class="govuk-heading-m">Our collaborative approach</h3>
 
     <p class="govuk-body">
-      If your contribution doesn't meet all the criteria, we'll work with you
-      to:
+      Throughout both stages, we provide iterative feedback and support to help
+      improve your contribution. We're committed to supporting contributors and
+      helping improve contributions rather than simply rejecting them.
     </p>
 
     <ul class="govuk-list govuk-list--bullet">
-      <li>Identify specific areas that need improvement</li>
-      <li>Provide guidance on how to address any issues</li>
-      <li>Suggest alternative approaches if appropriate</li>
-      <li>Connect you with relevant expertise within our team</li>
+      <li>
+        <strong>Regular check-ins</strong> - We'll schedule regular meetings during
+        development to provide guidance and feedback
+      </li>
+      <li>
+        <strong>Early feedback</strong> - We encourage sharing work-in-progress to
+        get feedback before formal review
+      </li>
+      <li>
+        <strong>Status transparency</strong> - You can track progress through our
+        component status system
+      </li>
+      <li>
+        <strong>Identify improvement areas</strong> - If criteria aren't met, we'll
+        identify specific areas that need improvement
+      </li>
+      <li>
+        <strong>Practical guidance</strong> - We provide clear guidance on how to
+        address any issues
+      </li>
+      <li>
+        <strong>Alternative approaches</strong> - We'll suggest different approaches
+        if appropriate
+      </li>
+      <li>
+        <strong>Expert support</strong> - We'll connect you with relevant expertise
+        within our team
+      </li>
     </ul>
 
     <p class="govuk-body">
-      We're committed to supporting contributors and helping improve
-      contributions rather than simply rejecting them. Our goal is to build the
-      best possible component library together.
+      Our goal is to build the best possible component library together, working
+      collaboratively to ensure every contribution reaches its full potential.
     </p>
 
     <h2 class="govuk-heading-l">Maintaining contributions</h2>

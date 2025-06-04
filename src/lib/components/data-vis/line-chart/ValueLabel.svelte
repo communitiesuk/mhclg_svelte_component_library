@@ -40,7 +40,11 @@
       fill={labelTextColor}
       bind:contentRect={textDimensions}
     >
-      {tooltipContent}
+      {#if typeof tooltipContent === "string"}
+        {tooltipContent}
+      {:else}
+        {@render tooltipContent()}
+      {/if}
     </text>
   </g>
 </svg>

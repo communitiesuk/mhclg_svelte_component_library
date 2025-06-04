@@ -44,7 +44,7 @@
           <li>Case studies from our real-world government projects</li>
           <li>Accessibility best practices for data visualisation</li>
           <li>Performance optimisation techniques</li>
-          <li>Design system evolution and decision-making</li>
+          <li>Component library evolution and decision-making</li>
         </ul>
       </div>
 

@@ -1,0 +1,1 @@
+import{j as q,k as T,u as c,q as j,S as x}from"./DUQSyTfv.js";function h(i,r){return i===r||(i==null?void 0:i[x])===r}function B(i={},r,k,S){return q(()=>{var s,f;return T(()=>{s=f,f=(S==null?void 0:S())||[],c(()=>{i!==k(...f)&&(r(i,...f),s&&h(k(...s),i)&&r(null,...s))})}),()=>{j(()=>{f&&h(k(...f),i)&&r(null,...f)})}}),i}export{B as b};

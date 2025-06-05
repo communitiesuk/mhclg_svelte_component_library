@@ -2,7 +2,6 @@
   import Button from "$lib/components/ui/Button.svelte";
 
   let {
-    componentNameProp = undefined,
     data = undefined,
     metaData = undefined,
     caption = undefined,
@@ -150,8 +149,9 @@
   {/if}
 
   <div class="table-container">
+    <div id="table-caption" class="sticky-caption">{caption}</div>
     <table class="govuk-table" data-module="moj-sortable-table">
-      <caption class="govuk-table__caption">{caption}</caption>
+      <!-- <caption class="govuk-table__caption"></caption> -->
       <thead class="govuk-table__head"
         ><tr class="govuk-table__row">
           {#each columns as column}
@@ -223,14 +223,23 @@
 
 <style>
   .table-container {
-    max-height: 80vh;
+    max-height: 85vh;
     overflow-y: auto;
+    border: solid red 1px;
+    width: 100%;
   }
 
   th {
     position: sticky;
     top: 0;
     z-index: 1;
+    background-color: white;
+  }
+
+  .sticky-caption {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     background-color: white;
   }
 

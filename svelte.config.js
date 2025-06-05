@@ -1,23 +1,24 @@
 import adapter from "@sveltejs/adapter-static";
-import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
-// import { mdsvex } from 'mdsvex';
 import { join } from "path";
+
+const dev = process.env.NODE_ENV === "development";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
   // Consult https://svelte.dev/docs/kit/integrations#preprocessors
   // for more information about preprocessors
-  preprocess: [vitePreprocess()],
 
   kit: {
-    // adapter-auto only supports some environments, see https://svelte.dev/docs/kit/adapter-auto for a list.
-    // If your environment is not supported, or you settled on a specific environment, switch out the adapter.
-    // See https://svelte.dev/docs/kit/adapters for more information about adapters.
-    adapter: adapter(),
+    adapter: adapter({
+      pages: "build",
+      assets: "build",
+      fallback: "404.html",
+    }),
     prerender: {
       handleHttpError: ({ path, referrer, message }) => {
         // ignore deliberate link to shiny 404 page
         if (true) {
+          console.log(path, referrer, message);
           return;
         }
 
@@ -32,11 +33,10 @@ const config = {
       "govuk-frontend": join(process.cwd(), "node_modules/govuk-frontend"),
     },
     paths: {
-      base:
-        process.env.NODE_ENV === "production" ? "/sveltekit-github-pages" : "",
+      base: dev ? "" : "/mhclg_svelte_component_library",
     },
   },
-
+  trailingSlash: "always",
   extensions: [".svelte", ".svx"],
 };
 

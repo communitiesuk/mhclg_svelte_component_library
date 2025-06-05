@@ -1,3 +1,12 @@
+/** @type {import('./$types').EntryGenerator} */
+export async function entries() {
+  const data = [{ slug: "ui", subslug: "accordion" }]; // Replace with your data fetching logic
+  return data.map((item) => ({
+    slug: item.slug,
+    subslug: item.subslug,
+  }));
+}
+
 import { error, json, fail } from "@sveltejs/kit";
 // import { read } from "$app/server"; // No longer using $app/server for reading file
 import fs from "fs";
@@ -16,13 +25,11 @@ interface FlatMetricData {
   areaCode: string;
   x: string | number;
   y: string | number;
-
 }
 
 interface TestData {
   flatMetricData: FlatMetricData[];
   areaCodeLookup: Record<string, string>;
-
 }
 
 /** @satisfies {import('./$types').Actions} */

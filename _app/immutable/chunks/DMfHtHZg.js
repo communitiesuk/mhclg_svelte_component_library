@@ -1,0 +1,1 @@
+import{t,a}from"./MlBHtrsl.js";import"./DZ9QVHGI.js";var l=t('<div class="g-top-level-container"><h2>User guide coming soon...</h2> <div class="mt-10 flex flex-col gap-20"></div></div>');function i(e){var o=l();a(e,o)}const p=Object.freeze(Object.defineProperty({__proto__:null,default:i},Symbol.toStringTag,{value:"Module"}));export{p as _,i as a};

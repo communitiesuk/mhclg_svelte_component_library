@@ -106,7 +106,7 @@
     zoom?: number;
     minZoom?: number | undefined;
     maxZoom?: number | undefined;
-    maxBoundsCoords?: [number, number][];
+    maxBoundsCoords?: LngLatBoundsLike;
     setMaxBounds?: boolean;
     hash?: boolean;
     updateHash?: (URL) => void;
@@ -116,7 +116,7 @@
     customBreaks?: number[];
     interative: boolean;
   } = $props();
-  $inspect(setMaxBounds);
+
   let styleLookup = {
     "Carto-light":
       "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -203,6 +203,8 @@
     } else {
       map?.cooperativeGestures.disable();
     }
+
+    map?.setMaxBounds(bounds);
   });
 
   let vals = $derived(
@@ -234,7 +236,7 @@
   let hoveredAreaData = $state();
   let currentMousePosition = $state();
 
-  function convertToLngLatBounds(coords: [number, number][]): LngLatBoundsLike {
+  function convertToLngLatBounds(coords: LngLatBoundsLike): LngLatBoundsLike {
     const bounds = new LngLatBounds(coords[0], coords[0]);
 
     for (let i = 1; i < coords.length; i++) {
@@ -285,7 +287,7 @@
     : zoom;
 
   let bounds = $derived(
-    setMaxBounds ? convertToLngLatBounds(maxBoundsCoords) : {},
+    setMaxBounds ? convertToLngLatBounds(maxBoundsCoords) : undefined,
   );
 
   // let displayBounds = $derived(bounds.map((b) => b.toFixed(4)).join(", "));
@@ -293,90 +295,88 @@
 </script>
 
 <div style="height: {mapHeight}px;">
-  {#key bounds}
-    <MapLibre
-      bind:map
-      bind:loaded
-      {style}
-      {center}
-      {zoom}
-      {maxZoom}
-      {minZoom}
-      {standardControls}
-      {hash}
-      {updateHash}
-      class="map"
-    >
-      {#if !standardControls}
-        <NonStandardControls
-          {navigationControl}
-          {navigationControlPosition}
-          {geolocateControl}
-          {geolocateControlPosition}
-          {fullscreenControl}
-          {fullscreenControlPosition}
-          {scaleControl}
-          {scaleControlPosition}
-          {scaleControlUnit}
-        />
-        <Control>
-          <ControlGroup>
-            <button
-              class="reset-button"
-              onclick={() => {
-                map.flyTo({
-                  center: center,
-                  zoom: zoom,
-                });
-              }}>Reset view</button
-            ></ControlGroup
-          >
-        </Control>
-      {/if}
+  <MapLibre
+    bind:map
+    bind:loaded
+    {style}
+    {center}
+    {zoom}
+    {maxZoom}
+    {minZoom}
+    {standardControls}
+    {hash}
+    {updateHash}
+    class="map"
+  >
+    {#if !standardControls}
+      <NonStandardControls
+        {navigationControl}
+        {navigationControlPosition}
+        {geolocateControl}
+        {geolocateControlPosition}
+        {fullscreenControl}
+        {fullscreenControlPosition}
+        {scaleControl}
+        {scaleControlPosition}
+        {scaleControlUnit}
+      />
+      <Control>
+        <ControlGroup>
+          <button
+            class="reset-button"
+            onclick={() => {
+              map.flyTo({
+                center: center,
+                zoom: zoom,
+              });
+            }}>Reset view</button
+          ></ControlGroup
+        >
+      </Control>
+    {/if}
 
-      <GeoJSON id="areas" data={merged} promoteId="areanm">
-        <FillLayer
+    <GeoJSON id="areas" data={merged} promoteId="areanm">
+      <FillLayer
+        paint={{
+          //Get the color property of the area, or lightgrey if that's undefined
+          "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
+          "fill-opacity": changeOpacityOnHover
+            ? hoverStateFilter(fillOpacity, hoverOpacity) //setting the fill-opacity based on whether the area is hovered
+            : fillOpacity,
+        }}
+        beforeLayerType="symbol"
+        manageHoverState
+        onclick={(e) => zoomToArea(e)}
+        onmousemove={(e) => {
+          hoveredArea = e.features[0].id;
+          hoveredAreaData = e.features[0].properties.metric;
+          currentMousePosition = e.event.point;
+        }}
+        onmouseleave={(e) => {
+          (hoveredArea = null), (hoveredAreaData = null);
+        }}
+      />
+      {#if showBorder}
+        <LineLayer
+          layout={{ "line-cap": "round", "line-join": "round" }}
           paint={{
-            //Get the color property of the area, or lightgrey if that's undefined
-            "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
-            "fill-opacity": changeOpacityOnHover
-              ? hoverStateFilter(fillOpacity, hoverOpacity) //setting the fill-opacity based on whether the area is hovered
-              : fillOpacity,
+            "line-color": hoverStateFilter(borderColor, "orange"), //setting the colour based on whether the area is hovered
+            "line-width": zoomTransition(3, 0, 12, maxBorderWidth), //setting the line-width based on the zoom level
           }}
           beforeLayerType="symbol"
-          manageHoverState
-          onclick={(e) => zoomToArea(e)}
-          onmousemove={(e) => {
-            hoveredArea = e.features[0].id;
-            hoveredAreaData = e.features[0].properties.metric;
-            currentMousePosition = e.event.point;
-          }}
-          onmouseleave={(e) => {
-            (hoveredArea = null), (hoveredAreaData = null);
-          }}
-        />
-        {#if showBorder}
-          <LineLayer
-            layout={{ "line-cap": "round", "line-join": "round" }}
-            paint={{
-              "line-color": hoverStateFilter(borderColor, "orange"), //setting the colour based on whether the area is hovered
-              "line-width": zoomTransition(3, 0, 12, maxBorderWidth), //setting the line-width based on the zoom level
-            }}
-            beforeLayerType="symbol"
-          />
-        {/if}
-      </GeoJSON>
-      {#if tooltip}
-        <Tooltip
-          {currentMousePosition}
-          {hoveredArea}
-          {hoveredAreaData}
-          {year}
-          {metric}
         />
       {/if}
-    </MapLibre>
-  {/key}
+    </GeoJSON>
+    {#if tooltip}
+      <Tooltip
+        {currentMousePosition}
+        {hoveredArea}
+        {hoveredAreaData}
+        {year}
+        {metric}
+      />
+    {/if}
+  </MapLibre>
 </div>
 
 <style>

@@ -20,6 +20,10 @@ const config = {
     alias: {
       "govuk-frontend": join(process.cwd(), "node_modules/govuk-frontend"),
     },
+    paths: {
+      base:
+        process.env.NODE_ENV === "production" ? "/sveltekit-github-pages" : "",
+    },
   },
 
   extensions: [".svelte", ".svx"],

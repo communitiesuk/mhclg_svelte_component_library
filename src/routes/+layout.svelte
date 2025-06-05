@@ -292,6 +292,7 @@
       <PhaseBanner
         tagText="Alpha"
         linkHref="mailto:dataexplorerfeedback@communities.gov.uk"
+        bannerText="This is a new service still in development. Some wording about later in the year."
       />
       <div
         class="app-pane__body"

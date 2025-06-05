@@ -49,7 +49,7 @@
     columns.push(columnObject);
   }
 
-  // $inspect("columns array is ", columns);
+  $inspect("columns array is ", columns);
 
   const metrics = columns
     .filter((column) => column.dataType === "number")
@@ -78,12 +78,22 @@
     }
     if (typeof localCopyOfData[0][sortState["column"]] === "string") {
       if (sortState.order === "ascending") {
-        localCopyOfData.sort((a, b) => a.areaName.localeCompare(b.name));
+        localCopyOfData.sort((a, b) =>
+          a[sortState["column"]].localeCompare(b[sortState["column"]]),
+        );
       } else {
-        localCopyOfData.sort((a, b) => b.areaName.localeCompare(a.name));
+        localCopyOfData.sort((a, b) =>
+          b[sortState["column"]].localeCompare(a[sortState["column"]]),
+        );
       }
     }
   }
+
+  $inspect(
+    sortState,
+    localCopyOfData[0],
+    typeof localCopyOfData[0][sortState["column"]],
+  );
 
   // heat map
 

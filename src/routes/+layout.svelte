@@ -68,6 +68,15 @@
         { text: "Tables", href: "/patterns/tables" },
       ],
     },
+    {
+      title: "Managing state",
+      items: [
+        {
+          text: "State management",
+          href: "/patterns/state-management",
+        },
+      ],
+    },
   ];
 
   const communityNavGroups: SideNavGroup[] = [
@@ -128,6 +137,15 @@
           items: [
             { text: "Forms", href: "/patterns/forms" },
             { text: "Tables", href: "/patterns/tables" },
+          ],
+        },
+        {
+          title: "Managing state",
+          items: [
+            {
+              text: "State management",
+              href: "/patterns/state-management",
+            },
           ],
         },
       ],

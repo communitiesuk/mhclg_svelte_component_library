@@ -96,7 +96,7 @@
 
   let { data } = $props();
 
-  $inspect(data.tableData, data.deprivationData);
+  $inspect(data.deprivationMetaData, data.deprivationData);
 
   /**
    * DONOTTOUCH *
@@ -168,13 +168,13 @@
         name: "data",
         category: "Data",
         visible: false,
-        value: data.tableData,
+        value: data.deprivationData,
       },
       {
         name: "metaData",
         category: "Data",
         visible: false,
-        value: data.metaData,
+        value: data.deprivationMetaData,
       },
       {
         name: "caption",

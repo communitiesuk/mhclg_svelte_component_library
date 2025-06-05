@@ -49,13 +49,13 @@
     columns.push(columnObject);
   }
 
-  $inspect("columns array is ", columns);
+  // $inspect("columns array is ", columns);
 
   const metrics = columns
     .filter((column) => column.dataType === "number")
     .map((column) => column.key);
 
-  $inspect("metrics is", metrics);
+  // $inspect("metrics is", metrics);
 
   let sortState = $state({ column: "sortedColumn", order: "ascending" });
 
@@ -124,7 +124,7 @@
 
   const colorKey = Object.entries({ Good: 1, Ok: 0.5, Bad: 0 });
 
-  $inspect("the first column key is", columns[0].key);
+  // $inspect("the first column key is", columns[0].key);
 </script>
 
 <div class="p-4">

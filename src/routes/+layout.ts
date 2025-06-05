@@ -105,6 +105,8 @@ export const load: LayoutLoad = async (event) => {
 
   let metaData = testData.metaData;
 
+  let deprivationData = testData.indexOfMultipleDeprivation
+
   return {
     metrics,
     areas,
@@ -118,5 +120,6 @@ export const load: LayoutLoad = async (event) => {
     svgFontDimensions,
     componentTree,
     metaData,
+    deprivationData,
   };
 };

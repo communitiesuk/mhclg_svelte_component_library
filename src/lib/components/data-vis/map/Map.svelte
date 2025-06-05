@@ -36,6 +36,7 @@
     data,
     customPallet,
     setCustomPallet,
+    interactive,
     cooperativeGestures = true,
     standardControls = true,
     navigationControl,
@@ -114,7 +115,7 @@
     mapHeight?: number;
     setCustomPallet?: boolean;
     customBreaks?: number[];
-    interative: boolean;
+    interactive: boolean;
   } = $props();
 
   let styleLookup = {
@@ -125,12 +126,9 @@
   };
   let style = $derived(styleLookup[styleSheet] ?? styleSheet);
 
-  $inspect(customBreaks);
-
   let breakCount = $derived(
     breaksType == "custom" ? customBreaks.length : numberOfBreaks,
   );
-  $inspect(breakCount);
 
   let mapData = $derived(data?.filter((d) => d["year"] == year)[0]?.data);
 
@@ -230,8 +228,6 @@
 
   let merged = $derived(joinData(filteredGeoJsonData, dataWithColor));
 
-  $inspect(merged);
-
   let hoveredArea = $state();
   let hoveredAreaData = $state();
   let currentMousePosition = $state();
@@ -289,9 +285,6 @@
   let bounds = $derived(
     setMaxBounds ? convertToLngLatBounds(maxBoundsCoords) : undefined,
   );
-
-  // let displayBounds = $derived(bounds.map((b) => b.toFixed(4)).join(", "));
-  // $inspect(displayBounds);
 </script>
 
 <div style="height: {mapHeight}px;">
@@ -303,12 +296,13 @@
     {zoom}
     {maxZoom}
     {minZoom}
-    {standardControls}
+    standardControls={interactive && standardControls}
     {hash}
     {updateHash}
+    {interactive}
     class="map"
   >
-    {#if !standardControls}
+    {#if interactive && !standardControls}
       <NonStandardControls
         {navigationControl}
         {navigationControlPosition}
@@ -329,45 +323,52 @@
                 center: center,
                 zoom: zoom,
               });
-            }}>Reset view</button
-          ></ControlGroup
-        >
+            }}
+          >
+            Reset view
+          </button>
+        </ControlGroup>
       </Control>
     {/if}
 
     <GeoJSON id="areas" data={merged} promoteId="areanm">
       <FillLayer
         paint={{
-          //Get the color property of the area, or lightgrey if that's undefined
           "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
           "fill-opacity": changeOpacityOnHover
-            ? hoverStateFilter(fillOpacity, hoverOpacity) //setting the fill-opacity based on whether the area is hovered
+            ? hoverStateFilter(fillOpacity, hoverOpacity)
             : fillOpacity,
         }}
         beforeLayerType="symbol"
-        manageHoverState
-        onclick={(e) => zoomToArea(e)}
-        onmousemove={(e) => {
-          hoveredArea = e.features[0].id;
-          hoveredAreaData = e.features[0].properties.metric;
-          currentMousePosition = e.event.point;
-        }}
-        onmouseleave={(e) => {
-          (hoveredArea = null), (hoveredAreaData = null);
-        }}
+        manageHoverState={interactive}
+        onclick={interactive ? (e) => zoomToArea(e) : null}
+        onmousemove={interactive
+          ? (e) => {
+              hoveredArea = e.features[0].id;
+              hoveredAreaData = e.features[0].properties.metric;
+              currentMousePosition = e.event.point;
+            }
+          : null}
+        onmouseleave={interactive
+          ? () => {
+              hoveredArea = null;
+              hoveredAreaData = null;
+            }
+          : null}
       />
       {#if showBorder}
         <LineLayer
           layout={{ "line-cap": "round", "line-join": "round" }}
           paint={{
-            "line-color": hoverStateFilter(borderColor, "orange"), //setting the colour based on whether the area is hovered
-            "line-width": zoomTransition(3, 0, 12, maxBorderWidth), //setting the line-width based on the zoom level
+            "line-color": hoverStateFilter(borderColor, "orange"),
+            "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
           }}
           beforeLayerType="symbol"
         />
       {/if}
     </GeoJSON>
-    {#if tooltip}
+
+    {#if interactive && tooltip}
       <Tooltip
         {currentMousePosition}
         {hoveredArea}

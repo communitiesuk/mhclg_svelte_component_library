@@ -3,6 +3,8 @@ import { resolve, join } from "path";
 import type { LayoutServerLoad } from "./$types.js";
 import { dev } from "$app/environment";
 
+export const prerender = true;
+
 // Helper function to format directory name into display name
 function formatDirName(dirName: string): string {
   // Convert kebab-case to Title Case

@@ -212,56 +212,12 @@
 </div>
 
 <style>
-  /* :root {
-    --column-width: 50vw;
-  }
-
-  @media (min-width: 400px) {
-    :root {
-      --column-width: calc(100vw / 3);
-    }
-  }
-
-  @media (min-width: 550px) {
-    :root {
-      --column-width: calc(100vw / 4);
-    }
-  } */
-
-  /* Add more breakpoints as needed */
-
   .table-container {
     max-height: 85vh;
     overflow-y: auto;
     border: solid red 1px;
     width: 100%;
-    /* overflow-x: auto; */
-    /* max-width: calc(var(--column-width) * 2); */
-    --column-width: 50%;
   }
-
-  td,
-  th {
-    min-width: var(--column-width);
-    /* width: var(--column-width); */
-    border: 1px solid #ccc;
-  }
-
-  /* .govuk-table {
-    min-width: max-content;
-    border-collapse: collapse;
-    table-layout: auto;
-    width: max-content;
-  } */
-
-  /* .responsive-table th:nth-child(1),
-  .responsive-table td:nth-child(1) {
-    max-width: 150px;
-    width: 150px;
-    white-space: normal;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-  } */
 
   th {
     position: sticky;

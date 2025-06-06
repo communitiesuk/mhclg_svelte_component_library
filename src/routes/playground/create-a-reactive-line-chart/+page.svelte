@@ -1,20 +1,34 @@
 <script>
-  import { page } from '$app/stores';
-  import PlaygroundDetails from '$lib/package-wrapping/PlaygroundDetails.svelte';
-  import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
-  import { details } from './details.js';
-  import LineChart from './local-lib/LineChart.svelte';
-  import Radio from './local-lib/Radio.svelte';
+  import { page } from "$app/state";
+  import PlaygroundDetails from "$lib/package-wrapping/PlaygroundDetails.svelte";
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
+  import { details } from "./details.js";
+  import LineChart from "$lib/components/data-vis/line-chart/LineChart.svelte";
+  import Radio from "./local-lib/Radio.svelte";
+  import { goto } from "$app/navigation";
 
   let { data, homepage = false, folders } = $props();
 
-  let pageInfo = $page?.route.id.split('/');
+  let pageInfo = page?.route.id.split("/");
 
   details.name = textStringConversion(
     folders ? folders[folders.length - 1] : pageInfo[pageInfo.length - 1],
-    'title-first-word'
+    "title-first-word",
   );
 
+  let urlParams = $state({});
+  let urlParamsString = $derived(
+    Object.entries(urlParams)
+      .map(([key, value]) => `${key}=${value}`)
+      .join("&"),
+  );
+  let stateTracker = $state(page.url.searchParams);
+  for (const p of stateTracker) {
+    urlParams[p[0]] = p[1];
+  }
+
+  let selectedYear = $derived(urlParams["selectedYear"]);
+  // $inspect(selectedYear);
   let selectedMetric = $state(data?.metrics[0]);
 </script>
 
@@ -32,8 +46,9 @@
           {#if selectedMetric}
             <LineChart
               data={data.dataInFormatForLineChart.find(
-                (el) => el.metric === selectedMetric
+                (el) => el.metric === selectedMetric,
               )}
+              {selectedYear}
             ></LineChart>
           {/if}
         </div>

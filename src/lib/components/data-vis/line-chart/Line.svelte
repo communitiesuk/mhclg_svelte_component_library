@@ -1,101 +1,150 @@
 <script>
+  import ValueLabel from "./ValueLabel.svelte";
+  import Marker from "./Marker.svelte";
+  import {
+    curveBasis,
+    curveCardinal,
+    curveLinear,
+    curveLinearClosed,
+    curveMonotoneX,
+    curveStep,
+    line,
+    area,
+  } from "d3-shape";
+
+  import { scaleLinear } from "d3-scale";
+  import LineChart from "../../../../routes/playground/create-a-reactive-line-chart-camilla/local-lib/LineChart.svelte";
+
   let {
     dataArray,
     opacity = 1,
-    pathStrokeColor = '#b312a0',
-    pathStrokeWidth = 1,
-    pathFillColor = 'none',
-    pathStrokeDashArray = 'none',
-    includeMarkers = false,
-    markerShape = 'circle',
-    markerRadius = 5,
-    markerFill = '#b312a0',
-    markerStroke = 'white',
-    markerStrokeWidth = 3,
+    pathStrokeColor = "grey",
+    pathStrokeWidth = 3,
+    pathFillColor = "none",
+    pathStrokeDashArray = "none",
+    areaFillColor,
+    includeArea = false,
     lineFunction,
+    areaFunction,
     xFunction,
     yFunction,
+    lineEnding,
     dataId,
-    markersDataId,
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
-    onMouseMove,
+    onClickSeries,
+    onMouseEnterSeries,
+    onMouseLeaveSeries,
+    halo,
+    chartBackgroundColor,
+    invisibleStrokeWidth,
+    interactive,
     onClickMarker,
     onMouseEnterMarker,
     onMouseLeaveMarker,
-    onMouseMoveMarker,
+    // includeLabels,
+    // labelText,
+    // labelColor,
+    // labelTextColor,
+    clickedSeries,
+    hoveredSeries,
+    activeMarkerId,
+    series,
+    y,
+    id,
+    x,
+    markers,
+    markerFill,
+    markerRadius,
+    markerShape,
+    markerStroke,
+    markerStrokeWidth,
+    tier,
   } = $props();
+
+  let linePath = $derived(lineFunction(dataArray));
 </script>
+
+<defs>
+  <marker
+    id={`arrow-${pathStrokeColor}`}
+    markerWidth="4"
+    markerHeight="3"
+    refX="2.7"
+    refY="1.5"
+    orient="auto-start-reverse"
+  >
+    <polygon points="0 0, 4 1.5, 0 3" style="fill: {pathStrokeColor}"></polygon>
+  </marker>
+
+  <marker
+    id={`circle-${pathStrokeColor}`}
+    markerWidth="14"
+    markerHeight="14"
+    refX="5"
+    refY="5"
+    orient="auto"
+  >
+    <circle cx="5" cy="5" r="1.5" style="fill: {pathStrokeColor}"></circle>
+  </marker>
+</defs>
 
 <g
   data-id={dataId}
-  onclick={onClick}
-  onmouseenter={onMouseEnter}
-  onmouseleave={onMouseLeave}
-  onmousemove={onMouseMove}
+  {id}
+  onclick={interactive ? (e) => onClickSeries(dataId, tier) : null}
+  onmouseenter={interactive ? (e) => onMouseEnterSeries(dataId, tier) : null}
+  onmouseleave={interactive ? (e) => onMouseLeaveSeries(dataId, tier) : null}
+  role="button"
+  tabindex="0"
+  onkeydown={(e) => e.key === "Enter" && onClickSeries(e, dataArray)}
   {opacity}
+  pointer-events={interactive ? null : "none"}
 >
+  {#if includeArea}
+    <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
+  {/if}
   <path
-    d={lineFunction(dataArray)}
+    d={linePath}
+    fill="none"
+    stroke="invisible"
+    stroke-width={invisibleStrokeWidth}
+    pointer-events={interactive ? "stroke" : "none"}
+  ></path>
+  {#if halo}
+    <path
+      d={linePath}
+      fill={pathFillColor}
+      stroke={chartBackgroundColor}
+      stroke-width={pathStrokeWidth * 1.2}
+      stroke-dasharray={pathStrokeDashArray}
+      pointer-events="none"
+    ></path>
+  {/if}
+  <path
+    d={linePath}
     fill={pathFillColor}
     stroke={pathStrokeColor}
     stroke-width={pathStrokeWidth}
     stroke-dasharray={pathStrokeDashArray}
+    pointer-events="none"
+    marker-start={`url(#${lineEnding}-${pathStrokeColor})`}
   ></path>
-
-  {#if includeMarkers}
-    {#each dataArray as marker, i}
-      <g
-        data-id={markersDataId + '-' + i}
-        onclick={onClickMarker}
-        onmouseenter={onMouseEnterMarker}
-        onmouseleave={onMouseLeaveMarker}
-        onmousemove={onMouseMoveMarker}
-        transform="translate({xFunction(marker.x)},{yFunction(marker.y)})"
-      >
-        {#if markerShape === 'circle'}
-          <circle
-            r={markerRadius}
-            stroke={markerStroke}
-            fill={markerFill}
-            stroke-width={markerStrokeWidth}
-          ></circle>
-        {:else if ['square', 'diamond'].includes(markerShape)}
-          <rect
-            transform="rotate({markerShape === 'diamond' ? 45 : 0})"
-            x={-markerRadius}
-            y={-markerRadius}
-            width={markerRadius * 2}
-            height={markerRadius * 2}
-            stroke={markerStroke}
-            fill={markerFill}
-            stroke-width={markerStrokeWidth}
-          ></rect>
-        {:else if markerShape === 'triangle'}
-          <polygon
-            points="0,{-markerRadius * 2} {markerRadius *
-              1.733},{markerRadius} {-markerRadius * 1.733},{markerRadius}"
-            stroke={markerStroke}
-            fill={markerFill}
-            stroke-width={markerStrokeWidth}
-          ></polygon>
-        {/if}
-      </g>
-    {/each}
+  {#if markers}
+    <Marker
+      {dataArray}
+      {markerFill}
+      {markerRadius}
+      {markerShape}
+      {markerStroke}
+      {markerStrokeWidth}
+      {x}
+      {y}
+      {series}
+      {xFunction}
+      {yFunction}
+      {onMouseEnterMarker}
+      {onMouseLeaveMarker}
+      {onClickMarker}
+      {activeMarkerId}
+    ></Marker>
   {/if}
 </g>
-
-<!-- <path
-  d={pathFunction(dataArray)}
-  fill="none"
-  stroke={color}
-  stroke-width={strokeWidth}
-></path>
-
-{#if markers}
-  {#each dataArray as marker}
-    <circle cx={x(marker.x)} cy={y(marker.y)} r="6" stroke="white" fill={color}>
-    </circle>
-  {/each}
-{/if} -->

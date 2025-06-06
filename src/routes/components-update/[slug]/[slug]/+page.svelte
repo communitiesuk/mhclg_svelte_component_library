@@ -1,19 +1,24 @@
 <script>
   // @ts-nocheck
-  import { page } from "$app/stores";
+  import { page } from "$app/state";
+  import { kebabToPascalCase } from "$lib/utils/text-string-conversion/textStringConversion.js";
 
-  let { data } = $props();
+  let { data, form } = $props();
 
   /**
    * &&   Splits the URL into parts, then takes the last two entries, which are used for locating the relevant wrapper svelte file.
    * &&   Note that these variables are reactive so that if the user navigates directly to another component, the slugArray will update and so the current wrapper svelte file will be swapped for the new one.
    */
-  let slugArray = $derived($page?.url.pathname.split("/").filter(Boolean));
+  let slugArray = $derived(page?.url.pathname.split("/").filter(Boolean));
   let folder = $derived(slugArray[slugArray.length - 2]);
   let wrapper = $derived(
-    slugArray[slugArray.length - 1][0].toUpperCase() +
-      slugArray[slugArray.length - 1].substring(1),
+    kebabToPascalCase(
+      slugArray[slugArray.length - 1][0].toUpperCase() +
+        slugArray[slugArray.length - 1].substring(1),
+    ),
   );
+
+  // $inspect(wrapper);
 
   /**
    * &&   Imports the wrapper component, reports error if the URL does not correspond to a component.
@@ -25,7 +30,8 @@
     (async () => {
       try {
         const module = await import(
-          `/src/wrappers/${folder}/${wrapper}Wrapper.svelte`
+          /* @vite-ignore */
+          `/src/wrappers/components/${folder}/${wrapper}Wrapper.svelte`
         );
         Component = module.default;
       } catch (error) {
@@ -34,13 +40,15 @@
       }
     })();
   });
+
+  // $inspect(Component);
 </script>
 
 {#if Component}
-  <svelte:component this={Component} {data}></svelte:component>
+  <svelte:component this={Component} {data} {form}></svelte:component>
 {:else if errorImportingComponent}
   <div class="g-top-level-container">
-    <h3>Failed to import componnet</h3>
+    <h3>Failed to import component</h3>
     <p>
       Oops...we've returned an error when trying to import the component wrapper
       associated with this URL.
@@ -52,7 +60,7 @@
       <div>2.</div>
       <div>
         Is the component wrapper file called <span class="font-bold"
-          >{wrapper}.svelte</span
+          >{wrapper}Wrapper.svelte</span
         >?
       </div>
       <div>3.</div>

@@ -1,8 +1,8 @@
 <script>
   // @ts-nocheck
-  import DividerLine from '$lib/components/layout/DividerLine.svelte';
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
 
-  import { textStringConversion } from '$lib/utils/text-string-conversion/textStringConversion.js';
+  import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
 
   let { homepage, details } = $props();
 </script>
@@ -34,7 +34,7 @@
     {#if homepage}
       <a
         class="underline underline-offset-4"
-        style={homepage ? 'width: 450px' : ''}
+        style={homepage ? "width: 450px" : ""}
         href="/playground/{textStringConversion(details.name, 'kebab')}"
       >
         <h8>{details.name}</h8>
@@ -66,14 +66,14 @@
         <h7 class="font-bold">Steps:</h7>
         <ul class="grid gap-y-2">
           {#each details.steps as step, i}
-            <li class={step.complete ? 'text-green-700' : ''}>
+            <li class={step.complete ? "text-green-700" : ""}>
               <span>{i + 1}.</span>
               {#if step.markdown}
-                <span class={step.complete ? 'line-through' : ''}
+                <span class={step.complete ? "line-through" : ""}
                   >{@html step.label}</span
                 >
               {:else}
-                <span class={step.complete ? 'line-through' : ''}
+                <span class={step.complete ? "line-through" : ""}
                   >{step.label}</span
                 >
               {/if}
@@ -86,7 +86,7 @@
 </div>
 
 <style>
-  [data-role='details-grid-container'] {
+  [data-role="details-grid-container"] {
     grid-template-columns: 180px auto;
   }
   dd p:first-of-type {

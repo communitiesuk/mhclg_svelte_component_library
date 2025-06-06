@@ -1,7 +1,7 @@
 <script>
   // @ts-nocheck
-  import Pill from "$lib/components/content/Pill.svelte";
-  import DividerLine from "$lib/components/layout/DividerLine.svelte";
+  import Pill from "$lib/package-wrapping/Pill.svelte";
+  import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
 
   import { componentStausLookup } from "$lib/config.js";
   import { textStringConversion } from "$lib/utils/text-string-conversion/textStringConversion.js";
@@ -53,7 +53,7 @@
     {#each ["description", "context"] as detail}
       {@const detailData = details[detail]}
       {#if detailData?.length > 0}
-        <dt>{textStringConversion(detail, "title-first-word")}:</dt>
+        <dt id={detail}>{textStringConversion(detail, "title-first-word")}:</dt>
         <dd>
           {#each detailData as paragraph}
             {#if paragraph.markdown}

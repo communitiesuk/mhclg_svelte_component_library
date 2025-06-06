@@ -52542,5 +52542,91 @@
     "E07000052": "West Dorset",
     "E07000191": "West Somerset",
     "E07000053": "Weymouth and Portland"
+    },
+    "metaData" : {
+        
+            "areaName": {
+              "direction": "none",
+              "explainer": "Local authorities",
+              "label": "Local Authority",
+              "shortLabel": "Local Authority"
+            },
+            "Household waste recycling rate": {
+              "direction": "Higher is better",
+              "explainer": "Percentage of household waste sent for recycling.",
+              "label": "Household recycling rate (%)",
+              "shortLabel": "Recycling"
+            },
+            "Recycling contamination rate": {
+              "direction": "Lower is better",
+              "explainer":
+                "Percentage of recycling that is contaminated and cannot be processed.",
+              "label": "Recycling contamination rate (%)",
+              "shortLabel": "Contamination"
+            },
+            "Residual household waste": {
+              "direction": "Lower is better",
+              "explainer": "Amount of non-recyclable waste per household (kg/year).",
+              "label": "Household waste (kg)",
+              "shortLabel": "Waste"
+            }
+          },
+    "indexOfMultipleDeprivation": [
+        {"LSOA":"City of London 001A","localAuthority":"City of London","IMD":29199,"IMDdecile":9},
+{"LSOA":"City of London 001B","localAuthority":"City of London","IMD":30379,"IMDdecile":10},
+{"LSOA":"City of London 001C","localAuthority":"City of London","IMD":14915,"IMDdecile":5},
+{"LSOA":"City of London 001E","localAuthority":"City of London","IMD":8678,"IMDdecile":3},
+{"LSOA":"Liverpool 022E","localAuthority":"Liverpool","IMD":116,"IMDdecile":1},
+{"LSOA":"Liverpool 061D","localAuthority":"Liverpool","IMD":945,"IMDdecile":1},
+{"LSOA":"Liverpool 042G","localAuthority":"Liverpool","IMD":12842,"IMDdecile":4},
+{"LSOA":"Liverpool 050J","localAuthority":"Liverpool","IMD":422,"IMDdecile":1},
+{"LSOA":"Liverpool 037F","localAuthority":"Liverpool","IMD":1833,"IMDdecile":1},
+{"LSOA":"Brent 019D","localAuthority":"Brent","IMD":11067,"IMDdecile":4},
+{"LSOA":"Brent 019E","localAuthority":"Brent","IMD":12873,"IMDdecile":4},
+{"LSOA":"Brent 020D","localAuthority":"Brent","IMD":8174,"IMDdecile":3},
+{"LSOA":"Brent 020E","localAuthority":"Brent","IMD":15999,"IMDdecile":5},
+{"LSOA":"Brent 022B","localAuthority":"Brent","IMD":11819,"IMDdecile":4},
+{"LSOA":"Brent 024A","localAuthority":"Brent","IMD":8516,"IMDdecile":3},
+{"LSOA":"Brent 022C","localAuthority":"Brent","IMD":12728,"IMDdecile":4},
+{"LSOA":"Brent 024B","localAuthority":"Brent","IMD":9599,"IMDdecile":3},
+{"LSOA":"Brent 024C","localAuthority":"Brent","IMD":7673,"IMDdecile":3},
+{"LSOA":"Brent 022D","localAuthority":"Brent","IMD":9415,"IMDdecile":3},
+{"LSOA":"Brent 024D","localAuthority":"Brent","IMD":2011,"IMDdecile":1},
+{"LSOA":"Brent 022E","localAuthority":"Brent","IMD":10775,"IMDdecile":4},
+{"LSOA":"Bromley 007A","localAuthority":"Bromley","IMD":31081,"IMDdecile":10},
+{"LSOA":"Bromley 016A","localAuthority":"Bromley","IMD":26185,"IMDdecile":8},
+{"LSOA":"Bromley 016B","localAuthority":"Bromley","IMD":28453,"IMDdecile":9},
+{"LSOA":"Bromley 016C","localAuthority":"Bromley","IMD":28942,"IMDdecile":9},
+{"LSOA":"Bromley 007B","localAuthority":"Bromley","IMD":25707,"IMDdecile":8},
+{"LSOA":"Bromley 022A","localAuthority":"Bromley","IMD":22579,"IMDdecile":7},
+{"LSOA":"Bromley 020A","localAuthority":"Bromley","IMD":24779,"IMDdecile":8}
+    ],
+    "deprivationMetaData" : {
+        
+        "LSOA": {
+          "direction": "none",
+          "explainer": "Lower layer super output area",
+          "label": "Neighbourhood",
+          "shortLabel": "Neighbourhood"
+        },
+        "localAuthority": {
+          "direction": "none",
+          "explainer": "Local authority",
+          "label": "Local authority",
+          "shortLabel": "Local authority"
+        },
+        "IMD": {
+          "direction": "Higher is better",
+          "explainer":
+            "Index of Multiple Deprivation",
+          "label": "IMD",
+          "shortLabel": "IMD"
+        },
+        "IMDdecile": {
+          "direction": "Higher is better",
+          "explainer": "Index of Multiple Deprivation decile",
+          "label": "IMD decile",
+          "shortLabel": "IMD decile"
+        }
+      }
     }
-}

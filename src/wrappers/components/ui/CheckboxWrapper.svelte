@@ -95,7 +95,7 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Checkbox from "$lib/components/ui/Checkbox.svelte";
+  // import Checkbox from "$lib/components/ui/Checkbox.svelte";
   import Examples from "./checkbox/Examples.svelte";
 
   let { data } = $props();
@@ -410,9 +410,7 @@
  -->
 {#snippet Component()}
   <div class="flex flex-col gap-4">
-    <div class="px-6 py-14">
-      <Checkbox {...parametersObject} bind:selectedValues />
-    </div>
+    <div class="px-6 py-14"></div>
   </div>
 {/snippet}
 
@@ -459,5 +457,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section">
-  <Examples></Examples>
+  <!-- <Examples></Examples> -->
 </div>

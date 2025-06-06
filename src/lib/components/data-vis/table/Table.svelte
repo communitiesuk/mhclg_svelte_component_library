@@ -225,7 +225,7 @@
   .table-container {
     max-height: 85vh;
     overflow-y: auto;
-    border: solid red 1px;
+    /* border: solid red 1px; */
     width: 100%;
   }
 

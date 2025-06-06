@@ -75,7 +75,7 @@
     "node": "^18.20.6",
     "npm": "^11.0.0",
     "prism-svelte": "^0.5.0",
-    "prismjs": "^1.29.0",
+    "prismjs": "^1.30.0",
     "svelte-preprocess": "^6.0.3"
   }
 }

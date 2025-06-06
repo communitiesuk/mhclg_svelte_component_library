@@ -23,6 +23,11 @@
       SvelteKit projects.
     </p>
 
+    <WarningText
+      assistiveText="Warning"
+      text="This service is in development and intended to be production-ready by Autumn 2025. In the meantime, we welcome developers to install the package and try it out."
+    />
+
     <InsetText>
       {#snippet content()}
         This guide assumes you already have a SvelteKit project set up. If you
@@ -190,18 +195,11 @@
 
     <ul class="govuk-list govuk-list--bullet">
       <li>
-        <a href="/get-in-touch" class="govuk-link">Contact the team</a> for support
-      </li>
-      <li>
         Check the <a
           href="https://github.com/communitiesuk/oflog_svelte_component_library"
           class="govuk-link"
           rel="external">GitHub repository</a
         > for issues and documentation
-      </li>
-      <li>
-        Review the <a href="/community/roadmap" class="govuk-link">roadmap</a> to
-        see what's planned
       </li>
     </ul>
 

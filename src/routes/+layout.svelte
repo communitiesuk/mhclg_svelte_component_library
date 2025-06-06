@@ -73,52 +73,7 @@
     // },
   ];
 
-  const communityNavGroups: SideNavGroup[] = [
-    {
-      title: "What we're working on",
-      items: [{ text: "Roadmap", href: "/community/roadmap" }],
-    },
-    {
-      title: "Ways to get involved",
-      items: [
-        {
-          text: "Share findings about your users",
-          href: "/community/share-findings",
-        },
-        {
-          text: "Contribution criteria",
-          href: "/community/contribution-criteria",
-        },
-        {
-          text: "Propose a component or pattern",
-          href: "/community/propose-component",
-        },
-        {
-          text: "Develop a component or pattern",
-          href: "/community/develop-component",
-        },
-        {
-          text: "Propose a content change using GitHub",
-          href: "/community/propose-content-change",
-        },
-      ],
-    },
-    {
-      title: "How we work",
-      items: [
-        {
-          text: "Our team and delivery approach",
-          href: "/community/team-approach",
-        },
-        { text: "Projects", href: "/community/projects" },
-        // { text: "Community principles", href: "/community/principles" },
-        {
-          text: "Blog posts, videos and podcasts",
-          href: "/community/blog-posts",
-        },
-      ],
-    },
-  ];
+  const communityNavGroups: SideNavGroup[] = [];
 
   const getStartedNavGroups: SideNavGroup[] = [
     {
@@ -211,56 +166,7 @@
     {
       title: "Community",
       href: "/community",
-      items: [
-        {
-          title: "What we're working on",
-          items: [{ text: "Roadmap", href: "/community/roadmap" }],
-        },
-        {
-          title: "Ways to get involved",
-          items: [
-            {
-              text: "Share findings about your users",
-              href: "/community/share-findings",
-            },
-            {
-              text: "Propose a component or pattern",
-              href: "/community/propose-component",
-            },
-            {
-              text: "Develop a component or pattern",
-              href: "/community/develop-component",
-            },
-            {
-              text: "Propose a content change using GitHub",
-              href: "/community/propose-content-change",
-            },
-          ],
-        },
-        {
-          title: "How we work",
-          items: [
-            {
-              text: "Our team and delivery approach",
-              href: "/community/team-approach",
-            },
-            { text: "Projects", href: "/community/projects" },
-            { text: "Community principles", href: "/community/principles" },
-            {
-              text: "Contribution criteria",
-              href: "/community/contribution-criteria",
-            },
-            {
-              text: "Contribution approach",
-              href: "/community/contribution-approach",
-            },
-            {
-              text: "Blog posts, videos and podcasts",
-              href: "/community/blog-posts",
-            },
-          ],
-        },
-      ],
+      items: [],
     },
   ];
 
@@ -292,6 +198,8 @@
       <PhaseBanner
         tagText="Alpha"
         linkHref="mailto:dataexplorerfeedback@communities.gov.uk"
+        bannerText="This service is in development and intended to be production-ready and available for use by the digital community in Autumn 2025"
+        linkText=""
       />
       <div
         class="app-pane__body"

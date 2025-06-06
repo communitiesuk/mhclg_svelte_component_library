@@ -176,11 +176,7 @@
         <a href="/community/" class="govuk-link">Join our community</a> for updates
         and discussions
       </li>
-      <li>
-        Check our
-        <a href="/community/roadmap/" class="govuk-link">roadmap</a> to see what
-        patterns are planned
-      </li>
+
       <li>
         Follow our
         <a href="/" class="govuk-link">What's new</a> section for the latest releases

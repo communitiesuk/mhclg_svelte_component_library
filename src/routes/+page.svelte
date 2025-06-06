@@ -56,7 +56,7 @@ TODO
       {
         date: "June 2025",
         content:
-          "We launched the MHCLG Svelte Component Library alpha version. This library provides Svelte 5 implementations of GOV.UK Design System components, as well as other custom components, specifically tailored for data-rich digital products and services within the Ministry of Housing, Communities and Local Government and beyond.",
+          "We made the MHCLG Svelte Component Library public, so other developers can see what we're working on. This library provides Svelte 5 implementations of GOV.UK Design System components, as well as other custom components, specifically tailored for data-rich digital products and services within the Ministry of Housing, Communities and Local Government and beyond.",
         releaseNotesUrl:
           "https://github.com/communitiesuk/oflog_svelte_component_library/releases/tag/v0.1.16",
         releaseVersion: "v0.1.16",
@@ -135,76 +135,13 @@ TODO
         />
       </div>
 
-      <div class="govuk-grid-column-two-thirds">
-        <h2 class="govuk-heading-l">Roadmap</h2>
-        <p class="govuk-body">
-          See what the Component Library team at MHCLG is planning to work on
-          over the next 12 months in the
-          <a href="/community/roadmap/" class="govuk-link"
-            >MHCLG Svelte Component Library Roadmap</a
-          >.
-        </p>
-      </div>
-
-      <div class="govuk-grid-column-full">
-        <hr
-          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl"
-        />
-      </div>
-
-      <div class="govuk-grid-column-two-thirds">
-        <h2 class="govuk-heading-l">Principles we follow</h2>
-        <p class="govuk-body">
-          The MHCLG Svelte Component Library helps teams that work on government
-          services follow the <a
-            class="govuk-link"
-            href="https://www.gov.uk/guidance/government-design-principles"
-            >Government Design Principles</a
-          >
-          and
-          <a class="govuk-link" href="https://www.gov.uk/service-manual"
-            >GOV.UK Service Manual</a
-          >. This library also follows the
-          <a class="govuk-link" href="https://www.gov.uk/guidance/style-guide"
-            >GOV.UK style guide</a
-          >
-          and
-          <a
-            class="govuk-link"
-            href="https://www.gov.uk/guidance/content-design"
-            >GOV.UK content design guidance</a
-          >.
-        </p>
-
-        <p class="govuk-body">
-          <a class="govuk-link" href="/accessibility/accessibility-strategy/"
-            >Our accessibility strategy</a
-          > outlines our principles and work to improve accessibility within the
-          Svelte Component Library.
-        </p>
-      </div>
-
-      <div class="govuk-grid-column-full">
-        <hr
-          class="govuk-section-break govuk-section-break--visible govuk-section-break--xl"
-        />
-      </div>
-
       <div class="govuk-grid-column-two-thirds-from-desktop">
         <h2 id="support" class="govuk-heading-l">Support</h2>
         <p class="govuk-body">
-          The MHCLG Svelte Component Library is <a
-            class="govuk-link"
-            href="/design-system-team/"
-            >maintained by the Digital, Design and Development team at MHCLG</a
-          >. If you've got a question, idea or suggestion, you can
+          The MHCLG Svelte Component Library is maintained by the Digital,
+          Design and Development team at MHCLG. If you've got a question, idea
+          or suggestion, you can
           <a class="govuk-link" href="/get-in-touch/">contact the team</a>.
-        </p>
-        <p class="govuk-body">
-          See <a class="govuk-link" href="/community/blogs-talks-podcasts/"
-            >blog posts, video talks, and podcasts about Svelte development and
-            the Component Library</a
-          >.
         </p>
       </div>
     </div>

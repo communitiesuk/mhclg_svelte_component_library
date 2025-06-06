@@ -182,7 +182,7 @@
     <ul class="govuk-list govuk-list--bullet">
       <li>
         <strong>WCAG compliance</strong> - All components are developed towards meeting
-        WCAG 2.1 AA standards
+        WCAG 2.2 AA standards
       </li>
       <li>
         <strong>Progressive enhancement</strong> - Components work without JavaScript

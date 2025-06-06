@@ -22,7 +22,7 @@
 </svelte:head>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-full">
+  <div class="govuk-grid-column-two-thirds">
     <h1 class="govuk-heading-xl">Community</h1>
 
     <p class="govuk-body-l">
@@ -62,7 +62,7 @@
       </li>
       <li>
         <strong>Accessibility enhancements</strong> - Ensuring all components meet
-        WCAG 2.1 AA standards and work with assistive technologies
+        WCAG 2.2 AA standards and work with assistive technologies
       </li>
       <li>
         <strong>Performance optimisation</strong> - Lightweight, fast-loading components
@@ -70,13 +70,7 @@
       </li>
     </ul>
 
-    <p class="govuk-body">
-      <a href="/community/roadmap/" class="govuk-link"
-        >View our detailed roadmap</a
-      > to see what's planned and when.
-    </p>
-
-    <h2 class="govuk-heading-l govuk-!-margin-top-8">Ways to get involved</h2>
+    <!-- <h2 class="govuk-heading-l govuk-!-margin-top-8">Ways to get involved</h2>
 
     <p class="govuk-body">
       There are many ways to contribute to the MHCLG Svelte Component Library,
@@ -121,9 +115,9 @@
           >
         </p>
       </div>
-    </div>
+    </div> -->
 
-    <div class="govuk-grid-row govuk-!-margin-top-4">
+    <!-- <div class="govuk-grid-row govuk-!-margin-top-4">
       <div class="govuk-grid-column-one-half">
         <img
           src="/assets/images/undraw_pull-request_zlsu.svg"
@@ -160,7 +154,7 @@
           >
         </p>
       </div>
-    </div>
+    </div> -->
 
     <h2 class="govuk-heading-l govuk-!-margin-top-8">How we work</h2>
 
@@ -192,35 +186,6 @@
       <li>
         <strong>Open source</strong> - All our code is open source and available
         for anyone to use and contribute to
-      </li>
-    </ul>
-
-    <h3 class="govuk-heading-m">Learn more about our work</h3>
-
-    <ul class="govuk-list govuk-list--bullet">
-      <li>
-        <a href="/community/team-approach/" class="govuk-link"
-          >Our team and delivery approach</a
-        > - How we're organised and how we work
-      </li>
-      <li>
-        <a href="/community/projects/" class="govuk-link">Projects</a> - Current
-        and completed projects
-      </li>
-      <li>
-        <a href="/community/principles/" class="govuk-link"
-          >Community principles</a
-        > - The values that guide our work
-      </li>
-      <li>
-        <a href="/community/contribution-approach/" class="govuk-link"
-          >Contribution approach</a
-        > - How we review and accept contributions
-      </li>
-      <li>
-        <a href="/community/blog-posts/" class="govuk-link"
-          >Blog posts, videos and podcasts</a
-        > - Updates and insights from our team
       </li>
     </ul>
 

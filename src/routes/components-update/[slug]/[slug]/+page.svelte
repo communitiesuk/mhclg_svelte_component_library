@@ -26,6 +26,10 @@
   let Component = $state();
   let errorImportingComponent = $state();
 
+  const modules = import.meta.glob(
+    "/src/wrappers/components/*/*Wrapper.svelte",
+  );
+
   $effect(() => {
     (async () => {
       try {

@@ -26,16 +26,12 @@
   let Component = $state();
   let errorImportingComponent = $state();
 
-  const modules = import.meta.glob(
-    "/src/wrappers/components/*/*Wrapper.svelte",
-  );
-
   $effect(() => {
     (async () => {
       try {
         const module = await import(
           /* @vite-ignore */
-          `/src/wrappers/components/${folder}/${wrapper}Wrapper.svelte`
+          `./../../wrappers/components/${folder}/${wrapper}Wrapper.svelte`
         );
         Component = module.default;
       } catch (error) {

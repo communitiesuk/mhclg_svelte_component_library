@@ -86,6 +86,7 @@
     "@maptiler/sdk": "^3.0.1",
     "@ministryofjustice/frontend": "^4.0.1",
     "@monaco-editor/loader": "^1.4.0",
+    "@sveltejs/adapter-netlify": "^5.0.2",
     "@types/dompurify": "^3.0.5",
     "accessible-autocomplete": "^3.0.1",
     "csv-parser": "^3.0.0",

@@ -12,9 +12,6 @@
     area,
   } from "d3-shape";
 
-  import { scaleLinear } from "d3-scale";
-  import LineChart from "../../../../routes/playground/create-a-reactive-line-chart-camilla/local-lib/LineChart.svelte";
-
   let {
     dataArray,
     opacity = 1,

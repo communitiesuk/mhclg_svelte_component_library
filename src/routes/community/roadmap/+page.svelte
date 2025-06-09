@@ -29,7 +29,7 @@
     <h2 class="govuk-heading-l">Moving from alpha to stable release</h2>
 
     <p class="govuk-body">
-      After gathering feedback from our initial alpha release, we're working
+      After gathering feedback from our initial alpha release, we'll be working
       towards a stable component library release. Our work is organised into
       current priorities and upcoming developments.
     </p>

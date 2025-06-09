@@ -15,7 +15,7 @@
 </svelte:head>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-xl">Share findings about your users</h1>
 
     <p class="govuk-body-l">
@@ -33,7 +33,7 @@
       <li>accessibility testing results</li>
       <li>performance data from components in production</li>
       <li>
-        responses to any calls for information 
+        responses to any calls for information
         <!-- we give in the 'Research on
         this…' section of our component pages -->
       </li>
@@ -151,7 +151,7 @@ Add links to any prototypes, research documents, or live services (where appropr
       Community members might respond to your findings on GitHub. Feel free to
       take part in the conversation.
     </p>
-<!-- 
+    <!-- 
     <p class="govuk-body">For example, you could:</p>
 
     <ul class="govuk-list govuk-list--bullet">
@@ -283,9 +283,7 @@ Add links to any prototypes, research documents, or live services (where appropr
       We're also happy to help you plan user research or provide guidance on
       testing our components with your users.
     </p>
-  </div>
 
-  <div class="govuk-grid-column-one-third">
     <RelatedContent
       sections={[
         {
@@ -333,7 +331,7 @@ Add links to any prototypes, research documents, or live services (where appropr
           links: [
             {
               title: "GitHub discussions",
-              url: "https://github.com/mhclg-digital/svelte-component-library/discussions",
+              url: "https://github.com/communitiesuk/svelte-component-library/discussions",
             },
             {
               title: "GOV.UK Service Manual: User research",

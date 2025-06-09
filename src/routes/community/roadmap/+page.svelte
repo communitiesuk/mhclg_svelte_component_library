@@ -273,6 +273,8 @@
       </div>
     </div>
 
+    <br />
+
     <RelatedContent
       sections={[
         {
@@ -291,44 +293,6 @@
             {
               title: "Component statuses",
               base_path: "/get-started/component-statuses",
-            },
-          ],
-        },
-        {
-          type: "subheading",
-          id: "ways-to-contribute",
-          subheading: "Ways to get involved",
-          links: [
-            {
-              title: "Share findings about your users",
-              base_path: "/community/share-findings",
-            },
-            {
-              title: "Propose a component or pattern",
-              base_path: "/community/propose-component",
-            },
-            {
-              title: "Develop a component or pattern",
-              base_path: "/community/develop-component",
-            },
-          ],
-        },
-        {
-          type: "other",
-          id: "external-resources",
-          subheading: "External resources",
-          links: [
-            {
-              title: "GitHub repository",
-              url: "https://github.com/communitiesuk/mhclg_svelte_component_library",
-            },
-            {
-              title: "GitHub discussions",
-              url: "https://github.com/communitiesuk/mhclg_svelte_component_library/discussions",
-            },
-            {
-              title: "GitHub issues",
-              url: "https://github.com/communitiesuk/mhclg_svelte_component_library/issues",
             },
           ],
         },

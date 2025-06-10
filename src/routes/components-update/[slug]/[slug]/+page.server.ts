@@ -1,3 +1,9 @@
+import type { EntryGenerator } from "./$types";
+
+export const entries: EntryGenerator = () => {
+  return [{ slug: "hello-world" }];
+};
+
 import { error, json, fail } from "@sveltejs/kit";
 // import { read } from "$app/server"; // No longer using $app/server for reading file
 import fs from "fs";
@@ -16,13 +22,11 @@ interface FlatMetricData {
   areaCode: string;
   x: string | number;
   y: string | number;
-
 }
 
 interface TestData {
   flatMetricData: FlatMetricData[];
   areaCodeLookup: Record<string, string>;
-
 }
 
 /** @satisfies {import('./$types').Actions} */

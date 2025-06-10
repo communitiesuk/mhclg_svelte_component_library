@@ -1,5 +1,7 @@
 <script lang="ts">
   // --- Imports ---
+  import { base } from "$app/paths";
+
   import Footer from "$lib/components/ui/Footer.svelte";
   import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
@@ -79,14 +81,14 @@
     {
       title: "Setup guides",
       items: [
-        { text: "About & Benefits", href: "/get-started/about-benefits" },
-        { text: "Installation and usage", href: "/get-started" },
+        { text: "About & Benefits", href: `${base}/get-started/about-benefits` },
+        { text: "Installation and usage", href: `${base}/get-started` },
       ],
     },
     {
       title: "Component library usage guides",
       items: [
-        { text: "Component statuses", href: "/get-started/component-statuses" },
+        { text: "Component statuses", href: `${base}/get-started/component-statuses` },
       ],
     },
   ];
@@ -133,11 +135,11 @@
   const mobileNavSections = [
     {
       title: "Get started",
-      href: "/get-started",
+      href: `${base}/get-started`,
       items: [
-        { text: "Installation and usage", href: "/get-started" },
-        { text: "About & Benefits", href: "/get-started/about-benefits" },
-        { text: "Component statuses", href: "/get-started/component-statuses" },
+        { text: "Installation and usage", href: `${base}/get-started` },
+        { text: "About & Benefits", href: `${base}/get-started/about-benefits` },
+        { text: "Component statuses", href: `${base}/get-started/component-statuses` },
       ],
     },
     // {
@@ -147,12 +149,12 @@
     // },
     {
       title: "Components",
-      href: "/components",
+      href: `${base}/components`,
       items: structuredComponentItems,
     },
     {
       title: "Patterns",
-      href: "/patterns",
+      href: `${base}/patterns`,
       items: [
         // {
         //   title: "Common patterns",
@@ -165,7 +167,7 @@
     },
     {
       title: "Community",
-      href: "/community",
+      href: `${base}/community`,
       items: [],
     },
   ];

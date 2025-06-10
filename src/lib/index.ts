@@ -29,7 +29,7 @@ export { default as ServiceNavigationNestedMobile } from './components/layout/se
 export { default as SideNav } from './components/layout/service-navigation-nested-mobile/SideNav.svelte';
 export { default as Accordion } from './components/ui/Accordion.svelte';
 export { default as Button } from './components/ui/Button.svelte';
-export { default as Checkbox } from './components/ui/Checkbox.svelte';
+export { default as CheckBox } from './components/ui/CheckBox.svelte';
 export { default as ContentsList } from './components/ui/ContentsList.svelte';
 export { default as DateInput } from './components/ui/DateInput.svelte';
 export { default as Details } from './components/ui/Details.svelte';

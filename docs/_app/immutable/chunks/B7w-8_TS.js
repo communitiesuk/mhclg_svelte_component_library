@@ -1,0 +1,1 @@
+import{y as A,z as T,m as c,A as q,S as x}from"./Cp2qfsB-.js";function k(i,r){return i===r||(i==null?void 0:i[x])===r}function z(i={},r,S,h){return A(()=>{var s,f;return T(()=>{s=f,f=(h==null?void 0:h())||[],c(()=>{i!==S(...f)&&(r(i,...f),s&&k(S(...s),i)&&r(null,...s))})}),()=>{q(()=>{f&&k(S(...f),i)&&r(null,...f)})}}),i}export{z as b};

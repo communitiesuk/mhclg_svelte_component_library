@@ -1,9 +1,0 @@
-@layer base {
-  .link-to-other-page {
-    @apply underline underline-offset-4;
-  }
-
-  .g-top-level-container {
-    @apply w-full lg:w-3/4 max-w-3xl mx-auto my-10 px-5;
-  }
-}

@@ -1,8 +1,11 @@
 <script>
+  import { base } from "$app/paths";
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import Masthead from "$lib/components/ui/Masthead.svelte";
   import mastheadIllustration from "$lib/assets/images/masthead-illustration.svg";
   import WhatsNew from "$lib/components/ui/WhatsNew.svelte";
+  import NotificationBanner from "$lib/components/ui/NotificationBanner.svelte";
+  import InsetText from "$lib/components/content/InsetText.svelte";
 
   // Keep only playground wrappers for the homepage
   const wrappersPlaygroundsObject = import.meta.glob(
@@ -40,6 +43,26 @@ TODO
 <>		
 -->
 
+{#snippet InsetTextSnippet()}
+  <p>
+    This service is in the <a
+      href="https://www.gov.uk/service-manual/agile-delivery/how-the-alpha-phase-works"
+      >ALPHA</a
+    >
+    stage. The content is in
+    <a href="https://design-system.service.gov.uk/">GOV.UK style</a> because it is
+    designed for creating GOV.UK applications.
+  </p>
+
+  <p>
+    The use of the GDS Transport typeface and government logos should be limited
+    to GOV.UK web pages. See: <a
+      href="https://www.gov.uk/service-manual/design/making-your-service-look-like-govuk"
+      >Making your service look like GOV.UK.</a
+    >
+  </p>
+{/snippet}
+
 <div class="homepage-layout">
   <Masthead
     title="MHCLG Svelte Component Library"
@@ -49,6 +72,12 @@ TODO
     imageSrc={mastheadIllustration}
     imageAlt="MHCLG Svelte Component Library"
   />
+  <div
+    class="govuk-width-container"
+    style="padding-top: 20px; padding-bottom: 20px;"
+  >
+    <InsetText content={InsetTextSnippet}></InsetText>
+  </div>
   <WhatsNew
     title="What's new"
     componentLinksIntroText="This initial alpha release includes foundational components for building government services."
@@ -94,8 +123,9 @@ TODO
           navigation, panels, tables, charts and data visualisations.
         </p>
         <p class="govuk-body govuk-!-margin-bottom-0">
-          <a href="/components/" class="govuk-link govuk-!-font-weight-bold"
-            >Browse our components</a
+          <a
+            href={base + "/components/"}
+            class="govuk-link govuk-!-font-weight-bold">Browse our components</a
           >
         </p>
       </div>
@@ -108,8 +138,9 @@ TODO
           and creating interactive dashboards with proven design patterns.
         </p>
         <p class="govuk-body govuk-!-margin-bottom-0">
-          <a href="/patterns/" class="govuk-link govuk-!-font-weight-bold"
-            >Browse our patterns</a
+          <a
+            href={base + "/patterns/"}
+            class="govuk-link govuk-!-font-weight-bold">Browse our patterns</a
           >
         </p>
       </div>
@@ -123,8 +154,9 @@ TODO
           events and collaborative design sessions.
         </p>
         <p class="govuk-body govuk-!-margin-bottom-0">
-          <a href="/community/" class="govuk-link govuk-!-font-weight-bold"
-            >Join our community</a
+          <a
+            href={base + "/community/"}
+            class="govuk-link govuk-!-font-weight-bold">Join our community</a
           >
         </p>
       </div>
@@ -141,7 +173,9 @@ TODO
           The MHCLG Svelte Component Library is maintained by the Digital,
           Design and Development team at MHCLG. If you've got a question, idea
           or suggestion, you can
-          <a class="govuk-link" href="/get-in-touch/">contact the team</a>.
+          <a href="mailto:andrew.hillman@communities.gov.uk" class="govuk-link"
+            >get in touch</a
+          >.
         </p>
       </div>
     </div>
@@ -192,5 +226,7 @@ TODO
   /* Allow masthead to break out of container and span full width */
   .homepage-layout :global(.app-masthead) {
     width: 100%;
+    padding-left: 30px;
+    padding-right: 30px;
   }
 </style>

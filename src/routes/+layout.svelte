@@ -81,14 +81,20 @@
     {
       title: "Setup guides",
       items: [
-        { text: "About & Benefits", href: `${base}/get-started/about-benefits` },
+        {
+          text: "About & Benefits",
+          href: `${base}/get-started/about-benefits`,
+        },
         { text: "Installation and usage", href: `${base}/get-started` },
       ],
     },
     {
       title: "Component library usage guides",
       items: [
-        { text: "Component statuses", href: `${base}/get-started/component-statuses` },
+        {
+          text: "Component statuses",
+          href: `${base}/get-started/component-statuses`,
+        },
       ],
     },
   ];
@@ -138,8 +144,14 @@
       href: `${base}/get-started`,
       items: [
         { text: "Installation and usage", href: `${base}/get-started` },
-        { text: "About & Benefits", href: `${base}/get-started/about-benefits` },
-        { text: "Component statuses", href: `${base}/get-started/component-statuses` },
+        {
+          text: "About & Benefits",
+          href: `${base}/get-started/about-benefits`,
+        },
+        {
+          text: "Component statuses",
+          href: `${base}/get-started/component-statuses`,
+        },
       ],
     },
     // {
@@ -185,6 +197,7 @@
       <InternalHeader
         homepageUrl="/"
         organisationName="MHCLG Digital Design & Development Team"
+        includeCrest={false}
       />
 
       <!-- Use ServiceNavigationNestedMobile component -->
@@ -297,7 +310,7 @@
   /* Adjust padding for larger devices */
   @media (min-width: 40.0625em) {
     .app-content {
-      padding: 30px 0px 30px 30px;
+      padding: 30px 0px 30px 0px;
     }
   }
 </style>

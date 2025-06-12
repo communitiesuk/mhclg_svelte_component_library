@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import WarningText from "$lib/components/content/WarningText.svelte";
   import InsetText from "$lib/components/content/InsetText.svelte";
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
@@ -176,16 +177,17 @@
 
     <ul class="govuk-list govuk-list--bullet">
       <li>
-        <a href="/components" class="govuk-link">Browse our components</a> to see
-        what's available
+        <a href={base + "/components"} class="govuk-link"
+          >Browse our components</a
+        > to see what's available
       </li>
       <li>
-        <a href="/patterns" class="govuk-link">Explore patterns</a> for common design
-        solutions
+        <a href={base + "/patterns"} class="govuk-link">Explore patterns</a> for
+        common design solutions
       </li>
       <li>
-        <a href="/community" class="govuk-link">Join the community</a> to contribute
-        and get support
+        <a href={base + "/community"} class="govuk-link">Join the community</a> to
+        contribute and get support
       </li>
     </ul>
 

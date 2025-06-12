@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import InsetText from "$lib/components/content/InsetText.svelte";
   import WarningText from "$lib/components/content/WarningText.svelte";
   import RelatedContent from "$lib/components/ui/RelatedContent.svelte";
@@ -10,13 +11,13 @@
       id: "related-main",
       title: "Related",
       links: [
-        { title: "Browse components", base_path: "/components/" },
-        { title: "Get started guide", base_path: "/get-started/" },
+        { title: "Browse components", base_path: `${base}/components/` },
+        { title: "Get started guide", base_path: `${base}/get-started/` },
         {
           title: "About & Benefits",
-          base_path: "/get-started/about-benefits/",
+          base_path: `${base}/get-started/about-benefits/`,
         },
-        { title: "Community", base_path: "/community/" },
+        { title: "Community", base_path: `${base}/community/` },
       ],
     },
   ];
@@ -30,7 +31,9 @@
 {#snippet ContributingSnippet()}
   <strong>Contributing patterns:</strong> If you have a proven design solution
   that could benefit other government teams, we'd love to hear from you.
-  <a href="/community/" class="govuk-link">Get in touch with our community</a>
+  <a href={base + "/community/"} class="govuk-link"
+    >Get in touch with our community</a
+  >
   to discuss contributing patterns to the library.
 {/snippet}
 
@@ -134,8 +137,8 @@
 
     <p class="govuk-body">
       Patterns will show you how to combine our
-      <a href="/components/" class="govuk-link">Svelte components</a> with content
-      design and interaction principles to create effective user experiences.
+      <a href={base + "/components/"} class="govuk-link">Svelte components</a> with
+      content design and interaction principles to create effective user experiences.
     </p>
 
     <p class="govuk-body">Each pattern will include:</p>
@@ -173,13 +176,13 @@
 
     <ul class="govuk-list govuk-list--bullet">
       <li>
-        <a href="/community/" class="govuk-link">Join our community</a> for updates
-        and discussions
+        <a href={base + "/community/"} class="govuk-link">Join our community</a>
+        for updates and discussions
       </li>
 
       <li>
         Follow our
-        <a href="/" class="govuk-link">What's new</a> section for the latest releases
+        <a href={base} class="govuk-link">What's new</a> section for the latest releases
       </li>
     </ul>
   </div>

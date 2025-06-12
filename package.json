@@ -6,7 +6,8 @@
     "url": "https://github.com/communitiesuk/oflog_svelte_component_library.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "author": "Ibrahim-Haizel",
   "description": "A collection of reusable Svelte components",

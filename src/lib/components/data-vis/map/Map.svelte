@@ -52,21 +52,21 @@
     colorPalette = "YlGnBu",
     showBorder = false,
     maxBorderWidth = 1.5,
-    tooltip,
+    tooltip = true,
     clickToZoom = true,
-    geoType,
-    year,
-    metric,
+    geoType = "ltla",
+    year = 2024,
+    metric = "Residual household waste",
     breaksType = "quantile",
-    customBreaks,
+    customBreaks = [20, 40, 60, 80, 100],
     numberOfBreaks = 5,
     fillOpacity = 0.5,
     changeOpacityOnHover = true,
     hoverOpacity = 0.8,
     center = [-2.5, 53],
     zoom = 5,
-    minZoom,
-    maxZoom,
+    minZoom = undefined,
+    maxZoom = undefined,
     maxBoundsCoords,
     hash = false,
     updateHash = (u) => {
@@ -198,8 +198,10 @@
 
     if (cooperativeGestures) {
       map?.cooperativeGestures.enable();
+      $inspect(cooperativeGestures);
     } else {
       map?.cooperativeGestures.disable();
+      $inspect(cooperativeGestures);
     }
 
     map?.setMaxBounds(bounds);

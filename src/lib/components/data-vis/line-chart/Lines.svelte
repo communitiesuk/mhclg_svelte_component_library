@@ -120,19 +120,3 @@
     </g>
   </g>
 {/each}
-
-{#if activeMarkerId}
-  <ValueLabel
-    {activeMarkerId}
-    labelColor="grey"
-    labelTextColor="black"
-    {tooltipContent}
-    {xFunction}
-    {yFunction}
-    {x}
-    {y}
-  ></ValueLabel>
-{/if}
-
-<!-- if markerhovered get the id render the tooltip find in the tieredDataObject gets
-the data for that line -->

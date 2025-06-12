@@ -23,7 +23,13 @@
   <g
     data-id={markerId}
     onclick={(event) => onClickMarker(event, marker, markerId)}
-    onmouseenter={(event) => onMouseEnterMarker(event, marker, markerId)}
+    onmouseenter={(event) =>
+      onMouseEnterMarker(
+        event,
+        marker,
+        markerId,
+        event.currentTarget.getBoundingClientRect(),
+      )}
     onmouseleave={(event) => onMouseLeaveMarker(event, marker, markerId)}
     transform="translate({xFunction(marker[x])},{yFunction(marker[y])})"
     role="button"

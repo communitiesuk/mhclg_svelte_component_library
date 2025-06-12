@@ -7,6 +7,7 @@
   import { curveLinear, line, area } from "d3-shape";
   import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
   import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
+  import ValueLabel from "./ValueLabel.svelte";
 
   let {
     // Required
@@ -14,6 +15,9 @@
     y,
     x,
     lineChartData,
+
+    tooltipSnippet = undefined,
+    textContent = undefined,
 
     // ask
     xFunction = (number) => {
@@ -56,23 +60,48 @@
     },
     onClickMarker = (event, marker, markerId) => {
       activeMarkerId = marker;
+      currentMousePosition = [event.screenX, event.screenY];
+      markerRect = rect;
     },
-    onMouseEnterMarker = (event, marker, markerId) => {
+    onMouseEnterMarker = (event, marker, markerId, rect) => {
+      {
+        console.log("hovering");
+      }
       activeMarkerId = marker;
+      if (container) {
+        const bounds = container.getBoundingClientRect();
+        currentMousePosition = [
+          // option for moving tooltip
+          event.clientX - bounds.left,
+          event.clientY - bounds.top,
+        ];
+        markerRect = {
+          // option for fixed tooltip
+          x: rect.x - bounds.left + rect.width / 2,
+          y: rect.y - bounds.top + rect.height / 2,
+        };
+      } else {
+        currentMousePosition = [event.clientX, event.clientY];
+        markerRect = rect;
+      }
     },
     onMouseLeaveMarker = (event, marker, dataId) => {
       activeMarkerId = null;
     },
 
     // Optional
+    currentMousePosition = undefined,
+    markerRect = undefined,
     clickedSeries = $bindable(undefined),
     hoveredSeries = undefined,
+    hoveredTier = undefined,
     overrideLineParams = () => ({}),
     getLine = (key, el) => {
       return true;
     },
     nothingSelected = true,
     svgWidth = $bindable(500),
+    container = $bindable(),
     svgHeight = 500,
     paddingTop = 50,
     paddingBottom = 50,
@@ -195,7 +224,11 @@
   }
 </script>
 
-<div bind:clientWidth={svgWidth}>
+<div
+  style="position: relative"
+  bind:clientWidth={svgWidth}
+  bind:this={container}
+>
   <svg
     onclick={handleClickOutside}
     width={svgWidth}
@@ -230,6 +263,8 @@
             {y}
             {x}
             {tooltipContent}
+            {currentMousePosition}
+            {markerRect}
           ></Lines>
         </g>
         <g data-role="y-axis">
@@ -246,4 +281,18 @@
       </g>
     {/if}
   </svg>
+  <ValueLabel
+    {activeMarkerId}
+    labelColor="grey"
+    labelTextColor="black"
+    {tooltipContent}
+    {xFunction}
+    {yFunction}
+    {x}
+    {y}
+    {currentMousePosition}
+    {markerRect}
+    {tooltipSnippet}
+    {textContent}
+  ></ValueLabel>
 </div>

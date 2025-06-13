@@ -205,39 +205,42 @@
     }
   });
 
-  // Listen for storage changes (when user updates preferences on cookies page)
-  $effect(() => {
-    if (!browser) return;
+  // Handle storage changes (same tab - from cookies page)
+  function handleStorageChange(): void {
+    const updatedConsent = loadConsent();
+    const bannerHidden = isBannerHidden();
 
-    function handleStorageChange(): void {
-      const updatedConsent = loadConsent();
-      const bannerHidden = isBannerHidden();
-
-      if (bannerHidden) {
-        bannerVisible = false;
-        return;
-      }
-
-      if (updatedConsent) {
-        consentMode = updatedConsent;
-        gtag("consent", "update", updatedConsent);
-
-        if (updatedConsent.accepted) {
-          currentMessage = "accepted";
-        } else if (updatedConsent.rejected) {
-          currentMessage = "rejected";
-        }
-      }
+    if (bannerHidden) {
+      bannerVisible = false;
+      return;
     }
 
-    // Listen for custom storage events
-    window.addEventListener("localStorageChange", handleStorageChange);
+    if (updatedConsent) {
+      consentMode = updatedConsent;
+      gtag("consent", "update", updatedConsent);
 
-    return () => {
-      window.removeEventListener("localStorageChange", handleStorageChange);
-    };
-  });
+      if (updatedConsent.accepted) {
+        currentMessage = "accepted";
+      } else if (updatedConsent.rejected) {
+        currentMessage = "rejected";
+      }
+    }
+  }
+
+  // Handle native storage events (cross-tab changes)
+  function handleCrossTabStorage(event: StorageEvent): void {
+    // Only respond to changes to our consentMode or bannerHidden keys
+    if (event.key === "consentMode" || event.key === "bannerHidden") {
+      handleStorageChange();
+    }
+  }
 </script>
+
+<!-- Listen for both native and custom storage events -->
+<svelte:window
+  onstorage={handleCrossTabStorage}
+  onlocalStorageChange={handleStorageChange}
+/>
 
 {#if bannerVisible}
   <div

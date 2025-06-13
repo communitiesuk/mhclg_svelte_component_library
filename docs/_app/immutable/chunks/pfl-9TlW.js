@@ -1,1 +1,0 @@
-var s;const a=((s=globalThis.__sveltekit_1lcpzem)==null?void 0:s.base)??"/mhclg_svelte_component_library/gh-pages";var e;const l=((e=globalThis.__sveltekit_1lcpzem)==null?void 0:e.assets)??a;export{l as a,a as b};

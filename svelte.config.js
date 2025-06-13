@@ -69,7 +69,7 @@ const config = {
     paths: {
       base:
         process.env.NODE_ENV === "production"
-          ? "/mhclg_svelte_component_library/gh-pages"
+          ? "/mhclg_svelte_component_library"
           : "",
     },
     files: {

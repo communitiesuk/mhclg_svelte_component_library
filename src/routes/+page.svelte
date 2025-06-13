@@ -2,7 +2,6 @@
   import { base } from "$app/paths";
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import Masthead from "$lib/components/ui/Masthead.svelte";
-  import mastheadIllustration from "$lib/assets/images/masthead-illustration.svg";
   import WhatsNew from "$lib/components/ui/WhatsNew.svelte";
   import NotificationBanner from "$lib/components/ui/NotificationBanner.svelte";
   import InsetText from "$lib/components/content/InsetText.svelte";
@@ -69,7 +68,7 @@ TODO
     description="Bring your service or page to life with dynamic content, layout, UI, charts, maps and data visualisations. The well tested and trusted GDS components are coded here in Svelte for data rich digital products."
     buttonHref="/get-started"
     backgroundColor="#00625E"
-    imageSrc={mastheadIllustration}
+    imageSrc="{base}/assets/images/masthead-illustration.svg"
     imageAlt="MHCLG Svelte Component Library"
   />
   <div

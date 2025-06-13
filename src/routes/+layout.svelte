@@ -196,7 +196,7 @@
     <div class="flex-grow">
       <InternalHeader
         homepageUrl="/"
-        organisationName="MHCLG Digital Design & Development Team"
+        organisationName="MHCLG Digital, Data and Information"
         includeCrest={false}
       />
 

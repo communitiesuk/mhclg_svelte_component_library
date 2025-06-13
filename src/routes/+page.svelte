@@ -169,9 +169,9 @@ TODO
       <div class="govuk-grid-column-two-thirds-from-desktop">
         <h2 id="support" class="govuk-heading-l">Support</h2>
         <p class="govuk-body">
-          The MHCLG Svelte Component Library is maintained by the Digital,
-          Design and Development team at MHCLG. If you've got a question, idea
-          or suggestion, you can
+          The MHCLG Svelte Component Library is maintained by the Digital, Data
+          and Information team at MHCLG. If you've got a question, idea or
+          suggestion, you can
           <a href="mailto:andrew.hillman@communities.gov.uk" class="govuk-link"
             >get in touch</a
           >.

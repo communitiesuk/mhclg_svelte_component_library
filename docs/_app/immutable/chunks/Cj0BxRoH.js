@@ -1,0 +1,1 @@
+import{s as e,c as t}from"./DaFokRx_.js";const r={get data(){return t.data},get error(){return t.error},get state(){return t.state},get status(){return t.status},get url(){return t.url}};e.updated.check;const s=r;export{s as p};

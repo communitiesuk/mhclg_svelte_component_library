@@ -83,9 +83,9 @@
       items: [
         {
           text: "About & Benefits",
-          href: `${base}/get-started/about-benefits`,
+          href: "/get-started/about-benefits",
         },
-        { text: "Installation and usage", href: `${base}/get-started` },
+        { text: "Installation and usage", href: "/get-started" },
       ],
     },
     {
@@ -93,7 +93,7 @@
       items: [
         {
           text: "Component statuses",
-          href: `${base}/get-started/component-statuses`,
+          href: "/get-started/component-statuses",
         },
       ],
     },
@@ -141,16 +141,16 @@
   const mobileNavSections = [
     {
       title: "Get started",
-      href: `${base}/get-started`,
+      href: "/get-started",
       items: [
-        { text: "Installation and usage", href: `${base}/get-started` },
+        { text: "Installation and usage", href: "/get-started" },
         {
           text: "About & Benefits",
-          href: `${base}/get-started/about-benefits`,
+          href: "/get-started/about-benefits",
         },
         {
           text: "Component statuses",
-          href: `${base}/get-started/component-statuses`,
+          href: "/get-started/component-statuses",
         },
       ],
     },
@@ -161,12 +161,12 @@
     // },
     {
       title: "Components",
-      href: `${base}/components`,
+      href: "/components",
       items: structuredComponentItems,
     },
     {
       title: "Patterns",
-      href: `${base}/patterns`,
+      href: "/patterns",
       items: [
         // {
         //   title: "Common patterns",
@@ -179,7 +179,7 @@
     },
     {
       title: "Community",
-      href: `${base}/community`,
+      href: "/community",
       items: [],
     },
   ];
@@ -195,7 +195,7 @@
   <div class="min-h-screen flex flex-col">
     <div class="flex-grow">
       <InternalHeader
-        homepageUrl={base + "/"}
+        homepageUrl="/"
         organisationName="MHCLG Digital Design & Development Team"
         includeCrest={false}
       />

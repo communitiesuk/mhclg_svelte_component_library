@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { base } from "$app/paths";
+
   import { onMount } from "svelte";
 
   // Define navigation item type
@@ -29,7 +31,7 @@
   <div class="govuk-width-container">
     <div class="govuk-service-navigation__container">
       <span class="govuk-service-navigation__service-name">
-        <a href={homeHref} class="govuk-service-navigation__link">
+        <a href={base + homeHref} class="govuk-service-navigation__link">
           {serviceName}
         </a>
       </span>
@@ -45,7 +47,7 @@
           >
             <a
               class="govuk-service-navigation__link"
-              href={item.href}
+              href={base + item.href}
               data-topnav={item.text}
               aria-current={isCurrent ? "page" : undefined}
             >

@@ -195,7 +195,7 @@
   <div class="min-h-screen flex flex-col">
     <div class="flex-grow">
       <InternalHeader
-        homepageUrl="/"
+        homepageUrl={base + "/"}
         organisationName="MHCLG Digital Design & Development Team"
         includeCrest={false}
       />

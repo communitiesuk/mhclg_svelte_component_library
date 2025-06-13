@@ -1,5 +1,6 @@
 <script lang="ts">
   // --- Imports ---
+  import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
   import Footer from "$lib/components/ui/Footer.svelte";
   import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
@@ -274,6 +275,7 @@
 {#if !isDemoPage}
   <div class="min-h-screen flex flex-col">
     <div class="flex-grow">
+      <CookieBanner />
       <InternalHeader
         homepageUrl="/"
         organisationName="MHCLG Digital Design & Development Team"

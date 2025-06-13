@@ -218,11 +218,11 @@
       />
       <div
         class="app-pane__body"
-        class:govuk-width-container={currentPath !== "/"}
+        class:govuk-width-container={currentPath !== base + "/"}
       >
-        <div class={currentPath !== "/" ? "app-split-pane" : ""}>
+        <div class={currentPath !== base + "/" ? "app-split-pane" : ""}>
           <!-- Side navigation - only shown if not Home and has navigation items -->
-          {#if currentPath !== "/" && hasNavigationItems}
+          {#if currentPath !== base + "/" && hasNavigationItems}
             <aside class="app-split-pane__nav">
               <SideNav
                 title={getSectionTitle(currentSection)}
@@ -233,9 +233,9 @@
           {/if}
           <!-- Main content area -->
           <div
-            class:app-split-pane__content={currentPath !== "/" &&
+            class:app-split-pane__content={currentPath !== base + "/" &&
               hasNavigationItems}
-            class:app-content={currentPath !== "/"}
+            class:app-content={currentPath !== base + "/"}
           >
             {@render children()}
           </div>

@@ -246,7 +246,7 @@
       </div>
     </div>
 
-    <Footer />
+    <Footer inlineLinks={[{ href: "/cookies-page", label: "Cookies" }]} />
   </div>
 {:else}
   <!-- For demo page, render children directly without any layout chrome -->

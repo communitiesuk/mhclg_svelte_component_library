@@ -158,7 +158,7 @@
       {
         name: "interactive",
         category: "UI",
-        value: false,
+        value: true,
         description: "Turn on/off the interactvity funtion for the maps",
       },
       {

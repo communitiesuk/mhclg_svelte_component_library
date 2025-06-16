@@ -80,8 +80,8 @@
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
 
-{#snippet ContentSnippet()}
-  <p>Service update</p>
+{#snippet tooltipSnippet()}
+  {@html `<div style="border: 1px solid black; padding: 0.5rem;"><i>tooltipContent</i></div>`}
 {/snippet}
 
 {#snippet Example4()}
@@ -92,7 +92,7 @@
       y="y"
       series="areaCode"
       basicLineParams={{ markers: true, interactive: true }}
-      tooltipContent={ContentSnippet}
+      {tooltipSnippet}
     ></LineChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

@@ -143,7 +143,6 @@
               scope="col"
               class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
               title={metaData[column.key].explainer}
-              aria-sort="none"
             >
               <div class="header">
                 <Button
@@ -171,27 +170,17 @@
             {#each columns as column}
               {#if column.dataType === "number"}
                 {#if colourScale === "On"}
-                  {#if metaData[column.key].direction === "Higher is better"}
-                    <td
-                      class="govuk-table__cell govuk-table__cell--numeric"
-                      style="background-color: {normToColor(
-                        row[column.key + '__normalised'],
-                      )}"
-                      data-sort-value="42">{row[column.key]}</td
-                    >
-                  {:else}
-                    <td
-                      class="govuk-table__cell govuk-table__cell--numeric"
-                      style="background-color: {normToColorReverse(
-                        row[column.key + '__normalised'],
-                      )}"
-                      data-sort-value="42">{row[column.key]}</td
-                    >
-                  {/if}
-                {:else}
                   <td
                     class="govuk-table__cell govuk-table__cell--numeric"
-                    data-sort-value="42">{row[column.key]}</td
+                    style="background-color: {metaData[column.key].direction ===
+                    'Higher is better'
+                      ? normToColor(row[column.key + '__normalised'])
+                      : normToColorReverse(row[column.key + '__normalised'])}"
+                    >{row[column.key]}</td
+                  >
+                {:else}
+                  <td class="govuk-table__cell govuk-table__cell--numeric"
+                    >{row[column.key]}</td
                   >
                 {/if}
               {:else}

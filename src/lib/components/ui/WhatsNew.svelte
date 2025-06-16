@@ -151,7 +151,5 @@
   .app-whats-new {
     border-bottom: 1px solid #b1b4b6;
     background-color: #f8f8f8;
-    padding-left: 30px;
-    padding-right: 30px;
   }
 </style>

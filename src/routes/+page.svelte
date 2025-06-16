@@ -225,7 +225,5 @@ TODO
   /* Allow masthead to break out of container and span full width */
   .homepage-layout :global(.app-masthead) {
     width: 100%;
-    padding-left: 30px;
-    padding-right: 30px;
   }
 </style>

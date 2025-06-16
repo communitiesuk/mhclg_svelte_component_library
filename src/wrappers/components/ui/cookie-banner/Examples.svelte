@@ -4,13 +4,23 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
+  import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
 
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
+      heading: "1. Basic Cookie Banner - Default configuration",
       content: Example1,
+    },
+    {
+      id: "2",
+      heading: "2. Custom Text - Customized messaging",
+      content: Example2,
+    },
+    {
+      id: "3",
+      heading: "3. Non-rebranded - White background styling",
+      content: Example3,
     },
   ];
 </script>
@@ -37,32 +47,48 @@ import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    <CookieBanner
+      heading="Cookies on Example Service"
+      essentialCookiesText="We use essential cookies to make this service work."
+      additionalCookiesText="We'd also like to use analytics cookies to understand how you use our service and make improvements."
+      rebranded={true}
+      demoMode={true}
+    />
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example2()}
+  <div class="p-5 bg-white">
+    <CookieBanner
+      heading="Cookie Preferences"
+      essentialCookiesText="Essential cookies keep our website running smoothly."
+      additionalCookiesText="Optional cookies help us improve your experience by collecting anonymous usage data."
+      acceptButtonText="Accept all cookies"
+      rejectButtonText="Only essential cookies"
+      viewCookiesText="Manage cookie preferences"
+      acceptedMessage="Great! You've accepted our cookies. You can"
+      rejectedMessage="No problem! You've rejected optional cookies. You can"
+      changeSettingsText="update your preferences"
+      hideMessageText="Dismiss this message"
+      rebranded={true}
+      demoMode={true}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example3()}
+  <div class="p-5 bg-white">
+    <CookieBanner
+      heading="Data Collection Notice"
+      essentialCookiesText="This website requires certain cookies to function properly."
+      additionalCookiesText="We would like your permission to collect analytics data to help us understand user behavior and improve our services."
+      cookiesPageUrl="/privacy-policy"
+      ariaLabel="Data collection and cookie preferences"
+      rebranded={false}
+      demoMode={true}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
 {/snippet}

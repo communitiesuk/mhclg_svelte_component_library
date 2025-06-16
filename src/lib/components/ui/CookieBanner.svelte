@@ -34,6 +34,9 @@
 
     // Styling props
     rebranded?: boolean;
+
+    // Demo/isolation props
+    demoMode?: boolean;
   }
 
   let {
@@ -50,6 +53,7 @@
     cookiesPageUrl = "/cookies-page",
     ariaLabel = "Cookies on MHCLG Svelte Component Library",
     rebranded = true,
+    demoMode = false,
   }: CookieBannerProps = $props();
 
   // Banner state management
@@ -76,7 +80,7 @@
 
   // Load consent preferences from localStorage
   function loadConsent(): ConsentMode | null {
-    if (!browser) return null;
+    if (!browser || demoMode) return null;
 
     try {
       const stored = localStorage.getItem("consentMode");
@@ -89,7 +93,7 @@
 
   // Save consent preferences to localStorage
   function saveConsent(consent: ConsentMode): void {
-    if (!browser) return;
+    if (!browser || demoMode) return;
 
     try {
       localStorage.setItem("consentMode", JSON.stringify(consent));
@@ -100,13 +104,17 @@
 
   // Check if banner should be hidden
   function isBannerHidden(): boolean {
-    if (!browser) return false;
+    if (!browser || demoMode) return false;
     return localStorage.getItem("bannerHidden") === "true";
   }
 
   // Hide banner permanently
   function hideBanner(): void {
-    if (!browser) return;
+    if (!browser || demoMode) {
+      // In demo mode, just hide the banner without affecting storage
+      bannerVisible = false;
+      return;
+    }
     localStorage.setItem("bannerHidden", "true");
     bannerVisible = false;
   }
@@ -121,14 +129,18 @@
       security_storage: "denied",
     };
 
-    gtag("consent", "default", defaultConsent);
+    if (!demoMode) {
+      gtag("consent", "default", defaultConsent);
+    }
     saveConsent(defaultConsent);
     return defaultConsent;
   }
 
   // Update consent and inform Google Analytics
   function updateConsent(consent: ConsentMode): void {
-    gtag("consent", "update", consent);
+    if (!demoMode) {
+      gtag("consent", "update", consent);
+    }
     saveConsent(consent);
     consentMode = consent;
 
@@ -169,6 +181,12 @@
   // Navigate to cookies page while preserving current URL
   function handleCookiesNavigation(event: Event): void {
     if (!browser) return;
+
+    if (demoMode) {
+      // In demo mode, prevent navigation
+      event.preventDefault();
+      return;
+    }
 
     // Store the current URL in sessionStorage
     sessionStorage.setItem("previousUrl", window.location.href);
@@ -215,6 +233,8 @@
 
   // Handle storage changes (same tab - from cookies page)
   function handleStorageChange(): void {
+    if (demoMode) return; // Don't respond to storage changes in demo mode
+
     const updatedConsent = loadConsent();
     const bannerHidden = isBannerHidden();
 
@@ -237,6 +257,8 @@
 
   // Handle native storage events (cross-tab changes)
   function handleCrossTabStorage(event: StorageEvent): void {
+    if (demoMode) return; // Don't respond to storage changes in demo mode
+
     // Only respond to changes to our consentMode or bannerHidden keys
     if (event.key === "consentMode" || event.key === "bannerHidden") {
       handleStorageChange();

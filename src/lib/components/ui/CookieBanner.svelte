@@ -250,6 +250,42 @@
   onlocalStorageChange={handleStorageChange}
 />
 
+{#snippet settingsLink()}
+  <a href={cookiesUrl} class="govuk-link" onclick={handleCookiesNavigation}>
+    {changeSettingsText}
+  </a>
+{/snippet}
+
+{#snippet hideBannerButton()}
+  <button
+    type="button"
+    class="govuk-button"
+    data-module="govuk-button"
+    onclick={hideBanner}
+  >
+    {hideMessageText}
+  </button>
+{/snippet}
+
+{#snippet confirmationMessage(message)}
+  <div class="govuk-cookie-banner__message govuk-width-container">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <div class="govuk-cookie-banner__content">
+          <p class="govuk-body">
+            {message}
+            {@render settingsLink()}
+            at any time.
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="govuk-button-group">
+      {@render hideBannerButton()}
+    </div>
+  </div>
+{/snippet}
+
 {#if bannerVisible}
   <div
     class="govuk-cookie-banner {rebranded ? 'govuk-template--rebranded' : ''}"
@@ -301,68 +337,12 @@
 
     <!-- Accepted cookies confirmation message -->
     {#if currentMessage === "accepted"}
-      <div class="govuk-cookie-banner__message govuk-width-container">
-        <div class="govuk-grid-row">
-          <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-cookie-banner__content">
-              <p class="govuk-body">
-                {acceptedMessage}
-                <a
-                  href={cookiesUrl}
-                  class="govuk-link"
-                  onclick={handleCookiesNavigation}
-                >
-                  {changeSettingsText}
-                </a>
-                at any time.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="govuk-button-group">
-          <button
-            type="button"
-            class="govuk-button"
-            data-module="govuk-button"
-            onclick={hideBanner}
-          >
-            {hideMessageText}
-          </button>
-        </div>
-      </div>
+      {@render confirmationMessage(acceptedMessage)}
     {/if}
 
     <!-- Rejected cookies confirmation message -->
     {#if currentMessage === "rejected"}
-      <div class="govuk-cookie-banner__message govuk-width-container">
-        <div class="govuk-grid-row">
-          <div class="govuk-grid-column-two-thirds">
-            <div class="govuk-cookie-banner__content">
-              <p class="govuk-body">
-                {rejectedMessage}
-                <a
-                  href={cookiesUrl}
-                  class="govuk-link"
-                  onclick={handleCookiesNavigation}
-                >
-                  {changeSettingsText}
-                </a>
-                at any time.
-              </p>
-            </div>
-          </div>
-        </div>
-        <div class="govuk-button-group">
-          <button
-            type="button"
-            class="govuk-button"
-            data-module="govuk-button"
-            onclick={hideBanner}
-          >
-            {hideMessageText}
-          </button>
-        </div>
-      </div>
+      {@render confirmationMessage(rejectedMessage)}
     {/if}
   </div>
 {/if}

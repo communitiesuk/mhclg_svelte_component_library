@@ -16,6 +16,10 @@
     getSectionTitle,
     addStandardSubItemsToActiveComponentLink,
   } from "$lib/utils/layoutNavHelpers";
+  import {
+    handleCookiesNavigation,
+    createCookiesUrl,
+  } from "$lib/utils/cookiesNavigation";
 
   // --- Props ---
   let { children, data } = $props();
@@ -184,6 +188,9 @@
     },
   ];
 
+  // --- Cookies Navigation Logic ---
+  let cookiesUrl = $derived(createCookiesUrl());
+
   // --- Effects ---
   $effect(() => {
     if (typeof window === "undefined") return;
@@ -198,7 +205,6 @@
       <InternalHeader
         homepageUrl="/"
         organisationName="MHCLG Digital, Data and Information"
-        includeCrest={false}
       />
 
       <!-- Use ServiceNavigationNestedMobile component -->
@@ -248,7 +254,11 @@
 
     <Footer
       inlineLinks={[
-        { href: "/cookies-page", label: "Cookies" },
+        {
+          href: cookiesUrl,
+          label: "Cookies",
+          onclick: handleCookiesNavigation,
+        },
         { href: "/privacy-policy", label: "Privacy Policy" },
       ]}
     />

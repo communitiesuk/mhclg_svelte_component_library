@@ -2,6 +2,10 @@
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
   import { page } from "$app/state";
+  import {
+    handleCookiesNavigation as handleCookiesNav,
+    createCookiesUrl,
+  } from "$lib/utils/cookiesNavigation";
 
   interface ConsentMode {
     ad_storage: "granted" | "denied";
@@ -178,31 +182,13 @@
     updateConsent(consent);
   }
 
-  // Navigate to cookies page while preserving current URL
+  // Create wrapper function for demo mode handling
   function handleCookiesNavigation(event: Event): void {
-    if (!browser) return;
-
-    if (demoMode) {
-      // In demo mode, prevent navigation
-      event.preventDefault();
-      return;
-    }
-
-    // Store the current URL in sessionStorage
-    sessionStorage.setItem("previousUrl", window.location.href);
-
-    // Let the normal link navigation proceed
-    // SvelteKit will handle the navigation
+    return handleCookiesNav(event, demoMode);
   }
 
   // Create the cookies page URL with current query parameters
-  let cookiesUrl = $derived.by(() => {
-    if (!browser) return cookiesPageUrl;
-
-    const currentUrl = new URL(window.location.href);
-    const searchParams = currentUrl.search;
-    return cookiesPageUrl + searchParams;
-  });
+  let cookiesUrl = $derived(createCookiesUrl(cookiesPageUrl));
 
   // Initialize component on mount
   onMount(() => {

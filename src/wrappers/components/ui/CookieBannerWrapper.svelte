@@ -26,11 +26,11 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "Baseline completed",
     statusRows: [
       {
-        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
-        visibleOnHompepage: false,
+        obj: { Accessible: true, Responsive: true, "Prog. enhanced": false },
+        visibleOnHompepage: true,
       },
       {
         obj: { Reviewed: false, Tested: false },
@@ -46,10 +46,18 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "Allow users to accept or reject cookies which are not essential to making your service work.",
+    'Based on the <a href="https://design-system.service.gov.uk/components/cookie-banner/" target="_blank" rel="noopener noreferrer">GOV.UK Design System cookie banner component</a> pattern.',
+    "Integrates with Google Tag Manager and provides cross-tab synchronisation of user preferences.",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Use this component to comply with GDPR and UK data protection regulations by getting user consent for non-essential cookies.",
+    "The banner should be displayed on all pages until the user makes a choice about cookie preferences.",
+    "Essential cookies are always allowed, while analytics and marketing cookies require user consent.",
+    "You'll need a dedicated cookies page in your service as well as the cookie banner - users can access this via the 'View cookies' link.",
+    "The component automatically manages consent state and integrates with Google Tag Manager to control when tracking scripts are loaded.",
   ];
 
   let detailsArray = [
@@ -91,8 +99,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
-import Examples from "./cookie-banner/Examples.svelte";
+  import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
+  import Examples from "./cookie-banner/Examples.svelte";
 
   let { data } = $props();
 
@@ -156,141 +164,163 @@ import Examples from "./cookie-banner/Examples.svelte";
    */
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
+      // Text content props
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        name: "heading",
+        category: "Text content",
+        value: "Cookies on MHCLG Svelte Component Library",
         description: {
           markdown: true,
           arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
+            "The main heading displayed at the top of the cookie banner.",
+            "Should clearly identify the service or website name.",
           ],
         },
         rows: 2,
       },
       {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
+        name: "essentialCookiesText",
+        category: "Text content",
+        value: "We use some essential cookies to make this service work.",
         description: {
           markdown: true,
           arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
+            "Explains what essential cookies are used for.",
+            "Essential cookies are required for the service to function and cannot be rejected.",
           ],
         },
-        rows: 5,
+        rows: 2,
       },
       {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
+        name: "additionalCookiesText",
+        category: "Text content",
+        value:
+          "We'd like to set additional cookies so we can remember your settings, understand how people use the service and make improvements.",
         description: {
           markdown: true,
           arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
+            "Explains the purpose of optional cookies (analytics, preferences, etc.).",
+            "Should clearly state the benefits to users and how data will be used.",
           ],
         },
+        rows: 3,
       },
       {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
+        name: "acceptButtonText",
+        category: "Text content",
+        value: "Accept additional cookies",
+        description: "Text for the button that accepts optional cookies.",
+      },
+      {
+        name: "rejectButtonText",
+        category: "Text content",
+        value: "Reject additional cookies",
+        description: "Text for the button that rejects optional cookies.",
+      },
+      {
+        name: "viewCookiesText",
+        category: "Text content",
+        value: "View cookies",
+        description:
+          "Text for the link that takes users to the detailed cookies page.",
+      },
+      {
+        name: "acceptedMessage",
+        category: "Confirmation messages",
+        value: "You've accepted additional cookies. You can",
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
+            "Message shown after user accepts cookies.",
+            "Note: This text is followed by a link to change settings.",
           ],
         },
+        rows: 2,
       },
       {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
+        name: "rejectedMessage",
+        category: "Confirmation messages",
+        value: "You've rejected additional cookies. You can",
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
+            "Message shown after user rejects cookies.",
+            "Note: This text is followed by a link to change settings.",
           ],
         },
+        rows: 2,
       },
       {
-        name: "jsObjectProp",
-        category: "Input props",
-        value: [
-          {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
-          },
-          {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
-          },
-          {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
-          },
-        ],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
-          ],
-        },
+        name: "changeSettingsText",
+        category: "Text content",
+        value: "change your cookie settings",
+        description:
+          "Text for the link that allows users to modify their cookie preferences.",
       },
       {
-        name: "functionProp",
-        category: "Fixed props",
+        name: "hideMessageText",
+        category: "Text content",
+        value: "Hide cookie message",
+        description:
+          "Text for the button that permanently hides the cookie banner.",
+      },
 
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
-        functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
-        },
+      // Navigation props
+      {
+        name: "cookiesPageUrl",
+        category: "Navigation",
+        value: "/cookies-page",
         description: {
           markdown: true,
           arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
+            "URL path to the detailed cookies management page.",
+            "Should point to a page where users can manage their cookie preferences in detail.",
+          ],
+        },
+      },
+
+      // Accessibility props
+      {
+        name: "ariaLabel",
+        category: "Accessibility",
+        value: "Cookies on MHCLG Svelte Component Library",
+        description: {
+          markdown: true,
+          arr: [
+            "ARIA label for the cookie banner region.",
+            "Helps screen readers identify the purpose of the banner.",
+            "Should match or summarize the heading content.",
+          ],
+        },
+        rows: 2,
+      },
+
+      // Styling props
+      {
+        name: "rebranded",
+        category: "Styling",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            "Applies the rebranded styling with custom background color.",
+            "When <code>true</code>, uses a light blue background color.",
+            "When <code>false</code>, uses the default white background.",
+          ],
+        },
+      },
+
+      // Demo/isolation props
+      {
+        name: "demoMode",
+        category: "Demo settings",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            "Isolates the component from browser storage and Google Tag Manager.",
+            "When <code>true</code>, the component won't save preferences or interact with analytics.",
+            "Use <code>true</code> for demos and examples, <code>false</code> for production.",
           ],
         },
       },
@@ -434,9 +464,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="p-8">
-<CookieBanner {...parametersObject}></CookieBanner>
-  </div>
+  <CookieBanner {...parametersObject}></CookieBanner>
 {/snippet}
 
 <!--

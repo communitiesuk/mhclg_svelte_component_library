@@ -21,17 +21,6 @@
     return true; // All values are unique
   }
 
-  // $inspect(
-  //   localCopyOfData[0].areaName,
-  //   "data type is",
-  //   typeof localCopyOfData[0].areaName,
-  // );
-  // $inspect(
-  //   localCopyOfData[0]["Household waste recycling rate"],
-  //   "data type is",
-  //   typeof localCopyOfData[0]["Household waste recycling rate"],
-  // );
-
   let columns = [];
 
   for (const column in localCopyOfData[0]) {
@@ -53,8 +42,6 @@
   const metrics = columns
     .filter((column) => column.dataType === "number")
     .map((column) => column.key);
-
-  // $inspect("metrics is", metrics);
 
   let sortState = $state({ column: "sortedColumn", order: "ascending" });
 
@@ -132,8 +119,6 @@
   }
 
   const colorKey = Object.entries({ Good: 1, Ok: 0.5, Bad: 0 });
-
-  // $inspect("the first column key is", columns[0].key);
 </script>
 
 <div class="p-4">
@@ -151,7 +136,6 @@
   <div class="table-container">
     <div id="table-caption" class="sticky-caption">{caption}</div>
     <table class="govuk-table" data-module="moj-sortable-table">
-      <!-- <caption class="govuk-table__caption"></caption> -->
       <thead class="govuk-table__head"
         ><tr class="govuk-table__row">
           {#each columns as column}
@@ -225,7 +209,7 @@
   .table-container {
     max-height: 85vh;
     overflow-y: auto;
-    /* border: solid red 1px; */
+    overflow-x: scroll;
     width: 100%;
   }
 

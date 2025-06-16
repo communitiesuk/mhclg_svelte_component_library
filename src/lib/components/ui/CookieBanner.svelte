@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
+  import { page } from "$app/state";
 
   interface ConsentMode {
     ad_storage: "granted" | "denied";
@@ -166,17 +167,24 @@
   }
 
   // Navigate to cookies page while preserving current URL
-  function navigateToPreferencesPage(): void {
+  function handleCookiesNavigation(event: Event): void {
     if (!browser) return;
 
     // Store the current URL in sessionStorage
     sessionStorage.setItem("previousUrl", window.location.href);
 
-    // Navigate to cookies page with current query parameters
+    // Let the normal link navigation proceed
+    // SvelteKit will handle the navigation
+  }
+
+  // Create the cookies page URL with current query parameters
+  let cookiesUrl = $derived.by(() => {
+    if (!browser) return cookiesPageUrl;
+
     const currentUrl = new URL(window.location.href);
     const searchParams = currentUrl.search;
-    window.location.href = cookiesPageUrl + searchParams;
-  }
+    return cookiesPageUrl + searchParams;
+  });
 
   // Initialize component on mount
   onMount(() => {
@@ -280,14 +288,13 @@
           >
             {rejectButtonText}
           </button>
-          <button
-            type="button"
+          <a
+            href={cookiesUrl}
             class="govuk-link"
-            style="background: none; border: none; padding: 0; color: #1d70b8; text-decoration: underline; cursor: pointer;"
-            onclick={navigateToPreferencesPage}
+            onclick={handleCookiesNavigation}
           >
             {viewCookiesText}
-          </button>
+          </a>
         </div>
       </div>
     {/if}
@@ -300,14 +307,13 @@
             <div class="govuk-cookie-banner__content">
               <p class="govuk-body">
                 {acceptedMessage}
-                <button
-                  type="button"
+                <a
+                  href={cookiesUrl}
                   class="govuk-link"
-                  style="background: none; border: none; padding: 0; color: #1d70b8; text-decoration: underline; cursor: pointer;"
-                  onclick={navigateToPreferencesPage}
+                  onclick={handleCookiesNavigation}
                 >
                   {changeSettingsText}
-                </button>
+                </a>
                 at any time.
               </p>
             </div>
@@ -334,14 +340,13 @@
             <div class="govuk-cookie-banner__content">
               <p class="govuk-body">
                 {rejectedMessage}
-                <button
-                  type="button"
+                <a
+                  href={cookiesUrl}
                   class="govuk-link"
-                  style="background: none; border: none; padding: 0; color: #1d70b8; text-decoration: underline; cursor: pointer;"
-                  onclick={navigateToPreferencesPage}
+                  onclick={handleCookiesNavigation}
                 >
                   {changeSettingsText}
-                </button>
+                </a>
                 at any time.
               </p>
             </div>

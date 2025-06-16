@@ -222,7 +222,9 @@
       >
         <div class={currentPath !== base + "/" ? "app-split-pane" : ""}>
           <!-- Side navigation - only shown if not Home and has navigation items -->
+          {console.log(currentPath, base, currentPath !== base + "/")}
           {#if currentPath !== base + "/" && hasNavigationItems}
+            {console.log("hello")}
             <aside class="app-split-pane__nav">
               <SideNav
                 title={getSectionTitle(currentSection)}

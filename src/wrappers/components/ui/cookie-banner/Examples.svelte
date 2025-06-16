@@ -14,7 +14,7 @@
     },
     {
       id: "2",
-      heading: "2. Custom Text - Customized messaging",
+      heading: "2. Custom Text - Customised messaging",
       content: Example2,
     },
     {

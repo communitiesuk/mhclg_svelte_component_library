@@ -285,7 +285,7 @@
       <CookieBanner />
       <InternalHeader
         homepageUrl="/"
-        organisationName="MHCLG Digital, Data and Information"
+        organisationName="MHCLG Digital, Design and Development Team"
       />
 
       <!-- Use ServiceNavigationNestedMobile component -->

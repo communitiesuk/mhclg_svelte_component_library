@@ -338,7 +338,7 @@
             {rejectButtonText}
           </button>
           <a
-            href={cookiesUrl}
+            href={base + cookiesUrl}
             class="govuk-link"
             onclick={handleCookiesNavigation}
           >

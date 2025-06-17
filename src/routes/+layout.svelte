@@ -99,8 +99,6 @@
     },
   ];
 
-  console.log(base, currentPath, base + currentPath);
-
   // --- Dynamic Side Navigation Groups --- get the appropriate nav groups based on current section
   const navGroupsForCurrentSection = $derived.by(() => {
     const section = currentSection;
@@ -113,7 +111,7 @@
           ...group,
           items: addStandardSubItemsToActiveComponentLink(
             group.items,
-            base + currentPath,
+            currentPath,
           ),
         }));
       case "Patterns":

@@ -2,6 +2,7 @@
   // --- Imports ---
   import { base } from "$app/paths";
 
+  import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
   import Footer from "$lib/components/layout/Footer.svelte";
   import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
@@ -16,6 +17,10 @@
     getSectionTitle,
     addStandardSubItemsToActiveComponentLink,
   } from "$lib/utils/layoutNavHelpers";
+  import {
+    handleCookiesNavigation,
+    createCookiesUrl,
+  } from "$lib/utils/cookiesNavigation";
 
   // --- Props ---
   let { children, data } = $props();
@@ -184,6 +189,9 @@
     },
   ];
 
+  // --- Cookies Navigation Logic ---
+  let cookiesUrl = $derived(createCookiesUrl());
+
   // --- Effects ---
   $effect(() => {
     if (typeof window === "undefined") return;
@@ -194,6 +202,7 @@
 {#if !isDemoPage}
   <div class="min-h-screen flex flex-col">
     <div class="flex-grow">
+      <CookieBanner />
       <InternalHeader
         homepageUrl="/"
         organisationName="MHCLG Digital, Data and Information"
@@ -244,7 +253,16 @@
       </div>
     </div>
 
-    <Footer />
+    <Footer
+      inlineLinks={[
+        {
+          href: cookiesUrl,
+          label: "Cookies",
+          onclick: handleCookiesNavigation,
+        },
+        { href: "/privacy-policy", label: "Privacy Policy" },
+      ]}
+    />
   </div>
 {:else}
   <!-- For demo page, render children directly without any layout chrome -->

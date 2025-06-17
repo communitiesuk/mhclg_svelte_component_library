@@ -152,12 +152,9 @@
   let hoveredTier = $state();
   let clickedTier = $state();
 
-  $inspect({ hoveredSeries, clickedSeries, hoveredTier, clickedTier });
-  $inspect(
-    [hoveredSeries, clickedSeries].includes("E06000040") ||
-      ("primary" === "primary" &&
-        (nothingSelected || [hoveredTier, clickedTier].includes("primary"))),
-  );
+  let currentMousePosition = $state();
+  let markerRect = $state();
+  let container = $state();
 
   /**
    * ! Step 3 - Add your props
@@ -338,6 +335,12 @@
         value: activeMarkerId,
       },
       {
+        name: "currentMousePosition",
+        category: "markerEvents",
+        value: currentMousePosition,
+      },
+      { name: "markerRect", category: "markerEvents", value: markerRect },
+      {
         name: "onClickSeries",
         category: "lineEvents",
         functionElements: {
@@ -389,8 +392,24 @@
               labelHovered = series;
             }`,
         },
-        value: function (event, marker, markerId) {
+        value: function (event, marker, markerId, rect) {
           activeMarkerId = marker;
+          if (container) {
+            const bounds = container.getBoundingClientRect();
+            currentMousePosition = [
+              // option for moving tooltip
+              event.clientX - bounds.left,
+              event.clientY - bounds.top,
+            ];
+            markerRect = {
+              // option for fixed tooltip
+              x: rect.x - bounds.left + rect.width / 2,
+              y: rect.y - bounds.top + rect.height / 2,
+            };
+          } else {
+            currentMousePosition = [event.clientX, event.clientY];
+            markerRect = rect;
+          }
         },
       },
       {
@@ -418,7 +437,7 @@
             }`,
         },
         value: function (event, marker, markerId) {
-          activeMarkerSId = marker;
+          activeMarkerId = marker;
         },
       },
       {
@@ -850,8 +869,11 @@
       bind:clickedSeries
       bind:hoveredSeries
       bind:svgWidth
+      bind:container
       bind:activeMarkerId
       bind:series
+      bind:markerRect
+      bind:currentMousePosition
     ></LineChart>
   </div>
 {/snippet}

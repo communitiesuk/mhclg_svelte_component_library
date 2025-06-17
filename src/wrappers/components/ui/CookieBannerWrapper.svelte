@@ -26,11 +26,11 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "In progress",
+    progress: "Baseline completed",
     statusRows: [
       {
-        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
-        visibleOnHompepage: false,
+        obj: { Accessible: true, Responsive: true, "Prog. enhanced": false },
+        visibleOnHompepage: true,
       },
       {
         obj: { Reviewed: false, Tested: false },
@@ -46,10 +46,18 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Map for visualising geographic data."];
+  let descriptionArray = [
+    "Allow users to accept or reject cookies which are not essential to making your service work.",
+    'Based on the <a href="https://design-system.service.gov.uk/components/cookie-banner/" target="_blank" rel="noopener noreferrer">GOV.UK Design System cookie banner component</a> pattern.',
+    "Integrates with Google Tag Manager and provides cross-tab synchronisation of user preferences.",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Use this component to comply with GDPR and UK data protection regulations by getting user consent for non-essential cookies.",
+    "The banner should be displayed on all pages until the user makes a choice about cookie preferences.",
+    "Essential cookies are always allowed, while analytics and marketing cookies require user consent.",
+    "You'll need a dedicated cookies page in your service as well as the cookie banner - users can access this via the 'View cookies' link.",
+    "The component automatically manages consent state and integrates with Google Tag Manager to control when tracking scripts are loaded.",
   ];
 
   let detailsArray = [
@@ -91,10 +99,11 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Map from "$lib/components/data-vis/map/Map.svelte";
+  import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
+  import Examples from "./cookie-banner/Examples.svelte";
 
   let { data } = $props();
-  $inspect(data.dataInFormatForMap);
+
   /**
    * DONOTTOUCH *
    * ? 		uses the page url to identify the name of the component and the folder it belongs to (folder is only used by snippets exported to the homepage to link back to this page).
@@ -155,427 +164,165 @@
    */
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
+      // Text content props
       {
-        name: "interactive",
-        category: "UI",
-        value: true,
-        description: "Turn on/off the interactvity funtion for the maps",
-      },
-      {
-        name: "cooperativeGestures",
-        isProp: true,
-        description:
-          "Make it harder for users to accidentally interact with the map, recommended",
-        value: true,
-        category: "UI",
-      },
-      {
-        name: "standardControls",
-        isProp: true,
-        description:
-          "Use the default set of controls in the default position, recommended",
-        value: true,
-        category: "UI",
-      },
-      {
-        name: "navigationControl",
-        isProp: true,
-        description:
-          "Add zoom in and out, and 'reset bearing to north' buttons",
-        value: true,
-        category: "UI",
-        visible: { name: "standardControls", value: false },
-      },
-      {
-        name: "maxZoom",
-        isProp: true,
-        description:
-          "Add zoom in and out, and 'reset bearing to north' buttons",
-        value: 10,
-        category: "UI",
-        visible: { name: "standardControls", value: false },
-      },
-      {
-        name: "minZoom",
-        isProp: true,
-        description:
-          "Add zoom in and out, and 'reset bearing to north' buttons",
-        value: 0,
-        category: "UI",
-        visible: { name: "standardControls", value: false },
-      },
-      {
-        name: "navigationControlPosition",
-        isProp: true,
-        description: "The location of the navigation control",
-        value: "top-left",
-        options: ["top-left", "top-right", "bottom-left", "bottom-right"],
-        category: "UI",
-        visible: [
-          { name: "standardControls", value: false },
-          { name: "navigationControl", value: true },
-        ],
-      },
-      {
-        name: "geolocateControl",
-        isProp: true,
-        description: "Add 'find my location' button",
-        value: true,
-        category: "UI",
-        visible: { name: "standardControls", value: false },
-      },
-      {
-        name: "geolocateControlPosition",
-        isProp: true,
-        description: "The location of the geo-location control",
-        value: "top-left",
-        options: ["top-left", "top-right", "bottom-left", "bottom-right"],
-        category: "UI",
-        visible: [
-          { name: "standardControls", value: false },
-          { name: "geolocateControl", value: true },
-        ],
-      },
-      {
-        name: "fullscreenControl",
-        isProp: true,
-        description: "Add 'full screen' button",
-        value: true,
-        category: "UI",
-        visible: { name: "standardControls", value: false },
-      },
-      {
-        name: "fullscreenControlPosition",
-        isProp: true,
-        description: "The location of the full screen control",
-        value: "top-left",
-        options: ["top-left", "top-right", "bottom-left", "bottom-right"],
-        category: "UI",
-        visible: [
-          { name: "standardControls", value: false },
-          { name: "fullscreenControl", value: true },
-        ],
-      },
-      {
-        name: "scaleControl",
-        isProp: true,
-        description: "Add scale",
-        value: true,
-        category: "UI",
-        visible: { name: "standardControls", value: false },
-      },
-      {
-        name: "scaleControlPosition",
-        isProp: true,
-        description: "The location of the scale",
-        value: "bottom-left",
-        options: ["top-left", "top-right", "bottom-left", "bottom-right"],
-        category: "UI",
-        visible: [
-          { name: "standardControls", value: false },
-          { name: "scaleControl", value: true },
-        ],
-      },
-      {
-        name: "scaleControlUnit",
-        isProp: true,
-        description: "The units of the scale",
-        value: "metric",
-        options: ["imperial", "metric", "nautical"],
-        category: "UI",
-        visible: [
-          { name: "standardControls", value: false },
-          { name: "scaleControl", value: true },
-        ],
-      },
-      {
-        name: "mapHeight",
-        category: "Styling",
-        isProp: true,
-        value: 400,
-        description: "Set height of map",
-      },
-      {
-        name: "styleSheet",
-        isProp: true,
+        name: "heading",
+        category: "Text content",
+        value: "Cookies on MHCLG Svelte Component Library",
         description: {
           markdown: true,
           arr: [
-            "The stylesheet affects how the base map looks, either use one of these options, or the url of a stylesheet or pass an object in the <a href='https://maplibre.org/maplibre-style-spec/root/'> maplibre style format</a>",
+            "The main heading displayed at the top of the cookie banner.",
+            "Should clearly identify the service or website name.",
           ],
         },
-        options: [
-          "Carto-light",
-          "Carto-dark",
-          "https://raw.githubusercontent.com/ONSvisual/svelte-maps/refs/heads/main/dist/data/style-ons-light.json",
-          { version: 8, sources: {}, layers: [] },
-        ],
-
-        category: "Styling",
+        rows: 2,
       },
       {
-        name: "colorPalette",
-        isProp: true,
-        description: "The colour palette to use for data visualisation",
-        options: [
-          "YlGn",
-          "YlGnBu",
-          "GnBu",
-          "BuGn",
-          "PuBuGn",
-          "PuBu",
-          "BuPu",
-          "RdPu",
-          "PuRd",
-          "OrRd",
-          "YlOrRd",
-          "YlOrBr",
-          "Purples",
-          "Blues",
-          "Greens",
-          "Oranges",
-          "Reds",
-          "Greys",
-          "PuOr",
-          "BrBG",
-          "PRGn",
-          "PiYG",
-          "RdBu",
-          "RdGy",
-          "RdYlBu",
-          "Spectral",
-          "RdYlGn",
-          "Accent",
-          "Dark2",
-          "Paired",
-          "Pastel1",
-          "Pastel2",
-          "Set1",
-          "Set2",
-          "Set3",
-          "custom",
-        ],
-        value: "YlGnBu",
-        category: "Styling",
+        name: "essentialCookiesText",
+        category: "Text content",
+        value: "We use some essential cookies to make this service work.",
+        description: {
+          markdown: true,
+          arr: [
+            "Explains what essential cookies are used for.",
+            "Essential cookies are required for the service to function and cannot be rejected.",
+          ],
+        },
+        rows: 2,
       },
       {
-        name: "setCustomPallet",
-        isProp: true,
-        category: "Styling",
-        value: false,
-        description: " Set wheather a custom palllet will be used",
+        name: "additionalCookiesText",
+        category: "Text content",
+        value:
+          "We'd like to set additional cookies so we can remember your settings, understand how people use the service and make improvements.",
+        description: {
+          markdown: true,
+          arr: [
+            "Explains the purpose of optional cookies (analytics, preferences, etc.).",
+            "Should clearly state the benefits to users and how data will be used.",
+          ],
+        },
+        rows: 3,
       },
       {
-        name: "customPallet",
-        isProp: true,
-        category: "Styling",
-        value: ["#979e4f"],
-        visable: { name: "setCustomPallet", value: true },
+        name: "acceptButtonText",
+        category: "Text content",
+        value: "Accept additional cookies",
+        description: "Text for the button that accepts optional cookies.",
+      },
+      {
+        name: "rejectButtonText",
+        category: "Text content",
+        value: "Reject additional cookies",
+        description: "Text for the button that rejects optional cookies.",
+      },
+      {
+        name: "viewCookiesText",
+        category: "Text content",
+        value: "View cookies",
         description:
-          "Pass in an array of colours you want to be used in a custom pallet. Write in a hex format",
+          "Text for the link that takes users to the detailed cookies page.",
       },
       {
-        name: "showBorder",
-        isProp: true,
-        description: "Show the borders between areas",
-        value: true,
-        category: "Styling",
+        name: "acceptedMessage",
+        category: "Confirmation messages",
+        value: "You've accepted additional cookies. You can",
+        description: {
+          markdown: true,
+          arr: [
+            "Message shown after user accepts cookies.",
+            "Note: This text is followed by a link to change settings.",
+          ],
+        },
+        rows: 2,
       },
       {
-        name: "maxBorderWidth",
-        isProp: true,
+        name: "rejectedMessage",
+        category: "Confirmation messages",
+        value: "You've rejected additional cookies. You can",
+        description: {
+          markdown: true,
+          arr: [
+            "Message shown after user rejects cookies.",
+            "Note: This text is followed by a link to change settings.",
+          ],
+        },
+        rows: 2,
+      },
+      {
+        name: "changeSettingsText",
+        category: "Text content",
+        value: "change your cookie settings",
         description:
-          "Borders get gradually thicker with zoom level, this is the maximum thickness, in pixels",
-        value: 1.5,
-        category: "Styling",
-        visible: { name: "showBorder", value: true },
+          "Text for the link that allows users to modify their cookie preferences.",
       },
       {
-        name: "fillOpacity",
-        isProp: true,
-        description: "The opacity for the fill layer, a value between 0 and 1",
-        value: 0.5,
-        category: "Styling",
-      },
-      {
-        name: "changeOpacityOnHover",
-        isProp: true,
+        name: "hideMessageText",
+        category: "Text content",
+        value: "Hide cookie message",
         description:
-          "Change the opacity of the hovered area - uses the 'hoverOpacity' value",
-        value: true,
-        category: "Styling",
-      },
-      {
-        name: "hoverOpacity",
-        isProp: true,
-        category: "Styling",
-        description:
-          "The opacity for an area that is hovered, a value between 0 and 1",
-        value: 0.8,
-        visible: { name: "changeOpacityOnHover", value: true },
-      },
-      {
-        name: "tooltip",
-        isProp: true,
-        description: "Show a tooltip when hovering over an area",
-        category: "UI",
-        value: true,
-      },
-      {
-        name: "clickToZoom",
-        isProp: true,
-        description: "Zoom to an area when a user clicks it",
-        category: "UI",
-        value: true,
-      },
-      {
-        name: "geoType",
-        isProp: true,
-        description: "The geography level",
-        category: "Data",
-        value: "ltla",
-        options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
-      },
-      {
-        name: "year",
-        isProp: true,
-        category: "Data",
-        value: 2022,
-        options: data.years,
-      },
-      {
-        name: "metric",
-        isProp: true,
-        category: "Data",
-        options: data.metrics,
-      },
-      {
-        name: "breaksType",
-        isProp: true,
-        category: "Data",
-        options: ["quantile", "jenks", "custom"],
-        description: "The method for splitting your data into groups",
-      },
-      {
-        name: "customBreaks",
-        isProp: true,
-        value: [20, 40, 60, 80, 100],
-        category: "Data",
-        description:
-          "Split the data into you own groups. Breaks must equal or be less the numberOfBreaks",
-      },
-      {
-        name: "numberOfBreaks",
-        isProp: true,
-        category: "Data",
-        value: 5,
-        options: [3, 4, 5, 6, 7, 8],
-        description: "The number of groups to split your data into",
-      },
-      {
-        name: "dummyData",
-        category: "Data",
-        value: [
-          {
-            year: 2022,
-            data: [
-              {
-                areaCode: "E2020202",
-                areaName: "Sdfsa",
-                data: {
-                  "Household waste recycling rate": 23.5,
-                  "Other measure": 493,
-                  "Something else": 2,
-                },
-              },
-              {
-                areaCode: "E2020203",
-                areaName: "Dsfd",
-                data: {
-                  "Household waste recycling rate": 23.5,
-                  "Other measure": 493,
-                  "Something else": 2,
-                },
-              },
-            ],
-          },
-          {
-            year: 2021,
-            data: [
-              {
-                areaCode: "E2020202",
-                areaName: "Sdfsa",
-                data: {
-                  "Household waste recycling rate": 23.5,
-                  "Other measure": 493,
-                  "Something else": 2,
-                },
-              },
-              "etc.",
-            ],
-          },
-          "etc.",
-        ],
-        visible: true,
-        isProp: false,
-        description: `An example of the format that 'data' needs to be in. Don't pass 'dummyData' as a prop, just use 'data'.`,
-      },
-      {
-        name: "data",
-        category: "Data",
-        visible: false,
-        value: data.dataInFormatForMap,
-      },
-      {
-        name: "center",
-        isProp: true,
-        category: "View",
-        value: [-2.5, 53],
-        description: "The initial centre of the map, in [lng, lat] form",
+          "Text for the button that permanently hides the cookie banner.",
       },
 
+      // Navigation props
       {
-        name: "setMaxBounds",
-        isProp: true,
-        value: false,
-        category: "View",
-        description:
-          "Binds the viewpory to a the area between an NW point and SE point. Write max bounds as [[number,number], [number number]]",
+        name: "cookiesPageUrl",
+        category: "Navigation",
+        value: "/cookies-page",
+        description: {
+          markdown: true,
+          arr: [
+            "URL path to the detailed cookies management page.",
+            "Should point to a page where users can manage their cookie preferences in detail.",
+          ],
+        },
       },
 
+      // Accessibility props
       {
-        name: "maxBoundsCoords",
-        isProp: true,
-        category: "View",
-        value: [
-          [-23.899, 47.5943],
-          [13.421, 59.8988],
-        ],
-        visible: { name: "setMaxBounds", value: true },
-        description: "Set the max bounds of the map",
+        name: "ariaLabel",
+        category: "Accessibility",
+        value: "Cookies on MHCLG Svelte Component Library",
+        description: {
+          markdown: true,
+          arr: [
+            "ARIA label for the cookie banner region.",
+            "Helps screen readers identify the purpose of the banner.",
+            "Should match or summarize the heading content.",
+          ],
+        },
+        rows: 2,
       },
+
+      // Styling props
       {
-        name: "zoom",
-        isProp: true,
-        category: "View",
-        value: 5,
-        description: "The initial zoom level",
-      },
-      {
-        name: "hash",
-        isProp: true,
-        description:
-          "Set to true to track the map viewport in the URL hash. If the URL hash is set, that overrides initial viewport settings.",
-        category: "View",
-        value: false,
-      },
-      {
-        name: "useInitialHash",
-        isProp: true,
-        description:
-          "If the URL has a valid hash that will override initial viewport settings, even if hash is false. Recommended.",
+        name: "rebranded",
+        category: "Styling",
         value: true,
-        category: "View",
+        description: {
+          markdown: true,
+          arr: [
+            "Applies the rebranded styling with custom background color.",
+            "When <code>true</code>, uses a light blue background color.",
+            "When <code>false</code>, uses the default white background.",
+          ],
+        },
+      },
+
+      // Demo/isolation props
+      {
+        name: "demoMode",
+        category: "Demo settings",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            "Isolates the component from browser storage and Google Tag Manager.",
+            "When <code>true</code>, the component won't save preferences or interact with analytics.",
+            "Use <code>true</code> for demos and examples, <code>false</code> for production.",
+          ],
+        },
       },
     ]),
   );
@@ -717,7 +464,7 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <Map {...parametersObject}></Map>
+  <CookieBanner {...parametersObject}></CookieBanner>
 {/snippet}
 
 <!--
@@ -762,4 +509,6 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section"></div>
+<div id="examples" data-role="examples-section">
+  <Examples></Examples>
+</div>

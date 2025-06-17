@@ -1,12 +1,13 @@
 {
   "name": "@communitiesuk/svelte-component-library",
-  "version": "0.1.16",
+  "version": "0.1.18",
   "repository": {
     "type": "git",
-    "url": "https://github.com/communitiesuk/oflog_svelte_component_library.git"
+    "url": "https://github.com/communitiesuk/mhclg_svelte_component_library.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "author": "Ibrahim-Haizel",
   "description": "A collection of reusable Svelte components",

@@ -12,6 +12,8 @@
     area,
   } from "d3-shape";
 
+  import { scaleLinear } from "d3-scale";
+
   let {
     dataArray,
     opacity = 1,

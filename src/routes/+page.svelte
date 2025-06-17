@@ -86,8 +86,8 @@ TODO
         content:
           "We made the MHCLG Svelte Component Library public, so other developers can see what we're working on. This library provides Svelte 5 implementations of GOV.UK Design System components, as well as other custom components, specifically tailored for data-rich digital products and services within the Ministry of Housing, Communities and Local Government and beyond.",
         releaseNotesUrl:
-          "https://github.com/communitiesuk/oflog_svelte_component_library/releases/tag/v0.1.16",
-        releaseVersion: "v0.1.16",
+          "https://github.com/communitiesuk/oflog_svelte_component_library/releases/",
+        releaseVersion: "v0.1.18",
       },
       {
         date: "January 2025",

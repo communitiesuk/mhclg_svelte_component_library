@@ -99,7 +99,7 @@
     },
   ];
 
-  $inspect(base, currentPath, base + currentPath);
+  console.log(base, currentPath, base + currentPath);
 
   // --- Dynamic Side Navigation Groups --- get the appropriate nav groups based on current section
   const navGroupsForCurrentSection = $derived.by(() => {

@@ -31,6 +31,7 @@ export { default as Accordion } from './components/ui/Accordion.svelte';
 export { default as Button } from './components/ui/Button.svelte';
 export { default as CheckBox } from './components/ui/CheckBox.svelte';
 export { default as ContentsList } from './components/ui/ContentsList.svelte';
+export { default as CookieBanner } from './components/ui/CookieBanner.svelte';
 export { default as DateInput } from './components/ui/DateInput.svelte';
 export { default as Details } from './components/ui/Details.svelte';
 export { default as FilterPanel } from './components/ui/FilterPanel.svelte';

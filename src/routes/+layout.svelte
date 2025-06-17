@@ -99,6 +99,8 @@
     },
   ];
 
+  $inspect(base, currentPath, base + currentPath);
+
   // --- Dynamic Side Navigation Groups --- get the appropriate nav groups based on current section
   const navGroupsForCurrentSection = $derived.by(() => {
     const section = currentSection;
@@ -111,7 +113,7 @@
           ...group,
           items: addStandardSubItemsToActiveComponentLink(
             group.items,
-            currentPath,
+            base + currentPath,
           ),
         }));
       case "Patterns":
@@ -222,9 +224,8 @@
       >
         <div class={currentPath !== base + "/" ? "app-split-pane" : ""}>
           <!-- Side navigation - only shown if not Home and has navigation items -->
-          {console.log(currentPath, base, currentPath !== base + "/")}
+
           {#if currentPath !== base + "/" && hasNavigationItems}
-            {console.log("hello")}
             <aside class="app-split-pane__nav">
               <SideNav
                 title={getSectionTitle(currentSection)}

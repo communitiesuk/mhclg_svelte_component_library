@@ -1,0 +1,1 @@
+var s;const l=((s=globalThis.__sveltekit_1l56fy3)==null?void 0:s.base)??"/mhclg_svelte_component_library";var e;const t=((e=globalThis.__sveltekit_1l56fy3)==null?void 0:e.assets)??l;export{t as a,l as b};

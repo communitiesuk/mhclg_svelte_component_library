@@ -2,7 +2,6 @@
 This component provides a MHCLG branded header for internal-facing services. -->
 
 <script lang="ts">
-  import { base } from "$app/paths";
 
   let {
     organisationName = "Organisation name",
@@ -193,11 +192,11 @@ This component provides a MHCLG branded header for internal-facing services. -->
 
       <a
         class="moj-header__link moj-header__link--organisation-name"
-        href={base + homepageUrl}>{organisationName}</a
+        href={homepageUrl}>{organisationName}</a
       >
       <a
         class="moj-header__link moj-header__link--service-name"
-        href={base + serviceUrl}>{serviceName}</a
+        href={serviceUrl}>{serviceName}</a
       >
     </div>
 

@@ -30,25 +30,25 @@
   let activeDetailHref = $derived(currentPath + currentHash);
   let isDemoPage = $derived(
     currentPath.startsWith(
-      "/components/layout/service-navigation-nested-mobile/mobile-demo",
+      base + "/components/layout/service-navigation-nested-mobile/mobile-demo",
     ),
   );
 
   // --- Section-Level Derived State ---
   let activeSectionInfo = $derived.by(() => {
-    if (currentPath.startsWith("/get-started")) {
+    if (currentPath.startsWith(base + "/get-started")) {
       return { sectionName: "Get started", sectionHref: "/get-started" };
     }
-    if (currentPath.startsWith("/components")) {
-      return { sectionName: "Components", sectionHref: "/components" };
+    if (currentPath.startsWith(base + "/components")) {
+      return { sectionName: "Components", sectionHref: base + "/components" };
     }
-    if (currentPath.startsWith("/patterns")) {
-      return { sectionName: "Patterns", sectionHref: "/patterns" };
+    if (currentPath.startsWith(base + "/patterns")) {
+      return { sectionName: "Patterns", sectionHref: base + "/patterns" };
     }
-    if (currentPath.startsWith("/community")) {
-      return { sectionName: "Community", sectionHref: "/community" };
+    if (currentPath.startsWith(base + "/community")) {
+      return { sectionName: "Community", sectionHref: base + "/community" };
     }
-    return { sectionName: "Home", sectionHref: "/" }; // Default
+    return { sectionName: "Home", sectionHref: base + "/" }; // Default
   });
   let currentSection = $derived(activeSectionInfo.sectionName);
   let activeSectionHref = $derived(activeSectionInfo.sectionHref);
@@ -87,9 +87,9 @@
       items: [
         {
           text: "About & Benefits",
-          href: "/get-started/about-benefits",
+          href: base + "/get-started/about-benefits",
         },
-        { text: "Installation and usage", href: "/get-started" },
+        { text: "Installation and usage", href: base + "/get-started" },
       ],
     },
     {
@@ -97,7 +97,7 @@
       items: [
         {
           text: "Component statuses",
-          href: "/get-started/component-statuses",
+          href: base + "/get-started/component-statuses",
         },
       ],
     },
@@ -145,45 +145,45 @@
   const mobileNavSections = [
     {
       title: "Get started",
-      href: "/get-started",
+      href: base + "/get-started",
       items: [
-        { text: "Installation and usage", href: "/get-started" },
+        { text: "Installation and usage", href: base + "/get-started" },
         {
           text: "About & Benefits",
-          href: "/get-started/about-benefits",
+          href: base + "/get-started/about-benefits",
         },
         {
           text: "Component statuses",
-          href: "/get-started/component-statuses",
+          href: base + "/get-started/component-statuses",
         },
       ],
     },
     // {
     //   title: "Home",
-    //   href: "/",
-    //   items: [{ text: "Overview", href: "/" }],
+    //   href: base + "/",
+    //   items: [{ text: "Overview", href: base + "/" }],
     // },
     {
       title: "Components",
-      href: "/components",
+      href: base + "/components",
       items: structuredComponentItems,
     },
     {
       title: "Patterns",
-      href: "/patterns",
+      href: base + "/patterns",
       items: [
         // {
         //   title: "Common patterns",
         //   items: [
-        //     { text: "Forms", href: "/patterns/forms" },
-        //     { text: "Tables", href: "/patterns/tables" },
+        //     { text: "Forms", href: base + "/patterns/forms" },
+        //     { text: "Tables", href: base + "/patterns/tables" },
         //   ],
         // },
       ],
     },
     {
       title: "Community",
-      href: "/community",
+      href: base + "/community",
       items: [],
     },
   ];
@@ -203,7 +203,7 @@
     <div class="flex-grow">
       <CookieBanner />
       <InternalHeader
-        homepageUrl="/"
+        homepageUrl={base + "/"}
         organisationName="MHCLG Digital, Data and Information"
         includeCrest={false}
       />
@@ -211,7 +211,7 @@
       <!-- Use ServiceNavigationNestedMobile component -->
       <ServiceNavigationNestedMobile
         serviceName="Svelte Component Library"
-        homeHref="/"
+        homeHref={base + "/"}
         {mobileNavSections}
         {activeSectionHref}
         {activeDetailHref}
@@ -253,6 +253,7 @@
     </div>
 
     <Footer
+      copyrightLogoUrl=""
       inlineLinks={[
         {
           href: cookiesUrl,

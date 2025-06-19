@@ -31,7 +31,7 @@
   <div class="govuk-width-container">
     <div class="govuk-service-navigation__container">
       <span class="govuk-service-navigation__service-name">
-        <a href={base + homeHref} class="govuk-service-navigation__link">
+        <a href={homeHref} class="govuk-service-navigation__link">
           {serviceName}
         </a>
       </span>
@@ -47,7 +47,7 @@
           >
             <a
               class="govuk-service-navigation__link"
-              href={base + item.href}
+              href={item.href}
               data-topnav={item.text}
               aria-current={isCurrent ? "page" : undefined}
             >

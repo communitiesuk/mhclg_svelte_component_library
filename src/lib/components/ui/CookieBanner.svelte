@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
   import { page } from "$app/state";
+  import { fly } from "svelte/transition";
   import {
     handleCookiesNavigation as handleCookiesNav,
     createCookiesUrl,
@@ -40,6 +41,11 @@
     // Styling props
     rebranded?: boolean;
 
+    // Modal/blocking props
+    modalMode?: boolean;
+    overlayOpacity?: number;
+    transitionDuration?: number;
+
     // Demo/isolation props
     demoMode?: boolean;
   }
@@ -58,6 +64,9 @@
     cookiesPageUrl = "/cookies-page",
     ariaLabel = "Cookies on MHCLG Svelte Component Library",
     rebranded = true,
+    modalMode = false,
+    overlayOpacity = 0.1,
+    transitionDuration = 300,
     demoMode = false,
   }: CookieBannerProps = $props();
 
@@ -65,6 +74,8 @@
   let bannerVisible = $state(true);
   let currentMessage = $state<"initial" | "accepted" | "rejected">("initial");
   let consentMode = $state<ConsentMode | null>(null);
+  let isModalPhase = $state(true); // Tracks if we're in the blocking modal phase
+  let hasUserInteracted = $state(false); // Tracks if user has made a choice
 
   // Initialize Google Tag Manager dataLayer
   function initializeGTM(): void {
@@ -149,6 +160,12 @@
     saveConsent(consent);
     consentMode = consent;
 
+    // Mark that user has interacted and exit modal phase
+    hasUserInteracted = true;
+    if (modalMode) {
+      isModalPhase = false;
+    }
+
     // Update current message based on consent
     if (consent.accepted) {
       currentMessage = "accepted";
@@ -191,6 +208,14 @@
   // Create the cookies page URL with current query parameters
   let cookiesUrl = $derived(createCookiesUrl(cookiesPageUrl));
 
+  // Determine if banner should show in modal mode
+  let showAsModal = $derived(
+    modalMode &&
+      currentMessage === "initial" &&
+      isModalPhase &&
+      !hasUserInteracted,
+  );
+
   // Initialize component on mount
   onMount(() => {
     initializeGTM();
@@ -206,6 +231,8 @@
     if (existingConsent) {
       consentMode = existingConsent;
       gtag("consent", "update", existingConsent);
+      hasUserInteracted = true;
+      isModalPhase = false;
 
       // Set initial message state based on existing consent
       if (existingConsent.accepted) {
@@ -215,6 +242,7 @@
       }
     } else {
       consentMode = setDefaultConsent();
+      // Keep isModalPhase = true and hasUserInteracted = false for new users
     }
   });
 
@@ -233,6 +261,8 @@
     if (updatedConsent) {
       consentMode = updatedConsent;
       gtag("consent", "update", updatedConsent);
+      hasUserInteracted = true;
+      isModalPhase = false;
 
       if (updatedConsent.accepted) {
         currentMessage = "accepted";
@@ -299,53 +329,80 @@
   </div>
 {/snippet}
 
+{#snippet initialMessage()}
+  <div class="govuk-cookie-banner__message govuk-width-container">
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-cookie-banner__heading govuk-heading-m">
+          {heading}
+        </h2>
+        <div class="govuk-cookie-banner__content">
+          <p class="govuk-body">{essentialCookiesText}</p>
+          <p class="govuk-body">{additionalCookiesText}</p>
+        </div>
+      </div>
+    </div>
+    <div class="govuk-button-group">
+      <button
+        type="button"
+        class="govuk-button"
+        data-module="govuk-button"
+        onclick={acceptCookies}
+      >
+        {acceptButtonText}
+      </button>
+      <button
+        type="button"
+        class="govuk-button"
+        data-module="govuk-button"
+        onclick={rejectCookies}
+      >
+        {rejectButtonText}
+      </button>
+      <a
+        href={base + cookiesUrl}
+        class="govuk-link"
+        onclick={handleCookiesNavigation}
+      >
+        {viewCookiesText}
+      </a>
+    </div>
+  </div>
+{/snippet}
+
 {#if bannerVisible}
+  <!-- Modal overlay (only shown when in modal mode and initial phase) -->
+  {#if showAsModal}
+    <div
+      class="cookie-banner-overlay"
+      style="background-color: rgba(0, 0, 0, {overlayOpacity});"
+      transition:fly={{ duration: transitionDuration, opacity: 0 }}
+    ></div>
+  {/if}
+
+  <!-- Cookie Banner -->
   <div
     class="govuk-cookie-banner {rebranded ? 'govuk-template--rebranded' : ''}"
+    class:cookie-banner--modal={showAsModal}
+    class:cookie-banner--standard={!showAsModal}
     data-nosnippet
     role="region"
     aria-label={ariaLabel}
+    aria-modal={showAsModal}
+    in:fly={{
+      duration: transitionDuration,
+      y: showAsModal ? 50 : -50,
+      opacity: 0,
+    }}
+    out:fly={{
+      duration: transitionDuration,
+      y: showAsModal ? -100 : -50,
+      opacity: 0,
+    }}
   >
     <!-- Initial consent request message -->
     {#if currentMessage === "initial"}
-      <div class="govuk-cookie-banner__message govuk-width-container">
-        <div class="govuk-grid-row">
-          <div class="govuk-grid-column-two-thirds">
-            <h2 class="govuk-cookie-banner__heading govuk-heading-m">
-              {heading}
-            </h2>
-            <div class="govuk-cookie-banner__content">
-              <p class="govuk-body">{essentialCookiesText}</p>
-              <p class="govuk-body">{additionalCookiesText}</p>
-            </div>
-          </div>
-        </div>
-        <div class="govuk-button-group">
-          <button
-            type="button"
-            class="govuk-button"
-            data-module="govuk-button"
-            onclick={acceptCookies}
-          >
-            {acceptButtonText}
-          </button>
-          <button
-            type="button"
-            class="govuk-button"
-            data-module="govuk-button"
-            onclick={rejectCookies}
-          >
-            {rejectButtonText}
-          </button>
-          <a
-            href={base + cookiesUrl}
-            class="govuk-link"
-            onclick={handleCookiesNavigation}
-          >
-            {viewCookiesText}
-          </a>
-        </div>
-      </div>
+      {@render initialMessage()}
     {/if}
 
     <!-- Accepted cookies confirmation message -->
@@ -363,5 +420,61 @@
 <style>
   .govuk-cookie-banner.govuk-template--rebranded {
     background-color: #f4f8fb;
+  }
+
+  /* Modal overlay */
+  .cookie-banner-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 9998;
+    backdrop-filter: blur(2px);
+  }
+
+  /* Modal positioning */
+  .cookie-banner--modal {
+    position: fixed !important;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+  }
+
+  /* Standard positioning */
+  .cookie-banner--standard {
+    position: relative;
+  }
+
+  /* Ensure modal banner content is properly contained */
+  .cookie-banner--modal .govuk-width-container {
+    width: 100%;
+    max-width: none;
+    margin: 0;
+    padding: 20px;
+  }
+
+  /* Responsive adjustments for modal */
+  @media (max-width: 768px) {
+    .cookie-banner--modal {
+      max-width: 95vw;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .cookie-banner--modal .govuk-width-container {
+      padding: 15px;
+    }
+  }
+
+  /* Prevent body scroll when modal is active */
+  :global(body:has(.cookie-banner--modal)) {
+    overflow: hidden;
   }
 </style>

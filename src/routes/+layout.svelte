@@ -201,7 +201,7 @@
 {#if !isDemoPage}
   <div class="min-h-screen flex flex-col">
     <div class="flex-grow">
-      <CookieBanner />
+      <CookieBanner modalMode={true} />
       <InternalHeader
         homepageUrl={base + "/"}
         organisationName="MHCLG Digital, Data and Information"

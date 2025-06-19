@@ -22,6 +22,7 @@
     label: string;
     lang?: string;
     hrefLang?: string;
+    onclick?: (event: MouseEvent) => void;
   }
 
   interface FooterSection {
@@ -118,6 +119,7 @@
                   href={base + link.href}
                   lang={link.lang}
                   hreflang={link.hrefLang}
+                  onclick={link.onclick}
                 >
                   {link.label}
                 </a>

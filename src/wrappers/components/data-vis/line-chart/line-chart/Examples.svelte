@@ -1,4 +1,5 @@
 <script>
+  //@ts-nocheck
   import { AccordionItem, Accordion } from "flowbite-svelte";
   import Template from "$lib/package-wrapping/templates/Template.svelte";
 
@@ -37,6 +38,9 @@
       content: Example4,
     },
   ];
+
+  let x = $state({ value: 200, year: 2019, line: "yes" });
+  let activeMarkerId = $state();
 </script>
 
 <div>
@@ -80,8 +84,8 @@
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
 
-{#snippet tooltipSnippet()}
-  {@html `<div style="border: 1px solid black; padding: 0.5rem;"><i>tooltipContent</i></div>`}
+{#snippet tooltipSnippet(activeMarkerId)}
+  {@html `<div style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"><i>Value</i>: ${activeMarkerId.y}<br><i>Year</i>: ${activeMarkerId.x}</div>`}
 {/snippet}
 
 {#snippet Example4()}

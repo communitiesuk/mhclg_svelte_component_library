@@ -17,7 +17,7 @@
     lineChartData,
 
     tooltipSnippet = undefined,
-    textContent = undefined,
+    tooltipContent = "tooltipContent",
 
     // ask
     xFunction = (number) => {
@@ -35,8 +35,6 @@
       .y((d) => yFunction(d[y]))
       .curve(curveLinear),
     labelText = "labelText",
-
-    tooltipContent = "tooltipContent",
 
     onClickSeries = (series, tier) => {
       if (clickedSeries === dataId) {
@@ -281,18 +279,19 @@
       </g>
     {/if}
   </svg>
-  <ValueLabel
-    {activeMarkerId}
-    labelColor="grey"
-    labelTextColor="black"
-    {tooltipContent}
-    {xFunction}
-    {yFunction}
-    {x}
-    {y}
-    {currentMousePosition}
-    {markerRect}
-    {tooltipSnippet}
-    {textContent}
-  ></ValueLabel>
+  {#if activeMarkerId}
+    <ValueLabel
+      {activeMarkerId}
+      labelColor="grey"
+      labelTextColor="black"
+      {tooltipContent}
+      {xFunction}
+      {yFunction}
+      {x}
+      {y}
+      {currentMousePosition}
+      {markerRect}
+      {tooltipSnippet}
+    ></ValueLabel>
+  {/if}
 </div>

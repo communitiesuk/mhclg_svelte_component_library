@@ -10,7 +10,6 @@
     y,
     markerRect,
     tooltipSnippet,
-    textContent,
   } = $props();
 
   let textDimensions = $state();
@@ -39,6 +38,6 @@
 {:else}<div
     style="position: absolute; top: {markerRect?.y}px; left: {markerRect?.x}px;"
   >
-    {@render tooltipSnippet(tooltipContent)}
+    {@render tooltipSnippet(activeMarkerId)}
   </div>
 {/if}

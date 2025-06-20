@@ -34,12 +34,11 @@
     },
     {
       id: "4",
-      heading: "4. Chart with markers",
+      heading: "4. Chart with interactive markers",
       content: Example4,
     },
   ];
 
-  let x = $state({ value: 200, year: 2019, line: "yes" });
   let activeMarkerId = $state();
 </script>
 
@@ -79,13 +78,32 @@
 
 {#snippet Example3()}
   <div class="p-5 bg-white">
-    <LineChart {lineChartData} x="x" y="y" series="areaCode"></LineChart>
+    <LineChart
+      {lineChartData}
+      x="x"
+      y="y"
+      series="areaCode"
+      getLine={(key, el) => {
+        if (key === "primary") {
+          return ["E07000224"].includes(el.areaCode);
+        } else return true;
+      }}
+      tieredLineParams={{
+        secondary: {},
+        primary: {
+          halo: true,
+          pathStrokeWidth: 5,
+          pathStrokeColor: "red",
+          interactiveLines: true,
+        },
+      }}
+    ></LineChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet tooltipSnippet(activeMarkerId)}
-  {@html `<div style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"><i>Value</i>: ${activeMarkerId.y}<br><i>Year</i>: ${activeMarkerId.x}</div>`}
+  {@html `<div style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"><i>Value:</i> ${activeMarkerId.y}<br><i>Year:</i> ${activeMarkerId.x}</div>`}
 {/snippet}
 
 {#snippet Example4()}
@@ -95,7 +113,7 @@
       x="x"
       y="y"
       series="areaCode"
-      basicLineParams={{ markers: true, interactive: true }}
+      basicLineParams={{ interactiveMarkers: true, markers: true }}
       {tooltipSnippet}
     ></LineChart>
   </div>

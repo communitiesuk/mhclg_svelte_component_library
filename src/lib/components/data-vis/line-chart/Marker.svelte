@@ -15,6 +15,7 @@
     markerFill = "grey",
     markerStroke = "white",
     markerStrokeWidth = 1,
+    interactiveMarkers,
   } = $props();
 </script>
 
@@ -22,19 +23,27 @@
   {@const markerId = "marker-" + marker[series] + marker[x]}
   <g
     data-id={markerId}
-    onclick={(event) => onClickMarker(event, marker, markerId)}
-    onmouseenter={(event) =>
-      onMouseEnterMarker(
-        event,
-        marker,
-        markerId,
-        event.currentTarget.getBoundingClientRect(),
-      )}
-    onmouseleave={(event) => onMouseLeaveMarker(event, marker, markerId)}
+    onclick={interactiveMarkers
+      ? (event) => onClickMarker(event, marker, markerId)
+      : null}
+    onmouseenter={interactiveMarkers
+      ? (event) =>
+          onMouseEnterMarker(
+            event,
+            marker,
+            markerId,
+            event.currentTarget.getBoundingClientRect(),
+          )
+      : null}
+    onmouseleave={interactiveMarkers
+      ? (event) => onMouseLeaveMarker(event, marker, markerId)
+      : null}
     transform="translate({xFunction(marker[x])},{yFunction(marker[y])})"
     role="button"
     tabindex="0"
-    onkeydown={(e) => e.key === "Enter" && onClickMarker(e, marker)}
+    onkeydown={interactiveMarkers
+      ? (e) => e.key === "Enter" && onClickMarker(e, marker)
+      : null}
   >
     {#if markerShape === "circle"}
       <circle

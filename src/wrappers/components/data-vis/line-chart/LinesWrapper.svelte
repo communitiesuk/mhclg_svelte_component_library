@@ -541,13 +541,13 @@
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 7,
       halo: true,
-      interactive: true,
+      interactiveLines: true,
     },
     hover: {
       pathStrokeColor: colors.ochre,
       pathStrokeWidth: 5,
       halo: true,
-      interactive: true,
+      interactiveLines: true,
     },
   });
 

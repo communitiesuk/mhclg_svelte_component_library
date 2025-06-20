@@ -1,7 +1,5 @@
 <script>
   import Line from "./Line.svelte";
-  import Marker from "./Marker.svelte";
-  import ValueLabel from "./ValueLabel.svelte";
   import SeriesLabel from "./SeriesLabel.svelte";
   import labelplacer from "labelplacer";
   import { onMount } from "svelte";
@@ -97,7 +95,7 @@
             (el) => el.datum[series] === line[series],
           )?.[y]}
           <SeriesLabel
-            interactive={line.interactive}
+            interactiveLines={line.interactiveLines}
             id={`label-${line[series]}`}
             {clickedSeries}
             {hoveredSeries}

@@ -1,5 +1,4 @@
 <script>
-  import ValueLabel from "./ValueLabel.svelte";
   import Marker from "./Marker.svelte";
   import {
     curveBasis,
@@ -35,7 +34,8 @@
     halo,
     chartBackgroundColor,
     invisibleStrokeWidth,
-    interactive,
+    interactiveLines,
+    interactiveMarkers,
     onClickMarker,
     onMouseEnterMarker,
     onMouseLeaveMarker,
@@ -89,14 +89,18 @@
 <g
   data-id={dataId}
   {id}
-  onclick={interactive ? (e) => onClickSeries(dataId, tier) : null}
-  onmouseenter={interactive ? (e) => onMouseEnterSeries(dataId, tier) : null}
-  onmouseleave={interactive ? (e) => onMouseLeaveSeries(dataId, tier) : null}
+  onclick={interactiveMarkers ? (e) => onClickSeries(dataId, tier) : null}
+  onmouseenter={interactiveMarkers
+    ? (e) => onMouseEnterSeries(dataId, tier)
+    : null}
+  onmouseleave={interactiveMarkers
+    ? (e) => onMouseLeaveSeries(dataId, tier)
+    : null}
   role="button"
   tabindex="0"
   onkeydown={(e) => e.key === "Enter" && onClickSeries(e, dataArray)}
   {opacity}
-  pointer-events={interactive ? null : "none"}
+  pointer-events={interactiveMarkers ? null : "none"}
 >
   {#if includeArea}
     <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
@@ -106,7 +110,7 @@
     fill="none"
     stroke="invisible"
     stroke-width={invisibleStrokeWidth}
-    pointer-events={interactive ? "stroke" : "none"}
+    pointer-events={interactiveLines ? "stroke" : "none"}
   ></path>
   {#if halo}
     <path
@@ -143,7 +147,7 @@
       {onMouseEnterMarker}
       {onMouseLeaveMarker}
       {onClickMarker}
-      {activeMarkerId}
+      {interactiveMarkers}
     ></Marker>
   {/if}
 </g>

@@ -66,7 +66,7 @@
     rebranded = true,
     modalMode = false,
     overlayOpacity = 0.1,
-    transitionDuration = 300,
+    transitionDuration = 600,
     demoMode = false,
   }: CookieBannerProps = $props();
 
@@ -216,6 +216,9 @@
       !hasUserInteracted,
   );
 
+  // Create a transition key to force re-render when transitioning between modes
+  let transitionKey = $derived(showAsModal ? "modal" : "standard");
+
   // Initialize component on mount
   onMount(() => {
     initializeGTM();
@@ -231,15 +234,21 @@
     if (existingConsent) {
       consentMode = existingConsent;
       gtag("consent", "update", existingConsent);
-      hasUserInteracted = true;
-      isModalPhase = false;
 
-      // Set initial message state based on existing consent
-      if (existingConsent.accepted) {
-        currentMessage = "accepted";
-      } else if (existingConsent.rejected) {
-        currentMessage = "rejected";
+      // Only mark as user interacted if they actually made a choice (accepted or rejected)
+      // Default denied consent without explicit user choice should still show modal
+      if (existingConsent.accepted || existingConsent.rejected) {
+        hasUserInteracted = true;
+        isModalPhase = false;
+
+        // Set initial message state based on existing consent
+        if (existingConsent.accepted) {
+          currentMessage = "accepted";
+        } else if (existingConsent.rejected) {
+          currentMessage = "rejected";
+        }
       }
+      // If no explicit choice was made, keep isModalPhase = true and hasUserInteracted = false
     } else {
       consentMode = setDefaultConsent();
       // Keep isModalPhase = true and hasUserInteracted = false for new users
@@ -261,13 +270,17 @@
     if (updatedConsent) {
       consentMode = updatedConsent;
       gtag("consent", "update", updatedConsent);
-      hasUserInteracted = true;
-      isModalPhase = false;
 
-      if (updatedConsent.accepted) {
-        currentMessage = "accepted";
-      } else if (updatedConsent.rejected) {
-        currentMessage = "rejected";
+      // Only mark as user interacted if they actually made a choice (accepted or rejected)
+      if (updatedConsent.accepted || updatedConsent.rejected) {
+        hasUserInteracted = true;
+        isModalPhase = false;
+
+        if (updatedConsent.accepted) {
+          currentMessage = "accepted";
+        } else if (updatedConsent.rejected) {
+          currentMessage = "rejected";
+        }
       }
     }
   }
@@ -380,41 +393,47 @@
     ></div>
   {/if}
 
-  <!-- Cookie Banner -->
-  <div
-    class="govuk-cookie-banner {rebranded ? 'govuk-template--rebranded' : ''}"
-    class:cookie-banner--modal={showAsModal}
-    class:cookie-banner--standard={!showAsModal}
-    data-nosnippet
-    role="region"
-    aria-label={ariaLabel}
-    aria-modal={showAsModal}
-    in:fly={{
-      duration: transitionDuration,
-      y: showAsModal ? 50 : -50,
-      opacity: 0,
-    }}
-    out:fly={{
-      duration: transitionDuration,
-      y: showAsModal ? -100 : -50,
-      opacity: 0,
-    }}
-  >
-    <!-- Initial consent request message -->
-    {#if currentMessage === "initial"}
-      {@render initialMessage()}
-    {/if}
+  <!-- Cookie Banner with key-based transitions -->
+  {#key transitionKey}
+    <div
+      class="govuk-cookie-banner {rebranded ? 'govuk-template--rebranded' : ''}"
+      class:cookie-banner--modal={showAsModal}
+      class:cookie-banner--standard={!showAsModal}
+      data-nosnippet
+      role="region"
+      aria-label={ariaLabel}
+      aria-modal={showAsModal}
+      in:fly={{
+        duration: transitionDuration * 1.5,
+        y: showAsModal ? 150 : -300,
+        x: showAsModal ? 0 : 0,
+        opacity: 0,
+        easing: (t) => t * (2 - t), // easeOut
+      }}
+      out:fly={{
+        duration: transitionDuration,
+        y: showAsModal ? -150 : 300,
+        x: 0,
+        opacity: 0,
+        easing: (t) => t * t, // easeIn
+      }}
+    >
+      <!-- Initial consent request message -->
+      {#if currentMessage === "initial"}
+        {@render initialMessage()}
+      {/if}
 
-    <!-- Accepted cookies confirmation message -->
-    {#if currentMessage === "accepted"}
-      {@render confirmationMessage(acceptedMessage)}
-    {/if}
+      <!-- Accepted cookies confirmation message -->
+      {#if currentMessage === "accepted"}
+        {@render confirmationMessage(acceptedMessage)}
+      {/if}
 
-    <!-- Rejected cookies confirmation message -->
-    {#if currentMessage === "rejected"}
-      {@render confirmationMessage(rejectedMessage)}
-    {/if}
-  </div>
+      <!-- Rejected cookies confirmation message -->
+      {#if currentMessage === "rejected"}
+        {@render confirmationMessage(rejectedMessage)}
+      {/if}
+    </div>
+  {/key}
 {/if}
 
 <style>
@@ -445,11 +464,18 @@
     overflow-y: auto;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     border-radius: 4px;
+    transition: box-shadow 0.3s ease;
+  }
+
+  .cookie-banner--modal:hover {
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
   }
 
   /* Standard positioning */
   .cookie-banner--standard {
     position: relative;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
   }
 
   /* Ensure modal banner content is properly contained */

@@ -324,6 +324,49 @@
           ],
         },
       },
+
+      // Modal/blocking props
+      {
+        name: "modalMode",
+        category: "Modal settings",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            "Enables modal dialog mode for the initial cookie consent request.",
+            "When <code>true</code>, displays the banner as a blocking modal dialog.",
+            "After user interaction, smoothly transitions to standard banner position.",
+          ],
+        },
+      },
+      {
+        name: "overlayOpacity",
+        category: "Modal settings",
+        value: 0.1,
+        description: {
+          markdown: true,
+          arr: [
+            "Controls the opacity of the modal overlay backdrop (0-1).",
+            "Only applies when <code>modalMode</code> is <code>true</code>.",
+            "Higher values create a more prominent blocking effect.",
+          ],
+        },
+        visible: { name: "modalMode", value: true },
+      },
+      {
+        name: "transitionDuration",
+        category: "Modal settings",
+        value: 600,
+        description: {
+          markdown: true,
+          arr: [
+            "Duration of the transition animation in milliseconds.",
+            "Controls how long the banner takes to move from modal to standard position.",
+            "Longer durations make the transition movement more obvious.",
+          ],
+        },
+        visible: { name: "modalMode", value: true },
+      },
     ]),
   );
 
@@ -437,6 +480,14 @@
       ]),
     ),
   );
+
+  // Demo controls
+  let modalModeString = $state("false");
+  let modalMode = $derived(modalModeString === "true");
+  let demoMode = $state(true);
+  let rebranded = $state(true);
+  let overlayOpacity = $state(0.1);
+  let transitionDuration = $state(600);
 </script>
 
 <!--

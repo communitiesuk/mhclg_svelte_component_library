@@ -97,6 +97,7 @@
 
   import { scaleLinear } from "d3-scale";
   import { curveLinear, line, area } from "d3-shape";
+  import { tooltip } from "leaflet";
 
   let { data } = $props();
 
@@ -533,6 +534,7 @@
         description:
           "Background color of the chart. Also used for the 'halo' outline given to lines.",
       },
+      { name: "tooltipSnippet", category: "tooltip", value: tooltipSnippet },
       {
         name: "xFunction",
         category: "xScale",
@@ -926,3 +928,7 @@ DONOTTOUCH  *
 <div id="examples" data-role="examples-section">
   <Examples {data}></Examples>
 </div>
+
+{#snippet tooltipSnippet(activeMarkerId)}
+  {@html `<div style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none">${activeMarkerId.y}</div>`}
+{/snippet}

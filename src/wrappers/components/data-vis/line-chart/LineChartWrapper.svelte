@@ -128,15 +128,22 @@
    */
   let colors = $state({
     teal: "#408A7B",
-    lightblue: "#509EC8",
-    darkblue: "#335F91",
+    skyBlue: "#509EC8",
+    indigo: "#335F91",
     ochre: "#BA7F30",
     coral: "#E46B6C",
-    fuschia: "#BB2765",
-    purple: "#736CAC",
-    lightgrey: "#A0A0A0",
-    darkgrey: "#636363",
+    fuchsia: "#BB2765",
+    lavender: "#736CAC",
+    ashGrey: "#A0A0A0",
+    slateGrey: "#636363",
     black: "#161616",
+    forestGreen: "#3C6E3C",
+    midnightTeal: "#2C5E5E",
+    dustyRose: "#C86B84",
+    steelBlue: "#4B6E91",
+    burntSienna: "#B65C38",
+    oliveGreen: "#7A8644",
+    slatePurple: "#64587C",
   });
 
   let svgWidth = $state(700);

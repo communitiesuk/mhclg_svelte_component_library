@@ -89,16 +89,18 @@
 <g
   data-id={dataId}
   {id}
-  onclick={interactiveMarkers ? (e) => onClickSeries(dataId, tier) : null}
-  onmouseenter={interactiveMarkers
+  onclick={interactiveLines ? (e) => onClickSeries(dataId, tier) : null}
+  onmouseenter={interactiveLines
     ? (e) => onMouseEnterSeries(dataId, tier)
     : null}
-  onmouseleave={interactiveMarkers
+  onmouseleave={interactiveLines
     ? (e) => onMouseLeaveSeries(dataId, tier)
     : null}
   role="button"
   tabindex="0"
-  onkeydown={(e) => e.key === "Enter" && onClickSeries(e, dataArray)}
+  onkeydown={interactiveLines
+    ? (e) => e.key === "Enter" && onClickSeries(e, dataArray)
+    : null}
   {opacity}
   pointer-events={interactiveMarkers ? null : "none"}
 >

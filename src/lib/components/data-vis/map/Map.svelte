@@ -12,7 +12,7 @@
   import { contrastingColor } from "./colors.js";
   import { colorbrewer } from "./colorbrewer.js";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
-  import type { LngLatLike } from "maplibre-gl";
+  import type { LngLatLike, LngLatBoundsLike } from "maplibre-gl";
   import type { FeatureCollection } from "geojson";
   import fullTopo from "./fullTopo.json";
   import * as topojson from "topojson-client";
@@ -29,14 +29,14 @@
   import { joinData } from "./dataJoin.js";
 
   import maplibregl from "maplibre-gl";
-  const { LngLatBounds } = maplibregl;
+  import { LngLatBounds } from "maplibre-gl";
 
-  import type { LngLatBoundsLike } from "maplibre-gl";
+  // import type { LngLatBoundsLike } from "maplibre-gl";
   let {
     data,
-    customPallet,
-    setCustomPallet,
-    interactive,
+    customPalette,
+    setCustomPalette = false,
+    interactive = true,
     cooperativeGestures = true,
     standardControls = true,
     navigationControl,
@@ -67,17 +67,21 @@
     zoom = 5,
     minZoom = undefined,
     maxZoom = undefined,
-    maxBoundsCoords,
+    maxBoundsCoords = [
+      [-10, 49],
+      [5, 60],
+    ],
     hash = false,
     updateHash = (u) => {
       replaceState(u, page.state);
     },
     useInitialHash = true,
     mapHeight = 200,
-    setMaxBounds,
+    setMaxBounds = false,
+    onload,
   }: {
     data: object[];
-    customPallet: object[] | undefined;
+    customPalette?: object[];
     cooperativeGestures?: boolean;
     standardControls?: boolean;
     navigationControl?: boolean;
@@ -101,9 +105,9 @@
     breaksType?: string;
     numberOfBreaks?: number;
     fillOpacity?: number;
-    changeOpacityOnHover: boolean;
+    changeOpacityOnHover?: boolean;
     hoverOpacity?: number;
-    center?: LngLatLike | undefined;
+    center?: LngLatLike;
     zoom?: number;
     minZoom?: number | undefined;
     maxZoom?: number | undefined;
@@ -113,9 +117,10 @@
     updateHash?: (URL) => void;
     useInitialHash?: boolean;
     mapHeight?: number;
-    setCustomPallet?: boolean;
+    setCustomPalette?: boolean;
     customBreaks?: number[];
-    interactive: boolean;
+    interactive?: boolean;
+    onload?: (map: maplibregl.Map) => void;
   } = $props();
 
   let styleLookup = {
@@ -124,7 +129,11 @@
     "Carto-dark":
       "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
   };
-  let style = $derived(styleLookup[styleSheet] ?? styleSheet);
+  let style = $derived(
+    typeof styleSheet == "string"
+      ? (styleLookup[styleSheet] ?? styleSheet)
+      : styleSheet,
+  );
 
   let breakCount = $derived(
     breaksType == "custom" ? customBreaks.length : numberOfBreaks,
@@ -147,8 +156,8 @@
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
 
   let fillColors: string[] = $derived(
-    setCustomPallet == true
-      ? customPallet
+    setCustomPalette == true
+      ? customPalette
       : colorbrewer[colorPalette][breakCount],
   );
 
@@ -285,7 +294,11 @@
     : zoom;
 
   let bounds = $derived(
-    setMaxBounds ? convertToLngLatBounds(maxBoundsCoords) : undefined,
+    setMaxBounds
+      ? maxBoundsCoords
+        ? convertToLngLatBounds(maxBoundsCoords)
+        : undefined
+      : undefined,
   );
 </script>
 
@@ -303,6 +316,7 @@
     {updateHash}
     {interactive}
     class="map"
+    {onload}
   >
     {#if interactive && !standardControls}
       <NonStandardControls
@@ -343,20 +357,20 @@
         }}
         beforeLayerType="symbol"
         manageHoverState={interactive}
-        onclick={interactive ? (e) => zoomToArea(e) : null}
+        onclick={interactive ? (e) => zoomToArea(e) : undefined}
         onmousemove={interactive
           ? (e) => {
               hoveredArea = e.features[0].id;
               hoveredAreaData = e.features[0].properties.metric;
               currentMousePosition = e.event.point;
             }
-          : null}
+          : undefined}
         onmouseleave={interactive
           ? () => {
               hoveredArea = null;
               hoveredAreaData = null;
             }
-          : null}
+          : undefined}
       />
       {#if showBorder}
         <LineLayer
@@ -386,7 +400,7 @@
   :global(.maplibregl-ctrl-group button.reset-button) {
     /* margin: 10px; */
     width: fit-content;
-    padding: 0px 10px;
+    padding: 5px 10px;
     font-size: 16px;
     height: 100%;
   }

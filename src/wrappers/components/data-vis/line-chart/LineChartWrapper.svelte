@@ -97,7 +97,7 @@
 
   import { scaleLinear } from "d3-scale";
   import { curveLinear, line, area } from "d3-shape";
-  import { tooltip } from "leaflet";
+  // import { tooltip } from "leaflet";
 
   let { data } = $props();
 

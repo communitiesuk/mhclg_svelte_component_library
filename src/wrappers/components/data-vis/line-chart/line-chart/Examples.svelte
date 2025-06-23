@@ -16,6 +16,13 @@
     return found ? { ...found, lines: found.lines.slice(0, 5) } : null;
   })();
 
+  const dataForOneLine = (() => {
+    const found = data.dataInFormatForLineChart.find(
+      (el) => el.metric === "Household waste recycling rate",
+    );
+    return found ? { ...found, lines: found.lines.slice(0, 1) } : null;
+  })();
+
   let accordionSnippetSections = [
     {
       id: "1",
@@ -29,17 +36,26 @@
     },
     {
       id: "3",
-      heading: "3. Chart with different tiers",
+      heading: "3. Line chart with different tiers",
       content: Example3,
     },
     {
       id: "4",
-      heading: "4. Chart with interactive markers",
+      heading: "4. Line chart with interactive markers",
       content: Example4,
+    },
+    {
+      id: "5",
+      heading: "5. Line chart with shaded area",
+      content: Example5,
     },
   ];
 
   let activeMarkerId = $state();
+  let clickedSeries = $state();
+  let hoveredSeries = $state();
+  let clickedTier = $state();
+  let hoveredTier = $state();
 </script>
 
 <div>
@@ -71,7 +87,33 @@
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
-    <LineChart {lineChartData} x="x" y="y" series="areaCode"></LineChart>
+    <LineChart
+      {lineChartData}
+      x="x"
+      y="y"
+      series="areaCode"
+      basicLineParams={{ interactiveLines: true }}
+      tieredLineParams={{
+        all: {},
+        hover: { pathStrokeColor: "pink" },
+        clicked: {
+          pathStrokeColor: "red",
+        },
+      }}
+      getLine={(tier, el) => {
+        if (tier === "all") {
+          return true;
+        }
+        if (tier === "hover") {
+          return [hoveredSeries].includes(el.areaCode);
+        }
+        if (tier === "clicked") {
+          return [clickedSeries].includes(el.areaCode);
+        }
+      }}
+      bind:clickedSeries
+      bind:hoveredSeries
+    ></LineChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
@@ -83,8 +125,8 @@
       x="x"
       y="y"
       series="areaCode"
-      getLine={(key, el) => {
-        if (key === "primary") {
+      getLine={(tier, el) => {
+        if (tier === "primary") {
           return ["E07000224"].includes(el.areaCode);
         } else return true;
       }}
@@ -94,7 +136,6 @@
           halo: true,
           pathStrokeWidth: 5,
           pathStrokeColor: "red",
-          interactiveLines: true,
         },
       }}
     ></LineChart>
@@ -115,6 +156,19 @@
       series="areaCode"
       basicLineParams={{ interactiveMarkers: true, markers: true }}
       {tooltipSnippet}
+    ></LineChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example5()}
+  <div class="p-5 bg-white">
+    <LineChart
+      lineChartData={dataForOneLine}
+      x="x"
+      y="y"
+      series="areaCode"
+      basicLineParams={{ includeArea: true, areaFillColor: "lightgrey" }}
     ></LineChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

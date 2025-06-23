@@ -184,6 +184,7 @@
             id: "document-type",
             type: "radios",
             title: "Document type",
+            openByDefault: true,
             ga4Section: "document_type",
             ga4IndexSection: 1,
             ga4IndexSectionCount: 4,
@@ -279,6 +280,36 @@
           markdown: true,
           arr: [
             "The text to display on the apply button at the bottom of the filter panel.",
+          ],
+        },
+      },
+      {
+        name: "filterPanelSectionsExpanded",
+        category: "Display props",
+        value: false,
+        options: [true, false],
+        propType: "radio",
+        description: {
+          markdown: true,
+          arr: [
+            "Controls whether individual filter sections (like 'Document type', 'Date published') are expanded or collapsed.",
+            "This works reactively - changing the value will immediately expand/collapse all sections.",
+            "Individual sections can override this setting using their `openByDefault` property.",
+          ],
+        },
+      },
+      {
+        name: "filterPanelExpanded",
+        category: "Display props",
+        value: true,
+        options: [true, false],
+        propType: "radio",
+        description: {
+          markdown: true,
+          arr: [
+            "Controls whether the entire filter panel is visible or hidden.",
+            "This works reactively - changing the value will immediately show/hide the filter panel.",
+            "When `false`, users need to click the 'Filter and sort' button to reveal the filter options.",
           ],
         },
       },

@@ -10,11 +10,14 @@
     tieredDataObject,
     dataArray,
     lineFunction,
+    areaFunction,
     chartWidth,
     xFunction,
     yFunction,
     clickedSeries,
     hoveredSeries,
+    clickedTier,
+    hoveredTier,
     chartHeight,
     globalTierRules,
     chartBackgroundColor = "#fafafa",
@@ -70,6 +73,7 @@
           {tier}
           {chartBackgroundColor}
           {lineFunction}
+          {areaFunction}
           {xFunction}
           {yFunction}
           {onMouseEnterSeries}
@@ -77,6 +81,8 @@
           {onClickSeries}
           {clickedSeries}
           {hoveredSeries}
+          {clickedTier}
+          {hoveredTier}
           {series}
           {y}
           {x}

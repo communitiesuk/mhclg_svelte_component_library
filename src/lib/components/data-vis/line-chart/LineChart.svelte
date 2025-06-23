@@ -10,16 +10,14 @@
   import ValueLabel from "./ValueLabel.svelte";
 
   let {
-    // Required
     series,
     y,
     x,
     lineChartData,
 
     tooltipSnippet = undefined,
-    tooltipContent = "tooltipContent",
+    tooltipContent = "default",
 
-    // ask
     xFunction = (number) => {
       return scaleLinear()
         .domain([2015, 2022])
@@ -37,11 +35,14 @@
     labelText = "labelText",
 
     onClickSeries = (series, tier) => {
-      if (clickedSeries === dataId) {
+      if (clickedSeries === series) {
         clickedSeries = null;
+        hoveredSeries = null;
       } else {
         clickedSeries = series;
         clickedTier = tier;
+        hoveredSeries = series;
+        hoveredTier = tier;
       }
     },
     onMouseLeaveSeries = (series, tier) => {
@@ -91,10 +92,11 @@
     currentMousePosition = undefined,
     markerRect = undefined,
     clickedSeries = $bindable(undefined),
-    hoveredSeries = undefined,
-    hoveredTier = undefined,
+    hoveredSeries = $bindable(undefined),
+    hoveredTier = $bindable(undefined),
+    clickedTier = $bindable(undefined),
     overrideLineParams = () => ({}),
-    getLine = (key, el) => {
+    getLine = (tier, el) => {
       return true;
     },
     nothingSelected = true,
@@ -142,13 +144,13 @@
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
   let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
-  // let areaFunction = $derived(
-  //   area()
-  //     .y0((d) => yFunction(0))
-  //     .x((d) => xFunction(d.x))
-  //     .y1((d) => yFunction(d.y))
-  //     .curve(curveLinear),
-  // );
+  let areaFunction = $derived(
+    area()
+      .y0((d) => yFunction(0))
+      .x((d) => xFunction(d.x))
+      .y1((d) => yFunction(d.y))
+      .curve(curveLinear),
+  );
 
   let selectedLine = $derived([hoveredSeries, clickedSeries]);
 
@@ -240,11 +242,14 @@
             {tieredDataObject}
             dataArray={lineChartData.lines}
             {lineFunction}
+            {areaFunction}
             {chartWidth}
             {xFunction}
             {yFunction}
             {hoveredSeries}
             {clickedSeries}
+            {clickedTier}
+            {hoveredTier}
             {chartHeight}
             {globalTierRules}
             {chartBackgroundColor}
@@ -282,7 +287,7 @@
   {#if activeMarkerId}
     <ValueLabel
       {activeMarkerId}
-      labelColor="grey"
+      labelColor="lightgrey"
       labelTextColor="black"
       {tooltipContent}
       {xFunction}

@@ -3,7 +3,7 @@
     activeMarkerId,
     labelColor = "red",
     labelTextColor,
-    tooltipContent,
+    tooltipContent = activeMarkerId.y,
     xFunction,
     yFunction,
     x,
@@ -15,24 +15,24 @@
   let textDimensions = $state();
   let verticalPadding = $state(8);
   let horizontalPadding = $derived(verticalPadding * 2);
+  $inspect(markerRect);
 </script>
 
 {#if tooltipSnippet === undefined}
   <div
     style="position:absolute;
-  top: {markerRect?.y}px;
-  left: {markerRect?.x}px;
-  font-size: 24px;
+  top: {markerRect?.y - (textDimensions?.height ?? 0) - 15}px;
+left: {markerRect?.x +
+      (markerRect?.width ?? 0) / 2 -
+      (textDimensions?.width ?? 0) / 2}px;
   pointer-events: none;
   background-color: {labelColor};
   padding: 5px;
   border-radius: 5px;
-  height={(textDimensions?.height ?? 0) + verticalPadding}
-  rx=5;
-  ry=5;
-  width={(textDimensions?.width ?? 0) + horizontalPadding}"
+  height={textDimensions?.height ?? 0}
+  width={textDimensions?.width ?? 0}"
   >
-    <p bind:contentRect={textDimensions}>tooltipContent is a string</p>
+    <div bind:contentRect={textDimensions}>{activeMarkerId.y}</div>
   </div>
 {:else}<div
     style="position: absolute; top: {markerRect?.y}px; left: {markerRect?.x}px;"

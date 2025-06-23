@@ -534,7 +534,6 @@
         description:
           "Background color of the chart. Also used for the 'halo' outline given to lines.",
       },
-      { name: "tooltipSnippet", category: "tooltip", value: tooltipSnippet },
       {
         name: "xFunction",
         category: "xScale",
@@ -558,7 +557,7 @@
       {
         name: "tooltipContent",
         category: "interactions",
-        value: "Here's some content for a tooltip",
+        value: "tooltipContent from Wrapper",
       },
       {
         name: "getLine",
@@ -587,7 +586,7 @@
           }
         },`,
         },
-        value: function (key, el) {
+        value: function (tier, el) {
           let primaryLines = [
             "E07000224",
             "E07000225",
@@ -596,16 +595,16 @@
             englandMedian,
             similarAreas,
           ];
-          if (key === "primary") {
+          if (tier === "primary") {
             return primaryLines.includes(el[series]);
           }
-          if (key === "secondary" && !primaryLines.includes(el[series])) {
+          if (tier === "secondary" && !primaryLines.includes(el[series])) {
             return true;
           }
-          if (key === "hover") {
+          if (tier === "hover") {
             return [hoveredSeries, hoveredSeries].includes(el[series]);
           }
-          if (key === "clicked") {
+          if (tier === "clicked") {
             return [clickedSeries, clickedSeries].includes(el[series]);
           }
         },
@@ -928,7 +927,3 @@ DONOTTOUCH  *
 <div id="examples" data-role="examples-section">
   <Examples {data}></Examples>
 </div>
-
-{#snippet tooltipSnippet(activeMarkerId)}
-  {@html `<div style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none">${activeMarkerId.y}</div>`}
-{/snippet}

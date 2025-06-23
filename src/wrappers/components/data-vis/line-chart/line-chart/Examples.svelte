@@ -144,7 +144,13 @@
 {/snippet}
 
 {#snippet tooltipSnippet(activeMarkerId)}
-  {@html `<div style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"><i>Value:</i> ${activeMarkerId.y}<br><i>Year:</i> ${activeMarkerId.x}</div>`}
+  <div
+    style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"
+  >
+    <i>Value:</i>
+    {activeMarkerId.y}<br /><i>Year:</i>
+    {activeMarkerId.x}
+  </div>
 {/snippet}
 
 {#snippet Example4()}

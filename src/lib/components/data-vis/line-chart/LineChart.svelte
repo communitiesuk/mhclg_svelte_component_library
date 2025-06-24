@@ -97,6 +97,12 @@
     clickedTier = $bindable(undefined),
     overrideLineParams = () => ({}),
     getLine = (tier, el) => {
+      if (tier === "hover") {
+        return [hoveredSeries].includes(el.areaCode);
+      }
+      if (tier === "clicked") {
+        return [clickedSeries].includes(el.areaCode);
+      }
       return true;
     },
     nothingSelected = true,

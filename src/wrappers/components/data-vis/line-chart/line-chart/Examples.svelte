@@ -100,17 +100,6 @@
           pathStrokeWidth: 5,
         },
       }}
-      getLine={(tier, el) => {
-        if (tier === "all") {
-          return true;
-        }
-        if (tier === "hover") {
-          return [hoveredSeries].includes(el.areaCode);
-        }
-        if (tier === "clicked") {
-          return [clickedSeries].includes(el.areaCode);
-        }
-      }}
       bind:clickedSeries
       bind:hoveredSeries
     ></LineChart>

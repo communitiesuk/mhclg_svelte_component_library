@@ -127,7 +127,7 @@
 
     basicLineParams = {},
     colorLineParams = (tier, line, lineIndex) => {
-      return { pathStrokeColor: lineColorMap.get(line.areaCode) };
+      return { pathStrokeColor: lineColorMap[line.areaCode] };
     },
   } = $props();
 
@@ -151,13 +151,12 @@
     slatePurple: "#64587C",
   });
 
-  const lineColorMap = new Map();
-
-  lineChartData.lines.forEach((line, index) => {
-    const colorValues = Object.values(colors);
-    const color = colorValues[index % colorValues.length];
-    lineColorMap.set(line.areaCode, color);
-  });
+  const lineColorMap = Object.fromEntries(
+    lineChartData.lines.map((line, index) => [
+      line.areaCode,
+      Object.values(colors)[index % Object.values(colors).length],
+    ]),
+  );
 
   let defaultLineParams = $derived({
     xFunction,

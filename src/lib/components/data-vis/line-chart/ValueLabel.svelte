@@ -15,7 +15,6 @@
   let textDimensions = $state();
   let verticalPadding = $state(8);
   let horizontalPadding = $derived(verticalPadding * 2);
-  $inspect(markerRect);
 </script>
 
 {#if tooltipSnippet === undefined}

@@ -95,9 +95,9 @@
       basicLineParams={{ interactiveLines: true }}
       tieredLineParams={{
         all: {},
-        hover: { pathStrokeColor: "pink" },
+        hover: { pathStrokeWidth: 4 },
         clicked: {
-          pathStrokeColor: "red",
+          pathStrokeWidth: 5,
         },
       }}
       getLine={(tier, el) => {
@@ -131,7 +131,7 @@
         } else return true;
       }}
       tieredLineParams={{
-        secondary: {},
+        secondary: { pathStrokeColor: "grey" },
         primary: {
           halo: true,
           pathStrokeWidth: 5,
@@ -174,7 +174,11 @@
       x="x"
       y="y"
       series="areaCode"
-      basicLineParams={{ includeArea: true, areaFillColor: "lightgrey" }}
+      basicLineParams={{
+        includeArea: true,
+        pathStrokeColor: "darkgrey",
+        areaFillColor: "lightgrey",
+      }}
     ></LineChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

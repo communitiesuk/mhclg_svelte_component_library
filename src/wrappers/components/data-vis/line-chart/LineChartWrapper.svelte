@@ -465,13 +465,13 @@
   };`,
         },
         value: function (series, i) {
-          let colorsArray = [colors.coral, colors.fuschia, colors.purple];
+          let colorsArray = colors;
 
           return (
             {
-              [englandMedian]: colors.lightblue,
-              [selectedAreaCode]: colors.teal,
-              [similarAreas]: colors.darkblue,
+              [englandMedian]: colors.burntSienna,
+              [selectedAreaCode]: colors.coral,
+              [similarAreas]: colors.slatePurple,
             }[series] ?? colorsArray[i % colorsArray.length]
           );
         },
@@ -723,7 +723,7 @@
   });
 
   let getColor = function (series, i) {
-    let colorsArray = [colors.coral, colors.fuschia, colors.purple];
+    let colorsArray = colors;
 
     return (
       {

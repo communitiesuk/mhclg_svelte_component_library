@@ -126,7 +126,31 @@
     },
 
     basicLineParams = {},
+    colorLineParams = (tier, line, lineIndex) => {
+      const colorValues = Object.values(colors);
+      return { pathStrokeColor: colorValues[lineIndex % colorValues.length] };
+    },
   } = $props();
+
+  let colors = $state({
+    teal: "#408A7B",
+    skyBlue: "#509EC8",
+    indigo: "#335F91",
+    ochre: "#BA7F30",
+    coral: "#E46B6C",
+    fuchsia: "#BB2765",
+    lavender: "#736CAC",
+    ashGrey: "#A0A0A0",
+    slateGrey: "#636363",
+    black: "#161616",
+    forestGreen: "#3C6E3C",
+    midnightTeal: "#2C5E5E",
+    dustyRose: "#C86B84",
+    steelBlue: "#4B6E91",
+    burntSienna: "#B65C38",
+    oliveGreen: "#7A8644",
+    slatePurple: "#64587C",
+  });
 
   let defaultLineParams = $derived({
     xFunction,
@@ -170,11 +194,13 @@
     overrideLineParams,
     tieredLineParams,
     basicLineParams,
+    colorLineParams,
     defaultLineParams,
   ) {
     const listOfProperties = [
       ...new Set([
         ...Object.keys(defaultLineParams),
+        ...Object.keys(colorLineParams(tier, line)),
         ...Object.keys(basicLineParams ?? {}),
         ...Object.keys(tieredLineParams[tier] ?? {}),
         ...Object.keys(overrideLineParams(tier, line)),
@@ -187,9 +213,12 @@
         overrideLineParams(tier, line)[key] ??
           tieredLineParams[tier]?.[key] ??
           basicLineParams[key] ??
+          colorLineParams(tier, line)[key] ??
           defaultLineParams[key],
       ]),
     );
+
+    console.log(colorLineParams(tier, line));
 
     return {
       ...merged,
@@ -203,13 +232,14 @@
     Object.keys(tieredLineParams).reduce((acc, tier) => {
       acc[tier] = lineChartData.lines
         .filter((el) => getLine(tier, el))
-        .map((line) =>
+        .map((line, i) =>
           generateLineAttributes(
             line,
             tier,
             overrideLineParams,
             tieredLineParams,
             basicLineParams,
+            (tier, line) => colorLineParams(tier, line, i),
             defaultLineParams,
           ),
         );

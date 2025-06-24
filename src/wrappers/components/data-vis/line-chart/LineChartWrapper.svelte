@@ -239,21 +239,7 @@
         description:
           "Parameters that are specific to particular lines. Takes priority over `basicLineParams` and tieredLineParams",
         functionElements: {
-          functionAsString: `function (key, el) {
-            return {
-              pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
-                ? getColor(
-                    el[series],
-                    [
-                      "E07000224",
-                      "E07000225",
-                      "E07000226",
-                      "E07000228",
-                    ].indexOf(el[series]),
-                  )
-                : null,
-            };
-          }`,
+          functionAsString: ``,
         },
         value: function (tier, el) {
           return {
@@ -268,32 +254,6 @@
               (!clickedSeries &&
                 hoveredTier === "primary" &&
                 tier === "primary"),
-            pathStrokeColor: ["primary", "hover", "clicked"].includes(tier)
-              ? getColor(
-                  el[series],
-                  [
-                    "E07000224",
-                    "E07000225",
-                    "E07000226",
-                    "E07000228",
-                    englandMedian,
-                    similarAreas,
-                  ].indexOf(el[series]),
-                )
-              : null,
-            markerFill: ["primary", "hover", "clicked"].includes(tier)
-              ? getColor(
-                  el[series],
-                  [
-                    "E07000224",
-                    "E07000225",
-                    "E07000226",
-                    "E07000228",
-                    englandMedian,
-                    similarAreas,
-                  ].indexOf(el[series]),
-                )
-              : null,
           };
         },
       },
@@ -446,34 +406,6 @@
         },
         value: function (event, marker, markerId) {
           activeMarkerId = marker;
-        },
-      },
-      {
-        name: "getColor",
-        category: "customisingLines",
-        functionElements: {
-          functionAsString: `function (series, i) {
-    let colorsArray = [colors.coral, colors.fuschia, colors.purple];
-
-    return (
-      {
-        [englandMedian]: colors.lightblue,
-        [selectedAreaCode]: colors.teal,
-        [similarAreas]: colors.darkblue,
-      }[series] ?? colorsArray[i % colorsArray.length]
-    );
-  };`,
-        },
-        value: function (series, i) {
-          let colorsArray = colors;
-
-          return (
-            {
-              [englandMedian]: colors.burntSienna,
-              [selectedAreaCode]: colors.coral,
-              [similarAreas]: colors.slatePurple,
-            }[series] ?? colorsArray[i % colorsArray.length]
-          );
         },
       },
 
@@ -722,18 +654,6 @@
     clicked: { opacity: 1 },
   });
 
-  let getColor = function (series, i) {
-    let colorsArray = colors;
-
-    return (
-      {
-        [englandMedian]: colors.lightblue,
-        [selectedAreaCode]: colors.teal,
-        [similarAreas]: colors.darkblue,
-      }[series] ?? colorsArray[i % colorsArray.length]
-    );
-  };
-
   let xFunction = $derived(function (number) {
     return scaleLinear()
       .domain([2015, 2022])
@@ -780,7 +700,6 @@
     lineFunction,
     lineChartData,
     tieredLineParams,
-    getColor,
     basicLineParams,
     nothingSelected,
     globalTierRules,

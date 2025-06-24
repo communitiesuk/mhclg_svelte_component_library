@@ -53,12 +53,6 @@
     }
   };
 
-  function getColor(areaCode, lookupObj, i) {
-    return (
-      lookupObj[areaCode] ?? colorPalette.base[i % colorPalette.base.length]
-    );
-  }
-
   /**
    * !  More documentation is provided on the component library's user guide page.
    */
@@ -644,13 +638,6 @@
         .map((el) => ({
           ...el,
           includeMarkers: key === "primary" ? true : false,
-          pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
-            ? getColor(
-                el.areaCode,
-                lookupObj,
-                getValue("primaryLines").indexOf(el.areaCode),
-              )
-            : null,
         }));
       return acc;
     }, {}),

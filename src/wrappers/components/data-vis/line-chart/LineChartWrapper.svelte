@@ -333,6 +333,9 @@
           functionAsString: ``,
         },
         value: function (series, tier) {
+          {
+            console.log("ENTERING SERIES");
+          }
           if (hoveredSeries !== series) {
             hoveredSeries = series;
             hoveredTier = tier;
@@ -346,6 +349,9 @@
           functionAsString: ``,
         },
         value: function (series, tier) {
+          {
+            console.log("LEAVING SERIES");
+          }
           if (hoveredSeries === series) {
             hoveredSeries = null;
             hoveredTier = null;
@@ -361,6 +367,9 @@
             }`,
         },
         value: function (event, marker, markerId, rect) {
+          {
+            console.log("ENTERING MARKER");
+          }
           activeMarkerId = marker;
           if (container) {
             const bounds = container.getBoundingClientRect();
@@ -391,6 +400,9 @@
             }`,
         },
         value: function (event, marker, dataId) {
+          {
+            console.log("LEAVING MARKER");
+          }
           activeMarkerId = null;
         },
       },
@@ -609,7 +621,7 @@
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
-      interactiveLines: true,
+      interactiveLines: false,
       markers: false,
       showLabel: false,
     },

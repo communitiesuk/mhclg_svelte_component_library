@@ -45,13 +45,21 @@
     onkeydown={interactiveMarkers
       ? (e) => e.key === "Enter" && onClickMarker(e, marker)
       : null}
+    pointer-events={interactiveMarkers ? null : "none"}
   >
+    <circle
+      r={markerRadius + 6}
+      fill="transparent"
+      stroke="none"
+      pointer-events="all"
+    ></circle>
     {#if markerShape === "circle"}
       <circle
         r={markerRadius}
         stroke={markerStroke}
         fill={markerFill}
         stroke-width={markerStrokeWidth}
+        pointer-events="none"
       ></circle>
     {:else if ["square", "diamond"].includes(markerShape)}
       <rect
@@ -63,6 +71,7 @@
         stroke={markerStroke}
         fill={markerFill}
         stroke-width={markerStrokeWidth}
+        pointer-events="none"
       ></rect>
     {:else if markerShape === "triangle"}
       <polygon
@@ -71,6 +80,7 @@
         stroke={markerStroke}
         fill={markerFill}
         stroke-width={markerStrokeWidth}
+        pointer-events="none"
       ></polygon>
     {/if}
   </g>

@@ -141,6 +141,7 @@
       {markerShape}
       {markerStroke}
       {markerStrokeWidth}
+      {pathStrokeColor}
       {x}
       {y}
       {series}

@@ -149,7 +149,10 @@
       x="x"
       y="y"
       series="areaCode"
-      basicLineParams={{ interactiveMarkers: true, markers: true }}
+      basicLineParams={{
+        interactiveMarkers: true,
+        markers: true,
+      }}
       {tooltipSnippet}
     ></LineChart>
   </div>

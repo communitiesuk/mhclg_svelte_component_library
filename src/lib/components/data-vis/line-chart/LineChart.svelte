@@ -63,9 +63,6 @@
       markerRect = rect;
     },
     onMouseEnterMarker = (event, marker, markerId, rect) => {
-      {
-        console.log("hovering");
-      }
       activeMarkerId = marker;
       if (container) {
         const bounds = container.getBoundingClientRect();
@@ -239,8 +236,6 @@
           defaultLineParams[key],
       ]),
     );
-
-    console.log(colorLineParams(tier, line));
 
     return {
       ...merged,

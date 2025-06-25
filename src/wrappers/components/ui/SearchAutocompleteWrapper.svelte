@@ -252,6 +252,29 @@
         isRequired: false,
       },
       {
+        name: "sourceSelector",
+        category: "Autocomplete",
+        value: () => null, // Dummy function that doesn't interfere but allows display
+        propType: "fixed", // Cannot edit functions via UI
+        functionElements: {
+          functionAsString: `// Example function (not active to prevent interference with demo UI):
+  // (query, options) => {
+  //   // If input has 3+ chars and contains a digit, use API (postcode search)
+  //   // Otherwise use local options
+  //   return query.length >= 3 && /\\d/.test(query) ? 'api' : 'options'; }`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Optional. Function to dynamically determine whether to use the API source or options source based on the user's input.`,
+            `The function receives <code>(query: string, options: Suggestion[])</code> and should return <code>'api'</code> or <code>'options'</code>.`,
+            `Example use case: Use API for postcode-like inputs (3+ chars with digits), otherwise use local options.`,
+            `Currently set to a dummy function that doesn't affect behavior. Replace with actual logic as needed.`,
+            `See the example function code below for implementation reference.`,
+          ],
+        },
+      },
+      {
         name: "minLength",
         category: "Autocomplete",
         value: 3,

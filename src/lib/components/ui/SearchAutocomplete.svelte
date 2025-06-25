@@ -20,6 +20,10 @@
     source_key?: string; // Optional: Key in the JSON response containing suggestions array
     source_property?: string; // Property to extract from API objects
     groupKey?: string; // Optional: Key to group suggestions by (e.g., "region", "category")
+    sourceSelector?: (
+      query: string,
+      options: Suggestion[],
+    ) => "api" | "options"; // Function to determine which source to use
     outerClasses?: string; // Optional classes for the outer wrapper
     outerDataAttributes?: Record<string, string>; // Optional data attributes for the outer wrapper
     // Add other expected props passed down (e.g., size, on_govuk_blue, id, name etc.)
@@ -53,6 +57,7 @@
     source_key = undefined,
     source_property = undefined,
     groupKey = undefined, // Add groupKey prop
+    sourceSelector = undefined, // Add sourceSelector prop
     size = "", // Default size from Search
     on_govuk_blue = false,
     homepage = false, // Added homepage prop handling
@@ -81,6 +86,12 @@
 
   let containerElement: HTMLDivElement; // bind:this target for the outer div
   let autocompleteInstance: { inputElement?: HTMLInputElement } | null = null; // To store instance if needed
+
+  // Track which source is currently being used for dynamic data attributes
+  let currentSource = $state<"api" | "options" | "auto">("auto");
+  let currentSourceUrl = $state<string | undefined>(undefined);
+  let currentSourceKey = $state<string | undefined>(undefined);
+  let currentSourceProperty = $state<string | undefined>(undefined);
 
   // --- Derived Values ---
   const wrapperClasses = $derived(
@@ -149,6 +160,12 @@
         query: string,
         populateResults: (results: string[]) => void,
       ) => {
+        // Update current source tracking
+        currentSource = "api";
+        currentSourceUrl = source_url;
+        currentSourceKey = source_key;
+        currentSourceProperty = source_property;
+
         if (!source_url || !source_key) {
           console.error(
             "SearchAutocomplete: source_url and source_key are required for API mode.",
@@ -210,6 +227,12 @@
         query: string,
         populateResults: (results: Suggestion[]) => void,
       ) => {
+        // Update current source tracking
+        currentSource = "options";
+        currentSourceUrl = undefined;
+        currentSourceKey = undefined;
+        currentSourceProperty = undefined;
+
         if (!options) {
           populateResults([]);
           return;
@@ -227,6 +250,43 @@
       const sourceFunction = useOptions
         ? getResultsFromOptions
         : getResultsFromApi;
+
+      // Initialise current source tracking based on initial configuration
+      if (sourceSelector) {
+        currentSource = "auto"; // Will be determined dynamically
+        currentSourceUrl = source_url;
+        currentSourceKey = source_key;
+        currentSourceProperty = source_property;
+      } else if (useOptions) {
+        currentSource = "options";
+        currentSourceUrl = undefined;
+        currentSourceKey = undefined;
+        currentSourceProperty = undefined;
+      } else {
+        currentSource = "api";
+        currentSourceUrl = source_url;
+        currentSourceKey = source_key;
+        currentSourceProperty = source_property;
+      }
+
+      // If sourceSelector is provided, create a dynamic source function
+      const dynamicSourceFunction = sourceSelector
+        ? (query: string, populateResults: (results: Suggestion[]) => void) => {
+            const selectedSource = sourceSelector(query, options || []);
+            // Handle invalid returns by falling back to default logic
+            if (selectedSource === "api") {
+              getResultsFromApi(query, populateResults);
+            } else if (selectedSource === "options") {
+              getResultsFromOptions(query, populateResults);
+            } else {
+              // Fall back to default logic if invalid return value
+              sourceFunction(query, populateResults);
+            }
+          }
+        : null;
+
+      // Use dynamic source if available, otherwise fall back to original logic
+      const finalSourceFunction = dynamicSourceFunction || sourceFunction;
 
       // Define suggestion template function (sanitize and highlight)
       const suggestionTemplate = (result: Suggestion): string => {
@@ -320,7 +380,7 @@
         id: searchInput.id, // Use the ID from the *rendered* Search input
         name: searchInput.name, // Use the name from the *rendered* Search input
         inputClasses: searchInput.classList, // Pass original classes directly
-        source: sourceFunction,
+        source: finalSourceFunction,
         minLength: minLength,
         confirmOnBlur: confirmOnBlur,
         showNoOptionsFound: showNoOptionsFound,
@@ -435,10 +495,11 @@
   bind:this={containerElement}
   class={wrapperClasses}
   data-module="gem-search-with-autocomplete"
-  data-source-url={source_url}
-  data-source-key={source_key}
-  data-source-property={source_property}
+  data-source-url={currentSourceUrl}
+  data-source-key={currentSourceKey}
+  data-source-property={currentSourceProperty}
   data-group-key={groupKey}
+  data-current-source={currentSource}
   {...outerDataAttributes}
   style={`--suggestion-icon: url("${suggestionIconUrl}"); --cancel-icon: url("${closeIconUrl}")`}
 >

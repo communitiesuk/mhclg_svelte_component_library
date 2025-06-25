@@ -40,22 +40,27 @@
     },
     {
       id: "7",
-      heading: "7. Behaviour (Default & Confirm)",
-      content: ExampleBehaviour,
+      heading: "7. Dynamic source selection",
+      content: ExampleDynamicSource,
     },
     {
       id: "8",
-      heading: "8. With Selected Value Binding",
-      content: Example7,
+      heading: "8. Behaviour (Default & Confirm)",
+      content: ExampleBehaviour,
     },
     {
       id: "9",
-      heading: "9. Used Inside a Form for progressive enhancement",
-      content: ExampleForm,
+      heading: "9. With Selected Value Binding",
+      content: Example7,
     },
     {
       id: "10",
-      heading: "10. Using enhance for Progressive Enhancement",
+      heading: "10. Used Inside a Form for progressive enhancement",
+      content: ExampleForm,
+    },
+    {
+      id: "11",
+      heading: "11. Using enhance for Progressive Enhancement",
       content: ExampleEnhance,
     },
   ];
@@ -172,7 +177,36 @@
   <CodeBlock code={codeBlocks.codeBlock6} language="svelte" />
 {/snippet}
 
-<!-- Example 7: Behaviour (Default & Confirm) -->
+<!-- Example 7: Dynamic source selection -->
+{#snippet ExampleDynamicSource()}
+  <div class="p-5 bg-white">
+    <SearchAutocomplete
+      options={[
+        { label: "London", value: "london", region: "England" },
+        { label: "Birmingham", value: "birmingham", region: "England" },
+        { label: "Manchester", value: "manchester", region: "England" },
+        { label: "Edinburgh", value: "edinburgh", region: "Scotland" },
+      ]}
+      source_url="https://www.gov.uk/api/search.json?suggest=autocomplete"
+      source_key="suggested_autocomplete"
+      groupKey="region"
+      placeholder="Type a city name or search term..."
+      label_text="Search cities or GOV.UK content"
+      minLength={3}
+    />
+    <p class="govuk-body mt-2 text-sm text-gray-600">
+      This example shows both local options and API configuration. Since no <code
+        >sourceSelector</code
+      >
+      function is provided, it will use the local options (since they're
+      available) as the primary source. To enable dynamic switching, you would
+      need to provide a <code>sourceSelector</code> function.
+    </p>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock7} language="svelte" />
+{/snippet}
+
+<!-- Example 8: Behaviour (Default & Confirm) -->
 {#snippet ExampleBehaviour()}
   <div class="p-5 bg-white">
     <SearchAutocomplete
@@ -182,10 +216,10 @@
       placeholder="Confirm on blur..."
     />
   </div>
-  <CodeBlock code={codeBlocks.codeBlock7} language="svelte" />
+  <CodeBlock code={codeBlocks.codeBlock8} language="svelte" />
 {/snippet}
 
-<!-- Example 8: With Selected Value Binding -->
+<!-- Example 9: With Selected Value Binding -->
 {#snippet Example7()}
   <div class="p-5 bg-white">
     <div class="mt-4">
@@ -210,10 +244,10 @@
       <p class="govuk-body mt-4 text-gray-500">No value selected yet.</p>
     {/if}
   </div>
-  <CodeBlock code={codeBlocks.codeBlock8} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock9} language="svelte"></CodeBlock>
 {/snippet}
 
-<!-- Example 9: Used Inside a Form for progressive enhancement -->
+<!-- Example 10: Used Inside a Form for progressive enhancement -->
 {#snippet ExampleForm()}
   <div class="p-5 bg-white">
     <form method="POST" class="govuk-form-group">
@@ -254,7 +288,7 @@
   <CodeBlock code={codeBlocks.codeBlockForm} language="svelte" />
 {/snippet}
 
-<!-- Example 10: Using enhance for Progressive Enhancement -->
+<!-- Example 11: Using enhance for Progressive Enhancement -->
 {#snippet ExampleEnhance()}
   <div class="p-5 bg-white">
     <form

@@ -85,8 +85,37 @@ export const codeBlock6 = `
   label_text="Select a UK city"
 />`;
 
-// Example 7: Behaviour (Default & Confirm)
+// Example 7: Dynamic source selection
 export const codeBlock7 = `
+<script>
+  import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
+</script>
+
+<SearchAutocomplete
+  options={[
+    { label: "London", value: "london", region: "England" },
+    { label: "Birmingham", value: "birmingham", region: "England" },
+    { label: "Manchester", value: "manchester", region: "England" },
+    { label: "Edinburgh", value: "edinburgh", region: "Scotland" },
+  ]}
+  source_url="https://www.gov.uk/api/search.json?suggest=autocomplete"
+  source_key="suggested_autocomplete"
+  groupKey="region"
+  placeholder="Type a city name or search term..."
+  label_text="Search cities or GOV.UK content"
+  minLength={3}
+/>
+
+<!-- Example sourceSelector function (not used in this example):
+  sourceSelector={(query, options) => {
+    // If input has 3+ chars and contains a digit, use API (postcode search)
+    // Otherwise use local options
+    return query.length >= 3 && /\\d/.test(query) ? 'api' : 'options';
+  }}
+-->`;
+
+// Example 8: Behaviour (Default & Confirm)
+export const codeBlock8 = `
 <script>
   import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
 </script>
@@ -98,8 +127,8 @@ export const codeBlock7 = `
   placeholder="Confirm on blur..."
 />`;
 
-// Example 8: Selected Value Binding
-export const codeBlock8 = `
+// Example 9: Selected Value Binding
+export const codeBlock9 = `
 <script lang="ts">
   import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
 
@@ -131,7 +160,7 @@ export const codeBlock8 = `
 {/if}
 `;
 
-// Example 9: Used Inside a Form for progressive enhancement
+// Example 10: Used Inside a Form for progressive enhancement
 export const codeBlockForm = `
 <script lang="ts">
   import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
@@ -168,7 +197,7 @@ export const codeBlockForm = `
 {/if}
 `;
 
-// Example 10: Using enhance for Progressive Enhancement
+// Example 11: Using enhance for Progressive Enhancement
 export const codeBlockEnhance = `
 <script lang="ts">
   import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';

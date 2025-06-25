@@ -9,6 +9,7 @@
   import LineChart from "$lib/components/data-vis/line-chart/LineChart.svelte";
 
   let { data } = $props();
+
   const lineChartData = (() => {
     const found = data.dataInFormatForLineChart.find(
       (el) => el.metric === "Household waste recycling rate",
@@ -21,6 +22,13 @@
       (el) => el.metric === "Household waste recycling rate",
     );
     return found ? { ...found, lines: found.lines.slice(0, 1) } : null;
+  })();
+
+  const theData = (() => {
+    const found = data.dataInFormatForLineChart.find(
+      (el) => el.metric === "Household waste recycling rate",
+    );
+    return found;
   })();
 
   let accordionSnippetSections = [
@@ -49,6 +57,11 @@
       heading: "5. Line chart with shaded area",
       content: Example5,
     },
+    {
+      id: "6",
+      heading: "6. Line chart with custom labels",
+      content: Example6,
+    },
   ];
 
   let activeMarkerId = $state();
@@ -56,6 +69,10 @@
   let hoveredSeries = $state();
   let clickedTier = $state();
   let hoveredTier = $state();
+  $inspect({ clickedTier, hoveredTier });
+  let nothingSelected = $derived(
+    [clickedSeries, hoveredSeries].every((item) => item == null),
+  );
 </script>
 
 <div>
@@ -171,6 +188,83 @@
         pathStrokeColor: "darkgrey",
         areaFillColor: "lightgrey",
       }}
+    ></LineChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example6()}
+  <div class="p-5 bg-white">
+    <LineChart
+      lineChartData={theData}
+      x="x"
+      y="y"
+      series="areaCode"
+      basicLineParams={{ interactiveLines: true }}
+      tieredLineParams={{
+        hover: {
+          pathStrokeWidth: 5,
+          pathStrokeColor: hoveredTier === "secondary" ? "grey" : null,
+        },
+        clicked: {
+          pathStrokeWidth: 6,
+          pathStrokeColor: clickedTier === "secondary" ? "grey" : null,
+        },
+        secondary: { pathStrokeColor: "grey", halo: true },
+        primary: {
+          halo: true,
+          pathStrokeWidth: 4,
+        },
+      }}
+      bind:clickedSeries
+      bind:hoveredSeries
+      bind:clickedTier
+      bind:hoveredTier
+      getLine={(tier, el) => {
+        if (tier === "primary") {
+          return ["E09000033"].includes(el.areaCode);
+        }
+        if (tier === "secondary") {
+          return [
+            "E09000025",
+            "E09000033",
+            "E09000030",
+            "E09000032",
+            "E06000004",
+            "E09000030",
+          ].includes(el.areaCode);
+        }
+        if (tier === "hover") {
+          return [hoveredSeries].includes(el.areaCode);
+        }
+        if (tier === "clicked") {
+          return [clickedSeries].includes(el.areaCode);
+        }
+      }}
+      overrideLineParams={(tier, el) => {
+        return {
+          placeLabel:
+            [hoveredSeries, clickedSeries].includes(el.areaCode) ||
+            (tier === "primary" &&
+              (nothingSelected ||
+                [hoveredTier, clickedTier].includes("primary"))),
+          showLabel:
+            [hoveredSeries, clickedSeries].includes(el.areaCode) ||
+            (tier === "primary" && nothingSelected) ||
+            (!clickedSeries && hoveredTier === "primary" && tier === "primary"),
+        };
+      }}
+      labelText={(dataArray) => {
+        const areaNames = {
+          E09000033: "A",
+          E09000025: "B",
+          E09000032: "C",
+          E06000004: "D",
+          E09000030: "E",
+        };
+        return areaNames[dataArray["areaCode"]] ?? dataArray["areaCode"];
+      }}
+      {nothingSelected}
     ></LineChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

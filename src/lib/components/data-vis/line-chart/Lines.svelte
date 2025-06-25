@@ -66,6 +66,7 @@
 {#each Object.keys(tieredDataObject) as tier}
   <g id={tier}>
     <g {...globalTierRules[tier]}>
+      {console.log(globalTierRules[tier])}
       {#each tieredDataObject[tier] as line, i}
         <Line
           {...line}

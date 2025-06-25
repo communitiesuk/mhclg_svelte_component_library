@@ -336,6 +336,7 @@
       {activeMarkerId}
       labelColor="lightgrey"
       labelTextColor="black"
+      {labelText}
       {tooltipContent}
       {xFunction}
       {yFunction}

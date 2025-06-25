@@ -62,6 +62,6 @@
     stroke-width={clickedSeries ? 0.7 : 0}
     stroke="black"
   >
-    {labelText(dataArray)}
+    {typeof labelText === "function" ? labelText(dataArray) : labelText}
   </text>
 </g>

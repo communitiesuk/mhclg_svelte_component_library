@@ -616,14 +616,13 @@
     primary: {
       halo: true,
       pathStrokeWidth: 5,
-      pathStrokeColor: colors.darkgrey,
       interactiveLines: true,
       lineEnding: null,
       markers: true,
       interactiveMarkers: true,
     },
     clicked: {
-      pathStrokeColor: colors.ochre,
+      pathStrokeColor: clickedTier === "secondary" ? colors.ashGrey : null,
       pathStrokeWidth: 7,
       halo: true,
       interactiveLines: false,
@@ -632,7 +631,7 @@
       lineEnding: null,
     },
     hover: {
-      pathStrokeColor: colors.ochre,
+      pathStrokeColor: hoveredTier === "secondary" ? colors.ashGrey : null,
       pathStrokeWidth: 6,
       halo: true,
       interactiveLines: false,

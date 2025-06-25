@@ -157,12 +157,22 @@
     slatePurple: "#64587C",
   });
 
-  const lineColorMap = Object.fromEntries(
-    lineChartData.lines.map((line, index) => [
-      line.areaCode,
-      Object.values(colors)[index % Object.values(colors).length],
-    ]),
-  );
+  const colorValues = Object.values(colors);
+
+  const lineColorMap = {};
+
+  Object.entries(tieredLineParams).forEach(([tier, tierParams]) => {
+    const tierLines = lineChartData.lines.filter((line) => getLine(tier, line));
+    let colorIndex = 0;
+
+    tierLines.forEach((line) => {
+      const id = line.areaCode;
+      if (!(id in lineColorMap)) {
+        lineColorMap[id] = colorValues[colorIndex % colorValues.length];
+        colorIndex++;
+      }
+    });
+  });
 
   let defaultLineParams = $derived({
     xFunction,

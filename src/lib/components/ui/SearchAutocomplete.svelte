@@ -6,13 +6,12 @@
   import { browser } from "$app/environment";
   import suggestionIconUrl from "$lib/assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg?url";
   import closeIconUrl from "$lib/assets/govuk_publishing_components/images/icon-close.svg?url"; // Import for the cancel button
-  
 
   // SSR-safe HTML sanitizer: no-op on server
   let sanitize: (html: string) => string = (html) => html;
 
   // --- Define Props ---
-  type SuggestionObject = { label: string; value: any };
+  type SuggestionObject = { label: string; value: any; [key: string]: any }; // Allow additional properties for grouping
   type Suggestion = string | SuggestionObject;
   type Props = {
     // User can supply either an options array or an API source
@@ -20,6 +19,7 @@
     source_url?: string; // Optional: URL for autocomplete suggestions
     source_key?: string; // Optional: Key in the JSON response containing suggestions array
     source_property?: string; // Property to extract from API objects
+    groupKey?: string; // Optional: Key to group suggestions by (e.g., "region", "category")
     outerClasses?: string; // Optional classes for the outer wrapper
     outerDataAttributes?: Record<string, string>; // Optional data attributes for the outer wrapper
     // Add other expected props passed down (e.g., size, on_govuk_blue, id, name etc.)
@@ -52,6 +52,7 @@
     source_url = undefined,
     source_key = undefined,
     source_property = undefined,
+    groupKey = undefined, // Add groupKey prop
     size = "", // Default size from Search
     on_govuk_blue = false,
     homepage = false, // Added homepage prop handling
@@ -256,11 +257,17 @@
           html = `${before}<mark class="gem-c-search-with-autocomplete__suggestion-highlight">${match}</mark>${after}`;
         }
 
-        // Match the GOV.UK structure
+        // Get group text if groupKey is provided and result is an object
+        const groupText =
+          groupKey && typeof result === "object" && result[groupKey]
+            ? ` <span class="gem-c-search-with-autocomplete__suggestion-group">${sanitize(String(result[groupKey]))}</span>`
+            : "";
+
+        // Match the GOV.UK structure with integrated group text
         return `
           <div class="gem-c-search-with-autocomplete__option-wrapper">
             <span class="gem-c-search-with-autocomplete__suggestion-icon"></span>
-            <span class="gem-c-search-with-autocomplete__suggestion-text">${html}</span>
+            <span class="gem-c-search-with-autocomplete__suggestion-text">${html}${groupText}</span>
           </div>
         `;
       };
@@ -431,6 +438,7 @@
   data-source-url={source_url}
   data-source-key={source_key}
   data-source-property={source_property}
+  data-group-key={groupKey}
   {...outerDataAttributes}
   style={`--suggestion-icon: url("${suggestionIconUrl}"); --cancel-icon: url("${closeIconUrl}")`}
 >
@@ -565,6 +573,12 @@
     .gem-c-search-with-autocomplete__suggestion-highlight {
       font-weight: normal;
       background: none;
+    }
+
+    .gem-c-search-with-autocomplete__suggestion-group {
+      opacity: 0.8;
+      font-size: smaller;
+      font-weight: normal;
     }
 
     .gem-c-search-with-autocomplete.gem-c-search-with-autocomplete--large

@@ -188,6 +188,7 @@
             `If this prop is provided with a non-empty array, it will be used as the suggestion source instead of <code>source_url</code> and <code>source_key</code>.`,
             `Example (strings): <code>["Apple", "Banana", "Cherry"]</code>`,
             `Example (objects, requires valid JSON in input): <code>[ { "label": "Aberdeen City", "value": "S12000033" }, { "label": "Aberdeenshire", "value": "S12000034" }, ... ]</code>`,
+            `For grouping: Objects can include additional properties (e.g., <code>{ "label": "London", "value": "london", "region": "England" }</code>) that can be used with the <code>groupKey</code> prop to display group information.`,
           ],
         },
       },
@@ -233,6 +234,22 @@
         },
         rows: 1,
         isRequired: false, // It's optional
+      },
+      {
+        name: "groupKey",
+        category: "Autocomplete",
+        value: "", // Default to empty string, means no grouping
+        description: {
+          markdown: true,
+          arr: [
+            `Optional. Specifies which attribute in your options contains group information for displaying groups as muted text next to the option label.`,
+            `Only works when using the <code>options</code> prop with object-based suggestions.`,
+            `Example: If your options are <code>[{ "label": "London", "region": "England" }]</code>, set this to <code>"region"</code> to show "England" as muted text next to "London".`,
+            `Leave empty to disable grouping.`,
+          ],
+        },
+        rows: 1,
+        isRequired: false,
       },
       {
         name: "minLength",
@@ -838,7 +855,7 @@
   <div class="p-8" style="background-color: {bgColor};">
     {#if parametersObject.source_url && parametersObject.source_key}
       {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}
-        <SearchAutocomplete {...parametersObject} bind:selectedValue/>
+        <SearchAutocomplete {...parametersObject} bind:selectedValue />
       {/key}
     {:else}
       <p class="text-red-600 font-bold">

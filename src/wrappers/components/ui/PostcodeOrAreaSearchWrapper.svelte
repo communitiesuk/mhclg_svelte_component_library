@@ -205,6 +205,95 @@
         },
       },
 
+      // --- Custom Lookup Configuration ---
+      {
+        name: "customGeoNames",
+        category: "Custom Lookups",
+        value: {},
+        description: {
+          markdown: true,
+          arr: [
+            `Custom geographic type names lookup. Overrides default UK geocode type labels.`,
+            `Format: <code>{ "E06": { label: "Unitary Authority", plural: "Unitary Authorities" } }</code>`,
+            `Used for generating human-readable group labels like "Unitary Authority in Greater London".`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "customGeoCodesLookup",
+        category: "Custom Lookups",
+        value: {},
+        description: {
+          markdown: true,
+          arr: [
+            `Custom geocodes lookup table. Provides labels for area codes not in geoNames.`,
+            `Format: <code>{ "E12": { label: "Region" } }</code>`,
+            `Used as fallback when an area type isn't found in the main geoNames lookup.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "customEssGeocodes",
+        category: "Custom Lookups",
+        value: [],
+        description: {
+          markdown: true,
+          arr: [
+            `Custom array of essential geocode prefixes. Used when <code>essOnly</code> is true.`,
+            `Default includes major UK boundaries: <code>["E06", "E07", "E08", "E09", "E10", "E12", "E47", "S12", "W06"]</code>`,
+            `Customize for different countries or to include/exclude specific area types.`,
+          ],
+        },
+        rows: 3,
+      },
+      {
+        name: "customGetTypeLabel",
+        category: "Custom Lookups",
+        value: () => null,
+        propType: "fixed",
+        functionElements: {
+          functionAsString: `// Example custom type label function:
+// (type) => {
+//   const customLabels = {
+//     'US01': 'State',
+//     'US02': 'County',
+//     'CA01': 'Province'
+//   };
+//   return customLabels[type] || type;
+// }`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Custom function to generate type labels. Overrides the default lookup logic entirely.`,
+            `Function signature: <code>(type: string) => string</code>`,
+            `Useful for complete control over how area types are displayed.`,
+          ],
+        },
+      },
+      {
+        name: "customSourceSelector",
+        category: "Custom Lookups",
+        value: () => null,
+        propType: "fixed",
+        functionElements: {
+          functionAsString: `// Example: Use API only for full postcodes with space
+// (query, options) => {
+//   return query.includes(' ') && /\\d/.test(query) ? 'api' : 'options';
+// }`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Custom function to determine when to use API vs local options.`,
+            `Function signature: <code>(query: string, options: Suggestion[]) => "api" | "options"</code>`,
+            `Default uses API for inputs with 3+ chars containing digits, otherwise local options.`,
+          ],
+        },
+      },
+
       // --- Postcode API Configuration ---
       {
         name: "postcodeApiUrl",
@@ -213,8 +302,10 @@
         description: {
           markdown: true,
           arr: [
-            `API endpoint for postcode lookup. Defaults to postcodes.io free API.`,
-            `The query parameter will be appended automatically.`,
+            `API endpoint for postcode lookup. The query parameter will be appended automatically (e.g., <code>?q=SW1A</code>).`,
+            `Default uses postcodes.io search API for UK postcodes (free, no auth required).`,
+            `<strong>Note:</strong> This is the search endpoint, not the autocomplete endpoint. The search endpoint supports partial postcode queries.`,
+            `For other countries, ensure the API supports query parameters in the format <code>?q=search_term</code>.`,
           ],
         },
         rows: 1,
@@ -226,8 +317,9 @@
         description: {
           markdown: true,
           arr: [
-            `Key in the API response containing the postcode data.`,
-            `For postcodes.io, this is typically <code>"result"</code>.`,
+            `Key in the API response containing the postcode data array.`,
+            `For postcodes.io search API, this is <code>"result"</code>.`,
+            `The API should return an array of postcode objects under this key.`,
           ],
         },
         rows: 1,
@@ -239,8 +331,9 @@
         description: {
           markdown: true,
           arr: [
-            `Property within the API response object to use as the display value.`,
+            `Property within each postcode object to use as the display value.`,
             `For postcodes.io, this is typically <code>"postcode"</code>.`,
+            `This determines what text is shown in the autocomplete suggestions.`,
           ],
         },
         rows: 1,

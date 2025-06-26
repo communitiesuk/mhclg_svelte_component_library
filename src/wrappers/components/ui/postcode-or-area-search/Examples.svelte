@@ -13,6 +13,8 @@
   let largeSize = $state("");
   let onBlueBackground = $state("");
   let requiredField = $state("");
+  let customDataExample = $state("");
+  let customLabelsExample = $state("");
 
   let accordionSnippetSections = [
     {
@@ -44,6 +46,16 @@
       id: "6",
       heading: "6. Required field",
       content: RequiredFieldExample,
+    },
+    {
+      id: "7",
+      heading: "7. Custom data for non-UK locations",
+      content: CustomDataExample,
+    },
+    {
+      id: "8",
+      heading: "8. Custom type labels and grouping",
+      content: CustomTypesExample,
     },
   ];
 </script>
@@ -201,4 +213,79 @@
     {/if}
   </div>
   <CodeBlock code={codeBlocks.requiredField} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet CustomDataExample()}
+  <div class="p-5 bg-white">
+    <p class="mb-4 text-gray-700">
+      Use custom places data for non-UK locations. This example shows US states
+      and major cities:
+    </p>
+    <PostcodeOrAreaSearch
+      customPlacesData={[
+        { areacd: "US-CA", areanm: "California", parentcd: "US" },
+        { areacd: "US-NY", areanm: "New York", parentcd: "US" },
+        { areacd: "US-TX", areanm: "Texas", parentcd: "US" },
+        { areacd: "US-FL", areanm: "Florida", parentcd: "US" },
+        { areacd: "US-IL", areanm: "Illinois", parentcd: "US" },
+        { areacd: "US-CA-LA", areanm: "Los Angeles", parentcd: "US-CA" },
+        { areacd: "US-CA-SF", areanm: "San Francisco", parentcd: "US-CA" },
+        { areacd: "US-NY-NYC", areanm: "New York City", parentcd: "US-NY" },
+        { areacd: "US-TX-HOU", areanm: "Houston", parentcd: "US-TX" },
+      ]}
+      customGeoNames={{
+        "US-": { label: "State", plural: "States" },
+        "US-CA-": { label: "California City", plural: "California Cities" },
+        "US-NY-": { label: "New York City", plural: "New York Cities" },
+        "US-TX-": { label: "Texas City", plural: "Texas Cities" },
+      }}
+      customEssGeocodes={["US-"]}
+      label_text="Search US states and cities"
+      placeholder="e.g. California, New York, Los Angeles"
+      hint="Custom geographic data with hierarchical relationships"
+      bind:selectedValue={customDataExample}
+    />
+    {#if customDataExample}
+      <p class="mt-3 font-semibold">
+        <strong>Selected:</strong>
+        {customDataExample}
+      </p>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.customData} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet CustomTypesExample()}
+  <div class="p-5 bg-white">
+    <p class="mb-4 text-gray-700">
+      Customise type labels and grouping with custom lookup functions:
+    </p>
+    <PostcodeOrAreaSearch
+      customGetTypeLabel={(type) => {
+        const labels = {
+          E06: "Council Area",
+          E07: "District Council",
+          E08: "Metropolitan Borough",
+          E09: "London Borough",
+          E10: "County Council",
+          E12: "English Region",
+        };
+        return labels[type] || "Area";
+      }}
+      customSourceSelector={(query, options) => {
+        // Only use API for full postcodes (with space)
+        return query.includes(" ") && /\d/.test(query) ? "api" : "options";
+      }}
+      label_text="Find your council area"
+      hint="More specific postcode detection"
+      bind:selectedValue={customLabelsExample}
+    />
+    {#if customLabelsExample}
+      <p class="mt-3 font-semibold">
+        <strong>Selected:</strong>
+        {customLabelsExample}
+      </p>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.customTypes} language="svelte"></CodeBlock>
 {/snippet}

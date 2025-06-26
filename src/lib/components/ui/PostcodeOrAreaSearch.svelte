@@ -1,14 +1,12 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import SearchAutocomplete from "./SearchAutocomplete.svelte";
-  import { getCSV } from "$lib/utils/data-transformations/convertCSV.js";
   import { capitalise } from "$lib/utils/text-string-conversion/textStringConversion.js";
   import {
     geoNames,
     geoCodesLookup,
     essGeocodes,
   } from "$lib/utils/area-search/geoConfig";
-  import { assets } from "$app/paths";
+  import defaultPlacesData from "$lib/data/places.json";
 
   // --- Define Types ---
   type SuggestionObject = { label: string; value: any; [key: string]: any };
@@ -23,7 +21,7 @@
 
   type Props = {
     // Data source configuration
-    placesDataUrl?: string; // URL to CSV file with places data
+    customPlacesData?: any[]; // Custom places data (JSON format: [{areacd, areanm, parentcd}])
     essOnly?: boolean; // Whether to filter to essential geocodes only
 
     // Custom lookup functions/data (for flexibility)
@@ -62,7 +60,7 @@
   };
 
   let {
-    placesDataUrl = "/data/places.csv",
+    customPlacesData = undefined,
     essOnly = false,
     customGeoNames = undefined,
     customGeoCodesLookup = undefined,
@@ -86,11 +84,6 @@
     ...restProps
   }: Props = $props();
 
-  // --- Internal State ---
-  let places: Place[] = $state([]);
-  let isLoading = $state(true);
-  let error = $state<string | null>(null);
-
   // --- Use custom lookups or defaults ---
   const geoNamesLookup = customGeoNames || geoNames;
   const geoCodesLookupTable = customGeoCodesLookup || geoCodesLookup;
@@ -112,60 +105,48 @@
 
   const sourceSelector = customSourceSelector || defaultSourceSelector;
 
-  // --- Load Places Data ---
-  async function loadPlaces() {
-    try {
-      isLoading = true;
-      error = null;
+  // --- Process Places Data ---
+  const places = $derived.by(() => {
+    // Use custom data if provided, otherwise use default
+    let placesData = customPlacesData || defaultPlacesData;
 
-      let placesData = await getCSV(placesDataUrl);
-
-      // Filter to essential geocodes if requested
-      if (essOnly) {
-        placesData = placesData.filter((p: any) =>
-          essGeocodesArray.includes(p.areacd.slice(0, 3)),
-        );
-      }
-
-      // Sort by area name
-      placesData.sort((a: any, b: any) => a.areanm.localeCompare(b.areanm));
-
-      // Create lookup for parent relationships
-      const lookup: Record<string, any> = {};
-      for (const p of placesData) lookup[p.areacd] = p;
-
-      // Add group information and format for autocomplete
-      const processedPlaces: Place[] = placesData.map((p: any) => {
-        const type = p.areacd.slice(0, 3);
-        const group =
-          type === "K02"
-            ? ""
-            : p.parentcd && lookup[p.parentcd]
-              ? `${capitalise(getTypeLabel(type))} in ${lookup[p.parentcd].areanm}`
-              : capitalise(getTypeLabel(type));
-
-        return {
-          areacd: p.areacd,
-          areanm: p.areanm,
-          parentcd: p.parentcd,
-          group,
-          label: p.areanm,
-          value: p.areacd,
-        };
-      });
-
-      places = processedPlaces;
-    } catch (err) {
-      console.error("Error loading places data:", err);
-      error = err instanceof Error ? err.message : "Failed to load places data";
-    } finally {
-      isLoading = false;
+    // Filter to essential geocodes if requested
+    if (essOnly) {
+      placesData = placesData.filter((p: any) =>
+        essGeocodesArray.includes(p.areacd.slice(0, 3)),
+      );
     }
-  }
 
-  // --- Lifecycle ---
-  onMount(() => {
-    loadPlaces();
+    // Sort by area name
+    const sortedData = [...placesData].sort((a: any, b: any) =>
+      a.areanm.localeCompare(b.areanm),
+    );
+
+    // Create lookup for parent relationships
+    const lookup: Record<string, any> = {};
+    for (const p of sortedData) lookup[p.areacd] = p;
+
+    // Add group information and format for autocomplete
+    const processedPlaces: Place[] = sortedData.map((p: any) => {
+      const type = p.areacd.slice(0, 3);
+      const group =
+        type === "K02"
+          ? ""
+          : p.parentcd && lookup[p.parentcd]
+            ? `${capitalise(getTypeLabel(type))} in ${lookup[p.parentcd].areanm}`
+            : capitalise(getTypeLabel(type));
+
+      return {
+        areacd: p.areacd,
+        areanm: p.areanm,
+        parentcd: p.parentcd,
+        group,
+        label: p.areanm,
+        value: p.areacd,
+      };
+    });
+
+    return processedPlaces;
   });
 
   // --- Autocomplete Configuration ---
@@ -190,13 +171,4 @@
   });
 </script>
 
-{#if isLoading}
-  <div class="govuk-body">Loading location data...</div>
-{:else if error}
-  <div class="govuk-error-message">
-    <span class="govuk-visually-hidden">Error:</span>
-    {error}
-  </div>
-{:else}
-  <SearchAutocomplete {...autocompleteProps} bind:selectedValue />
-{/if}
+<SearchAutocomplete {...autocompleteProps} bind:selectedValue />

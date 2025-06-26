@@ -51,6 +51,7 @@
     `Combines postcode lookup via the postcodes.io API with local area search using ONS geographic data.`,
     `Automatically switches between API and local data sources based on input patterns (postcodes vs area names).`,
     `Built on top of the SearchAutocomplete component with UK-specific functionality.`,
+    `Default UK geographic data is bundled with the component for optimal performance.`,
   ];
 
   let contextArray = [
@@ -178,17 +179,18 @@
     addIndexAndInitalValue([
       // --- Data Source Configuration ---
       {
-        name: "placesDataUrl",
+        name: "customPlacesData",
         category: "Data Sources",
-        value: "/data/places.csv", // Default in static folder
+        value: [],
         description: {
           markdown: true,
           arr: [
-            `URL to the CSV file containing UK places data. Defaults to <code>/data/places.csv</code> (built-in ONS dataset).`,
-            `CSV should have columns: <code>areacd</code> (area code), <code>areanm</code> (area name), <code>parentcd</code> (parent area code).`,
+            `Custom places data as JSON array. If empty/undefined, uses built-in UK ONS geographic data.`,
+            `Array should contain objects with: <code>areacd</code> (area code), <code>areanm</code> (area name), <code>parentcd</code> (parent area code).`,
+            `Example: <code>[{"areacd": "E09000033", "areanm": "Westminster", "parentcd": "E12000007"}]</code>`,
           ],
         },
-        rows: 1,
+        rows: 5,
       },
       {
         name: "essOnly",

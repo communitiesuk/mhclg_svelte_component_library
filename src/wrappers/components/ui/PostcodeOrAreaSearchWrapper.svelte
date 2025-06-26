@@ -47,7 +47,7 @@
    *
    */
   let descriptionArray = [
-    `A specialized search component for UK postcodes and administrative areas.`,
+    `A specialised search component for UK postcodes and administrative areas.`,
     `Combines postcode lookup via the postcodes.io API with local area search using ONS geographic data.`,
     `Automatically switches between API and local data sources based on input patterns (postcodes vs area names).`,
     `Built on top of the SearchAutocomplete component with UK-specific functionality.`,

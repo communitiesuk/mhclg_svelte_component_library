@@ -85,7 +85,32 @@ export const codeBlock6 = `
   label_text="Select a UK city"
 />`;
 
-// Example 7: Dynamic source selection
+// Example 7: RESTful Path-based API
+export const codeBlockPathBased = `
+<script>
+  import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
+</script>
+
+<SearchAutocomplete
+  source_url="https://api.zippopotam.us/us"
+  source_key="places"
+  source_property="place name"
+  pathBasedApi={true}
+  placeholder="Enter a US zip code (e.g., 90210, 10001)..."
+  label_text="Search US locations by zip code"
+  minLength={5}
+  hint="Uses Zippopotam.us RESTful API - enter a 5-digit zip code"
+/>
+
+<!-- 
+  pathBasedApi={true} constructs URLs like:
+  https://api.zippopotam.us/us/90210
+  
+  Instead of query parameter URLs like:
+  https://api.zippopotam.us/us?q=90210
+-->`;
+
+// Example 8: Dynamic source selection
 export const codeBlock7 = `
 <script>
   import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';

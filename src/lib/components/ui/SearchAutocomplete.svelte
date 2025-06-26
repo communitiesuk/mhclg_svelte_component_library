@@ -19,6 +19,7 @@
     source_url?: string; // Optional: URL for autocomplete suggestions
     source_key?: string; // Optional: Key in the JSON response containing suggestions array
     source_property?: string; // Property to extract from API objects
+    pathBasedApi?: boolean; // Whether to use path-based URLs (RESTful) instead of query parameters
     groupKey?: string; // Optional: Key to group suggestions by (e.g., "region", "category")
     sourceSelector?: (
       query: string,
@@ -56,11 +57,12 @@
     source_url = undefined,
     source_key = undefined,
     source_property = undefined,
-    groupKey = undefined, // Add groupKey prop
-    sourceSelector = undefined, // Add sourceSelector prop
-    size = "", // Default size from Search
+    pathBasedApi = false,
+    groupKey = undefined,
+    sourceSelector = undefined,
+    size = "",
     on_govuk_blue = false,
-    homepage = false, // Added homepage prop handling
+    homepage = false,
     outerClasses = "",
     outerDataAttributes = {},
     id, // Pass down id
@@ -173,8 +175,21 @@
           populateResults([]);
           return;
         }
-        const url = new URL(source_url);
-        url.searchParams.set("q", query);
+
+        // Construct URL based on pathBasedApi setting
+        let url: URL;
+        if (pathBasedApi) {
+          // For RESTful APIs like Zippopotam.us: append query to path
+          const baseUrl = source_url.endsWith("/")
+            ? source_url.slice(0, -1)
+            : source_url;
+          url = new URL(`${baseUrl}/${encodeURIComponent(query)}`);
+        } else {
+          // For query parameter APIs: add ?q=query
+          url = new URL(source_url);
+          url.searchParams.set("q", query);
+        }
+
         fetch(url, { headers: { Accept: "application/json" } })
           .then((response) => {
             if (!response.ok)

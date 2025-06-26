@@ -37,6 +37,7 @@
     postcodeApiUrl?: string;
     postcodeApiKey?: string; // Key in response containing suggestions
     postcodeApiProperty?: string; // Property to extract from API objects
+    postcodeApiPathBased?: boolean; // Whether the API uses path-based URLs
 
     // Source selection logic
     customSourceSelector?: (
@@ -69,6 +70,7 @@
     postcodeApiUrl = "https://api.postcodes.io/postcodes",
     postcodeApiKey = "result",
     postcodeApiProperty = "postcode",
+    postcodeApiPathBased = false,
     customSourceSelector = undefined,
     selectedValue = $bindable(),
     label_text = "Search for a postcode or area",
@@ -155,6 +157,7 @@
     source_url: postcodeApiUrl,
     source_key: postcodeApiKey,
     source_property: postcodeApiProperty,
+    pathBasedApi: postcodeApiPathBased,
     groupKey: "group",
     sourceSelector,
     label_text,

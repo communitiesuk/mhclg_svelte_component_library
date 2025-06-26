@@ -338,6 +338,20 @@
         },
         rows: 1,
       },
+      {
+        name: "postcodeApiPathBased",
+        category: "Postcode API",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Set to <code>true</code> for RESTful APIs that expect the query as part of the URL path.`,
+            `When <code>true</code>: constructs URLs like <code>https://api.zippopotam.us/us/90210</code>`,
+            `When <code>false</code> (default): constructs URLs like <code>https://api.postcodes.io/postcodes?q=SW1A</code>`,
+            `Use <code>true</code> for APIs like Zippopotam.us that use path-based routing.`,
+          ],
+        },
+      },
 
       // --- Content Props ---
       {

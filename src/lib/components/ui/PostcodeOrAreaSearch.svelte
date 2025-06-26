@@ -87,17 +87,33 @@
   }: Props = $props();
 
   // --- Use custom lookups or defaults ---
-  const geoNamesLookup = customGeoNames || geoNames;
-  const geoCodesLookupTable = customGeoCodesLookup || geoCodesLookup;
-  const essGeocodesArray = customEssGeocodes || essGeocodes;
+  const geoNamesLookup =
+    customGeoNames && Object.keys(customGeoNames).length > 0
+      ? customGeoNames
+      : geoNames;
+  const geoCodesLookupTable =
+    customGeoCodesLookup && Object.keys(customGeoCodesLookup).length > 0
+      ? customGeoCodesLookup
+      : geoCodesLookup;
+  const essGeocodesArray =
+    customEssGeocodes && customEssGeocodes.length > 0
+      ? customEssGeocodes
+      : essGeocodes;
 
   // --- Helper Functions ---
-  const getTypeLabel =
-    customGetTypeLabel ||
-    ((type: string) =>
-      geoNamesLookup[type]
-        ? geoNamesLookup[type].label
-        : geoCodesLookupTable[type]?.label || type);
+  const getTypeLabel = (type: string) => {
+    // If custom function is provided and returns a non-null value, use it
+    if (customGetTypeLabel) {
+      const customLabel = customGetTypeLabel(type);
+      if (customLabel !== null && customLabel !== undefined) {
+        return customLabel;
+      }
+    }
+    // Otherwise use default lookup logic
+    return geoNamesLookup[type]
+      ? geoNamesLookup[type].label
+      : geoCodesLookupTable[type]?.label || type;
+  };
 
   // Default source selector: use API for postcode-like inputs, options for area names
   const defaultSourceSelector = (query: string, options: Suggestion[]) => {
@@ -105,12 +121,25 @@
     return query.length >= 3 && /\d/.test(query) ? "api" : "options";
   };
 
-  const sourceSelector = customSourceSelector || defaultSourceSelector;
+  const sourceSelector = (query: string, options: Suggestion[]) => {
+    // If custom function is provided and returns a non-null value, use it
+    if (customSourceSelector) {
+      const customResult = customSourceSelector(query, options);
+      if (customResult !== null && customResult !== undefined) {
+        return customResult;
+      }
+    }
+    // Otherwise use default selector
+    return defaultSourceSelector(query, options);
+  };
 
   // --- Process Places Data ---
   const places = $derived.by(() => {
-    // Use custom data if provided, otherwise use default
-    let placesData = customPlacesData || defaultPlacesData;
+    // Use custom data if provided and not empty, otherwise use default
+    let placesData =
+      customPlacesData && customPlacesData.length > 0
+        ? customPlacesData
+        : defaultPlacesData;
 
     // Filter to essential geocodes if requested
     if (essOnly) {

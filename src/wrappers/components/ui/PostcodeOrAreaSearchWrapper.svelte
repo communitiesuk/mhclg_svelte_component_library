@@ -188,6 +188,7 @@
             `Custom places data as JSON array. If empty/undefined, uses built-in UK ONS geographic data.`,
             `Array should contain objects with: <code>areacd</code> (area code), <code>areanm</code> (area name), <code>parentcd</code> (parent area code).`,
             `Example: <code>[{"areacd": "E09000033", "areanm": "Westminster", "parentcd": "E12000007"}]</code>`,
+            `Leave empty to use default UK geographic data.`,
           ],
         },
         rows: 5,
@@ -458,7 +459,7 @@
       {
         name: "minLength",
         category: "Behaviour",
-        value: 2,
+        value: 3,
         description: {
           markdown: true,
           arr: [

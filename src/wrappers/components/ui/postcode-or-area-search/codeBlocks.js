@@ -52,21 +52,3 @@ export const requiredField = `<form>
     Submit
   </button>
 </form>`;
-
-export const customSourceSelector = `<script>
-  const customSourceFunction = (query, options) => {
-    // Use API for inputs that look like postcodes (contain digits and spaces)
-    if (/[0-9]/.test(query) && query.includes(' ')) {
-      return 'api';
-    }
-    // Use local options for everything else
-    return 'options';
-  };
-</script>
-
-<PostcodeOrAreaSearch 
-  customSourceSelector={customSourceFunction}
-  label_text="Location search (custom logic)"
-  hint="API used only for full postcodes (with space), otherwise local search"
-  bind:selectedValue 
-/>`;

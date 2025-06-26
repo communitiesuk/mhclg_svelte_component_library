@@ -14,18 +14,6 @@
   let onBlueBackground = $state("");
   let requiredField = $state("");
 
-  // Custom source selector example
-  const customSourceFunction = (query, options) => {
-    // Use API for inputs that look like postcodes (contain digits and spaces)
-    if (/[0-9]/.test(query) && query.includes(" ")) {
-      return "api";
-    }
-    // Use local options for everything else
-    return "options";
-  };
-
-  let customSourceExample = $state("");
-
   let accordionSnippetSections = [
     {
       id: "1",
@@ -56,16 +44,6 @@
       id: "6",
       heading: "6. Required field",
       content: RequiredFieldExample,
-    },
-    {
-      id: "7",
-      heading: "7. Custom source selection logic",
-      content: CustomSourceExample,
-    },
-    {
-      id: "8",
-      heading: "8. Integration notes",
-      content: IntegrationNotes,
     },
   ];
 </script>
@@ -223,67 +201,4 @@
     {/if}
   </div>
   <CodeBlock code={codeBlocks.requiredField} language="svelte"></CodeBlock>
-{/snippet}
-
-{#snippet CustomSourceExample()}
-  <div class="p-5 bg-white">
-    <p class="mb-4 text-gray-700">
-      Customize when to use the API vs local options. This example uses the API
-      only for inputs that contain both digits and spaces (more specific
-      postcode detection).
-    </p>
-    <PostcodeOrAreaSearch
-      customSourceSelector={customSourceFunction}
-      label_text="Location search (custom logic)"
-      hint="API used only for full postcodes (with space), otherwise local search"
-      bind:selectedValue={customSourceExample}
-    />
-    {#if customSourceExample}
-      <p class="mt-3 font-semibold">
-        <strong>Selected:</strong>
-        {customSourceExample}
-      </p>
-    {/if}
-  </div>
-  <CodeBlock code={codeBlocks.customSourceSelector} language="svelte"
-  ></CodeBlock>
-{/snippet}
-
-{#snippet IntegrationNotes()}
-  <div class="p-5 bg-white">
-    <div class="bg-blue-50 border-l-4 border-blue-400 p-4">
-      <h4 class="text-lg font-semibold mb-3">Data sources</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li>
-          <strong>Local areas:</strong> Uses ONS geographic data from
-          <code class="bg-gray-100 px-1 rounded">/data/places.csv</code> (served
-          from static folder)
-        </li>
-        <li><strong>Postcodes:</strong> Uses the free postcodes.io API</li>
-        <li>
-          <strong>Custom data:</strong> Provide your own CSV via the
-          <code class="bg-gray-100 px-1 rounded">placesDataUrl</code> prop
-        </li>
-      </ul>
-
-      <h4 class="text-lg font-semibold mb-3">Return values</h4>
-      <ul class="list-disc ml-6 mb-4">
-        <li>
-          <strong>Areas:</strong> Returns the area code (e.g., "E09000033" for Westminster)
-        </li>
-        <li>
-          <strong>Postcodes:</strong> Returns the postcode string (e.g., "SW1A 1AA")
-        </li>
-      </ul>
-
-      <h4 class="text-lg font-semibold mb-3">Flexibility</h4>
-      <ul class="list-disc ml-6">
-        <li>
-          All lookup data can be customized via props for non-UK use cases
-        </li>
-        <li>Source selection logic can be completely customized</li>
-        <li>API endpoints can be changed for different postcode services</li>
-      </ul>
-    </div>
-  </div>
 {/snippet}

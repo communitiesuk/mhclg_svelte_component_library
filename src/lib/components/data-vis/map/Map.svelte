@@ -28,10 +28,9 @@
   import { page } from "$app/state";
   import { joinData } from "./dataJoin.js";
 
-  import maplibregl from "maplibre-gl";
-  import { LngLatBounds } from "maplibre-gl";
+  import maplibre from "maplibre-gl";
+  const { LngLatBounds } = maplibre;
 
-  // import type { LngLatBoundsLike } from "maplibre-gl";
   let {
     data,
     customPalette,

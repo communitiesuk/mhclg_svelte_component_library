@@ -112,3 +112,62 @@ export const customTypes = `<script>
   hint="More specific postcode detection"
   bind:selectedValue 
 />`;
+
+export const customGeoTypes = `<script>
+  // Custom GeoNames based on specific geoTypes categories
+  const customGeoNames = {
+    // Combined/Upper-tier authorities (cauth codes)
+    'E06': { label: 'upper-tier/combined authority', plural: 'upper-tier/combined authorities' },
+    'E09': { label: 'upper-tier/combined authority', plural: 'upper-tier/combined authorities' },
+    'E10': { label: 'upper-tier/combined authority', plural: 'upper-tier/combined authorities' },
+    'E47': { label: 'upper-tier/combined authority', plural: 'upper-tier/combined authorities' },
+    'N09': { label: 'upper-tier/combined authority', plural: 'upper-tier/combined authorities' },
+    'S12': { label: 'upper-tier/combined authority', plural: 'upper-tier/combined authorities' },
+    'W06': { label: 'upper-tier/combined authority', plural: 'upper-tier/combined authorities' },
+    
+    // Upper-tier/unitary authorities (utla codes - overlaps with cauth but different grouping)
+    'E08': { label: 'upper-tier/unitary authority', plural: 'upper-tier/unitary authorities' },
+    
+    // Lower-tier/unitary authorities (ltla codes)
+    'E07': { label: 'lower-tier/unitary authority', plural: 'lower-tier/unitary authorities' },
+    
+    // MSOAs
+    'E02': { label: 'MSOA', plural: 'MSOAs' },
+    'W02': { label: 'MSOA', plural: 'MSOAs' },
+    
+    // LSOAs
+    'E01': { label: 'LSOA', plural: 'LSOAs' },
+    'W01': { label: 'LSOA', plural: 'LSOAs' },
+    
+    // Output areas
+    'E00': { label: 'output area', plural: 'output areas' },
+    'W00': { label: 'output area', plural: 'output areas' }
+  };
+  
+  // Custom essential geocodes based on the 6 geoTypes categories requested
+  const customEssGeocodes = [
+    // cauth (upper-tier/combined authority)
+    'E06', 'E09', 'E10', 'E47', 'N09', 'S12', 'W06',
+    // utla (upper-tier/unitary authority) - E08 is unique to utla
+    'E08',
+    // ltla (lower-tier/unitary authority) - E07 is unique to ltla  
+    'E07',
+    // msoa
+    'E02', 'W02',
+    // lsoa
+    'E01', 'W01',
+    // oa (output area)
+    'E00', 'W00'
+  ];
+</script>
+
+<PostcodeOrAreaSearch 
+  customGeoNames={customGeoNames}
+  customEssGeocodes={customEssGeocodes}
+  essOnly={true}
+  label_text="Search authorities and statistical areas"
+  hint="Filtered to cauth, utla, ltla, msoa, lsoa, and oa categories from geoTypes"
+  bind:selectedValue 
+/>
+
+<!-- Demonstrates custom geographic type configuration based on geoTypes -->`;

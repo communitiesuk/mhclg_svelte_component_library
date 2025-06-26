@@ -15,6 +15,7 @@
   let requiredField = $state("");
   let customDataExample = $state("");
   let customLabelsExample = $state("");
+  let customGeoTypesExample = $state("");
 
   let accordionSnippetSections = [
     {
@@ -56,6 +57,11 @@
       id: "8",
       heading: "8. Custom type labels and grouping",
       content: CustomTypesExample,
+    },
+    {
+      id: "9",
+      heading: "9. Custom geographic types (authorities & statistical areas)",
+      content: CustomGeoTypesExample,
     },
   ];
 </script>
@@ -288,4 +294,105 @@
     {/if}
   </div>
   <CodeBlock code={codeBlocks.customTypes} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet CustomGeoTypesExample()}
+  <div class="p-5 bg-white">
+    <p class="mb-4 text-gray-700">
+      Configure custom geographic types based on specific UK administrative and
+      statistical areas. This example focuses on 6 geoTypes categories: cauth,
+      utla, ltla, msoa, lsoa, and oa:
+    </p>
+    <PostcodeOrAreaSearch
+      customGeoNames={{
+        // Combined/Upper-tier authorities (cauth codes)
+        E06: {
+          label: "upper-tier/combined authority",
+          plural: "upper-tier/combined authorities",
+        },
+        E09: {
+          label: "upper-tier/combined authority",
+          plural: "upper-tier/combined authorities",
+        },
+        E10: {
+          label: "upper-tier/combined authority",
+          plural: "upper-tier/combined authorities",
+        },
+        E47: {
+          label: "upper-tier/combined authority",
+          plural: "upper-tier/combined authorities",
+        },
+        N09: {
+          label: "upper-tier/combined authority",
+          plural: "upper-tier/combined authorities",
+        },
+        S12: {
+          label: "upper-tier/combined authority",
+          plural: "upper-tier/combined authorities",
+        },
+        W06: {
+          label: "upper-tier/combined authority",
+          plural: "upper-tier/combined authorities",
+        },
+
+        // Upper-tier/unitary authorities (utla codes - overlaps with cauth but different grouping)
+        E08: {
+          label: "upper-tier/unitary authority",
+          plural: "upper-tier/unitary authorities",
+        },
+
+        // Lower-tier/unitary authorities (ltla codes)
+        E07: {
+          label: "lower-tier/unitary authority",
+          plural: "lower-tier/unitary authorities",
+        },
+
+        // MSOAs
+        E02: { label: "MSOA", plural: "MSOAs" },
+        W02: { label: "MSOA", plural: "MSOAs" },
+
+        // LSOAs
+        E01: { label: "LSOA", plural: "LSOAs" },
+        W01: { label: "LSOA", plural: "LSOAs" },
+
+        // Output areas
+        E00: { label: "output area", plural: "output areas" },
+        W00: { label: "output area", plural: "output areas" },
+      }}
+      customEssGeocodes={[
+        // cauth (upper-tier/combined authority)
+        "E06",
+        "E09",
+        "E10",
+        "E47",
+        "N09",
+        "S12",
+        "W06",
+        // utla (upper-tier/unitary authority) - E08 is unique to utla
+        "E08",
+        // ltla (lower-tier/unitary authority) - E07 is unique to ltla
+        "E07",
+        // msoa
+        "E02",
+        "W02",
+        // lsoa
+        "E01",
+        "W01",
+        // oa (output area)
+        "E00",
+        "W00",
+      ]}
+      essOnly={true}
+      label_text="Search authorities and statistical areas"
+      hint="Filtered to cauth, utla, ltla, msoa, lsoa, and oa categories from geoTypes"
+      bind:selectedValue={customGeoTypesExample}
+    />
+    {#if customGeoTypesExample}
+      <p class="mt-3 font-semibold">
+        <strong>Selected:</strong>
+        {customGeoTypesExample}
+      </p>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.customGeoTypes} language="svelte"></CodeBlock>
 {/snippet}

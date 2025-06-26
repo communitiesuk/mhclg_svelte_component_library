@@ -401,7 +401,7 @@
       {
         name: "placeholder",
         category: "Content",
-        value: "e.g. SW1A 1AA or Westminster",
+        value: "",
         description: {
           markdown: true,
           arr: [`Placeholder text shown in the input field.`],
@@ -411,7 +411,7 @@
       {
         name: "hint",
         category: "Content",
-        value: "Enter a UK postcode or area name",
+        value: "For example SW1A 1AA or Westminster",
         description: {
           markdown: true,
           arr: [`Hint text displayed below the label.`],

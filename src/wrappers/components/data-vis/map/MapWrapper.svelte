@@ -590,6 +590,18 @@
         },
         category: "Events",
       },
+      {
+        name: "onidle",
+        isProp: true,
+        description: "Pass a function to use when the map is idle",
+        value: () => {
+          console.log("idle");
+        },
+        functionElements: {
+          functionAsString: `() => { console.log("idle"); }`,
+        },
+        category: "Events",
+      },
     ]),
   );
 

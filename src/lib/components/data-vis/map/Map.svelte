@@ -78,6 +78,7 @@
     mapHeight = 200,
     setMaxBounds = false,
     onload,
+    onidle,
   }: {
     data: object[];
     customPalette?: object[];
@@ -120,6 +121,7 @@
     customBreaks?: number[];
     interactive?: boolean;
     onload?: (map: maplibregl.Map) => void;
+    onidle?: (e: maplibregl.MapLibreEvent) => void;
   } = $props();
 
   let styleLookup = {
@@ -316,6 +318,7 @@
     {interactive}
     class="map"
     {onload}
+    {onidle}
   >
     {#if interactive && !standardControls}
       <NonStandardControls

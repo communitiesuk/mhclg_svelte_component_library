@@ -229,23 +229,34 @@
     </p>
     <PostcodeOrAreaSearch
       customPlacesData={[
-        { areacd: "US-CA", areanm: "California", parentcd: "US" },
-        { areacd: "US-NY", areanm: "New York", parentcd: "US" },
-        { areacd: "US-TX", areanm: "Texas", parentcd: "US" },
-        { areacd: "US-FL", areanm: "Florida", parentcd: "US" },
-        { areacd: "US-IL", areanm: "Illinois", parentcd: "US" },
-        { areacd: "US-CA-LA", areanm: "Los Angeles", parentcd: "US-CA" },
-        { areacd: "US-CA-SF", areanm: "San Francisco", parentcd: "US-CA" },
-        { areacd: "US-NY-NYC", areanm: "New York City", parentcd: "US-NY" },
-        { areacd: "US-TX-HOU", areanm: "Houston", parentcd: "US-TX" },
+        // US Country (top level)
+        { areacd: "USA", areanm: "United States", parentcd: "" },
+        // States (3-char codes: "US1", "US2", etc.)
+        { areacd: "US1", areanm: "California", parentcd: "USA" },
+        { areacd: "US2", areanm: "New York", parentcd: "USA" },
+        { areacd: "US3", areanm: "Texas", parentcd: "USA" },
+        { areacd: "US4", areanm: "Florida", parentcd: "USA" },
+        { areacd: "US5", areanm: "Illinois", parentcd: "USA" },
+        // Cities (3-char codes: "CA1", "NY1", etc.)
+        { areacd: "CA1", areanm: "Los Angeles", parentcd: "US1" },
+        { areacd: "CA2", areanm: "San Francisco", parentcd: "US1" },
+        { areacd: "NY1", areanm: "New York City", parentcd: "US2" },
+        { areacd: "TX1", areanm: "Houston", parentcd: "US3" },
       ]}
       customGeoNames={{
-        "US-": { label: "State", plural: "States" },
-        "US-CA-": { label: "California City", plural: "California Cities" },
-        "US-NY-": { label: "New York City", plural: "New York Cities" },
-        "US-TX-": { label: "Texas City", plural: "Texas Cities" },
+        // 3-character lookups that match areacd.slice(0,3)
+        USA: { label: "Country", plural: "Countries" },
+        US1: { label: "State", plural: "States" },
+        US2: { label: "State", plural: "States" },
+        US3: { label: "State", plural: "States" },
+        US4: { label: "State", plural: "States" },
+        US5: { label: "State", plural: "States" },
+        CA1: { label: "California City", plural: "California Cities" },
+        CA2: { label: "California City", plural: "California Cities" },
+        NY1: { label: "New York City", plural: "New York Cities" },
+        TX1: { label: "Texas City", plural: "Texas Cities" },
       }}
-      customEssGeocodes={["US-"]}
+      customEssGeocodes={["US1", "US2", "US3", "US4", "US5"]}
       label_text="Search US states and cities"
       placeholder="e.g. California, New York, Los Angeles"
       hint="Custom geographic data with hierarchical relationships"

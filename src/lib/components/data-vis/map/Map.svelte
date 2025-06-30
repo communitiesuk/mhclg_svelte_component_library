@@ -8,6 +8,7 @@
     Control,
     ControlButton,
     ControlGroup,
+    ScaleControl,
   } from "svelte-maplibre";
   import { contrastingColor } from "./colors.js";
   import { colorbrewer } from "./colorbrewer.js";
@@ -85,14 +86,14 @@
     cooperativeGestures?: boolean;
     standardControls?: boolean;
     navigationControl?: boolean;
-    navigationControlPosition?: string;
+    navigationControlPosition?: maplibregl.ControlPosition;
     geolocateControl?: boolean;
-    geolocateControlPosition?: string;
+    geolocateControlPosition?: maplibregl.ControlPosition;
     fullscreenControl?: boolean;
-    fullscreenControlPosition?: string;
+    fullscreenControlPosition?: maplibregl.ControlPosition;
     scaleControl?: boolean;
-    scaleControlPosition?: string;
-    scaleControlUnit?: string;
+    scaleControlPosition?: maplibregl.ControlPosition;
+    scaleControlUnit?: "imperial" | "metric" | "nautical";
     styleSheet?: string | URL | object;
     colorPalette?: string;
     showBorder?: boolean;
@@ -214,6 +215,24 @@
       $inspect(cooperativeGestures);
     }
 
+    if (interactive) {
+      map?.scrollZoom.enable();
+      map?.boxZoom.enable();
+      map?.dragRotate.enable();
+      map?.dragPan.enable();
+      map?.keyboard.enable();
+      map?.doubleClickZoom.enable();
+      map?.touchZoomRotate.enable();
+    } else {
+      map?.scrollZoom.disable();
+      map?.boxZoom.disable();
+      map?.dragRotate.disable();
+      map?.dragPan.disable();
+      map?.keyboard.disable();
+      map?.doubleClickZoom.disable();
+      map?.touchZoomRotate.disable();
+    }
+
     map?.setMaxBounds(bounds);
   });
 
@@ -315,7 +334,6 @@
     standardControls={interactive && standardControls}
     {hash}
     {updateHash}
-    {interactive}
     class="map"
     {onload}
     {onidle}
@@ -347,6 +365,8 @@
           </button>
         </ControlGroup>
       </Control>
+    {:else if !interactive}
+      <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
     {/if}
 
     <GeoJSON id="areas" data={merged} promoteId="areanm">

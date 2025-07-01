@@ -151,7 +151,7 @@
   let nothingSelected = $derived(
     [clickedSeries, hoveredSeries].every((item) => item == null),
   );
-  let activeMarkerId = $state();
+  let activeMarkerId = $state(undefined);
   let seriesLabels = $state(false);
   let hoveredSeries = $state();
   let clickedSeries = $state();
@@ -207,19 +207,20 @@
     addIndexAndInitalValue([
       {
         name: "x",
-        category: "data",
+        category: "Data",
         value: "x",
         description: "Data variable to be plotted on the x axis",
       },
       {
         name: "y",
-        category: "data",
+        category: "Data",
         value: "y",
         description: "Data variable to be plotted on the y axis",
       },
       {
         name: "series",
-        category: "data",
+        category: "Data",
+        value: "series",
         description: "Data variable used to distinguish between lines",
       },
       {
@@ -231,7 +232,7 @@
         name: "tieredLineParams",
         category: "customisingLines",
         description:
-          "Parameters that apply to specific tiers. Takes priority over `basicLineParams`",
+          "Parameters that apply to specific tiers. Takes priority over `basicLineParams`. Specify in ascending priority order.",
       },
       {
         name: "overrideLineParams",
@@ -299,15 +300,19 @@
       },
       {
         name: "activeMarkerId",
-        category: "markerEvents",
+        category: "Markers",
         value: activeMarkerId,
+        functionElements: {
+          functionAsString: `activeMarkerId`,
+        },
+        description: "The ID of the marker that is being hovered over.",
       },
       {
-        name: "currentMousePosition",
-        category: "markerEvents",
-        value: currentMousePosition,
+        name: "markerRect",
+        category: "Markers",
+        value: markerRect,
+        description: "Dimensions of the marker.",
       },
-      { name: "markerRect", category: "markerEvents", value: markerRect },
       {
         name: "onClickSeries",
         category: "lineEvents",
@@ -333,9 +338,6 @@
           functionAsString: ``,
         },
         value: function (series, tier) {
-          {
-            console.log("ENTERING SERIES");
-          }
           if (hoveredSeries !== series) {
             hoveredSeries = series;
             hoveredTier = tier;
@@ -349,9 +351,6 @@
           functionAsString: ``,
         },
         value: function (series, tier) {
-          {
-            console.log("LEAVING SERIES");
-          }
           if (hoveredSeries === series) {
             hoveredSeries = null;
             hoveredTier = null;
@@ -367,19 +366,10 @@
             }`,
         },
         value: function (event, marker, markerId, rect) {
-          {
-            console.log("ENTERING MARKER");
-          }
           activeMarkerId = marker;
           if (container) {
             const bounds = container.getBoundingClientRect();
-            currentMousePosition = [
-              // option for moving tooltip
-              event.clientX - bounds.left,
-              event.clientY - bounds.top,
-            ];
             markerRect = {
-              // option for fixed tooltip
               x: rect.x - bounds.left + rect.width / 2,
               y: rect.y - bounds.top + rect.height / 2,
             };
@@ -400,9 +390,6 @@
             }`,
         },
         value: function (event, marker, dataId) {
-          {
-            console.log("LEAVING MARKER");
-          }
           activeMarkerId = null;
         },
       },
@@ -423,41 +410,47 @@
 
       {
         name: "paddingTop",
-        category: "dimensions",
+        category: "Appearance",
         value: 50,
       },
       {
         name: "paddingRight",
-        category: "dimensions",
+        category: "Appearance",
         value: 150,
       },
       {
         name: "paddingBottom",
-        category: "dimensions",
+        category: "Appearance",
         value: 50,
       },
       {
         name: "paddingLeft",
-        category: "dimensions",
+        category: "Appearance",
         value: 50,
       },
       {
         name: "svgHeight",
-        category: "dimensions",
+        category: "Appearance",
         value: 500,
       },
       {
         name: "svgWidth",
-        category: "dimensions",
+        category: "Appearance",
         value: svgWidth,
       },
       {
         name: "labelText",
-        category: "labels",
+        category: "Labels",
+        functionElements: {
+          functionAsString: `function (dataArray) {
+          return dataArray[series];
+        }`,
+        },
+        isProp: true,
         value: function (dataArray) {
           return dataArray[series];
         },
-        isProp: true,
+        description: "Text for the series labels.",
       },
       {
         name: "selectedMetric",
@@ -478,7 +471,7 @@
 
       {
         name: "chartBackgroundColor",
-        category: "Aesthetics",
+        category: "Appearance",
         visible: true,
         isProp: true,
         value: "#f5f5f5",
@@ -507,7 +500,7 @@
       },
       {
         name: "tooltipContent",
-        category: "interactions",
+        category: "Markers",
         value: "tooltipContent from Wrapper",
       },
       {

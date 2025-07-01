@@ -151,18 +151,17 @@
   let nothingSelected = $derived(
     [clickedSeries, hoveredSeries].every((item) => item == null),
   );
-  let activeMarkerId = $state(undefined);
-  let seriesLabels = $state(false);
   let hoveredSeries = $state();
   let clickedSeries = $state();
-
-  let lineData = $state();
   let hoveredTier = $state();
   let clickedTier = $state();
 
-  let currentMousePosition = $state();
+  let includeSeriesLabels = $state(false); // add to parameterssourcearray
+  let activeMarkerId = $state();
+
+  let currentMousePosition = $state(); // add to parameterssourcearray
   let markerRect = $state();
-  let container = $state();
+  let container = $state(); // add to parameterssourcearray
 
   /**
    * ! Step 3 - Add your props
@@ -281,22 +280,41 @@
         value: colors,
       },
       {
+        name: "hoveredSeries",
+        category: "Line Interactions",
+        isBinded: true,
+        value: hoveredSeries,
+        description: "The line or label that a user is hovering on.",
+      },
+      {
         name: "clickedSeries",
-        category: "lineEvents",
+        category: "Line Interactions",
         isBinded: true,
         value: clickedSeries,
+        description: "The line or label that a user has clicked.",
+      },
+      {
+        name: "hoveredTier",
+        category: "Line Interactions",
+        isBinded: true,
+        value: hoveredTier,
+        description:
+          "The tier of the line or label that a user is hovering on.",
+      },
+      {
+        name: "clickedTier",
+        category: "Line Interactions",
+        isBinded: true,
+        value: clickedTier,
+        description: "The tier of the line or label that a user has clicked.",
       },
       {
         name: "nothingSelected",
-        category: "lineEvents",
+        category: "Line Interactions",
         isBinded: true,
         value: nothingSelected,
-      },
-      {
-        name: "hoveredSeries",
-        category: "lineEvents",
-        isBinded: true,
-        value: hoveredSeries,
+        description:
+          "Boolean. True when no line or label is hovered or clicked.",
       },
       {
         name: "activeMarkerId",
@@ -315,9 +333,19 @@
       },
       {
         name: "onClickSeries",
-        category: "lineEvents",
+        category: "Line Interactions",
         functionElements: {
-          functionAsString: ``,
+          functionAsString: `function (series, tier) {
+          if (clickedSeries === series) {
+            clickedSeries = null;
+            hoveredSeries = null;
+          } else {
+            clickedSeries = series;
+            clickedTier = tier;
+            hoveredSeries = series;
+            hoveredTier = tier;
+          }
+        }`,
         },
         value: function (series, tier) {
           if (clickedSeries === series) {
@@ -330,12 +358,19 @@
             hoveredTier = tier;
           }
         },
+        description:
+          "Function that runs when a user clicks on a line or its label.",
       },
       {
         name: "onMouseEnterSeries",
-        category: "lineEvents",
+        category: "Line Interactions",
         functionElements: {
-          functionAsString: ``,
+          functionAsString: `function (series, tier) {
+          if (hoveredSeries !== series) {
+            hoveredSeries = series;
+            hoveredTier = tier;
+          }
+        }`,
         },
         value: function (series, tier) {
           if (hoveredSeries !== series) {
@@ -343,12 +378,19 @@
             hoveredTier = tier;
           }
         },
+        description:
+          "Function that runs when a user's mouse enters a line or its label.",
       },
       {
         name: "onMouseLeaveSeries",
-        category: "lineEvents",
+        category: "Line Interactions",
         functionElements: {
-          functionAsString: ``,
+          functionAsString: `function (series, tier) {
+          if (hoveredSeries === series) {
+            hoveredSeries = null;
+            hoveredTier = null;
+          }
+        }`,
         },
         value: function (series, tier) {
           if (hoveredSeries === series) {
@@ -356,10 +398,12 @@
             hoveredTier = null;
           }
         },
+        description:
+          "Function that runs when a user's mouse leaves a line or its label.",
       },
       {
         name: "onMouseEnterMarker",
-        category: "lineEvents",
+        category: "Markers",
         functionElements: {
           functionAsString: `function (event, dataArray, dataId) {
               labelHovered = series;
@@ -378,10 +422,11 @@
             markerRect = rect;
           }
         },
+        description: "Function that runs when a user's mouse enters a marker.",
       },
       {
         name: "onMouseLeaveMarker",
-        category: "lineEvents",
+        category: "Markers",
         functionElements: {
           functionAsString: `function (event, dataArray, dataId) {
               if (labelClicked !== series) {
@@ -392,10 +437,11 @@
         value: function (event, marker, dataId) {
           activeMarkerId = null;
         },
+        description: "Function that runs when a user's mouse leaves a marker.",
       },
       {
         name: "onClickMarker",
-        category: "lineEvents",
+        category: "Markers",
         functionElements: {
           functionAsString: `function (event, dataArray, dataId) {
               labelClicked === series
@@ -406,6 +452,7 @@
         value: function (event, marker, markerId) {
           activeMarkerId = marker;
         },
+        description: "Function that runs when a user clicks a marker.",
       },
 
       {
@@ -480,7 +527,7 @@
       },
       {
         name: "xFunction",
-        category: "xScale",
+        category: "Plotting Functions",
         value: function (number) {
           return scaleLinear()
             .domain([2015, 2022])
@@ -492,11 +539,11 @@
       },
       {
         name: "yFunction",
-        category: "yScale",
+        category: "Plotting Functions",
       },
       {
         name: "lineFunction",
-        category: "lineFunction",
+        category: "Plotting Functions",
       },
       {
         name: "tooltipContent",

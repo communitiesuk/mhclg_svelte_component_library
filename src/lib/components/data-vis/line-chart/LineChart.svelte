@@ -126,6 +126,10 @@
     },
     tieredLineParams = {
       all: {},
+      hover: { pathStrokeWidth: 4 },
+      clicked: {
+        pathStrokeWidth: 5,
+      },
     },
 
     basicLineParams = {},
@@ -182,6 +186,7 @@
     onMouseEnterMarker,
     onMouseLeaveMarker,
     haloColor: chartBackgroundColor,
+    halo: true,
     invisibleStrokeWidth: 20,
   });
 
@@ -287,6 +292,17 @@
   >
     {#if svgWidth}
       <g transform="translate({paddingLeft},{paddingTop})">
+        <g data-role="y-axis">
+          <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
+          ></path>
+        </g>
+        <g data-role="x-axis">
+          <path
+            d="M0 {chartHeight} l{chartWidth} 0"
+            stroke="black"
+            stroke-width="2px"
+          ></path>
+        </g>
         <g data-role="lines-group">
           <Lines
             {tieredDataObject}
@@ -319,17 +335,6 @@
             {currentMousePosition}
             {markerRect}
           ></Lines>
-        </g>
-        <g data-role="y-axis">
-          <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
-          ></path>
-        </g>
-        <g data-role="x-axis">
-          <path
-            d="M0 {chartHeight} l{chartWidth} 0"
-            stroke="black"
-            stroke-width="2px"
-          ></path>
         </g>
       </g>
     {/if}

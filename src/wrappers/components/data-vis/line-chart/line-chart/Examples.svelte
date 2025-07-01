@@ -24,13 +24,6 @@
     return found ? { ...found, lines: found.lines.slice(0, 1) } : null;
   })();
 
-  const theData = (() => {
-    const found = data.dataInFormatForLineChart.find(
-      (el) => el.metric === "Household waste recycling rate",
-    );
-    return found;
-  })();
-
   let accordionSnippetSections = [
     {
       id: "1",
@@ -69,7 +62,6 @@
   let hoveredSeries = $state();
   let clickedTier = $state();
   let hoveredTier = $state();
-  $inspect({ clickedTier, hoveredTier });
   let nothingSelected = $derived(
     [clickedSeries, hoveredSeries].every((item) => item == null),
   );
@@ -167,8 +159,8 @@
       y="y"
       series="areaCode"
       basicLineParams={{
-        interactiveMarkers: true,
         markers: true,
+        interactiveMarkers: true,
       }}
       {tooltipSnippet}
     ></LineChart>
@@ -185,8 +177,8 @@
       series="areaCode"
       basicLineParams={{
         includeArea: true,
-        pathStrokeColor: "darkgrey",
         areaFillColor: "lightgrey",
+        pathStrokeColor: "darkgrey",
       }}
     ></LineChart>
   </div>
@@ -196,43 +188,32 @@
 {#snippet Example6()}
   <div class="p-5 bg-white">
     <LineChart
-      lineChartData={theData}
+      {lineChartData}
       x="x"
       y="y"
       series="areaCode"
-      basicLineParams={{ interactiveLines: true }}
-      tieredLineParams={{
-        hover: {
-          pathStrokeWidth: 5,
-          pathStrokeColor: hoveredTier === "secondary" ? "grey" : null,
-        },
-        clicked: {
-          pathStrokeWidth: 6,
-          pathStrokeColor: clickedTier === "secondary" ? "grey" : null,
-        },
-        secondary: { pathStrokeColor: "grey", halo: true },
-        primary: {
-          halo: true,
-          pathStrokeWidth: 4,
-        },
+      labelText={(dataArray) => {
+        const areaNames = {
+          E07000224: "A",
+          E07000223: "B",
+          E07000026: "C",
+          E07000170: "D",
+          E07000032: "E",
+        };
+        return areaNames[dataArray["areaCode"]] ?? dataArray["areaCode"];
       }}
+      basicLineParams={{ interactiveLines: true }}
       bind:clickedSeries
       bind:hoveredSeries
       bind:clickedTier
       bind:hoveredTier
+      {nothingSelected}
       getLine={(tier, el) => {
         if (tier === "primary") {
-          return ["E09000033"].includes(el.areaCode);
+          return ["E07000224"].includes(el.areaCode);
         }
         if (tier === "secondary") {
-          return [
-            "E09000025",
-            "E09000033",
-            "E09000030",
-            "E09000032",
-            "E06000004",
-            "E09000030",
-          ].includes(el.areaCode);
+          return true;
         }
         if (tier === "hover") {
           return [hoveredSeries].includes(el.areaCode);
@@ -240,6 +221,22 @@
         if (tier === "clicked") {
           return [clickedSeries].includes(el.areaCode);
         }
+      }}
+      tieredLineParams={{
+        secondary: { pathStrokeColor: "grey" },
+        primary: {
+          pathStrokeWidth: 4,
+        },
+        clicked: {
+          pathStrokeWidth: 6,
+          pathStrokeColor: clickedTier === "secondary" ? "grey" : null,
+          interactiveLines: false,
+        },
+        hover: {
+          pathStrokeWidth: 5,
+          pathStrokeColor: hoveredTier === "secondary" ? "grey" : null,
+          interactiveLines: false,
+        },
       }}
       overrideLineParams={(tier, el) => {
         return {
@@ -254,17 +251,6 @@
             (!clickedSeries && hoveredTier === "primary" && tier === "primary"),
         };
       }}
-      labelText={(dataArray) => {
-        const areaNames = {
-          E09000033: "A",
-          E09000025: "B",
-          E09000032: "C",
-          E06000004: "D",
-          E09000030: "E",
-        };
-        return areaNames[dataArray["areaCode"]] ?? dataArray["areaCode"];
-      }}
-      {nothingSelected}
     ></LineChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

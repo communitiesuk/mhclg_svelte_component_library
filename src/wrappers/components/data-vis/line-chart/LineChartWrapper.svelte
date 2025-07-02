@@ -224,22 +224,116 @@
       },
       {
         name: "basicLineParams",
-        category: "customisingLines",
-        description: "Parameters that shared by all lines.",
+        category: "Customising Lines",
+        description: "Parameters that are shared by all lines.",
+      },
+      {
+        name: "assignLinesToTiers",
+        category: "Customising Lines",
+        description: "Function that assigns lines to different tiers.",
+        functionElements: {
+          functionAsString: `function (key, el, param) {
+          let primaryLines = [
+            "E07000224",
+            "E07000225",
+            "E07000226",
+            "E07000228",
+            englandMedian,
+            similarAreas,
+          ];
+          if (key === "primary") {
+            return primaryLines.includes(el[series]);
+          }
+          if (key === "secondary" && !primaryLines.includes(el[series])) {
+            return true;
+          }
+          if (key === "hover") {
+            return [lineHovered, labelHovered].includes(el[series]);
+          }
+          if (key === "clicked") {
+            return [clickedSeries, clickedSeries].includes(el[series]);
+          }
+        },`,
+        },
+        value: function (tier, el) {
+          let primaryLines = [
+            "E07000224",
+            "E07000225",
+            "E07000226",
+            "E07000228",
+            englandMedian,
+            similarAreas,
+          ];
+          if (tier === "primary") {
+            return primaryLines.includes(el[series]);
+          }
+          if (tier === "secondary" && !primaryLines.includes(el[series])) {
+            return true;
+          }
+          if (tier === "hover") {
+            return [hoveredSeries, hoveredSeries].includes(el[series]);
+          }
+          if (tier === "clicked") {
+            return [clickedSeries, clickedSeries].includes(el[series]);
+          }
+        },
+      },
+      {
+        name: "globalTierParams",
+        category: "Customising Lines",
+        description:
+          "Defines how the entire tier should be rendered. Must be valid SVG attributes",
+        // value: {
+        //   otherTier: {},
+        //   secondary: {
+        //     opacity: getValue("nothingSelected") ? 1 : 0.5,
+        //   },
+        //   primary: {
+        //     opacity: getValue("nothingSelected") ? 1 : 0.4,
+        //   },
+        //   hover: { opacity: 1 },
+        //   clicked: { opacity: 1 },
+        // },
+
+        functionElements: {
+          functionAsString: `{otherTier: {},
+        secondary: {
+          opacity: getValue("nothingSelected") ? 1 : 0.5,
+        },
+        primary: {
+          opacity: getValue("nothingSelected") ? 1 : 0.4,
+        },
+        hover: { opacity: 1 },
+        clicked: { opacity: 1 }}`,
+        },
       },
       {
         name: "tieredLineParams",
-        category: "customisingLines",
+        category: "Customising Lines",
         description:
           "Parameters that apply to specific tiers. Takes priority over `basicLineParams`. Specify in ascending priority order.",
       },
       {
         name: "overrideLineParams",
-        category: "customisingLines",
+        category: "Customising Lines",
         description:
           "Parameters that are specific to particular lines. Takes priority over `basicLineParams` and tieredLineParams",
         functionElements: {
-          functionAsString: ``,
+          functionAsString: `function (tier, el) {
+          return {
+            placeLabel:
+              [hoveredSeries, clickedSeries].includes(el[series]) ||
+              (tier === "primary" &&
+                (nothingSelected ||s
+                  [hoveredTier, clickedTier].includes("primary"))),
+            showLabel:
+              [hoveredSeries, clickedSeries].includes(el[series]) ||
+              (tier === "primary" && nothingSelected) ||
+              (!clickedSeries &&
+                hoveredTier === "primary" &&
+                tier === "primary"),
+          };
+        }`,
         },
         value: function (tier, el) {
           return {
@@ -257,26 +351,10 @@
           };
         },
       },
-      {
-        name: "globalTierRules",
-        category: "customisingLines",
-        description:
-          "Defines how the entire tier should be rendered. Must be valid SVG attributes",
-        functionElements: {
-          functionAsString: `{otherTier: {},
-    secondary: {
-      opacity: getValue("nothingSelected") ? 1 : 0.5,
-    },
-    primary: {
-      opacity: getValue("nothingSelected") ? 1 : 0.4,
-    },
-    hover: { opacity: 1 },
-    clicked: { opacity: 1 }}`,
-        },
-      },
+
       {
         name: "colors",
-        category: "customisingLines",
+        category: "Customising Lines",
         value: colors,
       },
       {
@@ -536,69 +614,67 @@
               svgWidth - getValue("paddingLeft") - getValue("paddingRight"),
             ])(number);
         },
+        functionElements: {
+          functionAsString: `function (number) {
+    return scaleLinear()
+      .domain([2015, 2022])
+      .range([
+        0,
+        svgWidth - getValue("paddingLeft") - getValue("paddingRight"),
+      ])(number);
+  }`,
+        },
+        description:
+          "Function translating numerical values to x-axis position.",
       },
       {
         name: "yFunction",
         category: "Plotting Functions",
+        description:
+          "Function translating numerical values to y-axis position.",
+        value: function (number) {
+          return scaleLinear()
+            .domain([0, 100])
+            .range([
+              getValue("svgHeight") -
+                getValue("paddingTop") -
+                getValue("paddingBottom"),
+              0,
+            ])(number);
+        },
+        functionElements: {
+          functionAsString: `function (number) {
+          return scaleLinear()
+            .domain([0, 100])
+            .range([
+              getValue("svgHeight") -
+                getValue("paddingTop") -
+                getValue("paddingBottom"),
+              0,
+            ])(number);
+        }`,
+        },
       },
       {
         name: "lineFunction",
         category: "Plotting Functions",
+        description:
+          "Function that creates a line from a series of x and y values. Uses d3.line().",
+        functionElements: {
+          functionAsString: `line()
+          .x((d) => xFunction(d[x]))
+          .y((d) => yFunction(d[y]))
+          .curve(curveLinear)`,
+        },
+        value: line()
+          .x((d) => xFunction(d[x]))
+          .y((d) => yFunction(d[y]))
+          .curve(curveLinear),
       },
       {
         name: "tooltipContent",
         category: "Markers",
         value: "tooltipContent from Wrapper",
-      },
-      {
-        name: "getLine",
-        category: "customisingLines",
-        functionElements: {
-          functionAsString: `function (key, el, param) {
-          let primaryLines = [
-            "E07000224",
-            "E07000225",
-            "E07000226",
-            "E07000228",
-            englandMedian,
-            similarAreas,
-          ];
-          if (key === "primary") {
-            return primaryLines.includes(el[series]);
-          }
-          if (key === "secondary" && !primaryLines.includes(el[series])) {
-            return true;
-          }
-          if (key === "hover") {
-            return [lineHovered, labelHovered].includes(el[series]);
-          }
-          if (key === "clicked") {
-            return [clickedSeries, clickedSeries].includes(el[series]);
-          }
-        },`,
-        },
-        value: function (tier, el) {
-          let primaryLines = [
-            "E07000224",
-            "E07000225",
-            "E07000226",
-            "E07000228",
-            englandMedian,
-            similarAreas,
-          ];
-          if (tier === "primary") {
-            return primaryLines.includes(el[series]);
-          }
-          if (tier === "secondary" && !primaryLines.includes(el[series])) {
-            return true;
-          }
-          if (tier === "hover") {
-            return [hoveredSeries, hoveredSeries].includes(el[series]);
-          }
-          if (tier === "clicked") {
-            return [clickedSeries, clickedSeries].includes(el[series]);
-          }
-        },
       },
     ]),
   );
@@ -693,7 +769,7 @@
     },
   });
 
-  let globalTierRules = $derived({
+  let globalTierParams = $derived({
     otherTier: {},
     secondary: {
       opacity: nothingSelected ? 1 : 0.5,
@@ -753,7 +829,7 @@
     tieredLineParams,
     basicLineParams,
     nothingSelected,
-    globalTierRules,
+    globalTierParams,
   });
 
   /**

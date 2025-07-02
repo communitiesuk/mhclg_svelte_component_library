@@ -139,11 +139,16 @@
         } else return true;
       }}
       tieredLineParams={{
-        secondary: { pathStrokeColor: "grey" },
+        secondary: {
+          pathStrokeColor: "grey",
+          showLabel: false,
+          placeLabel: false,
+          lineEnding: "arrow",
+        },
         primary: {
-          halo: true,
           pathStrokeWidth: 5,
           pathStrokeColor: "red",
+          lineEnding: "arrow",
         },
       }}
     ></LineChart>

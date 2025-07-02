@@ -15,9 +15,6 @@
     x,
     lineChartData,
 
-    tooltipSnippet = undefined,
-    tooltipContent = "default",
-
     xFunction = (number) => {
       return scaleLinear()
         .domain([2015, 2022])
@@ -132,6 +129,8 @@
         pathStrokeWidth: 5,
       },
     },
+    tooltipSnippet = undefined,
+    tooltipContent = activeMarkerId?.y,
 
     basicLineParams = {},
     colorLineParams = (tier, line, lineIndex) => {

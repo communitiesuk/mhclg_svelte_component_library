@@ -97,7 +97,6 @@
 
   import { scaleLinear } from "d3-scale";
   import { curveLinear, line, area } from "d3-shape";
-  // import { tooltip } from "leaflet";
 
   let { data } = $props();
 
@@ -286,15 +285,14 @@
         // value: {
         //   otherTier: {},
         //   secondary: {
-        //     opacity: getValue("nothingSelected") ? 1 : 0.5,
+        //     opacity: nothingSelected ? 1 : 0.5,
         //   },
         //   primary: {
-        //     opacity: getValue("nothingSelected") ? 1 : 0.4,
+        //     opacity: nothingSelected ? 1 : 0.4,
         //   },
         //   hover: { opacity: 1 },
         //   clicked: { opacity: 1 },
         // },
-
         functionElements: {
           functionAsString: `{otherTier: {},
         secondary: {
@@ -407,7 +405,7 @@
         name: "markerRect",
         category: "Markers",
         value: markerRect,
-        description: "Dimensions of the marker.",
+        description: "Dimensions of the marker that is being hovered over.",
       },
       {
         name: "onClickSeries",
@@ -674,7 +672,9 @@
       {
         name: "tooltipContent",
         category: "Markers",
-        value: "tooltipContent from Wrapper",
+        value: activeMarkerId?.y,
+        description:
+          "Content for the tooltip that appears when hovering over a marker. Can be a string or a snippet.",
       },
     ]),
   );

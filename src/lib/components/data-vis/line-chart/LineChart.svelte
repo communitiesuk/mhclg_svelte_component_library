@@ -32,8 +32,9 @@
       .x((d) => xFunction(d[x]))
       .y((d) => yFunction(d[y]))
       .curve(curveLinear),
-    labelText = "labelText",
-
+    labelText = (dataArray) => {
+      return dataArray[series];
+    },
     onClickSeries = (series, tier) => {
       if (clickedSeries === series) {
         clickedSeries = null;
@@ -93,7 +94,7 @@
     hoveredTier = $bindable(undefined),
     clickedTier = $bindable(undefined),
     overrideLineParams = () => ({}),
-    getLine = (tier, el) => {
+    assignLinesToTiers = (tier, el) => {
       if (tier === "hover") {
         return [hoveredSeries].includes(el.areaCode);
       }
@@ -113,7 +114,7 @@
     activeMarkerId = undefined,
     chartBackgroundColor = "#f5f5f5",
     seriesLabels = $bindable(false),
-    globalTierRules = {
+    globalTierParams = {
       otherTier: {},
       secondary: {
         opacity: nothingSelected ? 1 : 0.5,
@@ -136,34 +137,34 @@
     colorLineParams = (tier, line, lineIndex) => {
       return { pathStrokeColor: lineColorMap[line.areaCode] };
     },
+    colors = {
+      teal: "#408A7B",
+      skyBlue: "#509EC8",
+      indigo: "#335F91",
+      ochre: "#BA7F30",
+      coral: "#E46B6C",
+      fuchsia: "#BB2765",
+      lavender: "#736CAC",
+      ashGrey: "#A0A0A0",
+      slateGrey: "#636363",
+      black: "#161616",
+      forestGreen: "#3C6E3C",
+      midnightTeal: "#2C5E5E",
+      dustyRose: "#C86B84",
+      steelBlue: "#4B6E91",
+      burntSienna: "#B65C38",
+      oliveGreen: "#7A8644",
+      slatePurple: "#64587C",
+    },
   } = $props();
 
-  let colors = $state({
-    teal: "#408A7B",
-    skyBlue: "#509EC8",
-    indigo: "#335F91",
-    ochre: "#BA7F30",
-    coral: "#E46B6C",
-    fuchsia: "#BB2765",
-    lavender: "#736CAC",
-    ashGrey: "#A0A0A0",
-    slateGrey: "#636363",
-    black: "#161616",
-    forestGreen: "#3C6E3C",
-    midnightTeal: "#2C5E5E",
-    dustyRose: "#C86B84",
-    steelBlue: "#4B6E91",
-    burntSienna: "#B65C38",
-    oliveGreen: "#7A8644",
-    slatePurple: "#64587C",
-  });
-
-  const colorValues = Object.values(colors);
-
+  const colorValues = Array.isArray(colors) ? colors : Object.values(colors);
   const lineColorMap = {};
 
   Object.entries(tieredLineParams).forEach(([tier, tierParams]) => {
-    const tierLines = lineChartData.lines.filter((line) => getLine(tier, line));
+    const tierLines = lineChartData.lines.filter((line) =>
+      assignLinesToTiers(tier, line),
+    );
     let colorIndex = 0;
 
     tierLines.forEach((line) => {
@@ -188,6 +189,8 @@
     haloColor: chartBackgroundColor,
     halo: true,
     invisibleStrokeWidth: 20,
+    placeLabel: true,
+    showLabel: true,
   });
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);
@@ -256,7 +259,7 @@
   let tieredDataObject = $derived(
     Object.keys(tieredLineParams).reduce((acc, tier) => {
       acc[tier] = lineChartData.lines
-        .filter((el) => getLine(tier, el))
+        .filter((el) => assignLinesToTiers(tier, el))
         .map((line, i) =>
           generateLineAttributes(
             line,
@@ -317,7 +320,7 @@
             {clickedTier}
             {hoveredTier}
             {chartHeight}
-            {globalTierRules}
+            {globalTierParams}
             {chartBackgroundColor}
             {nothingSelected}
             {onMouseEnterSeries}

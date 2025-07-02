@@ -19,7 +19,7 @@
     clickedTier,
     hoveredTier,
     chartHeight,
-    globalTierRules,
+    globalTierParams,
     chartBackgroundColor = "#fafafa",
     nothingSelected,
     onMouseEnterSeries,
@@ -65,7 +65,7 @@
 
 {#each Object.keys(tieredDataObject) as tier}
   <g id={tier}>
-    <g {...globalTierRules[tier]}>
+    <g {...globalTierParams[tier]}>
       {#each tieredDataObject[tier] as line, i}
         <Line
           {...line}

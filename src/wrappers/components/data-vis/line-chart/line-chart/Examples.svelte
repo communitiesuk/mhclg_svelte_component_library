@@ -55,6 +55,16 @@
       heading: "6. Line chart with custom labels",
       content: Example6,
     },
+    {
+      id: "7",
+      heading: "7. Line chart with custom colours assigned randomly",
+      content: Example7,
+    },
+    {
+      id: "8",
+      heading: "8. Line chart with custom colours assigned to specific lines",
+      content: Example8,
+    },
   ];
 
   let activeMarkerId = $state();
@@ -123,7 +133,7 @@
       x="x"
       y="y"
       series="areaCode"
-      getLine={(tier, el) => {
+      assignLinesToTiers={(tier, el) => {
         if (tier === "primary") {
           return ["E07000224"].includes(el.areaCode);
         } else return true;
@@ -208,7 +218,7 @@
       bind:clickedTier
       bind:hoveredTier
       {nothingSelected}
-      getLine={(tier, el) => {
+      assignLinesToTiers={(tier, el) => {
         if (tier === "primary") {
           return ["E07000224"].includes(el.areaCode);
         }
@@ -250,6 +260,41 @@
             (tier === "primary" && nothingSelected) ||
             (!clickedSeries && hoveredTier === "primary" && tier === "primary"),
         };
+      }}
+    ></LineChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example7()}
+  <div class="p-5 bg-white">
+    <LineChart
+      {lineChartData}
+      x="x"
+      y="y"
+      series="areaCode"
+      colors={["royalblue", "steelblue", "darkblue", "blue", "navy"]}
+    ></LineChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example8()}
+  <div class="p-5 bg-white">
+    <LineChart
+      {lineChartData}
+      x="x"
+      y="y"
+      series="areaCode"
+      overrideLineParams={(tier, el) => {
+        let areaColorMapping = {
+          E07000224: "green",
+          E07000223: "seagreen",
+          E07000026: "yellowgreen",
+          E07000170: "darkgreen",
+          E07000032: "lightgreen",
+        };
+        return { pathStrokeColor: areaColorMapping[el.areaCode] };
       }}
     ></LineChart>
   </div>

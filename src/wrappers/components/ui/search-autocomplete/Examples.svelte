@@ -40,27 +40,32 @@
     },
     {
       id: "7",
-      heading: "7. Dynamic source selection",
-      content: ExampleDynamicSource,
+      heading: "7. RESTful Path-based API",
+      content: ExamplePathBasedApi,
     },
     {
       id: "8",
-      heading: "8. Behaviour (Default & Confirm)",
-      content: ExampleBehaviour,
+      heading: "8. Dynamic source selection",
+      content: ExampleDynamicSource,
     },
     {
       id: "9",
-      heading: "9. With Selected Value Binding",
-      content: Example7,
+      heading: "9. Behaviour (Default & Confirm)",
+      content: ExampleBehaviour,
     },
     {
       id: "10",
-      heading: "10. Used Inside a Form for progressive enhancement",
-      content: ExampleForm,
+      heading: "10. With Selected Value Binding",
+      content: Example7,
     },
     {
       id: "11",
-      heading: "11. Using enhance for Progressive Enhancement",
+      heading: "11. Used Inside a Form for progressive enhancement",
+      content: ExampleForm,
+    },
+    {
+      id: "12",
+      heading: "12. Using enhance for Progressive Enhancement",
       content: ExampleEnhance,
     },
   ];
@@ -177,7 +182,29 @@
   <CodeBlock code={codeBlocks.codeBlock6} language="svelte" />
 {/snippet}
 
-<!-- Example 7: Dynamic source selection -->
+<!-- Example 7: RESTful Path-based API -->
+{#snippet ExamplePathBasedApi()}
+  <div class="p-5 bg-white">
+    <SearchAutocomplete
+      source_url="https://api.zippopotam.us/us"
+      source_key="places"
+      source_property="place name"
+      pathBasedApi={true}
+      placeholder="Enter a US zip code (e.g., 90210, 10001)..."
+      label_text="Search US locations by zip code"
+      minLength={5}
+      hint="Uses Zippopotam.us RESTful API - enter a 5-digit zip code"
+    />
+    <p class="govuk-body mt-2 text-sm text-gray-600">
+      This example demonstrates <code>pathBasedApi={true}</code> for RESTful
+      APIs like Zippopotam.us that expect URLs like <code>/us/90210</code>
+      instead of <code>/us?q=90210</code>.
+    </p>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlockPathBased} language="svelte" />
+{/snippet}
+
+<!-- Example 8: Dynamic source selection -->
 {#snippet ExampleDynamicSource()}
   <div class="p-5 bg-white">
     <SearchAutocomplete
@@ -198,15 +225,15 @@
       This example shows both local options and API configuration. Since no <code
         >sourceSelector</code
       >
-      function is provided, it will use the local options (since they're
-      available) as the primary source. To enable dynamic switching, you would
-      need to provide a <code>sourceSelector</code> function.
+      function is provided, it will use the local options (since they're available)
+      as the primary source. To enable dynamic switching, you would need to provide
+      a <code>sourceSelector</code> function.
     </p>
   </div>
   <CodeBlock code={codeBlocks.codeBlock7} language="svelte" />
 {/snippet}
 
-<!-- Example 8: Behaviour (Default & Confirm) -->
+<!-- Example 9: Behaviour (Default & Confirm) -->
 {#snippet ExampleBehaviour()}
   <div class="p-5 bg-white">
     <SearchAutocomplete
@@ -219,7 +246,7 @@
   <CodeBlock code={codeBlocks.codeBlock8} language="svelte" />
 {/snippet}
 
-<!-- Example 9: With Selected Value Binding -->
+<!-- Example 10: With Selected Value Binding -->
 {#snippet Example7()}
   <div class="p-5 bg-white">
     <div class="mt-4">
@@ -247,7 +274,7 @@
   <CodeBlock code={codeBlocks.codeBlock9} language="svelte"></CodeBlock>
 {/snippet}
 
-<!-- Example 10: Used Inside a Form for progressive enhancement -->
+<!-- Example 11: Used Inside a Form for progressive enhancement -->
 {#snippet ExampleForm()}
   <div class="p-5 bg-white">
     <form method="POST" class="govuk-form-group">
@@ -288,7 +315,7 @@
   <CodeBlock code={codeBlocks.codeBlockForm} language="svelte" />
 {/snippet}
 
-<!-- Example 11: Using enhance for Progressive Enhancement -->
+<!-- Example 12: Using enhance for Progressive Enhancement -->
 {#snippet ExampleEnhance()}
   <div class="p-5 bg-white">
     <form

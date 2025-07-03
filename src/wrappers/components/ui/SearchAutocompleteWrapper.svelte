@@ -236,6 +236,20 @@
         isRequired: false, // It's optional
       },
       {
+        name: "pathBasedApi",
+        category: "Autocomplete",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Set to <code>true</code> for RESTful APIs that expect the query as part of the URL path instead of query parameters.`,
+            `When <code>true</code>: constructs URLs like <code>https://api.example.com/search/london</code>`,
+            `When <code>false</code> (default): constructs URLs like <code>https://api.example.com/search?q=london</code>`,
+            `Use <code>true</code> for APIs like Zippopotam.us that use path-based routing.`,
+          ],
+        },
+      },
+      {
         name: "groupKey",
         category: "Autocomplete",
         value: "", // Default to empty string, means no grouping

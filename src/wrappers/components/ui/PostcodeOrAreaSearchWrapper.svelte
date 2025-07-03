@@ -51,7 +51,7 @@
     `Combines postcode lookup via the postcodes.io API with local area search using ONS geographic data.`,
     `Automatically switches between API and local data sources based on input patterns (postcodes vs area names).`,
     `Built on top of the SearchAutocomplete component with UK-specific functionality.`,
-    `Default UK ONS Censeus geographic data options are bundled with the component for convenience. (Although we are unlikely to update this data in the future, it is possible to provide your own data.)`,
+    `Default UK geographic data is bundled with the component for optimal performance.`,
   ];
 
   let contextArray = [
@@ -59,6 +59,7 @@
     `The component automatically detects postcode-like inputs (containing digits) and uses the postcodes.io API, while area names are searched locally.`,
     `Supports both essential areas only (major administrative boundaries) or all UK areas including parishes and wards.`,
     `Ideal for address forms, location selectors, or geographic data collection.`,
+    `<strong>Note:</strong> All props available on the parent SearchAutocomplete component are inherited, even if not shown again in the demo interface or examples below.`,
   ];
 
   let detailsArray = [

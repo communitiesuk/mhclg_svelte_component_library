@@ -33,7 +33,6 @@
     series,
     y,
     x,
-    tooltipContent,
   } = $props();
 
   let bounds = $state([0, chartHeight]);

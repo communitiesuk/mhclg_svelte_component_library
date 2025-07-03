@@ -190,6 +190,7 @@
     invisibleStrokeWidth: 20,
     placeLabel: true,
     showLabel: true,
+    markerFill: undefined,
   });
 
   let chartWidth = $derived(svgWidth - paddingLeft - paddingRight);

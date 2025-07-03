@@ -270,10 +270,10 @@
             return true;
           }
           if (tier === "hover") {
-            return [hoveredSeries, hoveredSeries].includes(el[series]);
+            return hoveredSeries === el[series];
           }
           if (tier === "clicked") {
-            return [clickedSeries, clickedSeries].includes(el[series]);
+            return clickedSeries === el[series];
           }
         },
       },
@@ -354,6 +354,8 @@
         name: "colors",
         category: "Customising Lines",
         value: colors,
+        description:
+          "Colour palette used for lines that aren't assigned custom colours.",
       },
       {
         name: "hoveredSeries",
@@ -745,18 +747,15 @@
       halo: true,
       pathStrokeWidth: 5,
       interactiveLines: true,
-      lineEnding: null,
       markers: true,
       interactiveMarkers: true,
     },
     clicked: {
       pathStrokeColor: clickedTier === "secondary" ? colors.ashGrey : null,
       pathStrokeWidth: 7,
-      halo: true,
       interactiveLines: false,
       markers: true,
       interactiveMarkers: true,
-      lineEnding: null,
     },
     hover: {
       pathStrokeColor: hoveredTier === "secondary" ? colors.ashGrey : null,
@@ -765,7 +764,6 @@
       interactiveLines: false,
       markers: true,
       interactiveMarkers: true,
-      lineEnding: null,
     },
   });
 

@@ -136,7 +136,7 @@
   {#if markers}
     <Marker
       {dataArray}
-      {markerFill}
+      markerFill={markerFill ?? pathStrokeColor}
       {markerRadius}
       {markerShape}
       {markerStroke}

@@ -26,7 +26,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "In progress",
+    progress: "Baseline completed",
     statusRows: [
       {
         obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },

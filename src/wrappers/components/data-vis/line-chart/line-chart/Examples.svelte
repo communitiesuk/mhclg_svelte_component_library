@@ -160,9 +160,13 @@
   <div
     style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"
   >
-    <i>Value:</i>
-    {activeMarkerId.y}<br /><i>Year:</i>
-    {activeMarkerId.x}
+    {#if activeMarkerId.areaCode === "E07000032"}
+      This tooltip has different text
+    {:else}
+      <i>Value:</i>
+      {activeMarkerId.y}<br /><i>Year:</i>
+      {activeMarkerId.x}
+    {/if}
   </div>
 {/snippet}
 

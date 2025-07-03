@@ -206,13 +206,10 @@
   let selectedLine = $derived([hoveredSeries, clickedSeries]);
 
   function handleClickOutside(event) {
-    {
-      console.log(event.target.closest());
-    }
     if (
       clickedSeries &&
-      !event.target.closest('[id^="line"]') && //make this respond to the new element attribute
-      !event.target.closest('[id^="label"]')
+      !event.target.closest('[data-id^="line"]') && //make this respond to the new element attribute
+      !event.target.closest('[data-id^="label"]')
     ) {
       clickedSeries = null;
     }

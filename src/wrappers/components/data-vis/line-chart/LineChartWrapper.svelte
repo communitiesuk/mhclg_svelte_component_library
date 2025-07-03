@@ -218,7 +218,7 @@
       {
         name: "series",
         category: "Data",
-        value: "series",
+        value: series,
         description: "Data variable used to distinguish between lines",
       },
       {
@@ -926,7 +926,6 @@
       bind:svgWidth
       bind:container
       bind:activeMarkerId
-      bind:series
       bind:markerRect
       bind:currentMousePosition
     ></LineChart>

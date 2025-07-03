@@ -86,8 +86,9 @@
   </marker>
 </defs>
 
-<g data-id={dataId} {element} {opacity}>
+<g data-id={"series-" + dataId} {opacity}>
   <g
+    data-id={"line-" + dataId}
     onclick={interactiveLines ? (e) => onClickSeries(dataId, tier) : null}
     onmouseenter={interactiveLines
       ? (e) => onMouseEnterSeries(dataId, tier)

@@ -63,8 +63,59 @@ export const codeBlock5 = `
   placeholder="Select a fruit object..."
 />`;
 
-// Example 6: Behaviour (Default & Confirm)
+// Example 6: Options with grouping
 export const codeBlock6 = `
+<script>
+  import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
+</script>
+
+<SearchAutocomplete
+  options={[
+    { label: "London", value: "london", region: "A large city in England" },
+    { label: "Birmingham", value: "birmingham", region: "England" },
+    { label: "Manchester", value: "manchester", region: "England" },
+    { label: "Edinburgh", value: "edinburgh", region: "Scotland" },
+    { label: "Glasgow", value: "glasgow", region: "Scotland" },
+    { label: "Cardiff", value: "cardiff", region: "Wales" },
+    { label: "Swansea", value: "swansea", region: "Wales" },
+    { label: "Belfast", value: "belfast", region: "Northern Ireland" },
+  ]}
+  groupKey="region"
+  placeholder="Search UK cities..."
+  label_text="Select a UK city"
+/>`;
+
+// Example 7: Dynamic source selection
+export const codeBlock7 = `
+<script>
+  import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
+</script>
+
+<SearchAutocomplete
+  options={[
+    { label: "London", value: "london", region: "England" },
+    { label: "Birmingham", value: "birmingham", region: "England" },
+    { label: "Manchester", value: "manchester", region: "England" },
+    { label: "Edinburgh", value: "edinburgh", region: "Scotland" },
+  ]}
+  source_url="https://www.gov.uk/api/search.json?suggest=autocomplete"
+  source_key="suggested_autocomplete"
+  groupKey="region"
+  placeholder="Type a city name or search term..."
+  label_text="Search cities or GOV.UK content"
+  minLength={3}
+/>
+
+<!-- Example sourceSelector function (not used in this example):
+  sourceSelector={(query, options) => {
+    // If input has 3+ chars and contains a digit, use API (postcode search)
+    // Otherwise use local options
+    return query.length >= 3 && /\\d/.test(query) ? 'api' : 'options';
+  }}
+-->`;
+
+// Example 8: Behaviour (Default & Confirm)
+export const codeBlock8 = `
 <script>
   import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
 </script>
@@ -76,8 +127,8 @@ export const codeBlock6 = `
   placeholder="Confirm on blur..."
 />`;
 
-// Example 7: Selected Value Binding
-export const codeBlock7 = `
+// Example 9: Selected Value Binding
+export const codeBlock9 = `
 <script lang="ts">
   import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
 
@@ -109,7 +160,7 @@ export const codeBlock7 = `
 {/if}
 `;
 
-// Example 8: Used Inside a Form for progressive enhancement
+// Example 10: Used Inside a Form for progressive enhancement
 export const codeBlockForm = `
 <script lang="ts">
   import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';
@@ -146,7 +197,7 @@ export const codeBlockForm = `
 {/if}
 `;
 
-// Example 9: Using enhance for Progressive Enhancement
+// Example 11: Using enhance for Progressive Enhancement
 export const codeBlockEnhance = `
 <script lang="ts">
   import SearchAutocomplete from '$lib/components/ui/SearchAutocomplete.svelte';

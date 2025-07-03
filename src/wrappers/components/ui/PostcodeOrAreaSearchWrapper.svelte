@@ -51,7 +51,7 @@
     `Combines postcode lookup via the postcodes.io API with local area search using ONS geographic data.`,
     `Automatically switches between API and local data sources based on input patterns (postcodes vs area names).`,
     `Built on top of the SearchAutocomplete component with UK-specific functionality.`,
-    `Default UK geographic data is bundled with the component for optimal performance.`,
+    `Default UK ONS Censeus geographic data options are bundled with the component for convenience. (Although we are unlikely to update this data in the future, it is possible to provide your own data.)`,
   ];
 
   let contextArray = [

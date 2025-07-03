@@ -48,9 +48,6 @@ export const requiredField = `<form>
     name="required_location"
     bind:selectedValue 
   />
-  <button class="govuk-button" type="submit">
-    Submit
-  </button>
 </form>`;
 
 export const customData = `<script>

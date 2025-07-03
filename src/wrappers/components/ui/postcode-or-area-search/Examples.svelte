@@ -210,12 +210,6 @@
         name="required_location"
         bind:selectedValue={requiredField}
       />
-      <button
-        class="mt-3 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
-        type="submit"
-      >
-        Submit
-      </button>
     </form>
     {#if requiredField}
       <p class="mt-3 font-semibold">

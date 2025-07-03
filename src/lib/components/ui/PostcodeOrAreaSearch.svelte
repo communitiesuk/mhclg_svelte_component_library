@@ -25,11 +25,10 @@
     essOnly?: boolean; // Whether to filter to essential geocodes only
 
     // Custom lookup functions/data (for flexibility)
-    customGeoNames?: Record<
+    customTypeLookup?: Record<
       string,
       { label: string; plural: string; childGroup?: boolean }
     >;
-    customGeoCodesLookup?: Record<string, { label: string; plural?: string }>;
     customEssGeocodes?: string[];
     customGetTypeLabel?: (type: string) => string;
 
@@ -63,8 +62,7 @@
   let {
     customPlacesData = undefined,
     essOnly = false,
-    customGeoNames = undefined,
-    customGeoCodesLookup = undefined,
+    customTypeLookup = undefined,
     customEssGeocodes = undefined,
     customGetTypeLabel = undefined,
     postcodeApiUrl = "https://api.postcodes.io/postcodes",
@@ -87,14 +85,10 @@
   }: Props = $props();
 
   // --- Use custom lookups or defaults ---
-  const geoNamesLookup =
-    customGeoNames && Object.keys(customGeoNames).length > 0
-      ? customGeoNames
+  const typeLookup =
+    customTypeLookup && Object.keys(customTypeLookup).length > 0
+      ? customTypeLookup
       : geoNames;
-  const geoCodesLookupTable =
-    customGeoCodesLookup && Object.keys(customGeoCodesLookup).length > 0
-      ? customGeoCodesLookup
-      : geoCodesLookup;
   const essGeocodesArray =
     customEssGeocodes && customEssGeocodes.length > 0
       ? customEssGeocodes
@@ -109,10 +103,10 @@
         return customLabel;
       }
     }
-    // Otherwise use default lookup logic
-    return geoNamesLookup[type]
-      ? geoNamesLookup[type].label
-      : geoCodesLookupTable[type]?.label || type;
+    // Otherwise use lookup table (custom or default)
+    return typeLookup[type]
+      ? typeLookup[type].label
+      : geoCodesLookup[type]?.label || type;
   };
 
   // Default source selector: use API for postcode-like inputs, options for area names

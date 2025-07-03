@@ -208,33 +208,18 @@
 
       // --- Custom Lookup Configuration ---
       {
-        name: "customGeoNames",
+        name: "customTypeLookup",
         category: "Custom Lookups",
         value: {},
         description: {
           markdown: true,
           arr: [
-            `Custom geographic type names lookup. Overrides default UK geocode type labels.`,
+            `Custom type lookup table for area code classifications. Overrides default UK geocode type labels.`,
             `<strong>Key format:</strong> Uses the first 3 characters of area codes as lookup keys.`,
             `Format: <code>{ "E06": { label: "Unitary Authority", plural: "Unitary Authorities" } }</code>`,
             `Used for generating human-readable group labels like "Unitary Authority in Greater London".`,
             `Example: Area code "E06000001" → lookup key "E06" → label "Unitary Authority".`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "customGeoCodesLookup",
-        category: "Custom Lookups",
-        value: {},
-        description: {
-          markdown: true,
-          arr: [
-            `Custom geocodes lookup table. Provides labels for area codes not in geoNames.`,
-            `<strong>Key format:</strong> Uses the first 3 characters of area codes as lookup keys.`,
-            `Format: <code>{ "E12": { label: "Region" } }</code>`,
-            `Used as fallback when an area type isn't found in the main geoNames lookup.`,
-            `Example: Area code "E12000007" → lookup key "E12" → label "Region".`,
+            `For simple lookups, this is easier than writing a custom function.`,
           ],
         },
         rows: 5,
@@ -250,7 +235,7 @@
             `<strong>Format:</strong> Array of 3-character prefixes that match the first 3 characters of area codes.`,
             `Default includes major UK boundaries: <code>["E06", "E07", "E08", "E09", "E10", "E12", "E47", "S12", "W06"]</code>`,
             `Example: Include "E06" to show all areas with codes starting "E06" (like "E06000001", "E06000047").`,
-            `Customise for different countries or to include/exclude specific area types.`,
+            `Customize for different countries or to include/exclude specific area types.`,
           ],
         },
         rows: 3,
@@ -261,24 +246,24 @@
         value: () => null,
         propType: "fixed",
         functionElements: {
-          functionAsString: `// Example custom type label function:
-// (type) => {
-//   const customLabels = {
-//     'US1': 'State',      // For area codes starting 'US1'
-//     'CA1': 'City',       // For area codes starting 'CA1'  
-//     'E06': 'Authority'   // For area codes starting 'E06'
-//   };
-//   return customLabels[type] || type;
+          functionAsString: `// Example: Extract type from complex area code patterns
+// (areaCode) => {
+//   // Use regex to extract type from different code formats
+//   if (/^E0[6-9]/.test(areaCode)) return 'Unitary Authority';
+//   if (/^E1[0-2]/.test(areaCode)) return 'County/Region'; 
+//   if (/^[A-Z]{2}\\d{2}/.test(areaCode)) return 'Custom Area';
+//   return areaCode.slice(0, 3); // fallback to first 3 chars
 // }`,
         },
         description: {
           markdown: true,
           arr: [
-            `Custom function to generate type labels. Overrides the default lookup logic entirely.`,
-            `<strong>Input:</strong> Receives the first 3 characters of the area code as the <code>type</code> parameter.`,
+            `Custom function for complex type label logic. Provides complete programmatic control.`,
+            `<strong>Input:</strong> Receives the first 3 characters of the area code as the parameter.`,
             `Function signature: <code>(type: string) => string</code>`,
             `Example: Area code "E06000001" → function receives "E06" as input.`,
-            `Useful for complete control over how area types are displayed.`,
+            `Use when you need regex patterns, conditional logic, or computed labels.`,
+            `Takes priority over <code>customTypeLookup</code> when both are provided.`,
           ],
         },
       },

@@ -70,7 +70,7 @@ export const customData = `<script>
     { areacd: "TX1", areanm: "Houston", parentcd: "US3" }
   ];
   
-  const usGeoNames = {
+  const usTypeLookup = {
     // 3-character lookups that match areacd.slice(0,3)
     "USA": { label: "Country", plural: "Countries" },
     "US1": { label: "State", plural: "States" },
@@ -87,7 +87,7 @@ export const customData = `<script>
 
 <PostcodeOrAreaSearch 
   customPlacesData={usPlaces}
-  customGeoNames={usGeoNames}
+  customTypeLookup={usTypeLookup}
   customEssGeocodes={["US1", "US2", "US3", "US4", "US5"]}
   label_text="Search US states and cities"
   placeholder="e.g. California, New York, Los Angeles"
@@ -96,6 +96,35 @@ export const customData = `<script>
 />
 
 <!-- Demonstrates hierarchical geographic data structure -->`;
+
+export const regexTypeLabels = `<script>
+  // Use regex patterns to classify area codes with unique, clear types
+  const regexTypeLabels = (type) => {
+    // Pattern matching for different area types
+    if (/^E0[6-9]/.test(type)) return 'Local Authority';     // E06, E07, E08, E09
+    if (/^E1[0-2]/.test(type)) return 'Regional Area';       // E10, E11, E12
+    if (/^W0[1-6]/.test(type)) return 'Welsh Territory';     // W01-W06
+    if (/^S1[0-5]/.test(type)) return 'Scottish Zone';       // S10-S15
+    if (/^N0[1-9]/.test(type)) return 'Northern Ireland';    // N01-N09
+    
+    // Statistical areas with different patterns
+    if (/^[EW]0[01]/.test(type)) return 'Small Statistical Area';   // E00, E01, W00, W01
+    if (/^[EW]02/.test(type)) return 'Medium Statistical Area';     // E02, W02
+    
+    // Fallback for anything else
+    return 'Other Area';
+  };
+</script>
+
+<PostcodeOrAreaSearch 
+  customGetTypeLabel={regexTypeLabels}
+  label_text="Search with regex classification"
+  hint="Area types determined by regex patterns instead of lookup tables"
+  placeholder="e.g. Westminster, Birmingham, Cardiff"
+  bind:selectedValue 
+/>
+
+<!-- Demonstrates regex-based type classification with distinct, clear categories -->`;
 
 export const customTypes = `<script>
   const customTypeLabels = (type) => {
@@ -125,8 +154,8 @@ export const customTypes = `<script>
 />`;
 
 export const customGeoTypes = `<script>
-  // Custom GeoNames based on specific geoTypes categories
-  const customGeoNames = {
+  // Custom type lookup based on specific geoTypes categories
+  const customTypeLookup = {
     // Combined/Upper-tier authorities (cauth codes)
     'E06': { label: 'upper-tier/combined authority', plural: 'upper-tier/combined authorities' },
     'E09': { label: 'upper-tier/combined authority', plural: 'upper-tier/combined authorities' },
@@ -173,7 +202,7 @@ export const customGeoTypes = `<script>
 </script>
 
 <PostcodeOrAreaSearch 
-  customGeoNames={customGeoNames}
+  customTypeLookup={customTypeLookup}
   customEssGeocodes={customEssGeocodes}
   essOnly={true}
   label_text="Search authorities and statistical areas"

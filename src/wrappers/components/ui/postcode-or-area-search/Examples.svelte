@@ -14,6 +14,7 @@
   let onBlueBackground = $state("");
   let requiredField = $state("");
   let customDataExample = $state("");
+  let regexTypeLabelsExample = $state("");
   let customLabelsExample = $state("");
   let customGeoTypesExample = $state("");
 
@@ -55,12 +56,17 @@
     },
     {
       id: "8",
-      heading: "8. Custom type labels and grouping",
-      content: CustomTypesExample,
+      heading: "8. Regex-based type classification",
+      content: RegexTypeLabelsExample,
     },
     {
       id: "9",
-      heading: "9. Custom geographic types (authorities & statistical areas)",
+      heading: "9. Custom type labels and grouping",
+      content: CustomTypesExample,
+    },
+    {
+      id: "10",
+      heading: "10. Custom geographic types (authorities & statistical areas)",
       content: CustomGeoTypesExample,
     },
   ];
@@ -243,7 +249,7 @@
         { areacd: "NY1", areanm: "New York City", parentcd: "US2" },
         { areacd: "TX1", areanm: "Houston", parentcd: "US3" },
       ]}
-      customGeoNames={{
+      customTypeLookup={{
         // 3-character lookups that match areacd.slice(0,3)
         USA: { label: "Country", plural: "Countries" },
         US1: { label: "State", plural: "States" },
@@ -270,6 +276,43 @@
     {/if}
   </div>
   <CodeBlock code={codeBlocks.customData} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet RegexTypeLabelsExample()}
+  <div class="p-5 bg-white">
+    <p class="mb-4 text-gray-700">
+      Use regex patterns to classify area codes with unique, clear types. This
+      demonstrates how to create custom groupings based on code patterns:
+    </p>
+    <PostcodeOrAreaSearch
+      customGetTypeLabel={(type) => {
+        // Pattern matching for different area types
+        if (/^E0[6-9]/.test(type)) return "Local Authority"; // E06, E07, E08, E09
+        if (/^E1[0-2]/.test(type)) return "Regional Area"; // E10, E11, E12
+        if (/^W0[1-6]/.test(type)) return "Welsh Territory"; // W01-W06
+        if (/^S1[0-5]/.test(type)) return "Scottish Zone"; // S10-S15
+        if (/^N0[1-9]/.test(type)) return "Northern Ireland"; // N01-N09
+
+        // Statistical areas with different patterns
+        if (/^[EW]0[01]/.test(type)) return "Small Statistical Area"; // E00, E01, W00, W01
+        if (/^[EW]02/.test(type)) return "Medium Statistical Area"; // E02, W02
+
+        // Fallback for anything else
+        return "Other Area";
+      }}
+      label_text="Search with regex classification"
+      hint="Area types determined by regex patterns instead of lookup tables"
+      placeholder="e.g. Southampton, East of England, Cardiff"
+      bind:selectedValue={regexTypeLabelsExample}
+    />
+    {#if regexTypeLabelsExample}
+      <p class="mt-3 font-semibold">
+        <strong>Selected:</strong>
+        {regexTypeLabelsExample}
+      </p>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.regexTypeLabels} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet CustomTypesExample()}
@@ -315,7 +358,7 @@
       utla, ltla, msoa, lsoa, and oa:
     </p>
     <PostcodeOrAreaSearch
-      customGeoNames={{
+      customTypeLookup={{
         // Combined/Upper-tier authorities (cauth codes)
         E06: {
           label: "upper-tier/combined authority",

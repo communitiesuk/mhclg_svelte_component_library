@@ -2,6 +2,7 @@
   import {
     MapLibre,
     GeoJSON,
+    VectorTileSource,
     FillLayer,
     LineLayer,
     zoomTransition,
@@ -162,6 +163,14 @@
       ? customPalette
       : colorbrewer[colorPalette][breakCount],
   );
+
+  let tooFewColors = $derived(fillColors.length < breakCount);
+
+  $effect(() => {
+    if (tooFewColors) {
+      console.warn("Too few colours for the number of breaks");
+    }
+  });
 
   let borderColor = "#003300";
 
@@ -369,7 +378,7 @@
       <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
     {/if}
 
-    <GeoJSON id="areas" data={merged} promoteId="areanm">
+    <!-- <GeoJSON id="areas" data={merged} promoteId="areanm">
       <FillLayer
         paint={{
           "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
@@ -404,7 +413,66 @@
           beforeLayerType="symbol"
         />
       {/if}
-    </GeoJSON>
+    </GeoJSON> -->
+
+    <!-- <VectorTileSource
+      tiles={[
+        "https://tiles.mapillary.com/maps/vtp/mly1_public/2/{z}/{x}/{y}?access_token=MLY|4142433049200173|72206abe5035850d6743b23a49c41333",
+      ]}
+    > -->
+
+    <!-- <VectorTileSource
+      id={"imdlayer"}
+      tiles={["https://cdn.ons.gov.uk/maptiles/t18/tiles/{z}/{x}/{y}.pbf"]}
+    > -->
+
+    <VectorTileSource
+      id={"lsoas"}
+      promoteId={"LSOA21NM"}
+      tiles={["http://localhost:8080/{z}/{x}/{y}.pbf"]}
+      minzoom={6}
+      maxzoom={14}
+    >
+      <FillLayer
+        paint={{
+          "fill-color": "#234567",
+          "fill-opacity": 0.4,
+        }}
+        sourceLayer={"LSOA"}
+        onclick={interactive
+          ? (e) => {
+              console.log(e);
+              return zoomToArea(e);
+            }
+          : undefined}
+        onmousemove={interactive
+          ? (e) => {
+              hoveredArea = e.features[0].id;
+              hoveredAreaData =
+                e.features[0].properties[
+                  "Index of Multiple Deprivation (IMD) Rank"
+                ];
+              currentMousePosition = e.event.point;
+            }
+          : undefined}
+        onmouseleave={interactive
+          ? () => {
+              hoveredArea = null;
+              hoveredAreaData = null;
+            }
+          : undefined}
+      ></FillLayer>
+      <LineLayer
+        layout={{ "line-cap": "round", "line-join": "round" }}
+        paint={{
+          "line-color": hoverStateFilter(borderColor, "orange"),
+          "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
+        }}
+        beforeLayerType="symbol"
+        sourceLayer={"LSOA"}
+      />
+    </VectorTileSource>
+    <!-- Important note: sourceLayer must match `-l` value from tippecanoe -->
 
     {#if interactive && tooltip}
       <Tooltip

@@ -3,6 +3,7 @@
     $props();
   let tooltipHeight = $state();
   let tooltipWidth = $state();
+  $inspect(hoveredAreaData);
   // $inspect(tooltipHeight, tooltipWidth, currentMousePosition);
 </script>
 
@@ -15,8 +16,7 @@
   >
     <p>{hoveredArea}</p>
     <p class="detail">
-      {year}
-      {metric}: {isNaN(hoveredAreaData) ? "No data" : hoveredAreaData}
+      2019 IMD rank: {hoveredAreaData ?? "No data"}
     </p>
   </div>
 {/if}

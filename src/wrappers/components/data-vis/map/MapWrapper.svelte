@@ -189,20 +189,16 @@
       {
         name: "maxZoom",
         isProp: true,
-        description:
-          "Add zoom in and out, and 'reset bearing to north' buttons",
-        value: 10,
-        category: "UI",
-        visible: { name: "standardControls", value: false },
+        description: "The maximum zoom level, up to 22",
+        value: 15,
+        category: "View",
       },
       {
         name: "minZoom",
         isProp: true,
-        description:
-          "Add zoom in and out, and 'reset bearing to north' buttons",
+        description: "The minimum zoom level, at least 0",
         value: 0,
-        category: "UI",
-        visible: { name: "standardControls", value: false },
+        category: "View",
       },
       {
         name: "navigationControlPosition",
@@ -307,6 +303,7 @@
         options: [
           "Carto-light",
           "Carto-dark",
+          "https://raw.githubusercontent.com/fryford/imdmap/refs/heads/master/data/style.json",
           "https://raw.githubusercontent.com/ONSvisual/svelte-maps/refs/heads/main/dist/data/style-ons-light.json",
           { version: 8, sources: {}, layers: [] },
         ],

@@ -63,7 +63,13 @@ echo '[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"' >> ~/.
 - `.zprofile` runs once per login session (perfect for environment setup)
 - We can create `.zprofile` fresh without permission issues
 
-**Why this step:** Without this configuration, you'd need to manually run the long nvm export command every time you open a new terminal.
+**Why this step:** Without this configuration, you'd need to manually run this long command every time you open a new terminal:
+
+```bash
+export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+```
+
+This command loads nvm into your shell session. Without it, your terminal defaults back to the system Node.js (`/usr/local/bin/node`) and you'd get permission errors again. The `.zprofile` configuration runs this automatically on login.
 
 ### Step 3: Load nvm and Install Node.js
 

@@ -30,7 +30,7 @@
 </script>
 
 <g
-  {id}
+  data-id={id}
   transform="translate({chartWidth + 8},{0})"
   onclick={interactiveLines
     ? () => onClickSeries(dataArray[series], tier)
@@ -54,7 +54,6 @@
     stroke-width="1"
   ></path>
   <text
-    {id}
     dominant-baseline="central"
     text-anchor="start"
     x={20}

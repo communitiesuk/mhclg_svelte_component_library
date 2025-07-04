@@ -66,8 +66,8 @@
     hoverOpacity = 0.8,
     center = [-2.5, 53],
     zoom = 5,
-    minZoom = undefined,
-    maxZoom = undefined,
+    minZoom = 6,
+    maxZoom = 14,
     maxBoundsCoords = [
       [-10, 49],
       [5, 60],
@@ -435,7 +435,34 @@
     >
       <FillLayer
         paint={{
-          "fill-color": "#234567",
+          "fill-color": [
+            "match",
+            [
+              "to-number",
+              ["get", "Index of Multiple Deprivation (IMD) Decile"],
+            ],
+            1,
+            "#ffffcc",
+            2,
+            "#ffffcc",
+            3,
+            "#a1dab4",
+            4,
+            "#a1dab4",
+            5,
+            "#41b6c4",
+            6,
+            "#41b6c4",
+            7,
+            "#2c7fb8",
+            8,
+            "#2c7fb8",
+            9,
+            "#253494",
+            10,
+            "#253494",
+            /* default */ "rgba(0,0,0,0)",
+          ],
           "fill-opacity": 0.4,
         }}
         sourceLayer={"LSOA"}
@@ -462,15 +489,22 @@
             }
           : undefined}
       ></FillLayer>
-      <LineLayer
-        layout={{ "line-cap": "round", "line-join": "round" }}
-        paint={{
-          "line-color": hoverStateFilter(borderColor, "orange"),
-          "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
-        }}
-        beforeLayerType="symbol"
-        sourceLayer={"LSOA"}
-      />
+      {#if showBorder}
+        <LineLayer
+          layout={{ "line-cap": "round", "line-join": "round" }}
+          paint={{
+            "line-color": hoverStateFilter(borderColor, "orange"),
+            "line-width": zoomTransition(
+              minZoom ?? 3,
+              0,
+              maxZoom ?? 14,
+              maxBorderWidth,
+            ),
+          }}
+          beforeLayerType="symbol"
+          sourceLayer={"LSOA"}
+        />
+      {/if}
     </VectorTileSource>
     <!-- Important note: sourceLayer must match `-l` value from tippecanoe -->
 

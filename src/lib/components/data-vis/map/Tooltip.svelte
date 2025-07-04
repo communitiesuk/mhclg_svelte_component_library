@@ -3,7 +3,7 @@
     $props();
   let tooltipHeight = $state();
   let tooltipWidth = $state();
-  $inspect(hoveredAreaData);
+
   // $inspect(tooltipHeight, tooltipWidth, currentMousePosition);
 </script>
 

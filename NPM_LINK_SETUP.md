@@ -38,7 +38,7 @@ npm error Error: EACCES: permission denied, mkdir '/usr/local/lib/node_modules/@
 - **Because you own your home folder**, npm can freely write, link, or update files there without special privileges
 - This eliminates permission issues entirely
 
-## Step-by-Step Setup
+## Step-by-Step Setup based on these instructions: https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/#heading-how-to-install-nvm-on-linux-and-mac
 
 ### Step 1: Install nvm
 

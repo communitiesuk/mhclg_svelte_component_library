@@ -46,6 +46,20 @@ npm error Error: EACCES: permission denied, mkdir '/usr/local/lib/node_modules/@
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 ```
 
+**How to find the latest version:** Check the [nvm releases page](https://github.com/nvm-sh/nvm/releases) on GitHub to get the most recent version number. Replace `v0.39.0` in the command above with the latest version (e.g., `v0.39.1`).
+
+**What these commands do:**
+- curl is a simple, command-line tool for fetching (or “transferring”) data over the internet.
+- `curl` or `wget` downloads the installation script from GitHub
+- The `|` (pipe) sends the downloaded script directly to `bash` to execute it
+- This downloads and runs the nvm installer in one command
+
+You can also use `wget` if `curl` is not available (some minimal Linux systems don't include curl by default, which isn't an issue on our teams Mac OS):
+
+```bash
+wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+```
+
 **Why this step:** Downloads and installs nvm to `~/.nvm/` directory, which is owned by your user.
 
 ### Step 2: Configure Shell Auto-loading (Using .zprofile)

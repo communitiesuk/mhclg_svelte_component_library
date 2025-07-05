@@ -49,6 +49,7 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 **How to find the latest version:** Check the [nvm releases page](https://github.com/nvm-sh/nvm/releases) on GitHub to get the most recent version number. Replace `v0.39.0` in the command above with the latest version (e.g., `v0.39.1`).
 
 **What these commands do:**
+
 - curl is a simple, command-line tool for fetching (or “transferring”) data over the internet.
 - `curl` or `wget` downloads the installation script from GitHub
 - The `|` (pipe) sends the downloaded script directly to `bash` to execute it
@@ -183,3 +184,69 @@ This nvm approach provides:
 - **Flexibility:** Easy to switch Node.js versions if needed
 
 The setup takes a few minutes but eliminates permission issue in long term.
+
+## Bonus: Why nvm is Useful Beyond npm link
+
+Even though we installed nvm to solve the npm link permission issue, it's actually a powerful tool for managing multiple Node.js versions across different projects.
+
+### The Problem nvm Solves
+
+Different projects often require different Node.js versions:
+
+- **Legacy project** might need Node.js v16
+- **New project** might use Node.js v20
+- **Experimental project** might want the latest v22
+
+Without nvm, you'd need to:
+
+- Manually install/uninstall Node.js versions
+- Risk compatibility issues
+- Get warnings like "This project requires Node version X"
+
+### How to Use nvm for Different Projects
+
+**Install specific Node.js versions:**
+
+```bash
+nvm install 16.20.0    # Install specific version
+nvm install 18         # Install latest v18
+nvm install node       # Install latest stable
+```
+
+**Switch between versions:**
+
+```bash
+nvm use 16.20.0        # Switch to v16.20.0
+nvm use 18             # Switch to latest v18
+nvm use node           # Switch to latest stable
+```
+
+**Set default version:**
+
+```bash
+nvm alias default 18   # Make v18 your default
+```
+
+**Check what's installed:**
+
+```bash
+nvm list              # Show installed versions
+nvm current           # Show current active version
+```
+
+### Project-Specific Node.js Versions
+
+**Create a `.nvmrc` file in your project root:**
+
+```bash
+echo "18.17.0" > .nvmrc
+```
+
+**Then team members can automatically use the right version:**
+
+```bash
+cd your-project
+nvm use               # Automatically uses version from .nvmrc
+```
+
+This ensures everyone on our team uses the same Node.js version for each project, eliminating "works on my machine" issues.

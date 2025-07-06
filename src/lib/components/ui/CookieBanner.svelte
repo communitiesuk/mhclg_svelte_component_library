@@ -5,7 +5,7 @@
   import {
     handleCookiesNavigation as handleCookiesNav,
     createCookiesUrl,
-  } from "$lib/utils/cookiesNavigation";
+  } from "./../../utils/cookiesNavigation";
 
   interface ConsentMode {
     ad_storage: "granted" | "denied";

@@ -2,8 +2,8 @@
   import { clsx } from "clsx";
   import { browser } from "$app/environment";
   import { onMount } from "svelte";
-  import IconSearch from "$lib/icons/IconSearch.svelte";
-  import closeIconUrl from "$lib/assets/govuk_publishing_components/images/icon-close.svg?url";
+  import IconSearch from "./../../icons/IconSearch.svelte";
+  import closeIconUrl from "./../../assets/govuk_publishing_components/images/icon-close.svg?url";
 
   // SSR-safe HTML sanitizer: no-op on server
   let sanitize = $state<(html: string) => string>((html) => html);

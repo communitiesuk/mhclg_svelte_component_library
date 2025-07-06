@@ -45,7 +45,9 @@
     ".": {
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js"
-    }
+    },
+    "./src/lib/index.js": "./src/lib/index.js",
+    "./src/lib/components/*": "./src/lib/components/*.svelte"
   },
   "peerDependencies": {
     "@sveltejs/kit": "^2.0.0",

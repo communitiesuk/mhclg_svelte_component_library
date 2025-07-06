@@ -1,11 +1,11 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { clsx } from "clsx";
-  import Search from "$lib/components/ui/Search.svelte"; // Base component
+  import Search from "./Search.svelte"; // Base component
   import "accessible-autocomplete/dist/accessible-autocomplete.min.css";
   import { browser } from "$app/environment";
-  import suggestionIconUrl from "$lib/assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg?url";
-  import closeIconUrl from "$lib/assets/govuk_publishing_components/images/icon-close.svg?url"; // Import for the cancel button
+  import suggestionIconUrl from "./../../assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg?url";
+  import closeIconUrl from "./../../assets/govuk_publishing_components/images/icon-close.svg?url"; // Import for the cancel button
 
   // SSR-safe HTML sanitizer: no-op on server
   let sanitize: (html: string) => string = (html) => html;

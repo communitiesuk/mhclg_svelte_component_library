@@ -44,10 +44,12 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "svelte": "./dist/index.js"
+      "svelte": "./dist/index.js",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
     },
-    "./src/lib/index.js": "./src/lib/index.js",
-    "./src/lib/components/*": "./src/lib/components/*.svelte"
+    "./src/*": "./src/lib/*",
+    "./src/lib/*": "./src/lib/*"
   },
   "peerDependencies": {
     "@sveltejs/kit": "^2.0.0",

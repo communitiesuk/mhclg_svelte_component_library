@@ -64,6 +64,8 @@
   }>();
 </script>
 
+Check - hello
+
 <!-- Main footer container -->
 <footer class="govuk-footer">
   <div class={containerWidth}>

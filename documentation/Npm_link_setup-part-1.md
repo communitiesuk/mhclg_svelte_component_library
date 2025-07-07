@@ -1,4 +1,4 @@
-# Setting Up npm link with nvm - Avoiding Permission Issues
+# Setting up npm link with nvm - Avoiding Permission Issues
 
 ## The Problem
 
@@ -252,7 +252,7 @@ echo "18.17.0" > .nvmrc
 
 ```bash
 cd your-project
-npm run sync-node-versiion # custom script to install version of node compatible with node version range specfied in engine. This will also update the .nvmrc file version. 
+npm run sync-node-versiion # custom script to install version of node compatible with node version range specfied in engine. This will also update the .nvmrc file version.
 nvm use               # Automatically uses version from .nvmrc
 ```
 

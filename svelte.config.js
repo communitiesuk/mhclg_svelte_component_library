@@ -1,6 +1,5 @@
 import adapter from "@sveltejs/adapter-static";
 import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
-// import { mdsvex } from 'mdsvex';
 import { join } from "path";
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -16,8 +15,8 @@ const config = {
     adapter: adapter({
       // default options are shown. On some platforms
       // these options are set automatically — see below
-      pages: "docs",
-      assets: "docs",
+      pages: "pack",
+      assets: "pack",
       fallback: undefined,
       precompress: false,
       strict: true,

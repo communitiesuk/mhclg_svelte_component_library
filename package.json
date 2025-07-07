@@ -46,7 +46,9 @@
     ".": {
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js"
-    }
+    },
+    "./src/lib/index.js": "./src/lib/index.js",
+    "./src/lib/components/*": "./src/lib/components/*.svelte"
   },
   "engines": {
     "node": ">=20.0.0"

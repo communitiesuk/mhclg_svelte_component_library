@@ -1,5 +1,5 @@
 <script lang="ts">
-  import homepageIllustration from "$lib/assets/images/homepage-illustration.svg";
+  import homepageIllustration from "./../../assets/images/homepage-illustration.svg";
 
   // Define component props with types and default values
   let {

@@ -1,12 +1,12 @@
 <script>
   // @ts-nocheck
-  import SeriesLabel from "$lib/components/data-vis/line-chart/SeriesLabel.svelte";
-  import Line from "$lib/components/data-vis/line-chart/Line.svelte";
+  import SeriesLabel from "./SeriesLabel.svelte";
+  import Line from "./Line.svelte";
 
   import { scaleLinear } from "d3-scale";
   import { curveLinear, line, area } from "d3-shape";
-  import { highlight } from "$lib/utils/syntax-highlighting/shikiHighlight";
-  import Lines from "$lib/components/data-vis/line-chart/Lines.svelte";
+  import { highlight } from "./../../../utils/syntax-highlighting/shikiHighlight";
+  import Lines from "./Lines.svelte";
   import ValueLabel from "./ValueLabel.svelte";
 
   let {

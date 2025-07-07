@@ -1,12 +1,12 @@
 <script lang="ts">
   import SearchAutocomplete from "./SearchAutocomplete.svelte";
-  import { capitalise } from "$lib/utils/text-string-conversion/textStringConversion.js";
+  import { capitalise } from "./../../utils/text-string-conversion/textStringConversion";
   import {
     geoNames,
     geoCodesLookup,
     essGeocodes,
-  } from "$lib/utils/area-search/geoConfig";
-  import defaultPlacesData from "$lib/data/places.json";
+  } from "./../../utils/area-search/geoConfig";
+  import defaultPlacesData from "./../../data/places.json";
 
   // --- Define Types ---
   type SuggestionObject = { label: string; value: any; [key: string]: any };

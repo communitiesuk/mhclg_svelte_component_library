@@ -123,7 +123,7 @@
       bind:hoveredSeries
     ></LineChart>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example3()}
@@ -153,7 +153,7 @@
       }}
     ></LineChart>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet tooltipSnippet(activeMarkerId)}
@@ -184,7 +184,7 @@
       {tooltipSnippet}
     ></LineChart>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example5()}
@@ -201,7 +201,7 @@
       }}
     ></LineChart>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example6()}
@@ -272,7 +272,7 @@
       }}
     ></LineChart>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock6} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example7()}
@@ -285,7 +285,7 @@
       colors={["royalblue", "steelblue", "darkblue", "blue", "navy"]}
     ></LineChart>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock7} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example8()}
@@ -307,5 +307,5 @@
       }}
     ></LineChart>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock8} language="svelte"></CodeBlock>
 {/snippet}

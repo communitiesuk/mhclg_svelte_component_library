@@ -33,12 +33,16 @@ npm error Error: EACCES: permission denied, mkdir '/usr/local/lib/node_modules/@
 
 ### nvm installs everything under your home directory
 
+See detailed info here: https://github.com/nvm-sh/nvm
+
 - nvm lives in `~/.nvm/` (where `~` expands to `/Users/your-account` on macOS)
 - `nvm install` downloads Node into `~/.nvm/versions/node/v24.3.0/bin/node` (and matching npm)
 - **Because you own your home folder**, npm can freely write, link, or update files there without special privileges
 - This eliminates permission issues entirely
 
 ## Step-by-Step Setup based on these instructions: https://www.freecodecamp.org/news/node-version-manager-nvm-install-guide/#heading-how-to-install-nvm-on-linux-and-mac
+
+and more detailed info here: https://github.com/nvm-sh/nvm
 
 ### Step 1: Install nvm
 
@@ -205,6 +209,8 @@ Without nvm, you'd need to:
 
 ### How to Use nvm for Different Projects
 
+More detailed info here: https://github.com/nvm-sh/nvm
+
 **Install specific Node.js versions:**
 
 ```bash
@@ -246,6 +252,7 @@ echo "18.17.0" > .nvmrc
 
 ```bash
 cd your-project
+npm run sync-node-versiion # custom script to install version of node compatible with node version range specfied in engine. This will also update the .nvmrc file version. 
 nvm use               # Automatically uses version from .nvmrc
 ```
 

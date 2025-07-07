@@ -28,7 +28,8 @@
     "copy-govuk-assets": "node scripts/copy-govuk-assets-to-static.js",
     "copy-moj-assets": "node scripts/copy-moj-assets-to-static.js",
     "prepare": "",
-    "create-component-and-wrapper-pages": "node scripts/create-component-and-wrapper-pages.js"
+    "create-component-and-wrapper-pages": "node scripts/create-component-and-wrapper-pages.js",
+    "sync-node-version": "node -pe \"require('./package.json').engines.node.match(/\\d+/)[0]\" > .nvmrc && echo '.nvmrc updated to use latest Node.js v'$(cat .nvmrc)'.x' && source ~/.zprofile && INSTALL_OUTPUT=$(nvm install $(cat .nvmrc) 2>&1 | grep -E '(already installed|Downloading and installing)') && echo $INSTALL_OUTPUT && INSTALLED_VERSION=$(echo $INSTALL_OUTPUT | grep -o 'v[0-9.]*') && echo 'Node.js '$INSTALLED_VERSION' ready. To switch in this terminal: nvm use'"
   },
   "files": [
     "dist",
@@ -46,6 +47,9 @@
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js"
     }
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "peerDependencies": {
     "@sveltejs/kit": "^2.0.0",

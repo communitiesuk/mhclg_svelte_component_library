@@ -15,7 +15,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite dev",
     "build": "vite build && npm run package",
-    "deploy": "gh-pages -d pack",
+    "deploy": "gh-pages -d docs",
     "preview": "vite preview",
     "prepackage": "tsx scripts/generate-index.ts && node scripts/copy-static-assets-to-lib.js",
     "package": "npm run prepackage && svelte-kit sync && svelte-package && publint",

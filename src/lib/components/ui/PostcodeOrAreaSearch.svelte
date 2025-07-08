@@ -46,6 +46,7 @@
 
     // Pass-through props to SearchAutocomplete
     selectedValue?: any;
+    maxSuggestions?: number; // Maximum number of suggestions to display
     label_text?: string;
     button_text?: string;
     name?: string;
@@ -70,6 +71,7 @@
     postcodeApiProperty = "postcode",
     postcodeApiPathBased = false,
     customSourceSelector = undefined,
+    maxSuggestions = undefined,
     selectedValue = $bindable(),
     label_text = "Search for a postcode or area",
     button_text = "Search",
@@ -183,6 +185,7 @@
     pathBasedApi: postcodeApiPathBased,
     groupKey: "group",
     sourceSelector,
+    maxSuggestions,
     label_text,
     button_text,
     name,

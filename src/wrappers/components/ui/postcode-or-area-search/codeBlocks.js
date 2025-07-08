@@ -208,3 +208,68 @@ export const customGeoTypes = `<script>
 />
 
 <!-- Demonstrates custom geographic type configuration based on geoTypes -->`;
+
+export const limitedSuggestions = `<script>
+  import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
+  
+  let selectedValue = $state("");
+</script>
+
+<PostcodeOrAreaSearch 
+  maxSuggestions={5}
+  label_text="Search UK areas (max 5 suggestions)"
+  hint="Only the first 5 matching areas will be shown"
+  placeholder="e.g. Westminster, Birmingham"
+  bind:selectedValue 
+/>
+
+{#if selectedValue}
+  <p>Selected: {selectedValue}</p>
+{/if}
+
+<!-- Limits suggestions to 5 for better performance with large datasets -->`;
+
+export const hierarchyData = `<script>
+  import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
+  import hierarchyData from "$lib/data/geographic-hierarchy-flat.json";
+  
+  let selectedValue = $state("");
+</script>
+
+<PostcodeOrAreaSearch 
+  customPlacesData={hierarchyData.data}
+  customTypeLookup={{
+    // Area type mappings based on the hierarchy data
+    E00: { label: "OA", plural: "Output Areas" },
+    E01: { label: "LSOA", plural: "Lower Super Output Areas" },
+    E02: { label: "MSOA", plural: "Middle Super Output Areas" },
+    E06: { label: "LAD", plural: "Local Authority Districts" },
+    E07: { label: "LAD", plural: "Local Authority Districts" },
+    E08: { label: "LAD", plural: "Local Authority Districts" },
+    E09: { label: "LAD", plural: "Local Authority Districts" },
+    W00: { label: "OA", plural: "Output Areas" },
+    W01: { label: "LSOA", plural: "Lower Super Output Areas" },
+    W02: { label: "MSOA", plural: "Middle Super Output Areas" },
+    W06: { label: "LAD", plural: "Local Authority Districts" },
+    S00: { label: "OA", plural: "Output Areas" },
+    S01: { label: "LSOA", plural: "Data Zones" },
+    S02: { label: "MSOA", plural: "Intermediate Zones" },
+    S12: { label: "LAD", plural: "Council Areas" },
+    N00: { label: "OA", plural: "Output Areas" },
+    N01: { label: "LSOA", plural: "Super Output Areas" },
+    N02: { label: "MSOA", plural: "Super Output Areas" },
+    N09: { label: "LAD", plural: "Local Government Districts" },
+  }}
+  maxSuggestions={15}
+  label_text="Search UK Geographic Areas"
+  hint="Uses the complete ONS geographic data - all area levels (OA, LSOA, MSOA, LAD)"
+  placeholder="e.g. Westminster, Birmingham, specific output areas"
+  bind:selectedValue 
+/>
+
+{#if selectedValue}
+  <p>Selected: {selectedValue}</p>
+  <p>Total areas available: {hierarchyData.data.length.toLocaleString()}</p>
+{/if}
+
+<!-- Uses the bundled geographic-hierarchy-flat.json data file with 277,565+ UK areas -->`;

@@ -5,6 +5,7 @@
   import * as codeBlocks from "./codeBlocks.js";
 
   import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
+  import hierarchyData from "$lib/data/geographic-hierarchy-flat.json";
 
   // Example state variables
   let basicExample = $state("");
@@ -17,6 +18,8 @@
   let regexTypeLabelsExample = $state("");
   let customLabelsExample = $state("");
   let customGeoTypesExample = $state("");
+  let limitedSuggestionsExample = $state("");
+  let hierarchyDataExample = $state("");
 
   let accordionSnippetSections = [
     {
@@ -68,6 +71,16 @@
       id: "10",
       heading: "10. Custom geographic types (authorities & statistical areas)",
       content: CustomGeoTypesExample,
+    },
+    {
+      id: "11",
+      heading: "11. Limiting suggestions for performance",
+      content: LimitedSuggestionsExample,
+    },
+    {
+      id: "12",
+      heading: "12. Using geographic hierarchy data",
+      content: HierarchyDataExample,
     },
   ];
 </script>
@@ -443,4 +456,82 @@
     {/if}
   </div>
   <CodeBlock code={codeBlocks.customGeoTypes} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet LimitedSuggestionsExample()}
+  <div class="p-5 bg-white">
+    <p class="mb-4 text-gray-700">
+      Limit the number of suggestions displayed for better performance with
+      large datasets. This example limits suggestions to 5 results:
+    </p>
+    <PostcodeOrAreaSearch
+      maxSuggestions={5}
+      label_text="Search UK areas (max 5 suggestions)"
+      hint="Only the first 5 matching areas will be shown"
+      placeholder="e.g. Westminster, Birmingham"
+      bind:selectedValue={limitedSuggestionsExample}
+    />
+    {#if limitedSuggestionsExample}
+      <p class="mt-3 font-semibold">
+        <strong>Selected:</strong>
+        {limitedSuggestionsExample}
+      </p>
+    {/if}
+    <p class="mt-3 text-sm text-gray-600">
+      <strong>Note:</strong> This limit only applies to local area suggestions. Postcode
+      API results are controlled by the external API.
+    </p>
+  </div>
+  <CodeBlock code={codeBlocks.limitedSuggestions} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet HierarchyDataExample()}
+  <div class="p-5 bg-white">
+    <p class="mb-4 text-gray-700">
+      Use the bundled geographic hierarchy data file for comprehensive UK area
+      search. This demonstrates using the complete ONS geographic hierarchy with
+      all area levels:
+    </p>
+    <PostcodeOrAreaSearch
+      customPlacesData={hierarchyData.data}
+      customTypeLookup={{
+        // Area type mappings based on the hierarchy data
+        E00: { label: "OA", plural: "Output Areas" },
+        E01: { label: "LSOA", plural: "Lower Super Output Areas" },
+        E02: { label: "MSOA", plural: "Middle Super Output Areas" },
+        E06: { label: "LAD", plural: "Local Authority Districts" },
+        E07: { label: "LAD", plural: "Local Authority Districts" },
+        E08: { label: "LAD", plural: "Local Authority Districts" },
+        E09: { label: "LAD", plural: "Local Authority Districts" },
+        W00: { label: "OA", plural: "Output Areas" },
+        W01: { label: "LSOA", plural: "Lower Super Output Areas" },
+        W02: { label: "MSOA", plural: "Middle Super Output Areas" },
+        W06: { label: "LAD", plural: "Local Authority Districts" },
+        S00: { label: "OA", plural: "Output Areas" },
+        S01: { label: "LSOA", plural: "Data Zones" },
+        S02: { label: "MSOA", plural: "Intermediate Zones" },
+        S12: { label: "LAD", plural: "Council Areas" },
+        N00: { label: "OA", plural: "Output Areas" },
+        N01: { label: "LSOA", plural: "Super Output Areas" },
+        N02: { label: "MSOA", plural: "Super Output Areas" },
+        N09: { label: "LAD", plural: "Local Government Districts" },
+      }}
+      maxSuggestions={15}
+      label_text="Search UK Geographic Areas"
+      hint="Uses the complete ONS geographic data - all area levels (OA, LSOA, MSOA, LAD)"
+      placeholder="e.g. Westminster, Birmingham, specific output areas"
+      bind:selectedValue={hierarchyDataExample}
+    />
+    {#if hierarchyDataExample}
+      <p class="mt-3 font-semibold">
+        <strong>Selected:</strong>
+        {hierarchyDataExample}
+      </p>
+      <p class="mt-2 text-sm text-gray-600">
+        <strong>Total areas available in dataset:</strong>
+        {hierarchyData.data.length.toLocaleString()}
+      </p>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.hierarchyData} language="svelte"></CodeBlock>
 {/snippet}

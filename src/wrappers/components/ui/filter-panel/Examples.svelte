@@ -10,9 +10,11 @@
     enhancedFormExampleCode,
     basicExampleCode,
     advancedExampleCode,
+    clientSideOnlyCode,
   } from "./codeBlocks.js";
 
   import FilterPanel from "$lib/components/ui/FilterPanel.svelte";
+  import Table from "$lib/components/data-vis/table/Table.svelte";
 
   // Accept form prop from parent (runes mode)
   let { form } = $props();
@@ -34,6 +36,52 @@
   let clientFilteredResults = $state<FilteredResult[]>([]);
   let clientResultsCount = $state("Ready to filter");
   let clientFormSubmitted = $state(false);
+
+  // Simple client-side only data
+  const simpleItems = [
+    { id: 1, name: "Laptop", category: "electronics" },
+    { id: 2, name: "Mouse", category: "electronics" },
+    { id: 3, name: "Coffee Mug", category: "home" },
+    { id: 4, name: "Desk Chair", category: "home" },
+  ];
+
+  // Metadata for the Table component
+  const simpleMetaData = {
+    id: { shortLabel: "ID", explainer: "Item ID" },
+    name: { shortLabel: "Name", explainer: "Item name" },
+    category: { shortLabel: "Category", explainer: "Item category" },
+  };
+
+  // Client-side state
+  let filteredItems = $state(simpleItems);
+  let selectedCategory = $state("all");
+
+  // One simple filter function
+  function filterItems(category: string) {
+    return category === "all"
+      ? simpleItems
+      : simpleItems.filter((item) => item.category === category);
+  }
+
+  // One filter section 
+  let oneFilterSection = [
+    {
+      id: "category",
+      type: "radios" as "radios",
+      title: "Category",
+      ga4Section: "category_filter",
+      ga4IndexSection: 1,
+      ga4IndexSectionCount: 1,
+      name: "category",
+      legend: "Select category",
+      options: [
+        { value: "all", label: "All items" },
+        { value: "electronics", label: "Electronics" },
+        { value: "home", label: "Home" },
+      ],
+      selectedValue: selectedCategory,
+    },
+  ];
 
   // Basic filter sections for use in examples
   const basicFilterSections = [
@@ -277,7 +325,13 @@
     {
       id: "5",
       heading:
-        "5. Progressive Enhancement with use:enhance to cancel form submission and process client-side, server-side submission as fallback",
+        "5. Client-Side Only with use:enhance cancel() - No Server Fallback",
+      content: ClientSideOnlyExample,
+    },
+    {
+      id: "6",
+      heading:
+        "6. Progressive Enhancement with use:enhance to cancel form submission and process client-side, server-side submission as fallback",
       content: EnhancedFormExample,
     },
   ];
@@ -540,6 +594,70 @@
 
   <CodeBlock code={serverFormWithBasicEnhanceCode} language="svelte"
   ></CodeBlock>
+{/snippet}
+
+{#snippet ClientSideOnlyExample()}
+  <div class="p-5 bg-white">
+    <h3 class="text-xl font-bold mb-4">
+      Client-Side Only with use:enhance cancel()
+    </h3>
+    <p class="mb-4">
+      This example demonstrates <code>use:enhance</code> with
+      <code>cancel()</code>
+      to prevent server submission entirely. All processing happens client-side only.
+      <strong>No server fallback</strong> - this requires JavaScript to work.
+    </p>
+
+    <form
+      method="POST"
+      use:enhance={({ formData, cancel }) => {
+        // Cancel server submission - process client-side only
+        cancel();
+
+        // Extract form value
+        const category = formData.get("category")?.toString() || "all";
+
+        // Update state
+        selectedCategory = category;
+        filteredItems = filterItems(category);
+
+        // No return needed - we cancelled the submission
+      }}
+    >
+      <FilterPanel
+        sectionsData={oneFilterSection}
+        resultsCount={`${filteredItems.length} items found`}
+        filterButtonText="Filter items"
+        applyButtonText="Apply filter (Client-side only)"
+        ga4BaseEvent={{ event_name: "filter_items", type: "client_only" }}
+      />
+    </form>
+
+    <!-- Display current filter -->
+    <p class="govuk-body">
+      <strong>Selected Category:</strong>
+      {selectedCategory === "all" ? "All items" : selectedCategory}
+    </p>
+
+    <!-- Display results using Table component -->
+    <div class="mt-8 border-t pt-4">
+      <h4 class="text-lg font-semibold mb-4">
+        Results ({filteredItems.length} items)
+      </h4>
+      <Table
+        data={filteredItems}
+        metaData={simpleMetaData}
+        caption="Filtered Items"
+        colourScale="Off"
+      />
+
+      {#if filteredItems.length === 0}
+        <p class="text-gray-500 italic mt-4">No items match your filter.</p>
+      {/if}
+    </div>
+  </div>
+
+  <CodeBlock code={clientSideOnlyCode} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet EnhancedFormExample()}

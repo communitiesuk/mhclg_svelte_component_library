@@ -8,7 +8,7 @@
     colourScale = undefined,
   } = $props();
 
-  let localCopyOfData = $state([...data]);
+  let localCopyOfData = $derived([...data]);
 
   function hasUniqueValues(array, key) {
     const seen = new Set();

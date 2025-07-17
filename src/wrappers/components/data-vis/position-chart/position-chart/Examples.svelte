@@ -15,8 +15,6 @@
   ];
 
   let data = $props();
-
-  $inspect("data for Examples", data);
 </script>
 
 <div>
@@ -41,10 +39,12 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    {#each ["employment", "education", "income", "environment", "health", "crime", "housing"] as domain}
-      <PositionChart {data} lsoa="City of London 001A" {domain} scale="decile"
-      ></PositionChart>
-    {/each}
+    <PositionChart
+      data={data.data}
+      lsoa="City of London 001B"
+      domain="education"
+      scale="rank"
+    ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}

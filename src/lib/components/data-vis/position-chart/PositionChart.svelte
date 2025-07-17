@@ -15,13 +15,13 @@
     scale,
   } = $props();
 
-  $inspect(data);
+  $inspect({ data });
 
   const range = Array.from({ length: 10 }, (_, i) => i + 1);
 
   let maxRank = 32844;
 
-  let chartWidth = 500;
+  let chartWidth = 100;
 
   let xFunction = $derived(
     scaleLinear().domain([1, maxRank]).range([0, chartWidth]),
@@ -30,6 +30,10 @@
   let domainDecile = $derived(
     data.find((el) => el.LSOA_name === lsoa)[domain + "_" + scale],
   );
+
+  $inspect({ lsoa }, { domain }, { scale });
+
+  $inspect({ domainDecile });
 
   let domainRank = $derived(
     data.find((el) => el.LSOA_name === lsoa)[domain + "_" + scale],
@@ -72,6 +76,6 @@
 <style>
   .chart-container {
     display: flex;
-    padding-bottom: 100px;
+    padding-bottom: 10px;
   }
 </style>

@@ -1,4 +1,5 @@
 <script>
+  import { scaleLinear } from "d3-scale";
   let {
     componentNameProp = undefined,
     textProp = undefined,
@@ -16,9 +17,19 @@
 
   const range = Array.from({ length: 10 }, (_, i) => i + 1);
 
+  let maxRank = 32844;
+
+  let chartWidth = 500;
+
+  let xFunction = $derived(
+    scaleLinear().domain([1, maxRank]).range([0, chartWidth]),
+  );
+
   let imdDecile = deprivationData.find((el) => el.LSOA === lsoa).IMDdecile;
 
-  $inspect(imdDecile);
+  let imdRank = deprivationData.find((el) => el.LSOA === lsoa).IMD;
+
+  $inspect(imdRank);
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -33,19 +44,31 @@
   <div class="chart-container">
     {#each range as number}
       {#if number === imdDecile}
-        <svg width="50" height="50"
-          ><rect width="50" height="50" fill="blue"></rect></svg
+        <svg width={chartWidth / 10} height={chartWidth / 10}
+          ><rect width={chartWidth / 10} height={chartWidth / 10} fill="blue"
+          ></rect></svg
         >
       {:else}
-        <svg width="50" height="50"
-          ><rect width="50" height="50" fill="red"></rect></svg
+        <svg width={chartWidth / 10} height={chartWidth / 10}
+          ><rect width={chartWidth / 10} height={chartWidth / 10} fill="red"
+          ></rect></svg
         >{/if}
     {/each}
+  </div>
+
+  <div class="chart-container">
+    <svg width={chartWidth} height={chartWidth / 10}>
+      <rect width={chartWidth} height={chartWidth / 10}></rect>
+      <g transform="translate({(chartWidth * imdRank) / maxRank},0)"
+        ><rect width="10" height={chartWidth / 10} fill="white"></rect></g
+      >
+    </svg>
   </div>
 </div>
 
 <style>
   .chart-container {
     display: flex;
+    padding-bottom: 100px;
   }
 </style>

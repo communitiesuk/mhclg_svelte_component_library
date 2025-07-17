@@ -13,8 +13,6 @@
     lsoa,
   } = $props();
 
-  $inspect(deprivationData);
-
   const range = Array.from({ length: 10 }, (_, i) => i + 1);
 
   let maxRank = 32844;
@@ -25,11 +23,11 @@
     scaleLinear().domain([1, maxRank]).range([0, chartWidth]),
   );
 
-  let imdDecile = deprivationData.find((el) => el.LSOA === lsoa).IMDdecile;
+  let imdDecile = $derived(
+    deprivationData.find((el) => el.LSOA === lsoa).IMDdecile,
+  );
 
-  let imdRank = deprivationData.find((el) => el.LSOA === lsoa).IMD;
-
-  $inspect(imdRank);
+  let imdRank = $derived(deprivationData.find((el) => el.LSOA === lsoa).IMD);
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -38,32 +36,28 @@
   >
 {/snippet}
 
-<div class="p-4">
-  <h4>{componentNameProp} component</h4>
-
-  <div class="chart-container">
-    {#each range as number}
-      {#if number === imdDecile}
-        <svg width={chartWidth / 10} height={chartWidth / 10}
-          ><rect width={chartWidth / 10} height={chartWidth / 10} fill="blue"
-          ></rect></svg
-        >
-      {:else}
-        <svg width={chartWidth / 10} height={chartWidth / 10}
-          ><rect width={chartWidth / 10} height={chartWidth / 10} fill="red"
-          ></rect></svg
-        >{/if}
-    {/each}
-  </div>
-
-  <div class="chart-container">
-    <svg width={chartWidth} height={chartWidth / 10}>
-      <rect width={chartWidth} height={chartWidth / 10}></rect>
-      <g transform="translate({(chartWidth * imdRank) / maxRank},0)"
-        ><rect width="10" height={chartWidth / 10} fill="white"></rect></g
+<div class="chart-container">
+  {#each range as number}
+    {#if number === imdDecile}
+      <svg width={chartWidth / 10} height={chartWidth / 10}
+        ><rect width={chartWidth / 10} height={chartWidth / 10} fill="blue"
+        ></rect></svg
       >
-    </svg>
-  </div>
+    {:else}
+      <svg width={chartWidth / 10} height={chartWidth / 10}
+        ><rect width={chartWidth / 10} height={chartWidth / 10} fill="red"
+        ></rect></svg
+      >{/if}
+  {/each}
+</div>
+
+<div class="chart-container">
+  <svg width={chartWidth} height={chartWidth / 10}>
+    <rect width={chartWidth} height={chartWidth / 10}></rect>
+    <g transform="translate({xFunction(imdRank)},0)"
+      ><rect width="10" height={chartWidth / 10} fill="white"></rect></g
+    >
+  </svg>
 </div>
 
 <style>

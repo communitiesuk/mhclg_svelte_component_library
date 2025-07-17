@@ -4,15 +4,19 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-import PositionChart from "$lib/components/data-vis/position-chart/PositionChart.svelte";
+  import PositionChart from "$lib/components/data-vis/position-chart/PositionChart.svelte";
 
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
+      heading: "1. Example 1 - stacking multiple position charts",
       content: Example1,
     },
   ];
+
+  let data = $props();
+
+  $inspect("data for Examples", data);
 </script>
 
 <div>
@@ -37,32 +41,10 @@ import PositionChart from "$lib/components/data-vis/position-chart/PositionChart
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    {#each ["employment", "education", "income", "environment", "health", "crime", "housing"] as domain}
+      <PositionChart {data} lsoa="City of London 001A" {domain} scale="decile"
+      ></PositionChart>
+    {/each}
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}

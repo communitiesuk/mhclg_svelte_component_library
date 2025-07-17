@@ -96,8 +96,6 @@
 
   let { data } = $props();
 
-  $inspect(data);
-
   /**
    * DONOTTOUCH *
    * ? 		uses the page url to identify the name of the component and the folder it belongs to (folder is only used by snippets exported to the homepage to link back to this page).
@@ -159,7 +157,7 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "deprivationDomainData",
+        name: "data",
         category: "data",
         propType: "fixed",
         value: data.deprivationDomainData,
@@ -187,6 +185,12 @@
           "health",
           "education",
         ],
+      },
+      {
+        name: "scale",
+        category: "Input props",
+        propType: "radio",
+        options: ["rank", "decile"],
       },
       {
         name: "componentNameProp",
@@ -513,5 +517,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section">
-  <Examples></Examples>
+  <Examples data={data.deprivationDomainData}></Examples>
 </div>

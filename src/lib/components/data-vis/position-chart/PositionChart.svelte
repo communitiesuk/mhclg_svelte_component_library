@@ -1,4 +1,5 @@
 <script>
+  import { scaleLinear } from "d3-scale";
   let {
     componentNameProp = undefined,
     textProp = undefined,
@@ -12,13 +13,21 @@
     lsoa,
   } = $props();
 
-  $inspect(deprivationData);
-
   const range = Array.from({ length: 10 }, (_, i) => i + 1);
 
-  let imdDecile = deprivationData.find((el) => el.LSOA === lsoa).IMDdecile;
+  let maxRank = 32844;
 
-  $inspect(imdDecile);
+  let chartWidth = 500;
+
+  let xFunction = $derived(
+    scaleLinear().domain([1, maxRank]).range([0, chartWidth]),
+  );
+
+  let imdDecile = $derived(
+    deprivationData.find((el) => el.LSOA === lsoa).IMDdecile,
+  );
+
+  let imdRank = $derived(deprivationData.find((el) => el.LSOA === lsoa).IMD);
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -27,25 +36,33 @@
   >
 {/snippet}
 
-<div class="p-4">
-  <h4>{componentNameProp} component</h4>
+<div class="chart-container">
+  {#each range as number}
+    {#if number === imdDecile}
+      <svg width={chartWidth / 10} height={chartWidth / 10}
+        ><rect width={chartWidth / 10} height={chartWidth / 10} fill="blue"
+        ></rect></svg
+      >
+    {:else}
+      <svg width={chartWidth / 10} height={chartWidth / 10}
+        ><rect width={chartWidth / 10} height={chartWidth / 10} fill="red"
+        ></rect></svg
+      >{/if}
+  {/each}
+</div>
 
-  <div class="chart-container">
-    {#each range as number}
-      {#if number === imdDecile}
-        <svg width="50" height="50"
-          ><rect width="50" height="50" fill="blue"></rect></svg
-        >
-      {:else}
-        <svg width="50" height="50"
-          ><rect width="50" height="50" fill="red"></rect></svg
-        >{/if}
-    {/each}
-  </div>
+<div class="chart-container">
+  <svg width={chartWidth} height={chartWidth / 10}>
+    <rect width={chartWidth} height={chartWidth / 10}></rect>
+    <g transform="translate({xFunction(imdRank)},0)"
+      ><rect width="10" height={chartWidth / 10} fill="white"></rect></g
+    >
+  </svg>
 </div>
 
 <style>
   .chart-container {
     display: flex;
+    padding-bottom: 100px;
   }
 </style>

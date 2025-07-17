@@ -109,6 +109,9 @@ export const load: LayoutLoad = async (event) => {
 
   let deprivationMetaData = testData.deprivationMetaData
 
+  let deprivationDomainData = testData.domainData
+
+
   return {
     metrics,
     areas,
@@ -124,5 +127,6 @@ export const load: LayoutLoad = async (event) => {
     metaData,
     deprivationData,
     deprivationMetaData,
+    deprivationDomainData
   };
 };

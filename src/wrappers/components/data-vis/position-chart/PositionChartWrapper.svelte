@@ -159,10 +159,10 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "deprivationData",
+        name: "deprivationDomainData",
         category: "data",
         propType: "fixed",
-        value: data.deprivationData,
+        value: data.deprivationDomainData,
       },
       {
         name: "lsoa",
@@ -173,12 +173,20 @@
           "City of London 001C",
           "City of London 001E",
         ],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
+      },
+      {
+        name: "domain",
+        category: "Input props",
+        options: [
+          "IMD",
+          "income",
+          "employment",
+          "crime",
+          "environment",
+          "housing",
+          "health",
+          "education",
+        ],
       },
       {
         name: "componentNameProp",

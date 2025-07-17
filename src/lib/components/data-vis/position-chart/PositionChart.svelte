@@ -9,9 +9,12 @@
     radioProp = undefined,
     jsObjectProp = [],
     functionProp = undefined,
-    deprivationData,
+    deprivationDomainData,
     lsoa,
+    domain,
   } = $props();
+
+  $inspect(deprivationDomainData);
 
   const range = Array.from({ length: 10 }, (_, i) => i + 1);
 
@@ -24,10 +27,12 @@
   );
 
   let imdDecile = $derived(
-    deprivationData.find((el) => el.LSOA === lsoa).IMDdecile,
+    deprivationDomainData.find((el) => el.LSOA_name === lsoa).IMD_decile,
   );
 
-  let imdRank = $derived(deprivationData.find((el) => el.LSOA === lsoa).IMD);
+  let imdRank = $derived(
+    deprivationDomainData.find((el) => el.LSOA_name === lsoa).IMD_rank,
+  );
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}

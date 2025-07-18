@@ -79,6 +79,22 @@
     mapHeight = 200,
     setMaxBounds = false,
     onload,
+    onerror,
+    onclick,
+    ondblclick,
+    onmousemove,
+    oncontextmenu,
+    onmovestart,
+    onmoveend,
+    onzoomstart,
+    onzoom,
+    onzoomend,
+    onpitch,
+    onrotate,
+    onwheel,
+    ondata,
+    onstyleload,
+    onstyledata,
     onidle,
   }: {
     data: object[];
@@ -122,6 +138,26 @@
     customBreaks?: number[];
     interactive?: boolean;
     onload?: (map: maplibregl.Map) => void;
+    onerror?: (error: Partial<ErrorEvent>) => void;
+    onclick?: (e: maplibregl.MapMouseEvent) => void;
+    ondblclick?: (e: maplibregl.MapMouseEvent) => void;
+    onmousemove?: (e: maplibregl.MapMouseEvent) => void;
+    oncontextmenu?: (e: maplibregl.MapMouseEvent) => void;
+    onmovestart?: (e: MapMoveEvent) => void;
+    onmoveend?: (e: MapMoveEvent) => void;
+    onzoomstart?: (e: maplibregl.MapLibreZoomEvent) => void;
+    onzoom?: (e: maplibregl.MapLibreZoomEvent) => void;
+    onzoomend?: (e: maplibregl.MapLibreZoomEvent) => void;
+    onpitch?: (
+      e: maplibregl.MapLibreEvent<MouseEvent | TouchEvent | undefined>,
+    ) => void;
+    onrotate?: (
+      e: maplibregl.MapLibreEvent<MouseEvent | TouchEvent | undefined>,
+    ) => void;
+    onwheel?: (e: maplibregl.MapWheelEvent) => void;
+    ondata?: (e: maplibregl.MapDataEvent) => void;
+    onstyleload?: (e: StyleLoadEvent) => void;
+    onstyledata?: (e: maplibregl.MapStyleDataEvent) => void;
     onidle?: (e: maplibregl.MapLibreEvent) => void;
   } = $props();
 
@@ -257,6 +293,23 @@
     }),
   );
 
+  let legendItems = $derived([
+    ...breaks
+      .map((b, i) => {
+        const from = b;
+        const to = breaks[i + 1];
+        return {
+          color: fillColors[i],
+          label: to ? `${from} – ${to}` : `${from}+`,
+        };
+      })
+      .slice(0, fillColors.length),
+    {
+      color: "lightgrey",
+      label: "No data",
+    },
+  ]);
+
   let merged = $derived(joinData(filteredGeoJsonData, dataWithColor));
 
   let hoveredArea = $state();
@@ -322,7 +375,7 @@
   );
 </script>
 
-<div style="height: {mapHeight}px;">
+<div style="position: relative; height: {mapHeight}px;">
   <MapLibre
     bind:map
     bind:loaded
@@ -337,6 +390,22 @@
     class="map"
     {onload}
     {onidle}
+    {onerror}
+    {onclick}
+    {ondblclick}
+    {onmousemove}
+    {oncontextmenu}
+    {onmovestart}
+    {onmoveend}
+    {onzoomstart}
+    {onzoom}
+    {onzoomend}
+    {onpitch}
+    {onrotate}
+    {onwheel}
+    {ondata}
+    {onstyleload}
+    {onstyledata}
   >
     {#if interactive && !standardControls}
       <NonStandardControls
@@ -418,6 +487,15 @@
   </MapLibre>
 </div>
 
+<div class="legend">
+  {#each legendItems as item}
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: {item.color};"></div>
+      <span>{item.label}</span>
+    </div>
+  {/each}
+</div>
+
 <style>
   :global(.maplibregl-ctrl-group button.reset-button) {
     /* margin: 10px; */
@@ -425,5 +503,28 @@
     padding: 5px 10px;
     font-size: 16px;
     height: 100%;
+  }
+  .legend {
+    position: absolute;
+    bottom: 20px;
+    left: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    border: 1px solid #ccc;
   }
 </style>

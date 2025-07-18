@@ -138,10 +138,12 @@
           xmlns="http://www.w3.org/2000/svg"
         >
           <path
+            class="top-triangle"
             d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
             fill="currentColor"
           ></path>
           <path
+            class="bottom-triangle"
             d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
             fill="currentColor"
           ></path>

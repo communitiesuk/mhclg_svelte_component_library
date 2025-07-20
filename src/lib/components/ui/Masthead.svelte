@@ -32,7 +32,7 @@
         <p class="app-masthead__description">{description}</p>
 
         <a
-          href={base + buttonHref}
+          href={buttonHref}
           role="button"
           draggable="false"
           class="govuk-button govuk-button--inverse govuk-!-margin-top-6 govuk-!-margin-bottom-0 govuk-button--start"

@@ -65,8 +65,6 @@
   }>();
 </script>
 
-Check - hello
-
 <!-- Main footer container -->
 <footer class="govuk-footer">
   <div class={containerWidth}>
@@ -118,7 +116,7 @@ Check - hello
               <li class="govuk-footer__inline-list-item">
                 <a
                   class="govuk-footer__link"
-                  href={base + link.href}
+                  href={link.href}
                   lang={link.lang}
                   hreflang={link.hrefLang}
                   onclick={link.onclick}

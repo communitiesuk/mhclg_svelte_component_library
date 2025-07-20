@@ -26,11 +26,13 @@
     collapseOnMobile = false,
     inverse = false,
     ariaLabel = "Breadcrumb",
+    formatBreadcrumbText,
   } = $props<{
     items?: BreadcrumbItem[];
     collapseOnMobile?: boolean;
     inverse?: boolean;
     ariaLabel?: string;
+    formatBreadcrumbText?: (text: string[]) => string;
   }>();
 
   // Load all page modules for route detection
@@ -53,7 +55,7 @@
 
   // Effect to update breadcrumb items when dependencies change
   $effect(() => {
-    breadcrumbItems = items || generateBreadcrumbItems(page, routeModules);
+    breadcrumbItems = generateBreadcrumbItems(page, routeModules);
   });
 
   // Generate breadcrumb items from the current route
@@ -156,23 +158,19 @@
   /**
    * Converts route segments to human-readable text
    */
-  function formatBreadcrumbText(text: string): string {
+  /*function formatBreadcrumbText(text: string): string {
     // Handle special cases
-    if (text === "ui") return "UI Components";
-    if (text === "data-vis") return "Data Visualization";
-    if (text === "content") return "Content Components";
-    if (text === "layout") return "Layout Components";
-    if (text === "user-guide") return "User Guide";
-    if (text === "playground") return "Playground";
-    if (text === "components") return "Components";
-    if (text === "local-lib") return "Local Library";
+    const urlLookupObject = {
+      ui: "UI Components",
+      "data-vis": "Data Visualization",
+    };
 
     // Default: capitalize and replace hyphens with spaces
-    return text
+    return (text in urlLookupObject ? urlLookupObject[text] : text)
       .split("-")
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(" ");
-  }
+  }*/
 </script>
 
 <nav

@@ -1,3 +1,4 @@
+import { base } from "$app/paths";
 import type {
   SideNavItem,
   SideNavGroup,
@@ -29,7 +30,7 @@ export function extractLinkableComponentNavItems(
       // If it's a wrapper, add it directly
       navItems.push({
         text: forceWrapAtThirdCapital(item.name),
-        href: `/${item.path}`,
+        href: `${base}/${item.path}`,
         // subItems: undefined, // Explicitly no sub-items for direct wrappers here
       });
     }
@@ -66,7 +67,7 @@ export function createMobileItems(tree: ComponentItem[]) {
     if (category.hasWrapper) {
       result.push({
         text: forceWrapAtThirdCapital(category.name),
-        href: `/${category.path}`,
+        href: `${base}/${category.path}`,
       });
     }
     // If the category has children, process them

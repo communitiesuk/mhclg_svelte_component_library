@@ -22,6 +22,7 @@
     label: string;
     lang?: string;
     hrefLang?: string;
+    onclick?: (event: MouseEvent) => void;
   }
 
   interface FooterSection {
@@ -117,9 +118,10 @@ Check - hello
               <li class="govuk-footer__inline-list-item">
                 <a
                   class="govuk-footer__link"
-                  href={link.href}
+                  href={base + link.href}
                   lang={link.lang}
                   hreflang={link.hrefLang}
+                  onclick={link.onclick}
                 >
                   {link.label}
                 </a>

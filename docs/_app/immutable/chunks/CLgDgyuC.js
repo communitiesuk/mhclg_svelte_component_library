@@ -1,1 +1,0 @@
-import{z as A,A as B,m as T,B as c,S as q}from"./DAeYpASc.js";function k(i,r){return i===r||(i==null?void 0:i[q])===r}function z(i={},r,S,h){return A(()=>{var s,f;return B(()=>{s=f,f=(h==null?void 0:h())||[],T(()=>{i!==S(...f)&&(r(i,...f),s&&k(S(...s),i)&&r(null,...s))})}),()=>{c(()=>{f&&k(S(...f),i)&&r(null,...f)})}}),i}export{z as b};

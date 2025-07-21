@@ -46,10 +46,12 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Map for visualising geographic data."];
+  let descriptionArray = [
+    "Map for visualising geographic data. The component can handle geoJson, topoJson or vector tile sources.",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "This map can be used for locating an area, as well as for data visualisation. Use with caution, as a map isn't always the best way of displaying geographically distributed data.",
   ];
 
   let detailsArray = [

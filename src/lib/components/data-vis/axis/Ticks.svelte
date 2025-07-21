@@ -16,8 +16,6 @@
     yearsInput,
   } = $props();
 
-  $inspect(ticksArray);
-
   function generateTicks(data, numTicks, floor, ceiling) {
     let minValueFromData = Decimal.min(...data);
 

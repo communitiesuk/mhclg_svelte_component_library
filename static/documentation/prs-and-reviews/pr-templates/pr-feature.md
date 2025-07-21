@@ -10,7 +10,7 @@ Previous pull request for this component or collection of closely connected comp
 | :---------- | :----------- | :---------- | :-------------------------------- |
 | XXX         | Developer A  | Developer B | [Add link to pull request here]() |
 
-For any updated component, the developer should consider whether to update the component's status (it's main status tag and tick/cross sub-statuses on the wrapper page). A component's status should be updated when it is ready for a particular type of reivew. The reviewer will then tailor their review accordingly (e.g. if a component's sub-statuses is updated to include accessible, the reviewer will then test it against our accessibility checklist).
+For any updated component, the developer should consider whether to update the component's status (it's main status tag and tick/cross sub-statuses on the wrapper page). A component's status should be updated when it is ready for a particular type of review. The reviewer will then tailor their review accordingly (e.g. if a component's sub-statuses is updated to include accessible, the reviewer will then test it against our accessibility checklist).
 
 Definitions of each component status can be found on the library's [component statuses page.](https://communitiesuk.github.io/mhclg_svelte_component_library/get-started/component-statuses)
 

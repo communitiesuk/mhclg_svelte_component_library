@@ -40,7 +40,8 @@ Changes to a component often create a necessity for changes to a connected compo
 
 ### Connected components for checking:
 
-| Component | Connected componnet | Change to interaction |
+| Component     | Connected componnet    | Change to interaction                                                      |
+| :------------ | :--------------------- | :------------------------------------------------------------------------- |
 | ComponentName | ConnectedComponentName | Describe change to how these two components interact with each other here. |
 
 ---

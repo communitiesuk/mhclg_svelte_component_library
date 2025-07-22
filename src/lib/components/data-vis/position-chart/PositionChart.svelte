@@ -21,7 +21,7 @@
 
   let maxRank = 32844;
 
-  let chartWidth = 100;
+  let chartWidth = 500;
 
   let xFunction = $derived(
     scaleLinear().domain([1, maxRank]).range([0, chartWidth]),

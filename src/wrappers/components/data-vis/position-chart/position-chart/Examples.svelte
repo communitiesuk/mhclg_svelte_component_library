@@ -14,7 +14,7 @@
     },
   ];
 
-  let data = $props();
+  let { data } = $props();
 </script>
 
 <div>
@@ -40,7 +40,7 @@
 {#snippet Example1()}
   <div class="p-5 bg-white">
     <PositionChart
-      data={data.data}
+      {data}
       lsoa="City of London 001B"
       domain="education"
       scale="rank"

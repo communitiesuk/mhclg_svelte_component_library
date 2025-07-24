@@ -238,27 +238,22 @@ export const hierarchyData = `<script>
 
 <PostcodeOrAreaSearch 
   customPlacesData={hierarchyData.data}
-  customTypeLookup={{
-    // Area type mappings based on the hierarchy data
-    E00: { label: "OA", plural: "Output Areas" },
-    E01: { label: "LSOA", plural: "Lower Super Output Areas" },
-    E02: { label: "MSOA", plural: "Middle Super Output Areas" },
-    E06: { label: "LAD", plural: "Local Authority Districts" },
-    E07: { label: "LAD", plural: "Local Authority Districts" },
-    E08: { label: "LAD", plural: "Local Authority Districts" },
-    E09: { label: "LAD", plural: "Local Authority Districts" },
-    W00: { label: "OA", plural: "Output Areas" },
-    W01: { label: "LSOA", plural: "Lower Super Output Areas" },
-    W02: { label: "MSOA", plural: "Middle Super Output Areas" },
-    W06: { label: "LAD", plural: "Local Authority Districts" },
-    S00: { label: "OA", plural: "Output Areas" },
-    S01: { label: "LSOA", plural: "Data Zones" },
-    S02: { label: "MSOA", plural: "Intermediate Zones" },
-    S12: { label: "LAD", plural: "Council Areas" },
-    N00: { label: "OA", plural: "Output Areas" },
-    N01: { label: "LSOA", plural: "Super Output Areas" },
-    N02: { label: "MSOA", plural: "Super Output Areas" },
-    N09: { label: "LAD", plural: "Local Government Districts" },
+  customGetTypeLabel={(type) => {
+    // Pattern matching for different area types using regex
+    if (/^[EWSN]00/.test(type)) return "OA"; // Output Areas
+    if (/^[EW]01/.test(type)) return "LSOA"; // Lower Super Output Areas (England/Wales)
+    if (/^S01/.test(type)) return "LSOA"; // Data Zones (Scotland)
+    if (/^N01/.test(type)) return "LSOA"; // Super Output Areas (Northern Ireland)
+    if (/^[EW]02/.test(type)) return "MSOA"; // Middle Super Output Areas (England/Wales)
+    if (/^S02/.test(type)) return "MSOA"; // Intermediate Zones (Scotland)
+    if (/^N02/.test(type)) return "MSOA"; // Super Output Areas (Northern Ireland)
+    if (/^E0[6-9]/.test(type)) return "LAD"; // Local Authority Districts (England)
+    if (/^W06/.test(type)) return "LAD"; // Local Authority Districts (Wales)
+    if (/^S12/.test(type)) return "LAD"; // Council Areas (Scotland)
+    if (/^N09/.test(type)) return "LAD"; // Local Government Districts (Northern Ireland)
+    
+    // Fallback for anything else
+    return type;
   }}
   maxSuggestions={15}
   label_text="Search UK Geographic Areas"
@@ -272,4 +267,4 @@ export const hierarchyData = `<script>
   <p>Total areas available: {hierarchyData.data.length.toLocaleString()}</p>
 {/if}
 
-<!-- Uses the bundled geographic-hierarchy-flat.json data file with 277,565+ UK areas -->`;
+`;

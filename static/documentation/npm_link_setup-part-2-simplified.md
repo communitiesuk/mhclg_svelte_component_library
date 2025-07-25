@@ -58,61 +58,91 @@ Add the following scripts to your app's `package.json`:
 Update your `vite.config.js` file with the following configuration:
 
 ```js
-import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig } from 'vite';
-import path from 'path';
-import { fileURLToPath } from 'url';
+// @ts-nocheck
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+import tailwindcss from "@tailwindcss/vite";
+import { sveltekit } from "@sveltejs/kit/vite";
+import { defineConfig, loadEnv } from "vite";
 
-// Emulate __filename and __dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Use LIB_SRC_PATH env variable for local component library, fallback to default relative path
-const libSrc = process.env.LIB_SRC_PATH || path.resolve(__dirname, '../oflog_svelte_component_library/src/lib');
-const libDistAssets = path.resolve(__dirname, '../oflog_svelte_component_library/dist/assets');
+// Load environment variables from .env file
+const env = loadEnv("", process.cwd(), "");
+
+// Use environment variables for lib source path, infer assets path
+const libSrc = env.LIB_SRC_PATH;
+const libDistAssets = libSrc
+  ? libSrc.replace("/src/lib", "/dist/assets")
+  : undefined;
+
+// Check if we should use local src
+const useLocalSrc = !!libSrc;
+
+// Simple confirmation log
+console.log(
+  `Using ${useLocalSrc ? "local source" : "npm package"} for component library`,
+);
+if (useLocalSrc) {
+  console.log(`Source path: ${libSrc}`);
+  console.log(`Assets path: ${libDistAssets}`);
+} else if (!libSrc) {
+  console.log(`⚠️ Missing LIB_SRC_PATH - add it to .env file`);
+}
 
 export default defineConfig({
-	plugins: [sveltekit()],
-	// Alias to local component library if using dev-src
-	resolve: {
-		alias: process.env.LIB_SRC
-			? {
-				'@communitiesuk/svelte-component-library': libSrc
-			}
-			: {}
-	},
-	server: process.env.LIB_SRC
-		? {
-			fs: {
-				allow: [libSrc, libDistAssets]
-			},
-			watch: {
-				include: [libSrc + '/**']
-			}
-		}
-		: {
-			fs: {
-				allow: [libDistAssets]
-			}
-		},
-	ssr: {
-		noExternal: ['svelte-maplibre', '@communitiesuk/svelte-component-library']
-	},
-	optimizeDeps: {
-		exclude: ['@communitiesuk/svelte-component-library']
-	},
-	build: {
-		commonjsOptions: {
-			include: [
-				/node_modules/,
-				...(process.env.LIB_SRC ? [/oflog_svelte_component_library/] : [])
-			]
-		}
-	}
+  plugins: [tailwindcss(), sveltekit()],
+  // Alias to local component library if using local src
+  resolve: {
+    alias: useLocalSrc
+      ? {
+          "@communitiesuk/svelte-component-library": libSrc,
+        }
+      : {},
+  },
+  // Only allow and watch src if both paths are set
+  server: useLocalSrc
+    ? {
+        fs: {
+          allow: [libSrc, libDistAssets].filter(Boolean),
+        },
+        watch: {
+          include: [libSrc + "/**"],
+        },
+      }
+    : {},
+  ssr: {
+    noExternal: ["svelte-maplibre", "@communitiesuk/svelte-component-library"],
+  },
+  optimizeDeps: {
+    exclude: ["@communitiesuk/svelte-component-library"],
+  },
+  build: {
+    commonjsOptions: {
+      include: [
+        /node_modules/,
+        ...(useLocalSrc ? [/oflog_svelte_component_library/] : []),
+      ],
+    },
+  },
 });
 ```
 
-Update the relative paths on lines with `libSrc` and `libDistAssets` to match the library's location on your PC (optional, as step 5 prefered method).
+**Key improvements in this configuration:**
+
+- Uses `loadEnv()` to properly load `LIB_SRC_PATH` from `.env` file
+- Automatically determines whether to use source or built mode based on presence of `LIB_SRC_PATH`
+- Automatically infers the assets path from the source path
+- Includes helpful console logging to confirm which mode is being used
+- Better error handling with path filtering using `.filter(Boolean)`
+- Cleaner logic with the `useLocalSrc` boolean variable
+
+**How it works:**
+
+- If `LIB_SRC_PATH` is set in `.env`: Uses library source files for live development
+- If `LIB_SRC_PATH` is not set: Uses built library or npm package
 
 ### Step 5: Set up environment variables
 
@@ -127,17 +157,26 @@ Replace the path with the actual location (absolute path) of the component libra
 ### Step 6: Test the setup
 
 1. **Test source mode (live development):**
+
+   - Ensure `LIB_SRC_PATH` is set in your `.env` file
+
    ```bash
    npm run dev-src
    ```
+
+   - You should see console output: "Using local source for component library"
    - Make a temporary edit to a component in your library's `src/lib` folder
    - The change should be immediately reflected in your app
 
 2. **Test built mode (testing packaged version):**
+
    ```bash
    npm run dev
    ```
+
+   - You should see console output: "Using npm package for component library"
    - Your temporary edit should not be visible (uses built dist version)
+   - Need to do npm run build in component library and re-link to see changes in package consuming app
 
 3. **Test production mode:**
    ```bash
@@ -149,11 +188,11 @@ Replace the path with the actual location (absolute path) of the component libra
 
 ## Usage Summary
 
-| Command | What it uses | When to use |
-|---------|-------------|-------------|
-| `npm run dev-src` | Library source files (`src/lib`) | Live component development with hot reload |
-| `npm run dev` | Built library (`dist`) or npm package | Testing packaged version, normal development |
-| `npm run build` | Built library (`dist`) or npm package | Production builds |
+| Command           | What it uses                          | When to use                                  |
+| ----------------- | ------------------------------------- | -------------------------------------------- |
+| `npm run dev-src` | Library source files (`src/lib`)      | Live component development with hot reload   |
+| `npm run dev`     | Built library (`dist`) or npm package | Testing packaged version, normal development |
+| `npm run build`   | Built library (`dist`) or npm package | Production builds                            |
 
 ## Team Collaboration
 
@@ -168,9 +207,18 @@ Replace the path with the actual location (absolute path) of the component libra
 - **Team-friendly:** Each developer can set their own library path
 - **Cross-platform:** Works on all operating systems
 - **Simple:** Easy to understand and maintain
+- **Robust:** Better error handling and path resolution using Vite's built-in functions
 
 ## Troubleshooting
 
 - **Font loading issues:** The config includes `libDistAssets` in the Vite allow list to serve font files
 - **Path issues:** Use absolute paths in `LIB_SRC_PATH` environment variable
 - **Import errors:** Always import from the package root (`import { Component } from '@communitiesuk/svelte-component-library'`) rather than deep imports
+- **Node module export errors:** If you encounter errors related to Node module exports when linking the component library repo (the one you are linking from) and run the following commands in its directory:
+
+  ```bash
+  npm uninstall node
+  npm uninstall npm
+  ```
+
+  This can resolve issues caused by accidentally installed `node` or `npm` as dependencies in the library, which can break module resolution when linking.

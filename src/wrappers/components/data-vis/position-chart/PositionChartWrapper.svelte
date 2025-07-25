@@ -115,7 +115,7 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-
+  let chartWidth = $state(500);
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -470,7 +470,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
  -->
 {#snippet Component()}
   <div class="p-8">
-    <PositionChart {...parametersObject}></PositionChart>
+    <PositionChart {...parametersObject} bind:chartWidth></PositionChart>
   </div>
 {/snippet}
 

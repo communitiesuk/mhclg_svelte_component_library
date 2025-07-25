@@ -13,6 +13,7 @@
     lsoa,
     domain,
     scale,
+    chartWidth = $bindable(500),
   } = $props();
 
   $inspect({ data });
@@ -21,10 +22,10 @@
 
   let maxRank = 32844;
 
-  let chartWidth = 500;
+  let barWidth = $derived(chartWidth * 0.95);
 
   let xFunction = $derived(
-    scaleLinear().domain([1, maxRank]).range([0, chartWidth]),
+    scaleLinear().domain([1, maxRank]).range([0, barWidth]),
   );
 
   let domainDecile = $derived(
@@ -47,31 +48,33 @@
 {/snippet}
 
 <p>{domain}</p>
-{#if scale === "decile"}
-  <div class="chart-container">
-    {#each range as number}
-      {#if number === domainDecile}
-        <svg width={chartWidth / 10} height={chartWidth / 10}
-          ><rect width={chartWidth / 10} height={chartWidth / 10} fill="blue"
-          ></rect></svg
+<div bind:clientWidth={chartWidth}>
+  {#if scale === "decile"}
+    <div class="chart-container">
+      {#each range as number}
+        {#if number === domainDecile}
+          <svg width={chartWidth / 10} height={chartWidth / 10}
+            ><rect width={chartWidth / 10} height={chartWidth / 10} fill="blue"
+            ></rect></svg
+          >
+        {:else}
+          <svg width={chartWidth / 10} height={chartWidth / 10}
+            ><rect width={chartWidth / 10} height={chartWidth / 10} fill="red"
+            ></rect></svg
+          >{/if}
+      {/each}
+    </div>
+  {:else}
+    <div class="chart-container">
+      <svg width={chartWidth} height={chartWidth / 10}>
+        <rect width={barWidth} height={chartWidth / 10}></rect>
+        <g transform="translate({xFunction(domainRank)},0)"
+          ><rect width="10" height={chartWidth / 10} fill="red"></rect></g
         >
-      {:else}
-        <svg width={chartWidth / 10} height={chartWidth / 10}
-          ><rect width={chartWidth / 10} height={chartWidth / 10} fill="red"
-          ></rect></svg
-        >{/if}
-    {/each}
-  </div>
-{:else}
-  <div class="chart-container">
-    <svg width={chartWidth} height={chartWidth / 10}>
-      <rect width={chartWidth} height={chartWidth / 10}></rect>
-      <g transform="translate({xFunction(domainRank)},0)"
-        ><rect width="10" height={chartWidth / 10} fill="white"></rect></g
-      >
-    </svg>
-  </div>
-{/if}
+      </svg>
+    </div>
+  {/if}
+</div>
 
 <style>
   .chart-container {

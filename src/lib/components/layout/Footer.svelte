@@ -22,6 +22,7 @@
     label: string;
     lang?: string;
     hrefLang?: string;
+    onclick?: (event: MouseEvent) => void;
   }
 
   interface FooterSection {
@@ -63,8 +64,6 @@
     copyrightHref?: string;
   }>();
 </script>
-
-Check - hello
 
 <!-- Main footer container -->
 <footer class="govuk-footer">
@@ -120,6 +119,7 @@ Check - hello
                   href={link.href}
                   lang={link.lang}
                   hreflang={link.hrefLang}
+                  onclick={link.onclick}
                 >
                   {link.label}
                 </a>

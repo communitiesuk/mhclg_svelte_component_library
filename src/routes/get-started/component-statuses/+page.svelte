@@ -315,10 +315,6 @@
         <a href="/get-started" class="govuk-link">Get started</a> with installation
         and setup
       </li>
-      <li>
-        <a href="/community/contributing" class="govuk-link">Contribute</a> to help
-        improve component statuses
-      </li>
     </ul>
   </div>
 </div>

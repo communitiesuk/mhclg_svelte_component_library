@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import Pill from "$lib/package-wrapping/Pill.svelte";
   import {
     pascalToKebabCase,
@@ -20,7 +21,7 @@
     <!-- Homepage: component name as clickable link -->
     <a
       class="link-to-other-page"
-      href={`/${parentFolder}${(folder ? "/" + folder : "") + (subFolder ? "/" + subFolder : "")}/${pascalToKebabCase(name)}`}
+      href={`${base}/${parentFolder}${(folder ? "/" + folder : "") + (subFolder ? "/" + subFolder : "")}/${pascalToKebabCase(name)}`}
     >
       <h6>{@html forceWrapAtThirdCapital(name)}</h6>
     </a>

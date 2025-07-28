@@ -1,8 +1,7 @@
-import { base } from "$app/paths";
 import type {
   SideNavItem,
   SideNavGroup,
-} from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
+} from "../components/layout/service-navigation-nested-mobile/SideNav.svelte";
 import type { ComponentItem } from "../../routes/+layout.server"; // Adjust path as needed if +layout.server.ts is the source
 import { forceWrapAtThirdCapital } from "./text-string-conversion/textStringConversion.js";
 
@@ -30,7 +29,7 @@ export function extractLinkableComponentNavItems(
       // If it's a wrapper, add it directly
       navItems.push({
         text: forceWrapAtThirdCapital(item.name),
-        href: `${base}/${item.path}`,
+        href: `/${item.path}`,
         // subItems: undefined, // Explicitly no sub-items for direct wrappers here
       });
     }
@@ -67,7 +66,7 @@ export function createMobileItems(tree: ComponentItem[]) {
     if (category.hasWrapper) {
       result.push({
         text: forceWrapAtThirdCapital(category.name),
-        href: `${base}/${category.path}`,
+        href: `/${category.path}`,
       });
     }
     // If the category has children, process them

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { base } from "$app/paths";
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
   import { page } from "$app/state";
@@ -260,11 +259,7 @@
 />
 
 {#snippet settingsLink()}
-  <a
-    href={base + cookiesUrl}
-    class="govuk-link"
-    onclick={handleCookiesNavigation}
-  >
+  <a href={cookiesUrl} class="govuk-link" onclick={handleCookiesNavigation}>
     {changeSettingsText}
   </a>
 {/snippet}
@@ -338,7 +333,7 @@
             {rejectButtonText}
           </button>
           <a
-            href={base + cookiesUrl}
+            href={cookiesUrl}
             class="govuk-link"
             onclick={handleCookiesNavigation}
           >

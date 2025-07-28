@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { base } from "$app/paths";
-
   import { onMount } from "svelte";
 
   // Define navigation item type

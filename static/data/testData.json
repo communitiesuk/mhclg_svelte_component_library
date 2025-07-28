@@ -52569,6 +52569,24 @@
       "shortLabel": "Waste"
     }
   },
+  "indicesOfDeprivationExample": [
+    {
+        "LSOA_Code": "E01000001",
+        "Overall": "0.88902",
+        "Income": "0.99960",
+        "Employment": "0.99689",
+        "Education_Skills_Training": "0.99994",
+        "Health": "0.97774",
+        "Crime": "0.99446",
+        "Barriers_Housing_Services": "0.22284",
+        "Living_Environment": "0.23715",
+        "IDCACI": "0.99884",
+        "IDAOPI": "0.99927",
+        "LSOA_Name": "City of London 001A",
+        "LA_Code": "E09000001",
+        "LA_Name": "City of London"
+      }
+  ],
   "indexOfMultipleDeprivation": [
     {
       "LSOA": "City of London 001A",

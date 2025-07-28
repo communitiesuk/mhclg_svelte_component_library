@@ -44,7 +44,7 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <PositionChart {data} lsoa="City of London 001B" domain="IMD" scale="rank"
+    <PositionChart {data} lsoa="City of London 001B" domain="IMD_rank"
     ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
@@ -52,9 +52,8 @@
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
-    {#each ["education", "housing", "crime"] as domain}
-      <PositionChart {data} lsoa="City of London 001B" {domain} scale="rank"
-      ></PositionChart>
+    {#each ["education_rank", "housing_rank", "crime_rank"] as domain}
+      <PositionChart {data} lsoa="City of London 001B" {domain}></PositionChart>
     {/each}
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

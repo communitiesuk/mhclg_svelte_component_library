@@ -12,13 +12,12 @@
     data,
     lsoa,
     domain,
-    scale,
     chartWidth = $bindable(500),
   } = $props();
 
   $inspect({ data });
 
-  const range = Array.from({ length: 10 }, (_, i) => i + 1);
+  const range = Array.from({ length: 10 }, (_, i) => i);
 
   let maxRank = 32844;
 
@@ -28,16 +27,19 @@
     scaleLinear().domain([1, maxRank]).range([0, barWidth]),
   );
 
-  let domainDecile = $derived(
-    data.find((el) => el.LSOA_name === lsoa)[domain + "_" + scale],
-  );
+  $inspect({ lsoa }, { domain });
 
-  $inspect({ lsoa }, { domain }, { scale });
+  let domainRank = $derived(data.find((el) => el.LSOA_name === lsoa)[domain]);
 
-  $inspect({ domainDecile });
-
-  let domainRank = $derived(
-    data.find((el) => el.LSOA_name === lsoa)[domain + "_" + scale],
+  $inspect(
+    "x function",
+    xFunction(domainRank),
+    "domain rank",
+    domainRank,
+    "bar width",
+    barWidth,
+    "chart width",
+    chartWidth,
   );
 </script>
 
@@ -48,33 +50,25 @@
 {/snippet}
 
 <p>{domain}</p>
-<div bind:clientWidth={chartWidth}>
-  {#if scale === "decile"}
-    <div class="chart-container">
-      {#each range as number}
-        {#if number === domainDecile}
-          <svg width={chartWidth / 10} height={chartWidth / 10}
-            ><rect width={chartWidth / 10} height={chartWidth / 10} fill="blue"
-            ></rect></svg
-          >
-        {:else}
-          <svg width={chartWidth / 10} height={chartWidth / 10}
-            ><rect width={chartWidth / 10} height={chartWidth / 10} fill="red"
-            ></rect></svg
-          >{/if}
-      {/each}
-    </div>
-  {:else}
-    <div class="chart-container">
-      <svg width={chartWidth} height={chartWidth / 10}>
-        <rect width={barWidth} height={chartWidth / 10}></rect>
-        <g transform="translate({xFunction(domainRank)},0)"
-          ><rect width="10" height={chartWidth / 10} fill="red"></rect></g
-        >
-      </svg>
-    </div>
-  {/if}
+
+<div
+  class="chart-container"
+  bind:clientWidth={chartWidth}
+  style="border: 1px solid #ccc;"
+>
+  <svg width={barWidth}>
+    <rect width={barWidth} height="30" fill="green"></rect>
+    {#each range as number}
+      <g transform="translate({(barWidth * number) / 10},0)"
+        ><rect width={barWidth / 10} height="30" fill="blue"></rect></g
+      >{/each}
+    <g transform="translate({xFunction(domainRank)},0)"
+      ><circle r="10" cx="0" cy="0" fill="red"></circle></g
+    >
+  </svg>
 </div>
+
+<div style="border: 1px solid #ccc;"></div>
 
 <style>
   .chart-container {

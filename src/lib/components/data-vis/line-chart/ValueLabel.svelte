@@ -1,50 +1,42 @@
 <script>
   let {
     activeMarkerId,
-    labelColor,
+    labelColor = "red",
     labelTextColor,
-    tooltipContent,
+    tooltipContent = activeMarkerId.y,
     xFunction,
     yFunction,
     x,
     y,
+    markerRect,
+    tooltipSnippet,
   } = $props();
 
   let textDimensions = $state();
-  let lineSpacing = $state(20);
   let verticalPadding = $state(8);
   let horizontalPadding = $derived(verticalPadding * 2);
 </script>
 
-<svg>
-  <g
-    transform="translate({xFunction(activeMarkerId[x])},{yFunction(
-      activeMarkerId[y],
-    )})"
-    pointer-events="none"
-  >
-    {#if textDimensions}
-      <rect
-        height={textDimensions.height + verticalPadding}
-        rx="5"
-        ry="5"
-        fill={labelColor}
-        width={textDimensions.width + horizontalPadding}
-      ></rect>
-    {/if}
-    <text
-      x={horizontalPadding / 2}
-      y={(textDimensions?.height + verticalPadding) / 2}
-      dominant-baseline="middle"
-      font-size="16"
-      fill={labelTextColor}
-      bind:contentRect={textDimensions}
+<div
+  style="position:absolute;
+  top: {markerRect?.y - (textDimensions?.height ?? 0) - 15}px;
+left: {markerRect?.x +
+    (markerRect?.width ?? 0) / 2 -
+    (textDimensions?.width ?? 0) / 2}px;
+  pointer-events: none;
+  "
+>
+  {#if tooltipSnippet === undefined}
+    <div
+      style="background-color: {labelColor};
+  padding: 5px;
+  border-radius: 5px;"
     >
-      {#if typeof tooltipContent === "string"}
-        {tooltipContent}
-      {:else}
-        {@render tooltipContent()}
-      {/if}
-    </text>
-  </g>
-</svg>
+      <div bind:contentRect={textDimensions}>{activeMarkerId.y}</div>
+    </div>
+  {:else}
+    <div bind:contentRect={textDimensions}>
+      {@render tooltipSnippet(activeMarkerId)}
+    </div>
+  {/if}
+</div>

@@ -184,6 +184,34 @@
         category: "Accessibility",
         value: "Breadcrumb",
       },
+      {
+        name: "breadcrumbTextObject",
+        category: "customisations",
+        value: {
+          ui: "UI Components",
+          "data-vis": "Data Visualization",
+        },
+      },
+
+      {
+        name: "formatBreadcrumbText",
+        category: "customisations",
+        value: function (text) {
+          // Handle special cases
+          const urlLookupObject = {
+            ui: "UI Components",
+            "data-vis": "Data Visualization",
+          };
+
+          console.log("function is running");
+
+          // Default: capitalize and replace hyphens with spaces
+          return (text in urlLookupObject ? urlLookupObject[text] : text)
+            .split("-")
+            .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+            .join(" ");
+        },
+      },
     ]),
   );
 

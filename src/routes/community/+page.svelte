@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import InsetText from "$lib/components/content/InsetText.svelte";
   import WarningText from "$lib/components/content/WarningText.svelte";
 </script>
@@ -7,7 +8,7 @@
   <strong>Join our community:</strong> We're building this component library
   collaboratively with teams across government. Your expertise and feedback help
   us create better solutions for everyone.
-  <a href="mailto:dataexplorerfeedback@communities.gov.uk" class="govuk-link"
+  <a href="mailto:andrew.hillman@communities.gov.uk" class="govuk-link"
     >Get in touch</a
   >
   to start contributing.
@@ -22,7 +23,7 @@
 </svelte:head>
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-full">
     <h1 class="govuk-heading-xl">Community</h1>
 
     <p class="govuk-body-l">
@@ -198,13 +199,16 @@
     <ol class="govuk-list govuk-list--number">
       <li>
         <strong>Explore the library</strong> - Browse our
-        <a href="/components/" class="govuk-link">components</a>
-        and <a href="/patterns/" class="govuk-link">patterns</a> to see what's available
+        <a href={base + "/components/"} class="govuk-link">components</a>
+        and
+        <a href={base + "/patterns/"} class={base + "govuk-link"}>patterns</a> to
+        see what's available
       </li>
       <li>
         <strong>Try it in your service</strong> - Follow our
-        <a href="/get-started/" class="govuk-link">installation guide</a> to start
-        using components in your project
+        <a href={base + "/get-started/"} class="govuk-link"
+          >installation guide</a
+        > to start using components in your project
       </li>
       <li>
         <strong>Share your feedback</strong> - Let us know how the components work
@@ -212,9 +216,8 @@
       </li>
       <li>
         <strong>Join the conversation</strong> -
-        <a
-          href="mailto:dataexplorerfeedback@communities.gov.uk"
-          class="govuk-link">Get in touch</a
+        <a href="mailto:andrew.hillman@communities.gov.uk" class="govuk-link"
+          >Get in touch</a
         > to connect with other teams using the library
       </li>
     </ol>

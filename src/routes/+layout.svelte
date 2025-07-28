@@ -1,6 +1,8 @@
 <script lang="ts">
   // --- Imports ---
-  import Footer from "$lib/components/ui/Footer.svelte";
+  import { base } from "$app/paths";
+  import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
+  import Footer from "$lib/components/layout/Footer.svelte";
   import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
   import ServiceNavigationNestedMobile from "$lib/components/layout/service-navigation-nested-mobile/ServiceNavigationNestedMobile.svelte";
@@ -14,6 +16,10 @@
     getSectionTitle,
     addStandardSubItemsToActiveComponentLink,
   } from "$lib/utils/layoutNavHelpers";
+  import {
+    handleCookiesNavigation,
+    createCookiesUrl,
+  } from "$lib/utils/cookiesNavigation";
 
   // --- Props ---
   let { children, data } = $props();
@@ -24,25 +30,25 @@
   let activeDetailHref = $derived(currentPath + currentHash);
   let isDemoPage = $derived(
     currentPath.startsWith(
-      "/components/layout/service-navigation-nested-mobile/mobile-demo",
+      base + "/components/layout/service-navigation-nested-mobile/mobile-demo",
     ),
   );
 
   // --- Section-Level Derived State ---
   let activeSectionInfo = $derived.by(() => {
-    if (currentPath.startsWith("/get-started")) {
+    if (currentPath.startsWith(base + "/get-started")) {
       return { sectionName: "Get started", sectionHref: "/get-started" };
     }
-    if (currentPath.startsWith("/components")) {
-      return { sectionName: "Components", sectionHref: "/components" };
+    if (currentPath.startsWith(base + "/components")) {
+      return { sectionName: "Components", sectionHref: base + "/components" };
     }
-    if (currentPath.startsWith("/patterns")) {
-      return { sectionName: "Patterns", sectionHref: "/patterns" };
+    if (currentPath.startsWith(base + "/patterns")) {
+      return { sectionName: "Patterns", sectionHref: base + "/patterns" };
     }
-    if (currentPath.startsWith("/community")) {
-      return { sectionName: "Community", sectionHref: "/community" };
+    if (currentPath.startsWith(base + "/community")) {
+      return { sectionName: "Community", sectionHref: base + "/community" };
     }
-    return { sectionName: "Home", sectionHref: "/" }; // Default
+    return { sectionName: "Home", sectionHref: base + "/" }; // Default
   });
   let currentSection = $derived(activeSectionInfo.sectionName);
   let activeSectionHref = $derived(activeSectionInfo.sectionHref);
@@ -79,14 +85,20 @@
     {
       title: "Setup guides",
       items: [
-        { text: "About & Benefits", href: "/get-started/about-benefits" },
-        { text: "Installation and usage", href: "/get-started" },
+        {
+          text: "About & Benefits",
+          href: base + "/get-started/about-benefits",
+        },
+        { text: "Installation and usage", href: base + "/get-started" },
       ],
     },
     {
       title: "Component library usage guides",
       items: [
-        { text: "Component statuses", href: "/get-started/component-statuses" },
+        {
+          text: "Component statuses",
+          href: base + "/get-started/component-statuses",
+        },
       ],
     },
   ];
@@ -133,42 +145,51 @@
   const mobileNavSections = [
     {
       title: "Get started",
-      href: "/get-started",
+      href: base + "/get-started",
       items: [
-        { text: "Installation and usage", href: "/get-started" },
-        { text: "About & Benefits", href: "/get-started/about-benefits" },
-        { text: "Component statuses", href: "/get-started/component-statuses" },
+        { text: "Installation and usage", href: base + "/get-started" },
+        {
+          text: "About & Benefits",
+          href: base + "/get-started/about-benefits",
+        },
+        {
+          text: "Component statuses",
+          href: base + "/get-started/component-statuses",
+        },
       ],
     },
     // {
     //   title: "Home",
-    //   href: "/",
-    //   items: [{ text: "Overview", href: "/" }],
+    //   href: base + "/",
+    //   items: [{ text: "Overview", href: base + "/" }],
     // },
     {
       title: "Components",
-      href: "/components",
+      href: base + "/components",
       items: structuredComponentItems,
     },
     {
       title: "Patterns",
-      href: "/patterns",
+      href: base + "/patterns",
       items: [
         // {
         //   title: "Common patterns",
         //   items: [
-        //     { text: "Forms", href: "/patterns/forms" },
-        //     { text: "Tables", href: "/patterns/tables" },
+        //     { text: "Forms", href: base + "/patterns/forms" },
+        //     { text: "Tables", href: base + "/patterns/tables" },
         //   ],
         // },
       ],
     },
     {
       title: "Community",
-      href: "/community",
+      href: base + "/community",
       items: [],
     },
   ];
+
+  // --- Cookies Navigation Logic ---
+  let cookiesUrl = $derived(createCookiesUrl());
 
   // --- Effects ---
   $effect(() => {
@@ -180,15 +201,17 @@
 {#if !isDemoPage}
   <div class="min-h-screen flex flex-col">
     <div class="flex-grow">
+      <CookieBanner />
       <InternalHeader
-        homepageUrl="/"
-        organisationName="MHCLG Digital Design & Development Team"
+        homepageUrl={base + "/"}
+        organisationName="MHCLG Digital, Data and Information"
+        includeCrest={false}
       />
 
       <!-- Use ServiceNavigationNestedMobile component -->
       <ServiceNavigationNestedMobile
         serviceName="Svelte Component Library"
-        homeHref="/"
+        homeHref={base + "/"}
         {mobileNavSections}
         {activeSectionHref}
         {activeDetailHref}
@@ -203,11 +226,12 @@
       />
       <div
         class="app-pane__body"
-        class:govuk-width-container={currentPath !== "/"}
+        class:govuk-width-container={currentPath !== base + "/"}
       >
-        <div class={currentPath !== "/" ? "app-split-pane" : ""}>
+        <div class={currentPath !== base + "/" ? "app-split-pane" : ""}>
           <!-- Side navigation - only shown if not Home and has navigation items -->
-          {#if currentPath !== "/" && hasNavigationItems}
+
+          {#if currentPath !== base + "/" && hasNavigationItems}
             <aside class="app-split-pane__nav">
               <SideNav
                 title={getSectionTitle(currentSection)}
@@ -218,9 +242,9 @@
           {/if}
           <!-- Main content area -->
           <div
-            class:app-split-pane__content={currentPath !== "/" &&
+            class:app-split-pane__content={currentPath !== base + "/" &&
               hasNavigationItems}
-            class:app-content={currentPath !== "/"}
+            class:app-content={currentPath !== base + "/"}
           >
             {@render children()}
           </div>
@@ -228,7 +252,17 @@
       </div>
     </div>
 
-    <Footer />
+    <Footer
+      copyrightLogoUrl=""
+      inlineLinks={[
+        {
+          href: cookiesUrl,
+          label: "Cookies",
+          onclick: handleCookiesNavigation,
+        },
+        { href: "/privacy-policy", label: "Privacy Policy" },
+      ]}
+    />
   </div>
 {:else}
   <!-- For demo page, render children directly without any layout chrome -->
@@ -295,7 +329,7 @@
   /* Adjust padding for larger devices */
   @media (min-width: 40.0625em) {
     .app-content {
-      padding: 30px 0px 30px 30px;
+      padding: 30px 0px 30px 0px;
     }
   }
 </style>

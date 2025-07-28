@@ -1,7 +1,5 @@
 <script>
   import Line from "./Line.svelte";
-  import Marker from "./Marker.svelte";
-  import ValueLabel from "./ValueLabel.svelte";
   import SeriesLabel from "./SeriesLabel.svelte";
   import labelplacer from "labelplacer";
   import { onMount } from "svelte";
@@ -12,13 +10,16 @@
     tieredDataObject,
     dataArray,
     lineFunction,
+    areaFunction,
     chartWidth,
     xFunction,
     yFunction,
     clickedSeries,
     hoveredSeries,
+    clickedTier,
+    hoveredTier,
     chartHeight,
-    globalTierRules,
+    globalTierParams,
     chartBackgroundColor = "#fafafa",
     nothingSelected,
     onMouseEnterSeries,
@@ -32,7 +33,6 @@
     series,
     y,
     x,
-    tooltipContent,
   } = $props();
 
   let bounds = $state([0, chartHeight]);
@@ -64,14 +64,15 @@
 
 {#each Object.keys(tieredDataObject) as tier}
   <g id={tier}>
-    <g {...globalTierRules[tier]}>
+    <g {...globalTierParams[tier]}>
       {#each tieredDataObject[tier] as line, i}
         <Line
           {...line}
-          id={`line-${line[series]}`}
+          element={`line-${line[series]}`}
           {tier}
           {chartBackgroundColor}
           {lineFunction}
+          {areaFunction}
           {xFunction}
           {yFunction}
           {onMouseEnterSeries}
@@ -79,6 +80,8 @@
           {onClickSeries}
           {clickedSeries}
           {hoveredSeries}
+          {clickedTier}
+          {hoveredTier}
           {series}
           {y}
           {x}
@@ -97,7 +100,7 @@
             (el) => el.datum[series] === line[series],
           )?.[y]}
           <SeriesLabel
-            interactive={line.interactive}
+            interactiveLines={line.interactiveLines}
             id={`label-${line[series]}`}
             {clickedSeries}
             {hoveredSeries}
@@ -120,19 +123,3 @@
     </g>
   </g>
 {/each}
-
-{#if activeMarkerId}
-  <ValueLabel
-    {activeMarkerId}
-    labelColor="grey"
-    labelTextColor="black"
-    {tooltipContent}
-    {xFunction}
-    {yFunction}
-    {x}
-    {y}
-  ></ValueLabel>
-{/if}
-
-<!-- if markerhovered get the id render the tooltip find in the tieredDataObject gets
-the data for that line -->

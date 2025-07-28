@@ -158,7 +158,7 @@
       {
         name: "interactive",
         category: "UI",
-        value: false,
+        value: true,
         description: "Turn on/off the interactvity funtion for the maps",
       },
       {
@@ -359,20 +359,20 @@
         category: "Styling",
       },
       {
-        name: "setCustomPallet",
+        name: "setCustomPalette",
         isProp: true,
         category: "Styling",
         value: false,
         description: " Set wheather a custom palllet will be used",
       },
       {
-        name: "customPallet",
+        name: "customPalette",
         isProp: true,
         category: "Styling",
         value: ["#979e4f"],
-        visable: { name: "setCustomPallet", value: true },
+        visable: { name: "setCustomPalette", value: true },
         description:
-          "Pass in an array of colours you want to be used in a custom pallet. Write in a hex format",
+          "Pass in an array of colours you want to be used in a custom palette. Write in a hex format",
       },
       {
         name: "showBorder",
@@ -540,7 +540,7 @@
         value: false,
         category: "View",
         description:
-          "Binds the viewpory to a the area between an NW point and SE point. Write max bounds as [[number,number], [number number]]",
+          "Set the max bounds of the map. Binds the viewpory to the area between a SW point and NE point.",
       },
 
       {
@@ -548,11 +548,12 @@
         isProp: true,
         category: "View",
         value: [
-          [-23.899, 47.5943],
-          [13.421, 59.8988],
+          [-10, 49],
+          [5, 60],
         ],
         visible: { name: "setMaxBounds", value: true },
-        description: "Set the max bounds of the map",
+        description:
+          "Set the max bounds of the map. Binds the viewpory to the area between a SW point and NE point. Pass values in [[lng, lat], [lng, lat]] form",
       },
       {
         name: "zoom",
@@ -576,6 +577,30 @@
           "If the URL has a valid hash that will override initial viewport settings, even if hash is false. Recommended.",
         value: true,
         category: "View",
+      },
+      {
+        name: "onload",
+        isProp: true,
+        description: "Pass a function to use when the map loads",
+        value: () => {
+          console.log("loaded");
+        },
+        functionElements: {
+          functionAsString: `() => { console.log("loaded"); }`,
+        },
+        category: "Events",
+      },
+      {
+        name: "onidle",
+        isProp: true,
+        description: "Pass a function to use when the map is idle",
+        value: () => {
+          console.log("idle");
+        },
+        functionElements: {
+          functionAsString: `() => { console.log("idle"); }`,
+        },
+        category: "Events",
       },
     ]),
   );

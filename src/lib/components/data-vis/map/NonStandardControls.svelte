@@ -1,5 +1,4 @@
 <script lang="ts">
-  //@ts-nocheck
   import {
     FullscreenControl,
     GeolocateControl,
@@ -17,6 +16,16 @@
     scaleControl,
     scaleControlPosition = "bottom-left",
     scaleControlUnit = "metric",
+  }: {
+    navigationControl?: boolean;
+    navigationControlPosition?: maplibregl.ControlPosition;
+    geolocateControl?: boolean;
+    geolocateControlPosition?: maplibregl.ControlPosition;
+    fullscreenControl?: boolean;
+    fullscreenControlPosition?: maplibregl.ControlPosition;
+    scaleControl?: boolean;
+    scaleControlPosition?: maplibregl.ControlPosition;
+    scaleControlUnit?: "imperial" | "metric" | "nautical";
   } = $props();
 </script>
 

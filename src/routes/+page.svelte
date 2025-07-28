@@ -1,8 +1,10 @@
 <script>
+  import { base } from "$app/paths";
   import DividerLine from "$lib/package-wrapping/DividerLine.svelte";
   import Masthead from "$lib/components/ui/Masthead.svelte";
-  import mastheadIllustration from "$lib/assets/images/masthead-illustration.svg";
   import WhatsNew from "$lib/components/ui/WhatsNew.svelte";
+  import NotificationBanner from "$lib/components/ui/NotificationBanner.svelte";
+  import InsetText from "$lib/components/content/InsetText.svelte";
 
   // Keep only playground wrappers for the homepage
   const wrappersPlaygroundsObject = import.meta.glob(
@@ -40,15 +42,41 @@ TODO
 <>		
 -->
 
+{#snippet InsetTextSnippet()}
+  <p>
+    This service is in the <a
+      href="https://www.gov.uk/service-manual/agile-delivery/how-the-alpha-phase-works"
+      >ALPHA</a
+    >
+    stage. The content is in
+    <a href="https://design-system.service.gov.uk/">GOV.UK style</a> because it is
+    designed for creating GOV.UK applications.
+  </p>
+
+  <p>
+    The use of the GDS Transport typeface and government logos should be limited
+    to GOV.UK web pages. See: <a
+      href="https://www.gov.uk/service-manual/design/making-your-service-look-like-govuk"
+      >Making your service look like GOV.UK.</a
+    >
+  </p>
+{/snippet}
+
 <div class="homepage-layout">
   <Masthead
     title="MHCLG Svelte Component Library"
     description="Bring your service or page to life with dynamic content, layout, UI, charts, maps and data visualisations. The well tested and trusted GDS components are coded here in Svelte for data rich digital products."
     buttonHref="/get-started"
     backgroundColor="#00625E"
-    imageSrc={mastheadIllustration}
+    imageSrc="{base}/assets/images/masthead-illustration.svg"
     imageAlt="MHCLG Svelte Component Library"
   />
+  <div
+    class="govuk-width-container"
+    style="padding-top: 20px; padding-bottom: 20px;"
+  >
+    <InsetText content={InsetTextSnippet}></InsetText>
+  </div>
   <WhatsNew
     title="What's new"
     componentLinksIntroText="This initial alpha release includes foundational components for building government services."
@@ -58,8 +86,8 @@ TODO
         content:
           "We made the MHCLG Svelte Component Library public, so other developers can see what we're working on. This library provides Svelte 5 implementations of GOV.UK Design System components, as well as other custom components, specifically tailored for data-rich digital products and services within the Ministry of Housing, Communities and Local Government and beyond.",
         releaseNotesUrl:
-          "https://github.com/communitiesuk/oflog_svelte_component_library/releases/tag/v0.1.16",
-        releaseVersion: "v0.1.16",
+          "https://github.com/communitiesuk/oflog_svelte_component_library/releases/",
+        releaseVersion: "v0.1.18",
       },
       {
         date: "January 2025",
@@ -94,8 +122,9 @@ TODO
           navigation, panels, tables, charts and data visualisations.
         </p>
         <p class="govuk-body govuk-!-margin-bottom-0">
-          <a href="/components/" class="govuk-link govuk-!-font-weight-bold"
-            >Browse our components</a
+          <a
+            href={base + "/components/"}
+            class="govuk-link govuk-!-font-weight-bold">Browse our components</a
           >
         </p>
       </div>
@@ -108,8 +137,9 @@ TODO
           and creating interactive dashboards with proven design patterns.
         </p>
         <p class="govuk-body govuk-!-margin-bottom-0">
-          <a href="/patterns/" class="govuk-link govuk-!-font-weight-bold"
-            >Browse our patterns</a
+          <a
+            href={base + "/patterns/"}
+            class="govuk-link govuk-!-font-weight-bold">Browse our patterns</a
           >
         </p>
       </div>
@@ -123,8 +153,9 @@ TODO
           events and collaborative design sessions.
         </p>
         <p class="govuk-body govuk-!-margin-bottom-0">
-          <a href="/community/" class="govuk-link govuk-!-font-weight-bold"
-            >Join our community</a
+          <a
+            href={base + "/community/"}
+            class="govuk-link govuk-!-font-weight-bold">Join our community</a
           >
         </p>
       </div>
@@ -138,10 +169,12 @@ TODO
       <div class="govuk-grid-column-two-thirds-from-desktop">
         <h2 id="support" class="govuk-heading-l">Support</h2>
         <p class="govuk-body">
-          The MHCLG Svelte Component Library is maintained by the Digital,
-          Design and Development team at MHCLG. If you've got a question, idea
-          or suggestion, you can
-          <a class="govuk-link" href="/get-in-touch/">contact the team</a>.
+          The MHCLG Svelte Component Library is maintained by the Digital, Data
+          and Information team at MHCLG. If you've got a question, idea or
+          suggestion, you can
+          <a href="mailto:andrew.hillman@communities.gov.uk" class="govuk-link"
+            >get in touch</a
+          >.
         </p>
       </div>
     </div>

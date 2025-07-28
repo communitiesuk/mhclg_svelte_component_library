@@ -127,15 +127,22 @@
    */
   let colors = $state({
     teal: "#408A7B",
-    lightblue: "#509EC8",
-    darkblue: "#335F91",
+    skyBlue: "#509EC8",
+    indigo: "#335F91",
     ochre: "#BA7F30",
     coral: "#E46B6C",
-    fuschia: "#BB2765",
-    purple: "#736CAC",
-    lightgrey: "#A0A0A0",
-    darkgrey: "#636363",
+    fuchsia: "#BB2765",
+    lavender: "#736CAC",
+    ashGrey: "#A0A0A0",
+    slateGrey: "#636363",
     black: "#161616",
+    forestGreen: "#3C6E3C",
+    midnightTeal: "#2C5E5E",
+    dustyRose: "#C86B84",
+    steelBlue: "#4B6E91",
+    burntSienna: "#B65C38",
+    oliveGreen: "#7A8644",
+    slatePurple: "#64587C",
   });
 
   let svgWidth = $state(700);
@@ -143,21 +150,17 @@
   let nothingSelected = $derived(
     [clickedSeries, hoveredSeries].every((item) => item == null),
   );
-  let activeMarkerId = $state();
-  let seriesLabels = $state(false);
   let hoveredSeries = $state();
   let clickedSeries = $state();
-
-  let lineData = $state();
   let hoveredTier = $state();
   let clickedTier = $state();
 
-  $inspect({ hoveredSeries, clickedSeries, hoveredTier, clickedTier });
-  $inspect(
-    [hoveredSeries, clickedSeries].includes("E06000040") ||
-      ("primary" === "primary" &&
-        (nothingSelected || [hoveredTier, clickedTier].includes("primary"))),
-  );
+  let includeSeriesLabels = $state(false); // add to parameterssourcearray
+  let activeMarkerId = $state();
+
+  let currentMousePosition = $state(); // add to parameterssourcearray
+  let markerRect = $state();
+  let container = $state(); // add to parameterssourcearray
 
   /**
    * ! Step 3 - Add your props
@@ -202,346 +205,31 @@
     addIndexAndInitalValue([
       {
         name: "x",
-        category: "data",
+        category: "Data",
         value: "x",
         description: "Data variable to be plotted on the x axis",
       },
       {
         name: "y",
-        category: "data",
+        category: "Data",
         value: "y",
         description: "Data variable to be plotted on the y axis",
       },
       {
         name: "series",
-        category: "data",
+        category: "Data",
+        value: series,
         description: "Data variable used to distinguish between lines",
       },
       {
         name: "basicLineParams",
-        category: "customisingLines",
-        description: "Parameters that shared by all lines.",
+        category: "Customising Lines",
+        description: "Parameters that are shared by all lines.",
       },
       {
-        name: "tieredLineParams",
-        category: "customisingLines",
-        description:
-          "Parameters that apply to specific tiers. Takes priority over `basicLineParams`",
-      },
-      {
-        name: "overrideLineParams",
-        category: "customisingLines",
-        description:
-          "Parameters that are specific to particular lines. Takes priority over `basicLineParams` and tieredLineParams",
-        functionElements: {
-          functionAsString: `function (key, el) {
-            return {
-              pathStrokeColor: ["primary", "hover", "clicked"].includes(key)
-                ? getColor(
-                    el[series],
-                    [
-                      "E07000224",
-                      "E07000225",
-                      "E07000226",
-                      "E07000228",
-                    ].indexOf(el[series]),
-                  )
-                : null,
-            };
-          }`,
-        },
-        value: function (tier, el) {
-          return {
-            placeLabel:
-              [hoveredSeries, clickedSeries].includes(el[series]) ||
-              (tier === "primary" &&
-                (nothingSelected ||
-                  [hoveredTier, clickedTier].includes("primary"))),
-            showLabel:
-              [hoveredSeries, clickedSeries].includes(el[series]) ||
-              (tier === "primary" && nothingSelected) ||
-              (!clickedSeries &&
-                hoveredTier === "primary" &&
-                tier === "primary"),
-            pathStrokeColor: ["primary", "hover", "clicked"].includes(tier)
-              ? getColor(
-                  el[series],
-                  [
-                    "E07000224",
-                    "E07000225",
-                    "E07000226",
-                    "E07000228",
-                    englandMedian,
-                    similarAreas,
-                  ].indexOf(el[series]),
-                )
-              : null,
-            markerFill: ["primary", "hover", "clicked"].includes(tier)
-              ? getColor(
-                  el[series],
-                  [
-                    "E07000224",
-                    "E07000225",
-                    "E07000226",
-                    "E07000228",
-                    englandMedian,
-                    similarAreas,
-                  ].indexOf(el[series]),
-                )
-              : null,
-          };
-        },
-      },
-      {
-        name: "globalTierRules",
-        category: "customisingLines",
-        description:
-          "Defines how the entire tier should be rendered. Must be valid SVG attributes",
-        functionElements: {
-          functionAsString: `{otherTier: {},
-    secondary: {
-      opacity: getValue("nothingSelected") ? 1 : 0.5,
-    },
-    primary: {
-      opacity: getValue("nothingSelected") ? 1 : 0.4,
-    },
-    hover: { opacity: 1 },
-    clicked: { opacity: 1 }}`,
-        },
-      },
-      {
-        name: "colors",
-        category: "customisingLines",
-        value: colors,
-      },
-      {
-        name: "clickedSeries",
-        category: "lineEvents",
-        isBinded: true,
-        value: clickedSeries,
-      },
-      {
-        name: "nothingSelected",
-        category: "lineEvents",
-        isBinded: true,
-        value: nothingSelected,
-      },
-      {
-        name: "hoveredSeries",
-        category: "lineEvents",
-        isBinded: true,
-        value: hoveredSeries,
-      },
-      {
-        name: "activeMarkerId",
-        category: "markerEvents",
-        value: activeMarkerId,
-      },
-      {
-        name: "onClickSeries",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: ``,
-        },
-        value: function (series, tier) {
-          if (clickedSeries === series) {
-            clickedSeries = null;
-            hoveredSeries = null;
-          } else {
-            clickedSeries = series;
-            clickedTier = tier;
-            hoveredSeries = series;
-            hoveredTier = tier;
-          }
-        },
-      },
-      {
-        name: "onMouseEnterSeries",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: ``,
-        },
-        value: function (series, tier) {
-          if (hoveredSeries !== series) {
-            hoveredSeries = series;
-            hoveredTier = tier;
-          }
-        },
-      },
-      {
-        name: "onMouseLeaveSeries",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: ``,
-        },
-        value: function (series, tier) {
-          if (hoveredSeries === series) {
-            hoveredSeries = null;
-            hoveredTier = null;
-          }
-        },
-      },
-      {
-        name: "onMouseEnterMarker",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function (event, dataArray, dataId) {
-              labelHovered = series;
-            }`,
-        },
-        value: function (event, marker, markerId) {
-          activeMarkerId = marker;
-        },
-      },
-      {
-        name: "onMouseLeaveMarker",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function (event, dataArray, dataId) {
-              if (labelClicked !== series) {
-                labelHovered = null;
-              }
-            }`,
-        },
-        value: function (event, marker, dataId) {
-          activeMarkerId = null;
-        },
-      },
-      {
-        name: "onClickMarker",
-        category: "lineEvents",
-        functionElements: {
-          functionAsString: `function (event, dataArray, dataId) {
-              labelClicked === series
-                ? ((labelClicked = null), (labelHovered = null))
-                : (labelClicked = series);
-            }`,
-        },
-        value: function (event, marker, markerId) {
-          activeMarkerSId = marker;
-        },
-      },
-      {
-        name: "getColor",
-        category: "customisingLines",
-        functionElements: {
-          functionAsString: `function (series, i) {
-    let colorsArray = [colors.coral, colors.fuschia, colors.purple];
-
-    return (
-      {
-        [englandMedian]: colors.lightblue,
-        [selectedAreaCode]: colors.teal,
-        [similarAreas]: colors.darkblue,
-      }[series] ?? colorsArray[i % colorsArray.length]
-    );
-  };`,
-        },
-        value: function (series, i) {
-          let colorsArray = [colors.coral, colors.fuschia, colors.purple];
-
-          return (
-            {
-              [englandMedian]: colors.lightblue,
-              [selectedAreaCode]: colors.teal,
-              [similarAreas]: colors.darkblue,
-            }[series] ?? colorsArray[i % colorsArray.length]
-          );
-        },
-      },
-
-      {
-        name: "paddingTop",
-        category: "dimensions",
-        value: 50,
-      },
-      {
-        name: "paddingRight",
-        category: "dimensions",
-        value: 150,
-      },
-      {
-        name: "paddingBottom",
-        category: "dimensions",
-        value: 50,
-      },
-      {
-        name: "paddingLeft",
-        category: "dimensions",
-        value: 50,
-      },
-      {
-        name: "svgHeight",
-        category: "dimensions",
-        value: 500,
-      },
-      {
-        name: "svgWidth",
-        category: "dimensions",
-        value: svgWidth,
-      },
-      {
-        name: "labelText",
-        category: "labels",
-        value: function (dataArray) {
-          return dataArray[series];
-        },
-        isProp: true,
-      },
-      {
-        name: "selectedMetric",
-        category: "Data",
-        visible: true,
-        options: [
-          "Household waste recycling rate",
-          "Recycling contamination rate",
-          "Residual household waste",
-        ],
-      },
-      {
-        name: "lineChartData",
-        category: "Data",
-        visible: false,
-        isProp: true,
-      },
-
-      {
-        name: "chartBackgroundColor",
-        category: "Aesthetics",
-        visible: true,
-        isProp: true,
-        value: "#f5f5f5",
-        description:
-          "Background color of the chart. Also used for the 'halo' outline given to lines.",
-      },
-      {
-        name: "xFunction",
-        category: "xScale",
-        value: function (number) {
-          return scaleLinear()
-            .domain([2015, 2022])
-            .range([
-              0,
-              svgWidth - getValue("paddingLeft") - getValue("paddingRight"),
-            ])(number);
-        },
-      },
-      {
-        name: "yFunction",
-        category: "yScale",
-      },
-      {
-        name: "lineFunction",
-        category: "lineFunction",
-      },
-      {
-        name: "tooltipContent",
-        category: "interactions",
-        value: "Here's some content for a tooltip",
-      },
-      {
-        name: "getLine",
-        category: "customisingLines",
+        name: "assignLinesToTiers",
+        category: "Customising Lines",
+        description: "Function that assigns lines to different tiers.",
         functionElements: {
           functionAsString: `function (key, el, param) {
           let primaryLines = [
@@ -566,7 +254,7 @@
           }
         },`,
         },
-        value: function (key, el) {
+        value: function (tier, el) {
           let primaryLines = [
             "E07000224",
             "E07000225",
@@ -575,19 +263,420 @@
             englandMedian,
             similarAreas,
           ];
-          if (key === "primary") {
+          if (tier === "primary") {
             return primaryLines.includes(el[series]);
           }
-          if (key === "secondary" && !primaryLines.includes(el[series])) {
+          if (tier === "secondary" && !primaryLines.includes(el[series])) {
             return true;
           }
-          if (key === "hover") {
-            return [hoveredSeries, hoveredSeries].includes(el[series]);
+          if (tier === "hover") {
+            return hoveredSeries === el[series];
           }
-          if (key === "clicked") {
-            return [clickedSeries, clickedSeries].includes(el[series]);
+          if (tier === "clicked") {
+            return clickedSeries === el[series];
           }
         },
+      },
+      {
+        name: "globalTierParams",
+        category: "Customising Lines",
+        description:
+          "Defines how the entire tier should be rendered. Must be valid SVG attributes",
+        // value: {
+        //   otherTier: {},
+        //   secondary: {
+        //     opacity: nothingSelected ? 1 : 0.5,
+        //   },
+        //   primary: {
+        //     opacity: nothingSelected ? 1 : 0.4,
+        //   },
+        //   hover: { opacity: 1 },
+        //   clicked: { opacity: 1 },
+        // },
+        functionElements: {
+          functionAsString: `{otherTier: {},
+        secondary: {
+          opacity: getValue("nothingSelected") ? 1 : 0.5,
+        },
+        primary: {
+          opacity: getValue("nothingSelected") ? 1 : 0.4,
+        },
+        hover: { opacity: 1 },
+        clicked: { opacity: 1 }}`,
+        },
+      },
+      {
+        name: "tieredLineParams",
+        category: "Customising Lines",
+        description:
+          "Parameters that apply to specific tiers. Takes priority over `basicLineParams`. Specify in ascending priority order.",
+      },
+      {
+        name: "overrideLineParams",
+        category: "Customising Lines",
+        description:
+          "Parameters that are specific to particular lines. Takes priority over `basicLineParams` and tieredLineParams",
+        functionElements: {
+          functionAsString: `function (tier, el) {
+          return {
+            placeLabel:
+              [hoveredSeries, clickedSeries].includes(el[series]) ||
+              (tier === "primary" &&
+                (nothingSelected ||s
+                  [hoveredTier, clickedTier].includes("primary"))),
+            showLabel:
+              [hoveredSeries, clickedSeries].includes(el[series]) ||
+              (tier === "primary" && nothingSelected) ||
+              (!clickedSeries &&
+                hoveredTier === "primary" &&
+                tier === "primary"),
+          };
+        }`,
+        },
+        value: function (tier, el) {
+          return {
+            placeLabel:
+              [hoveredSeries, clickedSeries].includes(el[series]) ||
+              (tier === "primary" &&
+                (nothingSelected ||
+                  [hoveredTier, clickedTier].includes("primary"))),
+            showLabel:
+              [hoveredSeries, clickedSeries].includes(el[series]) ||
+              (tier === "primary" && nothingSelected) ||
+              (!clickedSeries &&
+                hoveredTier === "primary" &&
+                tier === "primary"),
+          };
+        },
+      },
+
+      {
+        name: "colors",
+        category: "Customising Lines",
+        value: colors,
+        description:
+          "Colour palette used for lines that aren't assigned custom colours.",
+      },
+      {
+        name: "hoveredSeries",
+        category: "Line Interactions",
+        isBinded: true,
+        value: hoveredSeries,
+        description: "The line or label that a user is hovering on.",
+      },
+      {
+        name: "clickedSeries",
+        category: "Line Interactions",
+        isBinded: true,
+        value: clickedSeries,
+        description: "The line or label that a user has clicked.",
+      },
+      {
+        name: "hoveredTier",
+        category: "Line Interactions",
+        isBinded: true,
+        value: hoveredTier,
+        description:
+          "The tier of the line or label that a user is hovering on.",
+      },
+      {
+        name: "clickedTier",
+        category: "Line Interactions",
+        isBinded: true,
+        value: clickedTier,
+        description: "The tier of the line or label that a user has clicked.",
+      },
+      {
+        name: "nothingSelected",
+        category: "Line Interactions",
+        isBinded: true,
+        value: nothingSelected,
+        description:
+          "Boolean. True when no line or label is hovered or clicked.",
+      },
+      {
+        name: "activeMarkerId",
+        category: "Markers",
+        value: activeMarkerId,
+        functionElements: {
+          functionAsString: `activeMarkerId`,
+        },
+        description: "The ID of the marker that is being hovered over.",
+      },
+      {
+        name: "markerRect",
+        category: "Markers",
+        value: markerRect,
+        description: "Dimensions of the marker that is being hovered over.",
+      },
+      {
+        name: "onClickSeries",
+        category: "Line Interactions",
+        functionElements: {
+          functionAsString: `function (series, tier) {
+          if (clickedSeries === series) {
+            clickedSeries = null;
+            hoveredSeries = null;
+          } else {
+            clickedSeries = series;
+            clickedTier = tier;
+            hoveredSeries = series;
+            hoveredTier = tier;
+          }
+        }`,
+        },
+        value: function (series, tier) {
+          if (clickedSeries === series) {
+            clickedSeries = null;
+            hoveredSeries = null;
+          } else {
+            clickedSeries = series;
+            clickedTier = tier;
+            hoveredSeries = series;
+            hoveredTier = tier;
+          }
+        },
+        description:
+          "Function that runs when a user clicks on a line or its label.",
+      },
+      {
+        name: "onMouseEnterSeries",
+        category: "Line Interactions",
+        functionElements: {
+          functionAsString: `function (series, tier) {
+          if (hoveredSeries !== series) {
+            hoveredSeries = series;
+            hoveredTier = tier;
+          }
+        }`,
+        },
+        value: function (series, tier) {
+          if (hoveredSeries !== series) {
+            hoveredSeries = series;
+            hoveredTier = tier;
+          }
+        },
+        description:
+          "Function that runs when a user's mouse enters a line or its label.",
+      },
+      {
+        name: "onMouseLeaveSeries",
+        category: "Line Interactions",
+        functionElements: {
+          functionAsString: `function (series, tier) {
+          if (hoveredSeries === series) {
+            hoveredSeries = null;
+            hoveredTier = null;
+          }
+        }`,
+        },
+        value: function (series, tier) {
+          if (hoveredSeries === series) {
+            hoveredSeries = null;
+            hoveredTier = null;
+          }
+        },
+        description:
+          "Function that runs when a user's mouse leaves a line or its label.",
+      },
+      {
+        name: "onMouseEnterMarker",
+        category: "Markers",
+        functionElements: {
+          functionAsString: `function (event, dataArray, dataId) {
+              labelHovered = series;
+            }`,
+        },
+        value: function (event, marker, markerId, rect) {
+          activeMarkerId = marker;
+          if (container) {
+            const bounds = container.getBoundingClientRect();
+            markerRect = {
+              x: rect.x - bounds.left + rect.width / 2,
+              y: rect.y - bounds.top + rect.height / 2,
+            };
+          } else {
+            currentMousePosition = [event.clientX, event.clientY];
+            markerRect = rect;
+          }
+        },
+        description: "Function that runs when a user's mouse enters a marker.",
+      },
+      {
+        name: "onMouseLeaveMarker",
+        category: "Markers",
+        functionElements: {
+          functionAsString: `function (event, dataArray, dataId) {
+              if (labelClicked !== series) {
+                labelHovered = null;
+              }
+            }`,
+        },
+        value: function (event, marker, dataId) {
+          activeMarkerId = null;
+        },
+        description: "Function that runs when a user's mouse leaves a marker.",
+      },
+      {
+        name: "onClickMarker",
+        category: "Markers",
+        functionElements: {
+          functionAsString: `function (event, dataArray, dataId) {
+              labelClicked === series
+                ? ((labelClicked = null), (labelHovered = null))
+                : (labelClicked = series);
+            }`,
+        },
+        value: function (event, marker, markerId) {
+          activeMarkerId = marker;
+        },
+        description: "Function that runs when a user clicks a marker.",
+      },
+
+      {
+        name: "paddingTop",
+        category: "Appearance",
+        value: 50,
+      },
+      {
+        name: "paddingRight",
+        category: "Appearance",
+        value: 150,
+      },
+      {
+        name: "paddingBottom",
+        category: "Appearance",
+        value: 50,
+      },
+      {
+        name: "paddingLeft",
+        category: "Appearance",
+        value: 50,
+      },
+      {
+        name: "svgHeight",
+        category: "Appearance",
+        value: 500,
+      },
+      {
+        name: "svgWidth",
+        category: "Appearance",
+        value: svgWidth,
+      },
+      {
+        name: "labelText",
+        category: "Labels",
+        functionElements: {
+          functionAsString: `function (dataArray) {
+          return dataArray[series];
+        }`,
+        },
+        isProp: true,
+        value: function (dataArray) {
+          return dataArray[series];
+        },
+        description: "Text for the series labels.",
+      },
+      {
+        name: "selectedMetric",
+        category: "Data",
+        visible: true,
+        options: [
+          "Household waste recycling rate",
+          "Recycling contamination rate",
+          "Residual household waste",
+        ],
+      },
+      {
+        name: "lineChartData",
+        category: "Data",
+        visible: false,
+        isProp: true,
+      },
+
+      {
+        name: "chartBackgroundColor",
+        category: "Appearance",
+        visible: true,
+        isProp: true,
+        value: "#f5f5f5",
+        description:
+          "Background color of the chart. Also used for the 'halo' outline given to lines.",
+      },
+      {
+        name: "xFunction",
+        category: "Plotting Functions",
+        value: function (number) {
+          return scaleLinear()
+            .domain([2015, 2022])
+            .range([
+              0,
+              svgWidth - getValue("paddingLeft") - getValue("paddingRight"),
+            ])(number);
+        },
+        functionElements: {
+          functionAsString: `function (number) {
+    return scaleLinear()
+      .domain([2015, 2022])
+      .range([
+        0,
+        svgWidth - getValue("paddingLeft") - getValue("paddingRight"),
+      ])(number);
+  }`,
+        },
+        description:
+          "Function translating numerical values to x-axis position.",
+      },
+      {
+        name: "yFunction",
+        category: "Plotting Functions",
+        description:
+          "Function translating numerical values to y-axis position.",
+        value: function (number) {
+          return scaleLinear()
+            .domain([0, 100])
+            .range([
+              getValue("svgHeight") -
+                getValue("paddingTop") -
+                getValue("paddingBottom"),
+              0,
+            ])(number);
+        },
+        functionElements: {
+          functionAsString: `function (number) {
+          return scaleLinear()
+            .domain([0, 100])
+            .range([
+              getValue("svgHeight") -
+                getValue("paddingTop") -
+                getValue("paddingBottom"),
+              0,
+            ])(number);
+        }`,
+        },
+      },
+      {
+        name: "lineFunction",
+        category: "Plotting Functions",
+        description:
+          "Function that creates a line from a series of x and y values. Uses d3.line().",
+        functionElements: {
+          functionAsString: `line()
+          .x((d) => xFunction(d[x]))
+          .y((d) => yFunction(d[y]))
+          .curve(curveLinear)`,
+        },
+        value: line()
+          .x((d) => xFunction(d[x]))
+          .y((d) => yFunction(d[y]))
+          .curve(curveLinear),
+      },
+      {
+        name: "tooltipContent",
+        category: "Markers",
+        value: activeMarkerId?.y,
+        description:
+          "Content for the tooltip that appears when hovering over a marker. Can be a string or a snippet.",
       },
     ]),
   );
@@ -650,37 +739,35 @@
       pathStrokeColor: colors.black,
       pathStrokeWidth: 1,
       opacity: 0.05,
-      interactive: true,
+      interactiveLines: false,
       markers: false,
       showLabel: false,
     },
     primary: {
       halo: true,
       pathStrokeWidth: 5,
-      pathStrokeColor: colors.darkgrey,
-      interactive: true,
-      lineEnding: null,
+      interactiveLines: true,
       markers: true,
+      interactiveMarkers: true,
     },
     clicked: {
-      pathStrokeColor: colors.ochre,
+      pathStrokeColor: clickedTier === "secondary" ? colors.ashGrey : null,
       pathStrokeWidth: 7,
-      halo: true,
-      interactive: false,
+      interactiveLines: false,
       markers: true,
-      lineEnding: null,
+      interactiveMarkers: true,
     },
     hover: {
-      pathStrokeColor: colors.ochre,
+      pathStrokeColor: hoveredTier === "secondary" ? colors.ashGrey : null,
       pathStrokeWidth: 6,
       halo: true,
-      interactive: false,
+      interactiveLines: false,
       markers: true,
-      lineEnding: null,
+      interactiveMarkers: true,
     },
   });
 
-  let globalTierRules = $derived({
+  let globalTierParams = $derived({
     otherTier: {},
     secondary: {
       opacity: nothingSelected ? 1 : 0.5,
@@ -691,18 +778,6 @@
     hover: { opacity: 1 },
     clicked: { opacity: 1 },
   });
-
-  let getColor = function (series, i) {
-    let colorsArray = [colors.coral, colors.fuschia, colors.purple];
-
-    return (
-      {
-        [englandMedian]: colors.lightblue,
-        [selectedAreaCode]: colors.teal,
-        [similarAreas]: colors.darkblue,
-      }[series] ?? colorsArray[i % colorsArray.length]
-    );
-  };
 
   let xFunction = $derived(function (number) {
     return scaleLinear()
@@ -750,10 +825,9 @@
     lineFunction,
     lineChartData,
     tieredLineParams,
-    getColor,
     basicLineParams,
     nothingSelected,
-    globalTierRules,
+    globalTierParams,
   });
 
   /**
@@ -850,8 +924,10 @@
       bind:clickedSeries
       bind:hoveredSeries
       bind:svgWidth
+      bind:container
       bind:activeMarkerId
-      bind:series
+      bind:markerRect
+      bind:currentMousePosition
     ></LineChart>
   </div>
 {/snippet}

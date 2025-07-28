@@ -1,5 +1,4 @@
 <script>
-  import ValueLabel from "./ValueLabel.svelte";
   import Marker from "./Marker.svelte";
   import {
     curveBasis,
@@ -11,6 +10,8 @@
     line,
     area,
   } from "d3-shape";
+
+  import { scaleLinear } from "d3-scale";
 
   let {
     dataArray,
@@ -33,7 +34,8 @@
     halo,
     chartBackgroundColor,
     invisibleStrokeWidth,
-    interactive,
+    interactiveLines,
+    interactiveMarkers,
     onClickMarker,
     onMouseEnterMarker,
     onMouseLeaveMarker,
@@ -46,7 +48,7 @@
     activeMarkerId,
     series,
     y,
-    id,
+    element,
     x,
     markers,
     markerFill,
@@ -84,55 +86,63 @@
   </marker>
 </defs>
 
-<g
-  data-id={dataId}
-  {id}
-  onclick={interactive ? (e) => onClickSeries(dataId, tier) : null}
-  onmouseenter={interactive ? (e) => onMouseEnterSeries(dataId, tier) : null}
-  onmouseleave={interactive ? (e) => onMouseLeaveSeries(dataId, tier) : null}
-  role="button"
-  tabindex="0"
-  onkeydown={(e) => e.key === "Enter" && onClickSeries(e, dataArray)}
-  {opacity}
-  pointer-events={interactive ? null : "none"}
->
-  {#if includeArea}
-    <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
-  {/if}
-  <path
-    d={linePath}
-    fill="none"
-    stroke="invisible"
-    stroke-width={invisibleStrokeWidth}
-    pointer-events={interactive ? "stroke" : "none"}
-  ></path>
-  {#if halo}
+<g data-id={"series-" + dataId} {opacity}>
+  <g
+    data-id={"line-" + dataId}
+    onclick={interactiveLines ? (e) => onClickSeries(dataId, tier) : null}
+    onmouseenter={interactiveLines
+      ? (e) => onMouseEnterSeries(dataId, tier)
+      : null}
+    onmouseleave={interactiveLines
+      ? (e) => onMouseLeaveSeries(dataId, tier)
+      : null}
+    role="button"
+    tabindex="0"
+    onkeydown={interactiveLines
+      ? (e) => e.key === "Enter" && onClickSeries(e, dataArray)
+      : null}
+    pointer-events={interactiveLines ? null : "none"}
+  >
+    {#if includeArea}
+      <path d={areaFunction(dataArray)} fill={areaFillColor}></path>
+    {/if}
+    <path
+      d={linePath}
+      fill="none"
+      stroke="invisible"
+      stroke-width={invisibleStrokeWidth}
+      pointer-events={interactiveLines ? "stroke" : "none"}
+    ></path>
+    {#if halo}
+      <path
+        d={linePath}
+        fill={pathFillColor}
+        stroke={chartBackgroundColor}
+        stroke-width={pathStrokeWidth * 1.2}
+        stroke-dasharray={pathStrokeDashArray}
+        pointer-events="none"
+      ></path>
+    {/if}
     <path
       d={linePath}
       fill={pathFillColor}
-      stroke={chartBackgroundColor}
-      stroke-width={pathStrokeWidth * 1.2}
+      stroke={pathStrokeColor}
+      stroke-width={pathStrokeWidth}
       stroke-dasharray={pathStrokeDashArray}
       pointer-events="none"
+      marker-start={`url(#${lineEnding}-${pathStrokeColor})`}
     ></path>
-  {/if}
-  <path
-    d={linePath}
-    fill={pathFillColor}
-    stroke={pathStrokeColor}
-    stroke-width={pathStrokeWidth}
-    stroke-dasharray={pathStrokeDashArray}
-    pointer-events="none"
-    marker-start={`url(#${lineEnding}-${pathStrokeColor})`}
-  ></path>
+  </g>
+
   {#if markers}
     <Marker
       {dataArray}
-      {markerFill}
+      markerFill={markerFill ?? pathStrokeColor}
       {markerRadius}
       {markerShape}
       {markerStroke}
       {markerStrokeWidth}
+      {pathStrokeColor}
       {x}
       {y}
       {series}
@@ -141,7 +151,7 @@
       {onMouseEnterMarker}
       {onMouseLeaveMarker}
       {onClickMarker}
-      {activeMarkerId}
+      {interactiveMarkers}
     ></Marker>
   {/if}
 </g>

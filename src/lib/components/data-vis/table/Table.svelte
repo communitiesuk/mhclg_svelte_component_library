@@ -1,15 +1,14 @@
 <script>
-  import Button from "$lib/components/ui/Button.svelte";
+  import Button from "./../../ui/Button.svelte";
 
   let {
-    componentNameProp = undefined,
     data = undefined,
     metaData = undefined,
     caption = undefined,
     colourScale = undefined,
   } = $props();
 
-  let localCopyOfData = $state([...data]);
+  let localCopyOfData = $derived([...data]);
 
   function hasUniqueValues(array, key) {
     const seen = new Set();
@@ -21,17 +20,6 @@
     }
     return true; // All values are unique
   }
-
-  // $inspect(
-  //   localCopyOfData[0].areaName,
-  //   "data type is",
-  //   typeof localCopyOfData[0].areaName,
-  // );
-  // $inspect(
-  //   localCopyOfData[0]["Household waste recycling rate"],
-  //   "data type is",
-  //   typeof localCopyOfData[0]["Household waste recycling rate"],
-  // );
 
   let columns = [];
 
@@ -54,8 +42,6 @@
   const metrics = columns
     .filter((column) => column.dataType === "number")
     .map((column) => column.key);
-
-  // $inspect("metrics is", metrics);
 
   let sortState = $state({ column: "sortedColumn", order: "ascending" });
 
@@ -133,8 +119,6 @@
   }
 
   const colorKey = Object.entries({ Good: 1, Ok: 0.5, Bad: 0 });
-
-  // $inspect("the first column key is", columns[0].key);
 </script>
 
 <div class="p-4">
@@ -150,8 +134,8 @@
   {/if}
 
   <div class="table-container">
+    <div id="table-caption" class="sticky-caption">{caption}</div>
     <table class="govuk-table" data-module="moj-sortable-table">
-      <caption class="govuk-table__caption">{caption}</caption>
       <thead class="govuk-table__head"
         ><tr class="govuk-table__row">
           {#each columns as column}
@@ -159,7 +143,12 @@
               scope="col"
               class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
               title={metaData[column.key].explainer}
-              aria-sort="none"
+              aria-sort={sortState.column !== column.key
+                ? "none"
+                : sortState.column === column.key &&
+                    sortState.order === "descending"
+                  ? "descending"
+                  : "ascending"}
             >
               <div class="header">
                 <Button
@@ -187,27 +176,17 @@
             {#each columns as column}
               {#if column.dataType === "number"}
                 {#if colourScale === "On"}
-                  {#if metaData[column.key].direction === "Higher is better"}
-                    <td
-                      class="govuk-table__cell govuk-table__cell--numeric"
-                      style="background-color: {normToColor(
-                        row[column.key + '__normalised'],
-                      )}"
-                      data-sort-value="42">{row[column.key]}</td
-                    >
-                  {:else}
-                    <td
-                      class="govuk-table__cell govuk-table__cell--numeric"
-                      style="background-color: {normToColorReverse(
-                        row[column.key + '__normalised'],
-                      )}"
-                      data-sort-value="42">{row[column.key]}</td
-                    >
-                  {/if}
-                {:else}
                   <td
                     class="govuk-table__cell govuk-table__cell--numeric"
-                    data-sort-value="42">{row[column.key]}</td
+                    style="background-color: {metaData[column.key].direction ===
+                    'Higher is better'
+                      ? normToColor(row[column.key + '__normalised'])
+                      : normToColorReverse(row[column.key + '__normalised'])}"
+                    >{row[column.key]}</td
+                  >
+                {:else}
+                  <td class="govuk-table__cell govuk-table__cell--numeric"
+                    >{row[column.key]}</td
                   >
                 {/if}
               {:else}
@@ -223,14 +202,23 @@
 
 <style>
   .table-container {
-    max-height: 80vh;
+    max-height: 85vh;
     overflow-y: auto;
+    overflow-x: scroll;
+    width: 100%;
   }
 
   th {
     position: sticky;
     top: 0;
     z-index: 1;
+    background-color: white;
+  }
+
+  .sticky-caption {
+    position: sticky;
+    top: 0;
+    z-index: 2;
     background-color: white;
   }
 

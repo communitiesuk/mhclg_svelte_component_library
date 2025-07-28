@@ -23,11 +23,6 @@
       SvelteKit projects.
     </p>
 
-    <WarningText
-      assistiveText="Warning"
-      text="This service is in development and intended to be production-ready by Autumn 2025. In the meantime, we welcome developers to install the package and try it out."
-    />
-
     <InsetText>
       {#snippet content()}
         This guide assumes you already have a SvelteKit project set up. If you
@@ -42,79 +37,9 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-8">Installation</h2>
 
-    <WarningText
-      assistiveText="Warning"
-      text="This package is currently privately published to the GitHub npm package registry. You'll need to authenticate before installation."
-    />
-
-    <h3 class="govuk-heading-m govuk-!-margin-top-6">
-      Step 1: Create a GitHub Personal Access Token
-    </h3>
-
-    <ol class="govuk-list govuk-list--number">
-      <li>Log in to your GitHub account</li>
-      <li>
-        Navigate to <strong>Settings</strong> →
-        <strong>Developer settings</strong>
-        → <strong>Personal access tokens</strong>
-      </li>
-      <li>Click <strong>Generate new token</strong> (classic)</li>
-      <li>Provide a descriptive name and set expiration if needed</li>
-      <li>
-        Select the following scopes:
-        <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
-          <li>
-            <code>write:packages</code> - Upload packages to GitHub Package Registry
-          </li>
-          <li>
-            <code>read:packages</code> - Download packages from GitHub Package Registry
-          </li>
-          <li><code>repo</code> - Repository access</li>
-        </ul>
-      </li>
-      <li>Click <strong>Generate token</strong> and save it securely</li>
-    </ol>
-
-    <h3 class="govuk-heading-m govuk-!-margin-top-6">
-      Step 2: Configure npm registry
-    </h3>
-
     <p class="govuk-body">
-      Add the GitHub registry path to your <code>.npmrc</code> file:
-    </p>
-
-    <CodeBlock
-      code={codeBlocks.npmrcConfig}
-      language="bash"
-      filename=""
-      extension=".npmrc"
-    />
-
-    <h3 class="govuk-heading-m govuk-!-margin-top-6">
-      Step 3: Authenticate with npm
-    </h3>
-
-    <p class="govuk-body">Run the following command in your terminal:</p>
-
-    <CodeBlock
-      code={codeBlocks.npmLogin}
-      language="bash"
-      filename="Terminal"
-      extension=""
-      theme="github-dark"
-    />
-
-    <p class="govuk-body">
-      Enter your GitHub username and use your Personal Access Token as the
-      password.
-    </p>
-
-    <h3 class="govuk-heading-m govuk-!-margin-top-6">
-      Step 4: Install the package
-    </h3>
-
-    <p class="govuk-body">
-      Install the latest version of the component library:
+      The component library is publicly available on npm, making installation
+      straightforward:
     </p>
 
     <CodeBlock
@@ -127,24 +52,11 @@
 
     <h2 class="govuk-heading-l govuk-!-margin-top-8">Usage</h2>
 
-    <InsetText>
-      {#snippet content()}
-        The component library includes all necessary CSS and JavaScript files.
-        When you install the package, GOV.UK Frontend styles & assets as well as
-        custom styles and assets are automatically included out of the box.
-      {/snippet}
-    </InsetText>
-
-    <h3 class="govuk-heading-m govuk-!-margin-top-6">Importing components</h3>
-
-    <p class="govuk-body">Import components in your Svelte files:</p>
-
-    <CodeBlock
-      code={codeBlocks.importComponents}
-      language="javascript"
-      filename="App"
-      extension=".svelte"
-    />
+    <p class="govuk-body">
+      The component library includes all necessary CSS and JavaScript files.
+      When you install the package, GOV.UK Frontend styles & assets as well as
+      custom styles and assets are automatically included out of the box.
+    </p>
 
     <h3 class="govuk-heading-m govuk-!-margin-top-6">
       Enable GOV.UK Frontend styles
@@ -170,6 +82,17 @@
       language="html"
       filename="app"
       extension=".html"
+    />
+
+    <h3 class="govuk-heading-m govuk-!-margin-top-6">Importing components</h3>
+
+    <p class="govuk-body">Import components in your Svelte files:</p>
+
+    <CodeBlock
+      code={codeBlocks.importComponents}
+      language="javascript"
+      filename="App"
+      extension=".svelte"
     />
 
     <h2 class="govuk-heading-l govuk-!-margin-top-8">Next steps</h2>
@@ -204,12 +127,10 @@
     </ul>
 
     <div class="govuk-!-margin-top-6">
-      <InsetText>
-        {#snippet content()}
-          This is an alpha release. The API may change as we continue to develop
-          and improve the library based on user feedback.
-        {/snippet}
-      </InsetText>
+      <WarningText
+        text="This is an alpha release. The API may change as we continue to develop
+        and improve the library based on user feedback."
+      />
     </div>
 
     <div class="govuk-!-margin-top-8">

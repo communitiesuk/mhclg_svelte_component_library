@@ -8,11 +8,12 @@
     Control,
     ControlButton,
     ControlGroup,
+    ScaleControl,
   } from "svelte-maplibre";
   import { contrastingColor } from "./colors.js";
   import { colorbrewer } from "./colorbrewer.js";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
-  import type { LngLatLike } from "maplibre-gl";
+  import type { LngLatLike, LngLatBoundsLike } from "maplibre-gl";
   import type { FeatureCollection } from "geojson";
   import fullTopo from "./fullTopo.json";
   import * as topojson from "topojson-client";
@@ -28,15 +29,14 @@
   import { page } from "$app/state";
   import { joinData } from "./dataJoin.js";
 
-  import maplibregl from "maplibre-gl";
-  const { LngLatBounds } = maplibregl;
+  import maplibre from "maplibre-gl";
+  const { LngLatBounds } = maplibre;
 
-  import type { LngLatBoundsLike } from "maplibre-gl";
   let {
     data,
-    customPallet,
-    setCustomPallet,
-    interactive,
+    customPalette,
+    setCustomPalette = false,
+    interactive = true,
     cooperativeGestures = true,
     standardControls = true,
     navigationControl,
@@ -52,43 +52,64 @@
     colorPalette = "YlGnBu",
     showBorder = false,
     maxBorderWidth = 1.5,
-    tooltip,
+    tooltip = true,
     clickToZoom = true,
-    geoType,
-    year,
-    metric,
+    geoType = "ltla",
+    year = 2024,
+    metric = "Residual household waste",
     breaksType = "quantile",
-    customBreaks,
+    customBreaks = [20, 40, 60, 80, 100],
     numberOfBreaks = 5,
     fillOpacity = 0.5,
     changeOpacityOnHover = true,
     hoverOpacity = 0.8,
     center = [-2.5, 53],
     zoom = 5,
-    minZoom,
-    maxZoom,
-    maxBoundsCoords,
+    minZoom = undefined,
+    maxZoom = undefined,
+    maxBoundsCoords = [
+      [-10, 49],
+      [5, 60],
+    ],
     hash = false,
     updateHash = (u) => {
       replaceState(u, page.state);
     },
     useInitialHash = true,
     mapHeight = 200,
-    setMaxBounds,
+    setMaxBounds = false,
+    onload,
+    onerror,
+    onclick,
+    ondblclick,
+    onmousemove,
+    oncontextmenu,
+    onmovestart,
+    onmoveend,
+    onzoomstart,
+    onzoom,
+    onzoomend,
+    onpitch,
+    onrotate,
+    onwheel,
+    ondata,
+    onstyleload,
+    onstyledata,
+    onidle,
   }: {
     data: object[];
-    customPallet: object[] | undefined;
+    customPalette?: object[];
     cooperativeGestures?: boolean;
     standardControls?: boolean;
     navigationControl?: boolean;
-    navigationControlPosition?: string;
+    navigationControlPosition?: maplibregl.ControlPosition;
     geolocateControl?: boolean;
-    geolocateControlPosition?: string;
+    geolocateControlPosition?: maplibregl.ControlPosition;
     fullscreenControl?: boolean;
-    fullscreenControlPosition?: string;
+    fullscreenControlPosition?: maplibregl.ControlPosition;
     scaleControl?: boolean;
-    scaleControlPosition?: string;
-    scaleControlUnit?: string;
+    scaleControlPosition?: maplibregl.ControlPosition;
+    scaleControlUnit?: "imperial" | "metric" | "nautical";
     styleSheet?: string | URL | object;
     colorPalette?: string;
     showBorder?: boolean;
@@ -101,9 +122,9 @@
     breaksType?: string;
     numberOfBreaks?: number;
     fillOpacity?: number;
-    changeOpacityOnHover: boolean;
+    changeOpacityOnHover?: boolean;
     hoverOpacity?: number;
-    center?: LngLatLike | undefined;
+    center?: LngLatLike;
     zoom?: number;
     minZoom?: number | undefined;
     maxZoom?: number | undefined;
@@ -113,9 +134,31 @@
     updateHash?: (URL) => void;
     useInitialHash?: boolean;
     mapHeight?: number;
-    setCustomPallet?: boolean;
+    setCustomPalette?: boolean;
     customBreaks?: number[];
-    interactive: boolean;
+    interactive?: boolean;
+    onload?: (map: maplibregl.Map) => void;
+    onerror?: (error: Partial<ErrorEvent>) => void;
+    onclick?: (e: maplibregl.MapMouseEvent) => void;
+    ondblclick?: (e: maplibregl.MapMouseEvent) => void;
+    onmousemove?: (e: maplibregl.MapMouseEvent) => void;
+    oncontextmenu?: (e: maplibregl.MapMouseEvent) => void;
+    onmovestart?: (e: MapMoveEvent) => void;
+    onmoveend?: (e: MapMoveEvent) => void;
+    onzoomstart?: (e: maplibregl.MapLibreZoomEvent) => void;
+    onzoom?: (e: maplibregl.MapLibreZoomEvent) => void;
+    onzoomend?: (e: maplibregl.MapLibreZoomEvent) => void;
+    onpitch?: (
+      e: maplibregl.MapLibreEvent<MouseEvent | TouchEvent | undefined>,
+    ) => void;
+    onrotate?: (
+      e: maplibregl.MapLibreEvent<MouseEvent | TouchEvent | undefined>,
+    ) => void;
+    onwheel?: (e: maplibregl.MapWheelEvent) => void;
+    ondata?: (e: maplibregl.MapDataEvent) => void;
+    onstyleload?: (e: StyleLoadEvent) => void;
+    onstyledata?: (e: maplibregl.MapStyleDataEvent) => void;
+    onidle?: (e: maplibregl.MapLibreEvent) => void;
   } = $props();
 
   let styleLookup = {
@@ -124,7 +167,11 @@
     "Carto-dark":
       "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json",
   };
-  let style = $derived(styleLookup[styleSheet] ?? styleSheet);
+  let style = $derived(
+    typeof styleSheet == "string"
+      ? (styleLookup[styleSheet] ?? styleSheet)
+      : styleSheet,
+  );
 
   let breakCount = $derived(
     breaksType == "custom" ? customBreaks.length : numberOfBreaks,
@@ -147,8 +194,8 @@
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
 
   let fillColors: string[] = $derived(
-    setCustomPallet == true
-      ? customPallet
+    setCustomPalette == true
+      ? customPalette
       : colorbrewer[colorPalette][breakCount],
   );
 
@@ -198,8 +245,28 @@
 
     if (cooperativeGestures) {
       map?.cooperativeGestures.enable();
+      $inspect(cooperativeGestures);
     } else {
       map?.cooperativeGestures.disable();
+      $inspect(cooperativeGestures);
+    }
+
+    if (interactive) {
+      map?.scrollZoom.enable();
+      map?.boxZoom.enable();
+      map?.dragRotate.enable();
+      map?.dragPan.enable();
+      map?.keyboard.enable();
+      map?.doubleClickZoom.enable();
+      map?.touchZoomRotate.enable();
+    } else {
+      map?.scrollZoom.disable();
+      map?.boxZoom.disable();
+      map?.dragRotate.disable();
+      map?.dragPan.disable();
+      map?.keyboard.disable();
+      map?.doubleClickZoom.disable();
+      map?.touchZoomRotate.disable();
     }
 
     map?.setMaxBounds(bounds);
@@ -225,6 +292,23 @@
       };
     }),
   );
+
+  let legendItems = $derived([
+    ...breaks
+      .map((b, i) => {
+        const from = b;
+        const to = breaks[i + 1];
+        return {
+          color: fillColors[i],
+          label: to ? `${from} – ${to}` : `${from}+`,
+        };
+      })
+      .slice(0, fillColors.length),
+    {
+      color: "lightgrey",
+      label: "No data",
+    },
+  ]);
 
   let merged = $derived(joinData(filteredGeoJsonData, dataWithColor));
 
@@ -283,11 +367,15 @@
     : zoom;
 
   let bounds = $derived(
-    setMaxBounds ? convertToLngLatBounds(maxBoundsCoords) : undefined,
+    setMaxBounds
+      ? maxBoundsCoords
+        ? convertToLngLatBounds(maxBoundsCoords)
+        : undefined
+      : undefined,
   );
 </script>
 
-<div style="height: {mapHeight}px;">
+<div style="position: relative; height: {mapHeight}px;">
   <MapLibre
     bind:map
     bind:loaded
@@ -299,8 +387,25 @@
     standardControls={interactive && standardControls}
     {hash}
     {updateHash}
-    {interactive}
     class="map"
+    {onload}
+    {onidle}
+    {onerror}
+    {onclick}
+    {ondblclick}
+    {onmousemove}
+    {oncontextmenu}
+    {onmovestart}
+    {onmoveend}
+    {onzoomstart}
+    {onzoom}
+    {onzoomend}
+    {onpitch}
+    {onrotate}
+    {onwheel}
+    {ondata}
+    {onstyleload}
+    {onstyledata}
   >
     {#if interactive && !standardControls}
       <NonStandardControls
@@ -329,6 +434,8 @@
           </button>
         </ControlGroup>
       </Control>
+    {:else if !interactive}
+      <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
     {/if}
 
     <GeoJSON id="areas" data={merged} promoteId="areanm">
@@ -341,20 +448,20 @@
         }}
         beforeLayerType="symbol"
         manageHoverState={interactive}
-        onclick={interactive ? (e) => zoomToArea(e) : null}
+        onclick={interactive ? (e) => zoomToArea(e) : undefined}
         onmousemove={interactive
           ? (e) => {
               hoveredArea = e.features[0].id;
               hoveredAreaData = e.features[0].properties.metric;
               currentMousePosition = e.event.point;
             }
-          : null}
+          : undefined}
         onmouseleave={interactive
           ? () => {
               hoveredArea = null;
               hoveredAreaData = null;
             }
-          : null}
+          : undefined}
       />
       {#if showBorder}
         <LineLayer
@@ -380,12 +487,44 @@
   </MapLibre>
 </div>
 
+<div class="legend">
+  {#each legendItems as item}
+    <div class="legend-item">
+      <div class="legend-color" style="background-color: {item.color};"></div>
+      <span>{item.label}</span>
+    </div>
+  {/each}
+</div>
+
 <style>
   :global(.maplibregl-ctrl-group button.reset-button) {
     /* margin: 10px; */
     width: fit-content;
-    padding: 0px 10px;
+    padding: 5px 10px;
     font-size: 16px;
     height: 100%;
+  }
+  .legend {
+    position: absolute;
+    bottom: 20px;
+    left: 10px;
+    background: white;
+    padding: 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+
+  .legend-color {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+    border: 1px solid #ccc;
   }
 </style>

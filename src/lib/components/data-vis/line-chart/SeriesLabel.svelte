@@ -16,7 +16,7 @@
     series,
     y,
     tier,
-    interactive,
+    interactiveLines,
   } = $props();
 
   let oldY = $derived(yFunction(dataArray.data[0][y]));
@@ -30,21 +30,21 @@
 </script>
 
 <g
-  {id}
+  data-id={id}
   transform="translate({chartWidth + 8},{0})"
-  onclick={interactive
+  onclick={interactiveLines
     ? () => onClickSeries(dataArray[series], tier)
     : undefined}
-  onmouseenter={interactive
+  onmouseenter={interactiveLines
     ? () => onMouseEnterSeries(dataArray[series], tier)
     : undefined}
-  onmouseleave={interactive
+  onmouseleave={interactiveLines
     ? () => onMouseLeaveSeries(dataArray[series], tier)
     : undefined}
   role="button"
   tabindex="0"
   onkeydown={(e) => e.key === "Enter" && onClickSeries(dataArray[series])}
-  pointer-events={interactive ? null : "none"}
+  pointer-events={interactiveLines ? null : "none"}
   {opacity}
 >
   <path
@@ -54,7 +54,6 @@
     stroke-width="1"
   ></path>
   <text
-    {id}
     dominant-baseline="central"
     text-anchor="start"
     x={20}
@@ -62,6 +61,6 @@
     stroke-width={clickedSeries ? 0.7 : 0}
     stroke="black"
   >
-    {labelText(dataArray)}
+    {typeof labelText === "function" ? labelText(dataArray) : labelText}
   </text>
 </g>

@@ -1,12 +1,13 @@
 {
   "name": "@communitiesuk/svelte-component-library",
-  "version": "0.1.16",
+  "version": "0.1.18",
   "repository": {
     "type": "git",
-    "url": "https://github.com/communitiesuk/oflog_svelte_component_library.git"
+    "url": "https://github.com/communitiesuk/mhclg_svelte_component_library.git"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "registry": "https://registry.npmjs.org/",
+    "access": "public"
   },
   "author": "Ibrahim-Haizel",
   "description": "A collection of reusable Svelte components",
@@ -14,6 +15,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite dev",
     "build": "vite build && npm run package",
+    "deploy": "gh-pages -d docs",
     "preview": "vite preview",
     "prepackage": "tsx scripts/generate-index.ts && node scripts/copy-static-assets-to-lib.js",
     "package": "npm run prepackage && svelte-kit sync && svelte-package && publint",
@@ -27,7 +29,8 @@
     "copy-govuk-assets": "node scripts/copy-govuk-assets-to-static.js",
     "copy-moj-assets": "node scripts/copy-moj-assets-to-static.js",
     "prepare": "",
-    "create-component-and-wrapper-pages": "node scripts/create-component-and-wrapper-pages.js"
+    "create-component-and-wrapper-pages": "node scripts/create-component-and-wrapper-pages.js",
+    "sync-node-version": "node -pe \"require('./package.json').engines.node.match(/\\d+/)[0]\" > .nvmrc && echo '.nvmrc updated to use latest Node.js v'$(cat .nvmrc)'.x' && source ~/.zprofile && INSTALL_OUTPUT=$(nvm install $(cat .nvmrc) 2>&1 | grep -E '(already installed|Downloading and installing)') && echo $INSTALL_OUTPUT && INSTALLED_VERSION=$(echo $INSTALL_OUTPUT | grep -o 'v[0-9.]*') && echo 'Node.js '$INSTALLED_VERSION' ready. To switch in this terminal: nvm use'"
   },
   "files": [
     "dist",
@@ -43,8 +46,15 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "svelte": "./dist/index.js"
-    }
+      "svelte": "./dist/index.js",
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
+    },
+    "./src/*": "./src/lib/*",
+    "./src/lib/*": "./src/lib/*"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   },
   "peerDependencies": {
     "@sveltejs/kit": "^2.0.0",
@@ -52,6 +62,7 @@
   },
   "devDependencies": {
     "@sveltejs/adapter-auto": "^3.3.0",
+    "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/kit": "^2.16.1",
     "@sveltejs/package": "^2.0.0",
     "@sveltejs/vite-plugin-svelte": "^4.0.0",
@@ -94,14 +105,13 @@
     "decimal.js": "^10.5.0",
     "dompurify": "^3.2.5",
     "flowbite-svelte-icons": "^2.0.3",
+    "gh-pages": "^6.3.0",
     "govuk-frontend": "^5.9.0",
     "labelplacer": "^0.0.0",
     "leaflet": "^1.9.4",
     "mapbox-gl": "^1.13.3",
     "maplibre-gl": "^5.2.0",
     "monaco-editor": "^0.52.2",
-    "node": "^18.20.6",
-    "npm": "^11.0.0",
     "prism-svelte": "^0.5.0",
     "prismjs": "^1.29.0",
     "shiki": "^1.27.2",

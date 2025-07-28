@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import InsetText from "$lib/components/content/InsetText.svelte";
 </script>
 
@@ -334,15 +335,16 @@
     </p>
 
     <p class="govuk-body">
-      <a href="/get-started" class="govuk-link govuk-!-font-weight-bold"
-        >Installation guide</a
+      <a
+        href={base + "/get-started"}
+        class="govuk-link govuk-!-font-weight-bold">Installation guide</a
       >
       |
-      <a href="/components" class="govuk-link govuk-!-font-weight-bold"
+      <a href={base + "/components"} class="govuk-link govuk-!-font-weight-bold"
         >Browse components</a
       >
       |
-      <a href="/patterns" class="govuk-link govuk-!-font-weight-bold"
+      <a href={base + "/patterns"} class="govuk-link govuk-!-font-weight-bold"
         >Design patterns</a
       >
     </p>

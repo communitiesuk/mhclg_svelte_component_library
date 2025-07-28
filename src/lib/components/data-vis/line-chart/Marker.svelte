@@ -10,11 +10,13 @@
     yFunction,
     x,
     y,
+    pathStrokeColor = null,
     markerShape = "circle",
     markerRadius = 5,
-    markerFill = "grey",
+    markerFill = pathStrokeColor,
     markerStroke = "white",
     markerStrokeWidth = 1,
+    interactiveMarkers,
   } = $props();
 </script>
 
@@ -22,20 +24,42 @@
   {@const markerId = "marker-" + marker[series] + marker[x]}
   <g
     data-id={markerId}
-    onclick={(event) => onClickMarker(event, marker, markerId)}
-    onmouseenter={(event) => onMouseEnterMarker(event, marker, markerId)}
-    onmouseleave={(event) => onMouseLeaveMarker(event, marker, markerId)}
+    onclick={interactiveMarkers
+      ? (event) => onClickMarker(event, marker, markerId)
+      : null}
+    onmouseenter={interactiveMarkers
+      ? (event) =>
+          onMouseEnterMarker(
+            event,
+            marker,
+            markerId,
+            event.currentTarget.getBoundingClientRect(),
+          )
+      : null}
+    onmouseleave={interactiveMarkers
+      ? (event) => onMouseLeaveMarker(event, marker, markerId)
+      : null}
     transform="translate({xFunction(marker[x])},{yFunction(marker[y])})"
     role="button"
     tabindex="0"
-    onkeydown={(e) => e.key === "Enter" && onClickMarker(e, marker)}
+    onkeydown={interactiveMarkers
+      ? (e) => e.key === "Enter" && onClickMarker(e, marker)
+      : null}
+    pointer-events={interactiveMarkers ? null : "none"}
   >
+    <circle
+      r={markerRadius + 6}
+      fill="transparent"
+      stroke="none"
+      pointer-events="all"
+    ></circle>
     {#if markerShape === "circle"}
       <circle
         r={markerRadius}
         stroke={markerStroke}
         fill={markerFill}
         stroke-width={markerStrokeWidth}
+        pointer-events="none"
       ></circle>
     {:else if ["square", "diamond"].includes(markerShape)}
       <rect
@@ -47,6 +71,7 @@
         stroke={markerStroke}
         fill={markerFill}
         stroke-width={markerStrokeWidth}
+        pointer-events="none"
       ></rect>
     {:else if markerShape === "triangle"}
       <polygon
@@ -55,6 +80,7 @@
         stroke={markerStroke}
         fill={markerFill}
         stroke-width={markerStrokeWidth}
+        pointer-events="none"
       ></polygon>
     {/if}
   </g>

@@ -172,6 +172,12 @@
         category: "UI Options",
         value: "/",
       },
+      {
+        name: "rebrand",
+        category: "UI Options",
+        value: true,
+        description: "Enable the new rebranded GOV.UK logo and styling",
+      },
     ]),
   );
 

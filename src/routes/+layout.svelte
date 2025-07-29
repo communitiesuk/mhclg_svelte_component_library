@@ -1,7 +1,7 @@
 <script lang="ts">
   // --- Imports ---
   import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
-  import Footer from "$lib/components/ui/Footer.svelte";
+  import Footer from "$lib/components/layout/Footer.svelte";
   import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
   import SideNav from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
   import ServiceNavigationNestedMobile from "$lib/components/layout/service-navigation-nested-mobile/ServiceNavigationNestedMobile.svelte";

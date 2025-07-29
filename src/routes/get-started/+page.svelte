@@ -163,18 +163,11 @@
 
     <ul class="govuk-list govuk-list--bullet">
       <li>
-        <a href="/get-in-touch" class="govuk-link">Contact the team</a> for support
-      </li>
-      <li>
         Check the <a
           href="https://github.com/communitiesuk/oflog_svelte_component_library"
           class="govuk-link"
           rel="external">GitHub repository</a
         > for issues and documentation
-      </li>
-      <li>
-        Review the <a href="/community/roadmap" class="govuk-link">roadmap</a> to
-        see what's planned
       </li>
     </ul>
 

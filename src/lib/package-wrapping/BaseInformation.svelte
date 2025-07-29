@@ -34,39 +34,6 @@
   </div>
 {/if}
 
-{#if connectedComponentsArray}
-  {#each connectedComponentsArray as connectedComponents}
-    {#if (!homepage || connectedComponents?.visibleOnHomepage) && connectedComponents.arr.length > 0}
-      <DividerLine></DividerLine>
-      <!-- CSS Grid layout for label:content pairs with constrained second column -->
-      <div
-        data-role="component-information-detail-grid-container"
-        class="grid grid-cols-[auto,minmax(0,1fr)] gap-2 items-baseline"
-      >
-        <dt>{connectedComponents.label}:</dt>
-        <dd>
-          <!-- flex-wrap allows items to wrap to new lines -->
-          <ul class="flex flex-row flex-wrap gap-4 gap-y-2">
-            {#each connectedComponents.arr as child}
-              <li>
-                <a
-                  class="link-to-other-page"
-                  href="/components-update/{child.folder}/{textStringConversion(
-                    child.name,
-                    'kebab',
-                  )}"
-                >
-                  {child.name}
-                </a>
-              </li>
-            {/each}
-          </ul>
-        </dd>
-      </div>
-    {/if}
-  {/each}
-{/if}
-
 <style>
   /* Constrain all grid containers and their content to prevent overflow */
   [data-role="component-information-detail-grid-container"] {

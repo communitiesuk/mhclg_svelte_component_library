@@ -959,16 +959,18 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Renders the demo UI and the component itself.
 -->
-<ComponentDemo
-  {Component}
-  bind:demoScreenWidth
-  {parametersSourceArray}
-  bind:statedParametersValuesArray
-  {derivedParametersValuesArray}
-  {parametersVisibleArray}
-  {parametersParsingErrorsObject}
-  {copyParametersToClipboardObject}
-></ComponentDemo>
+<div bind:clientWidth={demoScreenWidth}>
+  <ComponentDemo
+    {Component}
+    bind:demoScreenWidth
+    {parametersSourceArray}
+    bind:statedParametersValuesArray
+    {derivedParametersValuesArray}
+    {parametersVisibleArray}
+    {parametersParsingErrorsObject}
+    {copyParametersToClipboardObject}
+  ></ComponentDemo>
+</div>
 
 <!--
     DONOTTOUCH  *

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import InsetText from "$lib/components/content/InsetText.svelte";
 </script>
 
@@ -182,7 +183,7 @@
     <ul class="govuk-list govuk-list--bullet">
       <li>
         <strong>WCAG compliance</strong> - All components are developed towards meeting
-        WCAG 2.1 AA standards
+        WCAG 2.2 AA standards
       </li>
       <li>
         <strong>Progressive enhancement</strong> - Components work without JavaScript
@@ -334,15 +335,16 @@
     </p>
 
     <p class="govuk-body">
-      <a href="/get-started" class="govuk-link govuk-!-font-weight-bold"
-        >Installation guide</a
+      <a
+        href={base + "/get-started"}
+        class="govuk-link govuk-!-font-weight-bold">Installation guide</a
       >
       |
-      <a href="/components" class="govuk-link govuk-!-font-weight-bold"
+      <a href={base + "/components"} class="govuk-link govuk-!-font-weight-bold"
         >Browse components</a
       >
       |
-      <a href="/patterns" class="govuk-link govuk-!-font-weight-bold"
+      <a href={base + "/patterns"} class="govuk-link govuk-!-font-weight-bold"
         >Design patterns</a
       >
     </p>

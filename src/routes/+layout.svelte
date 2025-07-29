@@ -1,5 +1,6 @@
 <script lang="ts">
   // --- Imports ---
+  import { base } from "$app/paths";
   import CookieBanner from "$lib/components/ui/CookieBanner.svelte";
   import Footer from "$lib/components/layout/Footer.svelte";
   import InternalHeader from "$lib/components/layout/InternalHeader.svelte";
@@ -29,25 +30,25 @@
   let activeDetailHref = $derived(currentPath + currentHash);
   let isDemoPage = $derived(
     currentPath.startsWith(
-      "/components/layout/service-navigation-nested-mobile/mobile-demo",
+      base + "/components/layout/service-navigation-nested-mobile/mobile-demo",
     ),
   );
 
   // --- Section-Level Derived State ---
   let activeSectionInfo = $derived.by(() => {
-    if (currentPath.startsWith("/get-started")) {
+    if (currentPath.startsWith(base + "/get-started")) {
       return { sectionName: "Get started", sectionHref: "/get-started" };
     }
-    if (currentPath.startsWith("/components")) {
-      return { sectionName: "Components", sectionHref: "/components" };
+    if (currentPath.startsWith(base + "/components")) {
+      return { sectionName: "Components", sectionHref: base + "/components" };
     }
-    if (currentPath.startsWith("/patterns")) {
-      return { sectionName: "Patterns", sectionHref: "/patterns" };
+    if (currentPath.startsWith(base + "/patterns")) {
+      return { sectionName: "Patterns", sectionHref: base + "/patterns" };
     }
-    if (currentPath.startsWith("/community")) {
-      return { sectionName: "Community", sectionHref: "/community" };
+    if (currentPath.startsWith(base + "/community")) {
+      return { sectionName: "Community", sectionHref: base + "/community" };
     }
-    return { sectionName: "Home", sectionHref: "/" }; // Default
+    return { sectionName: "Home", sectionHref: base + "/" }; // Default
   });
   let currentSection = $derived(activeSectionInfo.sectionName);
   let activeSectionHref = $derived(activeSectionInfo.sectionHref);
@@ -78,65 +79,26 @@
     // },
   ];
 
-  const communityNavGroups: SideNavGroup[] = [
-    {
-      title: "What we're working on",
-      items: [{ text: "Roadmap", href: "/community/roadmap" }],
-    },
-    {
-      title: "Ways to get involved",
-      items: [
-        {
-          text: "Share findings about your users",
-          href: "/community/share-findings",
-        },
-        {
-          text: "Contribution criteria",
-          href: "/community/contribution-criteria",
-        },
-        {
-          text: "Propose a component or pattern",
-          href: "/community/propose-component",
-        },
-        {
-          text: "Develop a component or pattern",
-          href: "/community/develop-component",
-        },
-        {
-          text: "Propose a content change using GitHub",
-          href: "/community/propose-content-change",
-        },
-      ],
-    },
-    {
-      title: "How we work",
-      items: [
-        {
-          text: "Our team and delivery approach",
-          href: "/community/team-approach",
-        },
-        { text: "Projects", href: "/community/projects" },
-        // { text: "Community principles", href: "/community/principles" },
-        {
-          text: "Blog posts, videos and podcasts",
-          href: "/community/blog-posts",
-        },
-      ],
-    },
-  ];
+  const communityNavGroups: SideNavGroup[] = [];
 
   const getStartedNavGroups: SideNavGroup[] = [
     {
       title: "Setup guides",
       items: [
-        { text: "About & Benefits", href: "/get-started/about-benefits" },
-        { text: "Installation and usage", href: "/get-started" },
+        {
+          text: "About & Benefits",
+          href: base + "/get-started/about-benefits",
+        },
+        { text: "Installation and usage", href: base + "/get-started" },
       ],
     },
     {
       title: "Component library usage guides",
       items: [
-        { text: "Component statuses", href: "/get-started/component-statuses" },
+        {
+          text: "Component statuses",
+          href: base + "/get-started/component-statuses",
+        },
       ],
     },
   ];
@@ -183,89 +145,46 @@
   const mobileNavSections = [
     {
       title: "Get started",
-      href: "/get-started",
+      href: base + "/get-started",
       items: [
-        { text: "Installation and usage", href: "/get-started" },
-        { text: "About & Benefits", href: "/get-started/about-benefits" },
-        { text: "Component statuses", href: "/get-started/component-statuses" },
+        { text: "Installation and usage", href: base + "/get-started" },
+        {
+          text: "About & Benefits",
+          href: base + "/get-started/about-benefits",
+        },
+        {
+          text: "Component statuses",
+          href: base + "/get-started/component-statuses",
+        },
       ],
     },
     // {
     //   title: "Home",
-    //   href: "/",
-    //   items: [{ text: "Overview", href: "/" }],
+    //   href: base + "/",
+    //   items: [{ text: "Overview", href: base + "/" }],
     // },
     {
       title: "Components",
-      href: "/components",
+      href: base + "/components",
       items: structuredComponentItems,
     },
     {
       title: "Patterns",
-      href: "/patterns",
+      href: base + "/patterns",
       items: [
         // {
         //   title: "Common patterns",
         //   items: [
-        //     { text: "Forms", href: "/patterns/forms" },
-        //     { text: "Tables", href: "/patterns/tables" },
+        //     { text: "Forms", href: base + "/patterns/forms" },
+        //     { text: "Tables", href: base + "/patterns/tables" },
         //   ],
         // },
       ],
     },
     {
       title: "Community",
-      href: "/community",
-      items: [
-        {
-          title: "What we're working on",
-          items: [{ text: "Roadmap", href: "/community/roadmap" }],
-        },
-        {
-          title: "Ways to get involved",
-          items: [
-            {
-              text: "Share findings about your users",
-              href: "/community/share-findings",
-            },
-            {
-              text: "Propose a component or pattern",
-              href: "/community/propose-component",
-            },
-            {
-              text: "Develop a component or pattern",
-              href: "/community/develop-component",
-            },
-            {
-              text: "Propose a content change using GitHub",
-              href: "/community/propose-content-change",
-            },
-          ],
-        },
-        {
-          title: "How we work",
-          items: [
-            {
-              text: "Our team and delivery approach",
-              href: "/community/team-approach",
-            },
-            { text: "Projects", href: "/community/projects" },
-            { text: "Community principles", href: "/community/principles" },
-            {
-              text: "Contribution criteria",
-              href: "/community/contribution-criteria",
-            },
-            {
-              text: "Contribution approach",
-              href: "/community/contribution-approach",
-            },
-            {
-              text: "Blog posts, videos and podcasts",
-              href: "/community/blog-posts",
-            },
-          ],
-        },
-      ],
+      href: base + "/community",
+      items: [],
     },
   ];
 
@@ -284,14 +203,15 @@
     <div class="flex-grow">
       <CookieBanner />
       <InternalHeader
-        homepageUrl="/"
-        organisationName="MHCLG Digital, Design and Development Team"
+        homepageUrl={base + "/"}
+        organisationName="MHCLG Digital, Data and Information"
+        includeCrest={false}
       />
 
       <!-- Use ServiceNavigationNestedMobile component -->
       <ServiceNavigationNestedMobile
         serviceName="Svelte Component Library"
-        homeHref="/"
+        homeHref={base + "/"}
         {mobileNavSections}
         {activeSectionHref}
         {activeDetailHref}
@@ -301,14 +221,17 @@
       <PhaseBanner
         tagText="Alpha"
         linkHref="mailto:dataexplorerfeedback@communities.gov.uk"
+        bannerText="This service is in development and intended to be production-ready and available for use by the digital community in Autumn 2025"
+        linkText=""
       />
       <div
         class="app-pane__body"
-        class:govuk-width-container={currentPath !== "/"}
+        class:govuk-width-container={currentPath !== base + "/"}
       >
-        <div class={currentPath !== "/" ? "app-split-pane" : ""}>
+        <div class={currentPath !== base + "/" ? "app-split-pane" : ""}>
           <!-- Side navigation - only shown if not Home and has navigation items -->
-          {#if currentPath !== "/" && hasNavigationItems}
+
+          {#if currentPath !== base + "/" && hasNavigationItems}
             <aside class="app-split-pane__nav">
               <SideNav
                 title={getSectionTitle(currentSection)}
@@ -319,9 +242,9 @@
           {/if}
           <!-- Main content area -->
           <div
-            class:app-split-pane__content={currentPath !== "/" &&
+            class:app-split-pane__content={currentPath !== base + "/" &&
               hasNavigationItems}
-            class:app-content={currentPath !== "/"}
+            class:app-content={currentPath !== base + "/"}
           >
             {@render children()}
           </div>
@@ -330,6 +253,7 @@
     </div>
 
     <Footer
+      copyrightLogoUrl=""
       inlineLinks={[
         {
           href: cookiesUrl,
@@ -405,7 +329,7 @@
   /* Adjust padding for larger devices */
   @media (min-width: 40.0625em) {
     .app-content {
-      padding: 30px 0px 30px 30px;
+      padding: 30px 0px 30px 0px;
     }
   }
 </style>

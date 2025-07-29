@@ -34,17 +34,41 @@ npm install @communitiesuk/svelte-component-library@latest
 To ensure GOV.UK styles are applied correctly, add this script tag to your `app.html` file in the body section:
 
 ```html
-
 <script>
-    document.body.className +=
-        " js-enabled" +
-        ("noModule" in HTMLScriptElement.prototype
-        ? " govuk-frontend-supported"
-        : "");
+  document.body.className +=
+    " js-enabled" +
+    ("noModule" in HTMLScriptElement.prototype
+      ? " govuk-frontend-supported"
+      : "");
 </script>
 ```
 
 This is required because the GOV.UK Frontend CSS checks the document body for JavaScript availability to progressively enhance components.
+
+### GOV.UK Rebranded Styles (Optional)
+
+To use the refreshed GOV.UK brand (launched June 2025), add the `govuk-template--rebranded` class to your `app.html` body element:
+
+```html
+<body class="govuk-template--rebranded">
+  <!-- Your app content -->
+</body>
+```
+
+**When to use rebrand:**
+
+- **Global CSS styles**: The `govuk-template--rebranded` class on `<body>` automatically applies rebranded styles to all components
+- **Component markup**: Some components (like Footer and Header) have a `rebrand` prop that controls whether they show additional rebranded markup elements (like the crown logo). The rebrand prop is set to true by default on all relavent componets - you can specify false should you want to keep the old markup and assets.
+- **Assets**: Rebranded components will use updated assets (logos, icons) from the `/assets/rebrand/` folder
+
+**Example with rebranded Footer:**
+
+```javascript
+import { Footer } from "@communitiesuk/svelte-component-library";
+
+// Use rebrand=true to show the crown logo at top of footer
+<Footer rebrand={true} />;
+```
 
 ### Importing Components
 

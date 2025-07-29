@@ -84,6 +84,51 @@
       extension=".html"
     />
 
+    <h3 class="govuk-heading-m govuk-!-margin-top-6">
+      Enable GOV.UK Rebranded Styles (Optional)
+    </h3>
+
+    <p class="govuk-body">
+      To use the refreshed GOV.UK brand (launched June 2025), add the <code
+        >govuk-template--rebranded</code
+      >
+      class to your <code>app.html</code> body element:
+    </p>
+
+    <CodeBlock
+      code={codeBlocks.enableRebrandStyles}
+      language="html"
+      filename="app"
+      extension=".html"
+    />
+
+    <p class="govuk-body">
+      <strong>The rebrand implementation works in two parts:</strong>
+    </p>
+
+    <ul class="govuk-list govuk-list--bullet">
+      <li>
+        <strong>Global CSS styles:</strong> The
+        <code>govuk-template--rebranded</code> class automatically applies rebranded
+        colors, typography, and spacing to all components
+      </li>
+      <li>
+        <strong>Component markup:</strong> Some components (like Footer and
+        Header) have a <code>rebrand</code> prop that controls additional rebranded
+        elements like the crown logo. The rebrand prop is set to true by default on all 
+        relavent componets - you can specify false should you want to keep the old markup and assets.
+      </li>
+    </ul>
+
+    <h4 class="govuk-heading-s govuk-!-margin-top-4">Basic rebrand usage</h4>
+
+    <CodeBlock
+      code={codeBlocks.rebrandComponentExample}
+      language="javascript"
+      filename="App"
+      extension=".svelte"
+    />
+
     <h3 class="govuk-heading-m govuk-!-margin-top-6">Importing components</h3>
 
     <p class="govuk-body">Import components in your Svelte files:</p>

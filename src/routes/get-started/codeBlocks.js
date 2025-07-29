@@ -24,3 +24,20 @@ export const enableGovukStyles = `
 </script>
 
 `;
+
+export const enableRebrandStyles = `
+<body class="govuk-template--rebranded">
+  <!-- Your app content -->
+  %sveltekit.body%
+</body>
+
+`;
+
+export const rebrandComponentExample = `
+import { Footer, Header } from "@communitiesuk/svelte-component-library";
+
+// Use rebrand=true to show additional rebranded markup
+<Header rebrand={true} />
+<Footer rebrand={true} />
+
+`;

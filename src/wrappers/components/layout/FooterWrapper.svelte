@@ -218,6 +218,20 @@
         value: true,
       },
       {
+        name: "rebrand",
+        category: "UI Options",
+        value: true,
+        description:
+          "Adds markup needed forthe rebranded version of the footer, which includes the top crown logo and different styling.",
+      },
+      {
+        name: "borderTopColor",
+        category: "UI Options",
+        value: "#00625E",
+        description:
+          "Custom color for the footer's top border. Overrides the default GOV.UK blue.",
+      },
+      {
         name: "copyrightText",
         category: "UI Options",
         value: "© Crown copyright",

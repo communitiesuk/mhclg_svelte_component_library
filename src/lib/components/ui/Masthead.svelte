@@ -5,6 +5,7 @@
   let {
     title = "Design your service using GOV.UK styles, components and patterns",
     description = "Use this design system to make government services consistent with GOV.UK. Learn from the research and experience of other service teams and avoid repeating work that's already been done.",
+    includeButton = true,
     buttonText = "Get started",
     buttonHref = "/get-started/",
     imageSrc = homepageIllustration,
@@ -13,6 +14,7 @@
   } = $props<{
     title?: string;
     description?: string;
+    includeButton?: boolean;
     buttonText?: string;
     buttonHref?: string;
     imageSrc?: string;
@@ -30,27 +32,28 @@
       <div class="govuk-grid-column-two-thirds-from-desktop">
         <h1 class="govuk-heading-xl app-masthead__title">{@html title}</h1>
         <p class="app-masthead__description">{description}</p>
-
-        <a
-          href={buttonHref}
-          role="button"
-          draggable="false"
-          class="govuk-button govuk-button--inverse govuk-!-margin-top-6 govuk-!-margin-bottom-0 govuk-button--start"
-          data-module="govuk-button"
-        >
-          {buttonText}
-          <svg
-            class="govuk-button__start-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="17.5"
-            height="19"
-            viewBox="0 0 33 40"
-            aria-hidden="true"
-            focusable="false"
+        {#if includeButton === true}
+          <a
+            href={buttonHref}
+            role="button"
+            draggable="false"
+            class="govuk-button govuk-button--inverse govuk-!-margin-top-6 govuk-!-margin-bottom-0 govuk-button--start"
+            data-module="govuk-button"
           >
-            <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
-          </svg>
-        </a>
+            {buttonText}
+            <svg
+              class="govuk-button__start-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="17.5"
+              height="19"
+              viewBox="0 0 33 40"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
+            </svg>
+          </a>
+        {/if}
       </div>
 
       <div class="govuk-grid-column-one-third-from-desktop">

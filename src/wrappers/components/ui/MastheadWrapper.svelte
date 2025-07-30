@@ -210,6 +210,15 @@
         rows: 4,
       },
       {
+        name: "includeButton",
+        category: "Call to Action",
+        value: true,
+        description: {
+          markdown: true,
+          arr: ["Option to include or remove the call to action button"],
+        },
+      },
+      {
         name: "buttonText",
         category: "Call to Action",
         value: "Get started",

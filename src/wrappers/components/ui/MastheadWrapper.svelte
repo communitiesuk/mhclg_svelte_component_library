@@ -210,6 +210,15 @@
         rows: 4,
       },
       {
+        name: "textColor",
+        category: "Visual",
+        value: "#FFFFFF",
+        description: {
+          markdown: true,
+          arr: ["The text color of the title and description."],
+        },
+      },
+      {
         name: "includeButton",
         category: "Call to Action",
         value: true,

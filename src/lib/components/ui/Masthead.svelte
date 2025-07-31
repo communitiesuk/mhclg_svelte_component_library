@@ -11,6 +11,7 @@
     imageSrc = homepageIllustration,
     imageAlt = "",
     backgroundColor = "#1d70b8", // GOV.UK blue by default
+    textColor = "#FFFFFF",
   } = $props<{
     title?: string;
     description?: string;
@@ -20,12 +21,13 @@
     imageSrc?: string;
     imageAlt?: string;
     backgroundColor?: string;
+    textColor?: string;
   }>();
 </script>
 
 <div
   class="app-masthead"
-  style="background-color: {backgroundColor}; border-bottom-color: {backgroundColor};"
+  style="background-color: {backgroundColor}; border-bottom-color: {backgroundColor}; --masthead-text-color: {textColor};"
 >
   <div class="govuk-width-container">
     <div class="govuk-grid-row">
@@ -250,7 +252,10 @@
 
   /* GOV.UK Typography - Scoped to our component with high specificity */
   .app-masthead .govuk-heading-xl.govuk-heading-xl {
-    color: #ffffff; /* Override to white for masthead */
+    color: var(
+      --masthead-text-color,
+      #ffffff
+    ); /* Override to white for masthead */
     font-family: "GDS Transport", arial, sans-serif;
     font-weight: 700;
     font-size: 2rem;
@@ -266,5 +271,9 @@
       line-height: 1.04167;
       margin-bottom: 3.125rem;
     }
+  }
+
+  .app-masthead__description {
+    color: var(--masthead-text-color);
   }
 </style>

@@ -211,7 +211,7 @@
       },
       {
         name: "textColor",
-        category: "Content",
+        category: "Visual",
         value: "#FFFFFF",
         description: {
           markdown: true,

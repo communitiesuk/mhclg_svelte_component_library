@@ -255,7 +255,7 @@
     color: var(
       --masthead-text-color,
       #ffffff
-    ); /* Override to white for masthead */
+    ); /* Override to textColor prop if specified otherwise fall back to white */
     font-family: "GDS Transport", arial, sans-serif;
     font-weight: 700;
     font-size: 2rem;

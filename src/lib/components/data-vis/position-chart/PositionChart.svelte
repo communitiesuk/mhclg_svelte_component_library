@@ -21,7 +21,9 @@
 
   let maxRank = 32844;
 
-  let barWidth = $derived(chartWidth * 0.95);
+  let markerRadius = $derived(chartWidth / 40);
+
+  let barWidth = $derived(chartWidth - markerRadius * 2);
 
   let xFunction = $derived(
     scaleLinear().domain([1, maxRank]).range([0, barWidth]),
@@ -41,6 +43,22 @@
     "chart width",
     chartWidth,
   );
+
+  let barHeight = 20;
+  let chartHeight = barHeight * 1.5;
+
+  const colorScale = [
+    "#5A0000",
+    "#800000",
+    "#A31E1E",
+    "#C13D3D",
+    "#E05C5C",
+    "#3F6DCB",
+    "#4E7EDE",
+    "#5F8FFF",
+    "#719FFF",
+    "#3A8DFF",
+  ];
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -54,25 +72,38 @@
 <div
   class="chart-container"
   bind:clientWidth={chartWidth}
-  style="border: 1px solid #ccc;"
+  style="height: {barHeight * 1.5}px;"
 >
-  <svg width={barWidth}>
-    <rect width={barWidth} height="30" fill="green"></rect>
+  <svg width={chartWidth} height={chartHeight}>
     {#each range as number}
-      <g transform="translate({(barWidth * number) / 10},0)"
-        ><rect width={barWidth / 10} height="30" fill="blue"></rect></g
+      <g
+        transform="translate({markerRadius +
+          (barWidth * number) / 10},{(chartHeight - barHeight) / 2})"
+        ><rect
+          width={barWidth / 10}
+          height={barHeight}
+          fill={colorScale[number]}
+        ></rect></g
       >{/each}
-    <g transform="translate({xFunction(domainRank)},0)"
-      ><circle r="10" cx="0" cy="0" fill="red"></circle></g
+    <g
+      transform="translate({xFunction(domainRank)},{(chartHeight - barHeight) /
+        2})"
+      ><circle
+        r={markerRadius}
+        cx="0"
+        cy={barHeight / 2}
+        fill="#FFB400"
+        stroke="white"
+      ></circle></g
     >
   </svg>
 </div>
 
-<div style="border: 1px solid #ccc;"></div>
-
 <style>
   .chart-container {
     display: flex;
+    justify-content: center;
     padding-bottom: 10px;
+    /* border: 1px solid red; */
   }
 </style>

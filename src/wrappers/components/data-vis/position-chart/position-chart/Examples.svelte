@@ -20,6 +20,12 @@
   ];
 
   let { data } = $props();
+
+  let dummyData = $state([
+    ["Overall", 3],
+    ["Crime", 2],
+    ["Income", 5],
+  ]);
 </script>
 
 <div>
@@ -44,7 +50,11 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <PositionChart {data} lsoa="City of London 001B" domain="IMD_rank"
+    <PositionChart
+      value="5"
+      min="1"
+      max="10"
+      label="This is a long label which has spaces in it"
     ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
@@ -52,8 +62,9 @@
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
-    {#each ["education_rank", "housing_rank", "crime_rank"] as domain}
-      <PositionChart {data} lsoa="City of London 001B" {domain}></PositionChart>
+    {#each dummyData as item}
+      <PositionChart value={item[1]} min="0" max="10" label={item[0]}
+      ></PositionChart>
     {/each}
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

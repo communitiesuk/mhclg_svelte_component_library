@@ -9,11 +9,14 @@
     radioProp = undefined,
     jsObjectProp = [],
     functionProp = undefined,
-    data,
-    lsoa,
-    domain,
+    value = undefined,
+    min = undefined,
+    max = undefined,
+    label = "label",
     chartWidth = $bindable(500),
   } = $props();
+
+  data.E01000001.crime = 0.5;
 
   $inspect({ data });
 
@@ -26,7 +29,7 @@
   let barWidth = $derived(chartWidth - markerRadius * 2);
 
   let xFunction = $derived(
-    scaleLinear().domain([1, maxRank]).range([0, barWidth]),
+    scaleLinear().domain([min, max]).range([0, barWidth]),
   );
 
   $inspect({ lsoa }, { domain });

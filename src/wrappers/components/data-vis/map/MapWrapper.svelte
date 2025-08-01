@@ -434,6 +434,15 @@
         options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
       },
       {
+        name: "geoSouce",
+        isProp: true,
+        description: "Tiles or maps",
+        category: "Data",
+        value: "Tiles",
+        options: ["tiles", "file", "none"],
+      },
+      { name: "addData", isProp: true, category: "Data", value: true },
+      {
         name: "year",
         isProp: true,
         category: "Data",

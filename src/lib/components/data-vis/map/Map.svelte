@@ -81,6 +81,7 @@
     setMaxBounds = false,
     onload,
     onidle,
+    geoSouce,
   }: {
     data: object[];
     customPalette?: object[];
@@ -124,6 +125,7 @@
     interactive?: boolean;
     onload?: (map: maplibregl.Map) => void;
     onidle?: (e: maplibregl.MapLibreEvent) => void;
+    geosouce: String;
   } = $props();
 
   let styleLookup = {
@@ -377,135 +379,128 @@
     {:else if !interactive}
       <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
     {/if}
-
-    <!-- <GeoJSON id="areas" data={merged} promoteId="areanm">
-      <FillLayer
-        paint={{
-          "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
-          "fill-opacity": changeOpacityOnHover
-            ? hoverStateFilter(fillOpacity, hoverOpacity)
-            : fillOpacity,
-        }}
-        beforeLayerType="symbol"
-        manageHoverState={interactive}
-        onclick={interactive ? (e) => zoomToArea(e) : undefined}
-        onmousemove={interactive
-          ? (e) => {
-              hoveredArea = e.features[0].id;
-              hoveredAreaData = e.features[0].properties.metric;
-              currentMousePosition = e.event.point;
-            }
-          : undefined}
-        onmouseleave={interactive
-          ? () => {
-              hoveredArea = null;
-              hoveredAreaData = null;
-            }
-          : undefined}
-      />
-      {#if showBorder}
-        <LineLayer
-          layout={{ "line-cap": "round", "line-join": "round" }}
+    {#if geoSouce == "file"}
+      <GeoJSON id="areas" data={merged} promoteId="areanm">
+        <FillLayer
           paint={{
-            "line-color": hoverStateFilter(borderColor, "orange"),
-            "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
+            "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
+            "fill-opacity": changeOpacityOnHover
+              ? hoverStateFilter(fillOpacity, hoverOpacity)
+              : fillOpacity,
           }}
           beforeLayerType="symbol"
+          manageHoverState={interactive}
+          onclick={interactive ? (e) => zoomToArea(e) : undefined}
+          onmousemove={interactive
+            ? (e) => {
+                hoveredArea = e.features[0].id;
+                hoveredAreaData = e.features[0].properties.metric;
+                currentMousePosition = e.event.point;
+              }
+            : undefined}
+          onmouseleave={interactive
+            ? () => {
+                hoveredArea = null;
+                hoveredAreaData = null;
+              }
+            : undefined}
         />
-      {/if}
-    </GeoJSON> -->
-
-    <!-- <VectorTileSource
-      tiles={[
-        "https://tiles.mapillary.com/maps/vtp/mly1_public/2/{z}/{x}/{y}?access_token=MLY|4142433049200173|72206abe5035850d6743b23a49c41333",
-      ]}
-    > -->
-
-    <!-- <VectorTileSource
-      id={"imdlayer"}
-      tiles={["https://cdn.ons.gov.uk/maptiles/t18/tiles/{z}/{x}/{y}.pbf"]}
-    > -->
-
-    <VectorTileSource
-      id={"lsoas"}
-      promoteId={"LSOA21NM"}
-      tiles={["http://localhost:8080/{z}/{x}/{y}.pbf"]}
-      minzoom={6}
-      maxzoom={14}
-    >
-      <FillLayer
-        paint={{
-          "fill-color": [
-            "match",
-            [
-              "to-number",
-              ["get", "Index of Multiple Deprivation (IMD) Decile"],
+        {#if showBorder}
+          <LineLayer
+            layout={{ "line-cap": "round", "line-join": "round" }}
+            paint={{
+              "line-color": hoverStateFilter(borderColor, "orange"),
+              "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
+            }}
+            beforeLayerType="symbol"
+          />
+        {/if}
+      </GeoJSON>
+    {:else if geoSouce == "tiles"}
+      <VectorTileSource
+        id={"lsoas"}
+        promoteId={"LSOA21NM"}
+        tiles={["http://localhost:8080/{z}/{x}/{y}.pbf"]}
+        minzoom={6}
+        maxzoom={14}
+      >
+        <FillLayer
+          paint={{
+            "fill-color": [
+              "match",
+              [
+                "to-number",
+                ["get", "Index of Multiple Deprivation (IMD) Decile"],
+              ],
+              1,
+              "#ffffcc",
+              2,
+              "#ffffcc",
+              3,
+              "#a1dab4",
+              4,
+              "#a1dab4",
+              5,
+              "#41b6c4",
+              6,
+              "#41b6c4",
+              7,
+              "#2c7fb8",
+              8,
+              "#2c7fb8",
+              9,
+              "#253494",
+              10,
+              "#253494",
+              /* default */ "rgba(0,0,0,0)",
             ],
-            1,
-            "#ffffcc",
-            2,
-            "#ffffcc",
-            3,
-            "#a1dab4",
-            4,
-            "#a1dab4",
-            5,
-            "#41b6c4",
-            6,
-            "#41b6c4",
-            7,
-            "#2c7fb8",
-            8,
-            "#2c7fb8",
-            9,
-            "#253494",
-            10,
-            "#253494",
-            /* default */ "rgba(0,0,0,0)",
-          ],
-          "fill-opacity": 0.4,
-        }}
-        sourceLayer={"LSOA"}
-        onclick={interactive
-          ? (e) => {
-              console.log(e);
-              return zoomToArea(e);
-            }
-          : undefined}
-        onmousemove={interactive
-          ? (e) => {
-              hoveredArea = e.features[0].id;
-              hoveredAreaData =
-                e.features[0].properties[
-                  "Index of Multiple Deprivation (IMD) Rank"
-                ];
-              currentMousePosition = e.event.point;
-            }
-          : undefined}
-        onmouseleave={interactive
-          ? () => {
-              hoveredArea = null;
-              hoveredAreaData = null;
-            }
-          : undefined}
-      ></FillLayer>
-      {#if showBorder}
-        <LineLayer
-          layout={{ "line-cap": "round", "line-join": "round" }}
-          paint={{
-            "line-color": hoverStateFilter(borderColor, "orange"),
-            "line-width": zoomTransition(
-              minZoom ?? 3,
-              0,
-              maxZoom ?? 14,
-              maxBorderWidth,
-            ),
+            "fill-opacity": 0.4,
           }}
-          beforeLayerType="symbol"
           sourceLayer={"LSOA"}
-        />
-      {/if}
-    </VectorTileSource>
+          onclick={interactive
+            ? (e) => {
+                console.log(e);
+                return zoomToArea(e);
+              }
+            : undefined}
+          onmousemove={interactive
+            ? (e) => {
+                hoveredArea = e.features[0].id;
+                hoveredAreaData =
+                  e.features[0].properties[
+                    "Index of Multiple Deprivation (IMD) Rank"
+                  ];
+                currentMousePosition = e.event.point;
+              }
+            : undefined}
+          onmouseleave={interactive
+            ? () => {
+                hoveredArea = null;
+                hoveredAreaData = null;
+              }
+            : undefined}
+        ></FillLayer>
+        {#if showBorder}
+          <LineLayer
+            layout={{ "line-cap": "round", "line-join": "round" }}
+            paint={{
+              "line-color": hoverStateFilter(borderColor, "orange"),
+              "line-width": zoomTransition(
+                minZoom ?? 3,
+                0,
+                maxZoom ?? 14,
+                maxBorderWidth,
+              ),
+            }}
+            beforeLayerType="symbol"
+            sourceLayer={"LSOA"}
+          />
+        {/if}
+      </VectorTileSource>
+    {:else}
+      <p>No data</p>
+    {/if}
+
     <!-- Important note: sourceLayer must match `-l` value from tippecanoe -->
 
     {#if interactive && tooltip}

@@ -434,7 +434,7 @@
         options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
       },
       {
-        name: "geoSouce",
+        name: "geoSource",
         isProp: true,
         description: "Tiles or maps",
         category: "Data",

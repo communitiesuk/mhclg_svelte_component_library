@@ -81,7 +81,7 @@
     setMaxBounds = false,
     onload,
     onidle,
-    geoSouce,
+    geoSource = "file",
   }: {
     data: object[];
     customPalette?: object[];
@@ -125,7 +125,7 @@
     interactive?: boolean;
     onload?: (map: maplibregl.Map) => void;
     onidle?: (e: maplibregl.MapLibreEvent) => void;
-    geosouce: String;
+    geoSource: "file" | "tiles" | "none";
   } = $props();
 
   let styleLookup = {
@@ -245,6 +245,9 @@
     }
 
     map?.setMaxBounds(bounds);
+
+    map?.setMaxZoom(maxZoom);
+    map?.setMinZoom(minZoom);
   });
 
   let vals = $derived(
@@ -340,8 +343,6 @@
     {style}
     {center}
     {zoom}
-    {maxZoom}
-    {minZoom}
     standardControls={interactive && standardControls}
     {hash}
     {updateHash}
@@ -379,7 +380,7 @@
     {:else if !interactive}
       <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
     {/if}
-    {#if geoSouce == "file"}
+    {#if geoSource == "file"}
       <GeoJSON id="areas" data={merged} promoteId="areanm">
         <FillLayer
           paint={{
@@ -416,13 +417,11 @@
           />
         {/if}
       </GeoJSON>
-    {:else if geoSouce == "tiles"}
+    {:else if geoSource == "tiles"}
       <VectorTileSource
         id={"lsoas"}
         promoteId={"LSOA21NM"}
         tiles={["http://localhost:8080/{z}/{x}/{y}.pbf"]}
-        minzoom={6}
-        maxzoom={14}
       >
         <FillLayer
           paint={{

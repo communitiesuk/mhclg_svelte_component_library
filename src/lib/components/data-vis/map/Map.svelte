@@ -83,8 +83,10 @@
     onidle,
     geoSource = "file",
     tileSource = "http://localhost:8080/{z}/{x}/{y}.pbf",
+    paintObject,
   }: {
     data: object[];
+    paintObject?: object;
     customPalette?: object[];
     cooperativeGestures?: boolean;
     standardControls?: boolean;
@@ -426,37 +428,7 @@
         tiles={[tileSource]}
       >
         <FillLayer
-          paint={{
-            "fill-color": [
-              "match",
-              [
-                "to-number",
-                ["get", "Index of Multiple Deprivation (IMD) Decile"],
-              ],
-              1,
-              "#ffffcc",
-              2,
-              "#ffffcc",
-              3,
-              "#a1dab4",
-              4,
-              "#a1dab4",
-              5,
-              "#41b6c4",
-              6,
-              "#41b6c4",
-              7,
-              "#2c7fb8",
-              8,
-              "#2c7fb8",
-              9,
-              "#253494",
-              10,
-              "#253494",
-              /* default */ "rgba(0,0,0,0)",
-            ],
-            "fill-opacity": 0.4,
-          }}
+          paint={paintObject}
           sourceLayer={"LSOA"}
           onclick={interactive
             ? (e) => {

@@ -82,6 +82,7 @@
     onload,
     onidle,
     geoSource = "file",
+    tileSource = "http://localhost:8080/{z}/{x}/{y}.pbf",
   }: {
     data: object[];
     customPalette?: object[];
@@ -126,6 +127,7 @@
     onload?: (map: maplibregl.Map) => void;
     onidle?: (e: maplibregl.MapLibreEvent) => void;
     geoSource: "file" | "tiles" | "none";
+    tileSource?: string;
   } = $props();
 
   let styleLookup = {
@@ -421,7 +423,7 @@
       <VectorTileSource
         id={"lsoas"}
         promoteId={"LSOA21NM"}
-        tiles={["http://localhost:8080/{z}/{x}/{y}.pbf"]}
+        tiles={[tileSource]}
       >
         <FillLayer
           paint={{

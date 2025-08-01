@@ -438,8 +438,16 @@
         isProp: true,
         description: "Tiles or maps",
         category: "Data",
-        value: "Tiles",
+        value: "file",
         options: ["tiles", "file", "none"],
+      },
+      {
+        name: "tileSource",
+        isProp: true,
+        description: "A URL to get the vector tiles from",
+        category: "Data",
+        value: "http://localhost:8080/{z}/{x}/{y}.pbf",
+        visible: { name: "geoSource", value: "tiles" },
       },
       { name: "addData", isProp: true, category: "Data", value: true },
       {

@@ -28,12 +28,13 @@
     ["Education", 7],
     ["Health", 6],
     ["Crime", 6],
-    ["Living Environment", 5],
-    ["Barriers to Housing & Services", 1],
-    ["Living Environment", 5],
-    ["Income Deprivation Affecting Children", 1],
-    ["Income Deprivation Affecting Older People", 2],
   ]);
+
+  // ["Living Environment", 5],
+  //   ["Barriers to Housing & Services", 1],
+  //   ["Living Environment", 5],
+  //   ["Income Deprivation Affecting Children", 1],
+  //   ["Income Deprivation Affecting Older People", 2],
 </script>
 
 <div>

@@ -192,6 +192,31 @@
         propType: "fixed",
         value: pageName,
       },
+      {
+        name: "showAxis",
+        category: "Input props",
+        value: true,
+      },
+      {
+        name: "value",
+        category: "Input props",
+        value: 9,
+      },
+      {
+        name: "min",
+        category: "Input props",
+        value: 0,
+      },
+      {
+        name: "max",
+        category: "Input props",
+        value: 10,
+      },
+      {
+        name: "label",
+        category: "Input props",
+        value: `Employment`,
+      },
     ]),
   );
 

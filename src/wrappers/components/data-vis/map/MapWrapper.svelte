@@ -486,7 +486,7 @@
           "fill-opacity": 0.4,
         },
       },
-      { name: "addData", isProp: true, category: "Data", value: true },
+      { name: "addedDataURL", isProp: true, category: "Data", value: "" },
       {
         name: "year",
         isProp: true,

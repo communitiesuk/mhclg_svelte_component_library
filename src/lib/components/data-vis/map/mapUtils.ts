@@ -105,8 +105,7 @@ export function quantileBreaks(data: number[], numBreaks: number): number[] {
 
   let len = data.length;
 
-  let breaks: number[] = [
-  ];
+  let breaks: number[] = [];
   for (let i = 0; i < numBreaks; i++) {
     breaks.push(data[Math.floor(len * (i * (1 / numBreaks)))]);
   }
@@ -114,5 +113,64 @@ export function quantileBreaks(data: number[], numBreaks: number): number[] {
 
   return breaks;
 }
+export function createPaintObjectFromMetric(
+  metricProperty: string,
+  breaks: (string | number)[],
+  fillColors: string[],
+  fillOpacity: number = 0.4,
+): object {
+  const usableLength = Math.min(breaks.length, fillColors.length);
 
-  
+  function parseNumberWithCommas(value: string | number): number {
+    if (typeof value === "number") return value;
+    const cleaned = value.toString().replace(/,/g, "").trim();
+    const parsed = Number(cleaned);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+
+  const matchExpression: [string, any, ...any[]] = [
+    "step",
+    ["to-number", ["get", metricProperty]],
+    "rgba(0,0,0,0)", // Default color
+  ];
+
+  for (let i = 0; i < usableLength; i++) {
+    const breakValue = parseNumberWithCommas(breaks[i]);
+    matchExpression.push(breakValue, fillColors[i]);
+  }
+
+  return {
+    "fill-color": matchExpression,
+    "fill-opacity": fillOpacity,
+  };
+}
+
+export function extractVectorMetricValues(
+  map: maplibregl.Map,
+  layerId: string,
+  metricProperty: string,
+): number[] {
+  if (!map || !map.isStyleLoaded()) return [];
+
+  const features = map.queryRenderedFeatures({ layers: [layerId] });
+  const seen = new Set();
+
+  return features
+    .filter((f) => {
+      const id = f.id;
+      if (!id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    })
+    .map((f) => {
+      const raw = f.properties?.[metricProperty];
+      if (typeof raw === "string") {
+        const cleaned = raw.replace(/,/g, "");
+        return parseFloat(cleaned);
+      } else if (typeof raw === "number") {
+        return raw;
+      }
+      return NaN;
+    })
+    .filter((v) => !isNaN(v));
+}

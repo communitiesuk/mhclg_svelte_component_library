@@ -24,6 +24,8 @@
     filterGeo,
     jenksBreaks,
     quantileBreaks,
+    createPaintObjectFromMetric,
+    extractVectorMetricValues,
   } from "./mapUtils.js";
   import NonStandardControls from "./NonStandardControls.svelte";
   import { replaceState } from "$app/navigation";
@@ -84,6 +86,11 @@
     geoSource = "file",
     tileSource = "http://localhost:8080/{z}/{x}/{y}.pbf",
     paintObject,
+    geojsonPromoteId = "areanm",
+    vectorMetricProperty = "Index of Multiple Deprivation (IMD) Rank",
+    vectorLayerName = "LSOA",
+    borderColor = "#003300",
+    labelSourceLayer = "place",
   }: {
     data: object[];
     paintObject?: object;
@@ -130,7 +137,17 @@
     onidle?: (e: maplibregl.MapLibreEvent) => void;
     geoSource: "file" | "tiles" | "none";
     tileSource?: string;
+    geojsonPromoteId?: string;
+    vectorMetricProperty?: string;
+    vectorLayerName?: string;
+    borderColor?: string;
+    labelSourceLayer?: string;
+    usingExternalData: false;
   } = $props();
+
+  let usingExternalData = false;
+  const tileSourceId = "lsoas";
+  const promoteProperty = "LSOA21NM";
 
   let styleLookup = {
     "Carto-light":
@@ -163,6 +180,7 @@
   );
 
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
+  $inspect(breakCount);
 
   let fillColors: string[] = $derived(
     setCustomPalette == true
@@ -172,13 +190,53 @@
 
   let tooFewColors = $derived(fillColors.length < breakCount);
 
+  let paint = $derived(() => {
+    if (!map || !loaded) return;
+
+    const values = extractVectorMetricValues(
+      map,
+      vectorLayerName,
+      vectorMetricProperty,
+    );
+
+    if (!values || values.length === 0) return;
+
+    let breaks: number[];
+
+    if (breaksType === "quantile") {
+      breaks = quantileBreaks(values, breakCount);
+    } else if (breaksType === "jenks") {
+      breaks = jenksBreaks(values, breakCount);
+    } else {
+      const min = Math.min(...values);
+      const max = Math.max(...values);
+      const step = (max - min) / breakCount;
+      breaks = Array.from(
+        { length: breakCount },
+        (_, i) => min + step * (i + 1),
+      );
+    }
+
+    const paint = createPaintObjectFromMetric(
+      vectorMetricProperty,
+      breaks,
+      fillColors,
+      fillOpacity,
+    );
+
+    map.setPaintProperty(vectorLayerName, "fill-color", paint["fill-color"]);
+    map.setPaintProperty(
+      vectorLayerName,
+      "fill-opacity",
+      paint["fill-opacity"],
+    );
+  });
+
   $effect(() => {
     if (tooFewColors) {
       console.warn("Too few colours for the number of breaks");
     }
   });
-
-  let borderColor = "#003300";
 
   let map: maplibregl.Map | undefined = $state();
 
@@ -264,6 +322,16 @@
       : breaksType == "quantile"
         ? quantileBreaks(vals, breakCount)
         : customBreaks,
+  );
+  let vectorPaintObject = $derived(
+    usingExternalData
+      ? createPaintObjectFromMetric(metric, breaks, fillColors, fillOpacity)
+      : createPaintObjectFromMetric(
+          vectorMetricProperty,
+          breaks,
+          fillColors,
+          fillOpacity,
+        ),
   );
 
   let dataWithColor = $derived(
@@ -385,7 +453,7 @@
       <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
     {/if}
     {#if geoSource == "file"}
-      <GeoJSON id="areas" data={merged} promoteId="areanm">
+      <GeoJSON id="areas" data={merged} promoteId={geojsonPromoteId}>
         <FillLayer
           paint={{
             "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
@@ -423,27 +491,22 @@
       </GeoJSON>
     {:else if geoSource == "tiles"}
       <VectorTileSource
-        id={"lsoas"}
-        promoteId={"LSOA21NM"}
+        id={tileSourceId}
+        promoteId={promoteProperty}
         tiles={[tileSource]}
       >
         <FillLayer
-          paint={paintObject}
-          sourceLayer={"LSOA"}
-          onclick={interactive
-            ? (e) => {
-                console.log(e);
-                return zoomToArea(e);
-              }
-            : undefined}
+          paint={vectorPaintObject}
+          sourceLayer={vectorLayerName}
+          onclick={interactive ? zoomToArea : undefined}
           onmousemove={interactive
             ? (e) => {
-                hoveredArea = e.features[0].id;
-                hoveredAreaData =
-                  e.features[0].properties[
-                    "Index of Multiple Deprivation (IMD) Rank"
-                  ];
-                currentMousePosition = e.event.point;
+                if (e.features?.[0]) {
+                  hoveredArea = e.features[0].id;
+                  hoveredAreaData =
+                    e.features[0].properties[vectorMetricProperty];
+                  currentMousePosition = e.event.point;
+                }
               }
             : undefined}
           onmouseleave={interactive
@@ -452,7 +515,7 @@
                 hoveredAreaData = null;
               }
             : undefined}
-        ></FillLayer>
+        />
         {#if showBorder}
           <LineLayer
             layout={{ "line-cap": "round", "line-join": "round" }}
@@ -466,7 +529,7 @@
               ),
             }}
             beforeLayerType="symbol"
-            sourceLayer={"LSOA"}
+            sourceLayer={vectorLayerName}
           />
         {/if}
       </VectorTileSource>

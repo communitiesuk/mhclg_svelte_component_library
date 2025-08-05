@@ -55,7 +55,7 @@
 
   <div class="bar-and-axis">
     <div class="bar" style="height: {barHeight * 1.5}px; width: {chartWidth}">
-      <svg width={chartWidth} height={chartHeight}>
+      <svg width={chartWidth} height={chartHeight} stroke="green">
         {#each range as number}
           <g
             transform="translate({markerRadius +
@@ -81,7 +81,7 @@
       </svg>
     </div>
     {#if showAxis === true}
-      <div class="axis" style="width: {barWidth - markerRadius / 2}">
+      <div class="axis" style="--axis-padding:{markerRadius}px">
         <div class="more-deprived">
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -123,6 +123,7 @@
     display: flex;
     justify-content: center;
     padding-bottom: 10px;
+    border: 1px solid blue;
   }
 
   .position-chart {
@@ -136,6 +137,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border: 1px solid black;
+    padding: 0 var(--axis-padding);
   }
 
   .less-deprived,
@@ -143,5 +146,9 @@
     display: flex;
     align-items: center;
     gap: 5px;
+  }
+
+  .bar-and-axis {
+    border: 1px solid red;
   }
 </style>

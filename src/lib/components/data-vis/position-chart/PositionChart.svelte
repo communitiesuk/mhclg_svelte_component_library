@@ -2,13 +2,6 @@
   import { scaleLinear } from "d3-scale";
   let {
     componentNameProp = undefined,
-    textProp = undefined,
-    numberProp = undefined,
-    checkboxProp = false,
-    dropdownProp = undefined,
-    radioProp = undefined,
-    jsObjectProp = [],
-    functionProp = undefined,
     value = undefined,
     min = undefined,
     max = undefined,

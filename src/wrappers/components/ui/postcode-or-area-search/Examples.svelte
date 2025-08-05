@@ -562,15 +562,15 @@
       essOnly={true}
       customGetTypeLabel={(type) => {
         // LSOA codes (Lower Layer Super Output Areas / equivalent)
-        if (/^[EW]01/.test(type)) return "LSOA"; // Lower Super Output Areas (England/Wales)
-        if (/^S01/.test(type)) return "LSOA"; // Data Zones (Scotland)
-        if (/^N01/.test(type)) return "LSOA"; // Super Output Areas (Northern Ireland)
+        if (/^[EW]01/.test(type)) return "LSOA (Neighbourhood)"; // Lower Super Output Areas (England/Wales)
+        if (/^S01/.test(type)) return "LSOA (Neighbourhood)"; // Data Zones (Scotland)
+        if (/^N01/.test(type)) return "LSOA (Neighbourhood)"; // Super Output Areas (Northern Ireland)
 
         // LAD codes (Local Authority Districts / equivalent)
-        if (/^E0[6-9]/.test(type)) return "LAD"; // Local Authority Districts (England)
-        if (/^W06/.test(type)) return "LAD"; // Local Authority Districts (Wales)
-        if (/^S12/.test(type)) return "LAD"; // Council Areas (Scotland)
-        if (/^N09/.test(type)) return "LAD"; // Local Government Districts (Northern Ireland)
+        if (/^E0[6-9]/.test(type)) return "LAD (Local Authority District)"; // Local Authority Districts (England)
+        if (/^W06/.test(type)) return "LAD (Local Authority District)"; // Local Authority Districts (Wales)
+        if (/^S12/.test(type)) return "LAD (Local Authority District)"; // Council Areas (Scotland)
+        if (/^N09/.test(type)) return "LAD (Local Authority District)"; // Local Government Districts (Northern Ireland)
 
         // Fallback for anything else
         return type;

@@ -162,24 +162,25 @@
         ? customPlacesData
         : defaultPlacesData;
 
-    // Filter to essential geocodes if requested
-    if (essOnly) {
-      placesData = placesData.filter((p: any) =>
-        essGeocodesArray.includes(p.areacd.slice(0, 3)),
-      );
-    }
-
-    // Sort by area name
+    // Sort by area name (before filtering to ensure all data is available for lookups)
     const sortedData = [...placesData].sort((a: any, b: any) =>
       a.areanm.localeCompare(b.areanm),
     );
 
-    // Create lookup for parent relationships
+    // Create lookup for parent relationships using ALL data (before filtering)
     const lookup: Record<string, any> = {};
     for (const p of sortedData) lookup[p.areacd] = p;
 
+    // Filter to essential geocodes if requested (after lookup table is created)
+    let filteredData = sortedData;
+    if (essOnly) {
+      filteredData = sortedData.filter((p: any) =>
+        essGeocodesArray.includes(p.areacd.slice(0, 3)),
+      );
+    }
+
     // Add group information and format for autocomplete
-    const processedPlaces: Place[] = sortedData.map((p: any) => {
+    const processedPlaces: Place[] = filteredData.map((p: any) => {
       const type = p.areacd.slice(0, 3);
       const group =
         type === "K02"

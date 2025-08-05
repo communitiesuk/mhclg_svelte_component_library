@@ -540,9 +540,9 @@
 {#snippet LsoaLadOnlyExample()}
   <div class="p-5 bg-white">
     <p class="mb-4 text-gray-700">
-      Filter the geographic hierarchy data to show only LSOA and LAD areas using
-      <code>customEssGeocodes</code> with <code>essOnly=true</code>. This
-      provides a focused search for statistical areas and local authorities:
+      Filter the geographic hierarchy data to show only LSOA and LAD areas while
+      preserving parent-child relationships. The component now maintains MSOA
+      data for context without showing MSOA areas in suggestions:
     </p>
     <PostcodeOrAreaSearch
       customPlacesData={hierarchyData.data}
@@ -572,10 +572,6 @@
         if (/^S12/.test(type)) return "LAD"; // Council Areas (Scotland)
         if (/^N09/.test(type)) return "LAD"; // Local Government Districts (Northern Ireland)
 
-        // Other essential areas
-        if (/^E12/.test(type)) return "Region";
-        if (/^[EWSN]92/.test(type)) return "Country";
-
         // Fallback for anything else
         return type;
       }}
@@ -591,8 +587,9 @@
         {lsoaLadOnlyExample}
       </p>
       <p class="mt-2 text-sm text-gray-600">
-        <strong>Note:</strong> Using <code>customEssGeocodes</code> and
-        <code>essOnly=true</code> to filter to LSOA and LAD areas only
+        <strong>Note:</strong> Component logic now preserves parent-child
+        relationships without needing MSOA codes in
+        <code>customEssGeocodes</code>
       </p>
     {/if}
   </div>

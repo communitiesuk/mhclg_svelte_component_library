@@ -292,10 +292,6 @@ export const lsoaLadOnly = `<script>
     if (/^S12/.test(type)) return "LAD"; // Council Areas (Scotland)
     if (/^N09/.test(type)) return "LAD"; // Local Government Districts (Northern Ireland)
 
-    // Other essential areas
-    if (/^E12/.test(type)) return "Region";
-    if (/^[EWSN]92/.test(type)) return "Country";
-
     // Fallback for anything else
     return type;
   }}
@@ -308,7 +304,7 @@ export const lsoaLadOnly = `<script>
 
 {#if selectedValue}
   <p>Selected: {selectedValue}</p>
-  <p>Note: Using customEssGeocodes and essOnly=true to filter to LSOA and LAD areas only</p>
+  <p>Note: Component logic now preserves parent-child relationships without needing MSOA codes in customEssGeocodes</p>
 {/if}
 
-<!-- Uses customEssGeocodes with essOnly prop to filter to LSOA and LAD areas only -->`;
+<!-- Shows only LSOA and LAD areas while preserving parent-child relationships -->`;

@@ -38,6 +38,7 @@
     "#719FFF",
     "#3A8DFF",
   ];
+  $inspect({ value });
 </script>
 
 {#snippet propNameAndValue(marginTW, paddingTW, text)}
@@ -87,10 +88,11 @@
     display: flex;
     justify-content: center;
     padding-bottom: 10px;
-    /* border: 1px solid red; */
   }
+
   .chart-and-label-container {
-    display: flex;
+    display: grid;
+    grid-template-columns: minmax(100px, 30%) 1fr;
     align-items: center;
     gap: 3%;
   }

@@ -23,8 +23,16 @@
 
   let dummyData = $state([
     ["Overall", 3],
-    ["Crime", 2],
-    ["Income", 5],
+    ["Income", 2],
+    ["Employment", 3],
+    ["Education", 7],
+    ["Health", 6],
+    ["Crime", 6],
+    ["Living Environment", 5],
+    ["Barriers to Housing & Services", 1],
+    ["Living Environment", 5],
+    ["Income Deprivation Affecting Children", 1],
+    ["Income Deprivation Affecting Older People", 2],
   ]);
 </script>
 

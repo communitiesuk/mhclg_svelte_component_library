@@ -462,6 +462,19 @@
         },
       },
       {
+        name: "maxSuggestions",
+        category: "Behaviour",
+        value: 20,
+        description: {
+          markdown: true,
+          arr: [
+            `Maximum number of suggestions to display. Leave empty for no limit.`,
+            `Useful for performance with large datasets or to simplify the user experience.`,
+            `Only applies to local area suggestions, not postcode API results.`,
+          ],
+        },
+      },
+      {
         name: "required",
         category: "Behaviour",
         value: false,

@@ -50,6 +50,7 @@
     menuClasses?: string | null;
     hint?: string; // Add hint prop
     selectedValue?: any; // Bindable selected value, updated on selection
+    maxSuggestions?: number; // Maximum number of suggestions to display
   };
 
   let {
@@ -83,6 +84,7 @@
     menuClasses = "", // Default to empty string
     hint = undefined, // Add hint destructuring
     selectedValue = $bindable(), // Bindable prop for selected value
+    maxSuggestions = undefined, // Maximum number of suggestions to display
     ...restSearchProps // Other props for the base Search component
   }: Props = $props();
 
@@ -257,7 +259,14 @@
           const label = typeof option === "string" ? option : option.label;
           return label.toLowerCase().includes(lowerQuery);
         });
-        populateResults(filtered);
+
+        // Apply maxSuggestions limit if specified
+        const limitedResults =
+          maxSuggestions && maxSuggestions > 0
+            ? filtered.slice(0, maxSuggestions)
+            : filtered;
+
+        populateResults(limitedResults);
       };
 
       // Determine which source to use

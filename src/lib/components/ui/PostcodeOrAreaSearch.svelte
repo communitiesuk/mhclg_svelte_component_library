@@ -46,6 +46,7 @@
 
     // Pass-through props to SearchAutocomplete
     selectedValue?: any;
+    maxSuggestions?: number; // Maximum number of suggestions to display
     label_text?: string;
     button_text?: string;
     name?: string;
@@ -70,6 +71,7 @@
     postcodeApiProperty = "postcode",
     postcodeApiPathBased = false,
     customSourceSelector = undefined,
+    maxSuggestions = undefined,
     selectedValue = $bindable(),
     label_text = "Search for a postcode or area",
     button_text = "Search",
@@ -111,8 +113,33 @@
 
   // Default source selector: use API for postcode-like inputs, options for area names
   const defaultSourceSelector = (query: string, options: Suggestion[]) => {
-    // If input has 3+ chars and contains a digit, likely a postcode
-    return query.length >= 3 && /\d/.test(query) ? "api" : "options";
+    // UK postcode pattern: starts with letter(s), has digits, and contains a space or follows postcode format
+    // Area codes: start with letter+digits (like E00, E01, E02, etc.) but don't have spaces
+    const postcodePattern = /^[A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2}$/i; // Full postcode pattern
+    const partialPostcodePattern =
+      /^[A-Z]{1,2}\d{1,2}[A-Z]?\s?(\d[A-Z]{0,2})?$/i; // Partial postcode
+    const areaCodePattern = /^[A-Z]\d{2}/i; // Area codes like E00, E01, W02, S12, etc.
+
+    // If it looks like an area code, use local options
+    if (areaCodePattern.test(query) && !query.includes(" ")) {
+      return "options";
+    }
+
+    // If it looks like a postcode (partial or full), use API
+    if (
+      query.length >= 3 &&
+      (postcodePattern.test(query) || partialPostcodePattern.test(query))
+    ) {
+      return "api";
+    }
+
+    // For other inputs with digits that don't match area codes, still try API (could be partial postcodes)
+    if (query.length >= 3 && /\d/.test(query) && !areaCodePattern.test(query)) {
+      return "api";
+    }
+
+    // Default to local options for text-only searches
+    return "options";
   };
 
   const sourceSelector = (query: string, options: Suggestion[]) => {
@@ -135,24 +162,25 @@
         ? customPlacesData
         : defaultPlacesData;
 
-    // Filter to essential geocodes if requested
-    if (essOnly) {
-      placesData = placesData.filter((p: any) =>
-        essGeocodesArray.includes(p.areacd.slice(0, 3)),
-      );
-    }
-
-    // Sort by area name
+    // Sort by area name (before filtering to ensure all data is available for lookups)
     const sortedData = [...placesData].sort((a: any, b: any) =>
       a.areanm.localeCompare(b.areanm),
     );
 
-    // Create lookup for parent relationships
+    // Create lookup for parent relationships using ALL data (before filtering)
     const lookup: Record<string, any> = {};
     for (const p of sortedData) lookup[p.areacd] = p;
 
+    // Filter to essential geocodes if requested (after lookup table is created)
+    let filteredData = sortedData;
+    if (essOnly) {
+      filteredData = sortedData.filter((p: any) =>
+        essGeocodesArray.includes(p.areacd.slice(0, 3)),
+      );
+    }
+
     // Add group information and format for autocomplete
-    const processedPlaces: Place[] = sortedData.map((p: any) => {
+    const processedPlaces: Place[] = filteredData.map((p: any) => {
       const type = p.areacd.slice(0, 3);
       const group =
         type === "K02"
@@ -183,6 +211,7 @@
     pathBasedApi: postcodeApiPathBased,
     groupKey: "group",
     sourceSelector,
+    maxSuggestions,
     label_text,
     button_text,
     name,

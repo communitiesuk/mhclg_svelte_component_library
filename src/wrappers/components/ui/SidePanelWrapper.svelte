@@ -443,6 +443,7 @@
               size=""
               input_width="full"
               margin_bottom={4}
+              minLength={3}
             />
           </div>
         </div>

@@ -445,21 +445,21 @@
               margin_bottom={4}
             />
           </div>
+        </div>
 
-          <!-- Footer Section -->
-          <Footer
-            rebrand={true}
-            showLicence={true}
-            showCopyright={true}
-            inlineLinks={[
-              { href: "/accessibility", label: "Accessibility statement" },
-              { href: "/cookies", label: "Cookies" },
-              { href: "/privacy", label: "Privacy" },
-              { href: "/terms", label: "Terms and conditions" },
-            ]}
-            borderTopColor="#00625E"
-          />
-        </div></SidePanel
+        <!-- Footer Section (full width like Header) -->
+        <Footer
+          rebrand={true}
+          showLicence={true}
+          showCopyright={true}
+          inlineLinks={[
+            { href: "/accessibility", label: "Accessibility statement" },
+            { href: "/cookies", label: "Cookies" },
+            { href: "/privacy", label: "Privacy" },
+            { href: "/terms", label: "Terms and conditions" },
+          ]}
+          borderTopColor="#00625E"
+        /></SidePanel
       >
 
       <!-- Map Area -->

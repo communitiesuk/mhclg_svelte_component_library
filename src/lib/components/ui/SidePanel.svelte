@@ -43,7 +43,7 @@
 
 <!-- Side Panel - matches ONS Census Atlas layout structure -->
 <div
-  class="flex flex-col lg:w-[{width}] lg:max-w-[24rem] lg:flex-shrink-0 lg:relative transition-transform transform-gpu {position ===
+  class="flex flex-col lg:max-w-[24rem] lg:flex-shrink-0 lg:relative transition-transform transform-gpu {position ===
   'right'
     ? 'lg:order-last'
     : 'lg:order-first'} absolute {position === 'right'
@@ -53,6 +53,7 @@
       ? '-translate-x-full lg:translate-x-0'
       : 'translate-x-full lg:translate-x-0'
     : 'lg:translate-x-0'} {panelClass}"
+  style="--panel-width: {width};"
 >
   <div
     class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden bg-white min-w-0"
@@ -141,5 +142,12 @@
     transition-property:
       color, background-color, border-color, text-decoration-color, fill, stroke;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Dynamic width using CSS custom property */
+  @media (min-width: 1024px) {
+    div[style*="--panel-width"] {
+      width: var(--panel-width);
+    }
   }
 </style>

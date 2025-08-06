@@ -512,28 +512,6 @@
           tooltip={true}
           standardControls={true}
         />
-
-        <!-- Map Legend -->
-        <div
-          class="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-lg border"
-        >
-          <h4 class="text-sm font-semibold mb-2">
-            England households deprived in multiple areas
-          </h4>
-          <div class="flex items-center space-x-2 text-xs">
-            <div class="flex items-center">
-              <div class="w-4 h-3 bg-blue-800 mr-1"></div>
-              <span>Most deprived</span>
-            </div>
-            <div
-              class="w-16 h-3 bg-gradient-to-r from-blue-800 via-blue-400 to-yellow-200"
-            ></div>
-            <div class="flex items-center">
-              <div class="w-4 h-3 bg-yellow-200 mr-1"></div>
-              <span>Least deprived</span>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>

@@ -42,25 +42,27 @@
   // Declarative state for accessibility
   let panelElement;
   let previouslyFocusedElement;
-  
+
   // Reactive announcement text for screen readers
-  let announceText = $state('');
-  
+  let announceText = $state("");
+
   // Reactive derivation to get focusable elements
   let focusableElements = $derived.by(() => {
     if (!panelElement || !navState.open) return [];
-    return Array.from(panelElement.querySelectorAll(
-      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    ));
+    return Array.from(
+      panelElement.querySelectorAll(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      ),
+    );
   });
-  
+
   // Reactive focus management - Svelte handles the DOM updates
   $effect(() => {
     if (navState.open) {
       // Store current focus before opening
       previouslyFocusedElement = document.activeElement;
-      announceText = 'Side panel opened';
-      
+      announceText = "Side panel opened";
+
       // Focus first focusable element in panel
       setTimeout(() => {
         if (focusableElements.length > 0) {
@@ -68,8 +70,8 @@
         }
       }, 100);
     } else {
-      announceText = 'Side panel closed';
-      
+      announceText = "Side panel closed";
+
       // Restore focus when closing
       if (previouslyFocusedElement) {
         setTimeout(() => {
@@ -82,17 +84,18 @@
 
   // Clean focus trapping using reactive focusableElements
   function handleTabInPanel(event) {
-    if (!navState.open || event.key !== 'Tab' || focusableElements.length === 0) return;
-    
+    if (!navState.open || event.key !== "Tab" || focusableElements.length === 0)
+      return;
+
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
-    
+
     // Handle single focusable element
     if (focusableElements.length === 1) {
       event.preventDefault();
       return;
     }
-    
+
     if (event.shiftKey) {
       // Shift+Tab: if on first element, go to last
       if (document.activeElement === firstElement) {
@@ -100,7 +103,7 @@
         lastElement?.focus();
       }
     } else {
-      // Tab: if on last element, go to first  
+      // Tab: if on last element, go to first
       if (document.activeElement === lastElement) {
         event.preventDefault();
         firstElement?.focus();

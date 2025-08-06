@@ -30,64 +30,6 @@
 
 <svelte:window onkeydown={handleKeydown} />
 
-<!-- Toggle Button - matches ONS Census Atlas pattern -->
-{#if showToggle}
-  <button
-    class="relative flex flex-col justify-center items-center z-50 bg-white w-[40px] h-[76px] py-3 shadow-[6px_4px_10px_-1px_rgba(0,0,0,0.3)] transform-gpu hover:bg-gray-50 active:bg-white {position ===
-    'left'
-      ? 'rounded-r-md'
-      : 'rounded-l-md'} {toggleButtonClass}"
-    style="position: fixed; {position}: 0; top: 50%; transform: translateY(-50%);"
-    onclick={toggle}
-    aria-label={navState.open ? "Close side panel" : "Open side panel"}
-  >
-    {#if navState.open}
-      <div class="text-2xl text-gray-700">
-        <!-- Close icon - arrow pointing in direction of panel -->
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          {#if position === "left"}
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M15 19l-7-7 7-7"
-            ></path>
-          {:else}
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 5l7 7-7 7"
-            ></path>
-          {/if}
-        </svg>
-      </div>
-    {:else}
-      <div class="flex items-center px-2 text-2xl">
-        <!-- Menu icon -->
-        <svg
-          class="w-6 h-6"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M4 6h16M4 12h16M4 18h16"
-          ></path>
-        </svg>
-      </div>
-    {/if}
-  </button>
-{/if}
-
 <!-- Overlay - matches ONS Census Atlas pattern -->
 <!-- svelte-ignore a11y_click_events_have_key_events -->
 <div
@@ -116,6 +58,70 @@
   <div class="grow flex flex-col overflow-y-auto bg-white">
     {@render children?.()}
   </div>
+
+  <!-- Toggle Button - attached to panel, mobile only (matches ONS Census Atlas) -->
+  {#if showToggle}
+    <div
+      class="lg:hidden absolute inset-0 {position === 'left'
+        ? 'left-[100%]'
+        : 'right-[100%]'} my-auto h-24"
+      class:hidden={false}
+    >
+      <button
+        class="relative flex flex-col justify-center items-center z-50 bg-white w-[40px] h-[76px] py-3 shadow-[6px_4px_10px_-1px_rgba(0,0,0,0.3)] transform-gpu hover:bg-gray-50 active:bg-white {position ===
+        'left'
+          ? 'rounded-r-md'
+          : 'rounded-l-md'} {toggleButtonClass}"
+        onclick={toggle}
+        aria-label={navState.open ? "Close side panel" : "Open side panel"}
+      >
+        {#if navState.open}
+          <div class="text-2xl text-gray-700">
+            <!-- Close icon - arrow pointing in direction of panel -->
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              {#if position === "left"}
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M15 19l-7-7 7-7"
+                ></path>
+              {:else}
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 5l7 7-7 7"
+                ></path>
+              {/if}
+            </svg>
+          </div>
+        {:else}
+          <div class="flex items-center px-2 text-2xl">
+            <!-- Menu icon -->
+            <svg
+              class="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              ></path>
+            </svg>
+          </div>
+        {/if}
+      </button>
+    </div>
+  {/if}
 </div>
 
 <style>

@@ -96,6 +96,14 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import SidePanel from "$lib/components/ui/SidePanel.svelte";
+  import Map from "$lib/components/data-vis/map/Map.svelte";
+  import Search from "$lib/components/ui/Search.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  import Header from "$lib/components/layout/Header.svelte";
+  import ServiceNavigation from "$lib/components/layout/ServiceNavigation.svelte";
+  import PhaseBanner from "$lib/components/layout/PhaseBanner.svelte";
+  import Footer from "$lib/components/layout/Footer.svelte";
+  import Accordion from "$lib/components/ui/Accordion.svelte";
   import Examples from "./side-panel/Examples.svelte";
 
   let { data } = $props();
@@ -382,42 +390,173 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div
-    class="relative h-96 bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg overflow-hidden"
-  >
-    <div class="p-4 text-center text-gray-600">
-      <p>Click the toggle button to open/close the side panel</p>
-      <p class="text-sm mt-2">
-        Panel is currently: <strong
-          >{navStateProp.open ? "Open" : "Closed"}</strong
-        >
-      </p>
-    </div>
+  <div class="relative h-[700px] bg-white border rounded-lg overflow-hidden">
+    <!-- Main Layout with Side Panel and Map -->
+    <div class="relative h-full flex">
+      <!-- Side Panel -->
+      <SidePanel {...parametersObject} bind:navState={navStateProp}>
+        <div class="overflow-y-auto h-full">
+          <!-- Header Section -->
+          <Header rebrand={true} />
 
-    <SidePanel {...parametersObject} bind:navState={navStateProp}>
-      <div class="space-y-4">
-        <h3 class="text-lg font-semibold text-gray-900">Side Panel Content</h3>
-        <p class="text-gray-600">This is the content inside the side panel.</p>
-        <div class="space-y-2">
-          <button
-            class="w-full px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
-          >
-            Action Button 1
-          </button>
-          <button
-            class="w-full px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition-colors"
-          >
-            Action Button 2
-          </button>
+          <!-- Service Navigation -->
+          <ServiceNavigation
+            serviceName="English indices of deprivation 2025"
+            serviceUrl="/"
+          />
+
+          <!-- Phase Banner -->
+          <PhaseBanner
+            tagText="PROTOTYPE"
+            bannerText="This is not a live service. This is a service being designed. "
+            linkText="Help us improve it and give your feedback"
+            linkHref="/feedback"
+          />
+
+          <!-- Main Panel Content -->
+          <div class="p-4 space-y-6">
+            <!-- Title -->
+            <div>
+              <h2 class="text-xl font-bold text-gray-900 mb-4">Maps</h2>
+
+              <!-- Accordion for sections -->
+              <Accordion
+                sections={[
+                  {
+                    id: "index-geography",
+                    heading: "Select index and geography level",
+                    content:
+                      "Choose your data and geographic boundary options here. You can select different indices of deprivation and geographic levels for analysis.",
+                    expanded: false,
+                  },
+                  {
+                    id: "sharing",
+                    heading: "Sharing",
+                    content:
+                      "Share this map with others or export data. Generate shareable links, download data extracts, or embed the map in other services.",
+                    expanded: false,
+                  },
+                ]}
+                allSectionToggle={false}
+                headingLevel="h3"
+              />
+            </div>
+
+            <!-- Search Section -->
+            <div>
+              <Search
+                label_text="Search for a postcode or an area"
+                placeholder="Search and add an area"
+                size=""
+                input_width="full"
+                margin_bottom={4}
+              />
+            </div>
+
+            <!-- Status Info -->
+            <div class="mt-8 pt-4 border-t border-gray-200">
+              <p class="text-sm text-gray-600 mb-2">
+                Panel Status: <strong
+                  >{navStateProp.open ? "Open" : "Closed"}</strong
+                >
+              </p>
+              <p class="text-xs text-gray-500">
+                This demo shows how the side panel component works with other
+                components like maps, search, and accordion sections.
+              </p>
+            </div>
+          </div>
+
+          <!-- Footer Section -->
+          <Footer
+            rebrand={true}
+            showLicence={true}
+            showCopyright={true}
+            inlineLinks={[
+              { href: "/accessibility", label: "Accessibility statement" },
+              { href: "/cookies", label: "Cookies" },
+              { href: "/privacy", label: "Privacy" },
+              { href: "/terms", label: "Terms and conditions" },
+            ]}
+            borderTopColor="#00625E"
+          />
         </div>
-        <div class="pt-4 border-t border-gray-200">
-          <p class="text-sm text-gray-500">
-            You can put any content here: forms, navigation, filters, settings,
-            etc.
-          </p>
+      </SidePanel>
+
+      <!-- Map Area -->
+      <div class="flex-1 relative bg-gray-100">
+        <Map
+          data={[
+            {
+              year: 2024,
+              data: [
+                {
+                  areaCode: "E07000223",
+                  areaName: "Adur",
+                  data: { "Index of Multiple Deprivation": 25.3 },
+                },
+                {
+                  areaCode: "E07000026",
+                  areaName: "Allerdale",
+                  data: { "Index of Multiple Deprivation": 31.7 },
+                },
+                {
+                  areaCode: "E07000032",
+                  areaName: "Amber Valley",
+                  data: { "Index of Multiple Deprivation": 19.8 },
+                },
+                {
+                  areaCode: "E07000224",
+                  areaName: "Arun",
+                  data: { "Index of Multiple Deprivation": 22.1 },
+                },
+                {
+                  areaCode: "E07000170",
+                  areaName: "Ashfield",
+                  data: { "Index of Multiple Deprivation": 35.2 },
+                },
+              ],
+            },
+          ]}
+          geoType="ltla"
+          year={2024}
+          metric="Index of Multiple Deprivation"
+          colorPalette="YlOrRd"
+          breaksType="quantile"
+          numberOfBreaks={5}
+          mapHeight={400}
+          zoom={6}
+          center={[-2.5, 53.5]}
+          styleSheet="Carto-light"
+          fillOpacity={0.7}
+          showBorder={true}
+          tooltip={true}
+          standardControls={true}
+        />
+
+        <!-- Map Legend -->
+        <div
+          class="absolute bottom-4 left-4 bg-white p-3 rounded-lg shadow-lg border"
+        >
+          <h4 class="text-sm font-semibold mb-2">
+            England households deprived in multiple areas
+          </h4>
+          <div class="flex items-center space-x-2 text-xs">
+            <div class="flex items-center">
+              <div class="w-4 h-3 bg-blue-800 mr-1"></div>
+              <span>Most deprived</span>
+            </div>
+            <div
+              class="w-16 h-3 bg-gradient-to-r from-blue-800 via-blue-400 to-yellow-200"
+            ></div>
+            <div class="flex items-center">
+              <div class="w-4 h-3 bg-yellow-200 mr-1"></div>
+              <span>Least deprived</span>
+            </div>
+          </div>
         </div>
       </div>
-    </SidePanel>
+    </div>
   </div>
 {/snippet}
 

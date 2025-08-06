@@ -61,23 +61,34 @@
     if (navState.open) {
       // Store current focus before opening
       previouslyFocusedElement = document.activeElement;
-      announceText = "Side panel opened";
-
-      // Focus first focusable element in panel
+      
+      // Announce panel opened immediately, before focus moves
+      announceText = "Navigation panel opened. Press Escape to close.";
+      
+      // Focus first focusable element in panel after brief delay
       setTimeout(() => {
         if (focusableElements.length > 0) {
           focusableElements[0]?.focus();
         }
-      }, 100);
+      }, 150); // Slightly longer delay to let announcement complete
     } else {
-      announceText = "Side panel closed";
-
+      // Clear any existing announcements first
+      announceText = "";
+      
       // Restore focus when closing
       if (previouslyFocusedElement) {
         setTimeout(() => {
           previouslyFocusedElement?.focus();
+          
+          // Brief announcement after focus restoration
+          setTimeout(() => {
+            announceText = "Panel closed.";
+          }, 100);
+          
           previouslyFocusedElement = null;
         }, 100);
+      } else {
+        announceText = "Panel closed.";
       }
     }
   });
@@ -128,7 +139,7 @@
   onkeydown={handleOverlayKeydown}
   role="button"
   tabindex="0"
-  aria-label="Close side panel overlay"
+  aria-label="Close side panel and return to main content"
   aria-hidden={navState.open ? "false" : "true"}
 ></div>
 
@@ -148,9 +159,17 @@
       : 'translate-x-full lg:translate-x-0'
     : 'lg:translate-x-0'} {panelClass}"
   style="--panel-width: {width};"
-  aria-label="Side panel navigation"
+  aria-label="Navigation panel"
+  aria-describedby={navState.open ? `${panelId}-description` : undefined}
   aria-hidden={navState.open ? "false" : "true"}
 >
+  <!-- Hidden description for screen readers -->
+  {#if navState.open}
+    <div id="{panelId}-description" class="sr-only">
+      Navigation panel with search and menu options. Use Tab to move between items, Escape to close.
+    </div>
+  {/if}
+  
   <section
     class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden bg-white min-w-0"
     aria-label="Panel content"

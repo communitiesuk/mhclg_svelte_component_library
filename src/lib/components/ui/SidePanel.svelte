@@ -38,9 +38,83 @@
       closePanel();
     }
   }
+
+  // Declarative state for accessibility
+  let panelElement;
+  let previouslyFocusedElement;
+  
+  // Reactive announcement text for screen readers
+  let announceText = $state('');
+  
+  // Reactive derivation to get focusable elements
+  let focusableElements = $derived.by(() => {
+    if (!panelElement || !navState.open) return [];
+    return Array.from(panelElement.querySelectorAll(
+      'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+    ));
+  });
+  
+  // Reactive focus management - Svelte handles the DOM updates
+  $effect(() => {
+    if (navState.open) {
+      // Store current focus before opening
+      previouslyFocusedElement = document.activeElement;
+      announceText = 'Side panel opened';
+      
+      // Focus first focusable element in panel
+      setTimeout(() => {
+        if (focusableElements.length > 0) {
+          focusableElements[0]?.focus();
+        }
+      }, 100);
+    } else {
+      announceText = 'Side panel closed';
+      
+      // Restore focus when closing
+      if (previouslyFocusedElement) {
+        setTimeout(() => {
+          previouslyFocusedElement?.focus();
+          previouslyFocusedElement = null;
+        }, 100);
+      }
+    }
+  });
+
+  // Clean focus trapping using reactive focusableElements
+  function handleTabInPanel(event) {
+    if (!navState.open || event.key !== 'Tab' || focusableElements.length === 0) return;
+    
+    const firstElement = focusableElements[0];
+    const lastElement = focusableElements[focusableElements.length - 1];
+    
+    // Handle single focusable element
+    if (focusableElements.length === 1) {
+      event.preventDefault();
+      return;
+    }
+    
+    if (event.shiftKey) {
+      // Shift+Tab: if on first element, go to last
+      if (document.activeElement === firstElement) {
+        event.preventDefault();
+        lastElement?.focus();
+      }
+    } else {
+      // Tab: if on last element, go to first  
+      if (document.activeElement === lastElement) {
+        event.preventDefault();
+        firstElement?.focus();
+      }
+    }
+  }
 </script>
 
 <svelte:window onkeydown={handleKeydown} />
+
+<!-- Declarative live region - Svelte reactively updates the content -->
+<div class="sr-only" aria-live="polite" aria-atomic="true">
+  {announceText}
+</div>
 
 <!-- Overlay - matches ONS Census Atlas pattern -->
 <div
@@ -57,6 +131,8 @@
 
 <!-- Side Panel - matches ONS Census Atlas layout structure -->
 <aside
+  bind:this={panelElement}
+  onkeydown={handleTabInPanel}
   id={panelId}
   class="flex flex-col lg:max-w-[24rem] lg:flex-shrink-0 lg:relative transition-transform transform-gpu {position ===
   'right'

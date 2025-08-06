@@ -29,7 +29,7 @@
     progress: "Baseline completed",
     statusRows: [
       {
-        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
+        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },
         visibleOnHompepage: false,
       },
       {
@@ -47,7 +47,7 @@
    *
    */
   let descriptionArray = [
-    "A collapsible side panel component that slides in from the left or right side of the screen. The panel includes a toggle button, overlay backdrop, and smooth animations. It supports keyboard navigation (Escape key to close) and is fully accessible with proper ARIA attributes.",
+    "A fully accessible collapsible side panel component that slides in from the left or right side of the screen. Features include toggle button, overlay backdrop, smooth animations, focus trapping, live screen reader announcements, and comprehensive keyboard navigation. Meets WCAG 2.2 AA standards with GDS focus styling.",
   ];
 
   let contextArray = [

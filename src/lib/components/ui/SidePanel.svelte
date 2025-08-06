@@ -63,9 +63,9 @@
   <!-- Toggle Button - attached to panel, mobile only (matches ONS Census Atlas) -->
   {#if showToggle}
     <div
-      class="lg:hidden absolute inset-0 {position === 'left'
-        ? 'left-[100%]'
-        : 'right-[100%]'} my-auto h-24"
+      class="lg:hidden absolute {position === 'left'
+        ? 'top-0 bottom-0 -right-[40px]'
+        : 'top-0 bottom-0 -left-[40px]'} my-auto h-24 w-[40px]"
       class:hidden={false}
     >
       <button

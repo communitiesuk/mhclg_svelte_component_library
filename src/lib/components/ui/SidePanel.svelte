@@ -51,11 +51,12 @@
   onkeydown={handleOverlayKeydown}
   role="button"
   tabindex="0"
-  aria-label="Close side panel"
+  aria-label="Close side panel overlay"
+  aria-hidden={navState.open ? "false" : "true"}
 ></div>
 
 <!-- Side Panel - matches ONS Census Atlas layout structure -->
-<div
+<aside
   id={panelId}
   class="flex flex-col lg:max-w-[24rem] lg:flex-shrink-0 lg:relative transition-transform transform-gpu {position ===
   'right'
@@ -68,15 +69,15 @@
       : 'translate-x-full lg:translate-x-0'
     : 'lg:translate-x-0'} {panelClass}"
   style="--panel-width: {width};"
-  role="complementary"
   aria-label="Side panel navigation"
-  aria-hidden={navState.open ? 'false' : 'true'}
+  aria-hidden={navState.open ? "false" : "true"}
 >
-  <div
+  <section
     class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden bg-white min-w-0"
+    aria-label="Panel content"
   >
     {@render children?.()}
-  </div>
+  </section>
 
   <!-- Toggle Button - attached to panel, mobile only (matches ONS Census Atlas) -->
   {#if showToggle}
@@ -144,7 +145,7 @@
       </button>
     </div>
   {/if}
-</div>
+</aside>
 
 <style>
   /* Custom styles for smooth transitions */
@@ -174,7 +175,7 @@
 
   /* Dynamic width using CSS custom property */
   @media (min-width: 1024px) {
-    div[style*="--panel-width"] {
+    aside[style*="--panel-width"] {
       width: var(--panel-width);
     }
   }

@@ -24,13 +24,6 @@
     navState = { open: false };
   }
 
-  // Handle escape key - matches original pattern
-  function handleKeydown(event) {
-    if (navState.open && event.code === "Escape") {
-      navState = { open: false };
-    }
-  }
-
   // Handle overlay keyboard interaction
   function handleOverlayKeydown(event) {
     if (event.code === "Enter" || event.code === "Space") {
@@ -121,9 +114,20 @@
       }
     }
   }
+
+  // Combined keydown handler for window
+  function handleWindowKeydown(event) {
+    // Handle escape key for closing panel
+    if (navState.open && event.code === "Escape") {
+      navState = { open: false };
+    }
+    
+    // Handle tab trapping when panel is open
+    handleTabInPanel(event);
+  }
 </script>
 
-<svelte:window onkeydown={handleKeydown} />
+<svelte:window onkeydown={handleWindowKeydown} />
 
 <!-- Declarative live region - Svelte reactively updates the content -->
 <div class="sr-only" aria-live="polite" aria-atomic="true">
@@ -146,7 +150,6 @@
 <!-- Side Panel - matches ONS Census Atlas layout structure -->
 <aside
   bind:this={panelElement}
-  onkeydown={handleTabInPanel}
   id={panelId}
   class="flex flex-col lg:max-w-[24rem] lg:flex-shrink-0 lg:relative transition-transform transform-gpu {position ===
   'right'
@@ -161,7 +164,6 @@
   style="--panel-width: {width};"
   aria-label="Navigation panel"
   aria-describedby={navState.open ? `${panelId}-description` : undefined}
-  aria-hidden={navState.open ? "false" : "true"}
 >
   <!-- Hidden description for screen readers -->
   {#if navState.open}

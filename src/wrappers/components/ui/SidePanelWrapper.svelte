@@ -197,7 +197,7 @@
       {
         name: "width",
         category: "Layout",
-        value: "30%",
+        value: "50%",
         description: {
           markdown: true,
           arr: [

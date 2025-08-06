@@ -428,7 +428,7 @@
                   content:
                     "Choose your data and geographic boundary options here. You can select different indices of deprivation and geographic levels for analysis.",
                   expanded: false,
-                }
+                },
               ]}
               allSectionToggle={false}
               headingLevel="h3"

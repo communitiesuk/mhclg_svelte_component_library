@@ -105,6 +105,7 @@
   import Footer from "$lib/components/layout/Footer.svelte";
   import Accordion from "$lib/components/ui/Accordion.svelte";
   import Examples from "./side-panel/Examples.svelte";
+  import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
 
   let { data } = $props();
 
@@ -196,11 +197,11 @@
       {
         name: "width",
         category: "Layout",
-        value: "27rem",
+        value: "30%",
         description: {
           markdown: true,
           arr: [
-            `Sets the width of the side panel. Defaults to <code>27rem</code> to match ONS Census Atlas pattern. Can be any valid CSS width value.`,
+            `Sets the width of the side panel. Defaults to <code>30%</code> for responsive scaling across different screen sizes. Can be any valid CSS width value including percentages, rem, px, etc.`,
           ],
         },
       },
@@ -390,81 +391,59 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div class="relative h-[700px] bg-white border rounded-lg overflow-hidden">
+  <div
+    class="relative h-[700px] w-full max-w-[1200px] mx-auto bg-white border rounded-lg overflow-hidden"
+  >
     <!-- Main Layout with Side Panel and Map -->
-    <div class="relative h-full flex">
+    <div class="relative h-full flex min-w-0">
       <!-- Side Panel -->
       <SidePanel {...parametersObject} bind:navState={navStateProp}>
-        <div class="overflow-y-auto h-full">
-          <!-- Header Section -->
-          <Header rebrand={true} />
+        <!-- Panel content: Header, ServiceNavigation, PhaseBanner, Body, Footer -->
+        <!-- Header Section -->
+        <Header rebrand={true} />
+        <!-- Service Navigation -->
+        <ServiceNavigation
+          serviceName="English indices of deprivation 2025"
+          serviceUrl="/"
+        />
+        <!-- Phase Banner -->
+        <PhaseBanner
+          tagText="PROTOTYPE"
+          bannerText="This is not a live service. This is a service being designed. "
+          linkText="Help us improve it and give your feedback"
+          linkHref="/feedback"
+        />
+        <!-- Main Panel Content -->
+        <div class="p-4 space-y-6">
+          <!-- Title -->
+          <div>
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Maps</h2>
 
-          <!-- Service Navigation -->
-          <ServiceNavigation
-            serviceName="English indices of deprivation 2025"
-            serviceUrl="/"
-          />
+            <!-- Accordion for sections -->
+            <Accordion
+              sections={[
+                {
+                  id: "index-geography",
+                  heading: "Select index and geography level",
+                  content:
+                    "Choose your data and geographic boundary options here. You can select different indices of deprivation and geographic levels for analysis.",
+                  expanded: false,
+                }
+              ]}
+              allSectionToggle={false}
+              headingLevel="h3"
+            />
+          </div>
 
-          <!-- Phase Banner -->
-          <PhaseBanner
-            tagText="PROTOTYPE"
-            bannerText="This is not a live service. This is a service being designed. "
-            linkText="Help us improve it and give your feedback"
-            linkHref="/feedback"
-          />
-
-          <!-- Main Panel Content -->
-          <div class="p-4 space-y-6">
-            <!-- Title -->
-            <div>
-              <h2 class="text-xl font-bold text-gray-900 mb-4">Maps</h2>
-
-              <!-- Accordion for sections -->
-              <Accordion
-                sections={[
-                  {
-                    id: "index-geography",
-                    heading: "Select index and geography level",
-                    content:
-                      "Choose your data and geographic boundary options here. You can select different indices of deprivation and geographic levels for analysis.",
-                    expanded: false,
-                  },
-                  {
-                    id: "sharing",
-                    heading: "Sharing",
-                    content:
-                      "Share this map with others or export data. Generate shareable links, download data extracts, or embed the map in other services.",
-                    expanded: false,
-                  },
-                ]}
-                allSectionToggle={false}
-                headingLevel="h3"
-              />
-            </div>
-
-            <!-- Search Section -->
-            <div>
-              <Search
-                label_text="Search for a postcode or an area"
-                placeholder="Search and add an area"
-                size=""
-                input_width="full"
-                margin_bottom={4}
-              />
-            </div>
-
-            <!-- Status Info -->
-            <div class="mt-8 pt-4 border-t border-gray-200">
-              <p class="text-sm text-gray-600 mb-2">
-                Panel Status: <strong
-                  >{navStateProp.open ? "Open" : "Closed"}</strong
-                >
-              </p>
-              <p class="text-xs text-gray-500">
-                This demo shows how the side panel component works with other
-                components like maps, search, and accordion sections.
-              </p>
-            </div>
+          <!-- Search Section -->
+          <div>
+            <PostcodeOrAreaSearch
+              label_text="Search for a postcode or an area"
+              placeholder="Search and add an area"
+              size=""
+              input_width="full"
+              margin_bottom={4}
+            />
           </div>
 
           <!-- Footer Section -->
@@ -480,11 +459,11 @@
             ]}
             borderTopColor="#00625E"
           />
-        </div>
-      </SidePanel>
+        </div></SidePanel
+      >
 
       <!-- Map Area -->
-      <div class="flex-1 relative bg-gray-100">
+      <div class="flex-1 relative bg-gray-100 min-w-0">
         <Map
           data={[
             {

@@ -2,7 +2,7 @@
   let {
     navState = $bindable({ open: false }),
     position = "left", // 'left' or 'right'
-    width = "27rem", // Using rem like the original
+    width = "30%", // Percentage-based width for responsive scaling
     showToggle = true,
     toggleButtonClass = "",
     panelClass = "",
@@ -43,19 +43,20 @@
 
 <!-- Side Panel - matches ONS Census Atlas layout structure -->
 <div
-  class="absolute flex inset-0 {position === 'right'
-    ? 'left-[3rem] sm:left-[5rem] md:left-[7rem]'
-    : 'right-[3rem] sm:right-[5rem] md:right-[7rem]'} lg:relative lg:w-[{width}] xl:w-[{width ===
-  '27rem'
-    ? '32rem'
-    : width}] transition-transform transform-gpu z-20 {!navState.open
+  class="flex flex-col lg:w-[{width}] lg:max-w-[24rem] lg:flex-shrink-0 lg:relative transition-transform transform-gpu {position ===
+  'right'
+    ? 'lg:order-last'
+    : 'lg:order-first'} absolute {position === 'right'
+    ? 'inset-y-0 left-[3rem] sm:left-[5rem] md:left-[7rem] right-0'
+    : 'inset-y-0 right-[3rem] sm:right-[5rem] md:right-[7rem] left-0'} lg:inset-auto z-20 {!navState.open
     ? position === 'left'
-      ? '-translate-x-full'
-      : 'translate-x-full'
-    : ''} lg:translate-x-0 {panelClass}"
-  style="{position === 'left' ? 'left' : 'right'}: 0;"
+      ? '-translate-x-full lg:translate-x-0'
+      : 'translate-x-full lg:translate-x-0'
+    : 'lg:translate-x-0'} {panelClass}"
 >
-  <div class="grow flex flex-col overflow-y-auto bg-white">
+  <div
+    class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden bg-white min-w-0"
+  >
     {@render children?.()}
   </div>
 

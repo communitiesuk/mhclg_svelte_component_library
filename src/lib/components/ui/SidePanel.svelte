@@ -34,7 +34,6 @@
 
   // Declarative state for accessibility
   let panelElement;
-  let previouslyFocusedElement;
 
   // Reactive announcement text for screen readers
   let announceText = $state("");
@@ -52,12 +51,9 @@
   // Reactive focus management - Svelte handles the DOM updates
   $effect(() => {
     if (navState.open) {
-      // Store current focus before opening
-      previouslyFocusedElement = document.activeElement;
-      
       // Announce panel opened immediately, before focus moves
       announceText = "Navigation panel opened. Press Escape to close.";
-      
+
       // Focus first focusable element in panel after brief delay
       setTimeout(() => {
         if (focusableElements.length > 0) {
@@ -67,22 +63,9 @@
     } else {
       // Clear any existing announcements first
       announceText = "";
-      
-      // Restore focus when closing
-      if (previouslyFocusedElement) {
-        setTimeout(() => {
-          previouslyFocusedElement?.focus();
-          
-          // Brief announcement after focus restoration
-          setTimeout(() => {
-            announceText = "Panel closed.";
-          }, 100);
-          
-          previouslyFocusedElement = null;
-        }, 100);
-      } else {
-        announceText = "Panel closed.";
-      }
+
+      // Simple announcement when closing
+      announceText = "Panel closed.";
     }
   });
 
@@ -121,7 +104,7 @@
     if (navState.open && event.code === "Escape") {
       navState = { open: false };
     }
-    
+
     // Handle tab trapping when panel is open
     handleTabInPanel(event);
   }
@@ -168,10 +151,11 @@
   <!-- Hidden description for screen readers -->
   {#if navState.open}
     <div id="{panelId}-description" class="sr-only">
-      Navigation panel with search and menu options. Use Tab to move between items, Escape to close.
+      Navigation panel with search and menu options. Use Tab to move between
+      items, Escape to close.
     </div>
   {/if}
-  
+
   <section
     class="flex-1 flex flex-col overflow-y-auto overflow-x-hidden bg-white min-w-0"
     aria-label="Panel content"

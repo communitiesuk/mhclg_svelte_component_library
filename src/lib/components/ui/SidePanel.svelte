@@ -140,7 +140,8 @@ Features focus trapping, screen reader announcements, and smooth transitions.
       return;
 
     const firstElement: HTMLElement = focusableElements[0];
-    const lastElement: HTMLElement = focusableElements[focusableElements.length - 1];
+    const lastElement: HTMLElement =
+      focusableElements[focusableElements.length - 1];
 
     // Handle single focusable element
     if (focusableElements.length === 1) {

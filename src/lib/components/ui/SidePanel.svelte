@@ -1,34 +1,95 @@
+<!--
+@component
+# SidePanel
+
+A responsive, accessible side panel component that slides in from left or right.
+Features focus trapping, screen reader announcements, and smooth transitions.
+
+## Features
+- Responsive design (overlay on mobile, persistent on desktop)
+- Full keyboard navigation and focus management
+- Screen reader announcements
+- Configurable position (left/right)
+- Respects user motion preferences
+- ARIA-compliant accessibility
+
+@example
+```svelte
 <script>
+  import { SidePanel } from '$lib/components/ui';
+  
+  let panelState = $state({ open: false });
+</script>
+
+<SidePanel bind:navState={panelState} position="left" width="300px">
+  {#snippet children()}
+    <nav>Navigation content</nav>
+  {/snippet}
+</SidePanel>
+```
+-->
+
+<script lang="ts">
   import { fade } from "svelte/transition";
   import { cubicOut } from "svelte/easing";
+  import type { Snippet } from "svelte";
+
+  /**
+   * Props interface for the SidePanel component
+   */
+  interface Props {
+    /** Bindable state object controlling panel visibility */
+    navState?: { open: boolean };
+    /** Position of the panel - 'left' or 'right' side of screen */
+    position?: "left" | "right";
+    /** Width of the panel as CSS value (e.g., '30%', '300px') */
+    width?: string;
+    /** Whether to show the mobile toggle button */
+    showToggle?: boolean;
+    /** Additional CSS classes for the toggle button */
+    toggleButtonClass?: string;
+    /** Additional CSS classes for the panel container */
+    panelClass?: string;
+    /** Additional CSS classes for the overlay */
+    overlayClass?: string;
+    /** Snippet content to render inside the panel */
+    children?: Snippet;
+  }
 
   let {
     navState = $bindable({ open: false }),
-    position = "left", // 'left' or 'right'
-    width = "30%", // Percentage-based width for responsive scaling
+    position = "left",
+    width = "30%",
     showToggle = true,
     toggleButtonClass = "",
     panelClass = "",
     overlayClass = "",
     children,
-  } = $props();
+  }: Props = $props();
 
   // Generate unique IDs for ARIA relationships
-  let panelId = `side-panel-${Math.random().toString(36).slice(2, 11)}`;
-  let toggleId = `toggle-${Math.random().toString(36).slice(2, 11)}`;
+  const panelId: string = `side-panel-${Math.random().toString(36).slice(2, 11)}`;
+  const toggleId: string = `toggle-${Math.random().toString(36).slice(2, 11)}`;
 
-  // Toggle function - matches original pattern
-  function toggle() {
+  /**
+   * Toggles the panel open/closed state
+   */
+  function toggle(): void {
     navState.open = !navState.open;
   }
 
-  // Close panel when clicking overlay
-  function closePanel() {
+  /**
+   * Closes the panel (sets open state to false)
+   */
+  function closePanel(): void {
     navState.open = false;
   }
 
-  // Handle overlay keyboard interaction
-  function handleOverlayKeydown(event) {
+  /**
+   * Handles keyboard interactions on the overlay
+   * @param event - The keyboard event
+   */
+  function handleOverlayKeydown(event: KeyboardEvent): void {
     if (event.code === "Enter" || event.code === "Space") {
       event.preventDefault();
       closePanel();
@@ -36,19 +97,19 @@
   }
 
   // Declarative state for accessibility
-  let panelElement;
+  let panelElement: HTMLElement;
 
   // Reactive announcement text for screen readers
-  let announceText = $state("");
+  let announceText = $state<string>("");
 
   // Reactive derivation to get focusable elements
-  let focusableElements = $derived.by(() => {
+  let focusableElements = $derived.by((): HTMLElement[] => {
     if (!panelElement || !navState.open) return [];
     return Array.from(
       panelElement.querySelectorAll(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
       ),
-    );
+    ) as HTMLElement[];
   });
 
   // Reactive focus management - Svelte handles the DOM updates
@@ -69,13 +130,17 @@
     }
   });
 
-  // Clean focus trapping using reactive focusableElements
-  function handleTabInPanel(event) {
+  /**
+   * Manages focus trapping within the panel when Tab key is pressed
+   * Ensures focus cycles between focusable elements inside the panel
+   * @param event - The keyboard event
+   */
+  function handleTabInPanel(event: KeyboardEvent): void {
     if (!navState.open || event.key !== "Tab" || focusableElements.length === 0)
       return;
 
-    const firstElement = focusableElements[0];
-    const lastElement = focusableElements[focusableElements.length - 1];
+    const firstElement: HTMLElement = focusableElements[0];
+    const lastElement: HTMLElement = focusableElements[focusableElements.length - 1];
 
     // Handle single focusable element
     if (focusableElements.length === 1) {
@@ -98,8 +163,12 @@
     }
   }
 
-  // Combined keydown handler for window
-  function handleWindowKeydown(event) {
+  /**
+   * Combined keydown handler for window-level keyboard events
+   * Handles Escape key to close panel and delegates Tab trapping
+   * @param event - The keyboard event
+   */
+  function handleWindowKeydown(event: KeyboardEvent): void {
     // Handle escape key for closing panel
     if (navState.open && event.code === "Escape") {
       closePanel();
@@ -110,7 +179,7 @@
   }
 
   // Respect reduced motion preferences for transitions
-  let transitionDuration = $derived(
+  let transitionDuration = $derived<number>(
     typeof window !== "undefined" &&
       window.matchMedia("(prefers-reduced-motion: reduce)").matches
       ? 0
@@ -120,19 +189,19 @@
   // Computed classes for cleaner template
 
   // Controls flex order on desktop - panel appears before/after main content
-  let panelFlexOrder = $derived(
+  let panelFlexOrder = $derived<string>(
     position === "right" ? "lg:order-last" : "lg:order-first",
   );
 
   // Responsive positioning - panel slides from left/right edge with responsive spacing
-  let panelPositioning = $derived(
+  let panelPositioning = $derived<string>(
     position === "right"
       ? "inset-y-0 left-[3rem] sm:left-[5rem] md:left-[7rem] right-0"
       : "inset-y-0 right-[3rem] sm:right-[5rem] md:right-[7rem] left-0",
   );
 
   // Transform animations - slides panel in/out on mobile, always visible on desktop
-  let panelSlideAnimation = $derived(
+  let panelSlideAnimation = $derived<string>(
     !navState.open
       ? position === "left"
         ? "-translate-x-full lg:translate-x-0"
@@ -141,24 +210,24 @@
   );
 
   // Toggle button positioning - appears outside panel on left/right side
-  let toggleButtonPosition = $derived(
+  let toggleButtonPosition = $derived<string>(
     position === "left"
       ? "top-0 bottom-0 -right-[40px]"
       : "top-0 bottom-0 -left-[40px]",
   );
 
   // Toggle button border radius - rounded on the side facing away from panel
-  let toggleButtonBorderRadius = $derived(
+  let toggleButtonBorderRadius = $derived<string>(
     position === "left" ? "rounded-r-md" : "rounded-l-md",
   );
 
   // Toggle button base styling - layout, colors, shadows, and interactions
-  let toggleButtonBaseClasses = $derived(
+  let toggleButtonBaseClasses = $derived<string>(
     "relative flex flex-col justify-center items-center z-50 bg-white w-[40px] h-[76px] py-3 shadow-[6px_4px_10px_-1px_rgba(0,0,0,0.3)] transform-gpu hover:bg-gray-50 active:bg-white focus:outline-none focus:shadow-[0_0_0_3px_#ffdd00,0_0_0_6px_#0b0c0c]",
   );
 
   // Panel base styling - layout, positioning, and transitions
-  let panelBaseClasses = $derived(
+  let panelBaseClasses = $derived<string>(
     "flex flex-col lg:flex-shrink-0 lg:relative transition-transform transform-gpu absolute z-20",
   );
 </script>

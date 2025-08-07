@@ -134,7 +134,7 @@
 <aside
   bind:this={panelElement}
   id={panelId}
-  class="flex flex-col lg:max-w-[24rem] lg:flex-shrink-0 lg:relative transition-transform transform-gpu {position ===
+  class="flex flex-col lg:flex-shrink-0 lg:relative transition-transform transform-gpu {position ===
   'right'
     ? 'lg:order-last'
     : 'lg:order-first'} absolute {position === 'right'

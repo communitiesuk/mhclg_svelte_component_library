@@ -16,7 +16,7 @@ Features focus trapping, screen reader announcements, and smooth transitions.
 @example
 ```svelte
 <script>
-  import { SidePanel } from '$lib/components/ui';
+  import { SidePanel } from '@communitiesuk/svelte-component-library';
   
   let panelState = $state({ open: false });
 </script>

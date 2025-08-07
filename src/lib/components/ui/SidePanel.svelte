@@ -1,4 +1,7 @@
 <script>
+  import { fade } from 'svelte/transition';
+  import { cubicOut } from 'svelte/easing';
+
   let {
     navState = $bindable({ open: false }),
     position = "left", // 'left' or 'right'
@@ -106,6 +109,13 @@
     handleTabInPanel(event);
   }
 
+  // Respect reduced motion preferences for transitions
+  let transitionDuration = $derived(
+    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches 
+      ? 0 
+      : 300
+  );
+
   // Computed classes for cleaner template
 
   // Controls flex order on desktop - panel appears before/after main content
@@ -127,11 +137,6 @@
         ? "-translate-x-full lg:translate-x-0"
         : "translate-x-full lg:translate-x-0"
       : "lg:translate-x-0",
-  );
-
-  // Overlay visibility and opacity - only visible on mobile when panel is open
-  let overlayVisibility = $derived(
-    navState.open ? "visible opacity-50" : "invisible opacity-0",
   );
 
   // Toggle button positioning - appears outside panel on left/right side
@@ -165,19 +170,20 @@
 </div>
 
 <!-- Overlay - matches ONS Census Atlas pattern -->
-<div
-  class={[
-    "lg:hidden bg-black absolute inset-0 z-20 cursor-pointer transition-opacity",
-    overlayVisibility,
-    overlayClass,
-  ]}
-  onclick={closePanel}
-  onkeydown={handleOverlayKeydown}
-  role="button"
-  tabindex="0"
-  aria-label="Close side panel and return to main content"
-  aria-hidden={navState.open ? "false" : "true"}
-></div>
+{#if navState.open}
+  <div
+    class={[
+      "lg:hidden bg-black bg-opacity-50 absolute inset-0 z-20 cursor-pointer",
+      overlayClass,
+    ]}
+    transition:fade={{ duration: transitionDuration, easing: cubicOut }}
+    onclick={closePanel}
+    onkeydown={handleOverlayKeydown}
+    role="button"
+    tabindex="0"
+    aria-label="Close side panel and return to main content"
+  ></div>
+{/if}
 
 <!-- Side Panel - matches ONS Census Atlas layout structure -->
 <aside
@@ -278,8 +284,14 @@
 <style>
   /* Respect user motion preferences */
   @media (prefers-reduced-motion: reduce) {
+    /* Disable Tailwind CSS transitions */
     .transition-transform,
     .transition-opacity {
+      transition: none;
+    }
+    
+    /* Disable all CSS transitions on the panel */
+    aside {
       transition: none;
     }
   }

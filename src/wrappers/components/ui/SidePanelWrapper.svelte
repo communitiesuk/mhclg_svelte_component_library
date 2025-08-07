@@ -439,7 +439,7 @@
           <div>
             <PostcodeOrAreaSearch
               label_text="Search for a postcode or an area"
-              placeholder="Search and add an area"
+              placeholder=""
               size=""
               input_width="full"
               margin_bottom={4}

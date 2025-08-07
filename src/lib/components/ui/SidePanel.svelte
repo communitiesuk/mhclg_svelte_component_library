@@ -139,7 +139,7 @@
     ? 'lg:order-last'
     : 'lg:order-first'} absolute {position === 'right'
     ? 'inset-y-0 left-[3rem] sm:left-[5rem] md:left-[7rem] right-0'
-    : 'inset-y-0 right-[3rem] sm:right-[5rem] md:right-[7rem] left-0'} lg:inset-auto z-20 {!navState.open
+    : 'inset-y-0 right-[3rem] sm:right-[5rem] md:right-[7rem] left-0'} z-20 {!navState.open
     ? position === 'left'
       ? '-translate-x-full lg:translate-x-0'
       : 'translate-x-full lg:translate-x-0'
@@ -169,7 +169,6 @@
       class="lg:hidden absolute {position === 'left'
         ? 'top-0 bottom-0 -right-[40px]'
         : 'top-0 bottom-0 -left-[40px]'} my-auto h-24 w-[40px]"
-      class:hidden={false}
     >
       <button
         id={toggleId}
@@ -183,7 +182,7 @@
         aria-controls={panelId}
       >
         {#if navState.open}
-          <div class="text-2xl text-gray-700">
+          <div class="text-gray-700">
             <!-- Close icon - arrow pointing in direction of panel -->
             <svg
               class="w-6 h-6"
@@ -209,7 +208,7 @@
             </svg>
           </div>
         {:else}
-          <div class="flex items-center px-2 text-2xl">
+          <div class="flex items-center px-2">
             <!-- Menu icon -->
             <svg
               class="w-6 h-6"
@@ -232,23 +231,6 @@
 </aside>
 
 <style>
-  /* Custom styles for smooth transitions */
-  .transition-transform {
-    transition-property: transform;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .transition-opacity {
-    transition-property: opacity;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .transition-colors {
-    transition-property:
-      color, background-color, border-color, text-decoration-color, fill, stroke;
-    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
   /* Respect user motion preferences */
   @media (prefers-reduced-motion: reduce) {
     .transition-transform,

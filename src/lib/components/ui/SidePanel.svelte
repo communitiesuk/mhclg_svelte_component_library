@@ -16,12 +16,12 @@
 
   // Toggle function - matches original pattern
   function toggle() {
-    navState = { open: !navState.open };
+    navState.open = !navState.open;
   }
 
   // Close panel when clicking overlay
   function closePanel() {
-    navState = { open: false };
+    navState.open = false;
   }
 
   // Handle overlay keyboard interaction
@@ -61,10 +61,7 @@
         }
       }, 150); // Slightly longer delay to let announcement complete
     } else {
-      // Clear any existing announcements first
-      announceText = "";
-
-      // Simple announcement when closing
+      // Announce panel closed
       announceText = "Panel closed.";
     }
   });
@@ -102,7 +99,7 @@
   function handleWindowKeydown(event) {
     // Handle escape key for closing panel
     if (navState.open && event.code === "Escape") {
-      navState = { open: false };
+      closePanel();
     }
 
     // Handle tab trapping when panel is open

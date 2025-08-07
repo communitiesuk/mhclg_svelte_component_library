@@ -29,7 +29,7 @@
     progress: "Baseline completed",
     statusRows: [
       {
-        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },
+        obj: { Accessible: false, Responsive: true, "Prog. enhanced": false },
         visibleOnHompepage: false,
       },
       {

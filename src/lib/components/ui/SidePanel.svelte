@@ -1,6 +1,6 @@
 <script>
-  import { fade } from 'svelte/transition';
-  import { cubicOut } from 'svelte/easing';
+  import { fade } from "svelte/transition";
+  import { cubicOut } from "svelte/easing";
 
   let {
     navState = $bindable({ open: false }),
@@ -111,9 +111,10 @@
 
   // Respect reduced motion preferences for transitions
   let transitionDuration = $derived(
-    typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches 
-      ? 0 
-      : 300
+    typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 0
+      : 300,
   );
 
   // Computed classes for cleaner template
@@ -289,7 +290,7 @@
     .transition-opacity {
       transition: none;
     }
-    
+
     /* Disable all CSS transitions on the panel */
     aside {
       transition: none;

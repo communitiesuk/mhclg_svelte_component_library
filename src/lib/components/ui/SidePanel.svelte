@@ -11,8 +11,8 @@
   } = $props();
 
   // Generate unique IDs for ARIA relationships
-  let panelId = `side-panel-${Math.random().toString(36).substr(2, 9)}`;
-  let toggleId = `toggle-${Math.random().toString(36).substr(2, 9)}`;
+  let panelId = `side-panel-${Math.random().toString(36).slice(2, 11)}`;
+  let toggleId = `toggle-${Math.random().toString(36).slice(2, 11)}`;
 
   // Toggle function - matches original pattern
   function toggle() {

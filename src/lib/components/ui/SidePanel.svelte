@@ -67,9 +67,10 @@ Features focus trapping, screen reader announcements, and smooth transitions.
     children,
   }: Props = $props();
 
-  // Generate unique IDs for ARIA relationships
-  const panelId: string = `side-panel-${Math.random().toString(36).slice(2, 11)}`;
-  const toggleId: string = `toggle-${Math.random().toString(36).slice(2, 11)}`;
+  // Generate SSR-safe unique IDs for ARIA relationships
+  const uid: string = $props.id();
+  const panelId: string = `${uid}-panel`;
+  const toggleId: string = `${uid}-toggle`;
 
   /**
    * Toggles the panel open/closed state

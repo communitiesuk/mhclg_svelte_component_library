@@ -197,8 +197,8 @@ Features focus trapping, screen reader announcements, and smooth transitions.
   // Responsive positioning - panel slides from left/right edge with responsive spacing
   let panelPositioning = $derived<string>(
     position === "right"
-      ? "inset-y-0 left-[3rem] sm:left-[5rem] md:left-[7rem] right-0"
-      : "inset-y-0 right-[3rem] sm:right-[5rem] md:right-[7rem] left-0",
+      ? "inset-y-0 left-[3rem] sm:left-[5rem] md:left-[7rem] right-0 lg:inset-auto lg:left-auto lg:right-auto"
+      : "inset-y-0 right-[3rem] sm:right-[5rem] md:right-[7rem] left-0 lg:inset-auto lg:left-auto lg:right-auto",
   );
 
   // Transform animations - slides panel in/out on mobile, always visible on desktop

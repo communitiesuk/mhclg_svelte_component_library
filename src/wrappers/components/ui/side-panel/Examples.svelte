@@ -25,7 +25,8 @@
     },
     {
       id: "2",
-      heading: "2. Right panel with no toggle, programmatic control and custom styling",
+      heading:
+        "2. Right panel with no toggle, programmatic control and custom styling",
       content: Example2,
     },
   ];

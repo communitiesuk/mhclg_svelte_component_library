@@ -115,11 +115,13 @@ export function quantileBreaks(data: number[], numBreaks: number): number[] {
 }
 export function createPaintObjectFromMetric(
   metricProperty: string,
-  breaks: (string | number)[],
+  breaks: number[],
   fillColors: string[],
   fillOpacity: number = 0.4,
 ): object {
   const usableLength = Math.min(breaks.length, fillColors.length);
+
+  breaks.sort((a, b) => a - b);
 
   function parseNumberWithCommas(value: string | number): number {
     if (typeof value === "number") return value;
@@ -131,7 +133,7 @@ export function createPaintObjectFromMetric(
   const matchExpression: [string, any, ...any[]] = [
     "step",
     ["to-number", ["get", metricProperty]],
-    "rgba(0,0,0,0)", // Default color
+    "#d3d3d3", // Default color
   ];
 
   for (let i = 0; i < usableLength; i++) {

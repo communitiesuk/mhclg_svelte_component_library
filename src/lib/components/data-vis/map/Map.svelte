@@ -87,10 +87,11 @@
     tileSource = "http://localhost:8080/{z}/{x}/{y}.pbf",
     paintObject,
     geojsonPromoteId = "areanm",
-    vectorMetricProperty = "Index of Multiple Deprivation (IMD) Rank",
+    vectorMetricProperty = "Index of Multiple Deprivation (IMD) Decile",
     vectorLayerName = "LSOA",
     borderColor = "#003300",
     labelSourceLayer = "place",
+    externalData = null,
   }: {
     data: object[];
     paintObject?: object;
@@ -142,10 +143,9 @@
     vectorLayerName?: string;
     borderColor?: string;
     labelSourceLayer?: string;
-    usingExternalData: false;
+    externalData?: object;
   } = $props();
 
-  let usingExternalData = false;
   const tileSourceId = "lsoas";
   const promoteProperty = "LSOA21NM";
 
@@ -180,7 +180,6 @@
   );
 
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));
-  $inspect(breakCount);
 
   let fillColors: string[] = $derived(
     setCustomPalette == true
@@ -190,54 +189,11 @@
 
   let tooFewColors = $derived(fillColors.length < breakCount);
 
-  let paint = $derived(() => {
-    if (!map || !loaded) return;
-
-    const values = extractVectorMetricValues(
-      map,
-      vectorLayerName,
-      vectorMetricProperty,
-    );
-
-    if (!values || values.length === 0) return;
-
-    let breaks: number[];
-
-    if (breaksType === "quantile") {
-      breaks = quantileBreaks(values, breakCount);
-    } else if (breaksType === "jenks") {
-      breaks = jenksBreaks(values, breakCount);
-    } else {
-      const min = Math.min(...values);
-      const max = Math.max(...values);
-      const step = (max - min) / breakCount;
-      breaks = Array.from(
-        { length: breakCount },
-        (_, i) => min + step * (i + 1),
-      );
-    }
-
-    const paint = createPaintObjectFromMetric(
-      vectorMetricProperty,
-      breaks,
-      fillColors,
-      fillOpacity,
-    );
-
-    map.setPaintProperty(vectorLayerName, "fill-color", paint["fill-color"]);
-    map.setPaintProperty(
-      vectorLayerName,
-      "fill-opacity",
-      paint["fill-opacity"],
-    );
-  });
-
   $effect(() => {
     if (tooFewColors) {
       console.warn("Too few colours for the number of breaks");
     }
   });
-
   let map: maplibregl.Map | undefined = $state();
 
   let loaded = $state(false);
@@ -282,10 +238,8 @@
 
     if (cooperativeGestures) {
       map?.cooperativeGestures.enable();
-      $inspect(cooperativeGestures);
     } else {
       map?.cooperativeGestures.disable();
-      $inspect(cooperativeGestures);
     }
 
     if (interactive) {
@@ -324,7 +278,7 @@
         : customBreaks,
   );
   let vectorPaintObject = $derived(
-    usingExternalData
+    externalData != null
       ? createPaintObjectFromMetric(metric, breaks, fillColors, fillOpacity)
       : createPaintObjectFromMetric(
           vectorMetricProperty,
@@ -455,6 +409,7 @@
     {#if geoSource == "file"}
       <GeoJSON id="areas" data={merged} promoteId={geojsonPromoteId}>
         <FillLayer
+          id="main-fill-layer"
           paint={{
             "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
             "fill-opacity": changeOpacityOnHover
@@ -480,6 +435,7 @@
         />
         {#if showBorder}
           <LineLayer
+            id="border-layer"
             layout={{ "line-cap": "round", "line-join": "round" }}
             paint={{
               "line-color": hoverStateFilter(borderColor, "orange"),

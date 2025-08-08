@@ -140,6 +140,10 @@ Features focus trapping, screen reader announcements, and smooth transitions.
     if (!navState.open || event.key !== "Tab" || focusableElements.length === 0)
       return;
 
+    // Only trap focus when focus is currently within the panel
+    if (!panelElement || !panelElement.contains(document.activeElement as Node))
+      return;
+
     const firstElement: HTMLElement = focusableElements[0];
     const lastElement: HTMLElement =
       focusableElements[focusableElements.length - 1];

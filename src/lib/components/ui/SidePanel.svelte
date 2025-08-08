@@ -137,6 +137,7 @@ Features focus trapping, screen reader announcements, and smooth transitions.
    * @param event - The keyboard event
    */
   function handleTabInPanel(event: KeyboardEvent): void {
+    // Only handle Tab when panel is open and there are focusable elements
     if (!navState.open || event.key !== "Tab" || focusableElements.length === 0)
       return;
 

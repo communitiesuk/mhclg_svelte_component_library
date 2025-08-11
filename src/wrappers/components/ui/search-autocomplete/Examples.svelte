@@ -35,22 +35,37 @@
     },
     {
       id: "6",
-      heading: "6. Behaviour (Default & Confirm)",
-      content: ExampleBehaviour,
+      heading: "6. Options with grouping",
+      content: ExampleGroupedOptions,
     },
     {
       id: "7",
-      heading: "7. With Selected Value Binding",
-      content: Example7,
+      heading: "7. RESTful Path-based API",
+      content: ExamplePathBasedApi,
     },
     {
       id: "8",
-      heading: "8. Used Inside a Form for progressive enhancement",
-      content: ExampleForm,
+      heading: "8. Dynamic source selection",
+      content: ExampleDynamicSource,
     },
     {
       id: "9",
-      heading: "9. Using enhance for Progressive Enhancement",
+      heading: "9. Behaviour (Default & Confirm)",
+      content: ExampleBehaviour,
+    },
+    {
+      id: "10",
+      heading: "10. With Selected Value Binding",
+      content: Example7,
+    },
+    {
+      id: "11",
+      heading: "11. Used Inside a Form for progressive enhancement",
+      content: ExampleForm,
+    },
+    {
+      id: "12",
+      heading: "12. Using enhance for Progressive Enhancement",
       content: ExampleEnhance,
     },
   ];
@@ -141,7 +156,84 @@
   <CodeBlock code={codeBlocks.codeBlock5} language="svelte" />
 {/snippet}
 
-<!-- Example 6: Behaviour (Default & Confirm) -->
+<!-- Example 6: Options with grouping -->
+{#snippet ExampleGroupedOptions()}
+  <div class="p-5 bg-white">
+    <SearchAutocomplete
+      options={[
+        {
+          label: "London",
+          value: "london",
+          region: " A large city in England",
+        },
+        { label: "Birmingham", value: "birmingham", region: "England" },
+        { label: "Manchester", value: "manchester", region: "England" },
+        { label: "Edinburgh", value: "edinburgh", region: "Scotland" },
+        { label: "Glasgow", value: "glasgow", region: "Scotland" },
+        { label: "Cardiff", value: "cardiff", region: "Wales" },
+        { label: "Swansea", value: "swansea", region: "Wales" },
+        { label: "Belfast", value: "belfast", region: "Northern Ireland" },
+      ]}
+      groupKey="region"
+      placeholder="Search UK cities..."
+      label_text="Select a UK city"
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock6} language="svelte" />
+{/snippet}
+
+<!-- Example 7: RESTful Path-based API -->
+{#snippet ExamplePathBasedApi()}
+  <div class="p-5 bg-white">
+    <SearchAutocomplete
+      source_url="https://api.zippopotam.us/us"
+      source_key="places"
+      source_property="place name"
+      pathBasedApi={true}
+      placeholder="Enter a US zip code (e.g., 90210, 10001)..."
+      label_text="Search US locations by zip code"
+      minLength={5}
+      hint="Uses Zippopotam.us RESTful API - enter a 5-digit zip code"
+    />
+    <p class="govuk-body mt-2 text-sm text-gray-600">
+      This example demonstrates <code>pathBasedApi={true}</code> for RESTful
+      APIs like Zippopotam.us that expect URLs like <code>/us/90210</code>
+      instead of <code>/us?q=90210</code>.
+    </p>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlockPathBased} language="svelte" />
+{/snippet}
+
+<!-- Example 8: Dynamic source selection -->
+{#snippet ExampleDynamicSource()}
+  <div class="p-5 bg-white">
+    <SearchAutocomplete
+      options={[
+        { label: "London", value: "london", region: "England" },
+        { label: "Birmingham", value: "birmingham", region: "England" },
+        { label: "Manchester", value: "manchester", region: "England" },
+        { label: "Edinburgh", value: "edinburgh", region: "Scotland" },
+      ]}
+      source_url="https://www.gov.uk/api/search.json?suggest=autocomplete"
+      source_key="suggested_autocomplete"
+      groupKey="region"
+      placeholder="Type a city name or search term..."
+      label_text="Search cities or GOV.UK content"
+      minLength={3}
+    />
+    <p class="govuk-body mt-2 text-sm text-gray-600">
+      This example shows both local options and API configuration. Since no <code
+        >sourceSelector</code
+      >
+      function is provided, it will use the local options (since they're available)
+      as the primary source. To enable dynamic switching, you would need to provide
+      a <code>sourceSelector</code> function.
+    </p>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock7} language="svelte" />
+{/snippet}
+
+<!-- Example 9: Behaviour (Default & Confirm) -->
 {#snippet ExampleBehaviour()}
   <div class="p-5 bg-white">
     <SearchAutocomplete
@@ -151,10 +243,10 @@
       placeholder="Confirm on blur..."
     />
   </div>
-  <CodeBlock code={codeBlocks.codeBlock6} language="svelte" />
+  <CodeBlock code={codeBlocks.codeBlock8} language="svelte" />
 {/snippet}
 
-<!-- Example 7: With Selected Value Binding -->
+<!-- Example 10: With Selected Value Binding -->
 {#snippet Example7()}
   <div class="p-5 bg-white">
     <div class="mt-4">
@@ -179,10 +271,10 @@
       <p class="govuk-body mt-4 text-gray-500">No value selected yet.</p>
     {/if}
   </div>
-  <CodeBlock code={codeBlocks.codeBlock7} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock9} language="svelte"></CodeBlock>
 {/snippet}
 
-<!-- Example 8: Used Inside a Form for progressive enhancement -->
+<!-- Example 11: Used Inside a Form for progressive enhancement -->
 {#snippet ExampleForm()}
   <div class="p-5 bg-white">
     <form method="POST" class="govuk-form-group">
@@ -223,7 +315,7 @@
   <CodeBlock code={codeBlocks.codeBlockForm} language="svelte" />
 {/snippet}
 
-<!-- Example 9: Using enhance for Progressive Enhancement -->
+<!-- Example 12: Using enhance for Progressive Enhancement -->
 {#snippet ExampleEnhance()}
   <div class="p-5 bg-white">
     <form

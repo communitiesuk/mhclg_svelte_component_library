@@ -1,18 +1,17 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { clsx } from "clsx";
-  import Search from "$lib/components/ui/Search.svelte"; // Base component
+  import Search from "./Search.svelte"; // Base component
   import "accessible-autocomplete/dist/accessible-autocomplete.min.css";
   import { browser } from "$app/environment";
-  import suggestionIconUrl from "$lib/assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg?url";
-  import closeIconUrl from "$lib/assets/govuk_publishing_components/images/icon-close.svg?url"; // Import for the cancel button
-  
+  import suggestionIconUrl from "./../../assets/govuk_publishing_components/images/icon-autocomplete-search-suggestion.svg?url";
+  import closeIconUrl from "./../../assets/govuk_publishing_components/images/icon-close.svg?url"; // Import for the cancel button
 
   // SSR-safe HTML sanitizer: no-op on server
   let sanitize: (html: string) => string = (html) => html;
 
   // --- Define Props ---
-  type SuggestionObject = { label: string; value: any };
+  type SuggestionObject = { label: string; value: any; [key: string]: any }; // Allow additional properties for grouping
   type Suggestion = string | SuggestionObject;
   type Props = {
     // User can supply either an options array or an API source
@@ -20,6 +19,12 @@
     source_url?: string; // Optional: URL for autocomplete suggestions
     source_key?: string; // Optional: Key in the JSON response containing suggestions array
     source_property?: string; // Property to extract from API objects
+    pathBasedApi?: boolean; // Whether to use path-based URLs (RESTful) instead of query parameters
+    groupKey?: string; // Optional: Key to group suggestions by (e.g., "region", "category")
+    sourceSelector?: (
+      query: string,
+      options: Suggestion[],
+    ) => "api" | "options"; // Function to determine which source to use
     outerClasses?: string; // Optional classes for the outer wrapper
     outerDataAttributes?: Record<string, string>; // Optional data attributes for the outer wrapper
     // Add other expected props passed down (e.g., size, on_govuk_blue, id, name etc.)
@@ -52,9 +57,12 @@
     source_url = undefined,
     source_key = undefined,
     source_property = undefined,
-    size = "", // Default size from Search
+    pathBasedApi = false,
+    groupKey = undefined,
+    sourceSelector = undefined,
+    size = "",
     on_govuk_blue = false,
-    homepage = false, // Added homepage prop handling
+    homepage = false,
     outerClasses = "",
     outerDataAttributes = {},
     id, // Pass down id
@@ -80,6 +88,12 @@
 
   let containerElement: HTMLDivElement; // bind:this target for the outer div
   let autocompleteInstance: { inputElement?: HTMLInputElement } | null = null; // To store instance if needed
+
+  // Track which source is currently being used for dynamic data attributes
+  let currentSource = $state<"api" | "options" | "auto">("auto");
+  let currentSourceUrl = $state<string | undefined>(undefined);
+  let currentSourceKey = $state<string | undefined>(undefined);
+  let currentSourceProperty = $state<string | undefined>(undefined);
 
   // --- Derived Values ---
   const wrapperClasses = $derived(
@@ -148,6 +162,12 @@
         query: string,
         populateResults: (results: string[]) => void,
       ) => {
+        // Update current source tracking
+        currentSource = "api";
+        currentSourceUrl = source_url;
+        currentSourceKey = source_key;
+        currentSourceProperty = source_property;
+
         if (!source_url || !source_key) {
           console.error(
             "SearchAutocomplete: source_url and source_key are required for API mode.",
@@ -155,8 +175,21 @@
           populateResults([]);
           return;
         }
-        const url = new URL(source_url);
-        url.searchParams.set("q", query);
+
+        // Construct URL based on pathBasedApi setting
+        let url: URL;
+        if (pathBasedApi) {
+          // For RESTful APIs like Zippopotam.us: append query to path
+          const baseUrl = source_url.endsWith("/")
+            ? source_url.slice(0, -1)
+            : source_url;
+          url = new URL(`${baseUrl}/${encodeURIComponent(query)}`);
+        } else {
+          // For query parameter APIs: add ?q=query
+          url = new URL(source_url);
+          url.searchParams.set("q", query);
+        }
+
         fetch(url, { headers: { Accept: "application/json" } })
           .then((response) => {
             if (!response.ok)
@@ -209,6 +242,12 @@
         query: string,
         populateResults: (results: Suggestion[]) => void,
       ) => {
+        // Update current source tracking
+        currentSource = "options";
+        currentSourceUrl = undefined;
+        currentSourceKey = undefined;
+        currentSourceProperty = undefined;
+
         if (!options) {
           populateResults([]);
           return;
@@ -226,6 +265,43 @@
       const sourceFunction = useOptions
         ? getResultsFromOptions
         : getResultsFromApi;
+
+      // Initialise current source tracking based on initial configuration
+      if (sourceSelector) {
+        currentSource = "auto"; // Will be determined dynamically
+        currentSourceUrl = source_url;
+        currentSourceKey = source_key;
+        currentSourceProperty = source_property;
+      } else if (useOptions) {
+        currentSource = "options";
+        currentSourceUrl = undefined;
+        currentSourceKey = undefined;
+        currentSourceProperty = undefined;
+      } else {
+        currentSource = "api";
+        currentSourceUrl = source_url;
+        currentSourceKey = source_key;
+        currentSourceProperty = source_property;
+      }
+
+      // If sourceSelector is provided, create a dynamic source function
+      const dynamicSourceFunction = sourceSelector
+        ? (query: string, populateResults: (results: Suggestion[]) => void) => {
+            const selectedSource = sourceSelector(query, options || []);
+            // Handle invalid returns by falling back to default logic
+            if (selectedSource === "api") {
+              getResultsFromApi(query, populateResults);
+            } else if (selectedSource === "options") {
+              getResultsFromOptions(query, populateResults);
+            } else {
+              // Fall back to default logic if invalid return value
+              sourceFunction(query, populateResults);
+            }
+          }
+        : null;
+
+      // Use dynamic source if available, otherwise fall back to original logic
+      const finalSourceFunction = dynamicSourceFunction || sourceFunction;
 
       // Define suggestion template function (sanitize and highlight)
       const suggestionTemplate = (result: Suggestion): string => {
@@ -256,11 +332,17 @@
           html = `${before}<mark class="gem-c-search-with-autocomplete__suggestion-highlight">${match}</mark>${after}`;
         }
 
-        // Match the GOV.UK structure
+        // Get group text if groupKey is provided and result is an object
+        const groupText =
+          groupKey && typeof result === "object" && result[groupKey]
+            ? ` <span class="gem-c-search-with-autocomplete__suggestion-group">${sanitize(String(result[groupKey]))}</span>`
+            : "";
+
+        // Match the GOV.UK structure with integrated group text
         return `
           <div class="gem-c-search-with-autocomplete__option-wrapper">
             <span class="gem-c-search-with-autocomplete__suggestion-icon"></span>
-            <span class="gem-c-search-with-autocomplete__suggestion-text">${html}</span>
+            <span class="gem-c-search-with-autocomplete__suggestion-text">${html}${groupText}</span>
           </div>
         `;
       };
@@ -313,7 +395,7 @@
         id: searchInput.id, // Use the ID from the *rendered* Search input
         name: searchInput.name, // Use the name from the *rendered* Search input
         inputClasses: searchInput.classList, // Pass original classes directly
-        source: sourceFunction,
+        source: finalSourceFunction,
         minLength: minLength,
         confirmOnBlur: confirmOnBlur,
         showNoOptionsFound: showNoOptionsFound,
@@ -428,9 +510,11 @@
   bind:this={containerElement}
   class={wrapperClasses}
   data-module="gem-search-with-autocomplete"
-  data-source-url={source_url}
-  data-source-key={source_key}
-  data-source-property={source_property}
+  data-source-url={currentSourceUrl}
+  data-source-key={currentSourceKey}
+  data-source-property={currentSourceProperty}
+  data-group-key={groupKey}
+  data-current-source={currentSource}
   {...outerDataAttributes}
   style={`--suggestion-icon: url("${suggestionIconUrl}"); --cancel-icon: url("${closeIconUrl}")`}
 >
@@ -565,6 +649,12 @@
     .gem-c-search-with-autocomplete__suggestion-highlight {
       font-weight: normal;
       background: none;
+    }
+
+    .gem-c-search-with-autocomplete__suggestion-group {
+      opacity: 0.8;
+      font-size: smaller;
+      font-weight: normal;
     }
 
     .gem-c-search-with-autocomplete.gem-c-search-with-autocomplete--large

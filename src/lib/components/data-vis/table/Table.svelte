@@ -1,5 +1,5 @@
 <script>
-  import Button from "$lib/components/ui/Button.svelte";
+  import Button from "./../../ui/Button.svelte";
 
   let {
     data = undefined,
@@ -8,7 +8,7 @@
     colourScale = undefined,
   } = $props();
 
-  let localCopyOfData = $state([...data]);
+  let localCopyOfData = $derived([...data]);
 
   function hasUniqueValues(array, key) {
     const seen = new Set();
@@ -143,6 +143,12 @@
               scope="col"
               class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
               title={metaData[column.key].explainer}
+              aria-sort={sortState.column !== column.key
+                ? "none"
+                : sortState.column === column.key &&
+                    sortState.order === "descending"
+                  ? "descending"
+                  : "ascending"}
             >
               <div class="header">
                 <Button

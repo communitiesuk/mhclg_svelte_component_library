@@ -84,3 +84,13 @@ export function forceWrapAtThirdCapital(text) {
 
   return result;
 }
+
+/**
+ * Capitalizes the first letter of a string
+ * @param {string} str - The string to capitalize
+ * @returns {string} The string with first letter capitalized
+ */
+export function capitalise(str) {
+  if (!str || typeof str !== "string") return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

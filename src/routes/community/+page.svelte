@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import InsetText from "$lib/components/content/InsetText.svelte";
   import WarningText from "$lib/components/content/WarningText.svelte";
 </script>
@@ -7,7 +8,7 @@
   <strong>Join our community:</strong> We're building this component library
   collaboratively with teams across government. Your expertise and feedback help
   us create better solutions for everyone.
-  <a href="mailto:dataexplorerfeedback@communities.gov.uk" class="govuk-link"
+  <a href="mailto:andrew.hillman@communities.gov.uk" class="govuk-link"
     >Get in touch</a
   >
   to start contributing.
@@ -62,7 +63,7 @@
       </li>
       <li>
         <strong>Accessibility enhancements</strong> - Ensuring all components meet
-        WCAG 2.1 AA standards and work with assistive technologies
+        WCAG 2.2 AA standards and work with assistive technologies
       </li>
       <li>
         <strong>Performance optimisation</strong> - Lightweight, fast-loading components
@@ -70,13 +71,7 @@
       </li>
     </ul>
 
-    <p class="govuk-body">
-      <a href="/community/roadmap/" class="govuk-link"
-        >View our detailed roadmap</a
-      > to see what's planned and when.
-    </p>
-
-    <h2 class="govuk-heading-l govuk-!-margin-top-8">Ways to get involved</h2>
+    <!-- <h2 class="govuk-heading-l govuk-!-margin-top-8">Ways to get involved</h2>
 
     <p class="govuk-body">
       There are many ways to contribute to the MHCLG Svelte Component Library,
@@ -121,9 +116,9 @@
           >
         </p>
       </div>
-    </div>
+    </div> -->
 
-    <div class="govuk-grid-row govuk-!-margin-top-4">
+    <!-- <div class="govuk-grid-row govuk-!-margin-top-4">
       <div class="govuk-grid-column-one-half">
         <img
           src="/assets/images/undraw_pull-request_zlsu.svg"
@@ -160,7 +155,7 @@
           >
         </p>
       </div>
-    </div>
+    </div> -->
 
     <h2 class="govuk-heading-l govuk-!-margin-top-8">How we work</h2>
 
@@ -195,35 +190,6 @@
       </li>
     </ul>
 
-    <h3 class="govuk-heading-m">Learn more about our work</h3>
-
-    <ul class="govuk-list govuk-list--bullet">
-      <li>
-        <a href="/community/team-approach/" class="govuk-link"
-          >Our team and delivery approach</a
-        > - How we're organised and how we work
-      </li>
-      <li>
-        <a href="/community/projects/" class="govuk-link">Projects</a> - Current
-        and completed projects
-      </li>
-      <li>
-        <a href="/community/principles/" class="govuk-link"
-          >Community principles</a
-        > - The values that guide our work
-      </li>
-      <li>
-        <a href="/community/contribution-approach/" class="govuk-link"
-          >Contribution approach</a
-        > - How we review and accept contributions
-      </li>
-      <li>
-        <a href="/community/blog-posts/" class="govuk-link"
-          >Blog posts, videos and podcasts</a
-        > - Updates and insights from our team
-      </li>
-    </ul>
-
     <h2 class="govuk-heading-l govuk-!-margin-top-8">Get started</h2>
 
     <p class="govuk-body">
@@ -233,13 +199,16 @@
     <ol class="govuk-list govuk-list--number">
       <li>
         <strong>Explore the library</strong> - Browse our
-        <a href="/components/" class="govuk-link">components</a>
-        and <a href="/patterns/" class="govuk-link">patterns</a> to see what's available
+        <a href={base + "/components/"} class="govuk-link">components</a>
+        and
+        <a href={base + "/patterns/"} class={base + "govuk-link"}>patterns</a> to
+        see what's available
       </li>
       <li>
         <strong>Try it in your service</strong> - Follow our
-        <a href="/get-started/" class="govuk-link">installation guide</a> to start
-        using components in your project
+        <a href={base + "/get-started/"} class="govuk-link"
+          >installation guide</a
+        > to start using components in your project
       </li>
       <li>
         <strong>Share your feedback</strong> - Let us know how the components work
@@ -247,9 +216,8 @@
       </li>
       <li>
         <strong>Join the conversation</strong> -
-        <a
-          href="mailto:dataexplorerfeedback@communities.gov.uk"
-          class="govuk-link">Get in touch</a
+        <a href="mailto:andrew.hillman@communities.gov.uk" class="govuk-link"
+          >Get in touch</a
         > to connect with other teams using the library
       </li>
     </ol>

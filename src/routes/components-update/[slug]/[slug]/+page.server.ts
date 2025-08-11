@@ -16,13 +16,11 @@ interface FlatMetricData {
   areaCode: string;
   x: string | number;
   y: string | number;
-
 }
 
 interface TestData {
   flatMetricData: FlatMetricData[];
   areaCodeLookup: Record<string, string>;
-
 }
 
 /** @satisfies {import('./$types').Actions} */

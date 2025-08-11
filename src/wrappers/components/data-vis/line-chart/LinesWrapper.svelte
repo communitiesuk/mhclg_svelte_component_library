@@ -282,7 +282,7 @@
         visible: false,
       },
       {
-        name: "globalTierRules",
+        name: "globalTierParams",
         category: "data",
         visible: false,
       },
@@ -643,7 +643,7 @@
     }, {}),
   );
 
-  let globalTierRules = $derived({
+  let globalTierParams = $derived({
     otherTier: {},
     secondary: {
       opacity: nothingSelected ? 1 : 0.5,
@@ -662,7 +662,7 @@
     tieredLineParams,
     defaultLineParams,
     tieredDataObject,
-    globalTierRules,
+    globalTierParams,
   });
 
   /**

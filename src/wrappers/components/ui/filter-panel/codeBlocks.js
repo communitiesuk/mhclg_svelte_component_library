@@ -747,3 +747,103 @@ export const advancedExampleCode = `
   ga4BaseEvent={{ event_name: "filter_listings", type: "advanced" }}
 />
 `;
+
+// Client-Side Only Example with use:enhance cancel()
+export const clientSideOnlyCode = `
+<script>
+  import FilterPanel from '$lib/components/ui/FilterPanel.svelte';
+  import Table from '$lib/components/data-vis/table/Table.svelte';
+  import { enhance } from '$app/forms';
+  
+  // Simple client-side only data
+  const simpleItems = [
+    { id: 1, name: "Laptop", category: "electronics" },
+    { id: 2, name: "Mouse", category: "electronics" },
+    { id: 3, name: "Coffee Mug", category: "home" },
+    { id: 4, name: "Desk Chair", category: "home" },
+  ];
+
+  // Metadata for the Table component
+  const simpleMetaData = {
+    id: { shortLabel: "ID", explainer: "Item ID" },
+    name: { shortLabel: "Name", explainer: "Item name" },
+    category: { shortLabel: "Category", explainer: "Item category" },
+  };
+
+  // Client-side state
+  let filteredItems = $state(simpleItems);
+  let selectedCategory = $state("all");
+
+  // One simple filter function
+  function filterItems(category) {
+    return category === "all" ? simpleItems : simpleItems.filter(item => item.category === category);
+  }
+
+  // One filter section
+  const oneFilterSection = [
+    {
+      id: "category",
+      type: "radios",
+      title: "Category",
+      ga4Section: "category_filter",
+      ga4IndexSection: 1,
+      ga4IndexSectionCount: 1,
+      name: "category",
+      legend: "Select category",
+      options: [
+        { value: "all", label: "All items" },
+        { value: "electronics", label: "Electronics" },
+        { value: "home", label: "Home" },
+      ],
+      selectedValue: "all",
+    },
+  ];
+</script>
+
+<!-- Form with use:enhance and cancel() -->
+<form
+  method="POST"
+  use:enhance={({ formData, cancel }) => {
+    // Cancel server submission - process client-side only
+    cancel();
+    
+    // Extract form value
+    const category = formData.get("category")?.toString() || "all";
+    
+    // Update state
+    selectedCategory = category;
+    filteredItems = filterItems(category);
+    
+    // No return needed - we cancelled the submission
+  }}
+>
+  <FilterPanel
+    sectionsData={oneFilterSection}
+    resultsCount={\`\${filteredItems.length} items found\`}
+    filterButtonText="Filter items"
+    applyButtonText="Apply filter (Client-side only)"
+    ga4BaseEvent={{ event_name: "filter_items", type: "client_only" }}
+  />
+</form>
+
+<!-- Display current filter -->
+<p class="govuk-body">
+  <strong>Selected Category:</strong>
+  {selectedCategory === "all" ? "All items" : selectedCategory}
+</p>
+
+<!-- Display results using Table component -->
+<div class="mt-8 border-t pt-4">
+  <h4 class="text-lg font-semibold mb-4">Results ({filteredItems.length} items)</h4>
+  <Table 
+    data={filteredItems} 
+    metaData={simpleMetaData}
+    caption="Filtered Items"
+    colourScale="Off"
+  />
+  
+  {#if filteredItems.length === 0}
+    <p class="text-gray-500 italic mt-4">No items match your filter.</p>
+  {/if}
+</div>
+`;

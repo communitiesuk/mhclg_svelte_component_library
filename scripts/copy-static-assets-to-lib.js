@@ -8,7 +8,12 @@ const projectRoot = join(process.cwd()); // Assumes script run from project root
 const staticDir = join(projectRoot, "static/assets");
 const libDestDir = join(projectRoot, "src/lib/assets");
 
-const assetsToCopy = ["fonts", "images", "govuk_publishing_components"];
+const assetsToCopy = [
+  "fonts",
+  "images",
+  "govuk_publishing_components",
+  "rebrand",
+];
 
 console.log("Copying static assets to src/lib/assets...");
 
@@ -61,6 +66,9 @@ const transformAssetUrlsPlugin = {
           urlNode.value =
             "../govuk_publishing_components/images/" +
             url.slice("/assets/govuk_publishing_components/images/".length);
+        } else if (url.startsWith("/assets/rebrand/images/")) {
+          urlNode.value =
+            "../rebrand/images/" + url.slice("/assets/rebrand/images/".length);
         }
       }
     });

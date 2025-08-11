@@ -1,56 +1,61 @@
 <script lang="ts">
-  import homepageIllustration from "$lib/assets/images/homepage-illustration.svg";
+  import homepageIllustration from "./../../assets/images/homepage-illustration.svg";
 
   // Define component props with types and default values
   let {
     title = "Design your service using GOV.UK styles, components and patterns",
     description = "Use this design system to make government services consistent with GOV.UK. Learn from the research and experience of other service teams and avoid repeating work that's already been done.",
+    includeButton = true,
     buttonText = "Get started",
     buttonHref = "/get-started/",
     imageSrc = homepageIllustration,
     imageAlt = "",
     backgroundColor = "#1d70b8", // GOV.UK blue by default
+    textColor = "#FFFFFF",
   } = $props<{
     title?: string;
     description?: string;
+    includeButton?: boolean;
     buttonText?: string;
     buttonHref?: string;
     imageSrc?: string;
     imageAlt?: string;
     backgroundColor?: string;
+    textColor?: string;
   }>();
 </script>
 
 <div
   class="app-masthead"
-  style="background-color: {backgroundColor}; border-bottom-color: {backgroundColor};"
+  style="background-color: {backgroundColor}; border-bottom-color: {backgroundColor}; --masthead-text-color: {textColor};"
 >
   <div class="govuk-width-container">
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds-from-desktop">
         <h1 class="govuk-heading-xl app-masthead__title">{@html title}</h1>
         <p class="app-masthead__description">{description}</p>
-
-        <a
-          href={buttonHref}
-          role="button"
-          draggable="false"
-          class="govuk-button govuk-button--inverse govuk-!-margin-top-6 govuk-!-margin-bottom-0 govuk-button--start"
-          data-module="govuk-button"
-        >
-          {buttonText}
-          <svg
-            class="govuk-button__start-icon"
-            xmlns="http://www.w3.org/2000/svg"
-            width="17.5"
-            height="19"
-            viewBox="0 0 33 40"
-            aria-hidden="true"
-            focusable="false"
+        {#if includeButton === true}
+          <a
+            href={buttonHref}
+            role="button"
+            draggable="false"
+            class="govuk-button govuk-button--inverse govuk-!-margin-top-6 govuk-!-margin-bottom-0 govuk-button--start"
+            data-module="govuk-button"
           >
-            <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
-          </svg>
-        </a>
+            {buttonText}
+            <svg
+              class="govuk-button__start-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="17.5"
+              height="19"
+              viewBox="0 0 33 40"
+              aria-hidden="true"
+              focusable="false"
+            >
+              <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
+            </svg>
+          </a>
+        {/if}
       </div>
 
       <div class="govuk-grid-column-one-third-from-desktop">
@@ -247,7 +252,10 @@
 
   /* GOV.UK Typography - Scoped to our component with high specificity */
   .app-masthead .govuk-heading-xl.govuk-heading-xl {
-    color: #ffffff; /* Override to white for masthead */
+    color: var(
+      --masthead-text-color,
+      #ffffff
+    ); /* Override to textColor prop if specified otherwise fall back to white */
     font-family: "GDS Transport", arial, sans-serif;
     font-weight: 700;
     font-size: 2rem;
@@ -263,5 +271,9 @@
       line-height: 1.04167;
       margin-bottom: 3.125rem;
     }
+  }
+
+  .app-masthead__description {
+    color: var(--masthead-text-color);
   }
 </style>

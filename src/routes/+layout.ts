@@ -2,6 +2,8 @@ import { base } from "$app/paths";
 import type { LayoutLoad } from "./$types.js";
 import type { ComponentItem } from "./+layout.server.js";
 
+export const prerender = true;
+
 export const load: LayoutLoad = async (event) => {
   const testData = await (
     await event.fetch(`${base}/data/testData.json`)
@@ -105,9 +107,9 @@ export const load: LayoutLoad = async (event) => {
 
   let metaData = testData.metaData;
 
-  let deprivationData = testData.indexOfMultipleDeprivation
+  let deprivationData = testData.indexOfMultipleDeprivation;
 
-  let deprivationMetaData = testData.deprivationMetaData
+  let deprivationMetaData = testData.deprivationMetaData;
 
   return {
     metrics,

@@ -188,6 +188,7 @@
             `If this prop is provided with a non-empty array, it will be used as the suggestion source instead of <code>source_url</code> and <code>source_key</code>.`,
             `Example (strings): <code>["Apple", "Banana", "Cherry"]</code>`,
             `Example (objects, requires valid JSON in input): <code>[ { "label": "Aberdeen City", "value": "S12000033" }, { "label": "Aberdeenshire", "value": "S12000034" }, ... ]</code>`,
+            `For grouping: Objects can include additional properties (e.g., <code>{ "label": "London", "value": "london", "region": "England" }</code>) that can be used with the <code>groupKey</code> prop to display group information.`,
           ],
         },
       },
@@ -233,6 +234,59 @@
         },
         rows: 1,
         isRequired: false, // It's optional
+      },
+      {
+        name: "pathBasedApi",
+        category: "Autocomplete",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Set to <code>true</code> for RESTful APIs that expect the query as part of the URL path instead of query parameters.`,
+            `When <code>true</code>: constructs URLs like <code>https://api.example.com/search/london</code>`,
+            `When <code>false</code> (default): constructs URLs like <code>https://api.example.com/search?q=london</code>`,
+            `Use <code>true</code> for APIs like Zippopotam.us that use path-based routing.`,
+          ],
+        },
+      },
+      {
+        name: "groupKey",
+        category: "Autocomplete",
+        value: "", // Default to empty string, means no grouping
+        description: {
+          markdown: true,
+          arr: [
+            `Optional. Specifies which attribute in your options contains group information for displaying groups as muted text next to the option label.`,
+            `Only works when using the <code>options</code> prop with object-based suggestions.`,
+            `Example: If your options are <code>[{ "label": "London", "region": "England" }]</code>, set this to <code>"region"</code> to show "England" as muted text next to "London".`,
+            `Leave empty to disable grouping.`,
+          ],
+        },
+        rows: 1,
+        isRequired: false,
+      },
+      {
+        name: "sourceSelector",
+        category: "Autocomplete",
+        value: () => null, // Dummy function that doesn't interfere but allows display
+        propType: "fixed", // Cannot edit functions via UI
+        functionElements: {
+          functionAsString: `// Example function (not active to prevent interference with demo UI):
+  // (query, options) => {
+  //   // If input has 3+ chars and contains a digit, use API (postcode search)
+  //   // Otherwise use local options
+  //   return query.length >= 3 && /\\d/.test(query) ? 'api' : 'options'; }`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `Optional. Function to dynamically determine whether to use the API source or options source based on the user's input.`,
+            `The function receives <code>(query: string, options: Suggestion[])</code> and should return <code>'api'</code> or <code>'options'</code>.`,
+            `Example use case: Use API for postcode-like inputs (3+ chars with digits), otherwise use local options.`,
+            `Currently set to a dummy function that doesn't affect behavior. Replace with actual logic as needed.`,
+            `See the example function code below for implementation reference.`,
+          ],
+        },
       },
       {
         name: "minLength",
@@ -838,7 +892,7 @@
   <div class="p-8" style="background-color: {bgColor};">
     {#if parametersObject.source_url && parametersObject.source_key}
       {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}
-        <SearchAutocomplete {...parametersObject} bind:selectedValue/>
+        <SearchAutocomplete {...parametersObject} bind:selectedValue />
       {/key}
     {:else}
       <p class="text-red-600 font-bold">

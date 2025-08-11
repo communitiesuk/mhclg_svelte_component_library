@@ -295,21 +295,6 @@
         rows: 2,
       },
 
-      // Styling props
-      {
-        name: "rebranded",
-        category: "Styling",
-        value: true,
-        description: {
-          markdown: true,
-          arr: [
-            "Applies the rebranded styling with custom background color.",
-            "When <code>true</code>, uses a light blue background color.",
-            "When <code>false</code>, uses the default white background.",
-          ],
-        },
-      },
-
       // Demo/isolation props
       {
         name: "demoMode",

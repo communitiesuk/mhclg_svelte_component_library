@@ -78,12 +78,16 @@
     applyButtonText = "Apply",
     // GA4 related props
     ga4BaseEvent = { event_name: "select_content", type: "finder" },
+    filterPanelSectionsExpanded = false,
+    filterPanelExpanded = true,
   } = $props<{
     resultsCount?: string;
     sectionsData?: Section[];
     filterButtonText?: string;
     applyButtonText?: string;
     ga4BaseEvent?: Record<string, any>;
+    filterPanelSectionsExpanded?: boolean;
+    filterPanelExpanded?: boolean;
   }>();
 
   let sections = $derived(sectionsData);
@@ -91,7 +95,7 @@
   // Call $props.id() once at the top level
   const componentId = $props.id();
 
-  let panelOpen = $state(true);
+  let panelOpen = $derived(filterPanelExpanded);
   // Use the stored componentId to create other IDs
   const panelId = `filter-panel-${componentId}`;
   const filterButtonId = `filter-button-${componentId}`;
@@ -131,173 +135,178 @@
   }
 </script>
 
-<div data-module="filter-panel ga4-event-tracker" class="app-c-filter-panel">
-  <div class="app-c-filter-panel__header">
-    <button
-      id={filterButtonId}
-      class="app-c-filter-panel__button govuk-link"
-      aria-expanded={panelOpen}
-      aria-controls={panelId}
-      onclick={togglePanel}
-      data-ga4-expandable=""
-      data-ga4-event={getGa4Event({
-        section: filterButtonText,
-        text: filterButtonText,
-        index_section: 0,
-        index_section_count: sections.length,
-      })}
-    >
-      <span class="app-c-filter-panel__button-inner">{filterButtonText}</span>
-    </button>
-    <h2 id="js-result-count" class="app-c-filter-panel__count">
-      {resultsCount}
-    </h2>
-  </div>
+{#key `${filterPanelExpanded}-${filterPanelSectionsExpanded}`}
+  <div data-module="filter-panel ga4-event-tracker" class="app-c-filter-panel">
+    <div class="app-c-filter-panel__header">
+      <button
+        id={filterButtonId}
+        class="app-c-filter-panel__button govuk-link"
+        aria-expanded={panelOpen}
+        aria-controls={panelId}
+        onclick={togglePanel}
+        data-ga4-expandable=""
+        data-ga4-event={getGa4Event({
+          section: filterButtonText,
+          text: filterButtonText,
+          index_section: 0,
+          index_section_count: sections.length,
+        })}
+      >
+        <span class="app-c-filter-panel__button-inner">{filterButtonText}</span>
+      </button>
+      <h2 id="js-result-count" class="app-c-filter-panel__count">
+        {resultsCount}
+      </h2>
+    </div>
 
-  {#if panelOpen}
-    <div
-      class="app-c-filter-panel__content"
-      id={panelId}
-      role="region"
-      aria-labelledby={filterButtonId}
-    >
-      {#each sections as section (section.id)}
-        <details
-          data-ga4-index={JSON.stringify({
-            index_section: section.ga4IndexSection,
-            index_section_count: section.ga4IndexSectionCount,
-          })}
-          data-module="filter-section"
-          data-ga4-section={section.ga4Section}
-          data-ga4-filter-parent={section.ga4Section}
-          data-ga4-change-category={`update-filter ${section.type === "radios" || section.type === "checkboxes" ? section.type.slice(0, -2) : section.type}`}
-          class="app-c-filter-section {section.type === 'select' &&
-          section.title === 'Topic'
-            ? 'js-all-content-finder-taxonomy-select'
-            : ''}"
-          open={section.openByDefault === undefined
-            ? true
-            : section.openByDefault}
-        >
-          <summary
-            class="app-c-filter-section__summary"
-            data-ga4-expandable=""
-            data-ga4-event={getGa4Event({
-              section: section.ga4Section,
-              text: section.ga4Section,
+    {#if panelOpen}
+      <div
+        class="app-c-filter-panel__content"
+        id={panelId}
+        role="region"
+        aria-labelledby={filterButtonId}
+      >
+        {#each sections as section (section.id)}
+          <details
+            data-ga4-index={JSON.stringify({
               index_section: section.ga4IndexSection,
               index_section_count: section.ga4IndexSectionCount,
             })}
+            data-module="filter-section"
+            data-ga4-section={section.ga4Section}
+            data-ga4-filter-parent={section.ga4Section}
+            data-ga4-change-category={`update-filter ${section.type === "radios" || section.type === "checkboxes" ? section.type.slice(0, -2) : section.type}`}
+            class="app-c-filter-section {section.type === 'select' &&
+            section.title === 'Topic'
+              ? 'js-all-content-finder-taxonomy-select'
+              : ''}"
+            open={section.openByDefault !== undefined
+              ? section.openByDefault
+              : filterPanelSectionsExpanded}
           >
-            <h2 class="app-c-filter-section__summary-heading">
-              {#if section.type !== "radios"}
-                <span class="govuk-visually-hidden">Filter by</span>{/if}
-              {section.title}
-            </h2>
-          </summary>
-          <div class="app-c-filter-section__content">
-            {#if section.type === "radios"}
-              {@const radioData = section}
-              <div class="govuk-form-group govuk-!-margin-bottom-2">
-                <Radios
-                  name={radioData.name}
-                  legend={radioData.legend}
-                  legendSize="m"
-                  isPageHeading={false}
-                  options={radioData.options.map((opt) => ({ ...opt }))}
-                  selectedValue={radioData.selectedValue}
-                  small={true}
-                />
-              </div>
-            {:else if section.type === "date"}
-              {@const dateData = section}
-              <div data-ga4-section="Updated after">
-                <DateInput
-                  id={`${dateData.id}-from`}
-                  namePrefix={dateData.fromNamePrefix}
-                  items={createDateInputItems(dateData.fromInitialValue)}
-                  fieldset={{
-                    legend: { text: dateData.fromLegend, isPageHeading: false },
-                  }}
-                  hint={{ text: dateData.fromHint }}
-                  legendSize={undefined}
-                />
-              </div>
-              <div data-ga4-section="Updated before">
-                <DateInput
-                  id={`${dateData.id}-to`}
-                  namePrefix={dateData.toNamePrefix}
-                  items={createDateInputItems(dateData.toInitialValue)}
-                  fieldset={{
-                    legend: { text: dateData.toLegend, isPageHeading: false },
-                  }}
-                  hint={{ text: dateData.toHint }}
-                  legendSize={undefined}
-                />
-              </div>
-            {:else if section.type === "select"}
-              {@const selectData = section}
-              {#each selectData.selects as sel, selIdx (sel.id)}
-                <div
-                  class={`govuk-form-group gem-c-select ${selIdx === 1 ? "js-required" : ""}`}
-                  style={selIdx === 1 ? "display: block;" : undefined}
-                  data-ga4-section={selIdx === 1 ? sel.label : undefined}
-                >
-                  <Select
-                    id={sel.id}
-                    name={sel.name}
-                    label={sel.label}
-                    items={sel.options.map((opt) => ({
-                      value: opt.value,
-                      text: opt.label,
-                      disabled: opt.disabled,
-                    }))}
-                    value={sel.value}
-                    fullWidth={sel.fullWidth}
-                    labelIsPageHeading={false}
+            <summary
+              class="app-c-filter-section__summary"
+              data-ga4-expandable=""
+              data-ga4-event={getGa4Event({
+                section: section.ga4Section,
+                text: section.ga4Section,
+                index_section: section.ga4IndexSection,
+                index_section_count: section.ga4IndexSectionCount,
+              })}
+            >
+              <h2 class="app-c-filter-section__summary-heading">
+                {#if section.type !== "radios"}
+                  <span class="govuk-visually-hidden">Filter by</span>{/if}
+                {section.title}
+              </h2>
+            </summary>
+            <div class="app-c-filter-section__content">
+              {#if section.type === "radios"}
+                {@const radioData = section}
+                <div class="govuk-form-group govuk-!-margin-bottom-2">
+                  <Radios
+                    name={radioData.name}
+                    legend={radioData.legend}
+                    legendSize="m"
+                    isPageHeading={false}
+                    options={radioData.options.map((opt) => ({ ...opt }))}
+                    selectedValue={radioData.selectedValue}
+                    small={true}
                   />
                 </div>
-              {/each}
-            {:else if section.type === "checkboxes"}
-              {@const checkboxData = section}
-              <div
-                id={`checkboxes-${checkboxData.id}`}
-                data-module="gem-checkboxes govuk-checkboxes"
-                class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small"
-              >
-                <CheckBox
-                  name={checkboxData.name}
-                  legend={checkboxData.legend}
-                  legendSize="m"
-                  isPageHeading={false}
-                  options={checkboxData.options.map((opt) => ({ ...opt }))}
-                  selectedValues={checkboxData.selectedValues}
-                  small={true}
-                />
-              </div>
-            {/if}
-          </div>
-        </details>
-      {/each}
+              {:else if section.type === "date"}
+                {@const dateData = section}
+                <div data-ga4-section="Updated after">
+                  <DateInput
+                    id={`${dateData.id}-from`}
+                    namePrefix={dateData.fromNamePrefix}
+                    items={createDateInputItems(dateData.fromInitialValue)}
+                    fieldset={{
+                      legend: {
+                        text: dateData.fromLegend,
+                        isPageHeading: false,
+                      },
+                    }}
+                    hint={{ text: dateData.fromHint }}
+                    legendSize={undefined}
+                  />
+                </div>
+                <div data-ga4-section="Updated before">
+                  <DateInput
+                    id={`${dateData.id}-to`}
+                    namePrefix={dateData.toNamePrefix}
+                    items={createDateInputItems(dateData.toInitialValue)}
+                    fieldset={{
+                      legend: { text: dateData.toLegend, isPageHeading: false },
+                    }}
+                    hint={{ text: dateData.toHint }}
+                    legendSize={undefined}
+                  />
+                </div>
+              {:else if section.type === "select"}
+                {@const selectData = section}
+                {#each selectData.selects as sel, selIdx (sel.id)}
+                  <div
+                    class={`govuk-form-group gem-c-select ${selIdx === 1 ? "js-required" : ""}`}
+                    style={selIdx === 1 ? "display: block;" : undefined}
+                    data-ga4-section={selIdx === 1 ? sel.label : undefined}
+                  >
+                    <Select
+                      id={sel.id}
+                      name={sel.name}
+                      label={sel.label}
+                      items={sel.options.map((opt) => ({
+                        value: opt.value,
+                        text: opt.label,
+                        disabled: opt.disabled,
+                      }))}
+                      value={sel.value}
+                      fullWidth={sel.fullWidth}
+                      labelIsPageHeading={false}
+                    />
+                  </div>
+                {/each}
+              {:else if section.type === "checkboxes"}
+                {@const checkboxData = section}
+                <div
+                  id={`checkboxes-${checkboxData.id}`}
+                  data-module="gem-checkboxes govuk-checkboxes"
+                  class="gem-c-checkboxes govuk-form-group govuk-checkboxes--small"
+                >
+                  <CheckBox
+                    name={checkboxData.name}
+                    legend={checkboxData.legend}
+                    legendSize="m"
+                    isPageHeading={false}
+                    options={checkboxData.options.map((opt) => ({ ...opt }))}
+                    selectedValues={checkboxData.selectedValues}
+                    small={true}
+                  />
+                </div>
+              {/if}
+            </div>
+          </details>
+        {/each}
 
-      <div class="app-c-filter-panel__actions">
-        <input
-          type="submit"
-          value={applyButtonText}
-          class="govuk-button app-c-filter-panel__action app-c-filter-panel__action--submit"
-          data-ga4-event={getGa4Event({
-            text: applyButtonText,
-            section: filterButtonText,
-            action: "apply",
-            index_section: 0,
-            index_section_count: sections.length,
-          })}
-          data-disable-with={applyButtonText}
-        />
+        <div class="app-c-filter-panel__actions">
+          <input
+            type="submit"
+            value={applyButtonText}
+            class="govuk-button app-c-filter-panel__action app-c-filter-panel__action--submit"
+            data-ga4-event={getGa4Event({
+              text: applyButtonText,
+              section: filterButtonText,
+              action: "apply",
+              index_section: 0,
+              index_section_count: sections.length,
+            })}
+            data-disable-with={applyButtonText}
+          />
+        </div>
       </div>
-    </div>
-  {/if}
-</div>
+    {/if}
+  </div>
+{/key}
 
 <style>
   /* Test comment to see if line 1 error changes */

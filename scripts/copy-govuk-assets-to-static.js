@@ -15,6 +15,7 @@ const staticDirs = [
   join(projectRoot, "static/assets"),
   join(projectRoot, "static/assets/images"),
   join(projectRoot, "static/assets/fonts"),
+  join(projectRoot, "static/assets/rebrand"),
   join(projectRoot, "static/css"),
   join(projectRoot, "static/js"),
 ];
@@ -64,6 +65,12 @@ copyDir(
 copyDir(
   join(govukPath, "assets/fonts"),
   join(projectRoot, "static/assets/fonts"),
+);
+
+// Copy rebrand folder (new for brand refresh)
+copyDir(
+  join(govukPath, "assets/rebrand"),
+  join(projectRoot, "static/assets/rebrand"),
 );
 
 // Copy GOVUK CSS to the static directory only

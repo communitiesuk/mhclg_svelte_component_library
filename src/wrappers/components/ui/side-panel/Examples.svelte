@@ -118,8 +118,8 @@
         button, and programmatic control.
       </p>
       <p class="govuk-body-s">
-        <strong>Note:</strong> the panel only slides in or out on mobile view;
-        on desktop it remains persistently visible.
+        <strong>Note:</strong> the panel only slides in or out on mobile view; on
+        desktop it remains persistently visible.
       </p>
     </div>
     <div class="mb-3 flex gap-3">

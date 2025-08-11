@@ -59,12 +59,9 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <PositionChart
-      value="5"
-      min="1"
-      max="10"
-      label="This is a long label which has spaces in it"
-    ></PositionChart>
+    <div class="flex-div" style="display:flex">
+      <PositionChart value="5" min="1" max="10" label="Label"></PositionChart>
+    </div>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}

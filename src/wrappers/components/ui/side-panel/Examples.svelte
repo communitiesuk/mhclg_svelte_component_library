@@ -109,6 +109,19 @@
 
 {#snippet Example2()}
   <div class="p-4 bg-white rounded border">
+    <div class="mb-2">
+      <p class="govuk-body">
+        Panel Status: <strong>{navState2.open ? "Open" : "Closed"}</strong>
+      </p>
+      <p class="govuk-body-s">
+        This example shows a right-side panel with custom styling, no toggle
+        button, and programmatic control.
+      </p>
+      <p class="govuk-body-s">
+        <strong>Note:</strong> the panel only slides in or out on mobile view;
+        on desktop it remains persistently visible.
+      </p>
+    </div>
     <div class="mb-3 flex gap-3">
       <Button
         textContent="Open panel"
@@ -172,16 +185,6 @@
             input_width="full"
             minLength={3}
           />
-          <div class="mt-8 pt-4 border-t border-gray-200">
-            <p class="text-sm text-gray-600 mb-2">
-              Panel Status: <strong>{navState2.open ? "Open" : "Closed"}</strong
-              >
-            </p>
-            <p class="text-xs text-gray-500">
-              This example shows a right-side panel with custom styling, no
-              toggle button, and programmatic control.
-            </p>
-          </div>
         </div>
         <Footer rebrand={true} showLicence={false} />
       </SidePanel>

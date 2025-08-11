@@ -178,7 +178,7 @@
         description: {
           markdown: true,
           arr: [
-            `Navigation state object that controls whether the side panel is open or closed. This prop is bindable and follows the ONS Census Atlas pattern with <code>navState.open</code>.`,
+            `Navigation state object that controls whether the side panel is open or closed. This prop is bindable and follows the ONS Census Atlas pattern with <code>navState.open</code>. Note: the panel only slides in or out on mobile view; on desktop it remains persistently visible.`,
           ],
         },
       },
@@ -190,7 +190,7 @@
         description: {
           markdown: true,
           arr: [
-            `Determines which side of the screen the panel slides in from. Can be either <code>"left"</code> or <code>"right"</code>.`,
+            `Determines which side of the screen the panel slides in from. Can be either <code>"left"</code> or <code>"right"</code>. Note: the sliding transition applies only on mobile view; on desktop the panel is always visible.`,
           ],
         },
       },

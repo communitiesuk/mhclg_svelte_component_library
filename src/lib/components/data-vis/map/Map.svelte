@@ -85,7 +85,6 @@
     onidle,
     geoSource = "file",
     tileSource = "http://localhost:8080/{z}/{x}/{y}.pbf",
-    paintObject,
     geojsonPromoteId = "areanm",
     vectorMetricProperty = "Index of Multiple Deprivation (IMD) Decile",
     vectorLayerName = "LSOA",
@@ -493,15 +492,13 @@
       <p>No data</p>
     {/if}
 
-    <!-- Important note: sourceLayer must match `-l` value from tippecanoe -->
-
+    <!-- Important note: sourceLayer must match `-l` value from tippecanoe -->åß
     {#if interactive && tooltip}
       <Tooltip
         {currentMousePosition}
         {hoveredArea}
         {hoveredAreaData}
-        {year}
-        {metric}
+        metric={geoSource == "tiles" ? vectorMetricProperty : metric}
       />
     {/if}
   </MapLibre>

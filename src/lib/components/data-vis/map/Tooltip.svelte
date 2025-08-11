@@ -1,6 +1,5 @@
 <script>
-  let { currentMousePosition, hoveredArea, hoveredAreaData, year, metric } =
-    $props();
+  let { currentMousePosition, hoveredArea, hoveredAreaData, metric } = $props();
   let tooltipHeight = $state();
   let tooltipWidth = $state();
 
@@ -16,7 +15,7 @@
   >
     <p>{hoveredArea}</p>
     <p class="detail">
-      2019 IMD rank: {hoveredAreaData ?? "No data"}
+      {metric}: {hoveredAreaData ?? "No data"}
     </p>
   </div>
 {/if}

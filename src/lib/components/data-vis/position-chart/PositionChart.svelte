@@ -9,6 +9,7 @@
     componentWidth = $bindable(500),
     showAxis = undefined,
     chartWidth = $bindable(500),
+    container = "flex",
   } = $props();
 
   const range = Array.from({ length: 10 }, (_, i) => i);
@@ -51,7 +52,11 @@
   <p>{label}</p>
 {/if}
 
-<div bind:clientWidth={chartWidth} class="bar-and-axis">
+<div
+  bind:clientWidth={chartWidth}
+  class="bar-and-axis"
+  class:flexible={container === "flex"}
+>
   <div class="bar" style="height: {barHeight * 1.5}px; width: {barWidth}">
     <svg width={chartWidth} height={chartHeight}>
       {#each range as number}
@@ -151,5 +156,10 @@
   .bar-and-axis {
     display: flex;
     flex-direction: column;
+  }
+
+  .bar-and-axis.flexible {
+    flex: 1;
+    min-width: 0;
   }
 </style>

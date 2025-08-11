@@ -68,10 +68,22 @@
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
-    {#each dummyData as item}
-      <PositionChart value={item[1]} min="0" max="10" label={item[0]}
-      ></PositionChart>
-    {/each}
+    <div
+      class="grid-div"
+      style="display:grid; grid-template-columns: minmax(100px, 30%) 1fr;
+    align-items: center;
+    gap: 3%;"
+    >
+      {#each dummyData as item}
+        <PositionChart
+          value={item[1]}
+          min="0"
+          max="10"
+          label={item[0]}
+          container="grid"
+        ></PositionChart>
+      {/each}
+    </div>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}

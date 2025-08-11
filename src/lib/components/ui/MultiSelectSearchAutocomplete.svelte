@@ -1,6 +1,6 @@
 <script lang="ts">
   import { clsx as cx } from "clsx";
-  import { onMount, onDestroy } from 'svelte';
+  import { onMount, onDestroy } from "svelte";
 
   // Import Choices.js dynamically to avoid SSR issues
   let Choices: any;
@@ -81,58 +81,67 @@
     choicesOptions?: any;
   } & Omit<
     import("svelte/elements").HTMLSelectAttributes,
-    "id" | "name" | "value" | "class" | "aria-describedby" | "multiple" | "disabled"
+    | "id"
+    | "name"
+    | "value"
+    | "class"
+    | "aria-describedby"
+    | "multiple"
+    | "disabled"
   > = $props();
 
   // Client-side validation result
   let validationError = $derived(validate ? validate(value) : undefined);
-  
+
   // Select element reference
   let selectElement: HTMLSelectElement;
   let choicesInstance: any;
 
   // Computed placeholder text
   const computedPlaceholderText = $derived(
-    placeholderText || (multiple ? 'Select all that apply' : 'Select one')
+    placeholderText || (multiple ? "Select all that apply" : "Select one"),
   );
 
   // Computed remove item button setting
   const computedRemoveItemButton = $derived(
-    removeItemButton !== undefined ? removeItemButton : multiple
+    removeItemButton !== undefined ? removeItemButton : multiple,
   );
 
   // Initialize Choices.js
   onMount(async () => {
     try {
       // Import Choices.js dynamically
-      const ChoicesModule = await import('choices.js');
+      const ChoicesModule = await import("choices.js");
       Choices = ChoicesModule.default;
 
       if (!selectElement) {
-        console.error('Select element not found');
+        console.error("Select element not found");
         return;
       }
 
       // Set placeholder if empty option exists
-      const placeholderOption = selectElement.querySelector('option[value=""]:first-child') as HTMLOptionElement;
-      if (placeholderOption && placeholderOption.textContent === '') {
+      const placeholderOption = selectElement.querySelector(
+        'option[value=""]:first-child',
+      ) as HTMLOptionElement;
+      if (placeholderOption && placeholderOption.textContent === "") {
         placeholderOption.textContent = computedPlaceholderText;
       }
 
-      const ariaDescribedBy = selectElement.getAttribute('aria-describedby') || '';
+      const ariaDescribedBy =
+        selectElement.getAttribute("aria-describedby") || "";
 
       // Initialize Choices.js with GOV.UK settings
       const defaultOptions = {
         allowHTML,
         searchPlaceholderValue: searchPlaceholder,
         shouldSort,
-        itemSelectText: '',
+        itemSelectText: "",
         searchResultLimit,
         removeItemButton: computedRemoveItemButton,
-        labelId: id + '-label ' + ariaDescribedBy,
-        callbackOnInit: function() {
+        labelId: id + "-label " + ariaDescribedBy,
+        callbackOnInit: function () {
           // For multiple select, move input field to top of feedback area
-          if (this.dropdown.type === 'select-multiple') {
+          if (this.dropdown.type === "select-multiple") {
             const inner = this.containerInner.element;
             const input = this.input.element;
             inner.prepend(input);
@@ -141,21 +150,20 @@
         // Fuse.js options for search
         fuseOptions: {
           ignoreLocation: true, // matches any part of the string
-          threshold: 0 // only matches when characters are sequential
+          threshold: 0, // only matches when characters are sequential
         },
-        ...choicesOptions
+        ...choicesOptions,
       };
 
       choicesInstance = new Choices(selectElement, defaultOptions);
-      
+
       // Store reference on the element for external access (extend HTMLSelectElement)
       (selectElement as any).choices = choicesInstance;
 
       // Handle value changes from Choices.js
-      selectElement.addEventListener('change', handleChoicesChange);
-
+      selectElement.addEventListener("change", handleChoicesChange);
     } catch (error) {
-      console.error('Failed to initialize Choices.js:', error);
+      console.error("Failed to initialize Choices.js:", error);
     }
   });
 
@@ -163,7 +171,9 @@
   function handleChoicesChange(event: Event) {
     const target = event.target as HTMLSelectElement;
     if (multiple) {
-      const selectedValues = Array.from(target.selectedOptions).map(option => option.value);
+      const selectedValues = Array.from(target.selectedOptions).map(
+        (option) => option.value,
+      );
       value = selectedValues;
     } else {
       value = target.value;
@@ -187,7 +197,7 @@
   // Cleanup
   onDestroy(() => {
     if (choicesInstance) {
-      selectElement?.removeEventListener('change', handleChoicesChange);
+      selectElement?.removeEventListener("change", handleChoicesChange);
       choicesInstance.destroy();
     }
   });
@@ -195,13 +205,13 @@
   // Generate all items including groups
   const allSelectItems = $derived(() => {
     const result: (SelectItem | SelectGroup)[] = [];
-    
+
     // Add standalone items first
     result.push(...items);
-    
+
     // Add groups
     result.push(...groups);
-    
+
     return result;
   });
 </script>
@@ -267,12 +277,15 @@
 
     <!-- Render items and groups -->
     {#each allSelectItems() as item}
-      {#if 'choices' in item}
+      {#if "choices" in item}
         <!-- This is a group -->
-        <optgroup label={(item as SelectGroup).label} disabled={(item as SelectGroup).disabled}>
+        <optgroup
+          label={(item as SelectGroup).label}
+          disabled={(item as SelectGroup).disabled}
+        >
           {#each (item as SelectGroup).choices as choice}
-            <option 
-              value={choice.value} 
+            <option
+              value={choice.value}
               disabled={choice.disabled}
               selected={choice.selected}
             >
@@ -282,8 +295,8 @@
         </optgroup>
       {:else}
         <!-- This is a regular item -->
-        <option 
-          value={(item as SelectItem).value} 
+        <option
+          value={(item as SelectItem).value}
           disabled={(item as SelectItem).disabled}
           selected={(item as SelectItem).selected}
         >
@@ -293,7 +306,6 @@
     {/each}
   </select>
 </div>
-
 
 <style>
   :global(.govuk-label) {
@@ -445,9 +457,11 @@
   :global(.choices[data-type*="select-one"] .choices__button:focus) {
     box-shadow: 0 0 0 2px #fff;
   }
-  :global(.choices[data-type*="select-one"]
-    .choices__item[data-placeholder]
-    .choices__button) {
+  :global(
+    .choices[data-type*="select-one"]
+      .choices__item[data-placeholder]
+      .choices__button
+  ) {
     display: none;
   }
   :global(.choices[data-type*="select-one"]::after) {
@@ -626,14 +640,22 @@
     text-align: right;
   }
   @media (min-width: 640px) {
-    :global(.choices__list--dropdown .choices__item--selectable[data-select-text]),
-    :global(.choices__list[aria-expanded] .choices__item--selectable[data-select-text]) {
+    :global(
+      .choices__list--dropdown .choices__item--selectable[data-select-text]
+    ),
+    :global(
+      .choices__list[aria-expanded] .choices__item--selectable[data-select-text]
+    ) {
       padding-right: 100px;
     }
-    :global(.choices__list--dropdown
-      .choices__item--selectable[data-select-text]::after),
-    :global(.choices__list[aria-expanded]
-      .choices__item--selectable[data-select-text]::after) {
+    :global(
+      .choices__list--dropdown
+        .choices__item--selectable[data-select-text]::after
+    ),
+    :global(
+      .choices__list[aria-expanded]
+        .choices__item--selectable[data-select-text]::after
+    ) {
       content: attr(data-select-text);
       font-size: 19px;
       opacity: 0;
@@ -642,33 +664,47 @@
       top: 50%;
       transform: translateY(-50%);
     }
-    :global([dir="rtl"]
-      .choices__list--dropdown
-      .choices__item--selectable[data-select-text]),
-    :global([dir="rtl"]
-      .choices__list[aria-expanded]
-      .choices__item--selectable[data-select-text]) {
+    :global(
+      [dir="rtl"]
+        .choices__list--dropdown
+        .choices__item--selectable[data-select-text]
+    ),
+    :global(
+      [dir="rtl"]
+        .choices__list[aria-expanded]
+        .choices__item--selectable[data-select-text]
+    ) {
       text-align: right;
       padding-left: 100px;
       padding-right: 10px;
     }
-    :global([dir="rtl"]
-      .choices__list--dropdown
-      .choices__item--selectable[data-select-text]::after),
-    :global([dir="rtl"]
-      .choices__list[aria-expanded]
-      .choices__item--selectable[data-select-text]::after) {
+    :global(
+      [dir="rtl"]
+        .choices__list--dropdown
+        .choices__item--selectable[data-select-text]::after
+    ),
+    :global(
+      [dir="rtl"]
+        .choices__list[aria-expanded]
+        .choices__item--selectable[data-select-text]::after
+    ) {
       right: auto;
       left: 10px;
     }
   }
   :global(.choices__list--dropdown .choices__item--selectable.is-highlighted),
-  :global(.choices__list[aria-expanded] .choices__item--selectable.is-highlighted) {
+  :global(
+    .choices__list[aria-expanded] .choices__item--selectable.is-highlighted
+  ) {
     background-color: hsl(0, 0%, 95%);
   }
-  :global(.choices__list--dropdown .choices__item--selectable.is-highlighted::after),
-  :global(.choices__list[aria-expanded]
-    .choices__item--selectable.is-highlighted::after) {
+  :global(
+    .choices__list--dropdown .choices__item--selectable.is-highlighted::after
+  ),
+  :global(
+    .choices__list[aria-expanded]
+      .choices__item--selectable.is-highlighted::after
+  ) {
     opacity: 0.5;
   }
   :global(.choices__item) {
@@ -738,11 +774,13 @@
     box-sizing: border-box;
     font-family: "GDS Transport", arial, sans-serif;
   }
-  :global(.gem-c-select-with-search
-    .choices[data-type="select-one"]
-    .choices__list--dropdown
-    .choices__list
-    .choices__placeholder) {
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type="select-one"]
+      .choices__list--dropdown
+      .choices__list
+      .choices__placeholder
+  ) {
     opacity: 1;
   }
   :global(.gem-c-select-with-search .choices[data-type*="select-one"]::after) {
@@ -760,40 +798,56 @@
     transform: translateY(-50%) rotate(0) scale(1);
     margin: 0;
   }
-  :global(.gem-c-select-with-search .choices.is-open[data-type*="select-one"]::after) {
+  :global(
+    .gem-c-select-with-search .choices.is-open[data-type*="select-one"]::after
+  ) {
     margin: 0;
     bottom: 0.0526315789em;
     -webkit-transform: translateY(-50%) rotate(180deg) scale(1);
     -ms-transform: translateY(-50%) rotate(180deg) scale(1);
     transform: translateY(-50%) rotate(180deg) scale(1);
   }
-  :global(.gem-c-select-with-search
-    .choices[data-type*="select-multiple"]
-    .choices__button),
-  :global(.gem-c-select-with-search .choices[data-type*="text"] .choices__button) {
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-multiple"]
+      .choices__button
+  ),
+  :global(
+    .gem-c-select-with-search .choices[data-type*="text"] .choices__button
+  ) {
     border-color: #b1b4b6;
     border-right: 1px solid #b1b4b6;
     padding: 10px 20px 10px 10px;
     margin-right: 0;
   }
-  :global(.gem-c-select-with-search
-    .choices[data-type*="select-multiple"]
-    .choices__button:hover),
-  :global(.gem-c-select-with-search .choices[data-type*="text"] .choices__button:hover) {
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-multiple"]
+      .choices__button:hover
+  ),
+  :global(
+    .gem-c-select-with-search .choices[data-type*="text"] .choices__button:hover
+  ) {
     background-color: #b1b4b6;
     border-color: #505a5f;
     box-shadow: 0 2px 0 #505a5f;
   }
-  :global(.gem-c-select-with-search
-    .choices[data-type*="select-multiple"]
-    .choices__button:focus),
-  :global(.gem-c-select-with-search .choices[data-type*="text"] .choices__button:focus) {
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-multiple"]
+      .choices__button:focus
+  ),
+  :global(
+    .gem-c-select-with-search .choices[data-type*="text"] .choices__button:focus
+  ) {
     background-color: #fd0;
     box-shadow: 0 2px 0 #0b0c0c;
   }
-  :global(.gem-c-select-with-search
-    .choices.is-disabled
-    .choices__item[data-deletable]) {
+  :global(
+    .gem-c-select-with-search
+      .choices.is-disabled
+      .choices__item[data-deletable]
+  ) {
     background-color: #fff;
   }
   :global(.gem-c-select-with-search .choices.is-disabled .choices__button) {
@@ -807,9 +861,11 @@
     padding: 5px;
     border: 2px solid #0b0c0c;
   }
-  :global(.gem-c-select-with-search.govuk-form-group--error
-    .choices:not(.is-active):not(.is-focused):not(.is-open)
-    .choices__inner) {
+  :global(
+    .gem-c-select-with-search.govuk-form-group--error
+      .choices:not(.is-active):not(.is-focused):not(.is-open)
+      .choices__inner
+  ) {
     border-color: #d4351c;
   }
   :global(.gem-c-select-with-search .choices.is-focused),
@@ -845,10 +901,12 @@
     line-height: 1;
     color: #0b0c0c;
   }
-  :global(.is-disabled
-    .gem-c-select-with-search
-    .choices__list--multiple
-    .choices__item) {
+  :global(
+    .is-disabled
+      .gem-c-select-with-search
+      .choices__list--multiple
+      .choices__item
+  ) {
     opacity: 0.5;
   }
   :global(.gem-c-select-with-search .choices__list--dropdown),
@@ -862,22 +920,32 @@
     border-bottom-width: 0;
   }
   :global(.gem-c-select-with-search .choices__list--dropdown .choices__item),
-  :global(.gem-c-select-with-search .choices__list[aria-expanded] .choices__item) {
+  :global(
+    .gem-c-select-with-search .choices__list[aria-expanded] .choices__item
+  ) {
     position: relative;
     border-bottom: 1px solid #b1b4b6;
   }
-  :global(.gem-c-select-with-search .choices__list--dropdown .choices__item:last-child),
-  :global(.gem-c-select-with-search
-    .choices__list[aria-expanded]
-    .choices__item:last-child) {
+  :global(
+    .gem-c-select-with-search .choices__list--dropdown .choices__item:last-child
+  ),
+  :global(
+    .gem-c-select-with-search
+      .choices__list[aria-expanded]
+      .choices__item:last-child
+  ) {
     border-bottom: 0;
   }
-  :global(.gem-c-select-with-search
-    .choices__list--dropdown
-    .choices__item--selectable.is-highlighted),
-  :global(.gem-c-select-with-search
-    .choices__list[aria-expanded]
-    .choices__item--selectable.is-highlighted) {
+  :global(
+    .gem-c-select-with-search
+      .choices__list--dropdown
+      .choices__item--selectable.is-highlighted
+  ),
+  :global(
+    .gem-c-select-with-search
+      .choices__list[aria-expanded]
+      .choices__item--selectable.is-highlighted
+  ) {
     background-color: #1d70b8;
     border-color: #1d70b8;
     color: #fff;

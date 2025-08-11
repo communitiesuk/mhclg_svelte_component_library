@@ -72,7 +72,7 @@
       visibleOnHomepage: false,
       markdown: true,
     },
-  ];  /**
+  ]; /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
   let connectedComponentsArray = [
@@ -82,10 +82,10 @@
       arr: [
         {
           name: "Select",
-          folder: "ui"
-        }
-      ]
-    }
+          folder: "ui",
+        },
+      ],
+    },
   ];
 </script>
 
@@ -107,8 +107,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchAutocomplete.svelte";
-import Examples from "./multi-select-search-autocomplete/Examples.svelte";
+  import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchAutocomplete.svelte";
+  import Examples from "./multi-select-search-autocomplete/Examples.svelte";
 
   let { data } = $props();
 
@@ -453,7 +453,8 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
  -->
 {#snippet Component()}
   <div class="p-8">
-<MultiSelectSearchAutocomplete {...parametersObject}></MultiSelectSearchAutocomplete>
+    <MultiSelectSearchAutocomplete {...parametersObject}
+    ></MultiSelectSearchAutocomplete>
   </div>
 {/snippet}
 

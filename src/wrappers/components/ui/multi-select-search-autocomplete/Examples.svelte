@@ -4,7 +4,7 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchAutocomplete.svelte";
+  import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchAutocomplete.svelte";
 
   let accordionSnippetSections = [
     {
@@ -13,7 +13,7 @@ import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchA
       content: Example1,
     },
     {
-      id: "2", 
+      id: "2",
       heading: "2. Multiple Select with Colors",
       content: Example2,
     },
@@ -60,7 +60,7 @@ import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchA
         { value: "france", text: "France" },
         { value: "germany", text: "Germany" },
         { value: "spain", text: "Spain" },
-        { value: "italy", text: "Italy" }
+        { value: "italy", text: "Italy" },
       ]}
       multiple={false}
     />
@@ -81,7 +81,7 @@ import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchA
         { value: "green", text: "Green" },
         { value: "yellow", text: "Yellow" },
         { value: "purple", text: "Purple" },
-        { value: "orange", text: "Orange" }
+        { value: "orange", text: "Orange" },
       ]}
       multiple={true}
     />
@@ -103,8 +103,8 @@ import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchA
             { value: "england", text: "England" },
             { value: "scotland", text: "Scotland" },
             { value: "wales", text: "Wales" },
-            { value: "northern-ireland", text: "Northern Ireland" }
-          ]
+            { value: "northern-ireland", text: "Northern Ireland" },
+          ],
         },
         {
           label: "European Countries",
@@ -112,9 +112,9 @@ import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchA
             { value: "france", text: "France" },
             { value: "germany", text: "Germany" },
             { value: "spain", text: "Spain" },
-            { value: "italy", text: "Italy" }
-          ]
-        }
+            { value: "italy", text: "Italy" },
+          ],
+        },
       ]}
       multiple={false}
     />

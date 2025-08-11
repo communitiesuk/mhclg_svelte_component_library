@@ -1,6 +1,7 @@
 <script lang="ts">
   import { clsx as cx } from "clsx";
   import { onMount, onDestroy } from "svelte";
+  import crossIconUrl from "./../../assets/govuk_publishing_components/images/cross-icon.svg?url";
 
   // Import Choices.js dynamically to avoid SSR issues
   let Choices: any;
@@ -223,6 +224,7 @@
     formGroupClasses,
   )}
   data-module="select-with-search"
+  style={`--cross-icon-url: url("${crossIconUrl}")`}
 >
   {#if labelIsPageHeading}
     <h1 class="govuk-label-wrapper">
@@ -505,7 +507,7 @@
     margin-left: 8px;
     padding-left: 16px;
     border-left: 1px solid hsl(0, 0%, 90%);
-    background-image: url(/assets/select-with-search/cross-icon-3472f2e941ef2d45ab30e5fb69ddefc2b71568c11d6505f41274c50d5f00493a.svg);
+    background-image: var(--cross-icon-url);
     background-size: 12px;
     width: 12px;
     line-height: 1;

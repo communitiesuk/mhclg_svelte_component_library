@@ -26,16 +26,16 @@
   let chartHeight = barHeight * 1.5;
 
   const colorScale = [
-    "#5A0000",
-    "#800000",
-    "#A31E1E",
-    "#C13D3D",
-    "#E05C5C",
-    "#3F6DCB",
-    "#4E7EDE",
-    "#5F8FFF",
-    "#719FFF",
-    "#3A8DFF",
+    "#D2E49D",
+    "#B6D89F",
+    "#98CCA2",
+    "#7ABFA8",
+    "#5BB1AE",
+    "#4297AD",
+    "#357EA2",
+    "#2B658F",
+    "#1B3E70",
+    "#090C50",
   ];
   $inspect({ value });
 

@@ -131,7 +131,7 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let selectedValue = $state(undefined);
+  let selectedValue = $state([]);
   let selectedValues = $state([]);
 
   /**
@@ -174,141 +174,274 @@
    */
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
+      // Core Attributes
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
-        name: "textProp",
-        category: "Input props",
-        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        name: "id",
+        category: "Core attributes",
+        isRequired: true,
+        value: "multi-select-example",
         description: {
           markdown: true,
           arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 2,
-      },
-      {
-        name: "numberProp",
-        category: "Input props",
-        value: 9,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes a text string to the <code>${pageName}</code> component.`,
-          ],
-        },
-        rows: 5,
-      },
-      {
-        name: "checkboxProp",
-        category: "Input props",
-        value: false,
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
+            `The ID attribute for the <code>select</code> element. Used to link the label and hint/error messages.`,
           ],
         },
       },
       {
-        name: "dropdownProp",
-        category: "Input props",
-        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
+        name: "name",
+        category: "Core attributes",
+        isRequired: true,
+        value: "multi-select-example",
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
+            `The name attribute for the <code>select</code> element, submitted with form data.`,
           ],
         },
       },
       {
-        name: "radioProp",
-        category: "Input props",
-        propType: "radio",
-        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected <code>option</code> to the component as a string.`,
-          ],
-        },
-      },
-      {
-        name: "jsObjectProp",
-        category: "Input props",
+        name: "items",
+        category: "Core attributes",
         value: [
-          {
-            name: "Pikachu",
-            type: "Electric",
-            color: "#fde047",
-          },
-          {
-            name: "Charmander",
-            type: "Fire",
-            color: "#fca5a5",
-          },
-          {
-            name: "Squirtle",
-            type: "Water",
-            color: "#93c5fd",
-          },
-          {
-            name: "Bulbasaur",
-            type: "Grass",
-            color: "#86efac",
-          },
+          { value: "england", text: "England" },
+          { value: "scotland", text: "Scotland" },
+          { value: "wales", text: "Wales" },
+          { value: "northern-ireland", text: "Northern Ireland" },
+          { value: "france", text: "France" },
+          { value: "germany", text: "Germany" },
+          { value: "spain", text: "Spain" },
+          { value: "italy", text: "Italy" },
         ],
         description: {
           markdown: true,
           arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
+            `An array of objects defining the options for the dropdown. Each object should have:`,
+            `<code>value</code>: The value attribute for the option.`,
+            `<code>text</code>: The text displayed for the option.`,
+            `<code>disabled</code> (optional): Set to <code>true</code> to disable the option.`,
           ],
         },
       },
       {
-        name: "functionProp",
-        category: "Fixed props",
-
-        isRequired: true,
-        value: function (event, pokemon) {
-          window.alert(
-            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
-          );
-
-          this.functionElements.counter += 1;
-          Object.keys(this.functionElements.dataset).forEach((el) => {
-            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-          });
-        },
-        functionElements: {
-          dataset: { role: null, id: null },
-          counter: 0,
-          functionAsString: `function (event, pokemon) {
-window.alert(
-  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
-);
-
-this.functionElements.counter += 1;
-Object.keys(this.functionElements.dataset).forEach((el) => {
-  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
-});
-}`,
-        },
+        name: "groups",
+        category: "Core attributes",
+        value: [],
         description: {
           markdown: true,
           arr: [
-            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
-            `Firstly, it is not editable via the UI.`,
-            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
-            ,
-            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
-            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
+            `An array of option groups. Each group should have:`,
+            `<code>label</code>: The group label.`,
+            `<code>choices</code>: Array of options like the items array.`,
+            `<code>disabled</code> (optional): Set to <code>true</code> to disable all options in the group.`,
+          ],
+        },
+      },
+      {
+        name: "value",
+        category: "Core attributes",
+        isBinded: true,
+        value: selectedValue,
+        description: {
+          markdown: true,
+          arr: [
+            `The currently selected value(s). For multiple select, this will be an array of values. Use <code>bind:value</code> for two-way binding.`,
+            `This prop is bound using <code>bind:value</code> in this demo.`,
+          ],
+        },
+      },
+      {
+        name: "multiple",
+        category: "Core attributes",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, enables multiple selection mode.`,
+          ],
+        },
+      },
+
+      // Label and Hints
+      {
+        name: "label",
+        category: "Label and hints",
+        isRequired: true,
+        value: "Select countries",
+        description: {
+          markdown: true,
+          arr: [
+            `The text for the <code>label</code> element associated with the select.`,
+          ],
+        },
+      },
+      {
+        name: "labelIsPageHeading",
+        category: "Label and hints",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, wraps the label in an <code>h1</code> element and applies larger heading styles.`,
+          ],
+        },
+      },
+      {
+        name: "hint",
+        category: "Label and hints",
+        value: "You can select multiple countries",
+        description: {
+          markdown: true,
+          arr: [`Optional hint text displayed below the label.`],
+        },
+      },
+
+      // Error Handling
+      {
+        name: "error",
+        category: "Error handling",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Optional error message string. If present, indicates a server-side error.`,
+          ],
+        },
+      },
+      {
+        name: "validate",
+        category: "Error handling",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [
+            `A client-side validation function that takes the current value and returns an error message string if invalid, or undefined if valid.`,
+          ],
+        },
+      },
+
+      // Search Options
+      {
+        name: "searchPlaceholder",
+        category: "Search options",
+        value: "Search in list",
+        description: {
+          markdown: true,
+          arr: [
+            `Placeholder text shown in the search input field.`,
+          ],
+        },
+      },
+      {
+        name: "allowHTML",
+        category: "Search options",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `If true, allows HTML in option text.`,
+          ],
+        },
+      },
+      {
+        name: "shouldSort",
+        category: "Search options",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If true, options will be sorted by text value.`,
+          ],
+        },
+      },
+      {
+        name: "searchResultLimit",
+        category: "Search options",
+        value: 100,
+        description: {
+          markdown: true,
+          arr: [
+            `Maximum number of options to show in search results.`,
+          ],
+        },
+      },
+      {
+        name: "removeItemButton",
+        category: "Search options",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `Whether to show remove buttons on selected items. Defaults to true for multiple select.`,
+          ],
+        },
+      },
+
+      // Styling and Layout
+      {
+        name: "formGroupClasses",
+        category: "Styling and layout",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Additional CSS classes for the form group wrapper.`,
+          ],
+        },
+      },
+      {
+        name: "fullWidth",
+        category: "Styling and layout",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Makes the select element full width if true.`,
+          ],
+        },
+      },
+      {
+        name: "describedBy",
+        category: "Styling and layout",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `Override for aria-describedby attribute.`,
+          ],
+        },
+      },
+      {
+        name: "disabled",
+        category: "Styling and layout",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Disables the select element if true.`,
+          ],
+        },
+      },
+
+      // Other Options
+      {
+        name: "placeholderText",
+        category: "Other options",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [
+            `Custom placeholder text. If not provided, defaults to "Select all that apply" for multiple select or "Select one" for single select.`,
+          ],
+        },
+      },
+      {
+        name: "choicesOptions",
+        category: "Other options",
+        value: {},
+        description: {
+          markdown: true,
+          arr: [
+            `Additional options to pass to the Choices.js library.`,
           ],
         },
       },
@@ -453,8 +586,12 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
  -->
 {#snippet Component()}
   <div class="p-8">
-    <MultiSelectSearchAutocomplete {...parametersObject}
-    ></MultiSelectSearchAutocomplete>
+    {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit].join("|")}
+      <MultiSelectSearchAutocomplete 
+        bind:value={selectedValue}
+        {...parametersObject}
+      ></MultiSelectSearchAutocomplete>
+    {/key}
   </div>
 {/snippet}
 

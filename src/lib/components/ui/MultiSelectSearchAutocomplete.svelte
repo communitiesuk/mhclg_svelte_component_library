@@ -1,26 +1,13 @@
 <script lang="ts">
-  import { clsx as cx } from "clsx";
   import { onMount, onDestroy } from "svelte";
+  import Select, { type SelectItem, type SelectGroup } from "./Select.svelte";
   import crossIconUrl from "./../../assets/govuk_publishing_components/images/cross-icon.svg?url";
 
   // Import Choices.js dynamically to avoid SSR issues
   let Choices: any;
 
-  type SelectItem = {
-    value: string | number;
-    text: string;
-    disabled?: boolean;
-    selected?: boolean;
-  };
-
-  type SelectGroup = {
-    label: string;
-    disabled?: boolean;
-    choices: SelectItem[];
-  };
-
   let {
-    // Core attributes
+    // Core attributes - pass through to Select component
     id,
     name,
     items = [],
@@ -28,23 +15,23 @@
     value = $bindable<(string | number)[] | string | number | undefined>(),
     multiple = false,
 
-    // Label and hints
+    // Label and hints - pass through to Select component
     label,
     labelIsPageHeading = false,
     hint = undefined,
 
-    // Error handling
+    // Error handling - pass through to Select component
     error = undefined,
     validate = undefined,
 
-    // Search options
+    // Search-specific options
     searchPlaceholder = "Search in list",
     allowHTML = true,
     shouldSort = false,
     searchResultLimit = 100,
     removeItemButton = undefined, // Will default to multiple if not specified
 
-    // Styling and layout
+    // Styling and layout - pass through to Select component
     formGroupClasses = "",
     fullWidth = false,
     describedBy = "",
@@ -91,22 +78,27 @@
     | "disabled"
   > = $props();
 
-  // Client-side validation result
-  let validationError = $derived(validate ? validate(value) : undefined);
-
-  // Select element reference
-  let selectElement: HTMLSelectElement;
+  // Select element reference from child component
+  let selectElement = $state<HTMLSelectElement | undefined>();
   let choicesInstance: any;
 
-  // Computed placeholder text
-  const computedPlaceholderText = $derived(
-    placeholderText || (multiple ? "Select all that apply" : "Select one"),
+  // Computed values for component configuration
+  let computedPlaceholderText = $derived(
+    placeholderText || (multiple ? "Select all that apply" : "Select one")
+  );
+  
+  let computedRemoveItemButton = $derived(
+    removeItemButton !== undefined ? removeItemButton : multiple
   );
 
-  // Computed remove item button setting
-  const computedRemoveItemButton = $derived(
-    removeItemButton !== undefined ? removeItemButton : multiple,
-  );
+  // Enhanced items with placeholder for single select
+  let enhancedItems = $derived.by(() => {
+    if (multiple) return items;
+    return [
+      { value: "", text: computedPlaceholderText, disabled: false },
+      ...items
+    ];
+  });
 
   // Initialize Choices.js
   onMount(async () => {
@@ -120,16 +112,7 @@
         return;
       }
 
-      // Set placeholder if empty option exists
-      const placeholderOption = selectElement.querySelector(
-        'option[value=""]:first-child',
-      ) as HTMLOptionElement;
-      if (placeholderOption && placeholderOption.textContent === "") {
-        placeholderOption.textContent = computedPlaceholderText;
-      }
-
-      const ariaDescribedBy =
-        selectElement.getAttribute("aria-describedby") || "";
+      const ariaDescribedBy = selectElement.getAttribute("aria-describedby") || "";
 
       // Initialize Choices.js with GOV.UK settings
       const defaultOptions = {
@@ -158,7 +141,7 @@
 
       choicesInstance = new Choices(selectElement, defaultOptions);
 
-      // Store reference on the element for external access (extend HTMLSelectElement)
+      // Store reference on the element for external access
       (selectElement as any).choices = choicesInstance;
 
       // Handle value changes from Choices.js
@@ -202,111 +185,31 @@
       choicesInstance.destroy();
     }
   });
-
-  // Generate all items including groups
-  const allSelectItems = $derived(() => {
-    const result: (SelectItem | SelectGroup)[] = [];
-
-    // Add standalone items first
-    result.push(...items);
-
-    // Add groups
-    result.push(...groups);
-
-    return result;
-  });
 </script>
 
 <div
-  class={cx(
-    "govuk-form-group gem-c-select-with-search",
-    (validationError || error) && "govuk-form-group--error",
-    formGroupClasses,
-  )}
-  data-module="select-with-search"
+  class="gem-c-select-with-search"
   style={`--cross-icon-url: url("${crossIconUrl}")`}
 >
-  {#if labelIsPageHeading}
-    <h1 class="govuk-label-wrapper">
-      <label class="govuk-label govuk-label--l" for={id}>
-        {label}
-      </label>
-    </h1>
-  {:else}
-    <label class="govuk-label" for={id}>
-      {label}
-    </label>
-  {/if}
-
-  {#if hint}
-    <div id="{id}-hint" class="govuk-hint">
-      {hint}
-    </div>
-  {/if}
-
-  {#if validationError || error}
-    <p id="{id}-error" class="govuk-error-message">
-      <span class="govuk-visually-hidden">Error:</span>
-      {validationError || error}
-    </p>
-  {/if}
-
-  <select
-    bind:this={selectElement}
-    class={cx(
-      "govuk-select",
-      (validationError || error) && "govuk-select--error",
-      fullWidth && "govuk-!-width-full",
-    )}
+  <Select
     {id}
     {name}
+    items={enhancedItems}
+    {groups}
+    bind:value
     {multiple}
+    {label}
+    {labelIsPageHeading}
+    {hint}
+    {error}
+    {validate}
+    {formGroupClasses}
+    {fullWidth}
+    {describedBy}
     {disabled}
-    aria-describedby={describedBy ||
-      [
-        hint ? `${id}-hint` : null,
-        validationError || error ? `${id}-error` : null,
-      ]
-        .filter(Boolean)
-        .join(" ") ||
-      undefined}
+    bind:selectElement
     {...attributes}
-  >
-    <!-- Placeholder option for single select -->
-    {#if !multiple}
-      <option value="">{computedPlaceholderText}</option>
-    {/if}
-
-    <!-- Render items and groups -->
-    {#each allSelectItems() as item}
-      {#if "choices" in item}
-        <!-- This is a group -->
-        <optgroup
-          label={(item as SelectGroup).label}
-          disabled={(item as SelectGroup).disabled}
-        >
-          {#each (item as SelectGroup).choices as choice}
-            <option
-              value={choice.value}
-              disabled={choice.disabled}
-              selected={choice.selected}
-            >
-              {choice.text}
-            </option>
-          {/each}
-        </optgroup>
-      {:else}
-        <!-- This is a regular item -->
-        <option
-          value={(item as SelectItem).value}
-          disabled={(item as SelectItem).disabled}
-          selected={(item as SelectItem).selected}
-        >
-          {(item as SelectItem).text}
-        </option>
-      {/if}
-    {/each}
-  </select>
+  />
 </div>
 
 <style>
@@ -551,6 +454,7 @@
     display: inline-block;
     padding: 4px 16px 4px 4px;
     width: 100%;
+    border-color: transparent;
   }
   :global([dir="rtl"] .choices__list--single) {
     padding-right: 4px;
@@ -750,10 +654,12 @@
     max-width: 100%;
     padding: 4px 0 4px 2px;
   }
-  :global(.choices__input:focus) {
+  :global(.gem-c-select-with-search .choices__input:focus) {
     outline: 0;
+    border: none;
+    box-shadow: none;
   }
-  :global(.choices__input::-webkit-search-decoration),
+  :global(.gem-c-select-with-search .choices__input::-webkit-search-decoration),
   :global(.choices__input::-webkit-search-cancel-button),
   :global(.choices__input::-webkit-search-results-button),
   :global(.choices__input::-webkit-search-results-decoration) {
@@ -882,7 +788,8 @@
   :global(.gem-c-select-with-search .choices.is-open .choices__inner) {
     outline: 3px solid #fd0;
     outline-offset: 0;
-    box-shadow: inset 0 0 0 2px;
+    box-shadow: inset 0 0 0 2px #0b0c0c;
+    border-color: #0b0c0c;
   }
   :global(.gem-c-select-with-search .choices__list--multiple) {
     display: block;

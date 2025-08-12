@@ -84,11 +84,11 @@
 
   // Computed values for component configuration
   let computedPlaceholderText = $derived(
-    placeholderText || (multiple ? "Select all that apply" : "Select one")
+    placeholderText || (multiple ? "Select all that apply" : "Select one"),
   );
-  
+
   let computedRemoveItemButton = $derived(
-    removeItemButton !== undefined ? removeItemButton : multiple
+    removeItemButton !== undefined ? removeItemButton : multiple,
   );
 
   // Enhanced items with placeholder for single select
@@ -96,7 +96,7 @@
     if (multiple) return items;
     return [
       { value: "", text: computedPlaceholderText, disabled: false },
-      ...items
+      ...items,
     ];
   });
 
@@ -112,7 +112,8 @@
         return;
       }
 
-      const ariaDescribedBy = selectElement.getAttribute("aria-describedby") || "";
+      const ariaDescribedBy =
+        selectElement.getAttribute("aria-describedby") || "";
 
       // Initialize Choices.js with GOV.UK settings
       const defaultOptions = {

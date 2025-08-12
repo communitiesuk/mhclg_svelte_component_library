@@ -255,9 +255,7 @@
         value: true,
         description: {
           markdown: true,
-          arr: [
-            `If <code>true</code>, enables multiple selection mode.`,
-          ],
+          arr: [`If <code>true</code>, enables multiple selection mode.`],
         },
       },
 
@@ -326,9 +324,7 @@
         value: "Search in list",
         description: {
           markdown: true,
-          arr: [
-            `Placeholder text shown in the search input field.`,
-          ],
+          arr: [`Placeholder text shown in the search input field.`],
         },
       },
       {
@@ -337,9 +333,7 @@
         value: true,
         description: {
           markdown: true,
-          arr: [
-            `If true, allows HTML in option text.`,
-          ],
+          arr: [`If true, allows HTML in option text.`],
         },
       },
       {
@@ -348,9 +342,7 @@
         value: false,
         description: {
           markdown: true,
-          arr: [
-            `If true, options will be sorted by text value.`,
-          ],
+          arr: [`If true, options will be sorted by text value.`],
         },
       },
       {
@@ -359,9 +351,7 @@
         value: 100,
         description: {
           markdown: true,
-          arr: [
-            `Maximum number of options to show in search results.`,
-          ],
+          arr: [`Maximum number of options to show in search results.`],
         },
       },
       {
@@ -383,9 +373,7 @@
         value: "",
         description: {
           markdown: true,
-          arr: [
-            `Additional CSS classes for the form group wrapper.`,
-          ],
+          arr: [`Additional CSS classes for the form group wrapper.`],
         },
       },
       {
@@ -394,9 +382,7 @@
         value: false,
         description: {
           markdown: true,
-          arr: [
-            `Makes the select element full width if true.`,
-          ],
+          arr: [`Makes the select element full width if true.`],
         },
       },
       {
@@ -405,9 +391,7 @@
         value: "",
         description: {
           markdown: true,
-          arr: [
-            `Override for aria-describedby attribute.`,
-          ],
+          arr: [`Override for aria-describedby attribute.`],
         },
       },
       {
@@ -416,9 +400,7 @@
         value: false,
         description: {
           markdown: true,
-          arr: [
-            `Disables the select element if true.`,
-          ],
+          arr: [`Disables the select element if true.`],
         },
       },
 
@@ -440,9 +422,7 @@
         value: {},
         description: {
           markdown: true,
-          arr: [
-            `Additional options to pass to the Choices.js library.`,
-          ],
+          arr: [`Additional options to pass to the Choices.js library.`],
         },
       },
     ]),
@@ -587,7 +567,7 @@
 {#snippet Component()}
   <div class="p-8">
     {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit].join("|")}
-      <MultiSelectSearchAutocomplete 
+      <MultiSelectSearchAutocomplete
         bind:value={selectedValue}
         {...parametersObject}
       ></MultiSelectSearchAutocomplete>

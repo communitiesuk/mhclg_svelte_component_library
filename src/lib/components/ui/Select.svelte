@@ -36,10 +36,10 @@
     fullWidth = false, // If true, applies full width style
     describedBy = "", // Optional override for aria-describedby
     disabled = false, // Add disabled support
-    
+
     // Expose select element reference
     selectElement = $bindable<HTMLSelectElement | undefined>(),
-    
+
     ...attributes // Allow passing additional HTML attributes to the select element
   }: {
     id: string;
@@ -60,7 +60,13 @@
     selectElement?: HTMLSelectElement | undefined;
   } & Omit<
     import("svelte/elements").HTMLSelectAttributes,
-    "id" | "name" | "value" | "class" | "aria-describedby" | "multiple" | "disabled"
+    | "id"
+    | "name"
+    | "value"
+    | "class"
+    | "aria-describedby"
+    | "multiple"
+    | "disabled"
   > = $props();
 
   // Client-side validation result
@@ -75,22 +81,24 @@
   });
 
   // Computed classes for select element (shared between both versions)
-  const selectClasses = $derived(cx(
-    "govuk-select",
-    (validationError || error) && "govuk-select--error",
-    fullWidth && "govuk-!-width-full",
-  ));
+  const selectClasses = $derived(
+    cx(
+      "govuk-select",
+      (validationError || error) && "govuk-select--error",
+      fullWidth && "govuk-!-width-full",
+    ),
+  );
 
   // Computed aria-describedby (shared between both versions)
   const computedAriaDescribedBy = $derived(
     describedBy ||
-    [
-      hint ? `${id}-hint` : null,
-      validationError || error ? `${id}-error` : null,
-    ]
-      .filter(Boolean)
-      .join(" ") ||
-    undefined
+      [
+        hint ? `${id}-hint` : null,
+        validationError || error ? `${id}-error` : null,
+      ]
+        .filter(Boolean)
+        .join(" ") ||
+      undefined,
   );
 </script>
 
@@ -151,7 +159,10 @@
             {/each}
           </optgroup>
         {:else}
-          <option value={(item as SelectItem).value} disabled={(item as SelectItem).disabled}>
+          <option
+            value={(item as SelectItem).value}
+            disabled={(item as SelectItem).disabled}
+          >
             {(item as SelectItem).text}
           </option>
         {/if}
@@ -181,7 +192,10 @@
             {/each}
           </optgroup>
         {:else}
-          <option value={(item as SelectItem).value} disabled={(item as SelectItem).disabled}>
+          <option
+            value={(item as SelectItem).value}
+            disabled={(item as SelectItem).disabled}
+          >
             {(item as SelectItem).text}
           </option>
         {/if}

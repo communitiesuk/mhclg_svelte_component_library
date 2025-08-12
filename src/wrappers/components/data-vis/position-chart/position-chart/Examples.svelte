@@ -59,7 +59,7 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <PositionChart value="1" min="1" max="10" label="Education" showAxis={true}
+    <PositionChart value="7" min="1" max="10" label="Education" showAxis={true}
     ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
@@ -83,6 +83,7 @@
           max="10"
           label={item[0]}
           stacked={true}
+          numberOfRows={dummyData.length}
         ></PositionChart>
       {/each}
     </div>

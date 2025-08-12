@@ -1,5 +1,6 @@
 <script>
   import { AccordionItem, Accordion } from "flowbite-svelte";
+  import PositionChartAxis from "$lib/components/data-vis/position-chart/PositionChartAxis.svelte";
 
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
@@ -62,7 +63,7 @@
     <PositionChart value="7" min="1" max="10" label="Education" showAxis={true}
     ></PositionChart>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <!-- <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock> -->
 {/snippet}
 
 {#snippet Example2()}
@@ -84,8 +85,11 @@
           label={item[0]}
           stacked={true}
           numberOfRows={dummyData.length}
+          showAxis={false}
         ></PositionChart>
       {/each}
+      <div class="empty-div"></div>
+      <PositionChartAxis></PositionChartAxis>
     </div>
   </div>
 {/snippet}

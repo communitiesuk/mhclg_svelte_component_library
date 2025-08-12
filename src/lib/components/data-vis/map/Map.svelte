@@ -96,6 +96,7 @@
     onstyleload,
     onstyledata,
     onidle,
+    showLegend = false,
   }: {
     data: object[];
     customPalette?: object[];
@@ -486,15 +487,16 @@
     {/if}
   </MapLibre>
 </div>
-
-<div class="legend">
-  {#each legendItems as item}
-    <div class="legend-item">
-      <div class="legend-color" style="background-color: {item.color};"></div>
-      <span>{item.label}</span>
-    </div>
-  {/each}
-</div>
+{#if showLegend}
+  <div class="legend">
+    {#each legendItems as item}
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: {item.color};"></div>
+        <span>{item.label}</span>
+      </div>
+    {/each}
+  </div>
+{/if}
 
 <style>
   :global(.maplibregl-ctrl-group button.reset-button) {

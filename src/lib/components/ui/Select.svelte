@@ -1,5 +1,6 @@
 <script lang="ts">
   import { clsx as cx } from "clsx";
+  import type { Snippet } from "svelte";
 
   export type SelectItem = {
     value: string | number;
@@ -40,6 +41,9 @@
     // Expose select element reference
     selectElement = $bindable<HTMLSelectElement | undefined>(),
 
+    // Optional right-hand accessory renderer (e.g., icon button)
+    renderRight,
+
     ...attributes // Allow passing additional HTML attributes to the select element
   }: {
     id: string;
@@ -58,6 +62,7 @@
     describedBy?: string;
     disabled?: boolean;
     selectElement?: HTMLSelectElement | undefined;
+    renderRight?: Snippet | undefined;
   } & Omit<
     import("svelte/elements").HTMLSelectAttributes,
     | "id"
@@ -135,74 +140,104 @@
   {/if}
 
   {#if multiple}
-    <select
-      bind:this={selectElement}
-      class={selectClasses}
-      {id}
-      {name}
-      multiple
-      {disabled}
-      bind:value
-      aria-describedby={computedAriaDescribedBy}
-      {...attributes}
-    >
-      {#each allSelectItems() as item}
-        {#if "choices" in item}
-          <optgroup
-            label={(item as SelectGroup).label}
-            disabled={(item as SelectGroup).disabled}
-          >
-            {#each (item as SelectGroup).choices as choice}
-              <option value={choice.value} disabled={choice.disabled}>
-                {choice.text}
+    <div class="select-row">
+      <div class="select-cell">
+        <select
+          bind:this={selectElement}
+          class={selectClasses}
+          {id}
+          {name}
+          multiple
+          {disabled}
+          bind:value
+          aria-describedby={computedAriaDescribedBy}
+          {...attributes}
+        >
+          {#each allSelectItems() as item}
+            {#if "choices" in item}
+              <optgroup
+                label={(item as SelectGroup).label}
+                disabled={(item as SelectGroup).disabled}
+              >
+                {#each (item as SelectGroup).choices as choice}
+                  <option value={choice.value} disabled={choice.disabled}>
+                    {choice.text}
+                  </option>
+                {/each}
+              </optgroup>
+            {:else}
+              <option
+                value={(item as SelectItem).value}
+                disabled={(item as SelectItem).disabled}
+              >
+                {(item as SelectItem).text}
               </option>
-            {/each}
-          </optgroup>
-        {:else}
-          <option
-            value={(item as SelectItem).value}
-            disabled={(item as SelectItem).disabled}
-          >
-            {(item as SelectItem).text}
-          </option>
-        {/if}
-      {/each}
-    </select>
+            {/if}
+          {/each}
+        </select>
+      </div>
+      {#if renderRight}
+        <div class="select-addon">{@render renderRight()}</div>
+      {/if}
+    </div>
   {:else}
-    <select
-      bind:this={selectElement}
-      class={selectClasses}
-      {id}
-      {name}
-      {disabled}
-      bind:value
-      aria-describedby={computedAriaDescribedBy}
-      {...attributes}
-    >
-      {#each allSelectItems() as item}
-        {#if "choices" in item}
-          <optgroup
-            label={(item as SelectGroup).label}
-            disabled={(item as SelectGroup).disabled}
-          >
-            {#each (item as SelectGroup).choices as choice}
-              <option value={choice.value} disabled={choice.disabled}>
-                {choice.text}
+    <div class="select-row">
+      <div class="select-cell">
+        <select
+          bind:this={selectElement}
+          class={selectClasses}
+          {id}
+          {name}
+          {disabled}
+          bind:value
+          aria-describedby={computedAriaDescribedBy}
+          {...attributes}
+        >
+          {#each allSelectItems() as item}
+            {#if "choices" in item}
+              <optgroup
+                label={(item as SelectGroup).label}
+                disabled={(item as SelectGroup).disabled}
+              >
+                {#each (item as SelectGroup).choices as choice}
+                  <option value={choice.value} disabled={choice.disabled}>
+                    {choice.text}
+                  </option>
+                {/each}
+              </optgroup>
+            {:else}
+              <option
+                value={(item as SelectItem).value}
+                disabled={(item as SelectItem).disabled}
+              >
+                {(item as SelectItem).text}
               </option>
-            {/each}
-          </optgroup>
-        {:else}
-          <option
-            value={(item as SelectItem).value}
-            disabled={(item as SelectItem).disabled}
-          >
-            {(item as SelectItem).text}
-          </option>
-        {/if}
-      {/each}
-    </select>
+            {/if}
+          {/each}
+        </select>
+      </div>
+      {#if renderRight}
+        <div class="select-addon">{@render renderRight()}</div>
+      {/if}
+    </div>
   {/if}
 </div>
 
 <style>
+  .select-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: stretch;
+    column-gap: 0;
+  }
+
+  .select-cell {
+    min-width: 0;
+  }
+
+  .select-addon {
+    display: flex;
+    align-items: stretch; /* match .choices container height */
+    max-height: 46px;
+  }
 </style>

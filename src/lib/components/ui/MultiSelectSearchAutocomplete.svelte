@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
   import Select, { type SelectItem, type SelectGroup } from "./Select.svelte";
+  import IconSearch from "../../icons/IconSearch.svelte";
   import crossIconUrl from "./../../assets/govuk_publishing_components/images/cross-icon.svg?url";
 
   // Import Choices.js dynamically to avoid SSR issues
@@ -192,6 +193,17 @@
   class="gem-c-select-with-search"
   style={`--cross-icon-url: url("${crossIconUrl}")`}
 >
+  {#snippet rightIcon()}
+    <button
+      type="button"
+      class="search-addon-btn"
+      aria-label="Search"
+      title="Search"
+    >
+      <span class="search-addon-icon"><IconSearch /></span>
+    </button>
+  {/snippet}
+
   <Select
     {id}
     {name}
@@ -209,11 +221,17 @@
     {describedBy}
     {disabled}
     bind:selectElement
+    renderRight={rightIcon}
     {...attributes}
   />
 </div>
 
 <style>
+  /* Make the field border butt up against the addon button (like Search component) */
+  :global(.gem-c-select-with-search .choices__inner) {
+    min-height: 46px; /* align baseline height to Search button */
+  }
+
   :global(.govuk-label) {
     font-family: "GDS Transport", arial, sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -225,6 +243,37 @@
     display: block;
     margin-bottom: 5px;
   }
+
+  /* Addon button visual to match gem-c-search submit */
+  .search-addon-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 100%;
+    background-color: #1d70b8;
+    color: #fff;
+    border: 0;
+    padding: 0;
+    font-size: 19px;
+    font-family: "GDS Transport", arial, sans-serif;
+  }
+
+  .search-addon-btn:focus-visible {
+    outline: 3px solid #fd0;
+    box-shadow: inset 0 0 0 4px #0b0c0c;
+  }
+
+  .search-addon-icon {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   @media print {
     :global(.govuk-label) {
       font-family: sans-serif;
@@ -331,9 +380,9 @@
   :global(.choices[data-type*="select-one"]) {
     cursor: pointer;
   }
-  :global(.choices[data-type*="select-one"] .choices__inner) {
+  /* :global(.choices[data-type*="select-one"] .choices__inner) {
     padding-bottom: 7.5px;
-  }
+  } */
   :global(.choices[data-type*="select-one"] .choices__input) {
     display: block;
     width: 100%;
@@ -500,13 +549,13 @@
   :global(.choices__list--dropdown),
   :global(.choices__list[aria-expanded]) {
     display: none;
-    z-index: 2;
+    z-index: 5;
     position: absolute;
     width: 100%;
     background-color: #fff;
     border: 1px solid #ddd;
     top: 100%;
-    margin-top: -1px;
+    margin-top: 3px;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
     overflow: hidden;
@@ -525,7 +574,8 @@
     top: auto;
     bottom: 100%;
     margin-top: 0;
-    margin-bottom: -1px;
+    margin-bottom: 3px;
+    border-bottom: none;
     border-radius: 0.25rem 0.25rem 0 0;
   }
   :global(.choices__list--dropdown .choices__list),
@@ -660,6 +710,12 @@
     border: none;
     box-shadow: none;
   }
+  :global(.gem-c-select-with-search .choices__input.choices__input--cloned) {
+    margin: 0;
+    padding: 3px 0 3px 2px;
+    border: none;
+    box-shadow: none;
+  }
   :global(.gem-c-select-with-search .choices__input::-webkit-search-decoration),
   :global(.choices__input::-webkit-search-cancel-button),
   :global(.choices__input::-webkit-search-results-button),
@@ -769,6 +825,7 @@
   :global(.gem-c-select-with-search .choices__inner) {
     padding: 5px;
     border: 2px solid #0b0c0c;
+    margin: 0;
   }
   :global(
     .gem-c-select-with-search.govuk-form-group--error
@@ -787,6 +844,9 @@
   }
   :global(.gem-c-select-with-search .choices.is-focused .choices__inner),
   :global(.gem-c-select-with-search .choices.is-open .choices__inner) {
+    border: 2px solid #0b0c0c;
+    min-height: 46px;
+    padding: 5px;
     outline: 3px solid #fd0;
     outline-offset: 0;
     box-shadow: inset 0 0 0 2px #0b0c0c;
@@ -867,5 +927,10 @@
     padding: 30px 10px 10px;
     border-bottom: 1px solid #b1b4b6;
     cursor: default;
+  }
+
+  .gem-c-select-with-search .choices.is-flipped .choices__list {
+    border-radius: 0;
+    border-width: 0p !important;
   }
 </style>

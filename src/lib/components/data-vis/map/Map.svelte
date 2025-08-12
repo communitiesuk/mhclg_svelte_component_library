@@ -561,7 +561,7 @@
       <p>No data</p>
     {/if}
 
-    <!-- Important note: sourceLayer must match `-l` value from tippecanoe -->åß
+    <!-- Important note: sourceLayer must match `-l` value from tippecanoe -->
     {#if interactive && tooltip}
       <Tooltip
         {currentMousePosition}

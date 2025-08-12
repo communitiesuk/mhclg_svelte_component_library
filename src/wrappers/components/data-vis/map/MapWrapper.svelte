@@ -299,9 +299,9 @@
         name: "showLegend",
         category: "Styling",
         isProp: true,
-        value: true,
-        description:"Show the map Legend"
-      }
+        value: false,
+        description: "Show the map Legend",
+      },
       {
         name: "styleSheet",
         isProp: true,

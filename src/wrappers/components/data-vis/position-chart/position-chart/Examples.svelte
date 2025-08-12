@@ -59,19 +59,8 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <div
-      class="grid-div"
-      style="display:grid; grid-template-columns: auto 1fr; grid-auto-rows: 1fr; align-items: center;
-    gap: 0;"
-    >
-      <PositionChart
-        value="5"
-        min="1"
-        max="10"
-        label="Education"
-        showAxis={true}
-      ></PositionChart>
-    </div>
+    <PositionChart value="1" min="1" max="10" label="Education" showAxis={true}
+    ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
@@ -79,10 +68,13 @@
 {#snippet Example2()}
   <div class="p-5 bg-white">
     <div
-      class="grid-div"
-      style="display:grid; grid-template-columns: minmax(100px, 30%) 1fr; grid-auto-rows: 1fr;
+      class="grid"
+      style="display: grid;
+    grid-template-columns: minmax(100px, 30%) 1fr;
+    grid-auto-rows: 1fr;
     align-items: center;
-    gap: 0;"
+    column-gap: 2%;
+    row-gap: 0;"
     >
       {#each dummyData as item, i}
         <PositionChart
@@ -90,7 +82,7 @@
           min="0"
           max="10"
           label={item[0]}
-          showAxis={dummyData.length === 1 ? true : false}
+          stacked={true}
         ></PositionChart>
       {/each}
     </div>

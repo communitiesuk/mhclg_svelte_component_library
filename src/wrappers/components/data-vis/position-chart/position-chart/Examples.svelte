@@ -9,7 +9,7 @@
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - trivial example",
+      heading: "1. Example 1 - single position chart",
       content: Example1,
     },
     {
@@ -24,17 +24,17 @@
   let dummyData = $state([
     ["Overall", 3],
     ["Income", 2],
-    ["Employment", 3],
-    ["Education", 7],
-    ["Health", 6],
-    ["Crime", 6],
+    ["Living Environment", 5],
+    ["Barriers to Housing & Services", 1],
+    ["Living Environment", 5],
+    ["Income Deprivation Affecting Children", 1],
+    ["Income Deprivation Affecting Older People", 2],
   ]);
 
-  // ["Living Environment", 5],
-  //   ["Barriers to Housing & Services", 1],
-  //   ["Living Environment", 5],
-  //   ["Income Deprivation Affecting Children", 1],
-  //   ["Income Deprivation Affecting Older People", 2],
+  // ["Employment", 3],
+  //   ["Education", 7],
+  //   ["Health", 6],
+  //   ["Crime", 6],
 </script>
 
 <div>
@@ -59,8 +59,18 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <div class="flex-div" style="display:flex">
-      <PositionChart value="5" min="1" max="10" label="Label"></PositionChart>
+    <div
+      class="grid-div"
+      style="display:grid; grid-template-columns: auto 1fr; grid-auto-rows: 1fr; align-items: center;
+    gap: 0;"
+    >
+      <PositionChart
+        value="5"
+        min="1"
+        max="10"
+        label="Education"
+        showAxis={true}
+      ></PositionChart>
     </div>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
@@ -70,20 +80,19 @@
   <div class="p-5 bg-white">
     <div
       class="grid-div"
-      style="display:grid; grid-template-columns: minmax(100px, 30%) 1fr;
+      style="display:grid; grid-template-columns: minmax(100px, 30%) 1fr; grid-auto-rows: 1fr;
     align-items: center;
-    gap: 3%;"
+    gap: 0;"
     >
-      {#each dummyData as item}
+      {#each dummyData as item, i}
         <PositionChart
           value={item[1]}
           min="0"
           max="10"
           label={item[0]}
-          container="grid"
+          showAxis={dummyData.length === 1 ? true : false}
         ></PositionChart>
       {/each}
     </div>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}

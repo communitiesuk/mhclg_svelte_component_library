@@ -138,6 +138,7 @@
     setCustomPalette?: boolean;
     customBreaks?: number[];
     interactive?: boolean;
+    showLedgend: boolean;
     onload?: (map: maplibregl.Map) => void;
     onerror?: (error: Partial<ErrorEvent>) => void;
     onclick?: (e: maplibregl.MapMouseEvent) => void;

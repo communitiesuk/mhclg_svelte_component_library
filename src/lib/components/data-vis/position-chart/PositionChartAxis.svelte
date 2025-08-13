@@ -50,4 +50,22 @@
     align-items: center;
     gap: 5px;
   }
+
+  /* Tell the parent to act as a container */
+  .axis {
+    container-type: inline-size;
+  }
+
+  /* Container query: hide the child if parent's width is less than 400px */
+  @container (max-width: 18rem) {
+    .less-deprived {
+      display: none;
+    }
+  }
+
+  @container (max-width: 25rem) {
+    .average {
+      display: none;
+    }
+  }
 </style>

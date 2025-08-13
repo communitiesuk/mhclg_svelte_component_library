@@ -49,7 +49,7 @@
 {/snippet}
 
 <div
-  class="grid-container"
+  class={label ? "grid-container" : "bar-and-axis-container"}
   class:stacked={stacked === true}
   style=" --rows: {numberOfRows + 1};"
 >
@@ -106,6 +106,10 @@
   }
   .grid-container.stacked {
     display: contents;
+  }
+  .bar-and-axis-container {
+    display: flex;
+    flex-direction: column;
   }
   .label {
     text-align: right;

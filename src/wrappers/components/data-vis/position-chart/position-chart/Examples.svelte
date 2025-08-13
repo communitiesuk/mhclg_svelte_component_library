@@ -18,6 +18,11 @@
       heading: "2. Example 2 - stacking multiple position charts",
       content: Example2,
     },
+    {
+      id: "3",
+      heading: "3. Example 3 - single chart with no label",
+      content: Example3,
+    },
   ];
 
   let { data } = $props();
@@ -92,4 +97,11 @@
       <PositionChartAxis></PositionChartAxis>
     </div>
   </div>
+{/snippet}
+
+{#snippet Example3()}
+  <div class="p-5 bg-white">
+    <PositionChart value="7" min="1" max="10" showAxis={true}></PositionChart>
+  </div>
+  <!-- <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock> -->
 {/snippet}

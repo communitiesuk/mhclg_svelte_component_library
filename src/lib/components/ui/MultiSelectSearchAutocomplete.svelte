@@ -165,11 +165,12 @@
         // fall through to default
       }
     }
-    
+
     // Check if we have static options (items or groups with choices)
-    const hasStaticOptions = (items && items.length > 0) || 
-                            (groups && groups.some(g => g.choices && g.choices.length > 0));
-    
+    const hasStaticOptions =
+      (items && items.length > 0) ||
+      (groups && groups.some((g) => g.choices && g.choices.length > 0));
+
     // If we have static options, use them; otherwise default to API if configured
     if (hasStaticOptions) {
       return "options";
@@ -259,9 +260,12 @@
         selectElement.getAttribute("aria-describedby") || "";
 
       // Determine initial noChoicesText based on whether we have static choices
-      const hasStaticOptions = (items && items.length > 0) || 
-                              (groups && groups.some(g => g.choices && g.choices.length > 0));
-      const initialNoChoicesText = hasStaticOptions ? baseNoChoicesText : tTooShort(minLength);
+      const hasStaticOptions =
+        (items && items.length > 0) ||
+        (groups && groups.some((g) => g.choices && g.choices.length > 0));
+      const initialNoChoicesText = hasStaticOptions
+        ? baseNoChoicesText
+        : tTooShort(minLength);
 
       // Initialize Choices.js with GOV.UK settings
       const defaultOptions = {
@@ -319,7 +323,8 @@
             const mode = selectSource(lastQuery);
             if (choicesInstance) {
               // Set appropriate message based on the mode we're about to use
-              choicesInstance.config.noChoicesText = mode === "api" ? "No results found" : baseNoChoicesText;
+              choicesInstance.config.noChoicesText =
+                mode === "api" ? "No results found" : baseNoChoicesText;
             }
 
             if (mode === "api") {

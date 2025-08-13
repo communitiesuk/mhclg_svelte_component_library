@@ -345,9 +345,7 @@
               } catch (e) {
                 console.error("Failed to fetch API choices:", e);
               }
-            } else {
-              resetToStaticChoices();
-            }
+            } 
           }, 300);
         });
       }

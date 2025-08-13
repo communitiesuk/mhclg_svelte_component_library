@@ -141,6 +141,7 @@
       source_key="result"
       source_property="postcode"
       choicesOptions={{}}
+      minLength={3}
     />
   </div>
   <CodeBlock code={codeBlocks.codeBlockApi} language="svelte"></CodeBlock>

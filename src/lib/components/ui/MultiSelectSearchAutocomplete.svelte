@@ -56,7 +56,7 @@
     sourceSelector = undefined,
 
     // Minimum length and too-short text (mirrors SearchAutocomplete)
-    minLength = 3,
+    minLength = 0,
     tTooShort = (n: number) => `Enter ${n} or more characters for suggestions`,
 
     ...attributes

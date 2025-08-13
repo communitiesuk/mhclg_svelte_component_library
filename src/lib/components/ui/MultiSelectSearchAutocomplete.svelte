@@ -44,6 +44,21 @@
     // Choices.js specific options
     choicesOptions = {},
 
+    // Dynamic options sources (static or API)
+    // If provided, component can fetch options from an API based on user input
+    source_url = undefined,
+    source_key = undefined,
+    source_property = undefined,
+    /**
+     * Decide whether to use 'api' or 'options' for a given query.
+     * Defaults to using API when source_url/source_key are present and query length >= 3
+     */
+    sourceSelector = undefined,
+
+    // Minimum length and too-short text (mirrors SearchAutocomplete)
+    minLength = 3,
+    tTooShort = (n: number) => `Enter ${n} or more characters for suggestions`,
+
     ...attributes
   }: {
     id: string;
@@ -68,6 +83,12 @@
     disabled?: boolean;
     placeholderText?: string;
     choicesOptions?: any;
+    source_url?: string;
+    source_key?: string;
+    source_property?: string;
+    sourceSelector?: (query: string, options: any[]) => "api" | "options";
+    minLength?: number;
+    tTooShort?: (n: number) => string;
   } & Omit<
     import("svelte/elements").HTMLSelectAttributes,
     | "id"
@@ -82,6 +103,10 @@
   // Select element reference from child component
   let selectElement = $state<HTMLSelectElement | undefined>();
   let choicesInstance: any;
+  let searchInputElement: HTMLInputElement | null = null;
+  let debounceTimer: any = null;
+  let lastQuery = "";
+  const baseNoChoicesText = "No choices to choose from";
 
   // Computed values for component configuration
   let computedPlaceholderText = $derived(
@@ -101,6 +126,123 @@
     ];
   });
 
+  // Flatten current select items (including groups) into Choices-compatible objects
+  type ChoiceItem = {
+    value: string | number;
+    label: string;
+    disabled?: boolean;
+  };
+  const staticChoices = $derived.by<ChoiceItem[]>(() => {
+    /** @type {ChoiceItem[]} */
+    const flattened: ChoiceItem[] = [];
+    // Include enhancedItems() first (single-select placeholder support)
+    for (const it of enhancedItems) {
+      flattened.push({
+        value: it.value,
+        label: String(it.text),
+        disabled: it.disabled,
+      });
+    }
+    // Then any explicit groups
+    for (const g of groups) {
+      for (const choice of g.choices) {
+        flattened.push({
+          value: choice.value,
+          label: String(choice.text),
+          disabled: g.disabled || choice.disabled,
+        });
+      }
+    }
+    return flattened;
+  });
+
+  // Default selection logic between API and static options
+  function selectSource(query: string): "api" | "options" {
+    if (typeof sourceSelector === "function") {
+      try {
+        return sourceSelector(query, staticChoices);
+      } catch {
+        // fall through to default
+      }
+    }
+    
+    // Check if we have static options (items or groups with choices)
+    const hasStaticOptions = (items && items.length > 0) || 
+                            (groups && groups.some(g => g.choices && g.choices.length > 0));
+    
+    // If we have static options, use them; otherwise default to API if configured
+    if (hasStaticOptions) {
+      return "options";
+    } else if (source_url && source_key && query.trim().length >= minLength) {
+      return "api";
+    } else {
+      return "options"; // fallback to options even if empty
+    }
+  }
+
+  // Build URL for API requests. Replaces {query} placeholder or appends ?q=
+  function buildApiUrl(query: string): string {
+    if (!source_url) return "";
+    if (source_url.includes("{query}")) {
+      return source_url.replace("{query}", encodeURIComponent(query));
+    }
+    const separator = source_url.includes("?") ? "&" : "?";
+    return `${source_url}${separator}q=${encodeURIComponent(query)}`;
+  }
+
+  function toLabel(o: any): string {
+    if (o == null) return "";
+    if (typeof o === "string") return o;
+    if (source_property && o[source_property] != null)
+      return String(o[source_property]);
+    if (o.label != null) return String(o.label);
+    if (o.postcode != null) return String(o.postcode);
+    if (o.name != null) return String(o.name);
+    if (o.title != null) return String(o.title);
+    try {
+      return JSON.stringify(o);
+    } catch {
+      return String(o);
+    }
+  }
+
+  function toValue(o: any, label: string): string | number {
+    if (o && typeof o === "object" && "value" in o && o.value != null)
+      return o.value as string | number;
+    return label;
+  }
+
+  async function fetchApiChoices(query: string): Promise<ChoiceItem[]> {
+    const url = buildApiUrl(query);
+    if (!url) return [];
+    const res = await fetch(url);
+    const json = await res.json();
+    const data = (json && source_key ? json[source_key] : undefined) as
+      | any[]
+      | undefined;
+    if (!Array.isArray(data)) return [];
+    const mapped: ChoiceItem[] = data.map((entry) => {
+      const label = toLabel(entry);
+      return { value: toValue(entry, label), label };
+    });
+    return mapped;
+  }
+
+  function resetToStaticChoices() {
+    if (!choicesInstance) return;
+    choicesInstance.clearChoices();
+    choicesInstance.setChoices(
+      staticChoices.map((c) => ({
+        value: String(c.value),
+        label: c.label,
+        disabled: c.disabled,
+      })),
+      "value",
+      "label",
+      true,
+    );
+  }
+
   // Initialize Choices.js
   onMount(async () => {
     try {
@@ -116,6 +258,11 @@
       const ariaDescribedBy =
         selectElement.getAttribute("aria-describedby") || "";
 
+      // Determine initial noChoicesText based on whether we have static choices
+      const hasStaticOptions = (items && items.length > 0) || 
+                              (groups && groups.some(g => g.choices && g.choices.length > 0));
+      const initialNoChoicesText = hasStaticOptions ? baseNoChoicesText : tTooShort(minLength);
+
       // Initialize Choices.js with GOV.UK settings
       const defaultOptions = {
         allowHTML,
@@ -125,6 +272,9 @@
         searchResultLimit,
         removeItemButton: computedRemoveItemButton,
         labelId: id + "-label " + ariaDescribedBy,
+        // Link minLength behaviour to Choices
+        searchFloor: minLength,
+        noChoicesText: initialNoChoicesText,
         callbackOnInit: function () {
           // For multiple select, move input field to top of feedback area
           if (this.dropdown.type === "select-multiple") {
@@ -148,6 +298,54 @@
 
       // Handle value changes from Choices.js
       selectElement.addEventListener("change", handleChoicesChange);
+
+      // Capture the internal search input and attach API search handling
+      searchInputElement = choicesInstance?.input?.element ?? null;
+      if (searchInputElement) {
+        searchInputElement.addEventListener("input", () => {
+          const q = searchInputElement!.value || "";
+          lastQuery = q;
+          if (debounceTimer) clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(async () => {
+            // Too-short handling: show helpful message and don't search
+            if (lastQuery.trim().length < minLength) {
+              if (choicesInstance) {
+                choicesInstance.config.noChoicesText = tTooShort(minLength);
+                choicesInstance.clearChoices();
+              }
+              return;
+            }
+
+            const mode = selectSource(lastQuery);
+            if (choicesInstance) {
+              // Set appropriate message based on the mode we're about to use
+              choicesInstance.config.noChoicesText = mode === "api" ? "No results found" : baseNoChoicesText;
+            }
+
+            if (mode === "api") {
+              // Replace choices with API results
+              try {
+                const apiChoices = await fetchApiChoices(lastQuery);
+                if (!choicesInstance) return;
+                choicesInstance.clearChoices();
+                choicesInstance.setChoices(
+                  apiChoices.map((c) => ({
+                    value: String(c.value),
+                    label: c.label,
+                  })),
+                  "value",
+                  "label",
+                  true,
+                );
+              } catch (e) {
+                console.error("Failed to fetch API choices:", e);
+              }
+            } else {
+              resetToStaticChoices();
+            }
+          }, 300);
+        });
+      }
     } catch (error) {
       console.error("Failed to initialize Choices.js:", error);
     }

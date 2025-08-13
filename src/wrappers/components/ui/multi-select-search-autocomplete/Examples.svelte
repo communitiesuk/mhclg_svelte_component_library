@@ -22,6 +22,11 @@
       heading: "3. Grouped Options with Countries",
       content: Example3,
     },
+    {
+      id: "4",
+      heading: "4. Remote API source (postcodes.io)",
+      content: Example4,
+    },
   ];
 </script>
 
@@ -120,4 +125,23 @@
     />
   </div>
   <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
+{/snippet}
+
+<!-- Example 4: Remote API source (postcodes.io) -->
+{#snippet Example4()}
+  <div class="p-5 bg-white">
+    <!-- Uses postcodes.io API: https://postcodes.io/ -->
+    <MultiSelectSearchAutocomplete
+      id="postcode-select"
+      name="postcode"
+      label="Search UK postcodes"
+      hint="Start typing a postcode"
+      multiple={true}
+      source_url="https://api.postcodes.io/postcodes"
+      source_key="result"
+      source_property="postcode"
+      choicesOptions={{}}
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlockApi} language="svelte"></CodeBlock>
 {/snippet}

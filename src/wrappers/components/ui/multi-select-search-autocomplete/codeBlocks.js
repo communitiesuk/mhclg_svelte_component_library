@@ -74,3 +74,20 @@ export const codeBlock3 = `
   ]}
   multiple={false}
 />`;
+
+export const codeBlockApi = `
+<script>
+  import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchAutocomplete.svelte";
+<\/script>
+
+<!-- Uses postcodes.io API: https://postcodes.io/ -->
+<MultiSelectSearchAutocomplete
+  id="postcode-select"
+  name="postcode"
+  label="Search UK postcodes"
+  hint="Start typing a postcode"
+  multiple={false}
+  source_url="https://api.postcodes.io/postcodes"
+  source_key="result"
+  source_property="postcode"
+/>`;

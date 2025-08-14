@@ -96,8 +96,11 @@
     onstyleload,
     onstyledata,
     onidle,
+    showLegend = false,
+    countries = ["england", "scotland"],
   }: {
     data: object[];
+    countries?: string[];
     customPalette?: object[];
     cooperativeGestures?: boolean;
     standardControls?: boolean;
@@ -163,6 +166,17 @@
 
   let clickedArea = $state(null);
 
+  // ISO-3166/ONS-style prefixes for area codes
+  const areaCodePrefixes: Record<string, string[]> = {
+    england: ["E"], // all area codes starting with E
+    scotland: ["S"], // all area codes starting with S
+    wales: ["W"], // all area codes starting with W
+    "northern ireland": ["N"], // all area codes starting with N
+  };
+  const allowedPrefixes: string[] = countries
+    .map((area) => areaCodePrefixes[area.toLowerCase()] || [])
+    .flat();
+
   let styleLookup = {
     "Carto-light":
       "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -189,8 +203,22 @@
     })),
   );
 
+  const filteredTopo = {
+    ...fullTopo,
+    objects: {
+      [geoType]: {
+        ...fullTopo.objects[geoType],
+        geometries: fullTopo.objects[geoType].geometries.filter((geom) => {
+          const code = geom.properties.areacd;
+          if (!allowedPrefixes.length) return true; // No filter, keep all
+          return allowedPrefixes.some((prefix) => code?.startsWith(prefix));
+        }),
+      },
+    },
+  };
+
   const geojsonData: FeatureCollection = $derived(
-    topojson.feature(fullTopo, fullTopo.objects[geoType]),
+    topojson.feature(filteredTopo, filteredTopo.objects[geoType]),
   );
 
   let filteredGeoJsonData = $derived(filterGeo(geojsonData, year));

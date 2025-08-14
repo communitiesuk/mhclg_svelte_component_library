@@ -9,6 +9,7 @@ export const codeBlock1 = `
 export const codeBlock2 = `
     <script>
       import { PositionChart } from '@communitiesuk/svelte-component-library';
+      import { PositionChartAxis } from '@communitiesuk/svelte-component-library';
     </script>
 
         <div

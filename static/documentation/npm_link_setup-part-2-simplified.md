@@ -2,11 +2,45 @@
 
 [Npm_link_setup-part-1](./Npm_link_setup-part-1.md) provides instructions for navigating permission issues when setting up npm link.
 
+## Executive Summary
+
 Once you have set up `npm link` to connect the **library** (the component library you are developing) and your **app** (the project consuming the library), by default your app will use the packaged (built) version of the library. This means your app imports the compiled files from the library's `dist` folder, not the raw source files. The steps below show how to switch between using the library's source files and the built package for development.
 
 Instead of creating separate branches for different entry points, we can use environment variables to dynamically configure our app to use either the library's source files (for iterative development) or the built dist folder (for intermediate testing).
 
 The instructions below outline how to set this up for the Svelte Component Library. For other libraries you can follow the same process and change references and links.
+
+## How npm link works
+
+Before diving into the configuration, it's helpful to understand what npm link actually does behind the scenes:
+
+### The mechanism
+
+**npm link** creates symbolic links (symlinks) in your file system to connect a local package to a consuming project without publishing to npm. Here's how it works:
+
+1. **Step 1 - Register the library:** When you run `npm link` in your library directory, npm creates a global symlink from your library to the global npm modules folder
+   - On macOS/Linux: Usually `~/.npm-global/lib/node_modules/` or `/usr/local/lib/node_modules/`
+   - On Windows: Usually `%APPDATA%/npm/node_modules/`
+
+2. **Step 2 - Link in consuming app:** When you run `npm link @communitiesuk/svelte-component-library` in your app directory, npm creates a symlink in your app's `node_modules` folder that points to the global symlink created in step 1
+
+### What this means for development
+
+- **Real-time file availability (symlink):** When you link a library with `npm link`, your app's `node_modules/@communitiesuk/svelte-component-library` becomes a symlink to the library folder. That makes the library's files immediately visible on disk to the app and to tools that import them. In short: edits you make in the library appear immediately in the file tree the app uses.
+
+- **Hot Module Replacement (HMR):** HMR is a feature of dev servers like Vite that updates modules in the running app without a full page reload. HMR only works if the dev server is actually loading the changed source files and is configured to watch them. Simply having a symlink does not automatically enable HMR for library source files — you must import the source files (not the built `dist`) and configure Vite to watch/allow those paths.
+
+- **Built vs source files:** By default most packages expose a built entry (e.g. `dist/index.js`). If your app imports the package root and that root points at `dist`, then edits to the library `src` files will not affect the app until you rebuild the library using `npm build` (because the app is reading the compiled files, not the source).
+
+- **No reinstallation needed:** You don't need to run `npm install` again after linking or changing files — the symlink makes the library available immediately. However, whether changes are reflected in the running app depends on which files the dev server is using and watching.
+
+### The challenge this document solves
+
+- If you only use `npm link` but still import the package's built `dist` entry, you must rebuild the library to see changes in the app. That gives you "real-time availability" of files on disk but not the developer experience of HMR.
+
+- To get true hot-reload for library components you must: use an alias so the app imports the library's source (`src/lib`) directly, and configure Vite to allow and watch the library source paths (fs.allow, watch.include). When configured this way, edits to the library source will trigger Vite HMR and update the app instantly without rebuilding.
+
+- This document shows how to switch between those two modes (built vs source) using environment variables and a small Vite configuration change, so you can choose fast HMR during development or the built package for testing.
 
 ## Step-by-step guide
 

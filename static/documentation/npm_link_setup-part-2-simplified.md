@@ -55,7 +55,7 @@ Add the following scripts to your app's `package.json`:
 
 ### Step 4: Configure your app's vite.config.js
 
-Update your `vite.config.js` file with the following configuration:
+Replace everything in your vite.config.js with the following code:
 
 ```js
 // @ts-nocheck

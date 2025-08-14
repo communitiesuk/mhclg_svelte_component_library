@@ -231,17 +231,17 @@
 
   function resetToStaticChoices() {
     if (!choicesInstance) return;
-    
+
     // Get currently selected values to exclude from static choices
     const selectedValues = new Set(
-      choicesInstance.getValue(true).map((item: any) => String(item.value))
+      choicesInstance.getValue(true).map((item: any) => String(item.value)),
     );
-    
+
     // Filter out already selected values from static choices
     const filteredStaticChoices = staticChoices.filter(
-      (choice) => !selectedValues.has(String(choice.value))
+      (choice) => !selectedValues.has(String(choice.value)),
     );
-    
+
     choicesInstance.clearChoices();
     choicesInstance.setChoices(
       filteredStaticChoices.map((c) => ({
@@ -347,7 +347,8 @@
             if (lastQuery.trim().length === 0) {
               const hasStaticOptions =
                 (items && items.length > 0) ||
-                (groups && groups.some((g) => g.choices && g.choices.length > 0));
+                (groups &&
+                  groups.some((g) => g.choices && g.choices.length > 0));
               if (hasStaticOptions && choicesInstance) {
                 choicesInstance.config.noChoicesText = baseNoChoicesText;
                 resetToStaticChoices();
@@ -362,7 +363,8 @@
                 // Reset to static choices for short queries or use static ones if available
                 const hasStaticOptions =
                   (items && items.length > 0) ||
-                  (groups && groups.some((g) => g.choices && g.choices.length > 0));
+                  (groups &&
+                    groups.some((g) => g.choices && g.choices.length > 0));
                 if (hasStaticOptions) {
                   resetToStaticChoices();
                 } else {
@@ -373,30 +375,33 @@
             }
 
             const hasApiConfig = source_url && source_key;
-            
+
             if (hasApiConfig) {
               // Use API mode when API is configured
               try {
                 const apiChoices = await fetchApiChoices(lastQuery);
                 if (!choicesInstance) return;
-                
+
                 // Get currently selected values to exclude from new choices
                 const selectedValues = new Set(
-                  choicesInstance.getValue(true).map((item: any) => String(item.value))
+                  choicesInstance
+                    .getValue(true)
+                    .map((item: any) => String(item.value)),
                 );
-                
+
                 // Filter out already selected values from API results
                 const filteredApiChoices = apiChoices.filter(
-                  (choice) => !selectedValues.has(String(choice.value))
+                  (choice) => !selectedValues.has(String(choice.value)),
                 );
-                
+
                 choicesInstance.clearChoices();
-                
+
                 if (filteredApiChoices.length === 0) {
                   // No new results from API (either no results or all already selected)
-                  const hasUnselectedResults = apiChoices.length > filteredApiChoices.length;
-                  choicesInstance.config.noChoicesText = hasUnselectedResults 
-                    ? baseNoChoicesText 
+                  const hasUnselectedResults =
+                    apiChoices.length > filteredApiChoices.length;
+                  choicesInstance.config.noChoicesText = hasUnselectedResults
+                    ? baseNoChoicesText
                     : "No results found";
                 } else {
                   // Have new results from API - let Choices.js handle "no choices" when all are selected
@@ -422,24 +427,26 @@
               if (choicesInstance) {
                 // Get currently selected values to exclude
                 const selectedValues = new Set(
-                  choicesInstance.getValue(true).map((item: any) => String(item.value))
+                  choicesInstance
+                    .getValue(true)
+                    .map((item: any) => String(item.value)),
                 );
-                
+
                 // Filter static choices by search term and exclude selected values
                 const searchTerm = lastQuery.toLowerCase();
-                
+
                 // First, find choices that match the search term (regardless of selection)
-                const matchingChoices = staticChoices.filter((choice) => 
-                  choice.label.toLowerCase().includes(searchTerm)
+                const matchingChoices = staticChoices.filter((choice) =>
+                  choice.label.toLowerCase().includes(searchTerm),
                 );
-                
+
                 // Then filter out selected values from the matching choices
-                const filteredStaticChoices = matchingChoices.filter((choice) => 
-                  !selectedValues.has(String(choice.value))
+                const filteredStaticChoices = matchingChoices.filter(
+                  (choice) => !selectedValues.has(String(choice.value)),
                 );
-                
+
                 choicesInstance.clearChoices();
-                
+
                 if (filteredStaticChoices.length === 0) {
                   // No choices to show - distinguish between no matches vs all selected
                   if (matchingChoices.length === 0) {
@@ -464,7 +471,7 @@
                   );
                 }
               }
-            } 
+            }
           }, 300);
         });
       }

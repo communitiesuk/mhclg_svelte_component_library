@@ -29,7 +29,7 @@
 
   let dummyData = $state([
     ["Overall", 3],
-    ["Income", 2],
+    ["Income", 2.5],
     ["Living Environment", 5],
     ["Barriers to Housing & Services", 1],
     ["Employment", 3],

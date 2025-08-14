@@ -29,7 +29,7 @@
     progress: "To be developed",
     statusRows: [
       {
-        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
+        obj: { Accessible: false, Responsive: true, "Prog. enhanced": false },
         visibleOnHompepage: false,
       },
       {
@@ -46,10 +46,12 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "This component renders a horizontal bar chart with a highlighted marker to visually represent a single value within a defined range. The bar is segmented into ten color-coded bands, each representing a decile, but plots the marker on a continuous scale. The marker is positioned using a linear scale and can optionally be accompanied by an axis and label for added clarity.",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "Use this component when you want to visually communicate where a value sits within a distribution. Use the stacked version of the component when you want to compare values from similar distributions.",
   ];
 
   let detailsArray = [

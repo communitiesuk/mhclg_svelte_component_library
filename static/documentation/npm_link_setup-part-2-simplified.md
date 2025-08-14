@@ -19,6 +19,7 @@ Before diving into the configuration, it's helpful to understand what npm link a
 **npm link** creates symbolic links (symlinks) in your file system to connect a local package to a consuming project without publishing to npm. Here's how it works:
 
 1. **Step 1 - Register the library:** When you run `npm link` in your library directory, npm creates a global symlink from your library to the global npm modules folder
+
    - On macOS/Linux: Usually `~/.npm-global/lib/node_modules/` or `/usr/local/lib/node_modules/`
    - On Windows: Usually `%APPDATA%/npm/node_modules/`
 
@@ -106,107 +107,113 @@ Replace everything in your vite.config.ts with the following code:
 
 ```js
 // @ts-nocheck
-import path from 'path';
-import fs from 'fs';
-import { fileURLToPath } from 'url';
-import tailwindcss from '@tailwindcss/vite';
-import { sveltekit } from '@sveltejs/kit/vite';
-import { defineConfig, loadEnv } from 'vite';
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
+import tailwindcss from "@tailwindcss/vite";
+import { sveltekit } from "@sveltejs/kit/vite";
+import { defineConfig, loadEnv } from "vite";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load environment variables from .env file
-const env = loadEnv('', process.cwd(), '');
+const env = loadEnv("", process.cwd(), "");
 
 // Check if we should use local src based on LIB_SRC cmd line environment variable
 const useLocalSrc = !!process.env.LIB_SRC;
 
 // Always compute component library paths (needed for npm link and local src)
 const componentLibPath = env.LIB_SRC_PATH;
-const componentLibRoot = componentLibPath.replace('/src/lib', '');
+const componentLibRoot = componentLibPath.replace("/src/lib", "");
 
 // Set the lib source path when using local src - get from .env file
 const libSrc = useLocalSrc ? componentLibPath : null;
-const libSrcAssets = componentLibPath + '/assets';
-const libDistAssets = componentLibRoot + '/dist/assets';
+const libSrcAssets = componentLibPath + "/assets";
+const libDistAssets = componentLibRoot + "/dist/assets";
 
 // Simple confirmation log
-console.log(`Using ${useLocalSrc ? 'local source' : 'npm package'} for component library`);
+console.log(
+  `Using ${useLocalSrc ? "local source" : "npm package"} for component library`,
+);
 if (useLocalSrc) {
-	console.log(`Source path: ${libSrc}`);
-	console.log(`Source assets path: ${libSrcAssets}`);
-	console.log(`Dist assets path: ${libDistAssets}`);
-	if (!libSrc) {
-		console.log(`⚠️ Missing LIB_SRC_PATH - add it to .env file`);
-	} else if (!componentLibPath.includes('src/lib')) {
-		console.log(`⚠️ LIB_SRC_PATH should include 'src/lib' - current path: ${componentLibPath}`);
-	}
+  console.log(`Source path: ${libSrc}`);
+  console.log(`Source assets path: ${libSrcAssets}`);
+  console.log(`Dist assets path: ${libDistAssets}`);
+  if (!libSrc) {
+    console.log(`⚠️ Missing LIB_SRC_PATH - add it to .env file`);
+  } else if (!componentLibPath.includes("src/lib")) {
+    console.log(
+      `⚠️ LIB_SRC_PATH should include 'src/lib' - current path: ${componentLibPath}`,
+    );
+  }
 }
 
 export default defineConfig({
-	plugins: [tailwindcss(), sveltekit()],
-	// Alias to local component library if using local src
-	resolve: {
-		alias: useLocalSrc
-			? {
-				'@communitiesuk/svelte-component-library': libSrc
-			}
-			: {}
-	},
-	// Server configuration - allow linked component library assets
-	server: {
-		fs: {
-			allow: [libSrcAssets, libDistAssets].filter(Boolean)
-		},
-		...(useLocalSrc ? {
-			watch: {
-				include: [libSrc + '/**']
-			}
-		} : {})
-	},
-	ssr: {
-		noExternal: ['svelte-maplibre', '@communitiesuk/svelte-component-library']
-	},
-	optimizeDeps: {
-		exclude: ['@communitiesuk/svelte-component-library']
-	},
-	build: {
-		commonjsOptions: {
-			include: [
-				/node_modules/,
-				...(useLocalSrc ? [/oflog_svelte_component_library/] : [])
-			]
-		}
-	},
-	test: {
-		projects: [
-			{
-				extends: './vite.config.ts',
-				test: {
-					name: 'client',
-					environment: 'browser',
+  plugins: [tailwindcss(), sveltekit()],
+  // Alias to local component library if using local src
+  resolve: {
+    alias: useLocalSrc
+      ? {
+          "@communitiesuk/svelte-component-library": libSrc,
+        }
+      : {},
+  },
+  // Server configuration - allow linked component library assets
+  server: {
+    fs: {
+      allow: [libSrcAssets, libDistAssets].filter(Boolean),
+    },
+    ...(useLocalSrc
+      ? {
+          watch: {
+            include: [libSrc + "/**"],
+          },
+        }
+      : {}),
+  },
+  ssr: {
+    noExternal: ["svelte-maplibre", "@communitiesuk/svelte-component-library"],
+  },
+  optimizeDeps: {
+    exclude: ["@communitiesuk/svelte-component-library"],
+  },
+  build: {
+    commonjsOptions: {
+      include: [
+        /node_modules/,
+        ...(useLocalSrc ? [/oflog_svelte_component_library/] : []),
+      ],
+    },
+  },
+  test: {
+    projects: [
+      {
+        extends: "./vite.config.ts",
+        test: {
+          name: "client",
+          environment: "browser",
           browser: {
-						enabled: true,
-						provider: 'playwright',
-						instances: [{ browser: 'chromium' }]
-					},
-					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
-					exclude: ['src/lib/server/**'],
-					setupFiles: ['./vitest-setup-client.ts']
-				}
-			},
-			{
-				extends: './vite.config.ts',
-				test: {
-					name: 'server',
-					environment: 'node',
-					include: ['src/**/*.{test,spec}.{js,ts}'],
-					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
-				}
-			}
-		]
-	}
+            enabled: true,
+            provider: "playwright",
+            instances: [{ browser: "chromium" }],
+          },
+          include: ["src/**/*.svelte.{test,spec}.{js,ts}"],
+          exclude: ["src/lib/server/**"],
+          setupFiles: ["./vitest-setup-client.ts"],
+        },
+      },
+      {
+        extends: "./vite.config.ts",
+        test: {
+          name: "server",
+          environment: "node",
+          include: ["src/**/*.{test,spec}.{js,ts}"],
+          exclude: ["src/**/*.svelte.{test,spec}.{js,ts}"],
+        },
+      },
+    ],
+  },
 });
 ```
 

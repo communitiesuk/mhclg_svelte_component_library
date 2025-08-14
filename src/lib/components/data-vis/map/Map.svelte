@@ -161,6 +161,8 @@
     onidle?: (e: maplibregl.MapLibreEvent) => void;
   } = $props();
 
+  let clickedArea = $state(null);
+
   let styleLookup = {
     "Carto-light":
       "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -448,7 +450,17 @@
         }}
         beforeLayerType="symbol"
         manageHoverState={interactive}
-        onclick={interactive ? (e) => zoomToArea(e) : undefined}
+        onclick={interactive
+          ? (e) => {
+              clickedArea = e.features?.[0]?.id || null;
+              zoomToArea(e);
+            }
+          : undefined}
+        ondblclick={interactive
+          ? (e) => {
+              clickedArea = null;
+            }
+          : undefined}
         onmousemove={interactive
           ? (e) => {
               hoveredArea = e.features[0].id;
@@ -468,7 +480,25 @@
           layout={{ "line-cap": "round", "line-join": "round" }}
           paint={{
             "line-color": hoverStateFilter(borderColor, "orange"),
-            "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
+            "line-width": [
+              "interpolate",
+              ["linear"],
+              ["zoom"],
+              0,
+              [
+                "case",
+                ["==", ["id"], clickedArea],
+                5, // thick at low zoom
+                1, // thin at low zoom
+              ],
+              12,
+              [
+                "case",
+                ["==", ["id"], clickedArea],
+                8, // thick at high zoom
+                maxBorderWidth, // normal at high zoom
+              ],
+            ],
           }}
           beforeLayerType="symbol"
         />

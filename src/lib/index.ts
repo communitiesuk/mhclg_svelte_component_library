@@ -16,6 +16,7 @@ export { default as MapLegend } from "./components/data-vis/map/MapLegend.svelte
 export { default as NonStandardControls } from "./components/data-vis/map/NonStandardControls.svelte";
 export { default as Tooltip } from "./components/data-vis/map/Tooltip.svelte";
 export { default as PositionChart } from "./components/data-vis/position-chart/PositionChart.svelte";
+export { default as PositionChartAxis } from "./components/data-vis/position-chart/PositionChartAxis.svelte";
 export { default as Table } from "./components/data-vis/table/Table.svelte";
 export { default as Breadcrumbs } from "./components/layout/Breadcrumbs.svelte";
 export { default as Footer } from "./components/layout/Footer.svelte";

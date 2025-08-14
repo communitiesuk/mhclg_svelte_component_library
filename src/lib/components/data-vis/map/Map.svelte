@@ -97,10 +97,12 @@
     onstyledata,
     onidle,
     showLegend = false,
+    legendSnippet = undefined,
     countries = ["england", "scotland"],
   }: {
     data: object[];
     countries?: string[];
+    lengendSnippet?: string;
     customPalette?: object[];
     cooperativeGestures?: boolean;
     standardControls?: boolean;
@@ -545,14 +547,25 @@
   </MapLibre>
 </div>
 
-<div class="legend">
-  {#each legendItems as item}
-    <div class="legend-item">
-      <div class="legend-color" style="background-color: {item.color};"></div>
-      <span>{item.label}</span>
+{#if legendSnippet}
+  {#if typeof legendSnippet === "string"}
+    <div class="legend">
+      {@html legendSnippet}
     </div>
-  {/each}
-</div>
+  {:else}
+    <svelte:component this={legendSnippet} />
+  {/if}
+{:else}
+  <!-- Default legend -->
+  <div class="legend">
+    {#each legendItems as item}
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: {item.color};"></div>
+        <span>{item.label}</span>
+      </div>
+    {/each}
+  </div>
+{/if}
 
 <style>
   :global(.maplibregl-ctrl-group button.reset-button) {

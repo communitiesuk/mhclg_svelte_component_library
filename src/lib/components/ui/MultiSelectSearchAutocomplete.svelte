@@ -231,9 +231,20 @@
 
   function resetToStaticChoices() {
     if (!choicesInstance) return;
+    
+    // Get currently selected values to exclude from static choices
+    const selectedValues = new Set(
+      choicesInstance.getValue(true).map((item: any) => String(item.value))
+    );
+    
+    // Filter out already selected values from static choices
+    const filteredStaticChoices = staticChoices.filter(
+      (choice) => !selectedValues.has(String(choice.value))
+    );
+    
     choicesInstance.clearChoices();
     choicesInstance.setChoices(
-      staticChoices.map((c) => ({
+      filteredStaticChoices.map((c) => ({
         value: String(c.value),
         label: c.label,
         disabled: c.disabled,
@@ -279,6 +290,8 @@
         // Link minLength behaviour to Choices
         searchFloor: minLength,
         noChoicesText: initialNoChoicesText,
+        // Prevent duplicate selections
+        duplicateItemsAllowed: false,
         callbackOnInit: function () {
           // For multiple select, move input field to top of feedback area
           if (this.dropdown.type === "select-multiple") {
@@ -303,47 +316,153 @@
       // Handle value changes from Choices.js
       selectElement.addEventListener("change", handleChoicesChange);
 
+      // Listen for choice selection to reset search
+      selectElement.addEventListener("choice", () => {
+        // When an item is selected, clear the search and show all unselected options
+        if (searchInputElement) {
+          searchInputElement.value = "";
+          lastQuery = "";
+        }
+        // Reset to filtered static choices (excluding newly selected items)
+        setTimeout(() => {
+          const hasStaticOptions =
+            (items && items.length > 0) ||
+            (groups && groups.some((g) => g.choices && g.choices.length > 0));
+          if (hasStaticOptions && choicesInstance) {
+            resetToStaticChoices();
+          }
+        }, 0);
+      });
+
       // Capture the internal search input and attach API search handling
       searchInputElement = choicesInstance?.input?.element ?? null;
       if (searchInputElement) {
+        // Always add custom search handling to filter out selected values
         searchInputElement.addEventListener("input", () => {
           const q = searchInputElement!.value || "";
           lastQuery = q;
           if (debounceTimer) clearTimeout(debounceTimer);
           debounceTimer = setTimeout(async () => {
-            // Too-short handling: show helpful message and don't search
-            if (lastQuery.trim().length < minLength) {
-              if (choicesInstance) {
-                choicesInstance.config.noChoicesText = tTooShort(minLength);
-                choicesInstance.clearChoices();
+            // Empty query handling: reset to static choices if available
+            if (lastQuery.trim().length === 0) {
+              const hasStaticOptions =
+                (items && items.length > 0) ||
+                (groups && groups.some((g) => g.choices && g.choices.length > 0));
+              if (hasStaticOptions && choicesInstance) {
+                choicesInstance.config.noChoicesText = baseNoChoicesText;
+                resetToStaticChoices();
               }
               return;
             }
 
-            const mode = selectSource(lastQuery);
-            if (choicesInstance) {
-              // Set appropriate message based on the mode we're about to use
-              choicesInstance.config.noChoicesText =
-                mode === "api" ? "No results found" : baseNoChoicesText;
+            // Too-short handling: show helpful message and don't search
+            if (lastQuery.trim().length < minLength) {
+              if (choicesInstance) {
+                choicesInstance.config.noChoicesText = tTooShort(minLength);
+                // Reset to static choices for short queries or use static ones if available
+                const hasStaticOptions =
+                  (items && items.length > 0) ||
+                  (groups && groups.some((g) => g.choices && g.choices.length > 0));
+                if (hasStaticOptions) {
+                  resetToStaticChoices();
+                } else {
+                  choicesInstance.clearChoices();
+                }
+              }
+              return;
             }
 
-            if (mode === "api") {
-              // Replace choices with API results
+            const hasApiConfig = source_url && source_key;
+            
+            if (hasApiConfig) {
+              // Use API mode when API is configured
               try {
                 const apiChoices = await fetchApiChoices(lastQuery);
                 if (!choicesInstance) return;
-                choicesInstance.clearChoices();
-                choicesInstance.setChoices(
-                  apiChoices.map((c) => ({
-                    value: String(c.value),
-                    label: c.label,
-                  })),
-                  "value",
-                  "label",
-                  true,
+                
+                // Get currently selected values to exclude from new choices
+                const selectedValues = new Set(
+                  choicesInstance.getValue(true).map((item: any) => String(item.value))
                 );
+                
+                // Filter out already selected values from API results
+                const filteredApiChoices = apiChoices.filter(
+                  (choice) => !selectedValues.has(String(choice.value))
+                );
+                
+                choicesInstance.clearChoices();
+                
+                if (filteredApiChoices.length === 0) {
+                  // No new results from API (either no results or all already selected)
+                  const hasUnselectedResults = apiChoices.length > filteredApiChoices.length;
+                  choicesInstance.config.noChoicesText = hasUnselectedResults 
+                    ? baseNoChoicesText 
+                    : "No results found";
+                } else {
+                  // Have new results from API - let Choices.js handle "no choices" when all are selected
+                  choicesInstance.config.noChoicesText = baseNoChoicesText;
+                  choicesInstance.setChoices(
+                    filteredApiChoices.map((c) => ({
+                      value: String(c.value),
+                      label: c.label,
+                    })),
+                    "value",
+                    "label",
+                    true,
+                  );
+                }
               } catch (e) {
                 console.error("Failed to fetch API choices:", e);
+                if (choicesInstance) {
+                  choicesInstance.config.noChoicesText = "No results found";
+                }
+              }
+            } else {
+              // For static choices, filter both by search term and exclude selected values
+              if (choicesInstance) {
+                // Get currently selected values to exclude
+                const selectedValues = new Set(
+                  choicesInstance.getValue(true).map((item: any) => String(item.value))
+                );
+                
+                // Filter static choices by search term and exclude selected values
+                const searchTerm = lastQuery.toLowerCase();
+                
+                // First, find choices that match the search term (regardless of selection)
+                const matchingChoices = staticChoices.filter((choice) => 
+                  choice.label.toLowerCase().includes(searchTerm)
+                );
+                
+                // Then filter out selected values from the matching choices
+                const filteredStaticChoices = matchingChoices.filter((choice) => 
+                  !selectedValues.has(String(choice.value))
+                );
+                
+                choicesInstance.clearChoices();
+                
+                if (filteredStaticChoices.length === 0) {
+                  // No choices to show - distinguish between no matches vs all selected
+                  if (matchingChoices.length === 0) {
+                    // No search matches at all
+                    choicesInstance.config.noChoicesText = "No results found";
+                  } else {
+                    // Found matches but all are already selected
+                    choicesInstance.config.noChoicesText = baseNoChoicesText;
+                  }
+                } else {
+                  // Have choices to show
+                  choicesInstance.config.noChoicesText = baseNoChoicesText;
+                  choicesInstance.setChoices(
+                    filteredStaticChoices.map((c) => ({
+                      value: String(c.value),
+                      label: c.label,
+                      disabled: c.disabled,
+                    })),
+                    "value",
+                    "label",
+                    true,
+                  );
+                }
               }
             } 
           }, 300);
@@ -385,6 +504,7 @@
   onDestroy(() => {
     if (choicesInstance) {
       selectElement?.removeEventListener("change", handleChoicesChange);
+      selectElement?.removeEventListener("choice", () => {});
       choicesInstance.destroy();
     }
   });

@@ -59,74 +59,107 @@ Update your `vite.config.js` file with the following configuration:
 
 ```js
 // @ts-nocheck
-import path from "path";
-import fs from "fs";
-import { fileURLToPath } from "url";
-import tailwindcss from "@tailwindcss/vite";
-import { sveltekit } from "@sveltejs/kit/vite";
-import { defineConfig, loadEnv } from "vite";
+import path from 'path';
+import fs from 'fs';
+import { fileURLToPath } from 'url';
+import tailwindcss from '@tailwindcss/vite';
+import { sveltekit } from '@sveltejs/kit/vite';
+import { defineConfig, loadEnv } from 'vite';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 // Load environment variables from .env file
-const env = loadEnv("", process.cwd(), "");
+const env = loadEnv('', process.cwd(), '');
 
-// Use environment variables for lib source path, infer assets path
-const libSrc = env.LIB_SRC_PATH;
-const libDistAssets = libSrc
-  ? libSrc.replace("/src/lib", "/dist/assets")
-  : undefined;
+// Check if we should use local src based on LIB_SRC cmd line environment variable
+const useLocalSrc = !!process.env.LIB_SRC;
 
-// Check if we should use local src
-const useLocalSrc = !!libSrc;
+// Always compute component library paths (needed for npm link and local src)
+const componentLibPath = env.LIB_SRC_PATH;
+const componentLibRoot = componentLibPath.replace('/src/lib', '');
+
+// Set the lib source path when using local src - get from .env file
+const libSrc = useLocalSrc ? componentLibPath : null;
+const libSrcAssets = componentLibPath + '/assets';
+const libDistAssets = componentLibRoot + '/dist/assets';
 
 // Simple confirmation log
-console.log(
-  `Using ${useLocalSrc ? "local source" : "npm package"} for component library`,
-);
+console.log(`Using ${useLocalSrc ? 'local source' : 'npm package'} for component library`);
 if (useLocalSrc) {
-  console.log(`Source path: ${libSrc}`);
-  console.log(`Assets path: ${libDistAssets}`);
-} else if (!libSrc) {
-  console.log(`⚠️ Missing LIB_SRC_PATH - add it to .env file`);
+	console.log(`Source path: ${libSrc}`);
+	console.log(`Source assets path: ${libSrcAssets}`);
+	console.log(`Dist assets path: ${libDistAssets}`);
+	if (!libSrc) {
+		console.log(`⚠️ Missing LIB_SRC_PATH - add it to .env file`);
+	} else if (!componentLibPath.includes('src/lib')) {
+		console.log(`⚠️ LIB_SRC_PATH should include 'src/lib' - current path: ${componentLibPath}`);
+	}
 }
 
 export default defineConfig({
-  plugins: [tailwindcss(), sveltekit()],
-  // Alias to local component library if using local src
-  resolve: {
-    alias: useLocalSrc
-      ? {
-          "@communitiesuk/svelte-component-library": libSrc,
-        }
-      : {},
-  },
-  // Only allow and watch src if both paths are set
-  server: useLocalSrc
-    ? {
-        fs: {
-          allow: [libSrc, libDistAssets].filter(Boolean),
-        },
-        watch: {
-          include: [libSrc + "/**"],
-        },
-      }
-    : {},
-  ssr: {
-    noExternal: ["svelte-maplibre", "@communitiesuk/svelte-component-library"],
-  },
-  optimizeDeps: {
-    exclude: ["@communitiesuk/svelte-component-library"],
-  },
-  build: {
-    commonjsOptions: {
-      include: [
-        /node_modules/,
-        ...(useLocalSrc ? [/oflog_svelte_component_library/] : []),
-      ],
-    },
-  },
+	plugins: [tailwindcss(), sveltekit()],
+	// Alias to local component library if using local src
+	resolve: {
+		alias: useLocalSrc
+			? {
+				'@communitiesuk/svelte-component-library': libSrc
+			}
+			: {}
+	},
+	// Server configuration - allow linked component library assets
+	server: {
+		fs: {
+			allow: [libSrcAssets, libDistAssets].filter(Boolean)
+		},
+		...(useLocalSrc ? {
+			watch: {
+				include: [libSrc + '/**']
+			}
+		} : {})
+	},
+	ssr: {
+		noExternal: ['svelte-maplibre', '@communitiesuk/svelte-component-library']
+	},
+	optimizeDeps: {
+		exclude: ['@communitiesuk/svelte-component-library']
+	},
+	build: {
+		commonjsOptions: {
+			include: [
+				/node_modules/,
+				...(useLocalSrc ? [/oflog_svelte_component_library/] : [])
+			]
+		}
+	},
+	test: {
+		projects: [
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'client',
+					environment: 'browser',
+					browser: {
+						enabled: true,
+						provider: 'playwright',
+						instances: [{ browser: 'chromium' }]
+					},
+					include: ['src/**/*.svelte.{test,spec}.{js,ts}'],
+					exclude: ['src/lib/server/**'],
+					setupFiles: ['./vitest-setup-client.ts']
+				}
+			},
+			{
+				extends: './vite.config.ts',
+				test: {
+					name: 'server',
+					environment: 'node',
+					include: ['src/**/*.{test,spec}.{js,ts}'],
+					exclude: ['src/**/*.svelte.{test,spec}.{js,ts}']
+				}
+			}
+		]
+	}
 });
 ```
 

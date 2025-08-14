@@ -2,7 +2,7 @@
 
 [Npm_link_setup-part-1](./Npm_link_setup-part-1.md) provides instructions for navigating permission issues when setting up npm link.
 
-Once you have npm link set up to link our library and your app, by default it will link to the packaged version of our library.
+Once you have set up `npm link` to connect the **library** (the component library you are developing) and your **app** (the project consuming the library), by default your app will use the packaged (built) version of the library. This means your app imports the compiled files from the library's `dist` folder, not the raw source files. The steps below show how to switch between using the library's source files and the built package for development.
 
 Instead of creating separate branches for different entry points, we can use environment variables to dynamically configure our app to use either the library's source files (for iterative development) or the built dist folder (for intermediate testing).
 
@@ -31,6 +31,15 @@ The `./src/*` and `./src/lib/*` entries allow your app to import files directly 
 
 ### Step 2: Install required dependencies in your app
 
+In your **consuming app**, install the following development dependencies:
+
+```bash
+npm install --save-dev @types/node cross-env
+```
+
+These packages are needed for environment variable support (`cross-env`) and TypeScript compatibility (`@types/node`).  
+Make sure you run this command in your consuming app, **not** in the Svelte Component Library.
+
 Add the following devDependencies to your app's `package.json`:
 
 ```bash
@@ -40,6 +49,10 @@ npm install --save-dev @types/node cross-env
 ### Step 3: Update your app's package.json scripts
 
 Add the following scripts to your app's `package.json`:
+
+> **Note:**  
+> Perform this setup once when initially configuring your project.  
+> Commit these changes to your main branch so that all future branches inherit the configuration automatically.
 
 ```json
 "scripts": {
@@ -53,9 +66,9 @@ Add the following scripts to your app's `package.json`:
 - `dev`: Uses the built library (dist folder) or published npm package
 - `dev-src`: Uses the library's source files for live development with hot reload
 
-### Step 4: Configure your app's vite.config.js
+### Step 4: Configure your app's vite.config.ts
 
-Replace everything in your vite.config.js with the following code:
+Replace everything in your vite.config.ts with the following code:
 
 ```js
 // @ts-nocheck
@@ -139,7 +152,7 @@ export default defineConfig({
 				test: {
 					name: 'client',
 					environment: 'browser',
-					browser: {
+          browser: {
 						enabled: true,
 						provider: 'playwright',
 						instances: [{ browser: 'chromium' }]
@@ -166,16 +179,11 @@ export default defineConfig({
 **Key improvements in this configuration:**
 
 - Uses `loadEnv()` to properly load `LIB_SRC_PATH` from `.env` file
-- Automatically determines whether to use source or built mode based on presence of `LIB_SRC_PATH`
+- Automatically determines whether to use source or built mode based on presence of `LIB_SRC` cmd line env variable
 - Automatically infers the assets path from the source path
 - Includes helpful console logging to confirm which mode is being used
 - Better error handling with path filtering using `.filter(Boolean)`
 - Cleaner logic with the `useLocalSrc` boolean variable
-
-**How it works:**
-
-- If `LIB_SRC_PATH` is set in `.env`: Uses library source files for live development
-- If `LIB_SRC_PATH` is not set: Uses built library or npm package
 
 ### Step 5: Set up environment variables
 
@@ -185,7 +193,7 @@ For team collaboration, create a `.env` file in your app's root directory:
 LIB_SRC_PATH=/absolute/path/to/your/oflog_svelte_component_library/src/lib
 ```
 
-Replace the path with the actual location (absolute path) of the component library on your PC. Each team member can set their own path in their local `.env` file.
+Replace the path with the actual location (absolute path) of the component library on your PC. Each team member must set their own path in their local `.env` file.
 
 ### Step 6: Test the setup
 
@@ -244,10 +252,10 @@ Replace the path with the actual location (absolute path) of the component libra
 
 ## Troubleshooting
 
-- **Font loading issues:** The config includes `libDistAssets` in the Vite allow list to serve font files
-- **Path issues:** Use absolute paths in `LIB_SRC_PATH` environment variable
+- **Font loading issues:** The config includes `libDistAssets` and `libSrcAssets` in the Vite allow list to serve font files
+- **Path issues:** Use absolute paths in `LIB_SRC_PATH` environment variable without quotation marks
 - **Import errors:** Always import from the package root (`import { Component } from '@communitiesuk/svelte-component-library'`) rather than deep imports
-- **Node module export errors:** If you encounter errors related to Node module exports when linking the component library repo (the one you are linking from) and run the following commands in its directory:
+- **Node module export errors:** If you encounter errors related to Node module exports when linking the component library repo (the one you are linking from) and run the following commands in its directory before re-attempting an npm link:
 
   ```bash
   npm uninstall node

@@ -32,15 +32,11 @@
     ["Income", 2],
     ["Living Environment", 5],
     ["Barriers to Housing & Services", 1],
-    ["Living Environment", 5],
-    ["Income Deprivation Affecting Children", 1],
-    ["Income Deprivation Affecting Older People", 2],
+    ["Employment", 3],
+    ["Education", 7],
+    ["Health", 6],
+    ["Crime", 6],
   ]);
-
-  // ["Employment", 3],
-  //   ["Education", 7],
-  //   ["Health", 6],
-  //   ["Crime", 6],
 </script>
 
 <div>
@@ -68,7 +64,7 @@
     <PositionChart value="7" min="1" max="10" label="Education" showAxis={true}
     ></PositionChart>
   </div>
-  <!-- <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock> -->
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example2()}
@@ -97,11 +93,12 @@
       <PositionChartAxis></PositionChartAxis>
     </div>
   </div>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example3()}
   <div class="p-5 bg-white">
     <PositionChart value="7" min="1" max="10" showAxis={true}></PositionChart>
   </div>
-  <!-- <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock> -->
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
 {/snippet}

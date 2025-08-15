@@ -7,7 +7,6 @@
     min = undefined,
     max = undefined,
     label = undefined,
-    componentWidth = $bindable(500),
     showAxis = true,
     chartWidth = $bindable(500),
     stacked = false,

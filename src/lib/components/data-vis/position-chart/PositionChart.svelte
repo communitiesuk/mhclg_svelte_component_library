@@ -11,7 +11,7 @@
     showAxis = true,
     chartWidth = $bindable(500),
     stacked = false,
-    numberOfRows = 1,
+    numberOfPositionCharts = 1,
     chartHeight = 24,
   } = $props();
 
@@ -47,7 +47,7 @@
 <div
   class={label ? "grid-container" : "chart-and-axis"}
   class:stacked={stacked === true}
-  style=" --rows: {numberOfRows + 1};"
+  style=" --rows: {numberOfPositionCharts + 1};"
 >
   {#if label}
     <p class="label">{label}</p>

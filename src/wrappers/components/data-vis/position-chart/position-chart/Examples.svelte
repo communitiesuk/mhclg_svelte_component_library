@@ -92,7 +92,7 @@
           max="10"
           label={item[0]}
           stacked={true}
-          numberOfRows={dummyData.length}
+          numberOfPositionCharts={dummyData.length}
           showAxis={false}
         ></PositionChart>
       {/each}

@@ -296,11 +296,18 @@ Replace the path with the actual location (absolute path) of the component libra
 - **Font loading issues:** The config includes `libDistAssets` and `libSrcAssets` in the Vite allow list to serve font files
 - **Path issues:** Use absolute paths in `LIB_SRC_PATH` environment variable without quotation marks
 - **Import errors:** Always import from the package root (`import { Component } from '@communitiesuk/svelte-component-library'`) rather than deep imports
-- **Node module export errors:** If you encounter errors related to Node module exports when linking the component library repo (the one you are linking from) and run the following commands in its directory before re-attempting an npm link:
+- **Node module export errors:** If you encounter errors related to Node module exports when linking the component library repo (the one you are linking from), check if `node` or `npm` are listed as dependencies in your library's `package.json`. These should **not** be dependencies. If they are present, remove them by running:
 
   ```bash
   npm uninstall node
   npm uninstall npm
   ```
 
-  This can resolve issues caused by accidentally installed `node` or `npm` as dependencies in the library, which can break module resolution when linking.
+  > **Why this matters:**  
+  > `node` and `npm` are runtime tools, not libraries to be imported by your code. Including them as dependencies causes npm to install them inside your `node_modules` folder, which can confuse Node's module resolution algorithm.  
+  > 
+  > **Module resolution** is the process Node uses to find and load modules when you use `require()` or `import`. If `node` or `npm` are present in your `node_modules`, Node may try to load them as packages instead of using the system binaries, leading to unexpected errors—especially when using `npm link`, which relies on correct resolution of your library's exports.  
+  > 
+  > **In summary:** Never add `node` or `npm` as dependencies in your library. Their presence can break module resolution, cause export errors, and prevent your linked library from working as expected.
+
+  After uninstalling, try linking again.

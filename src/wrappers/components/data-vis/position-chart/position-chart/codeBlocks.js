@@ -9,6 +9,13 @@ export const codeBlock1 = `
 export const codeBlock2 = `
     <script>
       import { PositionChart } from '@communitiesuk/svelte-component-library';
+    </script>
+
+    <PositionChart value="7" min="1" max="10" showAxis={true}></PositionChart>`;
+
+export const codeBlock3 = `
+    <script>
+      import { PositionChart } from '@communitiesuk/svelte-component-library';
       import { PositionChartAxis } from '@communitiesuk/svelte-component-library';
     </script>
 
@@ -35,10 +42,3 @@ export const codeBlock2 = `
       <div class="empty-div"></div>
       <PositionChartAxis></PositionChartAxis>
     </div>`;
-
-export const codeBlock3 = `
-    <script>
-      import { PositionChart } from '@communitiesuk/svelte-component-library';
-    </script>
-
-    <PositionChart value="7" min="1" max="10" showAxis={true}></PositionChart>`;

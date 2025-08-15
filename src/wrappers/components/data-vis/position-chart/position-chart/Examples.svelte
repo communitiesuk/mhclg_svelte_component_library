@@ -10,17 +10,17 @@
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - single position chart",
+      heading: "1. Example 1 - single position chart with axis and label",
       content: Example1,
     },
     {
       id: "2",
-      heading: "2. Example 2 - stacking multiple position charts",
+      heading: "2. Example 2 - single position chart with axis but no label",
       content: Example2,
     },
     {
       id: "3",
-      heading: "3. Example 3 - single chart with no label",
+      heading: "3. Example 3 - stacked position chart",
       content: Example3,
     },
   ];
@@ -69,6 +69,13 @@
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
+    <PositionChart value="7" min="1" max="10" showAxis={true}></PositionChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example3()}
+  <div class="p-5 bg-white">
     <div
       class="grid"
       style="display: grid;
@@ -92,13 +99,6 @@
       <div class="empty-div"></div>
       <PositionChartAxis></PositionChartAxis>
     </div>
-  </div>
-  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
-{/snippet}
-
-{#snippet Example3()}
-  <div class="p-5 bg-white">
-    <PositionChart value="7" min="1" max="10" showAxis={true}></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
 {/snippet}

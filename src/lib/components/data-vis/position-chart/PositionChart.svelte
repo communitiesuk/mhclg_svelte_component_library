@@ -2,7 +2,6 @@
   import { scaleLinear } from "d3-scale";
   import PositionChartAxis from "./PositionChartAxis.svelte";
   let {
-    componentNameProp = undefined,
     value = undefined,
     min = undefined,
     max = undefined,

@@ -8,24 +8,27 @@
     max = undefined,
     label = undefined,
     componentWidth = $bindable(500),
-    showAxis = undefined,
+    showAxis = true,
     chartWidth = $bindable(500),
     stacked = false,
     numberOfRows = 1,
+    chartHeight = 24,
   } = $props();
 
   const range = Array.from({ length: 10 }, (_, i) => i);
 
-  let markerRadius = $derived(chartWidth / 40);
+  // the 'chart' is the bar and the marker - its height is a prop and its width is binded to clientWidth
 
+  // the 'marker' is the circle
+  let markerRadius = $derived(chartHeight / 2);
+
+  // the 'bar' is the 10 rectangles side by side
   let barWidth = $derived(chartWidth - markerRadius * 2);
+  let barHeight = $derived((chartHeight * 5) / 6);
 
   let xFunction = $derived(
     scaleLinear().domain([min, max]).range([0, barWidth]),
   );
-
-  let barHeight = 20;
-  let chartHeight = barHeight * 1.5;
 
   const colorScale = [
     "#090C50",
@@ -39,17 +42,10 @@
     "#B6D89F",
     "#D2E49D",
   ];
-  $inspect({ numberOfRows });
 </script>
 
-{#snippet propNameAndValue(marginTW, paddingTW, text)}
-  <span class="bg-slate-100 inline-block italic {marginTW} {paddingTW} rounded"
-    >{text}</span
-  >
-{/snippet}
-
 <div
-  class={label ? "grid-container" : "bar-and-axis-container"}
+  class={label ? "grid-container" : "chart-and-axis"}
   class:stacked={stacked === true}
   style=" --rows: {numberOfRows + 1};"
 >
@@ -58,8 +54,8 @@
   {/if}
 
   <div
-    class="bar"
-    style="height: {barHeight * 1.5}px"
+    class="chart"
+    style="height: {chartHeight}px"
     bind:clientWidth={chartWidth}
   >
     <svg width={chartWidth} height={chartHeight}>
@@ -74,22 +70,16 @@
           ></rect></g
         >{/each}
       <g
-        transform="translate({xFunction(value) + markerRadius},{(chartHeight -
-          barHeight) /
+        transform="translate({xFunction(value) + markerRadius},{chartHeight /
           2})"
-        ><circle
-          r={markerRadius}
-          cx="0"
-          cy={barHeight / 2}
-          fill="#FFB400"
-          stroke="white"
+        ><circle r={markerRadius} cx="0" cy="0" fill="#FFB400" stroke="white"
         ></circle></g
       >
     </svg>
   </div>
 
   {#if showAxis === true}
-    <div class="axis-component">
+    <div class="axis">
       <PositionChartAxis {markerRadius} {barWidth}></PositionChartAxis>
     </div>
   {/if}
@@ -107,20 +97,20 @@
   .grid-container.stacked {
     display: contents;
   }
-  .bar-and-axis-container {
-    display: flex;
-    flex-direction: column;
-  }
   .label {
     text-align: right;
     margin: 0;
   }
-  .bar {
+  .chart-and-axis {
+    display: flex;
+    flex-direction: column;
+  }
+  .chart {
     display: flex;
     justify-content: center;
     min-width: 0;
   }
-  .axis-component {
+  .axis {
     grid-row: var(--rows);
     grid-column: 2;
   }

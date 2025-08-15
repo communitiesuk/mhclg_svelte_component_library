@@ -159,36 +159,6 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "data",
-        category: "data",
-        propType: "fixed",
-        value: data.deprivationDomainData,
-      },
-      {
-        name: "lsoa",
-        category: "Input props",
-        options: [
-          "City of London 001A",
-          "City of London 001B",
-          "City of London 001C",
-          "City of London 001E",
-        ],
-      },
-      {
-        name: "domain",
-        category: "Input props",
-        options: [
-          "IMD_rank",
-          "income_rank",
-          "employment_rank",
-          "crime_rank",
-          "environment_rank",
-          "housing_rank",
-          "health_rank",
-          "education_rank",
-        ],
-      },
-      {
         name: "componentNameProp",
         category: "Input props",
         propType: "fixed",
@@ -202,7 +172,7 @@
       {
         name: "value",
         category: "Input props",
-        value: 9,
+        value: 3,
       },
       {
         name: "min",
@@ -218,6 +188,11 @@
         name: "label",
         category: "Input props",
         value: `Employment`,
+      },
+      {
+        name: "chartHeight",
+        category: "Input props",
+        value: 24,
       },
     ]),
   );

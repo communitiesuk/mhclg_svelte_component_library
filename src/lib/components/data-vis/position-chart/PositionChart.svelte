@@ -72,7 +72,7 @@
       <g
         transform="translate({xFunction(value) + markerRadius},{chartHeight /
           2})"
-        ><circle r={markerRadius} cx="0" cy="0" fill="#FFB400" stroke="white"
+        ><circle r={markerRadius} cx="0" cy="0" fill="#CA357C" stroke="white"
         ></circle></g
       >
     </svg>

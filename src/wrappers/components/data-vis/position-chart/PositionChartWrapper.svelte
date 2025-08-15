@@ -47,11 +47,11 @@
    *
    */
   let descriptionArray = [
-    "This component renders a horizontal bar chart with a highlighted marker to visually represent a single value within a defined range. The bar is segmented into ten color-coded bands, each representing a decile, but plots the marker on a continuous scale. The marker is positioned using a linear scale and can optionally be accompanied by an axis and label for added clarity.",
+    "This component renders a horizontal bar with a marker to visually represent a single value within a defined range. The bar has ten color-coded segments, each representing a decile, but the marker is plotted on a continuous scale using a linear function. The user can include an axis or label.",
   ];
 
   let contextArray = [
-    "Use this component when you want to visually communicate where a value sits within a distribution. Use the stacked version of the component when you want to compare values from similar distributions.",
+    "Use this component to show where a value sits within a range. Use the stacked version of the component when you want to compare values.",
   ];
 
   let detailsArray = [
@@ -159,40 +159,42 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
         name: "showAxis",
-        category: "Input props",
+        category: "Display",
         value: true,
+        description: "Whether to display an axis. Boolean.",
       },
       {
         name: "value",
-        category: "Input props",
+        category: "Data",
         value: 3,
+        description: "The numerical value to be plotted.",
       },
       {
         name: "min",
-        category: "Input props",
+        category: "Data",
         value: 0,
+        description: "The minimum value for the scale.",
       },
       {
         name: "max",
-        category: "Input props",
+        category: "Data",
         value: 10,
+        description: "The maximum value for the scale.",
       },
       {
         name: "label",
-        category: "Input props",
-        value: `Employment`,
+        category: "Display",
+        value: "Label",
+        description:
+          "Text label to display alongside the chart. If specified, the component uses a grid container, otherwise it uses a flex container.",
       },
       {
         name: "chartHeight",
-        category: "Input props",
+        category: "Display",
         value: 24,
+        description:
+          "The height of the chart (which is made up of the bar and the marker)",
       },
     ]),
   );

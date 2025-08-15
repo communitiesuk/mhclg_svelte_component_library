@@ -3,23 +3,33 @@ export const codeBlock1 = `
       import { PositionChart } from '@communitiesuk/svelte-component-library';
     </script>
 
-    <PositionChart value="7" min="1" max="10" label="Education" showAxis={true}
-    ></PositionChart>`;
+    <PositionChart value="7" min="0" max="10" label="Education"></PositionChart>`;
 
 export const codeBlock2 = `
     <script>
       import { PositionChart } from '@communitiesuk/svelte-component-library';
     </script>
 
-    <PositionChart value="7" min="1" max="10" showAxis={true}></PositionChart>`;
+    <PositionChart value="7" min="0" max="10"></PositionChart>`;
 
 export const codeBlock3 = `
     <script>
       import { PositionChart } from '@communitiesuk/svelte-component-library';
-      import { PositionChartAxis } from '@communitiesuk/svelte-component-library';
+
+    let dummyData = $state([
+      ["Overall", 3],
+      ["Income", 2.5],
+      ["Living Environment", 5],
+      ["Barriers to Housing & Services", 1],
+      ["Employment", 3],
+      ["Education", 7],
+      ["Health", 6],
+      ["Crime", 6],
+    ])
     </script>
 
-        <div
+
+    <div
       class="grid"
       style="display: grid;
     grid-template-columns: minmax(100px, 30%) 1fr;
@@ -36,9 +46,8 @@ export const codeBlock3 = `
           label={item[0]}
           stacked={true}
           numberOfPositionCharts={dummyData.length}
-          showAxis={false}
+          showAxis={dummyData.length == i + 1}
         ></PositionChart>
       {/each}
-      <div class="empty-div"></div>
-      <PositionChartAxis></PositionChartAxis>
-    </div>`;
+    </div>
+  </div>`;

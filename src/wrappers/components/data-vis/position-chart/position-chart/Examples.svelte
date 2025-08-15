@@ -61,15 +61,14 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <PositionChart value="7" min="1" max="10" label="Education" showAxis={true}
-    ></PositionChart>
+    <PositionChart value="7" min="0" max="10" label="Education"></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
-    <PositionChart value="7" min="1" max="10" showAxis={true}></PositionChart>
+    <PositionChart value="7" min="0" max="10"></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
 {/snippet}
@@ -93,11 +92,9 @@
           label={item[0]}
           stacked={true}
           numberOfPositionCharts={dummyData.length}
-          showAxis={false}
+          showAxis={dummyData.length == i + 1}
         ></PositionChart>
       {/each}
-      <div class="empty-div"></div>
-      <PositionChartAxis></PositionChartAxis>
     </div>
   </div>
   <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>

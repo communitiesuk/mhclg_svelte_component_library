@@ -137,7 +137,7 @@
       label="Search UK postcodes"
       hint="Start typing a postcode"
       multiple={true}
-      source_url="https://api.postcodes.io/postcodes"
+      source_url="https://api.postcodes.io/postcodes/"
       source_key="result"
       source_property="postcode"
       choicesOptions={{}}

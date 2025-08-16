@@ -278,6 +278,8 @@
         ? baseNoChoicesText
         : tTooShort(minLength);
 
+      const hasApiConfig = source_url && source_key;
+
       // Initialize Choices.js with GOV.UK settings
       const defaultOptions = {
         allowHTML,
@@ -289,6 +291,7 @@
         labelId: id + "-label " + ariaDescribedBy,
         // Link minLength behaviour to Choices
         searchFloor: minLength,
+        searchChoices: !hasApiConfig,
         noChoicesText: initialNoChoicesText,
         // Prevent duplicate selections
         duplicateItemsAllowed: false,
@@ -394,17 +397,19 @@
                   (choice) => !selectedValues.has(String(choice.value)),
                 );
 
-                choicesInstance.clearChoices();
-
                 if (filteredApiChoices.length === 0) {
-                  // No new results from API (either no results or all already selected)
-                  const hasUnselectedResults =
-                    apiChoices.length > filteredApiChoices.length;
-                  choicesInstance.config.noChoicesText = hasUnselectedResults
-                    ? baseNoChoicesText
-                    : "No results found";
+                  // No new results from API. Determine the correct message.
+                  if (apiChoices.length === 0) {
+                    // API returned no results for the query.
+                    choicesInstance.config.noChoicesText = "No results found";
+                  } else {
+                    // API returned results, but they are all already selected.
+                    choicesInstance.config.noChoicesText = baseNoChoicesText;
+                  }
+                  // Clear the list and show the message.
+                  choicesInstance.setChoices([], "value", "label", true);
                 } else {
-                  // Have new results from API - let Choices.js handle "no choices" when all are selected
+                  // We have new, unselected results to show.
                   choicesInstance.config.noChoicesText = baseNoChoicesText;
                   choicesInstance.setChoices(
                     filteredApiChoices.map((c) => ({
@@ -472,7 +477,7 @@
                 }
               }
             }
-          }, 300);
+          }, 0);
         });
       }
     } catch (error) {

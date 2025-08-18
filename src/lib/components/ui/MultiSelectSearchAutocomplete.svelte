@@ -1045,7 +1045,7 @@
   }
   :global(.gem-c-select-with-search .choices__input.choices__input--cloned) {
     margin: 0;
-    padding: 3px 0 3px 2px;
+    padding: 10px;
     border: none;
     box-shadow: none;
   }

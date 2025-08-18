@@ -23,6 +23,7 @@
     filterGeo,
     jenksBreaks,
     quantileBreaks,
+    computeBounds,
   } from "./mapUtils.js";
   import NonStandardControls from "./NonStandardControls.svelte";
   import { replaceState } from "$app/navigation";
@@ -415,6 +416,16 @@
         : undefined
       : undefined,
   );
+  $effect(() => {
+    if (areaCode && filteredGeoJsonData.features.length > 0) {
+      const bounds = computeBounds(filteredGeoJsonData, 0.2);
+      map?.setMaxBounds(bounds);
+    } else if (setMaxBounds && maxBoundsCoords) {
+      map?.setMaxBounds(convertToLngLatBounds(maxBoundsCoords));
+    } else {
+      map?.setMaxBounds(undefined);
+    }
+  });
 </script>
 
 <div style="position: relative; height: {mapHeight}px;">

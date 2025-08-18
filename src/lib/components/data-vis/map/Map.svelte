@@ -208,7 +208,7 @@
     })),
   );
 
-  const filteredTopo = {
+  const filteredTopo = $derived({
     ...fullTopo,
     objects: {
       [geoType]: {
@@ -227,7 +227,7 @@
         }),
       },
     },
-  };
+  });
 
   const geojsonData: FeatureCollection = $derived(
     topojson.feature(filteredTopo, filteredTopo.objects[geoType]),

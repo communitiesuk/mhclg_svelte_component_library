@@ -107,6 +107,7 @@
     borderColor = "#003300",
     labelSourceLayer = "place",
     externalData = null,
+    showLegend = false,
   }: {
     data: object[];
     paintObject?: object;
@@ -149,6 +150,7 @@
     setCustomPalette?: boolean;
     customBreaks?: number[];
     interactive?: boolean;
+    showLegend: boolean;
     onload?: (map: maplibregl.Map) => void;
     onerror?: (error: Partial<ErrorEvent>) => void;
     onclick?: (e: maplibregl.MapMouseEvent) => void;
@@ -572,15 +574,16 @@
     {/if}
   </MapLibre>
 </div>
-
-<div class="legend">
-  {#each legendItems as item}
-    <div class="legend-item">
-      <div class="legend-color" style="background-color: {item.color};"></div>
-      <span>{item.label}</span>
-    </div>
-  {/each}
-</div>
+{#if showLegend}
+  <div class="legend">
+    {#each legendItems as item}
+      <div class="legend-item">
+        <div class="legend-color" style="background-color: {item.color};"></div>
+        <span>{item.label}</span>
+      </div>
+    {/each}
+  </div>
+{/if}
 
 <style>
   :global(.maplibregl-ctrl-group button.reset-button) {

@@ -368,19 +368,6 @@
     return bounds;
   }
 
-  $effect(() => {
-    if (map && loaded && areaCode) {
-      const feature = geojsonData.features[0];
-      if (feature) {
-        const bounds = new LngLatBounds();
-        feature.geometry.coordinates.flat(2).forEach((coord) => {
-          bounds.extend(coord);
-        });
-        map.fitBounds(bounds, { padding: 20 });
-      }
-    }
-  });
-
   function zoomToArea(e) {
     if (clickToZoom) {
       let coordArray =

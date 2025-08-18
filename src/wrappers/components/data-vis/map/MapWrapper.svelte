@@ -436,6 +436,7 @@
         value: "ltla",
         options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
       },
+      { name: "areaCode", isProp: true, category: "Data", value: "E06000021" },
       {
         name: "year",
         isProp: true,

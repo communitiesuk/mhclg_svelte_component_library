@@ -99,6 +99,7 @@
     showLegend = true,
     legendSnippet = undefined,
     countries = ["england", "scotland"],
+    areaCode = "E06000024",
   }: {
     data: object[];
     countries?: string[];
@@ -165,6 +166,7 @@
     onstyleload?: (e: StyleLoadEvent) => void;
     onstyledata?: (e: maplibregl.MapStyleDataEvent) => void;
     onidle?: (e: maplibregl.MapLibreEvent) => void;
+    areaCode?: String;
   } = $props();
 
   let clickedArea = $state(null);
@@ -213,7 +215,14 @@
         ...fullTopo.objects[geoType],
         geometries: fullTopo.objects[geoType].geometries.filter((geom) => {
           const code = geom.properties.areacd;
-          if (!allowedPrefixes.length) return true; // No filter, keep all
+
+          // ✅ If areaCode is passed, show only that one
+          if (areaCode) {
+            return code === areaCode;
+          }
+
+          // Otherwise filter by allowedPrefixes
+          if (!allowedPrefixes.length) return true;
           return allowedPrefixes.some((prefix) => code?.startsWith(prefix));
         }),
       },
@@ -358,6 +367,19 @@
 
     return bounds;
   }
+
+  $effect(() => {
+    if (map && loaded && areaCode) {
+      const feature = geojsonData.features[0];
+      if (feature) {
+        const bounds = new LngLatBounds();
+        feature.geometry.coordinates.flat(2).forEach((coord) => {
+          bounds.extend(coord);
+        });
+        map.fitBounds(bounds, { padding: 20 });
+      }
+    }
+  });
 
   function zoomToArea(e) {
     if (clickToZoom) {

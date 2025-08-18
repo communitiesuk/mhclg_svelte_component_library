@@ -166,11 +166,19 @@
         name: "fullWidthBorder",
         category: "UI Options",
         value: false,
+        description:
+          "Enable a full-width bottom border. Note: this is only visible when the `govuk-template--rebranded` class is NOT applied to the body.",
       },
       {
         name: "homepageUrl",
         category: "UI Options",
         value: "/",
+      },
+      {
+        name: "rebrand",
+        category: "UI Options",
+        value: true,
+        description: "Enable the new rebranded GOV.UK logo and styling",
       },
     ]),
   );

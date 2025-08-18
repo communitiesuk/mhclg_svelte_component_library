@@ -1,7 +1,7 @@
 import type {
   SideNavItem,
   SideNavGroup,
-} from "$lib/components/layout/service-navigation-nested-mobile/SideNav.svelte";
+} from "../components/layout/service-navigation-nested-mobile/SideNav.svelte";
 import type { ComponentItem } from "../../routes/+layout.server"; // Adjust path as needed if +layout.server.ts is the source
 import { forceWrapAtThirdCapital } from "./text-string-conversion/textStringConversion.js";
 

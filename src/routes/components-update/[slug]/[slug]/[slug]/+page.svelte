@@ -27,19 +27,26 @@
   let Component = $state();
   let errorImportingComponent = $state();
 
+  const modules = import.meta.glob(
+    "/src/wrappers/components/*/*/*Wrapper.svelte",
+  );
+
   $effect(() => {
-    (async () => {
-      try {
-        const module = await import(
-          /* @vite-ignore */
-          `/src/wrappers/components/${folder}/${subFolder}/${wrapper}Wrapper.svelte`
-        );
-        Component = module.default;
-      } catch (error) {
-        errorImportingComponent = true;
-        console.log(error);
-      }
-    })();
+    const path = `/src/wrappers/components/${folder}/${subFolder}/${wrapper}Wrapper.svelte`;
+    const importModule = modules[path];
+    if (importModule) {
+      importModule()
+        .then((mod) => {
+          Component = mod.default;
+        })
+        .catch((error) => {
+          errorImportingComponent = true;
+          console.error(error);
+        });
+    } else {
+      errorImportingComponent = true;
+      console.error(`Module not found: ${path}`);
+    }
   });
 
   // $inspect(Component);

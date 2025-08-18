@@ -2,6 +2,7 @@
   import {
     MapLibre,
     GeoJSON,
+    VectorTileSource,
     FillLayer,
     LineLayer,
     zoomTransition,
@@ -23,6 +24,8 @@
     filterGeo,
     jenksBreaks,
     quantileBreaks,
+    createPaintObjectFromMetric,
+    extractVectorMetricValues,
   } from "./mapUtils.js";
   import NonStandardControls from "./NonStandardControls.svelte";
   import { replaceState } from "$app/navigation";
@@ -65,8 +68,8 @@
     hoverOpacity = 0.8,
     center = [-2.5, 53],
     zoom = 5,
-    minZoom = undefined,
-    maxZoom = undefined,
+    minZoom = 6,
+    maxZoom = 14,
     maxBoundsCoords = [
       [-10, 49],
       [5, 60],
@@ -96,9 +99,18 @@
     onstyleload,
     onstyledata,
     onidle,
+    geoSource = "file",
+    tileSource = "http://localhost:8080/{z}/{x}/{y}.pbf",
+    geojsonPromoteId = "areanm",
+    vectorMetricProperty = "Index of Multiple Deprivation (IMD) Decile",
+    vectorLayerName = "LSOA",
+    borderColor = "#003300",
+    labelSourceLayer = "place",
+    externalData = null,
     showLegend = false,
   }: {
     data: object[];
+    paintObject?: object;
     customPalette?: object[];
     cooperativeGestures?: boolean;
     standardControls?: boolean;
@@ -161,7 +173,18 @@
     onstyleload?: (e: StyleLoadEvent) => void;
     onstyledata?: (e: maplibregl.MapStyleDataEvent) => void;
     onidle?: (e: maplibregl.MapLibreEvent) => void;
+    geoSource: "file" | "tiles" | "none";
+    tileSource?: string;
+    geojsonPromoteId?: string;
+    vectorMetricProperty?: string;
+    vectorLayerName?: string;
+    borderColor?: string;
+    labelSourceLayer?: string;
+    externalData?: object;
   } = $props();
+
+  const tileSourceId = "lsoas";
+  const promoteProperty = "LSOA21NM";
 
   let styleLookup = {
     "Carto-light":
@@ -201,8 +224,13 @@
       : colorbrewer[colorPalette][breakCount],
   );
 
-  let borderColor = "#003300";
+  let tooFewColors = $derived(fillColors.length < breakCount);
 
+  $effect(() => {
+    if (tooFewColors) {
+      console.warn("Too few colours for the number of breaks");
+    }
+  });
   let map: maplibregl.Map | undefined = $state();
 
   let loaded = $state(false);
@@ -247,10 +275,8 @@
 
     if (cooperativeGestures) {
       map?.cooperativeGestures.enable();
-      $inspect(cooperativeGestures);
     } else {
       map?.cooperativeGestures.disable();
-      $inspect(cooperativeGestures);
     }
 
     if (interactive) {
@@ -272,6 +298,9 @@
     }
 
     map?.setMaxBounds(bounds);
+
+    map?.setMaxZoom(maxZoom);
+    map?.setMinZoom(minZoom);
   });
 
   let vals = $derived(
@@ -284,6 +313,16 @@
       : breaksType == "quantile"
         ? quantileBreaks(vals, breakCount)
         : customBreaks,
+  );
+  let vectorPaintObject = $derived(
+    externalData != null
+      ? createPaintObjectFromMetric(metric, breaks, fillColors, fillOpacity)
+      : createPaintObjectFromMetric(
+          vectorMetricProperty,
+          breaks,
+          fillColors,
+          fillOpacity,
+        ),
   );
 
   let dataWithColor = $derived(
@@ -384,8 +423,6 @@
     {style}
     {center}
     {zoom}
-    {maxZoom}
-    {minZoom}
     standardControls={interactive && standardControls}
     {hash}
     {updateHash}
@@ -439,51 +476,100 @@
     {:else if !interactive}
       <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
     {/if}
-
-    <GeoJSON id="areas" data={merged} promoteId="areanm">
-      <FillLayer
-        paint={{
-          "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
-          "fill-opacity": changeOpacityOnHover
-            ? hoverStateFilter(fillOpacity, hoverOpacity)
-            : fillOpacity,
-        }}
-        beforeLayerType="symbol"
-        manageHoverState={interactive}
-        onclick={interactive ? (e) => zoomToArea(e) : undefined}
-        onmousemove={interactive
-          ? (e) => {
-              hoveredArea = e.features[0].id;
-              hoveredAreaData = e.features[0].properties.metric;
-              currentMousePosition = e.event.point;
-            }
-          : undefined}
-        onmouseleave={interactive
-          ? () => {
-              hoveredArea = null;
-              hoveredAreaData = null;
-            }
-          : undefined}
-      />
-      {#if showBorder}
-        <LineLayer
-          layout={{ "line-cap": "round", "line-join": "round" }}
+    {#if geoSource == "file"}
+      <GeoJSON id="areas" data={merged} promoteId={geojsonPromoteId}>
+        <FillLayer
+          id="main-fill-layer"
           paint={{
-            "line-color": hoverStateFilter(borderColor, "orange"),
-            "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
+            "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
+            "fill-opacity": changeOpacityOnHover
+              ? hoverStateFilter(fillOpacity, hoverOpacity)
+              : fillOpacity,
           }}
           beforeLayerType="symbol"
+          manageHoverState={interactive}
+          onclick={interactive ? (e) => zoomToArea(e) : undefined}
+          onmousemove={interactive
+            ? (e) => {
+                hoveredArea = e.features[0].id;
+                hoveredAreaData = e.features[0].properties.metric;
+                currentMousePosition = e.event.point;
+              }
+            : undefined}
+          onmouseleave={interactive
+            ? () => {
+                hoveredArea = null;
+                hoveredAreaData = null;
+              }
+            : undefined}
         />
-      {/if}
-    </GeoJSON>
+        {#if showBorder}
+          <LineLayer
+            id="border-layer"
+            layout={{ "line-cap": "round", "line-join": "round" }}
+            paint={{
+              "line-color": hoverStateFilter(borderColor, "orange"),
+              "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
+            }}
+            beforeLayerType="symbol"
+          />
+        {/if}
+      </GeoJSON>
+    {:else if geoSource == "tiles"}
+      <VectorTileSource
+        id={tileSourceId}
+        promoteId={promoteProperty}
+        tiles={[tileSource]}
+      >
+        <FillLayer
+          paint={vectorPaintObject}
+          sourceLayer={vectorLayerName}
+          onclick={interactive ? zoomToArea : undefined}
+          onmousemove={interactive
+            ? (e) => {
+                if (e.features?.[0]) {
+                  hoveredArea = e.features[0].id;
+                  hoveredAreaData =
+                    e.features[0].properties[vectorMetricProperty];
+                  currentMousePosition = e.event.point;
+                }
+              }
+            : undefined}
+          onmouseleave={interactive
+            ? () => {
+                hoveredArea = null;
+                hoveredAreaData = null;
+              }
+            : undefined}
+        />
+        {#if showBorder}
+          <LineLayer
+            layout={{ "line-cap": "round", "line-join": "round" }}
+            paint={{
+              "line-color": hoverStateFilter(borderColor, "orange"),
+              "line-width": zoomTransition(
+                minZoom ?? 3,
+                0,
+                maxZoom ?? 14,
+                maxBorderWidth,
+              ),
+            }}
+            beforeLayerType="symbol"
+            sourceLayer={vectorLayerName}
+          />
+        {/if}
+      </VectorTileSource>
+    {:else}
+      <p>No data</p>
+    {/if}
 
+    <!-- Important note: sourceLayer must match `-l` value from tippecanoe -->
     {#if interactive && tooltip}
       <Tooltip
         {currentMousePosition}
         {hoveredArea}
         {hoveredAreaData}
-        {year}
-        {metric}
+        metric={geoSource == "tiles" ? vectorMetricProperty : metric}
       />
     {/if}
   </MapLibre>

@@ -102,7 +102,7 @@
     countries = ["england", "scotland"],
     areaCode = "E06000024",
   }: {
-    data: object[];
+    data?: object[];
     countries?: string[];
     lengendSnippet?: string;
     showLegend?: boolean;
@@ -199,14 +199,18 @@
     breaksType == "custom" ? customBreaks.length : numberOfBreaks,
   );
 
-  let mapData = $derived(data?.filter((d) => d["year"] == year)[0]?.data);
+  let mapData = $derived(
+    data ? (data?.filter((d) => d["year"] == year)[0]?.data ?? []) : [],
+  );
 
   let filteredMapData = $derived(
-    mapData.map((el) => ({
-      areaCode: el.areaCode,
-      areaName: el.areaName,
-      metric: +el.data[metric],
-    })),
+    mapData && mapData.length
+      ? mapData.map((el) => ({
+          areaCode: el.areaCode,
+          areaName: el.areaName,
+          metric: +el.data[metric],
+        }))
+      : [],
   );
 
   const filteredTopo = $derived({
@@ -316,17 +320,20 @@
   });
 
   let vals = $derived(
-    filteredMapData.map((d) => d.metric).sort((a, b) => a - b),
+    filteredMapData.length
+      ? filteredMapData.map((d) => d.metric).sort((a, b) => a - b)
+      : [],
   );
 
   let breaks = $derived(
-    breaksType == "jenks"
-      ? jenksBreaks(vals, breakCount)
-      : breaksType == "quantile"
-        ? quantileBreaks(vals, breakCount)
-        : customBreaks,
+    !data
+      ? customBreaks
+      : breaksType == "jenks"
+        ? jenksBreaks(vals, breakCount)
+        : breaksType == "quantile"
+          ? quantileBreaks(vals, breakCount)
+          : customBreaks,
   );
-
   let dataWithColor = $derived(
     filteredMapData.map((d) => {
       return {

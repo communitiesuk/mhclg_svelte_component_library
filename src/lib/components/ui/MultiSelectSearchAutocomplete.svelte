@@ -59,7 +59,12 @@
     minLength = 0,
     tTooShort = (n: number) => `Enter ${n} or more characters for suggestions`,
 
-    ...attributes
+    // Custom styling props
+    choicesItemBackgroundColor = "#f3f2f1",
+    choicesItemBorderColor = "#b1b4b6",
+  choicesItemTextColor = "black",
+  ...attributes
+
   }: {
     id: string;
     name: string;
@@ -89,6 +94,9 @@
     sourceSelector?: (query: string, options: any[]) => "api" | "options";
     minLength?: number;
     tTooShort?: (n: number) => string;
+    choicesItemBackgroundColor?: string;
+    choicesItemBorderColor?: string;
+    choicesItemTextColor?: string;
   } & Omit<
     import("svelte/elements").HTMLSelectAttributes,
     | "id"
@@ -951,7 +959,7 @@
 
 <div
   class="gem-c-select-with-search"
-  style={`--cross-icon-url: url("${crossIconUrl}")`}
+  style={`--cross-icon-url: url("${crossIconUrl}"); --choices-item-bg-color: ${choicesItemBackgroundColor}; --choices-item-border-color: ${choicesItemBorderColor}; --choices-item-text-color: ${choicesItemTextColor};`}
 >
   {#snippet rightIcon()}
     <button
@@ -1723,9 +1731,9 @@
       .choices__list[aria-expanded]
       .choices__item--selectable.is-highlighted
   ) {
-    background-color: #1d70b8;
-    border-color: #1d70b8;
-    color: #fff;
+    background-color: var(--choices-item-bg-color, #1d70b8);
+    border-color: var(--choices-item-border-color, #1d70b8);
+    color: var(--choices-item-text-color, #fff);
     outline: none;
   }
   :global(.gem-c-select-with-search .choices__heading) {

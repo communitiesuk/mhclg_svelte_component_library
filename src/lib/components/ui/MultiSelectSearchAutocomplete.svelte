@@ -333,6 +333,14 @@
 
           // Store reference on the element for external access
           (selectElement as any).choices = choicesInstance;
+
+          // Restore focus to the main Choices container after reinitialization
+          setTimeout(() => {
+            if (choicesInstance?.containerOuter?.element) {
+              choicesInstance.containerOuter.element.focus();
+              console.log("🎯 Focus restored to Choices container");
+            }
+          }, 0);
         }
 
         console.log("✅ Restored grouped options structure");
@@ -492,6 +500,16 @@
           if (hasStaticOptions && choicesInstance) {
             resetToStaticChoices();
             console.log("🔄 Reset to static choices after selection");
+
+            // Restore focus to the main Choices container after reset
+            setTimeout(() => {
+              if (choicesInstance?.containerOuter?.element) {
+                choicesInstance.containerOuter.element.focus();
+                console.log(
+                  "🎯 Focus restored to Choices container after reset",
+                );
+              }
+            }, 0);
           }
         }, 0);
       });

@@ -992,6 +992,41 @@
     min-height: 46px; /* align baseline height to Search button */
   }
 
+  /* Add border-bottom to choices input with more specific selectors */
+  :global(
+    .gem-c-select-with-search .choices[data-type*="select-one"] .choices__input
+  ) {
+    border-bottom: 1px solid #ddd;
+    margin: 0;
+  }
+
+  /* Also target the cloned input that appears when dropdown is active */
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-one"]
+      .choices__input--cloned
+  ) {
+    border-bottom: 1px solid #ddd;
+  }
+
+  /* Target the input when dropdown is active */
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-one"].is-active
+      .choices__input
+  ) {
+    border-bottom: 1px solid #ddd;
+  }
+
+  /* Target the input when focused */
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-one"]
+      .choices__input:focus
+  ) {
+    border-bottom: 1px solid #ddd;
+  }
+
   :global(.govuk-label) {
     font-family: "GDS Transport", arial, sans-serif;
     -webkit-font-smoothing: antialiased;

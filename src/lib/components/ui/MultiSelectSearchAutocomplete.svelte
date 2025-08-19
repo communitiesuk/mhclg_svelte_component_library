@@ -1724,6 +1724,8 @@
     .gem-c-select-with-search .choices[data-type*="select-one"] .choices__inner
   ) {
     max-height: 46px;
+    display: flex;
+    align-items: center;
   }
 
   :global(

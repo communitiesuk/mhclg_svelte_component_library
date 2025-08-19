@@ -835,13 +835,12 @@
   }
   :global(.choices__list--single) {
     display: inline-block;
-    padding: 4px 16px 4px 4px;
+    padding: 0;
     width: 100%;
     border-color: transparent;
   }
   :global([dir="rtl"] .choices__list--single) {
-    padding-right: 4px;
-    padding-left: 16px;
+    padding: 0;
   }
   :global(.choices__list--single .choices__item) {
     width: 100%;
@@ -922,8 +921,11 @@
   :global(.choices__list--dropdown .choices__item),
   :global(.choices__list[aria-expanded] .choices__item) {
     position: relative;
-    padding: 10px;
+    padding: 12px 10px;
     font-size: 19px;
+    display: flex;
+    align-items: center;
+    min-height: 44px;
   }
   :global([dir="rtl"] .choices__list--dropdown .choices__item),
   :global([dir="rtl"] .choices__list[aria-expanded] .choices__item) {
@@ -937,6 +939,9 @@
       .choices__list[aria-expanded] .choices__item--selectable[data-select-text]
     ) {
       padding-right: 100px;
+      display: flex;
+      align-items: center;
+      min-height: 44px;
     }
     :global(
       .choices__list--dropdown
@@ -967,6 +972,9 @@
       text-align: right;
       padding-left: 100px;
       padding-right: 10px;
+      display: flex;
+      align-items: center;
+      min-height: 44px;
     }
     :global(
       [dir="rtl"]
@@ -1043,9 +1051,14 @@
     border: none;
     box-shadow: none;
   }
-  :global(.gem-c-select-with-search .choices__input.choices__input--cloned) {
+  :global(
+    .gem-c-select-with-search .choices__input.choices__input--cloned--single
+  ) {
     margin: 0;
-    padding: 10px;
+    /* For the cloned single-input variant we want no padding so the input lines up
+     exactly with the surrounding UI. Use !important to override Choices.js inline
+     styles if necessary. */
+    padding: 0;
     border: none;
     box-shadow: none;
   }
@@ -1174,7 +1187,11 @@
   :global(.gem-c-select-with-search .choices.is-open .choices__inner) {
     border: 2px solid #0b0c0c;
     min-height: 46px;
-    padding: 5px;
+    /* Remove the 4px offset added on focus/open which increases the visual
+     height and mis-centres the placeholder. Keep the min-height but reset
+     padding so content stays vertically centred. Use !important to override
+     Choices.js inline styles. */
+    padding: 0px;
     outline: 3px solid #fd0;
     outline-offset: 0;
     box-shadow: inset 0 0 0 2px #0b0c0c;
@@ -1257,8 +1274,73 @@
     cursor: default;
   }
 
-  .gem-c-select-with-search .choices.is-flipped .choices__list {
-    border-radius: 0;
-    border-width: 0p !important;
+  :global(.gem-c-select-with-search .choices__inner) {
+    padding: 0px;
+  }
+
+  /* Ensure consistent vertical centering for single-select items */
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-one"]
+      .choices__list--single
+  ) {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0 12px;
+  }
+
+  /* Set max height for single-select choices__inner */
+  :global(
+    .gem-c-select-with-search .choices[data-type*="select-one"] .choices__inner
+  ) {
+    max-height: 46px;
+  }
+
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-one"]
+      .choices__list--single
+      .choices__item
+  ) {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-height: 44px;
+  }
+
+  /* Ensure consistent dropdown item heights */
+  :global(.gem-c-select-with-search .choices__list--dropdown .choices__item),
+  :global(
+    .gem-c-select-with-search .choices__list[aria-expanded] .choices__item
+  ) {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    padding-left: 10px;
+  }
+
+  /* Target the actual dropdown items that appear in the dropdown list */
+  :global(
+    .gem-c-select-with-search
+      .choices__list--dropdown
+      .choices__list
+      .choices__item
+  ) {
+    padding-left: 10px;
+  }
+
+  /* Also target the base Choices.js dropdown items to ensure consistency */
+  :global(.gem-c-select-with-search .choices__list--dropdown .choices__item) {
+    padding-left: 10px;
+  }
+
+  /* Add padding to multi-select choices__inner for proper spacing */
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-multiple"]
+      .choices__inner
+  ) {
+    padding: 4px 8px;
   }
 </style>

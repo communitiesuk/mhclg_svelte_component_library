@@ -63,6 +63,7 @@
     choicesItemBackgroundColor = "#f3f2f1",
     choicesItemBorderColor = "#b1b4b6",
     choicesItemTextColor = "black",
+    choicesItemDividerPadding = "10px",
     ...attributes
   }: {
     id: string;
@@ -96,6 +97,7 @@
     choicesItemBackgroundColor?: string;
     choicesItemBorderColor?: string;
     choicesItemTextColor?: string;
+    choicesItemDividerPadding?: string;
   } & Omit<
     import("svelte/elements").HTMLSelectAttributes,
     | "id"
@@ -958,7 +960,7 @@
 
 <div
   class="gem-c-select-with-search"
-  style={`--cross-icon-url: url("${crossIconUrl}"); --choices-item-bg-color: ${choicesItemBackgroundColor}; --choices-item-border-color: ${choicesItemBorderColor}; --choices-item-text-color: ${choicesItemTextColor};`}
+  style={`--cross-icon-url: url("${crossIconUrl}"); --choices-item-bg-color: ${choicesItemBackgroundColor}; --choices-item-border-color: ${choicesItemBorderColor}; --choices-item-text-color: ${choicesItemTextColor}; --choices-item-divider-padding: ${choicesItemDividerPadding};`}
 >
   {#snippet rightIcon()}
     <button
@@ -1703,23 +1705,48 @@
     border-top-width: 2px;
     border-bottom-width: 0;
   }
+
+  /* Remove the full-width divider and add pseudo-element dividers */
   :global(.gem-c-select-with-search .choices__list--dropdown .choices__item),
   :global(
     .gem-c-select-with-search .choices__list[aria-expanded] .choices__item
   ) {
-    position: relative;
-    border-bottom: 1px solid #b1b4b6;
+    border-bottom: none;
+    position: relative; /* for the ::after divider */
   }
+
+  /* Inset divider with configurable padding */
   :global(
-    .gem-c-select-with-search .choices__list--dropdown .choices__item:last-child
+    .gem-c-select-with-search .choices__list--dropdown .choices__item::after
   ),
   :global(
     .gem-c-select-with-search
       .choices__list[aria-expanded]
-      .choices__item:last-child
+      .choices__item::after
   ) {
-    border-bottom: 0;
+    content: "";
+    position: absolute;
+    left: var(--choices-item-divider-padding, 15px);
+    right: var(--choices-item-divider-padding, 15px);
+    bottom: 0;
+    height: 1px;
+    background: var(--choices-item-border-color, #b1b4b6);
   }
+
+  /* No divider on the last item */
+  :global(
+    .gem-c-select-with-search
+      .choices__list--dropdown
+      .choices__item:last-child::after
+  ),
+  :global(
+    .gem-c-select-with-search
+      .choices__list[aria-expanded]
+      .choices__item:last-child::after
+  ) {
+    display: none;
+  }
+
   :global(
     .gem-c-select-with-search
       .choices__list--dropdown

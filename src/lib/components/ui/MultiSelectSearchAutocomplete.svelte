@@ -62,9 +62,8 @@
     // Custom styling props
     choicesItemBackgroundColor = "#f3f2f1",
     choicesItemBorderColor = "#b1b4b6",
-  choicesItemTextColor = "black",
-  ...attributes
-
+    choicesItemTextColor = "black",
+    ...attributes
   }: {
     id: string;
     name: string;

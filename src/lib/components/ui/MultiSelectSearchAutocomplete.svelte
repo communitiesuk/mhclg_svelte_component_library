@@ -312,7 +312,8 @@
           choicesInstance = new Choices(selectElement, {
             allowHTML,
             searchPlaceholderValue: searchPlaceholder,
-            shouldSort,
+            shouldSort: false, // Force false to preserve placeholder position
+            placeholder: true, // Ensure placeholder option is treated as placeholder
             itemSelectText: "",
             searchResultLimit,
             removeItemButton: computedRemoveItemButton,
@@ -361,12 +362,30 @@
       });
 
       choicesInstance.clearChoices();
-      choicesInstance.setChoices(
-        filteredStaticChoices.map((c) => ({
+
+      // Ensure placeholder is first in the choices array
+      const choicesWithPlaceholder = [
+        // Add placeholder option first if it's a single select
+        ...(multiple
+          ? []
+          : [
+              {
+                value: "",
+                label: computedPlaceholderText,
+                disabled: false,
+                placeholder: true,
+              },
+            ]),
+        // Add filtered choices
+        ...filteredStaticChoices.map((c) => ({
           value: String(c.value),
           label: c.label,
           disabled: c.disabled,
         })),
+      ];
+
+      choicesInstance.setChoices(
+        choicesWithPlaceholder,
         "value",
         "label",
         true,
@@ -396,6 +415,62 @@
       if (!selectElement) {
         console.error("❌ Select element not found");
         return;
+      }
+
+      // Ensure the DOM structure is correct before Choices.js initializes
+      if (!multiple && (items.length > 0 || groups.length > 0)) {
+        console.log("🔧 Ensuring correct DOM structure for placeholder");
+
+        // Log the current DOM structure before any changes
+        console.log("📋 DOM structure BEFORE placeholder check:", {
+          totalOptions: selectElement.options.length,
+          options: Array.from(selectElement.options).map((opt, idx) => ({
+            index: idx,
+            value: (opt as HTMLOptionElement).value,
+            text: (opt as HTMLOptionElement).text,
+            selected: (opt as HTMLOptionElement).selected,
+            disabled: (opt as HTMLOptionElement).disabled,
+          })),
+        });
+
+        // Check if placeholder option already exists
+        const existingPlaceholder =
+          selectElement.querySelector('option[value=""]');
+        console.log("🔍 Existing placeholder check:", {
+          found: !!existingPlaceholder,
+          placeholder: existingPlaceholder
+            ? {
+                value: existingPlaceholder.value,
+                text: existingPlaceholder.textContent,
+                selected: existingPlaceholder.selected,
+              }
+            : null,
+        });
+
+        if (!existingPlaceholder) {
+          // Create placeholder option if it doesn't exist
+          const placeholderOption = document.createElement("option");
+          placeholderOption.value = "";
+          placeholderOption.textContent = computedPlaceholderText;
+          placeholderOption.selected = true;
+          selectElement.insertBefore(
+            placeholderOption,
+            selectElement.firstChild,
+          );
+          console.log("✅ Added placeholder option to DOM");
+        }
+
+        // Log the DOM structure after ensuring placeholder exists
+        console.log("📋 DOM structure AFTER placeholder check:", {
+          totalOptions: selectElement.options.length,
+          options: Array.from(selectElement.options).map((opt, idx) => ({
+            index: idx,
+            value: (opt as HTMLOptionElement).value,
+            text: (opt as HTMLOptionElement).text,
+            selected: (opt as HTMLOptionElement).selected,
+            disabled: (opt as HTMLOptionElement).disabled,
+          })),
+        });
       }
 
       console.log("🎯 Select element found:", {
@@ -439,7 +514,8 @@
       const defaultOptions = {
         allowHTML,
         searchPlaceholderValue: searchPlaceholder,
-        shouldSort,
+        shouldSort: false, // Force false to preserve placeholder position
+        placeholder: true, // Tells Choices.js to use first option with empty value as placeholder
         itemSelectText: "",
         searchResultLimit,
         removeItemButton: computedRemoveItemButton,
@@ -474,6 +550,23 @@
 
       // Store reference on the element for external access
       (selectElement as any).choices = choicesInstance;
+
+      // Log the DOM structure after Choices.js initialization
+      console.log("🔍 DOM structure AFTER Choices.js initialization:", {
+        totalOptions: selectElement.options.length,
+        options: Array.from(selectElement.options).map((opt, idx) => ({
+          index: idx,
+          value: (opt as HTMLOptionElement).value,
+          text: (opt as HTMLOptionElement).text,
+          selected: (opt as HTMLOptionElement).selected,
+          disabled: (opt as HTMLOptionElement).disabled,
+        })),
+        choicesInstance: {
+          config: choicesInstance.config,
+          choices: choicesInstance.choices,
+          items: choicesInstance.items,
+        },
+      });
 
       console.log("🎯 Choices instance created:", {
         instance: choicesInstance,

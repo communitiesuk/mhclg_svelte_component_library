@@ -232,40 +232,179 @@
   function resetToStaticChoices() {
     if (!choicesInstance) return;
 
+    console.log("🔄 resetToStaticChoices called");
+
     // Get currently selected values to exclude from static choices
-    const selectedValues = new Set(
-      choicesInstance.getValue(true).map((item: any) => String(item.value)),
-    );
+    let selectedValues: string[] = [];
+    try {
+      const currentValue = choicesInstance.getValue(true);
+      console.log("🎯 Current value from choicesInstance:", currentValue);
 
-    // Filter out already selected values from static choices
-    const filteredStaticChoices = staticChoices.filter(
-      (choice) => !selectedValues.has(String(choice.value)),
-    );
+      if (Array.isArray(currentValue)) {
+        selectedValues = currentValue.map((item: any) =>
+          String(item.value || item),
+        );
+      } else if (currentValue && typeof currentValue === "object") {
+        // Handle single selection case
+        selectedValues = [String(currentValue.value || currentValue)];
+      } else if (currentValue) {
+        // Handle primitive value case
+        selectedValues = [String(currentValue)];
+      }
+    } catch (error) {
+      console.warn("⚠️ Error getting current value:", error);
+      selectedValues = [];
+    }
 
-    choicesInstance.clearChoices();
-    choicesInstance.setChoices(
-      filteredStaticChoices.map((c) => ({
-        value: String(c.value),
-        label: c.label,
-        disabled: c.disabled,
-      })),
-      "value",
-      "label",
-      true,
-    );
+    console.log("🎯 Selected values to exclude:", selectedValues);
+
+    // For grouped options, we need to restore the original structure
+    if (groups && groups.length > 0) {
+      console.log("📋 Restoring grouped options structure");
+
+      // Clear current choices
+      choicesInstance.clearChoices();
+
+      // Restore the original select element structure
+      if (selectElement) {
+        // Remove all existing options
+        while (selectElement.firstChild) {
+          selectElement.removeChild(selectElement.firstChild);
+        }
+
+        // Add placeholder option for single select
+        if (!multiple) {
+          const placeholderOption = document.createElement("option");
+          placeholderOption.value = "";
+          placeholderOption.textContent = computedPlaceholderText;
+          placeholderOption.selected = true;
+          selectElement.appendChild(placeholderOption);
+        }
+
+        // Add grouped options
+        groups.forEach((group) => {
+          const optgroup = document.createElement("optgroup");
+          optgroup.label = group.label;
+
+          group.choices.forEach((choice) => {
+            const option = document.createElement("option");
+            option.value = String(choice.value);
+            option.textContent = String(choice.text);
+            option.disabled =
+              choice.disabled || false || group.disabled || false;
+
+            // Check if this option is currently selected
+            if (selectedValues.includes(String(choice.value))) {
+              option.selected = true;
+            }
+
+            optgroup.appendChild(option);
+          });
+
+          if (selectElement) {
+            selectElement.appendChild(optgroup);
+          }
+        });
+
+        // Reinitialize Choices.js with the restored structure
+        choicesInstance.destroy();
+        if (selectElement) {
+          choicesInstance = new Choices(selectElement, {
+            allowHTML,
+            searchPlaceholderValue: searchPlaceholder,
+            shouldSort,
+            itemSelectText: "",
+            searchResultLimit,
+            removeItemButton: computedRemoveItemButton,
+            labelId:
+              id +
+              "-label " +
+              (selectElement.getAttribute("aria-describedby") || ""),
+            searchFloor: minLength,
+            searchChoices: !(source_url && source_key),
+            noChoicesText: baseNoChoicesText,
+            duplicateItemsAllowed: false,
+            fuseOptions: {
+              ignoreLocation: true,
+              threshold: 0,
+            },
+            ...choicesOptions,
+          });
+
+          // Store reference on the element for external access
+          (selectElement as any).choices = choicesInstance;
+        }
+
+        console.log("✅ Restored grouped options structure");
+      }
+    } else {
+      // For non-grouped options, use the existing logic
+      console.log("📋 Restoring flat options structure");
+
+      // Filter out already selected values from static choices
+      const filteredStaticChoices = staticChoices.filter(
+        (choice) => !selectedValues.includes(String(choice.value)),
+      );
+
+      console.log("🔍 Filtered static choices:", {
+        total: staticChoices.length,
+        filtered: filteredStaticChoices.length,
+        excluded: selectedValues.length,
+      });
+
+      choicesInstance.clearChoices();
+      choicesInstance.setChoices(
+        filteredStaticChoices.map((c) => ({
+          value: String(c.value),
+          label: c.label,
+          disabled: c.disabled,
+        })),
+        "value",
+        "label",
+        true,
+      );
+    }
   }
 
   // Initialize Choices.js
   onMount(async () => {
+    console.log("🔧 MultiSelectSearchAutocomplete: onMount started", {
+      id,
+      name,
+      multiple,
+      items: items.length,
+      groups: groups.length,
+      source_url,
+      source_key,
+      minLength,
+    });
+
     try {
       // Import Choices.js dynamically
       const ChoicesModule = await import("choices.js");
       Choices = ChoicesModule.default;
+      console.log("✅ Choices.js imported successfully");
 
       if (!selectElement) {
-        console.error("Select element not found");
+        console.error("❌ Select element not found");
         return;
       }
+
+      console.log("🎯 Select element found:", {
+        tagName: selectElement.tagName,
+        id: selectElement.id,
+        name: selectElement.name,
+        multiple: selectElement.multiple,
+        options: selectElement.options.length,
+        value: selectElement.value,
+        selectedOptions: Array.from(selectElement.selectedOptions).map(
+          (opt) => ({
+            value: opt.value,
+            text: opt.text,
+            selected: opt.selected,
+          }),
+        ),
+      });
 
       const ariaDescribedBy =
         selectElement.getAttribute("aria-describedby") || "";
@@ -279,6 +418,14 @@
         : tTooShort(minLength);
 
       const hasApiConfig = source_url && source_key;
+
+      console.log("📊 Initial configuration:", {
+        hasStaticOptions,
+        hasApiConfig,
+        initialNoChoicesText,
+        staticChoices: staticChoices.length,
+        enhancedItems: enhancedItems.length,
+      });
 
       // Initialize Choices.js with GOV.UK settings
       const defaultOptions = {
@@ -296,11 +443,13 @@
         // Prevent duplicate selections
         duplicateItemsAllowed: false,
         callbackOnInit: function () {
+          console.log("🎉 Choices.js initialized successfully");
           // For multiple select, move input field to top of feedback area
           if (this.dropdown.type === "select-multiple") {
             const inner = this.containerInner.element;
             const input = this.input.element;
             inner.prepend(input);
+            console.log("🔄 Moved input field to top for multiple select");
           }
         },
         // Fuse.js options for search
@@ -311,16 +460,25 @@
         ...choicesOptions,
       };
 
+      console.log("⚙️ Choices.js options:", defaultOptions);
+
       choicesInstance = new Choices(selectElement, defaultOptions);
 
       // Store reference on the element for external access
       (selectElement as any).choices = choicesInstance;
+
+      console.log("🎯 Choices instance created:", {
+        instance: choicesInstance,
+        element: selectElement,
+        config: choicesInstance.config,
+      });
 
       // Handle value changes from Choices.js
       selectElement.addEventListener("change", handleChoicesChange);
 
       // Listen for choice selection to reset search
       selectElement.addEventListener("choice", () => {
+        console.log("🎯 Choice selected, resetting search");
         // When an item is selected, clear the search and show all unselected options
         if (searchInputElement) {
           searchInputElement.value = "";
@@ -333,6 +491,7 @@
             (groups && groups.some((g) => g.choices && g.choices.length > 0));
           if (hasStaticOptions && choicesInstance) {
             resetToStaticChoices();
+            console.log("🔄 Reset to static choices after selection");
           }
         }, 0);
       });
@@ -340,14 +499,29 @@
       // Capture the internal search input and attach API search handling
       searchInputElement = choicesInstance?.input?.element ?? null;
       if (searchInputElement) {
+        console.log("🔍 Search input element captured:", {
+          element: searchInputElement,
+          type: searchInputElement.type,
+          placeholder: searchInputElement.placeholder,
+          value: searchInputElement.value,
+        });
+
         // Always add custom search handling to filter out selected values
         searchInputElement.addEventListener("input", () => {
           const q = searchInputElement!.value || "";
           lastQuery = q;
           if (debounceTimer) clearTimeout(debounceTimer);
           debounceTimer = setTimeout(async () => {
+            console.log("🔍 Search input changed:", {
+              query: q,
+              queryLength: q.length,
+              minLength,
+              lastQuery,
+            });
+
             // Empty query handling: reset to static choices if available
             if (lastQuery.trim().length === 0) {
+              console.log("🔄 Empty query, resetting to static choices");
               const hasStaticOptions =
                 (items && items.length > 0) ||
                 (groups &&
@@ -361,6 +535,7 @@
 
             // Too-short handling: show helpful message and don't search
             if (lastQuery.trim().length < minLength) {
+              console.log("⚠️ Query too short, showing too-short message");
               if (choicesInstance) {
                 choicesInstance.config.noChoicesText = tTooShort(minLength);
                 // Reset to static choices for short queries or use static ones if available
@@ -380,31 +555,73 @@
             const hasApiConfig = source_url && source_key;
 
             if (hasApiConfig) {
+              console.log("🌐 Using API mode for search");
               // Use API mode when API is configured
               try {
                 const apiChoices = await fetchApiChoices(lastQuery);
+                console.log("📡 API response:", {
+                  query: lastQuery,
+                  apiChoices: apiChoices.length,
+                  rawChoices: apiChoices,
+                });
+
                 if (!choicesInstance) return;
 
                 // Get currently selected values to exclude from new choices
-                const selectedValues = new Set(
-                  choicesInstance
-                    .getValue(true)
-                    .map((item: any) => String(item.value)),
-                );
+                let selectedValues: string[] = [];
+                try {
+                  const currentValue = choicesInstance.getValue(true);
+                  console.log(
+                    "🎯 Current value from choicesInstance (API):",
+                    currentValue,
+                  );
+
+                  if (Array.isArray(currentValue)) {
+                    selectedValues = currentValue.map((item: any) =>
+                      String(item.value || item),
+                    );
+                  } else if (currentValue && typeof currentValue === "object") {
+                    // Handle single selection case
+                    selectedValues = [
+                      String(currentValue.value || currentValue),
+                    ];
+                  } else if (currentValue) {
+                    // Handle primitive value case
+                    selectedValues = [String(currentValue)];
+                  }
+                } catch (error) {
+                  console.warn(
+                    "⚠️ Error getting current value during API search:",
+                    error,
+                  );
+                  selectedValues = [];
+                }
+
+                console.log("🎯 Currently selected values:", selectedValues);
 
                 // Filter out already selected values from API results
                 const filteredApiChoices = apiChoices.filter(
-                  (choice) => !selectedValues.has(String(choice.value)),
+                  (choice) => !selectedValues.includes(String(choice.value)),
                 );
+
+                console.log("🔍 Filtered API choices:", {
+                  total: apiChoices.length,
+                  filtered: filteredApiChoices.length,
+                  excluded: apiChoices.length - filteredApiChoices.length,
+                });
 
                 if (filteredApiChoices.length === 0) {
                   // No new results from API. Determine the correct message.
                   if (apiChoices.length === 0) {
                     // API returned no results for the query.
                     choicesInstance.config.noChoicesText = "No results found";
+                    console.log("❌ API returned no results");
                   } else {
                     // API returned results, but they are all already selected.
                     choicesInstance.config.noChoicesText = baseNoChoicesText;
+                    console.log(
+                      "ℹ️ API returned results but all are already selected",
+                    );
                   }
                   // Clear the list and show the message.
                   choicesInstance.setChoices([], "value", "label", true);
@@ -420,21 +637,54 @@
                     "label",
                     true,
                   );
+                  console.log(
+                    "✅ Set new API choices:",
+                    filteredApiChoices.length,
+                  );
                 }
               } catch (e) {
-                console.error("Failed to fetch API choices:", e);
+                console.error("❌ Failed to fetch API choices:", e);
                 if (choicesInstance) {
                   choicesInstance.config.noChoicesText = "No results found";
                 }
               }
             } else {
+              console.log("📋 Using static choices mode for search");
               // For static choices, filter both by search term and exclude selected values
               if (choicesInstance) {
-                // Get currently selected values to exclude
-                const selectedValues = new Set(
-                  choicesInstance
-                    .getValue(true)
-                    .map((item: any) => String(item.value)),
+                // Get currently selected values to exclude - use safe getValue logic
+                let selectedValues: string[] = [];
+                try {
+                  const currentValue = choicesInstance.getValue(true);
+                  console.log(
+                    "🎯 Current value from choicesInstance (search):",
+                    currentValue,
+                  );
+
+                  if (Array.isArray(currentValue)) {
+                    selectedValues = currentValue.map((item: any) =>
+                      String(item.value || item),
+                    );
+                  } else if (currentValue && typeof currentValue === "object") {
+                    // Handle single selection case
+                    selectedValues = [
+                      String(currentValue.value || currentValue),
+                    ];
+                  } else if (currentValue) {
+                    // Handle primitive value case
+                    selectedValues = [String(currentValue)];
+                  }
+                } catch (error) {
+                  console.warn(
+                    "⚠️ Error getting current value during search:",
+                    error,
+                  );
+                  selectedValues = [];
+                }
+
+                console.log(
+                  "🎯 Currently selected values (static mode):",
+                  selectedValues,
                 );
 
                 // Filter static choices by search term and exclude selected values
@@ -445,10 +695,27 @@
                   choice.label.toLowerCase().includes(searchTerm),
                 );
 
+                console.log("🔍 Static choices matching search:", {
+                  searchTerm,
+                  totalStatic: staticChoices.length,
+                  matching: matchingChoices.length,
+                  matches: matchingChoices.map((c) => ({
+                    value: c.value,
+                    label: c.label,
+                  })),
+                });
+
                 // Then filter out selected values from the matching choices
                 const filteredStaticChoices = matchingChoices.filter(
-                  (choice) => !selectedValues.has(String(choice.value)),
+                  (choice) => !selectedValues.includes(String(choice.value)),
                 );
+
+                console.log("🔍 Final filtered static choices:", {
+                  matching: matchingChoices.length,
+                  filtered: filteredStaticChoices.length,
+                  excluded:
+                    matchingChoices.length - filteredStaticChoices.length,
+                });
 
                 choicesInstance.clearChoices();
 
@@ -457,9 +724,13 @@
                   if (matchingChoices.length === 0) {
                     // No search matches at all
                     choicesInstance.config.noChoicesText = "No results found";
+                    console.log("❌ No static choices match search term");
                   } else {
                     // Found matches but all are already selected
                     choicesInstance.config.noChoicesText = baseNoChoicesText;
+                    console.log(
+                      "ℹ️ Found static matches but all are already selected",
+                    );
                   }
                 } else {
                   // Have choices to show
@@ -474,39 +745,68 @@
                     "label",
                     true,
                   );
+                  console.log(
+                    "✅ Set filtered static choices:",
+                    filteredStaticChoices.length,
+                  );
                 }
               }
             }
           }, 0);
         });
+      } else {
+        console.warn("⚠️ Search input element not found");
       }
     } catch (error) {
-      console.error("Failed to initialize Choices.js:", error);
+      console.error("❌ Failed to initialize Choices.js:", error);
     }
   });
 
   // Handle changes from Choices.js
   function handleChoicesChange(event: Event) {
     const target = event.target as HTMLSelectElement;
+    console.log("🔄 Choices change event:", {
+      event: event.type,
+      target: target.tagName,
+      value: target.value,
+      selectedOptions: Array.from(target.selectedOptions).map((opt) => ({
+        value: opt.value,
+        text: opt.text,
+        selected: opt.selected,
+      })),
+      multiple: target.multiple,
+    });
+
     if (multiple) {
       const selectedValues = Array.from(target.selectedOptions).map(
         (option) => option.value,
       );
+      console.log("📝 Setting multiple value:", selectedValues);
       value = selectedValues;
     } else {
+      console.log("📝 Setting single value:", target.value);
       value = target.value;
     }
   }
 
   // Update Choices.js when value changes externally
   $effect(() => {
+    console.log("🔄 Value changed externally:", {
+      value,
+      type: typeof value,
+      isArray: Array.isArray(value),
+      choicesInstance: !!choicesInstance,
+    });
+
     if (choicesInstance && value !== undefined) {
       if (multiple && Array.isArray(value)) {
+        console.log("🔄 Updating multiple choices:", value);
         choicesInstance.removeActiveItems();
         value.forEach((val: string | number) => {
           choicesInstance.setChoiceByValue(String(val));
         });
       } else if (!multiple && !Array.isArray(value)) {
+        console.log("🔄 Updating single choice:", value);
         choicesInstance.setChoiceByValue(String(value));
       }
     }
@@ -514,11 +814,29 @@
 
   // Cleanup
   onDestroy(() => {
+    console.log("🧹 MultiSelectSearchAutocomplete: onDestroy called");
     if (choicesInstance) {
       selectElement?.removeEventListener("change", handleChoicesChange);
       selectElement?.removeEventListener("choice", () => {});
       choicesInstance.destroy();
+      console.log("✅ Choices instance destroyed");
     }
+  });
+
+  // Log component state changes
+  $effect(() => {
+    console.log("📊 Component state updated:", {
+      id,
+      name,
+      multiple,
+      value,
+      items: items.length,
+      groups: groups.length,
+      enhancedItems: enhancedItems.length,
+      staticChoices: staticChoices.length,
+      computedPlaceholderText,
+      computedRemoveItemButton,
+    });
   });
 </script>
 

@@ -935,20 +935,18 @@
   });
 
   // Log component state changes
-  $effect(() => {
-    console.log("📊 Component state updated:", {
-      id,
-      name,
-      multiple,
-      value,
-      items: items.length,
-      groups: groups.length,
-      enhancedItems: enhancedItems.length,
-      staticChoices: staticChoices.length,
-      computedPlaceholderText,
-      computedRemoveItemButton,
-    });
-  });
+  $inspect(
+    id,
+    name,
+    multiple,
+    value,
+    items,
+    groups,
+    enhancedItems,
+    staticChoices,
+    computedPlaceholderText,
+    computedRemoveItemButton,
+  );
 </script>
 
 <div

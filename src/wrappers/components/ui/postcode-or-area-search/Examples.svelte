@@ -5,6 +5,7 @@
   import * as codeBlocks from "./codeBlocks.js";
 
   import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
+  import hierarchyData from "$lib/data/geographic-hierarchy-flat.json";
 
   // Example state variables
   let basicExample = $state("");
@@ -17,6 +18,9 @@
   let regexTypeLabelsExample = $state("");
   let customLabelsExample = $state("");
   let customGeoTypesExample = $state("");
+  let limitedSuggestionsExample = $state("");
+  let hierarchyDataExample = $state("");
+  let lsoaLadOnlyExample = $state("");
 
   let accordionSnippetSections = [
     {
@@ -68,6 +72,21 @@
       id: "10",
       heading: "10. Custom geographic types (authorities & statistical areas)",
       content: CustomGeoTypesExample,
+    },
+    {
+      id: "11",
+      heading: "11. Limiting suggestions for performance",
+      content: LimitedSuggestionsExample,
+    },
+    {
+      id: "12",
+      heading: "12. Using geographic hierarchy data",
+      content: HierarchyDataExample,
+    },
+    {
+      id: "13",
+      heading: "13. Essential areas with LSOA and LAD focus",
+      content: LsoaLadOnlyExample,
     },
   ];
 </script>
@@ -443,4 +462,136 @@
     {/if}
   </div>
   <CodeBlock code={codeBlocks.customGeoTypes} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet LimitedSuggestionsExample()}
+  <div class="p-5 bg-white">
+    <p class="mb-4 text-gray-700">
+      Limit the number of suggestions displayed for better performance with
+      large datasets. This example limits suggestions to 5 results:
+    </p>
+    <PostcodeOrAreaSearch
+      maxSuggestions={5}
+      label_text="Search UK areas (max 5 suggestions)"
+      hint="Only the first 5 matching areas will be shown"
+      placeholder="e.g. Westminster, Birmingham"
+      bind:selectedValue={limitedSuggestionsExample}
+    />
+    {#if limitedSuggestionsExample}
+      <p class="mt-3 font-semibold">
+        <strong>Selected:</strong>
+        {limitedSuggestionsExample}
+      </p>
+    {/if}
+    <p class="mt-3 text-sm text-gray-600">
+      <strong>Note:</strong> This limit only applies to local area suggestions. Postcode
+      API results are controlled by the external API.
+    </p>
+  </div>
+  <CodeBlock code={codeBlocks.limitedSuggestions} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet HierarchyDataExample()}
+  <div class="p-5 bg-white">
+    <p class="mb-4 text-gray-700">
+      Use the bundled geographic hierarchy data file for comprehensive UK area
+      search. This demonstrates using the complete ONS geographic hierarchy with
+      all area levels:
+    </p>
+    <PostcodeOrAreaSearch
+      customPlacesData={hierarchyData.data}
+      customGetTypeLabel={(type) => {
+        // Pattern matching for different area types using regex
+        if (/^[EWSN]00/.test(type)) return "OA"; // Output Areas
+        if (/^[EW]01/.test(type)) return "LSOA"; // Lower Super Output Areas (England/Wales)
+        if (/^S01/.test(type)) return "LSOA"; // Data Zones (Scotland)
+        if (/^N01/.test(type)) return "LSOA"; // Super Output Areas (Northern Ireland)
+        if (/^[EW]02/.test(type)) return "MSOA"; // Middle Super Output Areas (England/Wales)
+        if (/^S02/.test(type)) return "MSOA"; // Intermediate Zones (Scotland)
+        if (/^N02/.test(type)) return "MSOA"; // Super Output Areas (Northern Ireland)
+        if (/^E0[6-9]/.test(type)) return "LAD"; // Local Authority Districts (England)
+        if (/^W06/.test(type)) return "LAD"; // Local Authority Districts (Wales)
+        if (/^S12/.test(type)) return "LAD"; // Council Areas (Scotland)
+        if (/^N09/.test(type)) return "LAD"; // Local Government Districts (Northern Ireland)
+
+        // Fallback for anything else
+        return type;
+      }}
+      maxSuggestions={15}
+      label_text="Search UK Geographic Areas"
+      hint="Uses the complete ONS geographic data - all area levels (OA, LSOA, MSOA, LAD)"
+      placeholder="e.g. Westminster, Birmingham, specific output areas"
+      bind:selectedValue={hierarchyDataExample}
+    />
+    {#if hierarchyDataExample}
+      <p class="mt-3 font-semibold">
+        <strong>Selected:</strong>
+        {hierarchyDataExample}
+      </p>
+      <p class="mt-2 text-sm text-gray-600">
+        <strong>Total areas available in dataset:</strong>
+        {hierarchyData.data.length.toLocaleString()}
+      </p>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.hierarchyData} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet LsoaLadOnlyExample()}
+  <div class="p-5 bg-white">
+    <p class="mb-4 text-gray-700">
+      Filter the geographic hierarchy data to show only LSOA and LAD areas while
+      preserving parent-child relationships. The component now maintains MSOA
+      data for context without showing MSOA areas in suggestions:
+    </p>
+    <PostcodeOrAreaSearch
+      customPlacesData={hierarchyData.data}
+      customEssGeocodes={[
+        "E01",
+        "W01",
+        "S01",
+        "N01",
+        "E06",
+        "E07",
+        "E08",
+        "E09",
+        "W06",
+        "S12",
+        "N09",
+      ]}
+      essOnly={true}
+      customGetTypeLabel={(type) => {
+        // LSOA codes (Lower Layer Super Output Areas / equivalent)
+        if (/^[EW]01/.test(type)) return "LSOA (Neighbourhood)"; // Lower Super Output Areas (England/Wales)
+        if (/^S01/.test(type)) return "LSOA (Neighbourhood)"; // Data Zones (Scotland)
+        if (/^N01/.test(type)) return "LSOA (Neighbourhood)"; // Super Output Areas (Northern Ireland)
+
+        // LAD codes (Local Authority Districts / equivalent)
+        if (/^E0[6-9]/.test(type)) return "LAD (Local Authority District)"; // Local Authority Districts (England)
+        if (/^W06/.test(type)) return "LAD (Local Authority District)"; // Local Authority Districts (Wales)
+        if (/^S12/.test(type)) return "LAD (Local Authority District)"; // Council Areas (Scotland)
+        if (/^N09/.test(type)) return "LAD (Local Authority District)"; // Local Government Districts (Northern Ireland)
+
+        // Fallback for anything else
+        return type;
+      }}
+      maxSuggestions={20}
+      label_text="Search Essential Areas (LSOA & LAD Focus)"
+      hint="Essential areas only - includes LSOA statistical areas and LAD local authorities"
+      placeholder="e.g. Westminster, Birmingham, specific LSOAs"
+      bind:selectedValue={lsoaLadOnlyExample}
+    />
+    {#if lsoaLadOnlyExample}
+      <p class="mt-3 font-semibold">
+        <strong>Selected:</strong>
+        {lsoaLadOnlyExample}
+      </p>
+      <p class="mt-2 text-sm text-gray-600">
+        <strong>Note:</strong> Component logic now preserves parent-child
+        relationships without needing MSOA codes in
+        <code>customEssGeocodes</code>
+      </p>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.lsoaLadOnly} language="svelte"></CodeBlock>
 {/snippet}

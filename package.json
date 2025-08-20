@@ -105,8 +105,8 @@
     "decimal.js": "^10.5.0",
     "dompurify": "^3.2.5",
     "flowbite-svelte-icons": "^2.0.3",
-    "govuk-frontend": "^5.11.1",
     "gh-pages": "^6.3.0",
+    "govuk-frontend": "^5.11.1",
     "labelplacer": "^0.0.0",
     "leaflet": "^1.9.4",
     "mapbox-gl": "^1.13.3",
@@ -118,7 +118,6 @@
     "sveaflet": "^0.1.4",
     "svelte-maplibre": "^1.0.0-next.12",
     "svelte-preprocess": "^6.0.3",
-    "tileserver-gl": "^5.3.1",
     "topojson-client": "^3.1.0"
   }
 }

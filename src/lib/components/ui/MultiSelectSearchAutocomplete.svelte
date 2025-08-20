@@ -34,7 +34,7 @@
     allowHTML = true,
     shouldSort = false,
     searchResultLimit = 100,
-    removeItemButton = undefined, // Will default to multiple if not specified
+    removeItemButton = true, // Will default to multiple if not specified
 
     // Styling and layout - pass through to Select component
     formGroupClasses = "",
@@ -72,7 +72,7 @@
     choicesItemTextColor = "black",
     choicesItemDividerPadding = "10px",
     // Circle feature props
-    enableSelectedItemCircles = false,
+    enableSelectedItemCircles = true,
     selectedItemCircleColor = "#1d70b8", // Default color when not using palette
     selectedItemCircleColorPalette = [
       // Complete GOV.UK Design System palette (19 colors)
@@ -153,9 +153,6 @@
   let lastQuery = "";
   const baseNoChoicesText = "No choices to choose from";
 
-  // Global color assignment tracking to ensure consistency across component lifecycle
-  let globalColorAssignments = new Map<string, string>(); // itemKey -> color
-
   // Helper function for getting group text
   function getGroupText(item: any): string | undefined {
     if (!groupKey || !item || typeof item !== "object") return undefined;
@@ -199,7 +196,10 @@
       const hslHue = Math.floor(hue * 360);
 
       const color = `hsl(${hslHue}, ${saturation}%, ${lightness}%)`;
-      extendedColors.push(color);
+      // Avoid pure white/very light colors
+      if (lightness < 90) {
+        extendedColors.push(color);
+      }
     }
 
     return extendedColors;
@@ -210,153 +210,40 @@
     return generateExtendedColorPalette(selectedCount);
   }
 
-  // Helper function to get current number of selected items
-  function getCurrentSelectedCount(): number {
-    if (!choicesInstance) return 0;
+  // Precompute stable palette once instead of regenerating per call
+  const stablePalette = (() => {
+    const base = [...selectedItemCircleColorPalette];
+    // Filter out pure white to avoid visibility issues
+    const filtered = base.filter(color => color !== "#ffffff");
+    // extend once if needed:
+    return filtered.length >= 64 ? filtered : generateExtendedColorPalette(64);
+  })();
 
-    try {
-      const currentValue = choicesInstance.getValue(true);
-      if (Array.isArray(currentValue)) {
-        return currentValue.length;
-      } else if (currentValue && typeof currentValue === "object") {
-        return 1;
-      } else if (currentValue) {
-        return 1;
-      }
-      return 0;
-    } catch (error) {
-      console.warn("Error getting selected count:", error);
-      return 0;
+  // Color cache to ensure consistent colors for the same values
+  const colorCache = new Map<string, string>();
+
+  /**
+   * Generate a consistent, deterministic color for a given value.
+   * Uses FNV-1a hash with proper unsigned handling to avoid color duplication.
+   * Caches results for performance and consistency.
+   */
+  function colorForValue(val: unknown): string {
+    const key = String(val).toLowerCase().trim();
+    const cached = colorCache.get(key);
+    if (cached) return cached;
+
+    // FNV-1a (32-bit) -> force unsigned before modulo to avoid negative array indices
+    let h = 2166136261;
+    for (let i = 0; i < key.length; i++) {
+      h ^= key.charCodeAt(i);
+      h = Math.imul(h, 16777619);
     }
-  }
+    h >>>= 0; // ✅ make it unsigned
 
-  // Function to refresh all circles with optimized colors based on current selection count
-  function refreshAllCircles() {
-    if (!enableSelectedItemCircles || !choicesInstance) return;
-
-    const selectedItems =
-      choicesInstance.containerInner.element.querySelectorAll(".choices__item");
-    const selectedCount = selectedItems.length;
-    const optimizedPalette = getOptimizedColorPalette(selectedCount);
-
-    console.log("🎨 Refreshing circles:", {
-      selectedCount,
-      paletteSize: optimizedPalette.length,
-      palette: optimizedPalette,
-      globalAssignments: Array.from(globalColorAssignments.entries()),
-    });
-
-    // Create a map to track which colors have been used to prevent duplicates
-    const usedColors = new Set();
-    const colorAssignments = new Map(); // item -> color mapping
-
-    selectedItems.forEach((item, index) => {
-      if (item instanceof HTMLElement) {
-        // Remove existing circle
-        const existingCircle = item.querySelector(".choices__item-circle");
-        if (existingCircle) {
-          existingCircle.remove();
-        }
-
-        // Determine color for this item - use sequential assignment to prevent duplicates
-        let circleColor = selectedItemCircleColor;
-
-        if (optimizedPalette.length > 0) {
-          // First, try to use the item's previously assigned color if it exists
-          const itemKey = item.textContent + item.dataset.value;
-
-          console.log(`🎨 Assigning color for "${itemKey}":`, {
-            hasGlobalAssignment: globalColorAssignments.has(itemKey),
-            hasLocalAssignment: colorAssignments.has(itemKey),
-            usedColors: Array.from(usedColors),
-            availableColors: optimizedPalette.filter((c) => !usedColors.has(c)),
-          });
-
-          // Check global assignments first, then local
-          if (globalColorAssignments.has(itemKey)) {
-            circleColor = globalColorAssignments.get(itemKey)!;
-            usedColors.add(circleColor);
-            colorAssignments.set(itemKey, circleColor);
-            console.log(`✅ Using existing global color: ${circleColor}`);
-          } else if (colorAssignments.has(itemKey)) {
-            circleColor = colorAssignments.get(itemKey);
-            console.log(`✅ Using existing local color: ${circleColor}`);
-          } else {
-            // Find the first available color that hasn't been used yet
-            let colorIndex = 0;
-            while (
-              colorIndex < optimizedPalette.length &&
-              usedColors.has(optimizedPalette[colorIndex])
-            ) {
-              colorIndex++;
-            }
-
-            // If we found an unused color, use it
-            if (colorIndex < optimizedPalette.length) {
-              circleColor = optimizedPalette[colorIndex];
-              usedColors.add(circleColor);
-              colorAssignments.set(itemKey, circleColor);
-              // Store in global assignments for consistency
-              globalColorAssignments.set(itemKey, circleColor);
-              console.log(
-                `🆕 Assigned new color: ${circleColor} (index: ${colorIndex})`,
-              );
-            } else {
-              // All colors used, cycle back to the beginning
-              const cycleIndex =
-                colorAssignments.size % optimizedPalette.length;
-              circleColor = optimizedPalette[cycleIndex];
-              colorAssignments.set(itemKey, circleColor);
-              // Store in global assignments for consistency
-              globalColorAssignments.set(itemKey, circleColor);
-              console.log(
-                `🔄 Cycled to color: ${circleColor} (cycle index: ${cycleIndex})`,
-              );
-            }
-          }
-        }
-
-        // Create circle element
-        const circle = document.createElement("span");
-        circle.className = "choices__item-circle";
-        circle.style.cssText = `
-          display: inline-block;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          margin-right: 8px;
-          background-color: ${circleColor};
-          flex-shrink: 0;
-        `;
-
-        // Insert circle before the first text node
-        const firstChild = item.firstChild;
-        if (firstChild) {
-          item.insertBefore(circle, firstChild);
-        } else {
-          item.appendChild(circle);
-        }
-      }
-    });
-  }
-
-  // Simple function to add circle to selected items
-  function addCircleToSelectedItem(itemElement: HTMLElement) {
-    // Check if circles are enabled
-    if (!enableSelectedItemCircles) {
-      return;
-    }
-
-    // Check if circle already exists
-    if (itemElement.querySelector(".choices__item-circle")) {
-      return;
-    }
-
-    // For individual item addition, we need to refresh all circles to maintain consistency
-    // This ensures proper color distribution and prevents duplicates
-    setTimeout(() => {
-      refreshAllCircles();
-    }, 0);
+    const idx = h % stablePalette.length;           // 0..palette-1
+    const color = stablePalette[idx] || selectedItemCircleColor;
+    colorCache.set(key, color);
+    return color;
   }
 
   // Computed values for component configuration
@@ -865,72 +752,8 @@
         callbackOnInit: function () {
           console.log("🎉 Choices.js initialized successfully");
 
-          // Set up event listeners for adding circles to selected items
-          this.containerInner.element.addEventListener("click", (event) => {
-            const target = event.target as HTMLElement;
-            if (target.classList.contains("choices__button")) {
-              // When remove button is clicked, the item will be removed
-              // We don't need to handle this case as the item is gone
-            }
-          });
-
-          // Set up MutationObserver to watch for new items being added or removed
-          const observer = new MutationObserver((mutations) => {
-            let shouldRefresh = false;
-
-            mutations.forEach((mutation) => {
-              if (mutation.type === "childList") {
-                // Check if any choices__item elements were added or removed
-                const hasItemChanges =
-                  Array.from(mutation.addedNodes).some(
-                    (node) =>
-                      node instanceof HTMLElement &&
-                      node.classList.contains("choices__item"),
-                  ) ||
-                  Array.from(mutation.removedNodes).some(
-                    (node) =>
-                      node instanceof HTMLElement &&
-                      node.classList.contains("choices__item"),
-                  );
-
-                if (hasItemChanges) {
-                  shouldRefresh = true;
-                }
-              }
-            });
-
-            // Refresh all circles with optimized palette when items change
-            if (shouldRefresh) {
-              setTimeout(() => {
-                refreshAllCircles();
-              }, 0);
-            }
-          });
-
-          // Start observing the container for changes
-          observer.observe(this.containerInner.element, {
-            childList: true,
-            subtree: true,
-          });
-
-          // Store observer reference for cleanup
-          (this as any)._circleObserver = observer;
-
-          // Add circles to any existing selected items
-          setTimeout(() => {
-            refreshAllCircles();
-          }, 0);
-
-          // Listen for when choices are set programmatically
-          const originalSetChoices = this.setChoices.bind(this);
-          this.setChoices = function (...args) {
-            const result = originalSetChoices.apply(this, args);
-            // Refresh all circles with optimized palette
-            setTimeout(() => {
-              refreshAllCircles();
-            }, 0);
-            return result;
-          };
+          // Remove the MutationObserver setup and circle refresh logic
+          // Circles are now handled by callbackOnCreateTemplates
 
           // Apply group text to initial choices if groupKey is provided
           if (groupKey && this.choices && this.choices.length > 0) {
@@ -965,6 +788,71 @@
             inner.prepend(input);
             console.log("🔄 Moved input field to top for multiple select");
           }
+        },
+        // Add the template customization to add circles at creation time
+        callbackOnCreateTemplates: function (strToEl: any) {
+          // public class names exposed by Choices
+          const cn = this.config.classNames;
+          const isMulti = this.passedElement?.element?.multiple === true;
+
+          // small escape for when allowHTML=false
+          const esc = (s: string) =>
+            String(s)
+              .replace(/&/g, "&amp;")
+              .replace(/</g, "&lt;")
+              .replace(/>/g, "&gt;");
+
+          // try to keep any existing templates if your build exposes them
+          const base = (this as any)._templates ?? {};
+
+          return {
+            ...base,
+
+            // Custom item template for chips (selected items), not dropdown choices
+            item: (_classNames: any, data: any) => {
+              const classes = [
+                cn.item,
+                data.highlighted ? cn.highlightedState : cn.itemSelectable,
+                data.placeholder ? cn.placeholder : "",
+              ]
+                .filter(Boolean)
+                .join(" ");
+
+              // ✅ Decide if this chip should be deletable
+              const showRemove =
+                isMulti && this.config.removeItemButton && !data.disabled;
+
+              // Circle
+              let circle = "";
+              if (enableSelectedItemCircles && isMulti && data.active) {
+                const color = colorForValue(data.value); // ✅ value-only, stable
+                circle = `<span class="choices__item-circle" style="background:${color}"></span>`;
+              }
+
+              // Label
+              const labelHtml = allowHTML ? data.label : esc(data.label);
+
+              // Remove button (same markup Choices normally generates)
+              const removeBtn = showRemove
+                ? `<button type="button"
+                           class="${cn.button}"
+                           data-button
+                           aria-label="Remove ${esc(String(data.value))}"></button>`
+                : "";
+
+              return strToEl(
+                `<div class="${classes}"
+                      data-item
+                      data-id="${data.id}"
+                      data-value="${String(data.value)}"
+                      ${showRemove ? "data-deletable" : ""}
+                      ${data.active ? 'aria-selected="true"' : ""}
+                      ${data.disabled ? 'aria-disabled="true"' : ""}>
+                    ${circle}${labelHtml}${removeBtn}
+                 </div>`,
+              );
+            },
+          };
         },
         // Fuse.js options for search
         fuseOptions: {
@@ -1379,12 +1267,7 @@
   onDestroy(() => {
     console.log("🧹 MultiSelectSearchAutocomplete: onDestroy called");
     if (choicesInstance) {
-      // Clean up MutationObserver if it exists
-      if ((choicesInstance as any)._circleObserver) {
-        (choicesInstance as any)._circleObserver.disconnect();
-        console.log("✅ Circle observer disconnected");
-      }
-
+      // No more MutationObserver to clean up
       selectElement?.removeEventListener("change", handleChoicesChange);
       selectElement?.removeEventListener("choice", () => {});
       choicesInstance.destroy();
@@ -1706,29 +1589,7 @@
   :global(.choices[data-type*="text"] .choices__inner) {
     cursor: text;
   }
-  :global(.choices[data-type*="select-multiple"] .choices__button),
-  :global(.choices[data-type*="text"] .choices__button) {
-    position: relative;
-    display: inline-block;
-    margin-top: 0;
-    margin-right: -4px;
-    margin-bottom: 0;
-    margin-left: 8px;
-    padding-left: 16px;
-    border-left: 1px solid hsl(0, 0%, 90%);
-    background-image: var(--cross-icon-url);
-    background-size: 12px;
-    width: 12px;
-    line-height: 1;
-    opacity: 0.75;
-    border-radius: 0;
-  }
-  :global(.choices[data-type*="select-multiple"] .choices__button:hover),
-  :global(.choices[data-type*="select-multiple"] .choices__button:focus),
-  :global(.choices[data-type*="text"] .choices__button:hover),
-  :global(.choices[data-type*="text"] .choices__button:focus) {
-    opacity: 1;
-  }
+
   :global(.choices__inner) {
     display: inline-block;
     vertical-align: top;
@@ -1771,21 +1632,7 @@
   :global(.choices__list--multiple) {
     display: inline;
   }
-  :global(.choices__list--multiple .choices__item) {
-    display: inline-block;
-    vertical-align: middle;
-    border-radius: 0;
-    padding: 4px 10px;
-    font-size: 19px;
-    font-weight: 500;
-    margin-right: 3.75px;
-    margin-bottom: 3.75px;
-    background-color: #fff;
-    border: 1px solid hsl(0, 0%, 95%);
-    color: #fff;
-    word-break: break-all;
-    box-sizing: border-box;
-  }
+
   :global(.choices__list--multiple .choices__item[data-deletable]) {
     padding-right: 5px;
   }
@@ -2110,11 +1957,8 @@
   :global(.gem-c-select-with-search .choices.is-open .choices__inner) {
     border: 2px solid #0b0c0c;
     min-height: 46px;
-    /* Remove the 4px offset added on focus/open which increases the visual
-     height and mis-centres the placeholder. Keep the min-height but reset
-     padding so content stays vertically centred. Use !important to override
-     Choices.js inline styles. */
-    padding: 0px;
+    /* keep inner padding on focus/open so height doesn't jump */
+    padding: 5px;
     outline: 3px solid #fd0;
     outline-offset: 0;
     box-shadow: inset 0 0 0 2px #0b0c0c;
@@ -2127,17 +1971,6 @@
     margin-block-start: 6px;
     border-block-start: 1px solid #b1b4b6;
     padding-block-end: 5px;
-  }
-  :global(.gem-c-select-with-search .choices__list--multiple .choices__item) {
-    display: inline-flex;
-    align-items: center;
-    border: 0;
-    padding: 0 0 0 10px;
-    margin: 10px 10px 0 0;
-    background-color: #f3f2f1;
-    box-shadow: 0 2px 0 #b1b4b6;
-    line-height: 1;
-    color: #0b0c0c;
   }
   :global(
     .is-disabled
@@ -2223,7 +2056,7 @@
   }
 
   :global(.gem-c-select-with-search .choices__inner) {
-    padding: 0px;
+    padding: 5px;
   }
 
   /* Ensure consistent vertical centering for single-select items */
@@ -2235,7 +2068,7 @@
     display: flex;
     align-items: center;
     min-height: 44px;
-    padding: 0 12px;
+    padding: 0 5px;
   }
 
   /* Set max height for single-select choices__inner */
@@ -2326,26 +2159,6 @@
     font-weight: normal;
   }
 
-  /* Circle styling for selected items in button only */
-  :global(
-    .gem-c-select-with-search
-      .choices__list--multiple
-      .choices__item
-      .choices__item-circle
-  ) {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    margin-right: 8px;
-    flex-shrink: 0;
-    background-color: var(--selected-item-circle-color, #1d70b8);
-    /* Add subtle border for light colors and white */
-    border: 1px solid rgba(0, 0, 0, 0.1);
-    /* Ensure proper contrast for generated HSL colors */
-    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
-  }
-
   /* Ensure proper alignment of circle with text in selected items */
   :global(.gem-c-select-with-search .choices__list--multiple .choices__item) {
     display: inline-flex;
@@ -2353,13 +2166,66 @@
     gap: 0;
   }
 
-  /* Hide circles in dropdown choices */
+  /* Chips (selected items) */
+  :global(.gem-c-select-with-search .choices__list--multiple .choices__item) {
+    display: inline-flex;
+    align-items: center;
+    border: 0;
+    padding: 0 0px 0 10px; /* right padding for button divider */
+    margin: 10px 10px 0 0;
+    background-color: #f3f2f1;
+    box-shadow: 0 2px 0 #b1b4b6;
+    line-height: 1;
+    color: #0b0c0c;
+  }
+
+  /* Circle */
+  :global(.gem-c-select-with-search .choices__item-circle) {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-right: 8px;
+  }
+
+  /* Remove button */
   :global(
     .gem-c-select-with-search
-      .choices__list--dropdown
-      .choices__item
-      .choices__item-circle
+      .choices[data-type*="select-multiple"]
+      .choices__button
+  ),
+  :global(
+    .gem-c-select-with-search .choices[data-type*="text"] .choices__button
   ) {
-    display: none;
+    margin-left: 8px;
+    width: 16px;
+    height: 40px;
+    padding-left: 12px; /* space for the divider */
+    border-left: 1px solid #b1b4b6;
+    background-image: var(--cross-icon-url);
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 12px;
+    opacity: 0.75;
+  }
+
+  /* Hover/focus states */
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-multiple"]
+      .choices__button:hover
+  ) {
+    background-color: #b1b4b6;
+    border-color: #505a5f;
+    box-shadow: 0 2px 0 #505a5f;
+  }
+
+  :global(
+    .gem-c-select-with-search
+      .choices[data-type*="select-multiple"]
+      .choices__button:focus
+  ) {
+    background-color: #fd0;
+    box-shadow: 0 2px 0 #0b0c0c;
   }
 </style>

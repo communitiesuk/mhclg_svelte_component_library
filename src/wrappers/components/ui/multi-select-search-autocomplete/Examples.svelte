@@ -24,8 +24,13 @@
     },
     {
       id: "4",
-      heading: "4. Remote API source (postcodes.io)",
+      heading: "4. Group Key Feature with Locations",
       content: Example4,
+    },
+    {
+      id: "5",
+      heading: "5. Remote API source (postcodes.io)",
+      content: Example5,
     },
   ];
 </script>
@@ -127,8 +132,58 @@
   <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
 {/snippet}
 
-<!-- Example 4: Remote API source (postcodes.io) -->
+<!-- Example 4: Group Key Feature with Locations -->
 {#snippet Example4()}
+  <div class="p-5 bg-white space-y-6">
+    <div>
+      <h6 class="font-semibold mb-3">Single Select with Group Key:</h6>
+      <MultiSelectSearchAutocomplete
+        id="location-select-single"
+        name="location-single"
+        label="Select a location"
+        hint="Options show location name and region"
+        groupKey="region"
+        items={[
+          { value: "hounslow", text: "Hounslow", region: "London" },
+          { value: "birmingham", text: "Birmingham", region: "West Midlands" },
+          { value: "manchester", text: "Manchester", region: "North West" },
+          { value: "leeds", text: "Leeds", region: "Yorkshire" },
+          { value: "bristol", text: "Bristol", region: "South West" },
+          { value: "cardiff", text: "Cardiff", region: "Wales" },
+          { value: "edinburgh", text: "Edinburgh", region: "Scotland" },
+          { value: "belfast", text: "Belfast", region: "Northern Ireland" },
+        ]}
+        multiple={false}
+      />
+    </div>
+
+    <div>
+      <h6 class="font-semibold mb-3">Multiple Select with Group Key:</h6>
+      <MultiSelectSearchAutocomplete
+        id="location-select-multiple"
+        name="location-multiple"
+        label="Select multiple locations"
+        hint="You can select multiple locations from different regions"
+        groupKey="region"
+        items={[
+          { value: "hounslow", text: "Hounslow", region: "London" },
+          { value: "birmingham", text: "Birmingham", region: "West Midlands" },
+          { value: "manchester", text: "Manchester", region: "North West" },
+          { value: "leeds", text: "Leeds", region: "Yorkshire" },
+          { value: "bristol", text: "Bristol", region: "South West" },
+          { value: "cardiff", text: "Cardiff", region: "Wales" },
+          { value: "edinburgh", text: "Edinburgh", region: "Scotland" },
+          { value: "belfast", text: "Belfast", region: "Northern Ireland" },
+        ]}
+        multiple={true}
+      />
+    </div>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
+{/snippet}
+
+<!-- Example 5: Remote API source (postcodes.io) -->
+{#snippet Example5()}
   <div class="p-5 bg-white">
     <!-- Uses postcodes.io API: https://postcodes.io/ -->
     <MultiSelectSearchAutocomplete

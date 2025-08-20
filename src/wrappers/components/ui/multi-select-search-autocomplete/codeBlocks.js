@@ -92,3 +92,48 @@ export const codeBlockApi = `
   source_property="postcode"
   minLength={3}
 />`;
+
+export const codeBlock4 = `
+<script>
+  import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchAutocomplete.svelte";
+</script>
+
+<!-- Single Select with Group Key -->
+<MultiSelectSearchAutocomplete
+  id="location-select-single"
+  name="location-single"
+  label="Select a location"
+  hint="Options show location name and region"
+  groupKey="region"
+  items={[
+    { value: "hounslow", text: "Hounslow", region: "London" },
+    { value: "birmingham", text: "Birmingham", region: "West Midlands" },
+    { value: "manchester", text: "Manchester", region: "North West" },
+    { value: "leeds", text: "Leeds", region: "Yorkshire" },
+    { value: "bristol", text: "Bristol", region: "South West" },
+    { value: "cardiff", text: "Cardiff", region: "Wales" },
+    { value: "edinburgh", text: "Edinburgh", region: "Scotland" },
+    { value: "belfast", text: "Belfast", region: "Northern Ireland" }
+  ]}
+  multiple={false}
+/>
+
+<!-- Multiple Select with Group Key -->
+<MultiSelectSearchAutocomplete
+  id="location-select-multiple"
+  name="location-multiple"
+  label="Select multiple locations"
+  hint="You can select multiple locations from different regions"
+  groupKey="region"
+  items={[
+    { value: "hounslow", text: "Hounslow", region: "London" },
+    { value: "birmingham", text: "Birmingham", region: "West Midlands" },
+    { value: "manchester", text: "Manchester", region: "North West" },
+    { value: "leeds", text: "Leeds", region: "Yorkshire" },
+    { value: "bristol", text: "Bristol", region: "South West" },
+    { value: "cardiff", text: "Cardiff", region: "Wales" },
+    { value: "edinburgh", text: "Edinburgh", region: "Scotland" },
+    { value: "belfast", text: "Belfast", region: "Northern Ireland" }
+  ]}
+  multiple={true}
+/>`;

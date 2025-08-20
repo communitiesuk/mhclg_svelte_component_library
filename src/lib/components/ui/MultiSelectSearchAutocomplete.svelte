@@ -7,6 +7,10 @@
   // Import Choices.js dynamically to avoid SSR issues
   let Choices: any;
 
+  // Extend SelectItem to allow additional properties for group key functionality
+  type ExtendedSelectItem = SelectItem & { [key: string]: any };
+  type ExtendedSelectGroup = SelectGroup & { choices: ExtendedSelectItem[] };
+
   let {
     // Core attributes - pass through to Select component
     id,
@@ -59,6 +63,9 @@
     minLength = 0,
     tTooShort = (n: number) => `Enter ${n} or more characters for suggestions`,
 
+    // Group key for displaying additional context in options
+    groupKey = undefined,
+
     // Custom styling props
     choicesItemBackgroundColor = "#f3f2f1",
     choicesItemBorderColor = "#b1b4b6",
@@ -68,8 +75,8 @@
   }: {
     id: string;
     name: string;
-    items?: SelectItem[];
-    groups?: SelectGroup[];
+    items?: ExtendedSelectItem[];
+    groups?: ExtendedSelectGroup[];
     value?: (string | number)[] | string | number | undefined;
     multiple?: boolean;
     label: string;
@@ -94,6 +101,7 @@
     sourceSelector?: (query: string, options: any[]) => "api" | "options";
     minLength?: number;
     tTooShort?: (n: number) => string;
+    groupKey?: string;
     choicesItemBackgroundColor?: string;
     choicesItemBorderColor?: string;
     choicesItemTextColor?: string;
@@ -116,6 +124,20 @@
   let debounceTimer: any = null;
   let lastQuery = "";
   const baseNoChoicesText = "No choices to choose from";
+
+  // Helper function for getting group text
+  function getGroupText(item: any): string | undefined {
+    if (!groupKey || !item || typeof item !== "object") return undefined;
+    return item[groupKey] ? String(item[groupKey]) : undefined;
+  }
+
+  // HTML escaping function (simple version)
+  function escapeHtml(text: string): string {
+    if (typeof document === "undefined") return text; // SSR safety
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+  }
 
   // Computed values for component configuration
   let computedPlaceholderText = $derived(
@@ -146,18 +168,36 @@
     const flattened: ChoiceItem[] = [];
     // Include enhancedItems() first (single-select placeholder support)
     for (const it of enhancedItems) {
+      const groupText = getGroupText(it);
+      const safeLabel = escapeHtml(String(it.text));
+      const safeGroup = groupText ? escapeHtml(groupText) : "";
+
       flattened.push({
         value: it.value,
-        label: String(it.text),
+        label: safeGroup
+          ? `<span class="choices__item-label">
+               <span class="choices__item-main">${safeLabel}</span>
+               <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
+             </span>`
+          : safeLabel,
         disabled: it.disabled,
       });
     }
     // Then any explicit groups
     for (const g of groups) {
       for (const choice of g.choices) {
+        const groupText = getGroupText(choice);
+        const safeLabel = escapeHtml(String(choice.text));
+        const safeGroup = groupText ? escapeHtml(groupText) : "";
+
         flattened.push({
           value: choice.value,
-          label: String(choice.text),
+          label: safeGroup
+            ? `<span class="choices__item-label">
+                 <span class="choices__item-main">${safeLabel}</span>
+                 <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
+               </span>`
+            : safeLabel,
           disabled: g.disabled || choice.disabled,
         });
       }
@@ -231,10 +271,24 @@
       | any[]
       | undefined;
     if (!Array.isArray(data)) return [];
+
     const mapped: ChoiceItem[] = data.map((entry) => {
       const label = toLabel(entry);
-      return { value: toValue(entry, label), label };
+      const groupText = getGroupText(entry);
+      const safeLabel = escapeHtml(label);
+      const safeGroup = groupText ? escapeHtml(groupText) : "";
+
+      return {
+        value: toValue(entry, label),
+        label: safeGroup
+          ? `<span class="choices__item-label">
+               <span class="choices__item-main">${safeLabel}</span>
+               <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
+             </span>`
+          : safeLabel,
+      };
     });
+
     return mapped;
   }
 
@@ -443,8 +497,9 @@
         });
 
         // Check if placeholder option already exists
-        const existingPlaceholder =
-          selectElement.querySelector('option[value=""]');
+        const existingPlaceholder = selectElement.querySelector(
+          'option[value=""]',
+        ) as HTMLOptionElement | null;
         console.log("🔍 Existing placeholder check:", {
           found: !!existingPlaceholder,
           placeholder: existingPlaceholder
@@ -469,6 +524,57 @@
           console.log("✅ Added placeholder option to DOM");
         }
 
+        // If groupKey is provided, update all existing options to include group text
+        if (groupKey && selectElement) {
+          console.log("🔧 Updating DOM options with group text");
+          // Update items options
+          items.forEach((item, index) => {
+            const optionIndex = multiple ? index : index + 1; // +1 for placeholder
+            if (selectElement && selectElement.options[optionIndex]) {
+              const groupText = getGroupText(item);
+              const safeLabel = escapeHtml(String(item.text));
+              const safeGroup = groupText ? escapeHtml(groupText) : "";
+              const option = selectElement.options[optionIndex];
+
+              if (safeGroup) {
+                option.innerHTML = `<span class="choices__item-label">
+                  <span class="choices__item-main">${safeLabel}</span>
+                  <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
+                </span>`;
+                console.log(
+                  "✅ Updated item option with group text:",
+                  option.innerHTML,
+                );
+              }
+            }
+          });
+
+          // Update grouped options
+          let optionIndex = multiple ? items.length : items.length + 1; // +1 for placeholder
+          groups.forEach((group) => {
+            group.choices.forEach((choice) => {
+              if (selectElement && selectElement.options[optionIndex]) {
+                const groupText = getGroupText(choice);
+                const safeLabel = escapeHtml(String(choice.text));
+                const safeGroup = groupText ? escapeHtml(groupText) : "";
+                const option = selectElement.options[optionIndex];
+
+                if (safeGroup) {
+                  option.innerHTML = `<span class="choices__item-label">
+                  <span class="choices__item-main">${safeLabel}</span>
+                  <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
+                </span>`;
+                  console.log(
+                    "✅ Updated grouped option with group text:",
+                    option.innerHTML,
+                  );
+                }
+              }
+              optionIndex++;
+            });
+          });
+        }
+
         // Log the DOM structure after ensuring placeholder exists
         console.log("📋 DOM structure AFTER placeholder check:", {
           totalOptions: selectElement.options.length,
@@ -476,6 +582,7 @@
             index: idx,
             value: (opt as HTMLOptionElement).value,
             text: (opt as HTMLOptionElement).text,
+            innerHTML: (opt as HTMLOptionElement).innerHTML,
             selected: (opt as HTMLOptionElement).selected,
             disabled: (opt as HTMLOptionElement).disabled,
           })),
@@ -537,6 +644,33 @@
         duplicateItemsAllowed: false,
         callbackOnInit: function () {
           console.log("🎉 Choices.js initialized successfully");
+
+          // Apply group text to initial choices if groupKey is provided
+          if (groupKey && this.choices && this.choices.length > 0) {
+            console.log("🔧 Applying group text to initial choices");
+            this.choices.forEach((choice: any) => {
+              if (
+                choice &&
+                choice.label &&
+                !choice.label.includes(
+                  '<span class="gem-c-select-with-search__suggestion-group">',
+                )
+              ) {
+                // Find the original item to get group text
+                const originalItem = staticChoices.find(
+                  (item) => String(item.value) === String(choice.value),
+                );
+                if (originalItem && originalItem.label !== choice.label) {
+                  choice.label = originalItem.label;
+                  console.log(
+                    "✅ Updated choice label with group text:",
+                    choice.label,
+                  );
+                }
+              }
+            });
+          }
+
           // For multiple select, move input field to top of feedback area
           if (this.dropdown.type === "select-multiple") {
             const inner = this.containerInner.element;
@@ -559,6 +693,28 @@
 
       // Store reference on the element for external access
       (selectElement as any).choices = choicesInstance;
+
+      // Ensure initial choices have group text applied if groupKey is provided
+      if (groupKey && choicesInstance && staticChoices.length > 0) {
+        console.log("🔧 Ensuring initial choices have group text applied");
+        // Force refresh of choices with group text
+        setTimeout(() => {
+          if (choicesInstance) {
+            choicesInstance.clearChoices();
+            choicesInstance.setChoices(
+              staticChoices.map((c) => ({
+                value: String(c.value),
+                label: c.label,
+                disabled: c.disabled,
+              })),
+              "value",
+              "label",
+              true,
+            );
+            console.log("✅ Initial choices refreshed with group text");
+          }
+        }, 0);
+      }
 
       // Log the DOM structure after Choices.js initialization
       console.log("🔍 DOM structure AFTER Choices.js initialization:", {
@@ -961,6 +1117,7 @@
 <div
   class="gem-c-select-with-search"
   style={`--cross-icon-url: url("${crossIconUrl}"); --choices-item-bg-color: ${choicesItemBackgroundColor}; --choices-item-border-color: ${choicesItemBorderColor}; --choices-item-text-color: ${choicesItemTextColor}; --choices-item-divider-padding: ${choicesItemDividerPadding};`}
+  data-group-key={groupKey}
 >
   {#snippet rightIcon()}
     <button
@@ -1840,5 +1997,37 @@
       .choices__inner
   ) {
     padding: 4px 8px;
+  }
+
+  /* Group text styling similar to SearchAutocomplete */
+  :global(
+    .gem-c-select-with-search
+      .choices__item
+      .gem-c-select-with-search__suggestion-group
+  ) {
+    opacity: 0.8;
+    font-size: smaller;
+    font-weight: normal;
+  }
+
+  /* Flex container for label + group text alignment */
+  :global(.gem-c-select-with-search .choices__item-label) {
+    display: inline-flex;
+    align-items: baseline; /* aligns text baselines for consistent vertical alignment */
+    gap: 5px; /* spacing between label and group text */
+  }
+
+  /* Main text styling */
+  /* :global(.gem-c-select-with-search .choices__item-main) {
+    font-weight: bold;
+  } */
+
+  /* Override the bold weight for the group text specifically */
+  :global(
+    .gem-c-select-with-search
+      .choices__item
+      .gem-c-select-with-search__suggestion-group
+  ) {
+    font-weight: normal;
   }
 </style>

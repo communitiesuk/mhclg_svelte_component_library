@@ -76,6 +76,7 @@
     selectedItemCircleColor = "#1d70b8", // Default color when not using palette
     selectedItemCircleColorPalette = [
       // Complete GOV.UK Design System palette (19 colors)
+      // Maximum selections = 19 before colors start cycling
       "#1d70b8", // Blue (primary)
       "#d4351c", // Red
       "#00703c", // Green
@@ -94,8 +95,7 @@
       "#626a6e", // Mid grey
       "#b1b4b6", // Light grey
       "#0b0c0c", // Black
-      "#ffffff", // White (with border for visibility)
-    ], // Complete GOV.UK Design System palette
+    ], // Complete GOV.UK Design System palette (19 colors)
     ...attributes
   }: {
     id: string;
@@ -167,81 +167,83 @@
     return div.innerHTML;
   }
 
-  // Extended color palette using proven data visualization algorithms
-  function generateExtendedColorPalette(count: number): string[] {
-    if (count === 0) return [];
+  // Sequential color mapping: each selected item gets a unique color based on selection order
+  // This ensures perfect visual distinction and predictable color assignment
+  // 1st selection = color[0], 2nd selection = color[1], 3rd selection = color[2], etc.
+  let selectedItemIndexMap = new Map<string, number>(); // Maps item value to selection index
+  let nextSelectionIndex = 0; // Tracks the next available color index
 
-    // Start with the predefined GOV.UK palette
-    const baseColors = [...selectedItemCircleColorPalette];
+  // Get the maximum number of selections allowed (limited by palette size)
+  // With 19 GOV.UK colors, maximum selections = 19 before cycling begins
+  const maxSelections = selectedItemCircleColorPalette.length;
 
-    if (count <= baseColors.length) {
-      return baseColors.slice(0, count);
+  // Function to get color for a selected item based on its selection order
+  function getColorForSelectedItem(itemValue: string | number): string {
+    const valueKey = String(itemValue);
+
+    // If this item already has an index, use it
+    if (selectedItemIndexMap.has(valueKey)) {
+      const index = selectedItemIndexMap.get(valueKey)!;
+      console.log("🎨 Color index map hit (existing item):", {
+        itemValue: valueKey,
+        existingColorIndex: index,
+        existingColor: selectedItemCircleColorPalette[index],
+        totalMappedItems: selectedItemIndexMap.size,
+      });
+      return selectedItemCircleColorPalette[index];
     }
 
-    // For more colors, generate using Plotly.js-style algorithm
-    const extendedColors = [...baseColors];
-    const needed = count - baseColors.length;
-
-    // Use golden ratio and HSL for optimal color distribution
-    const goldenRatio = 0.618033988749895;
-    let hue = 0;
-
-    for (let i = 0; i < needed; i++) {
-      // Vary saturation and lightness for accessibility
-      const saturation = 65 + (i % 3) * 10; // 65%, 75%, 85%
-      const lightness = 45 + (i % 4) * 10; // 45%, 55%, 65%, 75%
-
-      // Use golden ratio for optimal hue distribution
-      hue = (hue + goldenRatio) % 1;
-      const hslHue = Math.floor(hue * 360);
-
-      const color = `hsl(${hslHue}, ${saturation}%, ${lightness}%)`;
-      // Avoid pure white/very light colors
-      if (lightness < 90) {
-        extendedColors.push(color);
-      }
+    // If we've reached the palette limit, cycle back to the beginning
+    // This means the 20th selection will get color[0], 21st will get color[1], etc.
+    if (nextSelectionIndex >= maxSelections) {
+      nextSelectionIndex = 0;
     }
 
-    return extendedColors;
+    // Assign the next available color index to this item
+    const colorIndex = nextSelectionIndex;
+    selectedItemIndexMap.set(valueKey, colorIndex);
+    nextSelectionIndex++;
+
+    // Log the index map update for debugging
+    console.log("🎨 Color index map updated:", {
+      itemValue: valueKey,
+      assignedColorIndex: colorIndex,
+      assignedColor: selectedItemCircleColorPalette[colorIndex],
+      nextSelectionIndex,
+      totalMappedItems: selectedItemIndexMap.size,
+      currentMap: Object.fromEntries(selectedItemIndexMap),
+    });
+
+    return selectedItemCircleColorPalette[colorIndex];
   }
 
-  // Helper function to get optimized color palette based on number of selected items
-  function getOptimizedColorPalette(selectedCount: number): string[] {
-    return generateExtendedColorPalette(selectedCount);
+  // Function to reset the selection index when items are removed
+  // Call this when you want to clear all selections and start fresh
+  function resetSelectionIndexes() {
+    console.log("🔄 Color index map reset:", {
+      previousMapSize: selectedItemIndexMap.size,
+      previousNextIndex: nextSelectionIndex,
+    });
+    selectedItemIndexMap.clear();
+    nextSelectionIndex = 0;
+    console.log("✅ Color index map reset complete");
   }
-
-  // Precompute stable palette once instead of regenerating per call
-  const stablePalette = (() => {
-    const base = [...selectedItemCircleColorPalette];
-    // Filter out pure white to avoid visibility issues
-    const filtered = base.filter(color => color !== "#ffffff");
-    // extend once if needed:
-    return filtered.length >= 64 ? filtered : generateExtendedColorPalette(64);
-  })();
 
   // Color cache to ensure consistent colors for the same values
   const colorCache = new Map<string, string>();
 
   /**
    * Generate a consistent, deterministic color for a given value.
-   * Uses FNV-1a hash with proper unsigned handling to avoid color duplication.
-   * Caches results for performance and consistency.
+   * Uses sequential index-based mapping for perfect visual distinction.
+   * Each selected item gets a unique color based on selection order.
    */
   function colorForValue(val: unknown): string {
     const key = String(val).toLowerCase().trim();
     const cached = colorCache.get(key);
     if (cached) return cached;
 
-    // FNV-1a (32-bit) -> force unsigned before modulo to avoid negative array indices
-    let h = 2166136261;
-    for (let i = 0; i < key.length; i++) {
-      h ^= key.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    h >>>= 0; // ✅ make it unsigned
-
-    const idx = h % stablePalette.length;           // 0..palette-1
-    const color = stablePalette[idx] || selectedItemCircleColor;
+    // Use sequential color mapping instead of hash-based approach
+    const color = getColorForSelectedItem(String(val));
     colorCache.set(key, color);
     return color;
   }

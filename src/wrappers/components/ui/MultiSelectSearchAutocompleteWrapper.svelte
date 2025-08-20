@@ -425,6 +425,98 @@
           arr: [`Additional options to pass to the Choices.js library.`],
         },
       },
+
+      // Choices.js Styling Options
+      {
+        name: "choicesItemBackgroundColor",
+        category: "Choices.js styling",
+        value: "#f3f2f1",
+        description: {
+          markdown: true,
+          arr: [`Background color for highlighted dropdown items.`],
+        },
+      },
+      {
+        name: "choicesItemBorderColor",
+        category: "Choices.js styling",
+        value: "#b1b4b6",
+        description: {
+          markdown: true,
+          arr: [`Border color for dropdown item dividers.`],
+        },
+      },
+      {
+        name: "choicesItemTextColor",
+        category: "Choices.js styling",
+        value: "black",
+        description: {
+          markdown: true,
+          arr: [`Text color for highlighted dropdown items.`],
+        },
+      },
+      {
+        name: "choicesItemDividerPadding",
+        category: "Choices.js styling",
+        value: "10px",
+        description: {
+          markdown: true,
+          arr: [`Padding for dropdown item dividers.`],
+        },
+      },
+      {
+        name: "selectedItemCircleColor",
+        category: "Choices.js styling",
+        value: "#1d70b8",
+        description: {
+          markdown: true,
+          arr: [
+            `Color of the circle indicator shown on selected items in the button (not in dropdown options).`,
+          ],
+        },
+      },
+      {
+        name: "enableSelectedItemCircles",
+        category: "Choices.js styling",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `Enable or disable the colored circle indicators on selected items.`,
+          ],
+        },
+      },
+      {
+        name: "selectedItemCircleColorPalette",
+        category: "Choices.js styling",
+        value: [
+          // Complete GOV.UK Design System palette (19 colors)
+          "#1d70b8", // Blue (primary)
+          "#d4351c", // Red
+          "#00703c", // Green
+          "#f47738", // Orange
+          "#4c2c92", // Purple
+          "#801650", // Bright purple
+          "#28a197", // Turquoise
+          "#b58840", // Brown
+          "#d53880", // Pink
+          "#6f72af", // Light purple
+          "#f499be", // Light pink
+          "#85994b", // Light green
+          "#ffdd00", // Yellow
+          "#12436d", // Dark blue
+          "#505a5f", // Dark grey
+          "#626a6e", // Mid grey
+          "#b1b4b6", // Light grey
+          "#0b0c0c", // Black
+          "#ffffff", // White (with border for visibility)
+        ],
+        description: {
+          markdown: true,
+          arr: [
+            `Complete GOV.UK Design System color palette (19 colors) with infinite extension capability. Uses the full official GDS palette first, then automatically generates additional unique colors using proven data visualization algorithms (similar to Plotly.js) when more than 19 selections are made. This ensures every selection gets a unique color while maintaining accessibility standards.`,
+          ],
+        },
+      },
     ]),
   );
 
@@ -566,7 +658,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit].join("|")}
+    {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette].join("|")}
       <MultiSelectSearchAutocomplete
         bind:value={selectedValue}
         {...parametersObject}

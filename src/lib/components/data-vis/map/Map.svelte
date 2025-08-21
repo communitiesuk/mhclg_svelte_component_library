@@ -2,6 +2,7 @@
   import {
     MapLibre,
     GeoJSON,
+    VectorTileSource,
     FillLayer,
     LineLayer,
     zoomTransition,
@@ -24,6 +25,9 @@
     jenksBreaks,
     quantileBreaks,
     computeBounds,
+    createPaintObjectFromMetric,
+    extractVectorMetricValues,
+
   } from "./mapUtils.js";
   import NonStandardControls from "./NonStandardControls.svelte";
   import { replaceState } from "$app/navigation";
@@ -66,8 +70,8 @@
     hoverOpacity = 0.8,
     center = [-2.5, 53],
     zoom = 5,
-    minZoom = undefined,
-    maxZoom = undefined,
+    minZoom = 6,
+    maxZoom = 14,
     maxBoundsCoords = [
       [-10, 49],
       [5, 60],
@@ -101,10 +105,19 @@
     legendSnippet = undefined,
     countries = ["england", "scotland"],
     areaCode = "",
+    geoSource = "file",
+    tileSource = "http://localhost:8080/{z}/{x}/{y}.pbf",
+    geojsonPromoteId = "areanm",
+    vectorMetricProperty = "Index of Multiple Deprivation (IMD) Decile",
+    vectorLayerName = "LSOA",
+    borderColor = "#003300",
+    labelSourceLayer = "place",
+    externalData = null,
+    showLegend = false,
   }: {
     data?: object[];
     countries?: string[];
-    lengendSnippet?: string;
+    legendSnippet?: string;
     showLegend?: boolean;
     customPalette?: object[];
     cooperativeGestures?: boolean;
@@ -145,6 +158,7 @@
     setCustomPalette?: boolean;
     customBreaks?: number[];
     interactive?: boolean;
+    showLegend: boolean;
     onload?: (map: maplibregl.Map) => void;
     onerror?: (error: Partial<ErrorEvent>) => void;
     onclick?: (e: maplibregl.MapMouseEvent) => void;
@@ -167,8 +181,18 @@
     onstyleload?: (e: StyleLoadEvent) => void;
     onstyledata?: (e: maplibregl.MapStyleDataEvent) => void;
     onidle?: (e: maplibregl.MapLibreEvent) => void;
-    areaCode?: String;
+    areaCode?: String;   
+    geoSource: "file" | "tiles" | "none";
+    tileSource?: string;
+    geojsonPromoteId?: string;
+    vectorMetricProperty?: string;
+    vectorLayerName?: string;
+    borderColor?: string;
+    labelSourceLayer?: string;
+    externalData?: object;
   } = $props();
+  const tileSourceId = "lsoas";
+  const promoteProperty = "LSOA21NM";
 
   let clickedArea = $state(null);
 
@@ -182,7 +206,6 @@
   const allowedPrefixes: string[] = countries
     .map((area) => areaCodePrefixes[area.toLowerCase()] || [])
     .flat();
-
   let styleLookup = {
     "Carto-light":
       "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -203,6 +226,8 @@
     data ? (data?.filter((d) => d["year"] == year)[0]?.data ?? []) : [],
   );
 
+  $inspect(mapData);
+
   let filteredMapData = $derived(
     mapData && mapData.length
       ? mapData.map((el) => ({
@@ -211,6 +236,7 @@
           metric: +el.data[metric],
         }))
       : [],
+
   );
 
   const filteredTopo = $derived({
@@ -246,8 +272,13 @@
       : colorbrewer[colorPalette][breakCount],
   );
 
-  let borderColor = "#003300";
+  let tooFewColors = $derived(fillColors.length < breakCount);
 
+  $effect(() => {
+    if (tooFewColors) {
+      console.warn("Too few colours for the number of breaks");
+    }
+  });
   let map: maplibregl.Map | undefined = $state();
 
   let loaded = $state(false);
@@ -292,10 +323,8 @@
 
     if (cooperativeGestures) {
       map?.cooperativeGestures.enable();
-      $inspect(cooperativeGestures);
     } else {
       map?.cooperativeGestures.disable();
-      $inspect(cooperativeGestures);
     }
 
     if (interactive) {
@@ -317,6 +346,9 @@
     }
 
     map?.setMaxBounds(bounds);
+
+    map?.setMaxZoom(maxZoom);
+    map?.setMinZoom(minZoom);
   });
 
   let vals = $derived(
@@ -334,8 +366,20 @@
           ? quantileBreaks(vals, breakCount)
           : customBreaks,
   );
+
+  let vectorPaintObject = $derived(
+    externalData != null
+      ? createPaintObjectFromMetric(metric, breaks, fillColors, fillOpacity)
+      : createPaintObjectFromMetric(
+          vectorMetricProperty,
+          breaks,
+          fillColors,
+          fillOpacity,
+        ),
+  );
+
   let dataWithColor = $derived(
-    filteredMapData.map((d) => {
+    filteredMapData?.map((d) => {
       return {
         ...d,
         color: getColor(d?.metric, breaks, fillColors),
@@ -360,7 +404,9 @@
     },
   ]);
 
-  let merged = $derived(joinData(filteredGeoJsonData, dataWithColor));
+  let merged = $derived(
+    geoSource === "file" ? joinData(filteredGeoJsonData, dataWithColor) : null,
+  );
 
   let hoveredArea = $state();
   let hoveredAreaData = $state();
@@ -435,15 +481,13 @@
   });
 </script>
 
-<div style="position: relative; height: {mapHeight}px;">
+<div style="position: relative; height: {mapHeight}; width: 100%;">
   <MapLibre
     bind:map
     bind:loaded
     {style}
     {center}
     {zoom}
-    {maxZoom}
-    {minZoom}
     standardControls={interactive && standardControls}
     {hash}
     {updateHash}
@@ -498,6 +542,8 @@
       <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
     {/if}
 
+    
+   {#if geoSource == "file"}
     <GeoJSON id="areas" data={merged} promoteId="areanm">
       <FillLayer
         paint={{
@@ -557,23 +603,97 @@
                 maxBorderWidth, // normal at high zoom
               ],
             ],
+
           }}
           beforeLayerType="symbol"
+          manageHoverState={interactive}
+          onclick={interactive ? (e) => zoomToArea(e) : undefined}
+          onmousemove={interactive
+            ? (e) => {
+                hoveredArea = e.features[0].id;
+                hoveredAreaData = e.features[0].properties.metric;
+                currentMousePosition = e.event.point;
+              }
+            : undefined}
+          onmouseleave={interactive
+            ? () => {
+                hoveredArea = null;
+                hoveredAreaData = null;
+              }
+            : undefined}
         />
-      {/if}
-    </GeoJSON>
+        {#if showBorder}
+          <LineLayer
+            id="border-layer"
+            layout={{ "line-cap": "round", "line-join": "round" }}
+            paint={{
+              "line-color": hoverStateFilter(borderColor, "orange"),
+              "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
+            }}
+            beforeLayerType="symbol"
+          />
+        {/if}
+      </GeoJSON>
+    {:else if geoSource == "tiles"}
+      <VectorTileSource
+        id={tileSourceId}
+        promoteId={promoteProperty}
+        tiles={[tileSource]}
+      >
+        <FillLayer
+          paint={vectorPaintObject}
+          sourceLayer={vectorLayerName}
+          onclick={interactive ? zoomToArea : undefined}
+          onmousemove={interactive
+            ? (e) => {
+                if (e.features?.[0]) {
+                  hoveredArea = e.features[0].id;
+                  hoveredAreaData =
+                    e.features[0].properties[vectorMetricProperty];
+                  currentMousePosition = e.event.point;
+                }
+              }
+            : undefined}
+          onmouseleave={interactive
+            ? () => {
+                hoveredArea = null;
+                hoveredAreaData = null;
+              }
+            : undefined}
+        />
+        {#if showBorder}
+          <LineLayer
+            layout={{ "line-cap": "round", "line-join": "round" }}
+            paint={{
+              "line-color": hoverStateFilter(borderColor, "orange"),
+              "line-width": zoomTransition(
+                minZoom ?? 3,
+                0,
+                maxZoom ?? 14,
+                maxBorderWidth,
+              ),
+            }}
+            beforeLayerType="symbol"
+            sourceLayer={vectorLayerName}
+          />
+        {/if}
+      </VectorTileSource>
+    {:else}
+      <p>No data</p>
+    {/if}
 
+    <!-- Important note: sourceLayer must match `-l` value from tippecanoe -->
     {#if interactive && tooltip}
       <Tooltip
         {currentMousePosition}
         {hoveredArea}
         {hoveredAreaData}
-        {year}
-        {metric}
+        metric={geoSource == "tiles" ? vectorMetricProperty : metric}
       />
     {/if}
   </MapLibre>
 </div>
+
 
 {#if legendSnippet && showLegend}
   {#if typeof legendSnippet === "string"}
@@ -594,6 +714,7 @@
     {/each}
   </div>
 {:else}{/if}
+
 
 <style>
   :global(.maplibregl-ctrl-group button.reset-button) {

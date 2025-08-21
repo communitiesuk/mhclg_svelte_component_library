@@ -515,6 +515,71 @@
               ignoreLocation: true,
               threshold: 0,
             },
+            // Add the custom template callback to preserve colored circles
+            callbackOnCreateTemplates: function (strToEl: any) {
+              // public class names exposed by Choices
+              const cn = this.config.classNames;
+              const isMulti = this.passedElement?.element?.multiple === true;
+
+              // small escape for when allowHTML=false
+              const esc = (s: string) =>
+                String(s)
+                  .replace(/&/g, "&amp;")
+                  .replace(/</g, "&lt;")
+                  .replace(/>/g, "&gt;");
+
+              // try to keep any existing templates if your build exposes them
+              const base = (this as any)._templates ?? {};
+
+              return {
+                ...base,
+
+                // Custom item template for chips (selected items), not dropdown choices
+                item: (_classNames: any, data: any) => {
+                  const classes = [
+                    cn.item,
+                    data.highlighted ? cn.highlightedState : cn.itemSelectable,
+                    data.placeholder ? cn.placeholder : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ");
+
+                  // ✅ Decide if this chip should be deletable
+                  const showRemove =
+                    isMulti && this.config.removeItemButton && !data.disabled;
+
+                  // Circle
+                  let circle = "";
+                  if (enableSelectedItemCircles && isMulti && data.active) {
+                    const color = colorForValue(data.value); // ✅ value-only, stable
+                    circle = `<span class="choices__item-circle" style="background:${color}"></span>`;
+                  }
+
+                  // Label
+                  const labelHtml = allowHTML ? data.label : esc(data.label);
+
+                  // Remove button (same markup Choices normally generates)
+                  const removeBtn = showRemove
+                    ? `<button type="button"
+                               class="${cn.button}"
+                               data-button
+                               aria-label="Remove ${esc(String(data.value))}"></button>`
+                    : "";
+
+                  return strToEl(
+                    `<div class="${classes}"
+                          data-item
+                          data-id="${data.id}"
+                          data-value="${String(data.value)}"
+                          ${showRemove ? "data-deletable" : ""}
+                          ${data.active ? 'aria-selected="true"' : ""}
+                          ${data.disabled ? 'aria-disabled="true"' : ""}>
+                        ${circle}${labelHtml}${removeBtn}
+                     </div>`,
+                  );
+                },
+              };
+            },
             ...choicesOptions,
           });
 
@@ -576,6 +641,9 @@
         "label",
         true,
       );
+
+      // Custom templates are automatically applied when setChoices is called
+      // No need for additional refresh calls
     }
   }
 
@@ -826,6 +894,18 @@
 
             // Custom item template for chips (selected items), not dropdown choices
             item: (_classNames: any, data: any) => {
+              // Debug: Log template data to understand what we're working with
+              console.log("🎨 Template data for item:", {
+                value: data.value,
+                label: data.label,
+                active: data.active,
+                highlighted: data.highlighted,
+                placeholder: data.placeholder,
+                disabled: data.disabled,
+                isMulti,
+                enableSelectedItemCircles,
+              });
+
               const classes = [
                 cn.item,
                 data.highlighted ? cn.highlightedState : cn.itemSelectable,
@@ -840,9 +920,13 @@
 
               // Circle
               let circle = "";
-              if (enableSelectedItemCircles && isMulti && data.active) {
+              if (enableSelectedItemCircles && isMulti) {
                 const color = colorForValue(data.value); // ✅ value-only, stable
                 circle = `<span class="choices__item-circle" style="background:${color}"></span>`;
+                console.log("🎨 Adding circle with color:", {
+                  value: data.value,
+                  color,
+                });
               }
 
               // Label
@@ -1104,6 +1188,10 @@
                     "label",
                     true,
                   );
+
+                  // Custom templates are automatically applied when setChoices is called
+                  // No need for additional refresh calls
+
                   console.log(
                     "✅ Set new API choices:",
                     filteredApiChoices.length,
@@ -1212,6 +1300,10 @@
                     "label",
                     true,
                   );
+
+                  // Custom templates are automatically applied when setChoices is called
+                  // No need for additional refresh calls
+
                   console.log(
                     "✅ Set filtered static choices:",
                     filteredStaticChoices.length,

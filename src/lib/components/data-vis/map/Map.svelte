@@ -100,7 +100,7 @@
     showLegend = true,
     legendSnippet = undefined,
     countries = ["england", "scotland"],
-    areaCode = "E06000024",
+    areaCode = undefined,
   }: {
     data?: object[];
     countries?: string[];
@@ -321,7 +321,7 @@
 
   let vals = $derived(
     filteredMapData.length
-      ? filteredMapData.map((d) => d.metric).sort((a, b) => a - b)
+      ? filteredMapData.map((d) => d?.metric).sort((a, b) => a - b)
       : [],
   );
 
@@ -338,7 +338,7 @@
     filteredMapData.map((d) => {
       return {
         ...d,
-        color: getColor(d.metric, breaks, fillColors),
+        color: getColor(d?.metric, breaks, fillColors),
       };
     }),
   );
@@ -522,7 +522,7 @@
         onmousemove={interactive
           ? (e) => {
               hoveredArea = e.features[0].id;
-              hoveredAreaData = e.features[0].properties.metric;
+              hoveredAreaData = e.features[0].properties?.metric;
               currentMousePosition = e.event.point;
             }
           : undefined}

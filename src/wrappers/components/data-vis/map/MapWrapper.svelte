@@ -406,6 +406,13 @@
         category: "Styling",
       },
       {
+        name: "legendSnippet",
+        isProp: true,
+        description: "Pass in a snippet for the map legend",
+        value: undefined,
+        category: "Styling",
+      },
+      {
         name: "hoverOpacity",
         isProp: true,
         category: "Styling",
@@ -436,7 +443,20 @@
         value: "ltla",
         options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
       },
-      { name: "areaCode", isProp: true, category: "Data", value: "E06000021" },
+      {
+        name: "areaCode",
+        isProp: true,
+        category: "Data",
+        value: "E06000021",
+        description: "Pass in an area code to render one tile.",
+      },
+      {
+        name: "countries",
+        isProp: true,
+        category: "Data",
+        value: ["england"],
+        description: "Pass in countires you want the topo layer to render.",
+      },
       {
         name: "year",
         isProp: true,

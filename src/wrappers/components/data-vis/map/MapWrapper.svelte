@@ -447,7 +447,7 @@
         name: "areaCode",
         isProp: true,
         category: "Data",
-        value: "E06000021",
+        value: "",
         description: "Pass in an area code to render one tile.",
       },
       {

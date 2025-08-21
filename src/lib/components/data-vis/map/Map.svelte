@@ -100,7 +100,7 @@
     showLegend = true,
     legendSnippet = undefined,
     countries = ["england", "scotland"],
-    areaCode = undefined,
+    areaCode = "",
   }: {
     data?: object[];
     countries?: string[];

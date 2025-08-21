@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount, onDestroy } from "svelte";
+  import { SvelteMap } from "svelte/reactivity";
   import Select, { type SelectItem, type SelectGroup } from "./Select.svelte";
   import IconSearch from "../../icons/IconSearch.svelte";
   import crossIconUrl from "./../../assets/govuk_publishing_components/images/cross-icon.svg?url";
@@ -19,6 +20,10 @@
     groups = [],
     value = $bindable<(string | number)[] | string | number | undefined>(),
     multiple = false,
+
+    // Bindable state props for external synchronization
+    bindSelectedItemIndexMap = $bindable(new Map<string, number>()),
+    bindNextSelectionIndex = $bindable(0),
 
     // Label and hints - pass through to Select component
     label,
@@ -96,6 +101,7 @@
       "#b1b4b6", // Light grey
       "#0b0c0c", // Black
     ], // Complete GOV.UK Design System palette (19 colors)
+
     ...attributes
   }: {
     id: string;
@@ -134,6 +140,11 @@
     enableSelectedItemCircles?: boolean;
     selectedItemCircleColor?: string;
     selectedItemCircleColorPalette?: string[];
+
+    // Bindable state props for external synchronization
+    // Use these to sync color state with other components
+    bindSelectedItemIndexMap?: Map<string, number> | SvelteMap<string, number>; // Maps item values to their color indices
+    bindNextSelectionIndex?: number; // Next available color index
   } & Omit<
     import("svelte/elements").HTMLSelectAttributes,
     | "id"
@@ -170,8 +181,22 @@
   // Sequential color mapping: each selected item gets a unique color based on selection order
   // This ensures perfect visual distinction and predictable color assignment
   // 1st selection = color[0], 2nd selection = color[1], 3rd selection = color[2], etc.
-  let selectedItemIndexMap = new Map<string, number>(); // Maps item value to selection index
-  let nextSelectionIndex = 0; // Tracks the next available color index
+
+  // Architecture: Single source of truth using external bindings with fallbacks
+  // This eliminates state duplication and sync complexity
+  // Use $derived for reading external bindings reactively
+  // This ensures that when external bindings change, our local state updates automatically
+  let selectedItemIndexMap = $derived(
+    bindSelectedItemIndexMap || new SvelteMap<string, number>(),
+  );
+  let nextSelectionIndex = $derived(bindNextSelectionIndex ?? 0);
+
+  // Helper function to update external bindings when we modify state
+  function updateNextSelectionIndex(newValue: number) {
+    if (bindNextSelectionIndex !== undefined) {
+      bindNextSelectionIndex = newValue;
+    }
+  }
 
   // Get the maximum number of selections allowed (limited by palette size)
   // With 19 GOV.UK colors, maximum selections = 19 before cycling begins
@@ -196,37 +221,26 @@
     // If we've reached the palette limit, cycle back to the beginning
     // This means the 20th selection will get color[0], 21st will get color[1], etc.
     if (nextSelectionIndex >= maxSelections) {
-      nextSelectionIndex = 0;
+      updateNextSelectionIndex(0);
     }
 
     // Assign the next available color index to this item
     const colorIndex = nextSelectionIndex;
+    // SvelteMap.set() automatically triggers reactivity and updates external bindings
     selectedItemIndexMap.set(valueKey, colorIndex);
-    nextSelectionIndex++;
+    updateNextSelectionIndex(colorIndex + 1);
 
     // Log the index map update for debugging
     console.log("🎨 Color index map updated:", {
       itemValue: valueKey,
       assignedColorIndex: colorIndex,
       assignedColor: selectedItemCircleColorPalette[colorIndex],
-      nextSelectionIndex,
+      nextSelectionIndex: colorIndex + 1,
       totalMappedItems: selectedItemIndexMap.size,
       currentMap: Object.fromEntries(selectedItemIndexMap),
     });
 
     return selectedItemCircleColorPalette[colorIndex];
-  }
-
-  // Function to reset the selection index when items are removed
-  // Call this when you want to clear all selections and start fresh
-  function resetSelectionIndexes() {
-    console.log("🔄 Color index map reset:", {
-      previousMapSize: selectedItemIndexMap.size,
-      previousNextIndex: nextSelectionIndex,
-    });
-    selectedItemIndexMap.clear();
-    nextSelectionIndex = 0;
-    console.log("✅ Color index map reset complete");
   }
 
   // Color cache to ensure consistent colors for the same values

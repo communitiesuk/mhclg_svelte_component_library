@@ -504,7 +504,7 @@
           colorPalette="YlOrRd"
           breaksType="quantile"
           numberOfBreaks={5}
-          mapHeight={400}
+          mapHeight={"100vh"}
           zoom={6}
           center={[-2.5, 53.5]}
           styleSheet="Carto-light"

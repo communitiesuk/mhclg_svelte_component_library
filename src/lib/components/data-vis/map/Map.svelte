@@ -204,8 +204,10 @@
 
   let mapData = $derived(data?.filter((d) => d["year"] == year)[0]?.data);
 
+  $inspect(mapData);
+
   let filteredMapData = $derived(
-    mapData.map((el) => ({
+    mapData?.map((el) => ({
       areaCode: el.areaCode,
       areaName: el.areaName,
       metric: +el.data[metric],
@@ -304,7 +306,7 @@
   });
 
   let vals = $derived(
-    filteredMapData.map((d) => d.metric).sort((a, b) => a - b),
+    filteredMapData?.map((d) => d.metric).sort((a, b) => a - b),
   );
 
   let breaks = $derived(
@@ -326,7 +328,7 @@
   );
 
   let dataWithColor = $derived(
-    filteredMapData.map((d) => {
+    filteredMapData?.map((d) => {
       return {
         ...d,
         color: getColor(d.metric, breaks, fillColors),
@@ -351,7 +353,9 @@
     },
   ]);
 
-  let merged = $derived(joinData(filteredGeoJsonData, dataWithColor));
+  let merged = $derived(
+    geoSource === "file" ? joinData(filteredGeoJsonData, dataWithColor) : null,
+  );
 
   let hoveredArea = $state();
   let hoveredAreaData = $state();
@@ -416,7 +420,7 @@
   );
 </script>
 
-<div style="position: relative; height: {mapHeight}px;">
+<div style="position: relative; height: {mapHeight}; width: 100%;">
   <MapLibre
     bind:map
     bind:loaded

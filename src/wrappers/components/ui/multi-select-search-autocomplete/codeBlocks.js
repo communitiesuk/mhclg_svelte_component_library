@@ -323,3 +323,84 @@ export const codeBlock6 = `
      />
    </div>
 </div>`;
+
+export const codeBlock7 = `
+<script>
+  import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchAutocomplete.svelte";
+</script>
+
+<MultiSelectSearchAutocomplete
+  id="smart-selector-demo"
+  name="smart-selector"
+  label="Smart search with custom source selection"
+  hint="Search for postcodes, names, or short queries to see different behaviors"
+  items={[
+    { value: "london", text: "London", region: "England" },
+    { value: "manchester", text: "Manchester", region: "England" },
+    { value: "birmingham", text: "Birmingham", region: "England" },
+    { value: "leeds", text: "Leeds", region: "England" },
+    { value: "bristol", text: "Bristol", region: "England" },
+    { value: "cardiff", text: "Cardiff", region: "Wales" },
+    { value: "edinburgh", text: "Edinburgh", region: "Scotland" },
+    { value: "belfast", text: "Belfast", region: "Northern Ireland" }
+  ]}
+  groupKey="region"
+  multiple={true}
+  source_url="https://api.postcodes.io/postcodes/"
+  source_key="result"
+  source_property="postcode"
+  minLength={3}
+  sourceSelector={(query, staticOptions) => {
+    // Custom logic to decide between API and static options
+    const q = query.toLowerCase().trim();
+    
+    // More robust UK postcode detection
+    // Can detect partial postcodes as they're being typed
+    const isLikelyPostcode = (input) => {
+      const trimmed = input.trim().toUpperCase();
+      
+      // Full postcode patterns
+      const fullPostcodePatterns = [
+        /^[A-Z]{1,2}[0-9][A-Z0-9]?\s*[0-9][A-Z]{2}$/, // A1 1AA, A11 1AA, AA1 1AA, AA11 1AA
+        /^[A-Z]{1,2}[0-9][A-Z0-9]?[0-9][A-Z]{2}$/,   // A1A1AA, A11A1AA, AA1A1AA, AA11A1AA (no spaces)
+      ];
+      
+      // Partial postcode patterns (as user types)
+      const partialPostcodePatterns = [
+        /^[A-Z]{1,2}$/,                    // Just area code (e.g., "SW", "M")
+        /^[A-Z]{1,2}[0-9]$/,              // Area + district (e.g., "SW1", "M1")
+        /^[A-Z]{1,2}[0-9][A-Z0-9]?$/,    // Area + district + sector (e.g., "SW1A", "M1A")
+        /^[A-Z]{1,2}[0-9][A-Z0-9]?\s*$/, // Area + district + sector + space
+        /^[A-Z]{1,2}[0-9][A-Z0-9]?\s*[0-9]$/, // Area + district + sector + space + unit number
+      ];
+      
+      // Check if it's a complete postcode
+      if (fullPostcodePatterns.some(pattern => pattern.test(trimmed))) {
+        return true;
+      }
+      
+      // Check if it's a partial postcode (more than 2 chars to avoid false positives)
+      if (trimmed.length > 2 && partialPostcodePatterns.some(pattern => pattern.test(trimmed))) {
+        return true;
+      }
+      
+      // Additional heuristic: if it starts with area code pattern and has numbers
+      // This catches cases like "SW1", "M1", "B1" etc.
+      if (/^[A-Z]{1,2}[0-9]/.test(trimmed) && trimmed.length >= 3) {
+        return true;
+      }
+      
+      return false;
+    };
+    
+    // If it looks like a postcode (even partial), use API
+    if (isLikelyPostcode(q)) {
+      console.log("🎯 Query looks like postcode, using API:", q);
+      return "api";
+    }
+    
+    // For everything else, use static options
+    console.log("🎯 Query is not postcode-like, using static options:", q);
+    return "options";
+  }}
+/>`;

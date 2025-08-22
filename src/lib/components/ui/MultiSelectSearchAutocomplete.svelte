@@ -170,6 +170,34 @@
     return item[groupKey] ? String(item[groupKey]) : undefined;
   }
 
+  // Helper function to ensure group text is applied to choices
+  function ensureGroupTextApplied(choices: any[]) {
+    if (!groupKey || !choices || choices.length === 0) return choices;
+
+    console.log("🔧 Ensuring group text is applied to choices");
+
+    return choices.map((choice) => {
+      // Find the original item to get group text
+      const originalItem = staticChoices.find(
+        (item) => String(item.value) === String(choice.value),
+      );
+
+      if (originalItem && originalItem.label !== choice.label) {
+        console.log("✅ Applying group text to choice:", {
+          value: choice.value,
+          originalLabel: choice.label,
+          newLabel: originalItem.label,
+        });
+        return {
+          ...choice,
+          label: originalItem.label,
+        };
+      }
+
+      return choice;
+    });
+  }
+
   // HTML escaping function (simple version)
   function escapeHtml(text: string): string {
     if (typeof document === "undefined") return text; // SSR safety
@@ -328,11 +356,149 @@
     return flattened;
   });
 
+  // Strip tags so a custom sourceSelector can reason about labels
+  const staticPlainOptions = $derived.by(() =>
+    staticChoices.map((c) => ({
+      ...c,
+      label: String(c.label).replace(/<[^>]*>/g, ""),
+    })),
+  );
+
+  // Helper function to detect if a query looks like a postcode
+  function looksLikePostcode(query: string): boolean {
+    // UK postcode pattern: A1 1AA, A11 1AA, AA1 1AA, AA11 1AA
+    const postcodePattern = /^[A-Z]{1,2}[0-9][A-Z0-9]?\s*[0-9][A-Z]{2}$/i;
+    return postcodePattern.test(query);
+  }
+
+  // Define the search modes
+  type Mode = "short" | "options" | "api";
+  let currentMode: Mode = "options";
+
+  // Determine component configuration type
+  const hasApi = Boolean(source_url && source_key);
+  const hasStatic = staticChoices.length > (multiple ? 0 : 1); // (>1 if single because of placeholder)
+  const isDual = hasApi && hasStatic;
+  const isOptionsOnly = !hasApi && hasStatic;
+
+  // Decide which search mode to use based on query and configuration
+  function decideMode(query: string): Mode {
+    const q = query.trim();
+
+    console.log("🔍 Mode decision factors:", {
+      query: q,
+      queryLength: q.length,
+      minLength,
+      hasApi,
+      hasStatic,
+      isDual,
+      isOptionsOnly,
+      itemsCount: items?.length || 0,
+      groupsCount: groups?.length || 0,
+    });
+
+    // For dual-mode, gate initially until user types
+    if (isDual) {
+      if (q.length < minLength) {
+        console.log("🎯 Dual-mode: gating initially (query too short)");
+        return "short";
+      }
+
+      // Let sourceSelector override if provided
+      if (typeof sourceSelector === "function") {
+        try {
+          const pick = sourceSelector(q, staticPlainOptions);
+          console.log("🎯 sourceSelector returned:", pick);
+          if (pick === "api" && hasApi) return "api";
+          if (pick === "options" && hasStatic) return "options";
+        } catch (error) {
+          console.warn("⚠️ sourceSelector error:", error);
+        }
+      }
+
+      // Default dual-mode logic: postcode → API, else → options
+      const defaultMode = looksLikePostcode(q) ? "api" : "options";
+      console.log("🎯 Dual-mode default decision:", defaultMode);
+      return defaultMode;
+    }
+
+    // For options-only, show immediately
+    if (isOptionsOnly) {
+      console.log("🎯 Options-only: showing immediately");
+      return "options";
+    }
+
+    // For API-only, gate until minLength
+    if (hasApi && !hasStatic) {
+      if (q.length < minLength) {
+        console.log("🎯 API-only: gating until minLength");
+        return "short";
+      }
+      console.log("🎯 API-only: using API");
+      return "api";
+    }
+
+    // Fallback
+    console.log("🎯 Fallback: using options");
+    return "options";
+  }
+
+  // Apply the selected mode to Choices.js configuration
+  function applyMode(newMode: Mode) {
+    if (!choicesInstance || currentMode === newMode) return;
+
+    // Ensure the instance is fully initialized
+    if (!choicesInstance.initialised) {
+      console.log(
+        "⚠️ Choices instance not fully initialized, skipping mode application",
+      );
+      return;
+    }
+
+    currentMode = newMode;
+
+    console.log("🔄 Applying mode:", newMode);
+
+    if (newMode === "short") {
+      choicesInstance.config.searchChoices = false;
+      choicesInstance.config.noChoicesText = tTooShort(minLength);
+      choicesInstance.clearChoices();
+      choicesInstance.setChoices([], "value", "label", true);
+      // Force refresh to show the message
+      return;
+    }
+
+    if (newMode === "options") {
+      // For options mode, we control the list (not Choices' internal filter)
+      choicesInstance.config.searchChoices = false;
+
+      if (hasStatic) {
+        resetToStaticChoices(); // ensure full dataset is present with group text
+        // Don't set noChoicesText here - let the search logic handle it
+        // This allows us to show "No results found" vs "No choices to choose from"
+      } else {
+        // No static options available - show appropriate message
+        choicesInstance.config.noChoicesText = "No static options available";
+        choicesInstance.clearChoices();
+        choicesInstance.setChoices([], "value", "label", true);
+      }
+      return;
+    }
+
+    // mode === "api"
+    choicesInstance.config.searchChoices = false; // we own filtering & list
+    choicesInstance.config.noChoicesText = "No choices to choose from";
+    // Clear choices and force refresh to show the message
+    choicesInstance.clearChoices();
+    choicesInstance.setChoices([], "value", "label", true);
+    // Force refresh to show the message
+  }
+
   // Default selection logic between API and static options
   function selectSource(query: string): "api" | "options" {
     if (typeof sourceSelector === "function") {
       try {
-        return sourceSelector(query, staticChoices);
+        return sourceSelector(query, staticPlainOptions);
       } catch {
         // fall through to default
       }
@@ -416,7 +582,12 @@
   }
 
   function resetToStaticChoices() {
-    if (!choicesInstance) return;
+    if (!choicesInstance || !choicesInstance.initialised) {
+      console.log(
+        "⚠️ Choices instance not ready, skipping resetToStaticChoices",
+      );
+      return;
+    }
 
     console.log("🔄 resetToStaticChoices called");
 
@@ -508,8 +679,8 @@
               "-label " +
               (selectElement.getAttribute("aria-describedby") || ""),
             searchFloor: minLength,
-            searchChoices: !(source_url && source_key),
-            noChoicesText: baseNoChoicesText,
+            // Don't set searchChoices here - let applyMode handle it
+            // Don't set noChoicesText here - let the search logic handle it
             duplicateItemsAllowed: false,
             fuseOptions: {
               ignoreLocation: true,
@@ -586,6 +757,17 @@
           // Store reference on the element for external access
           (selectElement as any).choices = choicesInstance;
 
+          // Re-apply the current mode after reinitialization
+          setTimeout(() => {
+            if (choicesInstance) {
+              applyMode(currentMode);
+              console.log(
+                "🔄 Re-applied current mode after reinitialization:",
+                currentMode,
+              );
+            }
+          }, 0);
+
           // Restore focus to the main Choices container after reinitialization
           setTimeout(() => {
             if (choicesInstance?.containerOuter?.element) {
@@ -601,15 +783,21 @@
       // For non-grouped options, use the existing logic
       console.log("📋 Restoring flat options structure");
 
-      // Filter out already selected values from static choices
-      const filteredStaticChoices = staticChoices.filter(
-        (choice) => !selectedValues.includes(String(choice.value)),
-      );
+      // For options-only mode, show all choices; for search results, filter by selected values
+      const choicesToShow =
+        currentMode === "options" && !isDual
+          ? staticChoices // Show all choices for options-only mode
+          : staticChoices.filter(
+              (choice) => !selectedValues.includes(String(choice.value)),
+            ); // Filter for dual-mode
 
-      console.log("🔍 Filtered static choices:", {
+      console.log("🔍 Static choices to show:", {
         total: staticChoices.length,
-        filtered: filteredStaticChoices.length,
-        excluded: selectedValues.length,
+        toShow: choicesToShow.length,
+        mode: currentMode,
+        isDual,
+        isOptionsOnly,
+        excluded: staticChoices.length - choicesToShow.length,
       });
 
       choicesInstance.clearChoices();
@@ -627,19 +815,23 @@
                 placeholder: true,
               },
             ]),
-        // Add filtered choices
-        ...filteredStaticChoices.map((c) => ({
+        // Add choices to show
+        ...choicesToShow.map((c) => ({
           value: String(c.value),
           label: c.label,
           disabled: c.disabled,
         })),
       ];
 
-      choicesInstance.setChoices(
+      // Ensure group text is applied to choices
+      const choicesWithGroupText = ensureGroupTextApplied(
         choicesWithPlaceholder,
-        "value",
-        "label",
-        true,
+      );
+
+      choicesInstance.setChoices(choicesWithGroupText, "value", "label", true);
+      console.log(
+        "✅ Set static choices with group text:",
+        choicesWithGroupText.length,
       );
 
       // Custom templates are automatically applied when setChoices is called
@@ -829,7 +1021,7 @@
         labelId: id + "-label " + ariaDescribedBy,
         // Link minLength behaviour to Choices
         searchFloor: minLength,
-        searchChoices: !hasApiConfig,
+        // Don't set searchChoices initially - let applyMode handle it
         noChoicesText: initialNoChoicesText,
         // Prevent duplicate selections
         duplicateItemsAllowed: false,
@@ -839,31 +1031,8 @@
           // Remove the MutationObserver setup and circle refresh logic
           // Circles are now handled by callbackOnCreateTemplates
 
-          // Apply group text to initial choices if groupKey is provided
-          if (groupKey && this.choices && this.choices.length > 0) {
-            console.log("🔧 Applying group text to initial choices");
-            this.choices.forEach((choice: any) => {
-              if (
-                choice &&
-                choice.label &&
-                !choice.label.includes(
-                  '<span class="gem-c-select-with-search__suggestion-group">',
-                )
-              ) {
-                // Find the original item to get group text
-                const originalItem = staticChoices.find(
-                  (item) => String(item.value) === String(choice.value),
-                );
-                if (originalItem && originalItem.label !== choice.label) {
-                  choice.label = originalItem.label;
-                  console.log(
-                    "✅ Updated choice label with group text:",
-                    choice.label,
-                  );
-                }
-              }
-            });
-          }
+          // Don't apply group text here - let the mode logic handle it
+          // This prevents showing static options when we should be in "short" mode
 
           // For multiple select, move input field to top of feedback area
           if (this.dropdown.type === "select-multiple") {
@@ -872,6 +1041,23 @@
             inner.prepend(input);
             console.log("🔄 Moved input field to top for multiple select");
           }
+
+          // Set initial mode after Choices.js is fully initialized
+          setTimeout(() => {
+            // Determine initial mode based on component configuration
+            const initialMode = decideMode("");
+            console.log("🎯 Initial mode decision:", {
+              mode: initialMode,
+              isDual,
+              isOptionsOnly,
+              hasApi,
+              hasStatic,
+              minLength,
+            });
+
+            // Apply the initial mode - this will show options immediately for options-only mode
+            applyMode(initialMode);
+          }, 0);
         },
         // Add the template customization to add circles at creation time
         callbackOnCreateTemplates: function (strToEl: any) {
@@ -969,9 +1155,17 @@
       // Store reference on the element for external access
       (selectElement as any).choices = choicesInstance;
 
-      // Ensure initial choices have group text applied if groupKey is provided
-      if (groupKey && choicesInstance && staticChoices.length > 0) {
-        console.log("🔧 Ensuring initial choices have group text applied");
+      // For options-only components, apply group text immediately after initialization
+      // For dual-mode components, let the mode logic handle it
+      if (
+        isOptionsOnly &&
+        groupKey &&
+        choicesInstance &&
+        staticChoices.length > 0
+      ) {
+        console.log(
+          "🔧 Options-only component: applying group text immediately",
+        );
         // Force refresh of choices with group text
         setTimeout(() => {
           if (choicesInstance) {
@@ -986,10 +1180,18 @@
               "label",
               true,
             );
-            console.log("✅ Initial choices refreshed with group text");
+            console.log(
+              "✅ Initial choices refreshed with group text for options-only component",
+            );
           }
         }, 0);
       }
+
+      // Set initial mode after Choices.js is initialized - moved to callbackOnInit
+      // setTimeout(() => {
+      //   const initialQuery = (searchInputElement?.value ?? "").trim();
+      //   applyMode(decideMode(initialQuery));
+      // }, 0);
 
       // Log the DOM structure after Choices.js initialization
       console.log("🔍 DOM structure AFTER Choices.js initialization:", {
@@ -1025,26 +1227,57 @@
           searchInputElement.value = "";
           lastQuery = "";
         }
-        // Reset to filtered static choices (excluding newly selected items)
-        setTimeout(() => {
-          const hasStaticOptions =
-            (items && items.length > 0) ||
-            (groups && groups.some((g) => g.choices && g.choices.length > 0));
-          if (hasStaticOptions && choicesInstance) {
-            resetToStaticChoices();
-            console.log("🔄 Reset to static choices after selection");
 
-            // Restore focus to the main Choices container after reset
-            setTimeout(() => {
-              if (choicesInstance?.containerOuter?.element) {
-                choicesInstance.containerOuter.element.focus();
-                console.log(
-                  "🎯 Focus restored to Choices container after reset",
-                );
-              }
-            }, 0);
-          }
-        }, 0);
+        // Only reset to static choices if we're in "options" mode
+        // If we're in "short" mode, we should stay in "short" mode
+        if (currentMode === "options") {
+          setTimeout(() => {
+            const hasStaticOptions =
+              (items && items.length > 0) ||
+              (groups && groups.some((g) => g.choices && g.choices.length > 0));
+            if (
+              hasStaticOptions &&
+              choicesInstance &&
+              choicesInstance.initialised
+            ) {
+              resetToStaticChoices();
+              console.log(
+                "🔄 Reset to static choices after selection (options mode)",
+              );
+
+              // Restore focus to the main Choices container after reset
+              setTimeout(() => {
+                if (choicesInstance?.containerOuter?.element) {
+                  choicesInstance.containerOuter.element.focus();
+                  console.log(
+                    "🎯 Focus restored to Choices container after reset",
+                  );
+                }
+              }, 0);
+            }
+          }, 0);
+        } else {
+          console.log(
+            "🔄 Staying in current mode after selection:",
+            currentMode,
+          );
+          // For "short" or "api" modes, just clear the search input
+          // The mode will be re-evaluated on the next search input
+        }
+      });
+
+      // Handle dropdown show event to enforce mode logic
+      selectElement.addEventListener("showDropdown", () => {
+        // Ensure choicesInstance is ready before proceeding
+        if (!choicesInstance || !choicesInstance.initialised) {
+          console.log(
+            "⚠️ Choices instance not ready, skipping dropdown mode application",
+          );
+          return;
+        }
+
+        const q = (searchInputElement?.value ?? "").trim();
+        applyMode(decideMode(q));
       });
 
       // Capture the internal search input and attach API search handling
@@ -1059,96 +1292,96 @@
 
         // Always add custom search handling to filter out selected values
         searchInputElement.addEventListener("input", () => {
-          const q = searchInputElement!.value || "";
-          lastQuery = q;
+          const raw = searchInputElement!.value || "";
+          lastQuery = raw;
           if (debounceTimer) clearTimeout(debounceTimer);
           debounceTimer = setTimeout(async () => {
+            const q = raw.trim();
             console.log("🔍 Search input changed:", {
               query: q,
               queryLength: q.length,
               minLength,
               lastQuery,
+              currentMode,
             });
 
-            // Empty query handling: reset to static choices if available
-            if (lastQuery.trim().length === 0) {
-              console.log("🔄 Empty query, resetting to static choices");
-              const hasStaticOptions =
-                (items && items.length > 0) ||
-                (groups &&
-                  groups.some((g) => g.choices && g.choices.length > 0));
-              if (hasStaticOptions && choicesInstance) {
-                choicesInstance.config.noChoicesText = baseNoChoicesText;
-                resetToStaticChoices();
-              }
+            // Ensure choicesInstance is ready before proceeding
+            if (!choicesInstance || !choicesInstance.initialised) {
+              console.log("⚠️ Choices instance not ready, skipping search");
               return;
             }
 
-            // Too-short handling: show helpful message and don't search
-            if (lastQuery.trim().length < minLength) {
-              console.log("⚠️ Query too short, showing too-short message");
-              if (choicesInstance) {
-                choicesInstance.config.noChoicesText = tTooShort(minLength);
-                // Reset to static choices for short queries or use static ones if available
-                const hasStaticOptions =
-                  (items && items.length > 0) ||
-                  (groups &&
-                    groups.some((g) => g.choices && g.choices.length > 0));
-                if (hasStaticOptions) {
-                  resetToStaticChoices();
-                } else {
-                  choicesInstance.clearChoices();
-                }
+            const newMode = decideMode(q);
+            console.log("🎯 Mode decision:", {
+              from: currentMode,
+              to: newMode,
+              query: q,
+            });
+            applyMode(newMode);
+
+            // For short mode, don't process search - just return early
+            if (newMode === "short") return;
+
+            // Get currently selected values to exclude from new choices
+            let selectedValues: string[] = [];
+            try {
+              const currentValue = choicesInstance.getValue(true);
+              console.log(
+                "🎯 Current value from choicesInstance (search):",
+                currentValue,
+              );
+
+              if (Array.isArray(currentValue)) {
+                selectedValues = currentValue.map((item: any) =>
+                  String(item.value || item),
+                );
+              } else if (currentValue && typeof currentValue === "object") {
+                // Handle single selection case
+                selectedValues = [String(currentValue.value || currentValue)];
+              } else if (currentValue) {
+                // Handle primitive value case
+                selectedValues = [String(currentValue)];
               }
-              return;
+            } catch (error) {
+              console.warn(
+                "⚠️ Error getting current value during search:",
+                error,
+              );
+              selectedValues = [];
             }
 
-            const hasApiConfig = source_url && source_key;
+            console.log("🎯 Currently selected values:", selectedValues);
 
-            if (hasApiConfig) {
+            if (newMode === "api") {
               console.log("🌐 Using API mode for search");
-              // Use API mode when API is configured
+
+              // Check if the query exactly matches what's already selected
+              const queryMatchesSelected = selectedValues.some(
+                (selected) =>
+                  selected.toLowerCase().includes(q.toLowerCase()) ||
+                  q.toLowerCase().includes(selected.toLowerCase()),
+              );
+
+              console.log("🔍 Query vs selected values check:", {
+                query: q,
+                selectedValues,
+                queryMatchesSelected,
+                matches: selectedValues.filter(
+                  (selected) =>
+                    selected.toLowerCase().includes(q.toLowerCase()) ||
+                    q.toLowerCase().includes(selected.toLowerCase()),
+                ),
+              });
+
               try {
-                const apiChoices = await fetchApiChoices(lastQuery);
+                const apiChoices = await fetchApiChoices(q);
                 console.log("📡 API response:", {
-                  query: lastQuery,
+                  query: q,
                   apiChoices: apiChoices.length,
                   rawChoices: apiChoices,
                 });
 
                 if (!choicesInstance) return;
-
-                // Get currently selected values to exclude from new choices
-                let selectedValues: string[] = [];
-                try {
-                  const currentValue = choicesInstance.getValue(true);
-                  console.log(
-                    "🎯 Current value from choicesInstance (API):",
-                    currentValue,
-                  );
-
-                  if (Array.isArray(currentValue)) {
-                    selectedValues = currentValue.map((item: any) =>
-                      String(item.value || item),
-                    );
-                  } else if (currentValue && typeof currentValue === "object") {
-                    // Handle single selection case
-                    selectedValues = [
-                      String(currentValue.value || currentValue),
-                    ];
-                  } else if (currentValue) {
-                    // Handle primitive value case
-                    selectedValues = [String(currentValue)];
-                  }
-                } catch (error) {
-                  console.warn(
-                    "⚠️ Error getting current value during API search:",
-                    error,
-                  );
-                  selectedValues = [];
-                }
-
-                console.log("🎯 Currently selected values:", selectedValues);
 
                 // Filter out already selected values from API results
                 const filteredApiChoices = apiChoices.filter(
@@ -1159,6 +1392,17 @@
                   total: apiChoices.length,
                   filtered: filteredApiChoices.length,
                   excluded: apiChoices.length - filteredApiChoices.length,
+                  apiResults: apiChoices.map((c) => ({
+                    value: c.value,
+                    label: c.label,
+                  })),
+                  selectedValues,
+                  filteringDetails: apiChoices.map((choice) => ({
+                    choiceValue: String(choice.value),
+                    choiceLabel: choice.label,
+                    isSelected: selectedValues.includes(String(choice.value)),
+                    selectedValuesMatch: selectedValues,
+                  })),
                 });
 
                 if (filteredApiChoices.length === 0) {
@@ -1169,21 +1413,104 @@
                     console.log("❌ API returned no results");
                   } else {
                     // API returned results, but they are all already selected.
-                    choicesInstance.config.noChoicesText = baseNoChoicesText;
-                    console.log(
-                      "ℹ️ API returned results but all are already selected",
+                    // Double-check this by looking at the actual values
+                    const allResultsSelected = apiChoices.every((choice) =>
+                      selectedValues.includes(String(choice.value)),
                     );
+
+                    if (allResultsSelected) {
+                      choicesInstance.config.noChoicesText =
+                        "All results are already selected";
+                      console.log(
+                        "ℹ️ API returned results but all are already selected",
+                        {
+                          apiResults: apiChoices.map((c) => c.value),
+                          selectedValues,
+                          allResultsSelected,
+                        },
+                      );
+                    } else {
+                      // This shouldn't happen, but fallback to a generic message
+                      choicesInstance.config.noChoicesText =
+                        "No new results available";
+                      console.log(
+                        "⚠️ Unexpected: API returned results but filtering logic failed",
+                        {
+                          apiResults: apiChoices.map((c) => c.value),
+                          selectedValues,
+                          filteredCount: filteredApiChoices.length,
+                        },
+                      );
+                    }
                   }
                   // Clear the list and show the message.
                   choicesInstance.setChoices([], "value", "label", true);
+                  // Force refresh to show the message
+                } else if (queryMatchesSelected && apiChoices.length > 0) {
+                  // Special case: API returned results but they're similar to what's already selected
+                  // This handles cases like typing "tw5 0ew" when "TW5 0EW London" is already selected
+                  const allResultsSimilarToSelected = apiChoices.every(
+                    (choice) => {
+                      const choiceValue = String(choice.value).toLowerCase();
+                      return selectedValues.some(
+                        (selected) =>
+                          choiceValue.includes(selected.toLowerCase()) ||
+                          selected.toLowerCase().includes(choiceValue),
+                      );
+                    },
+                  );
+
+                  if (allResultsSimilarToSelected) {
+                    choicesInstance.config.noChoicesText =
+                      "All results are already selected";
+                    console.log(
+                      "🎯 Query matches selected items, showing 'all selected' message",
+                      {
+                        query: q,
+                        apiResults: apiChoices.map((c) => c.value),
+                        selectedValues,
+                        allResultsSimilarToSelected,
+                      },
+                    );
+                    // Clear choices to show the message
+                    choicesInstance.setChoices([], "value", "label", true);
+                  } else {
+                    // Show the filtered results
+
+                    // Ensure group text is applied to filtered API choices
+                    const filteredApiChoicesWithGroupText =
+                      ensureGroupTextApplied(
+                        filteredApiChoices.map((c) => ({
+                          value: String(c.value),
+                          label: c.label,
+                        })),
+                      );
+
+                    choicesInstance.setChoices(
+                      filteredApiChoicesWithGroupText,
+                      "value",
+                      "label",
+                      true,
+                    );
+                    console.log(
+                      "✅ Set filtered API choices (some similar to selected):",
+                      filteredApiChoices.length,
+                    );
+                  }
                 } else {
                   // We have new, unselected results to show.
-                  choicesInstance.config.noChoicesText = baseNoChoicesText;
-                  choicesInstance.setChoices(
+                  // Don't set noChoicesText when we have results - let Choices.js handle it
+
+                  // Ensure group text is applied to API choices
+                  const apiChoicesWithGroupText = ensureGroupTextApplied(
                     filteredApiChoices.map((c) => ({
                       value: String(c.value),
                       label: c.label,
                     })),
+                  );
+
+                  choicesInstance.setChoices(
+                    apiChoicesWithGroupText,
                     "value",
                     "label",
                     true,
@@ -1201,49 +1528,27 @@
                 console.error("❌ Failed to fetch API choices:", e);
                 if (choicesInstance) {
                   choicesInstance.config.noChoicesText = "No results found";
+                  // Clear choices and force refresh to show error message
+                  choicesInstance.setChoices([], "value", "label", true);
                 }
               }
             } else {
+              // newMode === "options": Choices handles filtering automatically
               console.log("📋 Using static choices mode for search");
+
+              // For empty queries, restore the full grouped structure
+              if (q === "" && groups && groups.length > 0) {
+                console.log(
+                  "🔄 Empty query with grouped options - restoring full structure",
+                );
+                resetToStaticChoices();
+                return;
+              }
+
               // For static choices, filter both by search term and exclude selected values
               if (choicesInstance) {
-                // Get currently selected values to exclude - use safe getValue logic
-                let selectedValues: string[] = [];
-                try {
-                  const currentValue = choicesInstance.getValue(true);
-                  console.log(
-                    "🎯 Current value from choicesInstance (search):",
-                    currentValue,
-                  );
-
-                  if (Array.isArray(currentValue)) {
-                    selectedValues = currentValue.map((item: any) =>
-                      String(item.value || item),
-                    );
-                  } else if (currentValue && typeof currentValue === "object") {
-                    // Handle single selection case
-                    selectedValues = [
-                      String(currentValue.value || currentValue),
-                    ];
-                  } else if (currentValue) {
-                    // Handle primitive value case
-                    selectedValues = [String(currentValue)];
-                  }
-                } catch (error) {
-                  console.warn(
-                    "⚠️ Error getting current value during search:",
-                    error,
-                  );
-                  selectedValues = [];
-                }
-
-                console.log(
-                  "🎯 Currently selected values (static mode):",
-                  selectedValues,
-                );
-
                 // Filter static choices by search term and exclude selected values
-                const searchTerm = lastQuery.toLowerCase();
+                const searchTerm = q.toLowerCase();
 
                 // First, find choices that match the search term (regardless of selection)
                 const matchingChoices = staticChoices.filter((choice) =>
@@ -1282,20 +1587,29 @@
                     console.log("❌ No static choices match search term");
                   } else {
                     // Found matches but all are already selected
-                    choicesInstance.config.noChoicesText = baseNoChoicesText;
+                    choicesInstance.config.noChoicesText =
+                      "All matching options are already selected";
                     console.log(
                       "ℹ️ Found static matches but all are already selected",
                     );
                   }
+                  // Clear choices to show the message
+                  choicesInstance.setChoices([], "value", "label", true);
                 } else {
                   // Have choices to show
-                  choicesInstance.config.noChoicesText = baseNoChoicesText;
-                  choicesInstance.setChoices(
+                  // Don't set noChoicesText when we have choices - let Choices.js handle it
+
+                  // Ensure group text is applied to filtered choices
+                  const choicesWithGroupText = ensureGroupTextApplied(
                     filteredStaticChoices.map((c) => ({
                       value: String(c.value),
                       label: c.label,
                       disabled: c.disabled,
                     })),
+                  );
+
+                  choicesInstance.setChoices(
+                    choicesWithGroupText,
                     "value",
                     "label",
                     true,
@@ -1311,7 +1625,7 @@
                 }
               }
             }
-          }, 0);
+          }, 120);
         });
       } else {
         console.warn("⚠️ Search input element not found");
@@ -1357,7 +1671,7 @@
       choicesInstance: !!choicesInstance,
     });
 
-    if (choicesInstance && value !== undefined) {
+    if (choicesInstance && choicesInstance.initialised && value !== undefined) {
       if (multiple && Array.isArray(value)) {
         console.log("🔄 Updating multiple choices:", value);
         choicesInstance.removeActiveItems();

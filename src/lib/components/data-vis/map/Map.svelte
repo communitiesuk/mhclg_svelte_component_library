@@ -108,6 +108,8 @@
     labelSourceLayer = "place",
     externalData = null,
     showLegend = false,
+    clickedArea = $bindable([]),
+    areaToColorLookup,
   }: {
     data: object[];
     paintObject?: object;
@@ -181,7 +183,11 @@
     borderColor?: string;
     labelSourceLayer?: string;
     externalData?: object;
+    clickedArea?: [];
+    areaToColorLookup?: object;
   } = $props();
+
+  // $inspect(clickedArea);
 
   const tileSourceId = "lsoas";
   const promoteProperty = "LSOA21NM";
@@ -254,6 +260,7 @@
         return layer.source == "areas";
       })
       .map((d) => d.id);
+
     const labelLayerId = map
       ?.getStyle()
       ?.layers.find(
@@ -372,6 +379,11 @@
   }
 
   function zoomToArea(e) {
+    //Add or remove the clicked area to/from the clickedArea array
+    clickedArea.includes(e.features[0].id)
+      ? clickedArea.splice(clickedArea.indexOf(e.features[0].id), 1)
+      : clickedArea.push(e.features[0].id);
+
     if (clickToZoom) {
       let coordArray =
         e.features[0].geometry.coordinates.length === 1
@@ -418,9 +430,52 @@
         : undefined
       : undefined,
   );
+
+  let paintObject = $derived(
+    clickedArea?.length > 0
+      ? {
+          "line-color": [
+            "case",
+            [
+              "in",
+              [
+                "get",
+                geoSource === "file" ? geojsonPromoteId : promoteProperty,
+              ],
+              ["literal", clickedArea],
+            ],
+            [
+              "match",
+              [
+                "get",
+                geoSource === "file" ? geojsonPromoteId : promoteProperty,
+              ],
+              ...Object.entries(areaToColorLookup).flat(),
+              "purple",
+            ],
+            hoverStateFilter(borderColor, "orange"),
+          ],
+
+          "line-width": zoomTransition(
+            minZoom ?? 3,
+            0,
+            maxZoom ?? 14,
+            maxBorderWidth,
+          ),
+        }
+      : {
+          "line-color": hoverStateFilter(borderColor, "orange"),
+          "line-width": zoomTransition(
+            minZoom ?? 3,
+            0,
+            maxZoom ?? 14,
+            maxBorderWidth,
+          ),
+        },
+  );
 </script>
 
-<div style="position: relative; height: {mapHeight}; width: 100%;">
+<div style="position: relative; height: {mapHeight}px; width: 100%;">
   <MapLibre
     bind:map
     bind:loaded
@@ -498,12 +553,14 @@
                 hoveredArea = e.features[0].id;
                 hoveredAreaData = e.features[0].properties.metric;
                 currentMousePosition = e.event.point;
+                map.getCanvas().style.cursor = "pointer";
               }
             : undefined}
           onmouseleave={interactive
             ? () => {
                 hoveredArea = null;
                 hoveredAreaData = null;
+                map.getCanvas().style.cursor = "";
               }
             : undefined}
         />
@@ -511,11 +568,9 @@
           <LineLayer
             id="border-layer"
             layout={{ "line-cap": "round", "line-join": "round" }}
-            paint={{
-              "line-color": hoverStateFilter(borderColor, "orange"),
-              "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
-            }}
+            paint={paintObject}
             beforeLayerType="symbol"
+            manageHoverState={interactive}
           />
         {/if}
       </GeoJSON>
@@ -528,7 +583,7 @@
         <FillLayer
           paint={vectorPaintObject}
           sourceLayer={vectorLayerName}
-          onclick={interactive ? zoomToArea : undefined}
+          onclick={interactive ? (e) => zoomToArea(e) : undefined}
           onmousemove={interactive
             ? (e) => {
                 if (e.features?.[0]) {
@@ -536,6 +591,7 @@
                   hoveredAreaData =
                     e.features[0].properties[vectorMetricProperty];
                   currentMousePosition = e.event.point;
+                  map.getCanvas().style.cursor = "pointer";
                 }
               }
             : undefined}
@@ -543,23 +599,18 @@
             ? () => {
                 hoveredArea = null;
                 hoveredAreaData = null;
+                map.getCanvas().style.cursor = "";
               }
             : undefined}
+          manageHoverState={interactive}
         />
         {#if showBorder}
           <LineLayer
             layout={{ "line-cap": "round", "line-join": "round" }}
-            paint={{
-              "line-color": hoverStateFilter(borderColor, "orange"),
-              "line-width": zoomTransition(
-                minZoom ?? 3,
-                0,
-                maxZoom ?? 14,
-                maxBorderWidth,
-              ),
-            }}
+            paint={paintObject}
             beforeLayerType="symbol"
             sourceLayer={vectorLayerName}
+            manageHoverState={interactive}
           />
         {/if}
       </VectorTileSource>

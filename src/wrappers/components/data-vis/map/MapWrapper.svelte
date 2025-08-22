@@ -115,6 +115,7 @@
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
 
+  let clickedArea = $state(["Northumberland"]);
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -455,6 +456,26 @@
         category: "Data",
         value: "http://localhost:8080/{z}/{x}/{y}.pbf",
         visible: { name: "geoSource", value: "tiles" },
+      },
+      {
+        name: "clickedArea",
+        isProp: true,
+        category: "Data",
+        value: ["Northumberland"],
+        isBinded: true,
+        description:
+          "A bindable array of the areas that have been clicked on the map, or otherwise selected from an another component.",
+      },
+      {
+        name: "areaToColorLookup",
+        isProp: true,
+        category: "Data",
+        value: {
+          Northumberland: "pink",
+          Leeds: "yellow",
+          Doncaster: "teal",
+        },
+        description: "Lookup for the border colours. ",
       },
       {
         name: "paintObject",
@@ -800,7 +821,7 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <Map {...parametersObject}></Map>
+  <Map {...parametersObject} bind:clickedArea></Map>
 {/snippet}
 
 <!--

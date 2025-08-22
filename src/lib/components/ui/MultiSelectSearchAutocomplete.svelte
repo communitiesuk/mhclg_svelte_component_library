@@ -839,6 +839,57 @@
     }
   }
 
+  // Restore grouped dropdown (with real group headings) without reinitializing Choices
+  function restoreGroupedChoicesWithoutReinit(selectedValues: string[]) {
+    if (!choicesInstance || !choicesInstance.initialised) {
+      console.log(
+        "⚠️ Choices instance not ready, skipping restoreGroupedChoicesWithoutReinit",
+      );
+      return;
+    }
+    if (!groups || groups.length === 0) {
+      console.log(
+        "ℹ️ No groups available; restoreGroupedChoicesWithoutReinit skipped",
+      );
+      return;
+    }
+
+    console.log("📋 Restoring grouped options via grouped payload (no reinit)");
+
+    // Clear current list but keep the instance intact (preserves focus)
+    choicesInstance.clearChoices();
+
+    // Build grouped payload excluding currently selected values
+    const groupedPayload = groups.map((grp: any) => ({
+      label: grp.label,
+      disabled: !!grp.disabled,
+      choices: grp.choices
+        .filter((ch: any) => !selectedValues.includes(String(ch.value)))
+        .map((ch: any) => ({
+          value: String(ch.value),
+          label: String(ch.text),
+          disabled: !!(grp.disabled || ch.disabled),
+        })),
+    }));
+
+    // Compose final list. Single-select keeps placeholder as first item.
+    const list: any[] = [];
+    if (!multiple) {
+      list.push({
+        value: "",
+        label: computedPlaceholderText,
+        placeholder: true,
+        disabled: false,
+        selected: false,
+      });
+    }
+    list.push(...groupedPayload);
+
+    // Pass grouped data to Choices so it renders headings properly
+    choicesInstance.setChoices(list, "value", "label", true);
+    console.log("✅ Grouped options restored in-place");
+  }
+
   // Initialize Choices.js
   onMount(async () => {
     console.log("🔧 MultiSelectSearchAutocomplete: onMount started", {
@@ -1536,12 +1587,29 @@
               // newMode === "options": Choices handles filtering automatically
               console.log("📋 Using static choices mode for search");
 
-              // For empty queries, restore the full grouped structure
+              // For empty queries, restore the full grouped structure (with real headings) without reinit
               if (q === "" && groups && groups.length > 0) {
-                console.log(
-                  "🔄 Empty query with grouped options - restoring full structure",
-                );
-                resetToStaticChoices();
+                // Get selected values so we can exclude them from the dropdown
+                let selectedValues: string[] = [];
+                try {
+                  const currentValue = choicesInstance.getValue(true);
+                  if (Array.isArray(currentValue)) {
+                    selectedValues = currentValue.map((item: any) =>
+                      String(item.value || item),
+                    );
+                  } else if (currentValue && typeof currentValue === "object") {
+                    selectedValues = [
+                      String(currentValue.value || currentValue),
+                    ];
+                  } else if (currentValue) {
+                    selectedValues = [String(currentValue)];
+                  }
+                } catch (error) {
+                  console.warn("⚠️ Error getting current value:", error);
+                  selectedValues = [];
+                }
+
+                restoreGroupedChoicesWithoutReinit(selectedValues);
                 return;
               }
 

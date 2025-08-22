@@ -151,6 +151,7 @@ export function getCoordinatesArray(
     return geometry.coordinates.flat(2);
   }
   return [];
+}
 
 export function createPaintObjectFromMetric(
   metricProperty: string,

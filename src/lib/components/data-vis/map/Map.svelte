@@ -27,7 +27,6 @@
     computeBounds,
     createPaintObjectFromMetric,
     extractVectorMetricValues,
-
   } from "./mapUtils.js";
   import NonStandardControls from "./NonStandardControls.svelte";
   import { replaceState } from "$app/navigation";
@@ -113,7 +112,6 @@
     borderColor = "#003300",
     labelSourceLayer = "place",
     externalData = null,
-    showLegend = false,
   }: {
     data?: object[];
     countries?: string[];
@@ -181,7 +179,7 @@
     onstyleload?: (e: StyleLoadEvent) => void;
     onstyledata?: (e: maplibregl.MapStyleDataEvent) => void;
     onidle?: (e: maplibregl.MapLibreEvent) => void;
-    areaCode?: String;   
+    areaCode?: String;
     geoSource: "file" | "tiles" | "none";
     tileSource?: string;
     geojsonPromoteId?: string;
@@ -195,6 +193,8 @@
   const promoteProperty = "LSOA21NM";
 
   let clickedArea = $state(null);
+
+  $inspect(clickedArea);
 
   // ISO-3166/ONS-style prefixes for area codes
   const areaCodePrefixes: Record<string, string[]> = {
@@ -236,7 +236,6 @@
           metric: +el.data[metric],
         }))
       : [],
-
   );
 
   const filteredTopo = $derived({
@@ -542,76 +541,32 @@
       <ScaleControl position={scaleControlPosition} unit={scaleControlUnit} />
     {/if}
 
-    
-   {#if geoSource == "file"}
-    <GeoJSON id="areas" data={merged} promoteId="areanm">
-      <FillLayer
-        paint={{
-          "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
-          "fill-opacity": changeOpacityOnHover
-            ? hoverStateFilter(fillOpacity, hoverOpacity)
-            : fillOpacity,
-        }}
-        beforeLayerType="symbol"
-        manageHoverState={interactive}
-        onclick={interactive
-          ? (e) => {
-              clickedArea = e.features?.[0]?.id || null;
-              zoomToArea(e);
-            }
-          : undefined}
-        ondblclick={interactive
-          ? (e) => {
-              clickedArea = null;
-            }
-          : undefined}
-        onmousemove={interactive
-          ? (e) => {
-              hoveredArea = e.features[0].id;
-              hoveredAreaData = e.features[0].properties?.metric;
-              currentMousePosition = e.event.point;
-            }
-          : undefined}
-        onmouseleave={interactive
-          ? () => {
-              hoveredArea = null;
-              hoveredAreaData = null;
-            }
-          : undefined}
-      />
-      {#if showBorder}
-        <LineLayer
-          layout={{ "line-cap": "round", "line-join": "round" }}
+    {#if geoSource == "file"}
+      <GeoJSON id="areas" data={merged} promoteId="areanm">
+        <FillLayer
           paint={{
-            "line-color": hoverStateFilter(borderColor, "orange"),
-            "line-width": [
-              "interpolate",
-              ["linear"],
-              ["zoom"],
-              0,
-              [
-                "case",
-                ["==", ["id"], clickedArea],
-                5, // thick at low zoom
-                1, // thin at low zoom
-              ],
-              12,
-              [
-                "case",
-                ["==", ["id"], clickedArea],
-                8, // thick at high zoom
-                maxBorderWidth, // normal at high zoom
-              ],
-            ],
-
+            "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
+            "fill-opacity": changeOpacityOnHover
+              ? hoverStateFilter(fillOpacity, hoverOpacity)
+              : fillOpacity,
           }}
           beforeLayerType="symbol"
           manageHoverState={interactive}
-          onclick={interactive ? (e) => zoomToArea(e) : undefined}
+          onclick={interactive
+            ? (e) => {
+                clickedArea = e.features?.[0]?.id || null;
+                zoomToArea(e);
+              }
+            : undefined}
+          ondblclick={interactive
+            ? (e) => {
+                clickedArea = null;
+              }
+            : undefined}
           onmousemove={interactive
             ? (e) => {
                 hoveredArea = e.features[0].id;
-                hoveredAreaData = e.features[0].properties.metric;
+                hoveredAreaData = e.features[0].properties?.metric;
                 currentMousePosition = e.event.point;
               }
             : undefined}
@@ -624,14 +579,57 @@
         />
         {#if showBorder}
           <LineLayer
-            id="border-layer"
             layout={{ "line-cap": "round", "line-join": "round" }}
             paint={{
               "line-color": hoverStateFilter(borderColor, "orange"),
-              "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
+              "line-width": [
+                "interpolate",
+                ["linear"],
+                ["zoom"],
+                0,
+                [
+                  "case",
+                  ["==", ["id"], clickedArea],
+                  5, // thick at low zoom
+                  1, // thin at low zoom
+                ],
+                12,
+                [
+                  "case",
+                  ["==", ["id"], clickedArea],
+                  8, // thick at high zoom
+                  maxBorderWidth, // normal at high zoom
+                ],
+              ],
             }}
             beforeLayerType="symbol"
+            manageHoverState={interactive}
+            onclick={interactive ? (e) => zoomToArea(e) : undefined}
+            onmousemove={interactive
+              ? (e) => {
+                  hoveredArea = e.features[0].id;
+                  hoveredAreaData = e.features[0].properties.metric;
+                  currentMousePosition = e.event.point;
+                }
+              : undefined}
+            onmouseleave={interactive
+              ? () => {
+                  hoveredArea = null;
+                  hoveredAreaData = null;
+                }
+              : undefined}
           />
+          {#if showBorder}
+            <LineLayer
+              id="border-layer"
+              layout={{ "line-cap": "round", "line-join": "round" }}
+              paint={{
+                "line-color": hoverStateFilter(borderColor, "orange"),
+                "line-width": zoomTransition(3, 0, 12, maxBorderWidth),
+              }}
+              beforeLayerType="symbol"
+            />
+          {/if}
         {/if}
       </GeoJSON>
     {:else if geoSource == "tiles"}
@@ -694,7 +692,6 @@
   </MapLibre>
 </div>
 
-
 {#if legendSnippet && showLegend}
   {#if typeof legendSnippet === "string"}
     <div class="legend">
@@ -714,7 +711,6 @@
     {/each}
   </div>
 {:else}{/if}
-
 
 <style>
   :global(.maplibregl-ctrl-group button.reset-button) {

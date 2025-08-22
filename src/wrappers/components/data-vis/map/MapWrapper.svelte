@@ -288,7 +288,7 @@
         name: "mapHeight",
         category: "Styling",
         isProp: true,
-        value: 400,
+        value: "400px",
         description: "Set height of map",
       },
       {
@@ -659,6 +659,20 @@
           functionAsString: `() => { console.log("idle"); }`,
         },
         category: "Events",
+      },
+      {
+        name: "tileSourceId",
+        isProp: true,
+        category: "data",
+        value: "LA",
+        description: "",
+      },
+      {
+        name: "promoteProperty",
+        isProp: true,
+        category: "data",
+        value: "lad19cd",
+        description: "",
       },
     ]),
   );

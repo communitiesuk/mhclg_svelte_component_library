@@ -108,6 +108,8 @@
     labelSourceLayer = "place",
     externalData = null,
     showLegend = false,
+    tileSourceId = "LA",
+    promoteProperty = "lad19cd",
   }: {
     data: object[];
     paintObject?: object;
@@ -146,7 +148,7 @@
     hash?: boolean;
     updateHash?: (URL) => void;
     useInitialHash?: boolean;
-    mapHeight?: number;
+    mapHeight?: string;
     setCustomPalette?: boolean;
     customBreaks?: number[];
     interactive?: boolean;
@@ -181,10 +183,14 @@
     borderColor?: string;
     labelSourceLayer?: string;
     externalData?: object;
+    tileSourceId?: string;
+    promoteProperty?: string;
   } = $props();
 
-  const tileSourceId = "lsoas";
-  const promoteProperty = "LSOA21NM";
+  $inspect(tileSourceId, promoteProperty, tileSource);
+
+  //const tileSourceId = "LA";
+  //const promoteProperty = "lad19cd";
 
   let styleLookup = {
     "Carto-light":
@@ -203,8 +209,6 @@
   );
 
   let mapData = $derived(data?.filter((d) => d["year"] == year)[0]?.data);
-
-  $inspect(mapData);
 
   let filteredMapData = $derived(
     mapData?.map((el) => ({

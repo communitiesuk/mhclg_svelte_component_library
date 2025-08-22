@@ -480,7 +480,7 @@
   });
 </script>
 
-<div style="position: relative; height: {mapHeight}; width: 100%;">
+<div style="position: relative; height: {mapHeight}px; width: 100%;">
   <MapLibre
     bind:map
     bind:loaded

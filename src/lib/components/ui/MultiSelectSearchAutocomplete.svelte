@@ -1789,7 +1789,7 @@
 >
   {#snippet rightIcon()}
     <button
-      type="button"
+      type="submit"
       class="search-addon-btn"
       aria-label="Search"
       title="Search"

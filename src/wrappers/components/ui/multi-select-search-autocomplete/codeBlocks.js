@@ -404,3 +404,84 @@ export const codeBlock7 = `
     return "options";
   }}
 />`;
+
+export const codeBlock8 = `
+<script>
+  import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchAutocomplete.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
+  
+  // State variable for submit button demo
+  let selectedValuesForSubmit = [];
+</script>
+
+<div class="p-5 bg-white space-y-6">
+  <div>
+    <h6 class="govuk-heading-s">Submit Button Demo:</h6>
+    <p class="govuk-body">
+      This example demonstrates how the submit button (search icon) works when
+      the component is placed inside a form. Click the search icon to see the
+      currently selected values.
+    </p>
+  </div>
+
+  <form
+    onsubmit={(e) => {
+      e.preventDefault();
+      alert(\`Form submitted with selected values: \${JSON.stringify(selectedValuesForSubmit, null, 2)}\`);
+    }}
+    class="govuk-form-group"
+  >
+    <MultiSelectSearchAutocomplete
+      id="submit-demo-select"
+      name="submit-demo"
+      label="Select multiple options"
+      hint="Select some options, then click the search icon to submit the form"
+      items={[
+        { value: "option1", text: "Option 1" },
+        { value: "option2", text: "Option 2" },
+        { value: "option3", text: "Option 3" },
+        { value: "option4", text: "Option 4" },
+        { value: "option5", text: "Option 5" }
+      ]}
+      multiple={true}
+      bind:value={selectedValuesForSubmit}
+    />
+    
+    <div class="govuk-button-group">
+      <Button
+        buttonType="default"
+        textContent="Submit Form (Regular Button)"
+        noPadding={true}
+        onClickFunction={() => {
+          // This will be handled by the form's onsubmit
+        }}
+      />
+      
+      <div class="govuk-body govuk-! govuk-!-margin-top-2">
+        <span class="govuk-!-margin-right-2">Or click the search icon above to submit</span>
+        <span class="govuk-!-font-weight-bold">→</span>
+      </div>
+    </div>
+  </form>
+
+  <div class="govuk-inset-text">
+    <h6 class="govuk-heading-s govuk-!-margin-top-0">How it works:</h6>
+    <div class="govuk-body">
+      <p>
+        The search icon button inside <code>MultiSelectSearchAutocomplete</code>
+        has <code>type="submit"</code>, making it functional when placed
+        inside a form.
+      </p>
+      <p>
+        <strong>Current selected values:</strong>
+        {selectedValuesForSubmit.length > 0
+          ? selectedValuesForSubmit.join(", ")
+          : "None selected"}
+      </p>
+      <p class="govuk-!-margin-top-4 govuk-! govuk-body govuk-!-font-weight-bold">
+        <strong>Try it:</strong> Select some options above, then click the search
+        icon to submit the form and see the selected values.
+      </p>
+    </div>
+  </div>
+</div>`;

@@ -395,12 +395,12 @@ export const codeBlock7 = `
     
     // If it looks like a postcode (even partial), use API
     if (isLikelyPostcode(q)) {
-      console.log("🎯 Query looks like postcode, using API:", q);
+      console.log("Query looks like postcode, using API:", q);
       return "api";
     }
     
     // For everything else, use static options
-    console.log("🎯 Query is not postcode-like, using static options:", q);
+    console.log("Query is not postcode-like, using static options:", q);
     return "options";
   }}
 />`;

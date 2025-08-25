@@ -438,13 +438,13 @@
 {#snippet Example7()}
   <div class="p-5 bg-white space-y-6">
     <div>
-      <h6 class="font-semibold mb-3">Smart Source Selection:</h6>
-      <p class="text-sm text-gray-600 mb-4">
+      <h6 class="govuk-heading-s">Smart Source Selection:</h6>
+      <p class="govuk-body">
         This example demonstrates how to use the <code>sourceSelector</code> prop
         to intelligently choose between API and static options based on the search
         query. Try searching for:
       </p>
-      <ul class="text-sm text-gray-600 list-disc list-inside mb-4 space-y-1">
+      <ul class="govuk-list govuk-list--bullet">
         <li>
           <strong>Postcodes</strong> (e.g., "SW1A 1AA", "M1", "B1") → Uses API
         </li>
@@ -526,23 +526,20 @@
 
           // If it looks like a postcode (even partial), use API
           if (isLikelyPostcode(q)) {
-            console.log("🎯 Query looks like postcode, using API:", q);
+            console.log("Query looks like postcode, using API:", q);
             return "api";
           }
 
           // For everything else, use static options
-          console.log(
-            "🎯 Query is not postcode-like, using static options:",
-            q,
-          );
+          console.log("Query is not postcode-like, using static options:", q);
           return "options";
         }}
       />
     </div>
 
-    <div class="bg-blue-50 p-4 rounded-lg">
-      <h6 class="font-semibold mb-2 text-blue-800">How it works:</h6>
-      <div class="text-sm text-blue-700 space-y-2">
+    <div class="govuk-inset-text">
+      <h6 class="govuk-heading-s govuk-!-margin-top-0">How it works:</h6>
+      <div class="govuk-body">
         <p>
           <strong>sourceSelector</strong> is a function that receives the search
           query and available static options, then returns either "api" or "options"
@@ -551,7 +548,7 @@
         <p>
           <strong>Priority order:</strong>
         </p>
-        <ol class="list-decimal list-inside ml-4 space-y-1">
+        <ol class="govuk-list govuk-list--number">
           <li>Below <code>minLength</code> → "short" mode (no search)</li>
           <li>
             Your <code>sourceSelector</code> function → "api" or "options"
@@ -562,12 +559,14 @@
           This gives you full control over when to use API vs static options
           while maintaining the existing fallback behavior for edge cases.
         </p>
-        <p class="mt-3 p-2 bg-blue-100 rounded">
-          <strong>🎯 Smart Postcode Detection:</strong> The example uses robust UK
-          postcode patterns that can detect both complete postcodes (e.g., "SW1A
-          1AA") and partial ones (e.g., "SW1", "M1A") as users type, automatically
-          switching to API mode for postcode-like queries and static options for
-          everything else.
+        <p
+          class="govuk-!-margin-top-4 govuk-!-padding-3 govuk-body govuk-!-font-weight-bold"
+        >
+          <strong>Smart Postcode Detection:</strong> The example uses robust UK postcode
+          patterns that can detect both complete postcodes (e.g., "SW1A 1AA") and
+          partial ones (e.g., "SW1", "M1A") as users type, automatically switching
+          to API mode for postcode-like queries and static options for everything
+          else.
         </p>
       </div>
     </div>

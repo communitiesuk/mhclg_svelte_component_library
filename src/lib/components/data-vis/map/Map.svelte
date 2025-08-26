@@ -113,7 +113,7 @@
     labelSourceLayer = "place",
     externalData = null,
     tileSourceId = "LA",
-    promoteProperty = "lad19cd",
+    promoteProperty = "LSOA21CD",
     clickedArea = $bindable([]),
     areaToColorLookup,
   }: {
@@ -423,10 +423,14 @@
   }
 
   function zoomToArea(e) {
-    //Add or remove the clicked area to/from the clickedArea array
-    clickedArea.includes(e.features[0].id)
-      ? clickedArea.splice(clickedArea.indexOf(e.features[0].id), 1)
-      : clickedArea.push(e.features[0].id);
+    const id = e.features[0].id;
+    if (!id) return;
+
+    if (clickedArea.includes(id)) {
+      clickedArea = clickedArea.filter((d) => d !== id);
+    } else {
+      clickedArea = [...clickedArea, id];
+    }
 
     if (clickToZoom) {
       let coordArray =
@@ -484,7 +488,7 @@
       map?.setMaxBounds(undefined);
     }
   });
-
+  $inspect(clickedArea);
   let paintObject = $derived(
     clickedArea?.length > 0
       ? {
@@ -510,21 +514,75 @@
             hoverStateFilter(borderColor, "orange"),
           ],
 
-          "line-width": zoomTransition(
-            minZoom ?? 3,
+          "line-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
             0,
-            maxZoom ?? 14,
-            maxBorderWidth,
-          ),
+            [
+              "case",
+              [
+                "in",
+                [
+                  "get",
+                  geoSource === "file" ? geojsonPromoteId : promoteProperty,
+                ],
+                ["literal", clickedArea],
+              ],
+              5, // thick at low zoom
+              1, // thin at low zoom
+            ],
+            12,
+            [
+              "case",
+              [
+                "in",
+                [
+                  "get",
+                  geoSource === "file" ? geojsonPromoteId : promoteProperty,
+                ],
+                ["literal", clickedArea],
+              ],
+              8, // thick at high zoom
+              maxBorderWidth, // normal at high zoom
+            ],
+          ],
         }
       : {
           "line-color": hoverStateFilter(borderColor, "orange"),
-          "line-width": zoomTransition(
-            minZoom ?? 3,
+          "line-width": [
+            "interpolate",
+            ["linear"],
+            ["zoom"],
             0,
-            maxZoom ?? 14,
-            maxBorderWidth,
-          ),
+            [
+              "case",
+              [
+                "in",
+                [
+                  "get",
+                  geoSource === "file" ? geojsonPromoteId : promoteProperty,
+                ],
+                ["literal", clickedArea],
+              ],
+              5,
+              1,
+            ],
+            12,
+            [
+              "case",
+              [
+                "in",
+                [
+                  "get",
+                  geoSource === "file" ? geojsonPromoteId : promoteProperty,
+                ],
+                ["literal", clickedArea],
+              ],
+              8,
+              maxBorderWidth,
+            ],
+          ],
         },
   );
 </script>
@@ -631,28 +689,7 @@
         {#if showBorder}
           <LineLayer
             layout={{ "line-cap": "round", "line-join": "round" }}
-            paint={{
-              "line-color": hoverStateFilter(borderColor, "orange"),
-              "line-width": [
-                "interpolate",
-                ["linear"],
-                ["zoom"],
-                0,
-                [
-                  "case",
-                  ["==", ["id"], clickedArea],
-                  5, // thick at low zoom
-                  1, // thin at low zoom
-                ],
-                12,
-                [
-                  "case",
-                  ["==", ["id"], clickedArea],
-                  8, // thick at high zoom
-                  maxBorderWidth, // normal at high zoom
-                ],
-              ],
-            }}
+            paint={paintObject}
             beforeLayerType="symbol"
             manageHoverState={interactive}
             onclick={interactive ? (e) => zoomToArea(e) : undefined}

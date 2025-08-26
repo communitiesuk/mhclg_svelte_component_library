@@ -112,7 +112,6 @@
     borderColor = "#003300",
     labelSourceLayer = "place",
     externalData = null,
-    showLegend = false,
     tileSourceId = "LA",
     promoteProperty = "lad19cd",
   }: {

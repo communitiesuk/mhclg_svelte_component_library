@@ -65,6 +65,7 @@
     customBreaks = [20, 40, 60, 80, 100],
     numberOfBreaks = 5,
     fillOpacity = 0.5,
+    fillOn = false,
     changeOpacityOnHover = true,
     hoverOpacity = 0.8,
     center = [-2.5, 53],
@@ -103,21 +104,23 @@
     showLegend = false,
     legendSnippet = undefined,
     countries = ["england", "scotland"],
-    areaCode = "",
+    areaCodes = ["E07000197", "E07000198"],
     geoSource = "file",
     tileSource = "http://localhost:8080/{z}/{x}/{y}.pbf",
     geojsonPromoteId = "areanm",
-    vectorMetricProperty = "Index of Multiple Deprivation (IMD) Decile",
-    vectorLayerName = "LSOA",
+    vectorMetricProperty = "IMD",
+    vectorLayerName = "LA",
     borderColor = "#003300",
     labelSourceLayer = "place",
     externalData = null,
     tileSourceId = "LA",
-    promoteProperty = "LSOA21CD",
+    promoteProperty = "lad19cd",
     clickedArea = $bindable([]),
     areaToColorLookup,
   }: {
     data?: object[];
+    areaCodes?: string[];
+    fillOn?: boolean;
     countries?: string[];
     legendSnippet?: string;
     showLegend?: boolean;
@@ -200,6 +203,29 @@
 
   $inspect(clickedArea);
 
+  function zoomToVectorAreas() {
+    if (!map || !areaCodes || areaCodes.length === 0) return; // ✅ do nothing if empty
+
+    const features = map.querySourceFeatures(tileSourceId, {
+      sourceLayer: vectorLayerName,
+      filter: ["in", ["get", promoteProperty], ["literal", areaCodes]],
+    });
+
+    if (features.length) {
+      const bounds = new LngLatBounds();
+
+      for (let f of features) {
+        const coords = f.geometry.coordinates.flat(Infinity);
+        for (let [x, y] of coords) {
+          bounds.extend([x, y]);
+        }
+      }
+
+      map.fitBounds(bounds, { padding: 40, animate: true });
+      map.setMaxBounds(bounds); // ✅ lock to those areas
+    }
+  }
+
   // ISO-3166/ONS-style prefixes for area codes
   const areaCodePrefixes: Record<string, string[]> = {
     england: ["E"], // all area codes starting with E
@@ -245,10 +271,9 @@
         ...fullTopo.objects[geoType],
         geometries: fullTopo.objects[geoType].geometries.filter((geom) => {
           const code = geom.properties.areacd;
-
-          // ✅ If areaCode is passed, show only that one
-          if (areaCode) {
-            return code === areaCode;
+          // ✅ If areaCodes is passed, show only those
+          if (areaCodes.length > 0) {
+            return areaCodes.includes(code);
           }
 
           // Otherwise filter by allowedPrefixes
@@ -478,16 +503,35 @@
         : undefined
       : undefined,
   );
+
   $effect(() => {
-    if (areaCode && filteredGeoJsonData.features.length > 0) {
+    if (!map) return;
+
+    if (
+      geoSource === "file" &&
+      areaCodes?.length > 0 &&
+      filteredGeoJsonData.features.length > 0
+    ) {
+      // ✅ GeoJSON case
       const bounds = computeBounds(filteredGeoJsonData, 0.2);
-      map?.setMaxBounds(bounds);
+      map.fitBounds(bounds, { padding: 20, animate: true });
+      map.setMaxBounds(bounds);
+    } else if (geoSource === "tiles" && areaCodes?.length > 0) {
+      // ✅ Vector tile case: wait until tiles render
+      const handler = () => {
+        zoomToVectorAreas();
+        map.off("idle", handler); // run once and clean up
+      };
+      map.on("idle", handler);
     } else if (setMaxBounds && maxBoundsCoords) {
-      map?.setMaxBounds(convertToLngLatBounds(maxBoundsCoords));
+      // ✅ fallback global bounds
+      map.setMaxBounds(convertToLngLatBounds(maxBoundsCoords));
     } else {
-      map?.setMaxBounds(undefined);
+      // ✅ free camera
+      map.setMaxBounds(undefined);
     }
   });
+
   $inspect(clickedArea);
   let paintObject = $derived(
     clickedArea?.length > 0
@@ -585,6 +629,18 @@
           ],
         },
   );
+  const fillPaint = $derived({
+    "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
+    "fill-opacity": fillOn
+      ? changeOpacityOnHover
+        ? hoverStateFilter(fillOpacity, hoverOpacity)
+        : fillOpacity
+      : 0, // 👈 fully transparent when off
+  });
+  const vectorFillPaint = $derived({
+    ...vectorPaintObject, // your existing fill-color logic
+    "fill-opacity": fillOn ? fillOpacity : 0,
+  });
 </script>
 
 <div style="position: relative; height: {mapHeight}px; width: 100%;">
@@ -651,12 +707,7 @@
     {#if geoSource == "file"}
       <GeoJSON id="areas" data={merged} promoteId="areanm">
         <FillLayer
-          paint={{
-            "fill-color": ["coalesce", ["get", "color"], "lightgrey"],
-            "fill-opacity": changeOpacityOnHover
-              ? hoverStateFilter(fillOpacity, hoverOpacity)
-              : fillOpacity,
-          }}
+          paint={fillColors}
           beforeLayerType="symbol"
           manageHoverState={interactive}
           onclick={interactive
@@ -749,14 +800,20 @@
               }
             : undefined}
           manageHoverState={interactive}
+          filter={areaCodes.length > 0
+            ? ["in", ["get", promoteProperty], ["literal", areaCodes]]
+            : true}
         />
         {#if showBorder}
           <LineLayer
             layout={{ "line-cap": "round", "line-join": "round" }}
-            paint={paintObject}
+            paint={vectorFillPaint}
             beforeLayerType="symbol"
             sourceLayer={vectorLayerName}
             manageHoverState={interactive}
+            filter={areaCodes.length > 0
+              ? ["in", ["get", promoteProperty], ["literal", areaCodes]]
+              : true}
           />
         {/if}
       </VectorTileSource>

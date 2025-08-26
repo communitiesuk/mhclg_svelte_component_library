@@ -681,6 +681,20 @@
         },
         category: "Events",
       },
+      {
+        name: "tileSourceId",
+        isProp: true,
+        category: "data",
+        value: "LA",
+        description: "",
+      },
+      {
+        name: "promoteProperty",
+        isProp: true,
+        category: "data",
+        value: "lad19cd",
+        description: "",
+      },
     ]),
   );
 

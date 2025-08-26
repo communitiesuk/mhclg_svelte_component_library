@@ -65,7 +65,7 @@
     customBreaks = [20, 40, 60, 80, 100],
     numberOfBreaks = 5,
     fillOpacity = 0.5,
-    fillOn = false,
+    fillOn = true,
     changeOpacityOnHover = true,
     hoverOpacity = 0.8,
     center = [-2.5, 53],

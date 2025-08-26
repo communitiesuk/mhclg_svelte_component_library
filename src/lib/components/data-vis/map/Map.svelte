@@ -198,8 +198,6 @@
     areaToColorLookup?: object;
   } = $props();
 
-  $inspect(clickedArea);
-
   // ISO-3166/ONS-style prefixes for area codes
   const areaCodePrefixes: Record<string, string[]> = {
     england: ["E"], // all area codes starting with E
@@ -409,8 +407,11 @@
   );
 
   let hoveredArea = $state();
+  let hoveredAreaArray = $derived(hoveredArea ? [hoveredArea] : []);
   let hoveredAreaData = $state();
   let currentMousePosition = $state();
+
+  $inspect(clickedArea, hoveredAreaArray);
 
   function convertToLngLatBounds(coords: LngLatBoundsLike): LngLatBoundsLike {
     const bounds = new LngLatBounds(coords[0], coords[0]);
@@ -587,7 +588,7 @@
   );
 </script>
 
-<div style="position: relative; height: {mapHeight}px; width: 100%;">
+<div style="height: {mapHeight}; width: 100%">
   <MapLibre
     bind:map
     bind:loaded
@@ -758,6 +759,41 @@
             sourceLayer={vectorLayerName}
             manageHoverState={interactive}
           />
+          {#if hoveredArea}
+            <LineLayer
+              layout={{ "line-cap": "round", "line-join": "round" }}
+              paint={{ "line-width": 5, "line-color": "orange" }}
+              beforeLayerType="symbol"
+              sourceLayer={vectorLayerName}
+              manageHoverState={interactive}
+              filter={hoveredArea
+                ? ["==", ["get", promoteProperty], hoveredArea]
+                : undefined}
+            />
+          {/if}
+          <!-- <LineLayer
+            layout={{ "line-cap": "round", "line-join": "round" }}
+            paint={paintObject}
+            beforeLayerType="symbol"
+            sourceLayer={vectorLayerName}
+            manageHoverState={interactive}
+          /> -->
+          <!-- <LineLayer
+            layout={{ "line-cap": "round", "line-join": "round" }}
+            paint={paintObject}
+            beforeLayerType="symbol"
+            sourceLayer={vectorLayerName}
+            manageHoverState={interactive}
+            filter={["==", ["get", "id"], clickedArea]}
+          /> -->
+          <!-- <LineLayer
+            layout={{ "line-cap": "round", "line-join": "round" }}
+            paint={{ "line-color": "red", "line-width": 10 }}
+            beforeLayerType="symbol"
+            sourceLayer={vectorLayerName}
+            manageHoverState={interactive}
+            filter={["==", ["get", "id"], hoveredAreaArray]}
+          /> -->
         {/if}
       </VectorTileSource>
     {:else}

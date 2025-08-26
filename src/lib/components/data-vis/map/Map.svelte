@@ -114,7 +114,6 @@
     externalData = null,
     tileSourceId = "LA",
     promoteProperty = "lad19cd",
-    showLegend = false,
     clickedArea = $bindable([]),
     areaToColorLookup,
   }: {
@@ -198,10 +197,6 @@
     clickedArea?: [];
     areaToColorLookup?: object;
   } = $props();
-
-  $inspect(tileSourceId, promoteProperty, tileSource);
-
-  let clickedArea = $state(null);
 
   $inspect(clickedArea);
 

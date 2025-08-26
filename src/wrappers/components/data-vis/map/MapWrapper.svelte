@@ -288,7 +288,7 @@
         name: "mapHeight",
         category: "Styling",
         isProp: true,
-        value: 400,
+        value: "400px",
         description: "Set height of map",
       },
       {
@@ -448,7 +448,6 @@
         options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
       },
       {
-
         name: "areaCode",
         isProp: true,
         category: "Data",
@@ -463,7 +462,6 @@
         description: "Pass in countires you want the topo layer to render.",
       },
       {
-
         name: "geoSource",
         isProp: true,
         description: "Tiles or maps",
@@ -518,7 +516,6 @@
       },
       { name: "addedDataURL", isProp: true, category: "Data", value: "" },
       {
-
         name: "year",
         isProp: true,
         category: "Data",

@@ -15,8 +15,6 @@ export { default as Map } from "./components/data-vis/map/Map.svelte";
 export { default as MapLegend } from "./components/data-vis/map/MapLegend.svelte";
 export { default as NonStandardControls } from "./components/data-vis/map/NonStandardControls.svelte";
 export { default as Tooltip } from "./components/data-vis/map/Tooltip.svelte";
-export { default as PositionChart } from "./components/data-vis/position-chart/PositionChart.svelte";
-export { default as PositionChartAxis } from "./components/data-vis/position-chart/PositionChartAxis.svelte";
 export { default as Table } from "./components/data-vis/table/Table.svelte";
 export { default as Breadcrumbs } from "./components/layout/Breadcrumbs.svelte";
 export { default as Footer } from "./components/layout/Footer.svelte";
@@ -46,5 +44,8 @@ export { default as RelatedContent } from "./components/ui/RelatedContent.svelte
 export { default as Search } from "./components/ui/Search.svelte";
 export { default as SearchAutocomplete } from "./components/ui/SearchAutocomplete.svelte";
 export { default as Select } from "./components/ui/Select.svelte";
+export { default as SidePanel } from "./components/ui/SidePanel.svelte";
 export { default as Tabs } from "./components/ui/Tabs.svelte";
 export { default as WhatsNew } from "./components/ui/WhatsNew.svelte";
+export { default as PositionChart } from "./components/data-vis/position-chart/PositionChart.svelte";
+export { default as PositionChartAxis } from "./components/data-vis/position-chart/PositionChartAxis.svelte";

@@ -39,13 +39,6 @@
                 {/each}
               </div>
             </TabItem>
-            <TabItem
-              open={false}
-              title={"Container width"}
-              defaultClass="text-lg"
-              ><ScreenSizeRadioUpdated bind:demoScreenWidth
-              ></ScreenSizeRadioUpdated>
-            </TabItem>
           </div>
           <DoubleChevronButton
             bind:open={sideBarOpen}

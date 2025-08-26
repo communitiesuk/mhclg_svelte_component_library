@@ -36,9 +36,6 @@
     // Accessibility props
     ariaLabel?: string;
 
-    // Styling props
-    rebranded?: boolean;
-
     // Demo/isolation props
     demoMode?: boolean;
   }
@@ -56,7 +53,6 @@
     hideMessageText = "Hide cookie message",
     cookiesPageUrl = "/cookies-page",
     ariaLabel = "Cookies on MHCLG Svelte Component Library",
-    rebranded = true,
     demoMode = false,
   }: CookieBannerProps = $props();
 
@@ -296,7 +292,7 @@
 
 {#if bannerVisible}
   <div
-    class="govuk-cookie-banner {rebranded ? 'govuk-template--rebranded' : ''}"
+    class="govuk-cookie-banner"
     data-nosnippet
     role="region"
     aria-label={ariaLabel}
@@ -356,7 +352,5 @@
 {/if}
 
 <style>
-  .govuk-cookie-banner.govuk-template--rebranded {
-    background-color: #f4f8fb;
-  }
+
 </style>

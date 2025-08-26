@@ -596,7 +596,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <svg width={demoScreenWidth} height={getValue("svgHeight")}>
+    <svg width="100%" height={getValue("svgHeight")}>
       <Line {...parametersObject}></Line>
     </svg>
   </div>
@@ -629,16 +629,18 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Renders the demo UI and the component itself.
 -->
-<ComponentDemo
-  {Component}
-  bind:demoScreenWidth
-  {parametersSourceArray}
-  bind:statedParametersValuesArray
-  {derivedParametersValuesArray}
-  {parametersVisibleArray}
-  {parametersParsingErrorsObject}
-  {copyParametersToClipboardObject}
-></ComponentDemo>
+<div bind:clientWidth={demoScreenWidth}>
+  <ComponentDemo
+    {Component}
+    bind:demoScreenWidth
+    {parametersSourceArray}
+    bind:statedParametersValuesArray
+    {derivedParametersValuesArray}
+    {parametersVisibleArray}
+    {parametersParsingErrorsObject}
+    {copyParametersToClipboardObject}
+  ></ComponentDemo>
+</div>
 
 <!--
     DONOTTOUCH  *

@@ -143,6 +143,12 @@
               scope="col"
               class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
               title={metaData[column.key].explainer}
+              aria-sort={sortState.column !== column.key
+                ? "none"
+                : sortState.column === column.key &&
+                    sortState.order === "descending"
+                  ? "descending"
+                  : "ascending"}
             >
               <div class="header">
                 <Button

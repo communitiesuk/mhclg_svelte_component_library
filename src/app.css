@@ -76,3 +76,15 @@ code {
   height: 100%;
   width: 100%;
 }
+[aria-sort="ascending"].govuk-table__header .top-triangle {
+  fill: #222;
+}
+[aria-sort="ascending"].govuk-table__header .bottom-triangle {
+  fill: #bcbcbd;
+}
+[aria-sort="descending"].govuk-table__header .top-triangle {
+  fill: #bcbcbd;
+}
+[aria-sort="descending"].govuk-table__header .bottom-triangle {
+  fill: #222;
+}

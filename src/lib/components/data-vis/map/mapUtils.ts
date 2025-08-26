@@ -113,6 +113,46 @@ export function quantileBreaks(data: number[], numBreaks: number): number[] {
 
   return breaks;
 }
+
+export function computeBounds(
+  geoJson: GeoJSON.FeatureCollection<any>,
+  padding = 0, // default no padding
+) {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  geoJson.features.forEach((feature) => {
+    const coordsArray = getCoordinatesArray(feature.geometry);
+
+    coordsArray.forEach(([lng, lat]) => {
+      if (lng < minX) minX = lng;
+      if (lat < minY) minY = lat;
+      if (lng > maxX) maxX = lng;
+      if (lat > maxY) maxY = lat;
+    });
+  });
+
+  // Apply padding
+  return [
+    [minX - padding, minY - padding],
+    [maxX + padding, maxY + padding],
+  ] as [[number, number], [number, number]];
+}
+
+// Flatten coordinates for Polygon or MultiPolygon
+export function getCoordinatesArray(
+  geometry: GeoJSON.Geometry,
+): [number, number][] {
+  if (geometry.type === "Polygon") {
+    return geometry.coordinates.flat();
+  } else if (geometry.type === "MultiPolygon") {
+    return geometry.coordinates.flat(2);
+  }
+  return [];
+}
+
 export function createPaintObjectFromMetric(
   metricProperty: string,
   breaks: number[],

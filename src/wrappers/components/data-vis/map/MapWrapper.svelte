@@ -289,7 +289,7 @@
         name: "mapHeight",
         category: "Styling",
         isProp: true,
-        value: 400,
+        value: "400px",
         description: "Set height of map",
       },
       {
@@ -411,6 +411,13 @@
         category: "Styling",
       },
       {
+        name: "legendSnippet",
+        isProp: true,
+        description: "Pass in a snippet for the map legend",
+        value: undefined,
+        category: "Styling",
+      },
+      {
         name: "hoverOpacity",
         isProp: true,
         category: "Styling",
@@ -440,6 +447,20 @@
         category: "Data",
         value: "ltla",
         options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
+      },
+      {
+        name: "areaCode",
+        isProp: true,
+        category: "Data",
+        value: "",
+        description: "Pass in an area code to render one tile.",
+      },
+      {
+        name: "countries",
+        isProp: true,
+        category: "Data",
+        value: ["england"],
+        description: "Pass in countires you want the topo layer to render.",
       },
       {
         name: "geoSource",
@@ -680,6 +701,20 @@
           functionAsString: `() => { console.log("idle"); }`,
         },
         category: "Events",
+      },
+      {
+        name: "tileSourceId",
+        isProp: true,
+        category: "data",
+        value: "LA",
+        description: "",
+      },
+      {
+        name: "promoteProperty",
+        isProp: true,
+        category: "data",
+        value: "lad19cd",
+        description: "",
       },
     ]),
   );

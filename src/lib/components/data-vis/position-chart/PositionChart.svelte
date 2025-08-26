@@ -98,6 +98,7 @@
   .label {
     text-align: right;
     margin: 0;
+    line-height: 1.05;
   }
   .chart-and-axis {
     display: flex;

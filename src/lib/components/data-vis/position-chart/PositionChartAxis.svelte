@@ -18,7 +18,6 @@
     </svg>
     <span>More deprived</span>
   </div>
-  <div class="average">Average</div>
   <div class="less-deprived">
     <span>Less deprived</span>
     <svg

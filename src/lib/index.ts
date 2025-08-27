@@ -49,3 +49,4 @@ export { default as Tabs } from "./components/ui/Tabs.svelte";
 export { default as WhatsNew } from "./components/ui/WhatsNew.svelte";
 export { default as PositionChart } from "./components/data-vis/position-chart/PositionChart.svelte";
 export { default as PositionChartAxis } from "./components/data-vis/position-chart/PositionChartAxis.svelte";
+export { default as MultiSelectSearchAutocomplete } from "./components/ui/MultiSelectSearchAutocomplete.svelte";

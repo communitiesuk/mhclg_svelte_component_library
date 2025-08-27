@@ -15,8 +15,6 @@
 
   const range = Array.from({ length: 10 }, (_, i) => i);
 
-  $inspect(value, "what is it");
-
   // the 'chart' is the bar and the marker - its height is a prop and its width is binded to clientWidth
 
   // the 'marker' is the circle

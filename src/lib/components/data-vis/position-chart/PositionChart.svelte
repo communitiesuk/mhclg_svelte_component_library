@@ -13,6 +13,8 @@
     chartHeight = 24,
   } = $props();
 
+  $inspect(value, "value");
+
   const range = Array.from({ length: 10 }, (_, i) => i);
 
   // the 'chart' is the bar and the marker - its height is a prop and its width is binded to clientWidth
@@ -79,10 +81,15 @@
       {:else}
         {#each value as rowValue, i}
           <g
-            transform="translate({xFunction(rowValue) +
+            transform="translate({xFunction(rowValue.data) +
               markerRadius},{chartHeight / 2})"
           >
-            <circle r={markerRadius} cx="0" cy="0" fill="#CA357C" stroke="white"
+            <circle
+              r={markerRadius}
+              cx="0"
+              cy="0"
+              fill={rowValue.color}
+              stroke="white"
             ></circle>
           </g>
         {/each}

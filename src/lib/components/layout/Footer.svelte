@@ -1,5 +1,5 @@
 <script lang="ts">
-  import defaultCopyrightLogo from "./../../assets/images/govuk-crest.svg";
+  import legacyDefaultCopyrightLogo from "./../../assets/images/govuk-crest.svg";
   // Define component props with default values
   // sections: array of footer navigation sections
   // inlineLinks: array of inline footer links
@@ -15,6 +15,8 @@
   // licenceTextBefore: Text to display before the licence link
   // licenceTextAfter: Text to display after the licence link
   // copyrightHref: URL for the crown copyright link
+  // rebrand: whether to use the new rebranded crown logo
+  // borderTopColor: custom color for the footer's top border (overrides default #1d70b8)
 
   // Define types for component props
   interface FooterItem {
@@ -22,7 +24,7 @@
     label: string;
     lang?: string;
     hrefLang?: string;
-    onclick?: (event: MouseEvent) => void;
+    onclick?: (event: Event) => void;
   }
 
   interface FooterSection {
@@ -47,6 +49,8 @@
     licenceTextBefore = "All content is available under the ",
     licenceTextAfter = ", except where otherwise stated",
     copyrightHref = "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
+    rebrand = true,
+    borderTopColor = "#00625E",
   } = $props<{
     sections?: FooterSection[];
     inlineLinks?: FooterItem[];
@@ -62,12 +66,46 @@
     licenceTextBefore?: string;
     licenceTextAfter?: string;
     copyrightHref?: string;
+    rebrand?: boolean;
+    borderTopColor?: string;
   }>();
 </script>
 
 <!-- Main footer container -->
-<footer class="govuk-footer">
+<footer
+  class="govuk-footer"
+  class:govuk-footer--rebranded={rebrand}
+  style:border-top-color={borderTopColor}
+>
   <div class={containerWidth}>
+    {#if rebrand}
+      <!-- New rebranded crown logo for footer -->
+      <svg
+        focusable="false"
+        role="presentation"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 64 60"
+        height="30"
+        width="32"
+        fill="currentcolor"
+        class="govuk-footer__crown"
+      >
+        <g>
+          <circle cx="20" cy="17.6" r="3.7"></circle>
+          <circle cx="10.2" cy="23.5" r="3.7"></circle>
+          <circle cx="3.7" cy="33.2" r="3.7"></circle>
+          <circle cx="31.7" cy="30.6" r="3.7"></circle>
+          <circle cx="43.3" cy="17.6" r="3.7"></circle>
+          <circle cx="53.2" cy="23.5" r="3.7"></circle>
+          <circle cx="59.7" cy="33.2" r="3.7"></circle>
+          <circle cx="31.7" cy="30.6" r="3.7"></circle>
+          <path
+            d="M33.1,9.8c.2-.1.3-.3.5-.5l4.6,2.4v-6.8l-4.6,1.5c-.1-.2-.3-.3-.5-.5l1.9-5.9h-6.7l1.9,5.9c-.2.1-.3.3-.5.5l-4.6-1.5v6.8l4.6-2.4c.1.2.3.3.5.5l-2.6,8c-.9,2.8,1.2,5.7,4.1,5.7h0c3,0,5.1-2.9,4.1-5.7l-2.6-8ZM37,37.9s-3.4,3.8-4.1,6.1c2.2,0,4.2-.5,6.4-2.8l-.7,8.5c-2-2.8-4.4-4.1-5.7-3.8.1,3.1.5,6.7,5.8,7.2,3.7.3,6.7-1.5,7-3.8.4-2.6-2-4.3-3.7-1.6-1.4-4.5,2.4-6.1,4.9-3.2-1.9-4.5-1.8-7.7,2.4-10.9,3,4,2.6,7.3-1.2,11.1,2.4-1.3,6.2,0,4,4.6-1.2-2.8-3.7-2.2-4.2.2-.3,1.7.7,3.7,3,4.2,1.9.3,4.7-.9,7-5.9-1.3,0-2.4.7-3.9,1.7l2.4-8c.6,2.3,1.4,3.7,2.2,4.5.6-1.6.5-2.8,0-5.3l5,1.8c-2.6,3.6-5.2,8.7-7.3,17.5-7.4-1.1-15.7-1.7-24.5-1.7h0c-8.8,0-17.1.6-24.5,1.7-2.1-8.9-4.7-13.9-7.3-17.5l5-1.8c-.5,2.5-.6,3.7,0,5.3.8-.8,1.6-2.3,2.2-4.5l2.4,8c-1.5-1-2.6-1.7-3.9-1.7,2.3,5,5.2,6.2,7,5.9,2.3-.4,3.3-2.4,3-4.2-.5-2.4-3-3.1-4.2-.2-2.2-4.6,1.6-6,4-4.6-3.7-3.7-4.2-7.1-1.2-11.1,4.2,3.2,4.3,6.4,2.4,10.9,2.5-2.8,6.3-1.3,4.9,3.2-1.8-2.7-4.1-1-3.7,1.6.3,2.3,3.3,4.1,7,3.8,5.4-.5,5.7-4.2,5.8-7.2-1.3-.2-3.7,1-5.7,3.8l-.7-8.5c2.2,2.3,4.2,2.7,6.4,2.8-.7-2.3-4.1-6.1-4.1-6.1h10.6,0Z"
+          ></path>
+        </g>
+      </svg>
+    {/if}
+
     <!-- Navigation sections (optional) -->
     {#if sections.length > 0}
       <div class="govuk-footer__navigation">
@@ -160,11 +198,34 @@
       <!-- Crown copyright section (optional) -->
       {#if showCopyright}
         <div class="govuk-footer__meta-item">
+          <!-- 
+            Copyright logo handling:
+            
+            The GOV.UK Frontend CSS uses a ::before pseudo-element on .govuk-footer__copyright-logo
+            to display the crown logo. This creates conflicts when we want to use custom logos.
+            
+            Our approach:
+            1. When using a custom logo (copyrightLogoUrl provided):
+               - Remove the govuk-footer__copyright-logo class to disable the pseudo-element
+               - Apply explicit background-image styles to show the custom logo
+            
+            2. When using default logos:
+               - Rebrand mode: Let the CSS pseudo-element handle it (uses rebrand assets)
+               - Legacy mode: Always use explicit styling (uses legacy assets)
+            
+            This prevents logo duplication/overlap while maintaining backward compatibility.
+          -->
           <a
-            class="govuk-footer__link govuk-footer__copyright-logo"
+            class={[
+              "govuk-footer__link",
+              {
+                "govuk-footer__copyright-logo": !copyrightLogoUrl && rebrand,
+              },
+            ]}
             href={copyrightHref}
-            style="background-image: url({copyrightLogoUrl ??
-              defaultCopyrightLogo});"
+            style={copyrightLogoUrl || !rebrand
+              ? `background-image: url(${copyrightLogoUrl ?? legacyDefaultCopyrightLogo}); display: block; width: 100%; padding-top: 112px; background-repeat: no-repeat; background-position: 50% 0; background-size: 125px 102px; text-align: center;`
+              : ""}
           >
             {copyrightText}
           </a>

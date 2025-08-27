@@ -115,6 +115,7 @@
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
 
+  let clickedArea = $state(["Northumberland"]);
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -189,20 +190,16 @@
       {
         name: "maxZoom",
         isProp: true,
-        description:
-          "Add zoom in and out, and 'reset bearing to north' buttons",
-        value: 10,
-        category: "UI",
-        visible: { name: "standardControls", value: false },
+        description: "The maximum zoom level, up to 22",
+        value: 15,
+        category: "View",
       },
       {
         name: "minZoom",
         isProp: true,
-        description:
-          "Add zoom in and out, and 'reset bearing to north' buttons",
+        description: "The minimum zoom level, at least 0",
         value: 0,
-        category: "UI",
-        visible: { name: "standardControls", value: false },
+        category: "View",
       },
       {
         name: "navigationControlPosition",
@@ -292,8 +289,15 @@
         name: "mapHeight",
         category: "Styling",
         isProp: true,
-        value: 400,
+        value: "400px",
         description: "Set height of map",
+      },
+      {
+        name: "showLegend",
+        category: "Styling",
+        isProp: true,
+        value: false,
+        description: "Show the map Legend",
       },
       {
         name: "styleSheet",
@@ -307,6 +311,7 @@
         options: [
           "Carto-light",
           "Carto-dark",
+          "https://raw.githubusercontent.com/fryford/imdmap/refs/heads/master/data/style.json",
           "https://raw.githubusercontent.com/ONSvisual/svelte-maps/refs/heads/main/dist/data/style-ons-light.json",
           { version: 8, sources: {}, layers: [] },
         ],
@@ -406,6 +411,13 @@
         category: "Styling",
       },
       {
+        name: "legendSnippet",
+        isProp: true,
+        description: "Pass in a snippet for the map legend",
+        value: undefined,
+        category: "Styling",
+      },
+      {
         name: "hoverOpacity",
         isProp: true,
         category: "Styling",
@@ -436,6 +448,94 @@
         value: "ltla",
         options: ["cauth", "ctry", "cty", "ltla", "mcty", "rgn", "uk", "utla"],
       },
+      {
+        name: "areaCode",
+        isProp: true,
+        category: "Data",
+        value: "",
+        description: "Pass in an area code to render one tile.",
+      },
+      {
+        name: "countries",
+        isProp: true,
+        category: "Data",
+        value: ["england"],
+        description: "Pass in countires you want the topo layer to render.",
+      },
+      {
+        name: "geoSource",
+        isProp: true,
+        description: "Tiles or maps",
+        category: "Data",
+        value: "file",
+        options: ["tiles", "file", "none"],
+      },
+      {
+        name: "tileSource",
+        isProp: true,
+        description: "A URL to get the vector tiles from",
+        category: "Data",
+        value: "http://localhost:8080/{z}/{x}/{y}.pbf",
+        visible: { name: "geoSource", value: "tiles" },
+      },
+      {
+        name: "clickedArea",
+        isProp: true,
+        category: "Data",
+        value: ["Northumberland"],
+        isBinded: true,
+        description:
+          "A bindable array of the areas that have been clicked on the map, or otherwise selected from an another component.",
+      },
+      {
+        name: "areaToColorLookup",
+        isProp: true,
+        category: "Data",
+        value: {
+          Northumberland: "pink",
+          Leeds: "yellow",
+          Doncaster: "teal",
+        },
+        description: "Lookup for the border colours. ",
+      },
+      {
+        name: "paintObject",
+        isProp: true,
+        description: "Paint object to pass in colouring",
+        category: "Data",
+        value: {
+          "fill-color": [
+            "match",
+            [
+              "to-number",
+              ["get", "Index of Multiple Deprivation (IMD) Decile"],
+            ],
+            1,
+            "#ffffcc",
+            2,
+            "#ffffcc",
+            3,
+            "#a1dab4",
+            4,
+            "#a1dab4",
+            5,
+            "#41b6c4",
+            6,
+            "#41b6c4",
+            7,
+            "#2c7fb8",
+            8,
+            "#2c7fb8",
+            9,
+            "#253494",
+            10,
+            "#253494",
+            /* default */ "rgba(0,0,0,0)",
+          ],
+          "fill-opacity": 0.4,
+        },
+      },
+      { name: "addedDataURL", isProp: true, category: "Data", value: "" },
       {
         name: "year",
         isProp: true,
@@ -602,6 +702,20 @@
         },
         category: "Events",
       },
+      {
+        name: "tileSourceId",
+        isProp: true,
+        category: "data",
+        value: "LA",
+        description: "",
+      },
+      {
+        name: "promoteProperty",
+        isProp: true,
+        category: "data",
+        value: "lad19cd",
+        description: "",
+      },
     ]),
   );
 
@@ -742,7 +856,7 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <Map {...parametersObject}></Map>
+  <Map {...parametersObject} bind:clickedArea></Map>
 {/snippet}
 
 <!--

@@ -105,8 +105,7 @@ export function quantileBreaks(data: number[], numBreaks: number): number[] {
 
   let len = data.length;
 
-  let breaks: number[] = [
-  ];
+  let breaks: number[] = [];
   for (let i = 0; i < numBreaks; i++) {
     breaks.push(data[Math.floor(len * (i * (1 / numBreaks)))]);
   }
@@ -115,4 +114,105 @@ export function quantileBreaks(data: number[], numBreaks: number): number[] {
   return breaks;
 }
 
-  
+export function computeBounds(
+  geoJson: GeoJSON.FeatureCollection<any>,
+  padding = 0, // default no padding
+) {
+  let minX = Infinity;
+  let minY = Infinity;
+  let maxX = -Infinity;
+  let maxY = -Infinity;
+
+  geoJson.features.forEach((feature) => {
+    const coordsArray = getCoordinatesArray(feature.geometry);
+
+    coordsArray.forEach(([lng, lat]) => {
+      if (lng < minX) minX = lng;
+      if (lat < minY) minY = lat;
+      if (lng > maxX) maxX = lng;
+      if (lat > maxY) maxY = lat;
+    });
+  });
+
+  // Apply padding
+  return [
+    [minX - padding, minY - padding],
+    [maxX + padding, maxY + padding],
+  ] as [[number, number], [number, number]];
+}
+
+// Flatten coordinates for Polygon or MultiPolygon
+export function getCoordinatesArray(
+  geometry: GeoJSON.Geometry,
+): [number, number][] {
+  if (geometry.type === "Polygon") {
+    return geometry.coordinates.flat();
+  } else if (geometry.type === "MultiPolygon") {
+    return geometry.coordinates.flat(2);
+  }
+  return [];
+}
+
+export function createPaintObjectFromMetric(
+  metricProperty: string,
+  breaks: number[],
+  fillColors: string[],
+  fillOpacity: number = 0.4,
+): object {
+  const usableLength = Math.min(breaks.length, fillColors.length);
+
+  breaks.sort((a, b) => a - b);
+
+  function parseNumberWithCommas(value: string | number): number {
+    if (typeof value === "number") return value;
+    const cleaned = value.toString().replace(/,/g, "").trim();
+    const parsed = Number(cleaned);
+    return isNaN(parsed) ? 0 : parsed;
+  }
+
+  const matchExpression: [string, any, ...any[]] = [
+    "step",
+    ["to-number", ["get", metricProperty]],
+    "#d3d3d3", // Default color
+  ];
+
+  for (let i = 0; i < usableLength; i++) {
+    const breakValue = parseNumberWithCommas(breaks[i]);
+    matchExpression.push(breakValue, fillColors[i]);
+  }
+
+  return {
+    "fill-color": matchExpression,
+    "fill-opacity": fillOpacity,
+  };
+}
+
+export function extractVectorMetricValues(
+  map: maplibregl.Map,
+  layerId: string,
+  metricProperty: string,
+): number[] {
+  if (!map || !map.isStyleLoaded()) return [];
+
+  const features = map.queryRenderedFeatures({ layers: [layerId] });
+  const seen = new Set();
+
+  return features
+    .filter((f) => {
+      const id = f.id;
+      if (!id || seen.has(id)) return false;
+      seen.add(id);
+      return true;
+    })
+    .map((f) => {
+      const raw = f.properties?.[metricProperty];
+      if (typeof raw === "string") {
+        const cleaned = raw.replace(/,/g, "");
+        return parseFloat(cleaned);
+      } else if (typeof raw === "number") {
+        return raw;
+      }
+      return NaN;
+    })
+    .filter((v) => !isNaN(v));
+}

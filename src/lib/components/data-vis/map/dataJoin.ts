@@ -2,7 +2,7 @@ import type { FeatureCollection } from "geojson";
 
 export function joinData(
   filteredGeoJsonData: FeatureCollection,
-  dataWithColor: any[]
+  dataWithColor: any[],
 ): FeatureCollection {
   const obj2Map = dataWithColor.reduce((map, item) => {
     map[item.areaCode] = item; // Use 'areaCode' as the key for the second map

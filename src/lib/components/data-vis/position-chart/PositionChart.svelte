@@ -13,8 +13,6 @@
     chartHeight = 24,
   } = $props();
 
-  $inspect(value, "value");
-
   const range = Array.from({ length: 10 }, (_, i) => i);
 
   // the 'chart' is the bar and the marker - its height is a prop and its width is binded to clientWidth
@@ -69,7 +67,6 @@
             fill={colorScale[number]}
           ></rect></g
         >{/each}
-      {console.log(value, typeof value)}
       {#if typeof value === "number"}
         <g
           transform="translate({xFunction(value) + markerRadius},{chartHeight /

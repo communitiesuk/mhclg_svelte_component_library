@@ -5,7 +5,6 @@
   import * as codeBlocks from "./codeBlocks.js";
 
   import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
-  import hierarchyData from "$lib/data/geographic-hierarchy-flat.json";
 
   // Example state variables
   let basicExample = $state("");
@@ -492,7 +491,7 @@
 {/snippet}
 
 {#snippet HierarchyDataExample()}
-  <div class="p-5 bg-white">
+  <!-- <div class="p-5 bg-white">
     <p class="mb-4 text-gray-700">
       Use the bundled geographic hierarchy data file for comprehensive UK area
       search. This demonstrates using the complete ONS geographic hierarchy with
@@ -534,7 +533,7 @@
       </p>
     {/if}
   </div>
-  <CodeBlock code={codeBlocks.hierarchyData} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.hierarchyData} language="svelte"></CodeBlock> -->
 {/snippet}
 
 {#snippet LsoaLadOnlyExample()}

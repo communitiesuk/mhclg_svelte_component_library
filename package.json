@@ -47,8 +47,8 @@
     ".": {
       "types": "./dist/index.d.ts",
       "svelte": "./dist/index.js",
-      "import": "./dist/index.es.js",
-      "require": "./dist/index.cjs.js"
+      "import": "./dist/index.js",
+      "require": "./dist/index.js"
     },
     "./src/*": "./src/lib/*",
     "./src/lib/*": "./src/lib/*"

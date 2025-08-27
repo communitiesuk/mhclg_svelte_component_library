@@ -208,3 +208,103 @@ export const customGeoTypes = `<script>
 />
 
 <!-- Demonstrates custom geographic type configuration based on geoTypes -->`;
+
+export const limitedSuggestions = `<script>
+  import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
+  
+  let selectedValue = $state("");
+</script>
+
+<PostcodeOrAreaSearch 
+  maxSuggestions={5}
+  label_text="Search UK areas (max 5 suggestions)"
+  hint="Only the first 5 matching areas will be shown"
+  placeholder="e.g. Westminster, Birmingham"
+  bind:selectedValue 
+/>
+
+{#if selectedValue}
+  <p>Selected: {selectedValue}</p>
+{/if}
+
+<!-- Limits suggestions to 5 for better performance with large datasets -->`;
+
+export const hierarchyData = `<script>
+  import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
+  import hierarchyData from "$lib/data/geographic-hierarchy-flat.json";
+  
+  let selectedValue = $state("");
+</script>
+
+<PostcodeOrAreaSearch 
+  customPlacesData={hierarchyData.data}
+  customGetTypeLabel={(type) => {
+    // Pattern matching for different area types using regex
+    if (/^[EWSN]00/.test(type)) return "OA"; // Output Areas
+    if (/^[EW]01/.test(type)) return "LSOA"; // Lower Super Output Areas (England/Wales)
+    if (/^S01/.test(type)) return "LSOA"; // Data Zones (Scotland)
+    if (/^N01/.test(type)) return "LSOA"; // Super Output Areas (Northern Ireland)
+    if (/^[EW]02/.test(type)) return "MSOA"; // Middle Super Output Areas (England/Wales)
+    if (/^S02/.test(type)) return "MSOA"; // Intermediate Zones (Scotland)
+    if (/^N02/.test(type)) return "MSOA"; // Super Output Areas (Northern Ireland)
+    if (/^E0[6-9]/.test(type)) return "LAD"; // Local Authority Districts (England)
+    if (/^W06/.test(type)) return "LAD"; // Local Authority Districts (Wales)
+    if (/^S12/.test(type)) return "LAD"; // Council Areas (Scotland)
+    if (/^N09/.test(type)) return "LAD"; // Local Government Districts (Northern Ireland)
+    
+    // Fallback for anything else
+    return type;
+  }}
+  maxSuggestions={15}
+  label_text="Search UK Geographic Areas"
+  hint="Uses the complete ONS geographic data - all area levels (OA, LSOA, MSOA, LAD)"
+  placeholder="e.g. Westminster, Birmingham, specific output areas"
+  bind:selectedValue 
+/>
+
+{#if selectedValue}
+  <p>Selected: {selectedValue}</p>
+  <p>Total areas available: {hierarchyData.data.length.toLocaleString()}</p>
+{/if}
+
+`;
+
+export const lsoaLadOnly = `<script>
+  import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
+  import hierarchyData from "$lib/data/geographic-hierarchy-flat.json";
+  
+  let selectedValue = $state("");
+</script>
+
+<PostcodeOrAreaSearch 
+  customPlacesData={hierarchyData.data}
+  customEssGeocodes={["E01", "W01", "S01", "N01", "E06", "E07", "E08", "E09", "W06", "S12", "N09"]}
+  essOnly={true}
+  customGetTypeLabel={(type) => {
+    // LSOA codes (Lower Layer Super Output Areas / equivalent)
+    if (/^[EW]01/.test(type)) return "LSOA"; // Lower Super Output Areas (England/Wales)
+    if (/^S01/.test(type)) return "LSOA"; // Data Zones (Scotland)
+    if (/^N01/.test(type)) return "LSOA"; // Super Output Areas (Northern Ireland)
+    
+    // LAD codes (Local Authority Districts / equivalent)
+    if (/^E0[6-9]/.test(type)) return "LAD"; // Local Authority Districts (England)
+    if (/^W06/.test(type)) return "LAD"; // Local Authority Districts (Wales)
+    if (/^S12/.test(type)) return "LAD"; // Council Areas (Scotland)
+    if (/^N09/.test(type)) return "LAD"; // Local Government Districts (Northern Ireland)
+
+    // Fallback for anything else
+    return type;
+  }}
+  maxSuggestions={20}
+  label_text="Search Essential Areas (LSOA & LAD Focus)"
+  hint="Essential areas only - includes LSOA statistical areas and LAD local authorities"
+  placeholder="e.g. Westminster, Birmingham, specific LSOAs"
+  bind:selectedValue 
+/>
+
+{#if selectedValue}
+  <p>Selected: {selectedValue}</p>
+  <p>Note: Component logic now preserves parent-child relationships without needing MSOA codes in customEssGeocodes</p>
+{/if}
+
+<!-- Shows only LSOA and LAD areas while preserving parent-child relationships -->`;

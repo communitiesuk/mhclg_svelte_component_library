@@ -116,6 +116,7 @@
     promoteProperty = "LSOA21CD",
     clickedArea = $bindable([]),
     areaToColorLookup,
+    hoveredArea = $bindable(),
   }: {
     data?: object[];
     countries?: string[];
@@ -196,6 +197,7 @@
     promoteProperty?: string;
     clickedArea?: [];
     areaToColorLookup?: object;
+    hoveredArea?: string;
   } = $props();
 
   // ISO-3166/ONS-style prefixes for area codes
@@ -406,12 +408,9 @@
     geoSource === "file" ? joinData(filteredGeoJsonData, dataWithColor) : null,
   );
 
-  let hoveredArea = $state();
   let hoveredAreaArray = $derived(hoveredArea ? [hoveredArea] : []);
   let hoveredAreaData = $state();
   let currentMousePosition = $state();
-
-  $inspect(clickedArea, hoveredAreaArray);
 
   function convertToLngLatBounds(coords: LngLatBoundsLike): LngLatBoundsLike {
     const bounds = new LngLatBounds(coords[0], coords[0]);
@@ -489,7 +488,7 @@
       map?.setMaxBounds(undefined);
     }
   });
-  $inspect(clickedArea);
+
   let paintObject = $derived(
     clickedArea?.length > 0
       ? {

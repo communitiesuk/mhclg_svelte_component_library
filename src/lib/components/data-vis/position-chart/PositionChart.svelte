@@ -15,6 +15,8 @@
 
   const range = Array.from({ length: 10 }, (_, i) => i);
 
+  $inspect(value, "what is it");
+
   // the 'chart' is the bar and the marker - its height is a prop and its width is binded to clientWidth
 
   // the 'marker' is the circle
@@ -67,12 +69,26 @@
             fill={colorScale[number]}
           ></rect></g
         >{/each}
-      <g
-        transform="translate({xFunction(value) + markerRadius},{chartHeight /
-          2})"
-        ><circle r={markerRadius} cx="0" cy="0" fill="#CA357C" stroke="white"
-        ></circle></g
-      >
+      {console.log(value, typeof value)}
+      {#if typeof value === "number"}
+        <g
+          transform="translate({xFunction(value) + markerRadius},{chartHeight /
+            2})"
+        >
+          <circle r={markerRadius} cx="0" cy="0" fill="#CA357C" stroke="white"
+          ></circle></g
+        >
+      {:else}
+        {#each value as rowValue, i}
+          <g
+            transform="translate({xFunction(rowValue) +
+              markerRadius},{chartHeight / 2})"
+          >
+            <circle r={markerRadius} cx="0" cy="0" fill="#CA357C" stroke="white"
+            ></circle>
+          </g>
+        {/each}
+      {/if}
     </svg>
   </div>
 

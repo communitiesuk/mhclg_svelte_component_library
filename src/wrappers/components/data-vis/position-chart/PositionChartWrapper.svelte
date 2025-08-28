@@ -196,6 +196,51 @@
         description:
           "The height of the chart (which is made up of the bar and the marker)",
       },
+      {
+        name: "nSegments",
+        category: "Display",
+        value: 10,
+        description: "The number of segments to display in the chart.",
+      },
+      {
+        name: "colorScale",
+        category: "Colours",
+        value: [
+          "#090C50",
+          "#1B3E70",
+          "#2B658F",
+          "#357EA2",
+          "#4297AD",
+          "#5BB1AE",
+          "#7ABFA8",
+          "#98CCA2",
+          "#B6D89F",
+          "#D2E49D",
+        ],
+        description:
+          "Use this prop if you want to specify every colour in the chart. Optional array of colours to apply to segments. Length must be greater than or equal to the number of segments. Use this prop if you want to specify every colour in the chart. Otherwise, supply start, end (and optionally mid) colours, and intervening colours will be calculated for you.",
+      },
+      {
+        name: "startColor",
+        category: "Colours",
+        value: "#8EB8DC",
+        description:
+          "Use this prop if you want only want to set a start, end (and optional mid) color for your colour scale. The component will interpolate colours for intermediate segments. Otherwise, supply an array of every colour, using `colorScale`",
+      },
+      {
+        name: "endColor",
+        category: "Colours",
+        value: "#0F385C",
+        description:
+          "Use this prop if you want only want to set a start, end (and optional mid) color for your colour scale. The component will interpolate colours for intermediate segments. Otherwise, supply an array of every colour, using `colorScale`",
+      },
+      {
+        name: "midColor",
+        category: "Colours",
+        value: "",
+        description:
+          "Use this prop if you want only want to set a start, end (and optional mid) color for your colour scale. The component will interpolate colours for intermediate segments. Otherwise, supply an array of every colour, using `colorScale`",
+      },
     ]),
   );
 

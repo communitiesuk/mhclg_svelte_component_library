@@ -674,7 +674,7 @@
       {
         name: "tooltipContent",
         category: "Markers",
-        value: activeMarkerId?.y,
+        value: "y",
         description:
           "Content for the tooltip that appears when hovering over a marker. Can be a string or a snippet.",
       },

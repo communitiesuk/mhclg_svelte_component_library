@@ -1,6 +1,7 @@
 <script>
   import { scaleLinear } from "d3-scale";
   import PositionChartAxis from "./PositionChartAxis.svelte";
+  import ValueLabel from "../line-chart/ValueLabel.svelte";
   let {
     value = undefined,
     min = undefined,
@@ -11,6 +12,43 @@
     stacked = false,
     numberOfPositionCharts = 1,
     chartHeight = 24,
+    interactiveMarkers = true,
+    labelText = "hello world",
+    tooltipContent = undefined,
+    container = undefined,
+    yFunction = () => 10,
+    x = 0,
+    y = 0,
+    currentMousePosition = undefined,
+    markerRect = undefined,
+    tooltipSnippet = undefined,
+    onClickMarker = (event, marker, markerId) => {
+      activeMarkerId = marker;
+      currentMousePosition = [event.screenX, event.screenY];
+    },
+    onMouseEnterMarker = (event, marker, markerId, rect) => {
+      activeMarkerId = marker;
+      if (container) {
+        const bounds = container.getBoundingClientRect();
+        currentMousePosition = [
+          // option for moving tooltip
+          event.clientX - bounds.left,
+          event.clientY - bounds.top,
+        ];
+        markerRect = {
+          // option for fixed tooltip
+          x: rect.x - bounds.left + rect.width / 2,
+          y: rect.y - bounds.top + rect.height / 2,
+        };
+      } else {
+        currentMousePosition = [event.clientX, event.clientY];
+        markerRect = rect;
+      }
+    },
+    onMouseLeaveMarker = (event, marker, dataId) => {
+      activeMarkerId = null;
+    },
+    activeMarkerId = undefined,
   } = $props();
 
   const range = Array.from({ length: 10 }, (_, i) => i);
@@ -23,6 +61,7 @@
   // the 'bar' is the 10 rectangles side by side
   let barWidth = $derived(chartWidth - markerRadius * 2);
   let barHeight = $derived((chartHeight * 5) / 6);
+  $inspect({ activeMarkerId });
 
   let xFunction = $derived(
     scaleLinear().domain([min, max]).range([0, barWidth]),
@@ -53,7 +92,7 @@
 
   <div
     class="chart"
-    style="height: {chartHeight}px"
+    style="height: {chartHeight}px; border: 1px solid red;  position: relative"
     bind:clientWidth={chartWidth}
   >
     <svg width={chartWidth} height={chartHeight}>
@@ -68,7 +107,31 @@
           ></rect></g
         >{/each}
       {#if typeof value === "number"}
+        {@const markerId = "marker-" + value}
+
         <g
+          data-id={markerId}
+          onclick={interactiveMarkers
+            ? (event) => onClickMarker(event, value, markerId)
+            : null}
+          onmouseenter={interactiveMarkers
+            ? (event) =>
+                onMouseEnterMarker(
+                  event,
+                  value,
+                  markerId,
+                  event.currentTarget.getBoundingClientRect(),
+                )
+            : null}
+          onmouseleave={interactiveMarkers
+            ? (event) => onMouseLeaveMarker(event, value, markerId)
+            : null}
+          role="button"
+          tabindex="0"
+          onkeydown={interactiveMarkers
+            ? (e) => e.key === "Enter" && onClickMarker(e, value)
+            : null}
+          pointer-events={interactiveMarkers ? null : "none"}
           transform="translate({xFunction(value) + markerRadius},{chartHeight /
             2})"
         >
@@ -77,9 +140,32 @@
         >
       {:else}
         {#each value as rowValue, i}
+          {@const markerId = "marker-" + rowValue}
           <g
             transform="translate({xFunction(rowValue.data) +
               markerRadius},{chartHeight / 2})"
+            data-id={markerId}
+            onclick={interactiveMarkers
+              ? (event) => onClickMarker(event, rowValue, markerId)
+              : null}
+            onmouseenter={interactiveMarkers
+              ? (event) =>
+                  onMouseEnterMarker(
+                    event,
+                    rowValue,
+                    markerId,
+                    event.currentTarget.getBoundingClientRect(),
+                  )
+              : null}
+            onmouseleave={interactiveMarkers
+              ? (event) => onMouseLeaveMarker(event, rowValue, markerId)
+              : null}
+            role="button"
+            tabindex="0"
+            onkeydown={interactiveMarkers
+              ? (e) => e.key === "Enter" && onClickMarker(e, rowValue)
+              : null}
+            pointer-events={interactiveMarkers ? null : "none"}
           >
             <circle
               r={markerRadius}
@@ -100,6 +186,22 @@
     </div>
   {/if}
 </div>
+
+{#if activeMarkerId}
+  <ValueLabel
+    {activeMarkerId}
+    labelColor="lightgrey"
+    labelTextColor="black"
+    {labelText}
+    {tooltipContent}
+    {xFunction}
+    {yFunction}
+    {x}
+    {y}
+    {markerRect}
+    {tooltipSnippet}
+  ></ValueLabel>
+{/if}
 
 <style>
   .grid-container {

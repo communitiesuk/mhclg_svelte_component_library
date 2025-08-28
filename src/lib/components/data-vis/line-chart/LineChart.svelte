@@ -130,7 +130,7 @@
       },
     },
     tooltipSnippet = undefined,
-    tooltipContent = activeMarkerId?.y,
+    tooltipContent = "y",
 
     basicLineParams = {},
     colorLineParams = (tier, line, lineIndex) => {

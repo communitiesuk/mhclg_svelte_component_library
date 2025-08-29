@@ -136,7 +136,7 @@
             height={barHeight}
             fill={colorScale
               ? colorScale[number]
-              : interpolateColors(startColour, endColour, nSegments)[number]}
+              : interpolateColors(startColor, endColor, nSegments)[number]}
           ></rect></g
         >{/each}
       {#if typeof value === "number"}

@@ -165,6 +165,12 @@
         description: "Whether to display an axis. Boolean.",
       },
       {
+        name: "numberOfPositionCharts",
+        category: "Data",
+        value: 3,
+        description: "",
+      },
+      {
         name: "value",
         category: "Data",
         value: 3,
@@ -195,6 +201,35 @@
         value: 24,
         description:
           "The height of the chart (which is made up of the bar and the marker)",
+      },
+      {
+        name: "dataObject",
+        category: "Input props",
+        value: [
+          {
+            label: "Pikachu",
+            value: 5,
+          },
+          {
+            label: "Charmander",
+            value: 5,
+          },
+          {
+            label: "Bulbasaur",
+            value: 5,
+          },
+          {
+            label: "Charazard",
+            value: 5,
+          },
+        ],
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes the selected a JS object to the component.`,
+            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
+          ],
+        },
       },
     ]),
   );

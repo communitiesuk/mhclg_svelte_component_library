@@ -11,9 +11,18 @@
     stacked = false,
     numberOfPositionCharts = 1,
     chartHeight = 24,
+    dataObject = undefined,
   } = $props();
 
+  $inspect({ numberOfPositionCharts });
+
   const range = Array.from({ length: 10 }, (_, i) => i);
+
+  const numberOfPositionChartsArray = $derived(
+    Array.from({ length: numberOfPositionCharts }, (_, i) => i),
+  );
+
+  $inspect({ numberOfPositionChartsArray });
 
   // the 'chart' is the bar and the marker - its height is a prop and its width is binded to clientWidth
 
@@ -40,59 +49,78 @@
     "#B6D89F",
     "#D2E49D",
   ];
+
+  const labelArray = [
+    "Overall",
+    "Income",
+    "Living Environment",
+    "Barriers to Housing & Services",
+    "Employment",
+    "Education",
+    "Health",
+    "Crime",
+  ];
 </script>
 
 <div
-  class={label ? "grid-container" : "chart-and-axis"}
+  class="grid-container"
   class:stacked={stacked === true}
-  style=" --rows: {numberOfPositionCharts + 1};"
+  style=" --rows: {showAxis
+    ? numberOfPositionCharts + 1
+    : numberOfPositionCharts};"
 >
-  {#if label}
-    <p class="label">{label}</p>
-  {/if}
-
-  <div
-    class="chart"
-    style="height: {chartHeight}px"
-    bind:clientWidth={chartWidth}
-  >
-    <svg width={chartWidth} height={chartHeight}>
-      {#each range as number}
-        <g
-          transform="translate({markerRadius +
-            (barWidth * number) / 10},{(chartHeight - barHeight) / 2})"
-          ><rect
-            width={barWidth / 10}
-            height={barHeight}
-            fill={colorScale[number]}
-          ></rect></g
-        >{/each}
-      {#if typeof value === "number"}
-        <g
-          transform="translate({xFunction(value) + markerRadius},{chartHeight /
-            2})"
-        >
-          <circle r={markerRadius} cx="0" cy="0" fill="#CA357C" stroke="white"
-          ></circle></g
-        >
+  {#each Object.entries(dataObject) as positionChart, i}
+    {#if label}
+      {#if typeof label === "string"}
+        <p class="label">{label}</p>
       {:else}
-        {#each value as rowValue, i}
+        <p class="label">{label[i]}</p>
+      {/if}
+    {/if}
+
+    <div
+      class="chart"
+      style="height: {chartHeight}px"
+      bind:clientWidth={chartWidth}
+    >
+      <svg width={chartWidth} height={chartHeight}>
+        {#each range as number}
           <g
-            transform="translate({xFunction(rowValue.data) +
+            transform="translate({markerRadius +
+              (barWidth * number) / 10},{(chartHeight - barHeight) / 2})"
+            ><rect
+              width={barWidth / 10}
+              height={barHeight}
+              fill={colorScale[number]}
+            ></rect></g
+          >{/each}
+        {#if typeof value === "number"}
+          <g
+            transform="translate({xFunction(value) +
               markerRadius},{chartHeight / 2})"
           >
-            <circle
-              r={markerRadius}
-              cx="0"
-              cy="0"
-              fill={rowValue.color}
-              stroke="white"
-            ></circle>
-          </g>
-        {/each}
-      {/if}
-    </svg>
-  </div>
+            <circle r={markerRadius} cx="0" cy="0" fill="#CA357C" stroke="white"
+            ></circle></g
+          >
+        {:else}
+          {#each value as rowValue, i}
+            <g
+              transform="translate({xFunction(rowValue.data) +
+                markerRadius},{chartHeight / 2})"
+            >
+              <circle
+                r={markerRadius}
+                cx="0"
+                cy="0"
+                fill={rowValue.color}
+                stroke="white"
+              ></circle>
+            </g>
+          {/each}
+        {/if}
+      </svg>
+    </div>
+  {/each}
 
   {#if showAxis === true}
     <div class="axis">
@@ -104,12 +132,23 @@
 <style>
   .grid-container {
     display: grid;
+    grid-template-columns: auto;
+    grid-auto-rows: 1fr;
+    align-items: center;
+    column-gap: 2%;
+    row-gap: 0;
+  }
+  /* .grid-container.includeLabel {
+    grid-template-columns: auto 1fr;
+  } */
+  /* .grid-container {
+    display: grid;
     grid-template-columns: auto 1fr;
     grid-template-rows: repeat(var(--rows), 1fr);
     align-items: center;
     column-gap: 2%;
     row-gap: 0;
-  }
+  } */
   .grid-container.stacked {
     display: contents;
   }

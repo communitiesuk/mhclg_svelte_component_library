@@ -20,8 +20,6 @@
 
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
 
-  $inspect(range);
-
   // the 'chart' is the bar and the marker - its height is a prop and its width is binded to clientWidth
 
   // the 'marker' is the circle
@@ -110,6 +108,8 @@
 
     return result;
   }
+
+  $inspect({ colorScale });
 </script>
 
 <div
@@ -134,7 +134,7 @@
           ><rect
             width={barWidth / nSegments}
             height={barHeight}
-            fill={colorScale
+            fill={colorScale && colorScale.length > 0
               ? colorScale[number]
               : interpolateColors(startColor, endColor, nSegments)[number]}
           ></rect></g

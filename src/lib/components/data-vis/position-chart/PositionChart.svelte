@@ -9,12 +9,11 @@
     showAxis = true,
     chartWidth = $bindable(500),
     stacked = false,
-    numberOfPositionCharts = 1,
     chartHeight = 24,
-    dataObject = undefined,
+    dataObject = [{ value: value, label: label }],
   } = $props();
 
-  $inspect({ numberOfPositionCharts });
+  let numberOfPositionCharts = $derived(dataObject.length);
 
   const range = Array.from({ length: 10 }, (_, i) => i);
 
@@ -60,6 +59,8 @@
     "Health",
     "Crime",
   ];
+
+  $inspect({ dataObject });
 </script>
 
 <div
@@ -69,13 +70,10 @@
     ? numberOfPositionCharts + 1
     : numberOfPositionCharts};"
 >
-  {#each Object.entries(dataObject) as positionChart, i}
+  {#each dataObject as positionChart, i}
+    {console.log(positionChart)}
     {#if label}
-      {#if typeof label === "string"}
-        <p class="label">{label}</p>
-      {:else}
-        <p class="label">{label[i]}</p>
-      {/if}
+      <p class="label">{positionChart.label}</p>
     {/if}
 
     <div
@@ -96,14 +94,14 @@
           >{/each}
         {#if typeof value === "number"}
           <g
-            transform="translate({xFunction(value) +
+            transform="translate({xFunction(positionChart.value) +
               markerRadius},{chartHeight / 2})"
           >
             <circle r={markerRadius} cx="0" cy="0" fill="#CA357C" stroke="white"
             ></circle></g
           >
         {:else}
-          {#each value as rowValue, i}
+          {#each positionChart.value as rowValue, i}
             <g
               transform="translate({xFunction(rowValue.data) +
                 markerRadius},{chartHeight / 2})"

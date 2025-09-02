@@ -165,16 +165,11 @@
         description: "Whether to display an axis. Boolean.",
       },
       {
-        name: "numberOfPositionCharts",
-        category: "Data",
-        value: 3,
-        description: "",
-      },
-      {
         name: "value",
         category: "Data",
         value: 3,
-        description: "The numerical value to be plotted.",
+        description:
+          "The numerical value to be plotted. This accepts a numerical value and must only be used for a single position chart. To create multiple position charts, use the dataObject prop.",
       },
       {
         name: "min",
@@ -212,24 +207,19 @@
           },
           {
             label: "Charmander",
-            value: 5,
+            value: 4,
           },
           {
             label: "Bulbasaur",
-            value: 5,
+            value: 2,
           },
           {
             label: "Charazard",
-            value: 5,
+            value: 3,
           },
         ],
-        description: {
-          markdown: true,
-          arr: [
-            `This prop passes the selected a JS object to the component.`,
-            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
-          ],
-        },
+        description:
+          "Use this prop to create multiple position charts. Provide an array of objects. Each object must contain a value key. And may also contain a label key.",
       },
     ]),
   );

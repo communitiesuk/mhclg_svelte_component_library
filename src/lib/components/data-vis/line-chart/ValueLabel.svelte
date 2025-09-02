@@ -29,7 +29,10 @@ left: {markerRect?.x +
   pointer-events: none; border 1px solid blue
   "
 > -->
-<div style="position:absolute; top: {textDimensions?.height ?? 0}px;">
+<div
+  style="position:absolute; left: {markerRect?.x - textDimensions?.width / 2}px;
+      top: {markerRect?.y - textDimensions?.height - 20}px"
+>
   {#if tooltipSnippet === undefined}
     <div
       style="background-color: {labelColor};

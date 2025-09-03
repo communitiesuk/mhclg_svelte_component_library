@@ -7,23 +7,25 @@
     max = undefined,
     label = undefined,
     showAxis = true,
-    chartWidth = $bindable(500),
-    stacked = false,
+    chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,
-    dataObject = [{ value: value, label: label }],
+    // dataObject = [{ value: value, label: label }],
   } = $props();
 
+  let dataObject = [{ value: 4, label: undefined }, { value: 4 }];
+
+  let showLabel = $derived(dataObject.some((obj) => obj.label !== undefined));
+
   let numberOfPositionCharts = $derived(dataObject.length);
-
-  const range = Array.from({ length: 10 }, (_, i) => i);
-
-  const numberOfPositionChartsArray = $derived(
-    Array.from({ length: numberOfPositionCharts }, (_, i) => i),
+  $inspect(numberOfPositionCharts);
+  let gridTemplateColumns = showLabel ? "auto 1fr" : "1fr";
+  let gridTemplateRows = $derived(
+    `repeat(${showAxis ? numberOfPositionCharts + 1 : numberOfPositionCharts}, auto)`,
   );
 
-  $inspect({ numberOfPositionChartsArray });
+  $inspect(gridTemplateRows);
 
-  // the 'chart' is the bar and the marker - its height is a prop and its width is binded to clientWidth
+  const range = Array.from({ length: 10 }, (_, i) => i);
 
   // the 'marker' is the circle
   let markerRadius = $derived(chartHeight / 2);
@@ -48,30 +50,16 @@
     "#B6D89F",
     "#D2E49D",
   ];
-
-  const labelArray = [
-    "Overall",
-    "Income",
-    "Living Environment",
-    "Barriers to Housing & Services",
-    "Employment",
-    "Education",
-    "Health",
-    "Crime",
-  ];
-
-  $inspect({ dataObject });
 </script>
 
 <div
   class="grid-container"
-  class:stacked={stacked === true}
-  style=" --rows: {showAxis
-    ? numberOfPositionCharts + 1
-    : numberOfPositionCharts};"
+  style="
+    grid-template-columns: {gridTemplateColumns};
+    grid-template-rows: {gridTemplateRows};
+  "
 >
   {#each dataObject as positionChart, i}
-    {console.log(positionChart)}
     {#if label}
       <p class="label">{positionChart.label}</p>
     {/if}
@@ -92,35 +80,43 @@
               fill={colorScale[number]}
             ></rect></g
           >{/each}
-        {#if typeof value === "number"}
-          <g
-            transform="translate({xFunction(positionChart.value) +
-              markerRadius},{chartHeight / 2})"
-          >
-            <circle r={markerRadius} cx="0" cy="0" fill="#CA357C" stroke="white"
-            ></circle></g
-          >
-        {:else}
-          {#each positionChart.value as rowValue, i}
+        {#if value || positionChart.value}
+          {#if typeof value === "number"}
             <g
-              transform="translate({xFunction(rowValue.data) +
+              transform="translate({xFunction(positionChart.value) +
                 markerRadius},{chartHeight / 2})"
             >
               <circle
                 r={markerRadius}
                 cx="0"
                 cy="0"
-                fill={rowValue.color}
+                fill="#CA357C"
                 stroke="white"
-              ></circle>
-            </g>
-          {/each}
+              ></circle></g
+            >
+          {:else}
+            {#each positionChart.value as rowValue, i}
+              <g
+                transform="translate({xFunction(rowValue.data) +
+                  markerRadius},{chartHeight / 2})"
+              >
+                <circle
+                  r={markerRadius}
+                  cx="0"
+                  cy="0"
+                  fill={rowValue.color}
+                  stroke="white"
+                ></circle>
+              </g>
+            {/each}
+          {/if}
         {/if}
       </svg>
     </div>
   {/each}
 
   {#if showAxis === true}
+    <div class="empty"></div>
     <div class="axis">
       <PositionChartAxis {markerRadius} {barWidth}></PositionChartAxis>
     </div>
@@ -130,42 +126,18 @@
 <style>
   .grid-container {
     display: grid;
-    grid-template-columns: auto;
-    grid-auto-rows: 1fr;
     align-items: center;
     column-gap: 2%;
     row-gap: 0;
-  }
-  /* .grid-container.includeLabel {
-    grid-template-columns: auto 1fr;
-  } */
-  /* .grid-container {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    grid-template-rows: repeat(var(--rows), 1fr);
-    align-items: center;
-    column-gap: 2%;
-    row-gap: 0;
-  } */
-  .grid-container.stacked {
-    display: contents;
   }
   .label {
     text-align: right;
     margin: 0;
     line-height: 1.05;
   }
-  .chart-and-axis {
-    display: flex;
-    flex-direction: column;
-  }
   .chart {
     display: flex;
     justify-content: center;
     min-width: 0;
-  }
-  .axis {
-    grid-row: var(--rows);
-    grid-column: 2;
   }
 </style>

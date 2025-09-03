@@ -487,7 +487,7 @@
 
     // mode === "api"
     choicesInstance.config.searchChoices = false; // we own filtering & list
-    choicesInstance.config.noChoicesText = "No choices to choose from";
+    // choicesInstance.config.noChoicesText = "";
     // Clear choices and force refresh to show the message
     choicesInstance.clearChoices();
     choicesInstance.setChoices([], "value", "label", true);

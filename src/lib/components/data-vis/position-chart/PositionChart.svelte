@@ -19,7 +19,7 @@
   const baseRow = { value, colour, opacity };
 
   // base defaults that apply to every chart
-  const baseChart = { label, chartHeight };
+  const baseChart = { label, chartHeight, min, max, showAxis };
 
   let allDataNormalized = $derived(
     allData.map((chart) => ({
@@ -48,9 +48,9 @@
   let barWidth = $derived(chartWidth - markerRadius * 2);
   let barHeight = $derived((chartHeight * 5) / 6);
 
-  let xFunction = $derived(
-    scaleLinear().domain([min, max]).range([0, barWidth]),
-  );
+  function xFunction(min, max) {
+    return scaleLinear().domain([min, max]).range([0, barWidth]);
+  }
 
   const colorScale = [
     "#090C50",
@@ -74,7 +74,6 @@
   "
 >
   {#each allDataNormalized as positionChart, i}
-    {console.log(allDataNormalized)}
     {#if showLabel}
       <p class="label">{positionChart.label}</p>
     {/if}
@@ -100,8 +99,10 @@
         {#each positionChart.rowData as rowValue, i}
           {console.log(rowValue)}
           <g
-            transform="translate({xFunction(rowValue.value) +
-              markerRadius},{positionChart.chartHeight / 2})"
+            transform="translate({xFunction(
+              positionChart.min,
+              positionChart.max,
+            )(rowValue.value) + markerRadius},{positionChart.chartHeight / 2})"
           >
             <circle
               r={markerRadius}

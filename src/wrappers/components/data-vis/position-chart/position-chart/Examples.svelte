@@ -98,22 +98,26 @@
     <PositionChart
       min="0"
       max="10"
+      colour="grey"
+      opacity="0.5"
       allData={[
         {
           rowData: [
-            { value: 4, colour: "purple" },
-            { value: 5, colour: "grey", opacity: 0.5 },
-            { value: 5.5, colour: "grey", opacity: 0.5 },
+            { value: 4, colour: "purple", opacity: 1 },
+            { value: 5 },
+            { value: 5.5 },
           ],
           label: "first",
         },
         {
           rowData: [
-            { value: 8, colour: "purple" },
-            { value: 3, colour: "grey", opacity: 0.5 },
-            { value: 1.5, colour: "grey", opacity: 0.5 },
+            { value: 80, colour: "purple", opacity: 1 },
+            { value: 30 },
+            { value: 10 },
           ],
           label: "second",
+          min: 0,
+          max: 100,
         },
       ]}
     ></PositionChart>

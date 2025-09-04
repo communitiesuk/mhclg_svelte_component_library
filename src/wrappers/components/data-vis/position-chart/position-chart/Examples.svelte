@@ -20,8 +20,13 @@
     },
     {
       id: "3",
-      heading: "3. Example 3 - stacked position chart",
+      heading: "3. Example 3 - single position chart with multiple values",
       content: Example3,
+    },
+    {
+      id: "4",
+      heading: "4. Example 4 - stacked position chart",
+      content: Example4,
     },
   ];
 
@@ -75,27 +80,43 @@
 
 {#snippet Example3()}
   <div class="p-5 bg-white">
-    <div
-      class="grid"
-      style="display: grid;
-    grid-template-columns: minmax(100px, 30%) 1fr;
-    grid-auto-rows: 1fr;
-    align-items: center;
-    column-gap: 2%;
-    row-gap: 0;"
-    >
-      {#each dummyData as item, i}
-        <PositionChart
-          value={item[1]}
-          min="0"
-          max="10"
-          label={item[0]}
-          stacked={true}
-          numberOfPositionCharts={dummyData.length}
-          showAxis={dummyData.length == i + 1}
-        ></PositionChart>
-      {/each}
-    </div>
+    <PositionChart
+      min={0}
+      max={10}
+      rowData={[
+        { value: 2, colour: "orange" },
+        { value: 3, colour: "purple" },
+      ]}
+      label="Hello"
+    />
   </div>
   <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example4()}
+  <div class="p-5 bg-white">
+    <PositionChart
+      min="0"
+      max="10"
+      allData={[
+        {
+          rowData: [
+            { value: 4, colour: "purple" },
+            { value: 5, colour: "grey", opacity: 0.5 },
+            { value: 5.5, colour: "grey", opacity: 0.5 },
+          ],
+          label: "first",
+        },
+        {
+          rowData: [
+            { value: 8, colour: "purple" },
+            { value: 3, colour: "grey", opacity: 0.5 },
+            { value: 1.5, colour: "grey", opacity: 0.5 },
+          ],
+          label: "second",
+        },
+      ]}
+    ></PositionChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
 {/snippet}

@@ -1,6 +1,9 @@
 # Tile server
+This docs will instruct on how to set up a local tile server on a machine. The below instructions have been used used with mac, in theory they should work with windows however this has not been tested. 
 
-Set up tile-server to serve the tiles locally
+It is good to test the tiles locally on a machine before uploading to blob storage or other cloud storage location to ensure they are have the data needed and that data can be extracted by an app. 
+
+## Set up tile-server to serve the tiles locally
 
 Make a server.cjs file that looks like this:
 
@@ -39,8 +42,10 @@ app.listen(PORT, () => {
 });
 ```
 
-Then from the terminal run:
+Then from the terminal while in the tiles server directory run:
 
 ```console
 node server.cjs
 ```
+
+This will start the tiles server which a svelte app can access 

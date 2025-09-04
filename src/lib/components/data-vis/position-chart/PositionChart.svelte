@@ -9,21 +9,35 @@
     showAxis = true,
     chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,
-    // dataObject = [{ value: value, label: label }],
+    colour = "purple",
+    opacity = 1,
+    rowData = [{ value: value, colour: colour, opacity: opacity }],
+    allData = [{ rowData, label: label, chartHeight: chartHeight }],
   } = $props();
 
-  let dataObject = [{ value: 4, label: undefined }, { value: 4 }];
+  // base defaults that apply to every row
+  const baseRow = { value, colour, opacity };
 
-  let showLabel = $derived(dataObject.some((obj) => obj.label !== undefined));
+  // base defaults that apply to every chart
+  const baseChart = { label, chartHeight };
 
-  let numberOfPositionCharts = $derived(dataObject.length);
-  $inspect(numberOfPositionCharts);
-  let gridTemplateColumns = showLabel ? "auto 1fr" : "1fr";
+  let allDataNormalized = $derived(
+    allData.map((chart) => ({
+      ...baseChart,
+      ...chart,
+      rowData: chart.rowData.map((r) => ({ ...baseRow, ...r })),
+    })),
+  );
+
+  let showLabel = $derived(
+    allDataNormalized.some((obj) => obj.label !== undefined),
+  );
+
+  let numberOfPositionCharts = $derived(allDataNormalized.length);
+  let gridTemplateColumns = $derived(showLabel ? "auto 1fr" : "1fr");
   let gridTemplateRows = $derived(
     `repeat(${showAxis ? numberOfPositionCharts + 1 : numberOfPositionCharts}, auto)`,
   );
-
-  $inspect(gridTemplateRows);
 
   const range = Array.from({ length: 10 }, (_, i) => i);
 
@@ -59,58 +73,46 @@
     grid-template-rows: {gridTemplateRows};
   "
 >
-  {#each dataObject as positionChart, i}
-    {#if label}
+  {#each allDataNormalized as positionChart, i}
+    {console.log(allDataNormalized)}
+    {#if showLabel}
       <p class="label">{positionChart.label}</p>
     {/if}
 
     <div
       class="chart"
-      style="height: {chartHeight}px"
+      style="height: {positionChart.chartHeight}px"
       bind:clientWidth={chartWidth}
     >
-      <svg width={chartWidth} height={chartHeight}>
+      <svg width={chartWidth} height={positionChart.chartHeight}>
         {#each range as number}
           <g
             transform="translate({markerRadius +
-              (barWidth * number) / 10},{(chartHeight - barHeight) / 2})"
+              (barWidth * number) / 10},{(positionChart.chartHeight -
+              barHeight) /
+              2})"
             ><rect
               width={barWidth / 10}
               height={barHeight}
               fill={colorScale[number]}
             ></rect></g
           >{/each}
-        {#if value || positionChart.value}
-          {#if typeof value === "number"}
-            <g
-              transform="translate({xFunction(positionChart.value) +
-                markerRadius},{chartHeight / 2})"
-            >
-              <circle
-                r={markerRadius}
-                cx="0"
-                cy="0"
-                fill="#CA357C"
-                stroke="white"
-              ></circle></g
-            >
-          {:else}
-            {#each positionChart.value as rowValue, i}
-              <g
-                transform="translate({xFunction(rowValue.data) +
-                  markerRadius},{chartHeight / 2})"
-              >
-                <circle
-                  r={markerRadius}
-                  cx="0"
-                  cy="0"
-                  fill={rowValue.color}
-                  stroke="white"
-                ></circle>
-              </g>
-            {/each}
-          {/if}
-        {/if}
+        {#each positionChart.rowData as rowValue, i}
+          {console.log(rowValue)}
+          <g
+            transform="translate({xFunction(rowValue.value) +
+              markerRadius},{positionChart.chartHeight / 2})"
+          >
+            <circle
+              r={markerRadius}
+              cx="0"
+              cy="0"
+              fill={rowValue.colour}
+              stroke="white"
+              opacity={rowValue.opacity}
+            ></circle>
+          </g>
+        {/each}
       </svg>
     </div>
   {/each}

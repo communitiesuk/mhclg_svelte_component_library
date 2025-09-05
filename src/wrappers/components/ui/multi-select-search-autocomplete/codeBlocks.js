@@ -485,3 +485,68 @@ export const codeBlock8 = `
     </div>
   </div>
 </div>`;
+
+export const codeBlock9 = `
+<script>
+  import MultiSelectSearchAutocomplete from "$lib/components/ui/MultiSelectSearchAutocomplete.svelte";
+
+  // Demo LAD options (static)
+  const ladOptions = [
+    { value: "E09000018", text: "London Borough of Hounslow" },
+    { value: "E09000033", text: "City of Westminster" },
+    { value: "E08000003", text: "Manchester" }
+  ];
+
+  // Tiny demo lookup from specific postcodes to LAD codes
+  const postcodeToLadDemo = {
+    "TW5 0AA": "E09000018",
+    "TW3 1LR": "E09000018",
+    "SW1A 1AA": "E09000033",
+    "M1 1AE": "E08000003"
+  };
+
+  /** Map a postcodes.io entry to its parent LAD */
+  const apiParentResolver = (entry) => {
+    if (!entry) return null;
+    const code = entry?.codes?.lad;
+    const label = entry?.admin_district ?? undefined;
+    if (!code) return null;
+    return { value: code, label };
+  };
+
+  /** Given a LAD code, return selected postcode strings that belong to it */
+  const staticChildrenResolver = (ladCode, selectedValues) => {
+    return (selectedValues || []).filter((v) => {
+      const s = String(v);
+      const looksLikePc = /[A-Z]{1,2}[0-9][A-Z0-9]?\s*[0-9][A-Z]{2}/i.test(s);
+      if (!looksLikePc) return false;
+      const mapped = postcodeToLadDemo[s.toUpperCase()];
+      return mapped === ladCode;
+    });
+  };
+
+  const tApiChildInSelectedParent = (child, parent) =>
+    \
+\`${'${child}'} is in ${'${parent}'}, which is already selected\`;
+
+  const tStaticParentContainsSelectedChildren = (parent, children) =>
+    \
+\`${'${parent}'} contains ${'${children.join(", ")}'}, which ${'${children.length > 1 ? "are" : "is"}'} already selected\`;
+</script>
+
+<MultiSelectSearchAutocomplete
+  id="lad-postcode-cross"
+  name="lad-postcode-cross"
+  label="Search LADs (static) and postcodes (API)"
+  hint="Try selecting an LAD (e.g. Hounslow) then type a postcode like TW5 0AA"
+  items={ladOptions}
+  multiple={true}
+  source_url="https://api.postcodes.io/postcodes/"
+  source_key="result"
+  source_property="postcode"
+  minLength={3}
+  {apiParentResolver}
+  {staticChildrenResolver}
+  {tApiChildInSelectedParent}
+  {tStaticParentContainsSelectedChildren}
+/>`;

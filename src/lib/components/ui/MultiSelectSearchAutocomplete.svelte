@@ -102,6 +102,32 @@
       "#0b0c0c", // Black
     ], // Complete GOV.UK Design System palette (19 colors)
 
+    // Cross-selection relationship resolvers (optional)
+    // If provided, they enable dynamic messages when results map to already-selected parents/children
+    apiParentResolver = undefined,
+    staticChildrenResolver = undefined,
+    selectedChildParentResolver = undefined,
+
+    // Dynamic message builders (optional)
+    tApiChildInSelectedParent = (child: string, parent: string) =>
+      `${child} result found is in ${parent} which is already selected`,
+    tApiChildCoveredBySelectedChild = (
+      child: string,
+      parent: string,
+      selectedChild: string,
+    ) =>
+      `${child} is in ${parent}, which is already covered by the selected postcode ${selectedChild}`,
+    tStaticParentContainsSelectedChildren = (
+      parent: string,
+      children: string[],
+    ) =>
+      `${parent} result found contains ${children.join(", ")} which ${
+        children.length > 1 ? "are" : "is"
+      } already selected`,
+
+    // Behavioural tweaks
+    resetApiSuggestionsAfterSelection = false,
+
     ...attributes
   }: {
     id: string;
@@ -140,6 +166,35 @@
     enableSelectedItemCircles?: boolean;
     selectedItemCircleColor?: string;
     selectedItemCircleColorPalette?: string[];
+
+    // Cross-selection relationship resolvers (optional)
+    apiParentResolver?:
+      | undefined
+      | ((entry: any) => { value: string | number; label?: string } | null);
+    staticChildrenResolver?:
+      | undefined
+      | ((
+          staticValue: string | number,
+          selectedValues: (string | number)[],
+        ) => (string | number)[] | Promise<(string | number)[]>);
+    selectedChildParentResolver?:
+      | undefined
+      | ((
+          selectedValue: string | number,
+        ) => { value: string | number; label?: string } | null);
+    tApiChildInSelectedParent?: (child: string, parent: string) => string;
+    tApiChildCoveredBySelectedChild?: (
+      child: string,
+      parent: string,
+      selectedChild: string,
+    ) => string;
+    tStaticParentContainsSelectedChildren?: (
+      parent: string,
+      children: string[],
+    ) => string;
+
+    // Behavioural tweaks
+    resetApiSuggestionsAfterSelection?: boolean;
 
     // Bindable state props for external synchronization
     // Use these to sync color state with other components
@@ -313,6 +368,8 @@
     value: string | number;
     label: string;
     disabled?: boolean;
+    labelPlain?: string;
+    raw?: any;
   };
   const staticChoices = $derived.by<ChoiceItem[]>(() => {
     /** @type {ChoiceItem[]} */
@@ -331,6 +388,7 @@
                <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
              </span>`
           : safeLabel,
+        labelPlain: String(it.text),
         disabled: it.disabled,
       });
     }
@@ -349,6 +407,7 @@
                  <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
                </span>`
             : safeLabel,
+          labelPlain: String(choice.text),
           disabled: g.disabled || choice.disabled,
         });
       }
@@ -550,6 +609,43 @@
     return label;
   }
 
+  // Resolve the parent LAD for a selected postcode value. Uses provided resolver first,
+  // then falls back to postcodes.io single lookup when available.
+  async function resolveParentOfSelectedChild(
+    selected: string | number,
+  ): Promise<{ value: string | number; label?: string } | null> {
+    try {
+      if (typeof selectedChildParentResolver === "function") {
+        const r = selectedChildParentResolver(selected);
+        if (r) return r;
+      }
+    } catch (e) {
+      console.warn("⚠️ selectedChildParentResolver error:", e);
+    }
+
+    // Best-effort fallback for postcodes.io
+    try {
+      if (
+        typeof selected === "string" &&
+        typeof source_url === "string" &&
+        /postcodes\.io\/postcodes\/?$/.test(source_url)
+      ) {
+        const pc = selected.replace(/\s+/g, "");
+        const url = `${source_url}${encodeURIComponent(pc)}`;
+        const res = await fetch(url);
+        const json = await res.json();
+        const result = json?.result;
+        const code = result?.codes?.lau2 || result?.codes?.lad;
+        const label = result?.admin_district ?? undefined;
+        if (code) return { value: code, label };
+      }
+    } catch (e) {
+      console.warn("⚠️ Fallback parent resolution failed:", e);
+    }
+
+    return null;
+  }
+
   async function fetchApiChoices(query: string): Promise<ChoiceItem[]> {
     const url = buildApiUrl(query);
     if (!url) return [];
@@ -574,6 +670,8 @@
                <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
              </span>`
           : safeLabel,
+        labelPlain: label,
+        raw: entry,
       };
     });
 
@@ -1306,6 +1404,19 @@
               }, 0);
             }
           }, 0);
+        } else if (currentMode === "api" && resetApiSuggestionsAfterSelection) {
+          // Clear API suggestions after a selection and close dropdown
+          setTimeout(() => {
+            try {
+              choicesInstance.clearChoices();
+              choicesInstance.setChoices([], "value", "label", true);
+              // Force dropdown to close
+              choicesInstance.hideDropdown(true);
+              console.log("🔄 Cleared API suggestions after selection");
+            } catch (e) {
+              console.warn("⚠️ Failed to clear API suggestions:", e);
+            }
+          }, 0);
         } else {
           console.log(
             "🔄 Staying in current mode after selection:",
@@ -1455,42 +1566,254 @@
                   })),
                 });
 
-                if (filteredApiChoices.length === 0) {
+                // Determine if the query is a full postcode (used to gate messages)
+                const isFullPostcode = looksLikePostcode(q);
+
+                // If resolver is provided, optionally hide results that all map to selected parents
+                try {
+                  if (
+                    isFullPostcode &&
+                    typeof apiParentResolver === "function" &&
+                    filteredApiChoices.length > 0
+                  ) {
+                    const covered = filteredApiChoices
+                      .map((c) => ({
+                        childValue: String(c.value),
+                        childLabel: c.labelPlain ?? String(c.value),
+                        parent: apiParentResolver(c.raw),
+                      }))
+                      .filter(
+                        (m) => m.parent && m.parent.value != null,
+                      ) as Array<{
+                      childValue: string;
+                      childLabel: string;
+                      parent: { value: string | number; label?: string };
+                    }>;
+
+                    const allCovered =
+                      covered.length === filteredApiChoices.length &&
+                      covered.every((m) =>
+                        selectedValues.includes(String(m.parent.value)),
+                      );
+
+                    if (allCovered) {
+                      const first = covered[0];
+                      const parentLabel =
+                        first.parent.label ?? String(first.parent.value);
+                      choicesInstance.config.noChoicesText =
+                        tApiChildInSelectedParent(
+                          first.childLabel,
+                          parentLabel,
+                        );
+                      choicesInstance.setChoices([], "value", "label", true);
+                      return;
+                    }
+                  }
+                } catch (err) {
+                  console.warn(
+                    "⚠️ apiParentResolver coverage check failed:",
+                    err,
+                  );
+                }
+
+                // Full vs partial postcode handling
+
+                // If full postcode exactly and it maps to a selected parent, show message
+                if (isFullPostcode && typeof apiParentResolver === "function") {
+                  const normalize = (s: string) =>
+                    String(s).replace(/\s+/g, "").toUpperCase();
+                  const exact = apiChoices.find(
+                    (c) =>
+                      normalize(String(c.value)) === normalize(q) ||
+                      normalize(c.labelPlain ?? "") === normalize(q),
+                  );
+                  if (exact) {
+                    try {
+                      const parent = apiParentResolver((exact as any).raw);
+                      if (parent && parent.value != null) {
+                        const parentLabel =
+                          parent.label ?? String(parent.value);
+                        if (selectedValues.includes(String(parent.value))) {
+                          choicesInstance.config.noChoicesText =
+                            tApiChildInSelectedParent(
+                              String(exact.labelPlain ?? exact.value),
+                              parentLabel,
+                            );
+                          choicesInstance.setChoices(
+                            [],
+                            "value",
+                            "label",
+                            true,
+                          );
+                          return;
+                        }
+                        {
+                          const coverParents = await Promise.all(
+                            (selectedValues || []).map((sv) =>
+                              resolveParentOfSelectedChild(sv),
+                            ),
+                          );
+                          const idx = coverParents.findIndex(
+                            (rel) =>
+                              rel && String(rel.value) === String(parent.value),
+                          );
+                          const coveringChild =
+                            idx >= 0 ? selectedValues[idx] : null;
+                          if (coveringChild) {
+                            choicesInstance.config.noChoicesText =
+                              tApiChildCoveredBySelectedChild(
+                                String(exact.labelPlain ?? exact.value),
+                                parentLabel,
+                                String(coveringChild),
+                              );
+                            choicesInstance.setChoices(
+                              [],
+                              "value",
+                              "label",
+                              true,
+                            );
+                            return;
+                          }
+                        }
+                      }
+                    } catch {}
+                  }
+                }
+
+                // For partial postcodes, hide suggestions that belong to already-selected parents
+                let filteredByParent = filteredApiChoices;
+                if (
+                  !isFullPostcode &&
+                  typeof apiParentResolver === "function"
+                ) {
+                  // Build a set of parent LAD codes covered by any currently selected postcode(s)
+                  let selectedParentSet = new Set<string>();
+                  try {
+                    const rels = await Promise.all(
+                      (selectedValues || []).map((sv) =>
+                        resolveParentOfSelectedChild(sv),
+                      ),
+                    );
+                    for (const r of rels)
+                      if (r && r.value != null)
+                        selectedParentSet.add(String(r.value));
+                  } catch (e) {
+                    console.warn(
+                      "⚠️ Failed to build selected parents set for partial filtering:",
+                      e,
+                    );
+                  }
+
+                  filteredByParent = filteredApiChoices.filter((c) => {
+                    try {
+                      const parent = apiParentResolver((c as any).raw);
+                      return !(
+                        parent &&
+                        parent.value != null &&
+                        (selectedValues.includes(String(parent.value)) ||
+                          selectedParentSet.has(String(parent.value)))
+                      );
+                    } catch {
+                      return true;
+                    }
+                  });
+                }
+
+                if (filteredByParent.length === 0) {
                   // No new results from API. Determine the correct message.
                   if (apiChoices.length === 0) {
                     // API returned no results for the query.
                     choicesInstance.config.noChoicesText = "No results found";
                     console.log("❌ API returned no results");
                   } else {
-                    // API returned results, but they are all already selected.
-                    // Double-check this by looking at the actual values
-                    const allResultsSelected = apiChoices.every((choice) =>
-                      selectedValues.includes(String(choice.value)),
-                    );
+                    // API returned results, but they are all already selected or map to selected parents.
+                    // Prefer resolver-based message if available.
+                    let usedResolverMessage = false;
+                    try {
+                      if (typeof apiParentResolver === "function") {
+                        // Map each API choice to its parent and check if parent is selected
+                        const mappings = apiChoices
+                          .map((c) => ({
+                            childValue: String(c.value),
+                            childLabel: c.labelPlain ?? String(c.value),
+                            parent: apiParentResolver(c.raw),
+                          }))
+                          .filter(
+                            (m) => !!m.parent && m.parent.value != null,
+                          ) as Array<{
+                          childValue: string;
+                          childLabel: string;
+                          parent: { value: string | number; label?: string };
+                        }>;
 
-                    if (allResultsSelected) {
-                      choicesInstance.config.noChoicesText =
-                        "All results are already selected";
-                      console.log(
-                        "ℹ️ API returned results but all are already selected",
-                        {
-                          apiResults: apiChoices.map((c) => c.value),
-                          selectedValues,
-                          allResultsSelected,
-                        },
+                        const parentsSelected = mappings.filter((m) =>
+                          selectedValues.includes(String(m.parent.value)),
+                        );
+
+                        if (
+                          mappings.length > 0 &&
+                          parentsSelected.length === mappings.length
+                        ) {
+                          // Only show specific message if single candidate or full postcode
+                          if (isFullPostcode || apiChoices.length === 1) {
+                            const first = parentsSelected[0];
+                            const parentLabel =
+                              first.parent.label ?? String(first.parent.value);
+                            const childLabel = first.childLabel;
+                            choicesInstance.config.noChoicesText =
+                              tApiChildInSelectedParent(
+                                childLabel,
+                                parentLabel,
+                              );
+                            usedResolverMessage = true;
+                            console.log(
+                              "ℹ️ API choices map to already-selected parents (specific)",
+                              {
+                                parentLabel,
+                                childLabel,
+                                parents: parentsSelected.map(
+                                  (p) => p.parent.value,
+                                ),
+                              },
+                            );
+                          }
+                        }
+                      }
+                    } catch (err) {
+                      console.warn("⚠️ apiParentResolver failed:", err);
+                    }
+
+                    if (!usedResolverMessage) {
+                      // Fallback to previous messages
+                      const allResultsSelected = apiChoices.every((choice) =>
+                        selectedValues.includes(String(choice.value)),
                       );
-                    } else {
-                      // This shouldn't happen, but fallback to a generic message
-                      choicesInstance.config.noChoicesText =
-                        "No new results available";
-                      console.log(
-                        "⚠️ Unexpected: API returned results but filtering logic failed",
-                        {
-                          apiResults: apiChoices.map((c) => c.value),
-                          selectedValues,
-                          filteredCount: filteredApiChoices.length,
-                        },
-                      );
+
+                      if (allResultsSelected) {
+                        choicesInstance.config.noChoicesText =
+                          "All results are already selected";
+                        console.log(
+                          "ℹ️ API returned results but all are already selected",
+                          {
+                            apiResults: apiChoices.map((c) => c.value),
+                            selectedValues,
+                            allResultsSelected,
+                          },
+                        );
+                      } else {
+                        // This shouldn't happen, but fallback to a generic message
+                        choicesInstance.config.noChoicesText = isFullPostcode
+                          ? "No new results available"
+                          : "All postcode suggestions cover an area that is already covered by a currently selected postcode or area";
+                        console.log(
+                          "⚠️ Unexpected: API returned results but filtering logic failed",
+                          {
+                            apiResults: apiChoices.map((c) => c.value),
+                            selectedValues,
+                            filteredCount: filteredByParent.length,
+                          },
+                        );
+                      }
                     }
                   }
                   // Clear the list and show the message.
@@ -1511,8 +1834,45 @@
                   );
 
                   if (allResultsSimilarToSelected) {
-                    choicesInstance.config.noChoicesText =
-                      "All results are already selected";
+                    // Try resolver-based message first, otherwise default
+                    let setMsg = false;
+                    try {
+                      if (typeof apiParentResolver === "function") {
+                        const mappings = apiChoices
+                          .map((c) => ({
+                            childValue: String(c.value),
+                            childLabel: c.labelPlain ?? String(c.value),
+                            parent: apiParentResolver(c.raw),
+                          }))
+                          .filter(
+                            (m) => !!m.parent && m.parent.value != null,
+                          ) as Array<{
+                          childValue: string;
+                          childLabel: string;
+                          parent: { value: string | number; label?: string };
+                        }>;
+
+                        const match = mappings.find((m) =>
+                          selectedValues.includes(String(m.parent.value)),
+                        );
+                        if (match) {
+                          const parentLabel =
+                            match.parent.label ?? String(match.parent.value);
+                          choicesInstance.config.noChoicesText =
+                            tApiChildInSelectedParent(
+                              match.childLabel,
+                              parentLabel,
+                            );
+                          setMsg = true;
+                        }
+                      }
+                    } catch (err) {
+                      console.warn("⚠️ apiParentResolver failed:", err);
+                    }
+                    if (!setMsg) {
+                      choicesInstance.config.noChoicesText =
+                        "All results are already selected";
+                    }
                     console.log(
                       "🎯 Query matches selected items, showing 'all selected' message",
                       {
@@ -1530,7 +1890,7 @@
                     // Ensure group text is applied to filtered API choices
                     const filteredApiChoicesWithGroupText =
                       ensureGroupTextApplied(
-                        filteredApiChoices.map((c) => ({
+                        filteredByParent.map((c) => ({
                           value: String(c.value),
                           label: c.label,
                         })),
@@ -1544,7 +1904,7 @@
                     );
                     console.log(
                       "✅ Set filtered API choices (some similar to selected):",
-                      filteredApiChoices.length,
+                      filteredByParent.length,
                     );
                   }
                 } else {
@@ -1553,7 +1913,7 @@
 
                   // Ensure group text is applied to API choices
                   const apiChoicesWithGroupText = ensureGroupTextApplied(
-                    filteredApiChoices.map((c) => ({
+                    filteredByParent.map((c) => ({
                       value: String(c.value),
                       label: c.label,
                     })),
@@ -1571,7 +1931,7 @@
 
                   console.log(
                     "✅ Set new API choices:",
-                    filteredApiChoices.length,
+                    filteredByParent.length,
                   );
                 }
               } catch (e) {
@@ -1644,18 +2004,129 @@
                     matchingChoices.length - filteredStaticChoices.length,
                 });
 
+                // Further exclude parents that already contain selected postcodes
+                let filteredStaticChoicesByParent = filteredStaticChoices;
+                try {
+                  if (
+                    typeof staticChildrenResolver === "function" &&
+                    filteredStaticChoices.length > 0
+                  ) {
+                    const checks = await Promise.all(
+                      filteredStaticChoices.map(async (ch) => {
+                        try {
+                          const children = await Promise.resolve(
+                            staticChildrenResolver(ch.value, selectedValues),
+                          );
+                          return {
+                            choice: ch,
+                            hasChildren: (children || []).length > 0,
+                          };
+                        } catch (e) {
+                          return { choice: ch, hasChildren: false };
+                        }
+                      }),
+                    );
+                    filteredStaticChoicesByParent = checks
+                      .filter((x) => !x.hasChildren)
+                      .map((x) => x.choice);
+                    console.log("🔍 Static choices after parent exclusion:", {
+                      before: filteredStaticChoices.length,
+                      after: filteredStaticChoicesByParent.length,
+                    });
+                  }
+                } catch (err) {
+                  console.warn(
+                    "⚠️ staticChildrenResolver exclusion failed:",
+                    err,
+                  );
+                }
+
+                // Before rendering, if resolver says this typed parent contains selected children,
+                // show a dynamic message instead of suggestions — but only when the query uniquely
+                // identifies a single parent (i.e. exactly one matching choice)
+                try {
+                  if (
+                    typeof staticChildrenResolver === "function" &&
+                    matchingChoices.length === 1
+                  ) {
+                    const parentChoice = matchingChoices[0];
+                    const children = await Promise.resolve(
+                      staticChildrenResolver(
+                        parentChoice.value,
+                        selectedValues,
+                      ),
+                    );
+                    const childStrings = (children || []).map((c) => String(c));
+                    if (childStrings.length > 0) {
+                      const parentLabelCandidate =
+                        parentChoice.labelPlain ?? parentChoice.label;
+                      choicesInstance.config.noChoicesText =
+                        tStaticParentContainsSelectedChildren(
+                          String(parentLabelCandidate),
+                          childStrings,
+                        );
+                      choicesInstance.clearChoices();
+                      choicesInstance.setChoices([], "value", "label", true);
+                      return;
+                    }
+                  }
+                } catch (err) {
+                  console.warn(
+                    "⚠️ staticChildrenResolver dynamic message failed:",
+                    err,
+                  );
+                }
+
                 choicesInstance.clearChoices();
 
-                if (filteredStaticChoices.length === 0) {
+                if (filteredStaticChoicesByParent.length === 0) {
                   // No choices to show - distinguish between no matches vs all selected
                   if (matchingChoices.length === 0) {
                     // No search matches at all
                     choicesInstance.config.noChoicesText = "No results found";
                     console.log("❌ No static choices match search term");
                   } else {
-                    // Found matches but all are already selected
-                    choicesInstance.config.noChoicesText =
-                      "All matching options are already selected";
+                    // Found matches but all are already selected.
+                    // Try child mapping detection: selected children that belong to a typed parent
+                    let usedDynamic = false;
+                    try {
+                      if (
+                        typeof staticChildrenResolver === "function" &&
+                        matchingChoices.length === 1
+                      ) {
+                        // Determine which selected values belong to the typed parent (only when unique)
+                        const parentLabelCandidate =
+                          matchingChoices[0]?.labelPlain ??
+                          matchingChoices[0]?.label ??
+                          "";
+                        const children = await Promise.resolve(
+                          staticChildrenResolver(
+                            matchingChoices[0]?.value,
+                            selectedValues,
+                          ),
+                        );
+                        const childrenStrings = (children || []).map((c) =>
+                          String(c),
+                        );
+                        if (childrenStrings.length > 0) {
+                          choicesInstance.config.noChoicesText =
+                            tStaticParentContainsSelectedChildren(
+                              String(parentLabelCandidate),
+                              childrenStrings,
+                            );
+                          usedDynamic = true;
+                        }
+                      }
+                    } catch (err) {
+                      console.warn("⚠️ staticChildrenResolver failed:", err);
+                    }
+                    if (!usedDynamic) {
+                      const hasStaticResolver =
+                        typeof staticChildrenResolver === "function";
+                      choicesInstance.config.noChoicesText = hasStaticResolver
+                        ? "All matching areas already covered by selected postcodes"
+                        : "All matching options are already selected";
+                    }
                     console.log(
                       "ℹ️ Found static matches but all are already selected",
                     );
@@ -1668,7 +2139,7 @@
 
                   // Ensure group text is applied to filtered choices
                   const choicesWithGroupText = ensureGroupTextApplied(
-                    filteredStaticChoices.map((c) => ({
+                    filteredStaticChoicesByParent.map((c) => ({
                       value: String(c.value),
                       label: c.label,
                       disabled: c.disabled,
@@ -1687,7 +2158,7 @@
 
                   console.log(
                     "✅ Set filtered static choices:",
-                    filteredStaticChoices.length,
+                    filteredStaticChoicesByParent.length,
                   );
                 }
               }

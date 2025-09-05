@@ -79,7 +79,116 @@
       heading: "8. Submit Button Functionality",
       content: Example8,
     },
+    {
+      id: "9",
+      heading: "9. LAD ↔ Postcode cross-selection messages",
+      content: Example9,
+    },
   ];
+
+  // Example 9 demo data and resolvers (top-level so snippets can reference them)
+  // Demo LAD options (static)
+  const ladOptions = [
+    { value: "E09000018", text: "London Borough of Hounslow" },
+    { value: "E09000033", text: "City of Westminster" },
+    { value: "E08000003", text: "Manchester" },
+    { value: "E07000173", text: "Mansfield" },
+  ];
+
+  // Tiny demo lookup from specific postcodes to LAD codes
+  // In a real app this would come from your own data service
+  const postcodeToLadDemo = {
+    "TW5 0AA": "E09000018",
+    "TW3 1LR": "E09000018",
+    "SW1A 1AA": "E09000033",
+    "M1 1AE": "E08000003",
+  };
+
+  // Cache resolved LAD codes per postcode to avoid repeated lookups
+  const ladByPostcodeCache = new Map();
+
+  /** Map a postcodes.io entry to its parent LAD (postcodes.io uses `codes.lau2`) */
+  const apiParentResolver = (entry) => {
+    if (!entry) return null;
+    const code = entry?.codes?.lau2; // e.g. E09000018
+    const label = entry?.admin_district ?? undefined; // e.g. Hounslow
+    if (!code) return null;
+    return { value: code, label };
+  };
+
+  /** Given a LAD code, return selected postcode strings that belong to it */
+  const staticChildrenResolver = async (ladCode, selectedValues) => {
+    const all = (selectedValues || []).map((v) => String(v));
+    const pcs = all.filter((s) =>
+      /[A-Z]{1,2}[0-9][A-Z0-9]?\s*[0-9][A-Z]{2}/i.test(s),
+    );
+
+    const found = [];
+    const toFetch = [];
+
+    for (const pcRaw of pcs) {
+      const pc = pcRaw.toUpperCase();
+      const cached = ladByPostcodeCache.get(pc) || postcodeToLadDemo[pc];
+      if (cached) {
+        ladByPostcodeCache.set(pc, cached);
+        if (cached === ladCode) found.push(pcRaw);
+      } else {
+        toFetch.push(pc);
+      }
+    }
+
+    if (toFetch.length > 0) {
+      try {
+        const res = await fetch("https://api.postcodes.io/postcodes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ postcodes: toFetch }),
+        });
+        const json = await res.json();
+        const results = Array.isArray(json?.result) ? json.result : [];
+        for (const r of results) {
+          const pc = (r?.query || "").toUpperCase();
+          const code = r?.result?.codes?.lau2 || r?.result?.codes?.lad;
+          if (pc && code) {
+            ladByPostcodeCache.set(pc, code);
+            if (code === ladCode) {
+              // find original casing from pcs
+              const original = pcs.find((p) => p.toUpperCase() === pc) ?? pc;
+              found.push(original);
+            }
+          }
+        }
+      } catch (e) {
+        // ignore lookup errors in demo
+      }
+    }
+
+    return found;
+  };
+
+  const tApiChildInSelectedParent = (child, parent) =>
+    `${child} is in ${parent}, which is already selected`;
+
+  const selectedChildParentResolver = (selectedValue) => {
+    // For demo: selectedValue is a postcode string — look up its LAD via cache/map
+    const pc = String(selectedValue).toUpperCase();
+    const code = ladByPostcodeCache.get(pc) || postcodeToLadDemo[pc];
+    if (!code) return null;
+    // We only have a few labels; map known codes to labels
+    const labelMap = {
+      E09000018: "London Borough of Hounslow",
+      E09000033: "City of Westminster",
+      E08000003: "Manchester",
+    };
+    return { value: code, label: labelMap[code] };
+  };
+
+  const tApiChildCoveredBySelectedChild = (child, parent, selectedChild) =>
+    `${child} is in ${parent}, which is already covered by the selected postcode ${selectedChild}`;
+  const tStaticParentContainsSelectedChildren = (parent, children) =>
+    `${parent} contains ${children.join(", ")}, which ${
+      children.length > 1 ? "are" : "is"
+    } already selected`;
 </script>
 
 <div>
@@ -656,4 +765,66 @@
     </div>
   </div>
   <CodeBlock code={codeBlocks.codeBlock8} language="svelte"></CodeBlock>
+{/snippet}
+
+<!-- Example 9: LAD static options with Postcodes API and cross-selection resolvers -->
+{#snippet Example9()}
+  <div class="p-5 bg-white space-y-6">
+    <div>
+      <h6 class="govuk-heading-s">LAD ↔ Postcode cross-selection demo</h6>
+      <p class="govuk-body">
+        Static options are LADs; API suggestions are postcodes from
+        postcodes.io. If you type a postcode within an already-selected LAD, the
+        list will show a dynamic message instead of suggestions. Likewise, if
+        you type a LAD name that contains already-selected postcodes, a message
+        explains which ones are already selected.
+      </p>
+    </div>
+
+    <MultiSelectSearchAutocomplete
+      id="lad-postcode-cross"
+      name="lad-postcode-cross"
+      label="Search LADs (static) and postcodes (API)"
+      hint="Try selecting an LAD (e.g. Hounslow) then type a postcode like TW5 0AA"
+      items={ladOptions}
+      multiple={true}
+      source_url="https://api.postcodes.io/postcodes/"
+      source_key="result"
+      source_property="postcode"
+      minLength={3}
+      groupKey={undefined}
+      sourceSelector={(query) => {
+        const q = query.toUpperCase().trim();
+        if (q.length < 3) return "options"; // mirror Example 5 gating
+
+        // Consider partial postcodes as postcode-like (similar to Example 7)
+        const full = [
+          /^[A-Z]{1,2}[0-9][A-Z0-9]?\s*[0-9][A-Z]{2}$/,
+          /^[A-Z]{1,2}[0-9][A-Z0-9]?[0-9][A-Z]{2}$/,
+        ];
+        const partial = [
+          /^[A-Z]{1,2}$/,
+          /^[A-Z]{1,2}[0-9]$/,
+          /^[A-Z]{1,2}[0-9][A-Z0-9]?$/,
+          /^[A-Z]{1,2}[0-9][A-Z0-9]?\s*$/,
+          /^[A-Z]{1,2}[0-9][A-Z0-9]?\s*[0-9]$/,
+        ];
+        const looksPc =
+          full.some((p) => p.test(q)) ||
+          partial.some((p) => p.test(q)) ||
+          /\d/.test(q); // heuristic: contains a digit
+
+        return looksPc ? "api" : "options";
+      }}
+      resetApiSuggestionsAfterSelection={true}
+      {apiParentResolver}
+      {staticChildrenResolver}
+      {selectedChildParentResolver}
+      {tApiChildInSelectedParent}
+      {tApiChildCoveredBySelectedChild}
+      {tStaticParentContainsSelectedChildren}
+    />
+  </div>
+
+  <CodeBlock code={codeBlocks.codeBlock9} language="svelte"></CodeBlock>
 {/snippet}

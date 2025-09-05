@@ -102,24 +102,29 @@
       opacity="0.5"
       allData={[
         {
-          rowData: [
-            { value: 4, colour: "purple", opacity: 1 },
-            { value: 5 },
-            { value: 5.5 },
-          ],
+          rowData: [{ value: 4, opacity: 1 }, { value: 5 }, { value: 5.5 }],
           label: "first",
         },
         {
-          rowData: [
-            { value: 80, colour: "purple", opacity: 1 },
-            { value: 30 },
-            { value: 10 },
-          ],
+          rowData: [{ value: 80, opacity: 1 }, { value: 30 }, { value: 10 }],
           label: "second",
           min: 0,
           max: 100,
         },
       ]}
+      markerStyles={{
+        primary: { colour: "blue", opacity: 1 },
+        secondary: { colour: "red", opacity: 0.6 },
+      }}
+      assignMarkerTier={(tier, chart, rowData, idx) => {
+        if (tier === "primary") {
+          return chart.label === "first" || rowData.value > 50;
+        }
+        if (tier === "secondary") {
+          return true;
+        }
+        return false;
+      }}
     ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>

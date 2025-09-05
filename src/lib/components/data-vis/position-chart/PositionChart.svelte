@@ -13,6 +13,10 @@
     opacity = 1,
     rowData = [{ value: value, colour: colour, opacity: opacity }],
     allData = [{ rowData, label: label, chartHeight: chartHeight }],
+    markerStyles = { all: {} },
+    assignMarkerTier = (tier, el) => {
+      return true;
+    },
   } = $props();
 
   // base defaults that apply to every row
@@ -25,9 +29,16 @@
     allData.map((chart) => ({
       ...baseChart,
       ...chart,
-      rowData: chart.rowData.map((r) => ({ ...baseRow, ...r })),
+      rowData: chart.rowData.map((r, idx) => {
+        const tier = Object.keys(markerStyles).find((t) =>
+          assignMarkerTier(t, chart, idx),
+        );
+        const markerStyle = tier ? markerStyles[tier] : {};
+        return { ...baseRow, ...markerStyle, ...r };
+      }),
     })),
   );
+  $inspect({ allDataNormalized });
 
   let showLabel = $derived(
     allDataNormalized.some((obj) => obj.label !== undefined),
@@ -97,7 +108,6 @@
             ></rect></g
           >{/each}
         {#each positionChart.rowData as rowValue, i}
-          {console.log(rowValue)}
           <g
             transform="translate({xFunction(
               positionChart.min,

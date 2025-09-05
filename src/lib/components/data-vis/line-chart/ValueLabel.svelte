@@ -13,6 +13,10 @@
     labelText = undefined,
   } = $props();
 
+  const typeOfTooltip = typeof tooltipSnippet;
+
+  $inspect({ typeOfTooltip });
+
   let textDimensions = $state();
   let verticalPadding = $state(8);
   let horizontalPadding = $derived(verticalPadding * 2);
@@ -33,7 +37,11 @@ left: {markerRect?.x +
   padding: 5px;
   border-radius: 5px;"
     >
-      <div bind:contentRect={textDimensions}>{activeMarkerId.y}</div>
+      <div bind:contentRect={textDimensions}>
+        {tooltipContent
+          ? activeMarkerId[tooltipContent]
+          : "tooltipContent undefined"}
+      </div>
     </div>
   {:else}
     <div bind:contentRect={textDimensions}>

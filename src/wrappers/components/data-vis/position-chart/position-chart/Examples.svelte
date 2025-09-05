@@ -105,6 +105,7 @@
       max="10"
       colour="grey"
       opacity="0.5"
+      tooltipContent="value"
       allData={[
         {
           rowData: [{ value: 4, opacity: 1 }, { value: 5 }, { value: 5.5 }],
@@ -139,8 +140,8 @@
   <div
     style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"
   >
-    <i>Year:</i>
-    {activeMarkerId}
+    <i>Value:</i>
+    {activeMarkerId.value}
   </div>
 {/snippet}
 

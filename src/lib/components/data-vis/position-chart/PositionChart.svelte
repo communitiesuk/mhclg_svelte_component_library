@@ -57,8 +57,6 @@
     activeMarkerId = undefined,
   } = $props();
 
-  $inspect(activeMarkerId);
-
   // base defaults that apply to every row
   const baseRow = { value, colour, opacity };
 
@@ -168,23 +166,23 @@
           >{/each}
         {#each Object.entries(positionChart.rowData) as [tier, points]}
           {#each points as rowValue, i}
-            {@const markerId = "marker-" + i}
+            {@const markerId = "marker-" + rowValue.value}
             <g
               data-id={markerId}
               onclick={interactiveMarkers
-                ? (event) => onClickMarker(event, value, markerId)
+                ? (event) => onClickMarker(event, rowValue, markerId)
                 : null}
               onmouseenter={interactiveMarkers
                 ? (event) =>
                     onMouseEnterMarker(
                       event,
-                      value,
+                      rowValue,
                       markerId,
                       event.currentTarget.getBoundingClientRect(),
                     )
                 : null}
               onmouseleave={interactiveMarkers
-                ? (event) => onMouseLeaveMarker(event, value, markerId)
+                ? (event) => onMouseLeaveMarker(event, rowValue, markerId)
                 : null}
               role="button"
               tabindex="0"

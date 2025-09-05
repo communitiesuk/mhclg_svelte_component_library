@@ -272,8 +272,6 @@
     }, {}),
   );
 
-  $inspect(tieredDataObject);
-
   function hasShowLabel(objOfArrays) {
     return Object.values(objOfArrays).some((array) =>
       array.some((obj) => obj.showLabel === true),

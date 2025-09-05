@@ -1,6 +1,7 @@
 <script>
   import { scaleLinear } from "d3-scale";
   import PositionChartAxis from "./PositionChartAxis.svelte";
+  import ValueLabel from "../line-chart/ValueLabel.svelte";
   let {
     value = undefined,
     min = undefined,
@@ -17,7 +18,46 @@
     assignMarkerTier = (tier, el) => {
       return true;
     },
+    interactiveMarkers = true,
+    labelText = "hello world",
+    tooltipContent = undefined,
+    container = undefined,
+    yFunction = () => 10,
+    x = 0,
+    y = 0,
+    currentMousePosition = undefined,
+    markerRect = undefined,
+    tooltipSnippet = undefined,
+    onClickMarker = (event, marker, markerId) => {
+      activeMarkerId = marker;
+      currentMousePosition = [event.screenX, event.screenY];
+    },
+    onMouseEnterMarker = (event, marker, markerId, rect) => {
+      activeMarkerId = marker;
+      if (container) {
+        const bounds = container.getBoundingClientRect();
+        currentMousePosition = [
+          // option for moving tooltip
+          event.clientX - bounds.left,
+          event.clientY - bounds.top,
+        ];
+        markerRect = {
+          // option for fixed tooltip
+          x: rect.x - bounds.left + rect.width / 2,
+          y: rect.y - bounds.top + rect.height / 2,
+        };
+      } else {
+        currentMousePosition = [event.clientX, event.clientY];
+        markerRect = rect;
+      }
+    },
+    onMouseLeaveMarker = (event, marker, dataId) => {
+      activeMarkerId = null;
+    },
+    activeMarkerId = undefined,
   } = $props();
+
+  $inspect(activeMarkerId);
 
   // base defaults that apply to every row
   const baseRow = { value, colour, opacity };
@@ -56,8 +96,6 @@
       };
     }),
   );
-
-  $inspect({ allDataNormalized });
 
   let showLabel = $derived(
     allDataNormalized.some((obj) => obj.label !== undefined),
@@ -98,7 +136,9 @@
 
 <div
   class="grid-container"
+  bind:this={container}
   style="
+  position: relative;
     grid-template-columns: {gridTemplateColumns};
     grid-template-rows: {gridTemplateRows};
   "
@@ -128,7 +168,30 @@
           >{/each}
         {#each Object.entries(positionChart.rowData) as [tier, points]}
           {#each points as rowValue, i}
+            {@const markerId = "marker-" + i}
             <g
+              data-id={markerId}
+              onclick={interactiveMarkers
+                ? (event) => onClickMarker(event, value, markerId)
+                : null}
+              onmouseenter={interactiveMarkers
+                ? (event) =>
+                    onMouseEnterMarker(
+                      event,
+                      value,
+                      markerId,
+                      event.currentTarget.getBoundingClientRect(),
+                    )
+                : null}
+              onmouseleave={interactiveMarkers
+                ? (event) => onMouseLeaveMarker(event, value, markerId)
+                : null}
+              role="button"
+              tabindex="0"
+              onkeydown={interactiveMarkers
+                ? (e) => e.key === "Enter" && onClickMarker(e, value)
+                : null}
+              pointer-events={interactiveMarkers ? null : "none"}
               transform="translate({xFunction(
                 positionChart.min,
                 positionChart.max,
@@ -155,6 +218,21 @@
     <div class="axis">
       <PositionChartAxis {markerRadius} {barWidth}></PositionChartAxis>
     </div>
+  {/if}
+  {#if activeMarkerId}
+    <ValueLabel
+      {activeMarkerId}
+      labelColor="lightgrey"
+      labelTextColor="black"
+      {labelText}
+      {tooltipContent}
+      {xFunction}
+      {yFunction}
+      {x}
+      {y}
+      {markerRect}
+      {tooltipSnippet}
+    ></ValueLabel>
   {/if}
 </div>
 

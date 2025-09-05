@@ -3,13 +3,14 @@
     activeMarkerId,
     labelColor = "red",
     labelTextColor,
-    tooltipContent = activeMarkerId.y,
+    tooltipContent = undefined,
     xFunction,
     yFunction,
-    x,
-    y,
-    markerRect,
+    x = undefined,
+    y = undefined,
+    markerRect = undefined,
     tooltipSnippet,
+    labelText = undefined,
   } = $props();
 
   let textDimensions = $state();

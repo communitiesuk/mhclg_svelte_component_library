@@ -28,6 +28,11 @@
       heading: "4. Example 4 - stacked position chart",
       content: Example4,
     },
+    {
+      id: "5",
+      heading: "5. Example 5 - stacked position chart",
+      content: Example5,
+    },
   ];
 
   let { data } = $props();
@@ -128,4 +133,21 @@
     ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet tooltipSnippet(activeMarkerId)}
+  <div
+    style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"
+  >
+    <i>Year:</i>
+    {activeMarkerId}
+  </div>
+{/snippet}
+
+{#snippet Example5()}
+  <div class="p-5 bg-white">
+    <PositionChart value="7" min="0" max="10" label="Education" {tooltipSnippet}
+    ></PositionChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}

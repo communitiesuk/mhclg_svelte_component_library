@@ -31,10 +31,13 @@
       ...chart,
       rowData: chart.rowData.map((r, idx) => {
         const tier = Object.keys(markerStyles).find((t) =>
-          assignMarkerTier(t, chart, idx),
+          assignMarkerTier(t, chart, r, idx),
         );
-        const markerStyle = tier ? markerStyles[tier] : {};
-        return { ...baseRow, ...markerStyle, ...r };
+        return {
+          ...baseRow,
+          ...(tier ? markerStyles[tier] : {}),
+          ...r,
+        };
       }),
     })),
   );

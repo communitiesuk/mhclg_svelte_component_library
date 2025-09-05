@@ -26,21 +26,37 @@
   const baseChart = { label, chartHeight, min, max, showAxis };
 
   let allDataNormalized = $derived(
-    allData.map((chart) => ({
-      ...baseChart,
-      ...chart,
-      rowData: chart.rowData.map((r, idx) => {
+    allData.map((chart) => {
+      // create a container for tiered rowData
+      const tieredRowData = {};
+
+      chart.rowData.forEach((r, idx) => {
+        // find the first matching tier
         const tier = Object.keys(markerStyles).find((t) =>
           assignMarkerTier(t, chart, r, idx),
         );
-        return {
+
+        // merge baseRow + tier style + original point
+        const styledPoint = {
           ...baseRow,
           ...(tier ? markerStyles[tier] : {}),
           ...r,
         };
-      }),
-    })),
+
+        // initialize array if needed
+        if (!tieredRowData[tier]) tieredRowData[tier] = [];
+
+        tieredRowData[tier].push(styledPoint);
+      });
+
+      return {
+        ...baseChart,
+        ...chart,
+        rowData: tieredRowData,
+      };
+    }),
   );
+
   $inspect({ allDataNormalized });
 
   let showLabel = $derived(
@@ -110,22 +126,25 @@
               fill={colorScale[number]}
             ></rect></g
           >{/each}
-        {#each positionChart.rowData as rowValue, i}
-          <g
-            transform="translate({xFunction(
-              positionChart.min,
-              positionChart.max,
-            )(rowValue.value) + markerRadius},{positionChart.chartHeight / 2})"
-          >
-            <circle
-              r={markerRadius}
-              cx="0"
-              cy="0"
-              fill={rowValue.colour}
-              stroke="white"
-              opacity={rowValue.opacity}
-            ></circle>
-          </g>
+        {#each Object.entries(positionChart.rowData) as [tier, points]}
+          {#each points as rowValue, i}
+            <g
+              transform="translate({xFunction(
+                positionChart.min,
+                positionChart.max,
+              )(rowValue.value) + markerRadius},{positionChart.chartHeight /
+                2})"
+            >
+              <circle
+                r={markerRadius}
+                cx="0"
+                cy="0"
+                fill={rowValue.colour}
+                stroke="white"
+                opacity={rowValue.opacity}
+              ></circle>
+            </g>
+          {/each}
         {/each}
       </svg>
     </div>

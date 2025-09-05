@@ -118,7 +118,7 @@
       }}
       assignMarkerTier={(tier, chart, rowData, idx) => {
         if (tier === "primary") {
-          return chart.label === "first" || rowData.value > 50;
+          return rowData.value == 5;
         }
         if (tier === "secondary") {
           return true;

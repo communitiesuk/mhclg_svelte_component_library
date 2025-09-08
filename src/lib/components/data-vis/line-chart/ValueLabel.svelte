@@ -32,6 +32,7 @@ left: {markerRect?.x +
 <div
   style="position:absolute; left: {markerRect?.x - textDimensions?.width / 2}px;
       top: {markerRect?.y - textDimensions?.height - 20}px"
+  bind:contentRect={textDimensions}
 >
   {#if tooltipSnippet === undefined}
     <div
@@ -40,16 +41,16 @@ left: {markerRect?.x +
   border-radius: 5px;"
     >
       {#if tooltipContent}
-        <div bind:contentRect={textDimensions}>
+        <div>
           {activeMarkerId[tooltipContent]}
         </div>
       {:else}
-        <div bind:contentRect={textDimensions}>
+        <div>
           {activeMarkerId}
         </div>{/if}
     </div>
   {:else}
-    <div bind:contentRect={textDimensions}>
+    <div>
       {@render tooltipSnippet(activeMarkerId)}
     </div>
   {/if}

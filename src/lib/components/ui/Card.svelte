@@ -1,5 +1,5 @@
 <script>
-  import { PostcodeOrAreaSearch } from "$lib";
+  import PostcodeOrAreaSearch from "./PostcodeOrAreaSearch.svelte";
 
   let {
     cardWidth = "100%",

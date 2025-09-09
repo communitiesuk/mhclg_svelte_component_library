@@ -2,6 +2,7 @@
   import { PostcodeOrAreaSearch } from "$lib";
 
   let {
+    cardWidth = "100%",
     linkCard = true,
     linkText = undefined,
     linkTextColor = "#1D70B8",
@@ -12,10 +13,11 @@
     bodyBackgroundColor = "#FBFCFD",
     bodyTopBorderColor = "#F4F8FB",
     bodyBottomBorderColor = "#c3d9e9",
+    selectedValue = $bindable(),
   } = $props();
 </script>
 
-<div class="card">
+<div class="card" style="width: {cardWidth};">
   <div
     class="call-to-action"
     style="background-color: {callToActionBackgroundColor};"
@@ -45,6 +47,7 @@
       </div>
     {:else}
       <PostcodeOrAreaSearch
+        bind:selectedValue
         label_text="Search for a postcode"
         hint=""
         placeholder="e.g. SW1A 1AA"

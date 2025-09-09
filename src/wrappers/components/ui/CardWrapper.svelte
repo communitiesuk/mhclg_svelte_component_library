@@ -157,6 +157,11 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
+        name: "cardWidth",
+        category: "Input props",
+        value: `100%`,
+      },
+      {
         name: "linkCard",
         category: "Input props",
         value: true,

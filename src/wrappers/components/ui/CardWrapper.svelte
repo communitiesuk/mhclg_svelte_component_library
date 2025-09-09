@@ -157,6 +157,11 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
+        name: "cardWidth",
+        category: "Input props",
+        value: `100%`,
+      },
+      {
         name: "linkCard",
         category: "Input props",
         value: true,
@@ -167,19 +172,14 @@
         value: `Download data`,
       },
       {
+        name: "linkTextColor",
+        category: "Input props",
+        value: `#1D70B8`,
+      },
+      {
         name: "href",
         category: "Input props",
         value: `/download-data`,
-      },
-      {
-        name: "chevronSrc",
-        category: "Input props",
-        value: `/assets/images/ons-icon-chevron-small.svg`,
-      },
-      {
-        name: "bodyText",
-        category: "Input props",
-        value: `This is the text that gives more information about call to action in the card heading test.`,
       },
       {
         name: "callToActionBackgroundColor",
@@ -187,12 +187,27 @@
         value: `white`,
       },
       {
+        name: "bodyText",
+        category: "Input props",
+        value: `This is the text that gives more information about call to action in the card heading test.`,
+      },
+      {
+        name: "bodyTextColor",
+        category: "Input props",
+        value: ``,
+      },
+      {
         name: "bodyBackgroundColor",
         category: "Input props",
         value: `#FBFCFD`,
       },
       {
-        name: "bottomBorderColor",
+        name: "bodyTopBorderColor",
+        category: "Input props",
+        value: `#F4F8FB`,
+      },
+      {
+        name: "bodyBottomBorderColor",
         category: "Input props",
         value: `#c3d9e9`,
       },

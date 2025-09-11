@@ -2,7 +2,6 @@
   import PostcodeOrAreaSearch from "./PostcodeOrAreaSearch.svelte";
 
   let {
-    cardWidth = "100%",
     linkCard = true,
     linkText = undefined,
     linkTextColor = "#1D70B8",
@@ -14,10 +13,11 @@
     bodyTopBorderColor = "#F4F8FB",
     bodyBottomBorderColor = "#c3d9e9",
     selectedValue = $bindable(),
+    cardSnippet = undefined,
   } = $props();
 </script>
 
-<div class="card" style="width: {cardWidth};">
+<div class="card">
   <div
     class="call-to-action"
     style="background-color: {callToActionBackgroundColor};"
@@ -46,12 +46,7 @@
         </svg>
       </div>
     {:else}
-      <PostcodeOrAreaSearch
-        bind:selectedValue
-        label_text="Search for a postcode"
-        hint=""
-        placeholder="e.g. SW1A 1AA"
-      ></PostcodeOrAreaSearch>
+      {@render cardSnippet()}
     {/if}
   </div>
 
@@ -64,12 +59,18 @@
 </div>
 
 <style>
+  .card {
+    display: flex;
+    flex-direction: column;
+  }
+
   .call-to-action {
     padding: 15px 20px;
   }
 
   .body {
-    padding: 20px 15px;
+    padding: 10px 20px 15px 20px;
+    flex: 1;
   }
 
   .govuk-heading-m {

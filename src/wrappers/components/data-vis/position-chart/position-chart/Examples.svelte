@@ -71,14 +71,14 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <PositionChart value="7" min="0" max="10" label="Education"></PositionChart>
+    <PositionChart value={7} min={0} max={10} label="Education"></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
-    <PositionChart value="7" min="0" max="10"></PositionChart>
+    <PositionChart value={7} min={0} max={10}></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
 {/snippet}
@@ -101,10 +101,10 @@
 {#snippet Example4()}
   <div class="p-5 bg-white">
     <PositionChart
-      min="0"
-      max="10"
+      min={0}
+      max={10}
       colour="grey"
-      opacity="0.5"
+      opacity={0.5}
       tooltipContent="value"
       allData={[
         {
@@ -147,7 +147,7 @@
 
 {#snippet Example5()}
   <div class="p-5 bg-white">
-    <PositionChart value="7" min="0" max="10" label="Education" {tooltipSnippet}
+    <PositionChart value={7} min={0} max={10} label="Education" {tooltipSnippet}
     ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

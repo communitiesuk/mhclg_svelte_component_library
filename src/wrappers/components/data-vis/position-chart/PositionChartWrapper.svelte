@@ -406,7 +406,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <PositionChart {...parametersObject} bind:chartWidth></PositionChart>
+    <PositionChart {...parametersObject}></PositionChart>
   </div>
 {/snippet}
 

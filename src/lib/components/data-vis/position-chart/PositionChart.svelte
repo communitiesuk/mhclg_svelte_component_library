@@ -107,7 +107,7 @@
   let numberOfPositionCharts = $derived(allDataNormalized.length);
   let gridTemplateColumns = $derived(showLabel ? "auto 1fr" : "1fr");
   let gridTemplateRows = $derived(
-    `repeat(${showAxis ? numberOfPositionCharts + 1 : numberOfPositionCharts}, auto)`,
+    `repeat(${showAxis ? numberOfPositionCharts + 2 : numberOfPositionCharts}, auto)`,
   );
 
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
@@ -216,16 +216,41 @@
   "
 >
   {#each allDataNormalized as positionChart, i}
+    <div><p></p></div>
+    <div>
+      <svg width={chartWidth} height="70">
+        <g>
+          <text x="10" y="50" fill="black" font-size="20">
+            Bournemouth, Christchurch and Poole 008A
+          </text>
+          <path
+            d="M 10,0 L 10,-10 L 20,-10 L 20,-20"
+            fill="none"
+            stroke="black"
+            stroke-width="1"
+          ></path>
+        </g>
+      </svg>
+    </div>
     {#if showLabel}
       <p class="label">{positionChart.label}</p>
     {/if}
-
     <div
       class="chart"
       style="height: {positionChart.chartHeight}px"
       bind:clientWidth={chartWidth}
     >
       <svg width={chartWidth} height={positionChart.chartHeight}>
+        <svg
+          ><circle
+            r={markerRadius}
+            cx="80"
+            cy="80"
+            fill="black"
+            stroke="white"
+            opacity="1"
+          ></circle></svg
+        >
         {#each range as number}
           <g
             transform="translate({markerRadius +
@@ -326,7 +351,8 @@
   }
   .chart {
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: flex-end;
     min-width: 0;
   }
 </style>

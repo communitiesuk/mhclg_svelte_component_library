@@ -51,7 +51,7 @@
   </div>
 
   <div
-    class="body"
+    class="body govuk-body"
     style="background-color: {bodyBackgroundColor}; color: {bodyTextColor}; border-bottom: 1px solid {bodyBottomBorderColor}; border-top: 1px solid {bodyTopBorderColor};"
   >
     {bodyText}

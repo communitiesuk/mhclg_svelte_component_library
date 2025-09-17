@@ -31,13 +31,15 @@ left: {markerRect?.x +
 > -->
 <div
   style="position:absolute; left: {markerRect?.x - textDimensions?.width / 2}px;
-      top: {markerRect?.y - textDimensions?.height - 20}px"
+      top: {markerRect?.y -
+    textDimensions?.height -
+    20}px; pointer-events: none"
   bind:contentRect={textDimensions}
 >
   {#if tooltipSnippet === undefined}
     <div
       style="background-color: {labelColor};
-  padding: 5px;§
+  padding: 5px;
   border-radius: 5px;"
     >
       {#if tooltipContent}

@@ -140,14 +140,19 @@
   <div
     style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"
   >
-    <i>Value:</i>
-    {activeMarkerId.value}
+    More deprived than
+    <b>{100 - activeMarkerId.value}%</b> of neighbourhoods
   </div>
 {/snippet}
 
 {#snippet Example5()}
   <div class="p-5 bg-white">
-    <PositionChart value={7} min={0} max={10} label="Education" {tooltipSnippet}
+    <PositionChart
+      value={70}
+      min={0}
+      max={100}
+      label="Education"
+      {tooltipSnippet}
     ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

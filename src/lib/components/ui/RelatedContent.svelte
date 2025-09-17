@@ -21,6 +21,7 @@
     linkStyle?: "normal" | "other"; // Default determined by type if undefined
     truncateThreshold?: number; // Per-section override
     disableTruncation?: boolean; // Disable truncation for this section
+    supplementaryText?: string;
   }
 
   // Define component props
@@ -290,6 +291,11 @@
             )}
           {/if}
         </ul>
+        {#if section.supplementaryText}
+          <p class="govuk-body-s">
+            {section.supplementaryText}
+          </p>
+        {/if}
       </nav>
     {/if}
   {/each}
@@ -619,7 +625,4 @@
     line-height: 1.45;
     font-weight: normal;
   }
-
-
-
 </style>

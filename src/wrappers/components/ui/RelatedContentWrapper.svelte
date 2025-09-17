@@ -182,6 +182,7 @@
                 base_path: "/careers-helpline-for-teenagers",
               },
             ],
+            supplementaryText: "This text adds supplementary information.",
             linkStyle: "other",
           },
           {

@@ -127,6 +127,9 @@
 
     // Behavioural tweaks
     resetApiSuggestionsAfterSelection = false,
+    // Promote API child (e.g., postcode) to its parent option (e.g., LAD)
+    // so that only the parent is ever selected (accessibility-friendly)
+    promoteApiChildToParent = false,
 
     ...attributes
   }: {
@@ -195,6 +198,7 @@
 
     // Behavioural tweaks
     resetApiSuggestionsAfterSelection?: boolean;
+    promoteApiChildToParent?: boolean;
 
     // Bindable state props for external synchronization
     // Use these to sync color state with other components
@@ -218,11 +222,62 @@
   let debounceTimer: any = null;
   let lastQuery = "";
   const baseNoChoicesText = "No choices to choose from";
+  let isProcessingPromotion = false;
+
+  // Track context for promoted items (postcode -> LAD promotions)
+  const promotedItemContext = $state(new Map<string, string>());
+
+  // Dev inspect: track selection history without logging proxies
+  let __lastSnapshot: string[] = [];
+  let __history: Array<{
+    seq: number;
+    type: string;
+    prev: string[];
+    next: string[];
+  }> = [];
+  let __seq = 0;
+  $inspect(value).with((type: string, current: unknown) => {
+    const next = Array.isArray(current)
+      ? current.map((x) => String(x))
+      : current == null
+        ? []
+        : [String(current as any)];
+    const prev = __lastSnapshot;
+    __seq += 1;
+    __history.push({ seq: __seq, type, prev, next });
+    // Keep history bounded
+    if (__history.length > 50) __history.shift();
+    console.log("🧭 [inspect:value]", {
+      seq: __seq,
+      type,
+      prev,
+      next,
+      historyLen: __history.length,
+    });
+    __lastSnapshot = next.slice();
+  });
 
   // Helper function for getting group text
   function getGroupText(item: any): string | undefined {
     if (!groupKey || !item || typeof item !== "object") return undefined;
-    return item[groupKey] ? String(item[groupKey]) : undefined;
+
+    // Check for promoted context first (for items that were promoted from postcode to LAD)
+    if (promotedItemContext.has(String(item.value))) {
+      const context = promotedItemContext.get(String(item.value));
+      console.log("🏷️ Found promotion context for", item.value, "→", context);
+      return context;
+    }
+
+    const regularContext = item[groupKey] ? String(item[groupKey]) : undefined;
+    if (regularContext) {
+      console.log(
+        "🏷️ Found regular context for",
+        item.value,
+        "→",
+        regularContext,
+      );
+    }
+    return regularContext;
   }
 
   // Helper function to ensure group text is applied to choices
@@ -345,6 +400,8 @@
     return color;
   }
 
+  // rollbackColorAssignmentForValue removed; no transient child is created now
+
   // Computed values for component configuration
   let computedPlaceholderText = $derived(
     placeholderText || (multiple ? "Select all that apply" : "Select one"),
@@ -372,6 +429,9 @@
     raw?: any;
   };
   const staticChoices = $derived.by<ChoiceItem[]>(() => {
+    // Include promotedItemContext.size to make this reactive to promotion changes
+    promotedItemContext.size;
+
     /** @type {ChoiceItem[]} */
     const flattened: ChoiceItem[] = [];
     // Include enhancedItems() first (single-select placeholder support)
@@ -436,9 +496,9 @@
 
   // Determine component configuration type
   const hasApi = Boolean(source_url && source_key);
-  const hasStatic = staticChoices.length > (multiple ? 0 : 1); // (>1 if single because of placeholder)
-  const isDual = hasApi && hasStatic;
-  const isOptionsOnly = !hasApi && hasStatic;
+  const hasStatic = $derived(staticChoices.length > (multiple ? 0 : 1)); // (>1 if single because of placeholder)
+  const isDual = $derived(hasApi && hasStatic);
+  const isOptionsOnly = $derived(!hasApi && hasStatic);
 
   // Decide which search mode to use based on query and configuration
   function decideMode(query: string): Mode {
@@ -609,43 +669,6 @@
     return label;
   }
 
-  // Resolve the parent LAD for a selected postcode value. Uses provided resolver first,
-  // then falls back to postcodes.io single lookup when available.
-  async function resolveParentOfSelectedChild(
-    selected: string | number,
-  ): Promise<{ value: string | number; label?: string } | null> {
-    try {
-      if (typeof selectedChildParentResolver === "function") {
-        const r = selectedChildParentResolver(selected);
-        if (r) return r;
-      }
-    } catch (e) {
-      console.warn("⚠️ selectedChildParentResolver error:", e);
-    }
-
-    // Best-effort fallback for postcodes.io
-    try {
-      if (
-        typeof selected === "string" &&
-        typeof source_url === "string" &&
-        /postcodes\.io\/postcodes\/?$/.test(source_url)
-      ) {
-        const pc = selected.replace(/\s+/g, "");
-        const url = `${source_url}${encodeURIComponent(pc)}`;
-        const res = await fetch(url);
-        const json = await res.json();
-        const result = json?.result;
-        const code = result?.codes?.lau2 || result?.codes?.lad;
-        const label = result?.admin_district ?? undefined;
-        if (code) return { value: code, label };
-      }
-    } catch (e) {
-      console.warn("⚠️ Fallback parent resolution failed:", e);
-    }
-
-    return null;
-  }
-
   async function fetchApiChoices(query: string): Promise<ChoiceItem[]> {
     const url = buildApiUrl(query);
     if (!url) return [];
@@ -662,8 +685,9 @@
       const safeLabel = escapeHtml(label);
       const safeGroup = groupText ? escapeHtml(groupText) : "";
 
+      // Keep CHILD (e.g. postcode) as value so it never collides with static LAD values
       return {
-        value: toValue(entry, label),
+        value: label,
         label: safeGroup
           ? `<span class="choices__item-label">
                <span class="choices__item-main">${safeLabel}</span>
@@ -1252,19 +1276,35 @@
               const showRemove =
                 isMulti && this.config.removeItemButton && !data.disabled;
 
-              // Circle
+              // If this selected item was promoted, render parent label + context
+              const meta = (data as any)?.customProperties;
+              const hasParent = meta && meta.parentValue && meta.parentLabel;
+
+              // Circle (color keyed by parent if present, else extract parent from composite value)
               let circle = "";
               if (enableSelectedItemCircles && isMulti) {
-                const color = colorForValue(data.value); // ✅ value-only, stable
+                let colorKey;
+                if (hasParent) {
+                  colorKey = meta.parentValue;
+                } else if (String(data.value).includes("::")) {
+                  // Extract parent from composite value for color consistency
+                  colorKey = String(data.value).split("::")[0];
+                } else {
+                  colorKey = data.value;
+                }
+                const color = colorForValue(colorKey);
                 circle = `<span class="choices__item-circle" style="background:${color}"></span>`;
-                console.log("🎨 Adding circle with color:", {
-                  value: data.value,
-                  color,
-                });
               }
 
               // Label
-              const labelHtml = allowHTML ? data.label : esc(data.label);
+              const displayLabel = hasParent
+                ? `<span class="choices__item-label">
+                     <span class="choices__item-main">${escapeHtml(meta.parentLabel)}</span>
+                     <span class="gem-c-select-with-search__suggestion-group">${escapeHtml(`(containing ${meta.childLabel ?? data.value})`)}</span>
+                   </span>`
+                : allowHTML
+                  ? data.label
+                  : esc(data.label);
 
               // Remove button (same markup Choices normally generates)
               const removeBtn = showRemove
@@ -1282,7 +1322,7 @@
                       ${showRemove ? "data-deletable" : ""}
                       ${data.active ? 'aria-selected="true"' : ""}
                       ${data.disabled ? 'aria-disabled="true"' : ""}>
-                    ${circle}${labelHtml}${removeBtn}
+                    ${circle}${displayLabel}${removeBtn}
                  </div>`,
               );
             },
@@ -1364,12 +1404,36 @@
         config: choicesInstance.config,
       });
 
-      // Handle value changes from Choices.js
-      selectElement.addEventListener("change", handleChoicesChange);
+      // Initialize static choices
+      choicesInstance.setChoices(staticChoices, "value", "label", true);
+
+      // Keep the bound value in sync by reading from the Choices instance
+      selectElement.addEventListener("change", async (_event: Event) => {
+        handleChoicesChange(_event);
+      });
 
       // Listen for choice selection to reset search
-      selectElement.addEventListener("choice", () => {
+      selectElement.addEventListener("choice", (ev: any) => {
         console.log("🎯 Choice selected, resetting search");
+
+        // Check if this was a promoted choice and store context
+        const choice = ev?.detail?.choice;
+        if (
+          choice?.customProperties?.isPromoted &&
+          choice.customProperties.parentValue &&
+          choice.customProperties.childLabel
+        ) {
+          const parentValue = choice.customProperties.parentValue;
+          const childLabel = choice.customProperties.childLabel;
+          const context = `(containing ${childLabel})`;
+          promotedItemContext.set(parentValue, context);
+          console.log("🏷️ Stored promotion context:", {
+            parentValue,
+            childLabel,
+            context,
+          });
+        }
+
         // When an item is selected, clear the search and show all unselected options
         if (searchInputElement) {
           searchInputElement.value = "";
@@ -1566,6 +1630,8 @@
                   })),
                 });
 
+                // Note: No need to build child->parent map anymore since promotion happens at data-time
+
                 // Determine if the query is a full postcode (used to gate messages)
                 const isFullPostcode = looksLikePostcode(q);
 
@@ -1648,10 +1714,41 @@
                           return;
                         }
                         {
+                          // Check if any selected postcode maps to the same LAD
                           const coverParents = await Promise.all(
-                            (selectedValues || []).map((sv) =>
-                              resolveParentOfSelectedChild(sv),
-                            ),
+                            (selectedValues || []).map(async (sv) => {
+                              try {
+                                if (
+                                  typeof selectedChildParentResolver ===
+                                  "function"
+                                ) {
+                                  const r = selectedChildParentResolver(sv);
+                                  if (r) return r;
+                                }
+                                // Fallback for postcodes.io
+                                if (
+                                  typeof sv === "string" &&
+                                  typeof source_url === "string" &&
+                                  /postcodes\.io\/postcodes\/?$/.test(
+                                    source_url,
+                                  )
+                                ) {
+                                  const pc = sv.replace(/\s+/g, "");
+                                  const url = `${source_url}${encodeURIComponent(pc)}`;
+                                  const res = await fetch(url);
+                                  const json = await res.json();
+                                  const result = json?.result;
+                                  const code =
+                                    result?.codes?.lau2 || result?.codes?.lad;
+                                  const label =
+                                    result?.admin_district ?? undefined;
+                                  if (code) return { value: code, label };
+                                }
+                              } catch (e) {
+                                console.warn("⚠️ Parent resolution failed:", e);
+                              }
+                              return null;
+                            }),
                           );
                           const idx = coverParents.findIndex(
                             (rel) =>
@@ -1690,9 +1787,35 @@
                   let selectedParentSet = new Set<string>();
                   try {
                     const rels = await Promise.all(
-                      (selectedValues || []).map((sv) =>
-                        resolveParentOfSelectedChild(sv),
-                      ),
+                      (selectedValues || []).map(async (sv) => {
+                        try {
+                          if (
+                            typeof selectedChildParentResolver === "function"
+                          ) {
+                            const r = selectedChildParentResolver(sv);
+                            if (r) return r;
+                          }
+                          // Fallback for postcodes.io
+                          if (
+                            typeof sv === "string" &&
+                            typeof source_url === "string" &&
+                            /postcodes\.io\/postcodes\/?$/.test(source_url)
+                          ) {
+                            const pc = sv.replace(/\s+/g, "");
+                            const url = `${source_url}${encodeURIComponent(pc)}`;
+                            const res = await fetch(url);
+                            const json = await res.json();
+                            const result = json?.result;
+                            const code =
+                              result?.codes?.lau2 || result?.codes?.lad;
+                            const label = result?.admin_district ?? undefined;
+                            if (code) return { value: code, label };
+                          }
+                        } catch (e) {
+                          console.warn("⚠️ Parent resolution failed:", e);
+                        }
+                        return null;
+                      }),
                     );
                     for (const r of rels)
                       if (r && r.value != null)
@@ -1911,16 +2034,70 @@
                   // We have new, unselected results to show.
                   // Don't set noChoicesText when we have results - let Choices.js handle it
 
-                  // Ensure group text is applied to API choices
-                  const apiChoicesWithGroupText = ensureGroupTextApplied(
-                    filteredByParent.map((c) => ({
+                  let finalChoices;
+
+                  // If promotion is enabled, construct parent-valued choices at data time
+                  if (
+                    promoteApiChildToParent &&
+                    typeof apiParentResolver === "function"
+                  ) {
+                    console.log(
+                      "🔄 Building parent-valued API choices (promotion at data time)",
+                    );
+
+                    // Map every API record to a parent-valued choice with composite unique values
+                    // This ensures all postcodes show in dropdown while mapping to parent on selection
+                    const selectedSet = new Set(selectedValues.map(String));
+                    finalChoices = filteredByParent
+                      .map((c) => {
+                        try {
+                          const parent = apiParentResolver((c as any).raw);
+                          if (parent && parent.value != null) {
+                            const parentValue = String(parent.value);
+                            const childValue = String(c.value);
+                            // Use composite value to ensure uniqueness while storing parent info
+                            const compositeValue = `${parentValue}::${childValue}`;
+                            return {
+                              value: compositeValue, // composite value ensures uniqueness
+                              label: c.label, // keep postcode in label
+                              customProperties: {
+                                parentValue,
+                                parentLabel: parent.label || parentValue,
+                                childLabel: c.labelPlain ?? childValue,
+                                isPromoted: true,
+                              },
+                            };
+                          }
+                        } catch (e) {
+                          console.warn("⚠️ Failed to resolve parent:", e);
+                        }
+                        // Fallback: no parent — keep child as-is
+                        return { value: String(c.value), label: c.label };
+                      })
+                      .filter((ch) => {
+                        // For promoted choices, check if parent is already selected
+                        // For regular choices, check if child is already selected
+                        const meta = (ch as any).customProperties;
+                        if (meta?.isPromoted) {
+                          return !selectedSet.has(meta.parentValue);
+                        }
+                        return !selectedSet.has(String(ch.value));
+                      });
+                    console.log(
+                      "✅ Built parent-valued API choices:",
+                      finalChoices.length,
+                    );
+                  } else {
+                    // No promotion - use original API choices
+                    finalChoices = filteredByParent.map((c) => ({
                       value: String(c.value),
                       label: c.label,
-                    })),
-                  );
+                    }));
+                  }
 
+                  // Render API choices as-is so the dropdown shows postcodes while values are LAD codes
                   choicesInstance.setChoices(
-                    apiChoicesWithGroupText,
+                    finalChoices,
                     "value",
                     "label",
                     true,
@@ -1929,10 +2106,7 @@
                   // Custom templates are automatically applied when setChoices is called
                   // No need for additional refresh calls
 
-                  console.log(
-                    "✅ Set new API choices:",
-                    filteredByParent.length,
-                  );
+                  console.log("✅ Set final API choices:", finalChoices.length);
                 }
               } catch (e) {
                 console.error("❌ Failed to fetch API choices:", e);
@@ -2175,28 +2349,66 @@
 
   // Handle changes from Choices.js
   function handleChoicesChange(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    console.log("🔄 Choices change event:", {
-      event: event.type,
-      target: target.tagName,
-      value: target.value,
-      selectedOptions: Array.from(target.selectedOptions).map((opt) => ({
-        value: opt.value,
-        text: opt.text,
-        selected: opt.selected,
-      })),
-      multiple: target.multiple,
-    });
+    if (!choicesInstance) return;
+
+    // Read values directly from Choices.js instance for accurate state
+    const raw = choicesInstance.getValue(true);
+    console.log("🔄 Choices change event - raw getValue:", raw);
 
     if (multiple) {
-      const selectedValues = Array.from(target.selectedOptions).map(
-        (option) => option.value,
-      );
-      console.log("📝 Setting multiple value:", selectedValues);
-      value = selectedValues;
+      const arr = Array.isArray(raw) ? raw : raw ? [raw] : [];
+      // Extract parent values from composite values for promoted choices
+      const processedValues = arr.map((x: any) => {
+        const val = String(x.value ?? x);
+        // Check if this is a composite value from promotion
+        if (val.includes("::")) {
+          const [parentValue, childLabel] = val.split("::");
+          // Persist context so the chip can render parent + (containing child)
+          try {
+            if (parentValue && childLabel) {
+              const context = `(containing ${childLabel})`;
+              promotedItemContext.set(parentValue, context);
+              console.log("🏷️ Stored promotion context (change):", {
+                parentValue,
+                childLabel,
+                context,
+              });
+            }
+          } catch {}
+          console.log(
+            "🔄 Extracting parent from composite:",
+            val,
+            "→",
+            parentValue,
+          );
+          return parentValue;
+        }
+        return val;
+      });
+      console.log("📝 Setting multiple value:", processedValues);
+      value = processedValues;
     } else {
-      console.log("📝 Setting single value:", target.value);
-      value = target.value;
+      const val = raw ? String((raw as any).value ?? raw) : "";
+      // Extract parent value from composite if needed and persist context
+      if (val.includes("::")) {
+        const [parentValue, childLabel] = val.split("::");
+        try {
+          if (parentValue && childLabel) {
+            const context = `(containing ${childLabel})`;
+            promotedItemContext.set(parentValue, context);
+            console.log("🏷️ Stored promotion context (change single):", {
+              parentValue,
+              childLabel,
+              context,
+            });
+          }
+        } catch {}
+        console.log("📝 Setting single value:", parentValue);
+        value = parentValue;
+      } else {
+        console.log("📝 Setting single value:", val);
+        value = val;
+      }
     }
   }
 
@@ -2212,10 +2424,85 @@
     if (choicesInstance && choicesInstance.initialised && value !== undefined) {
       if (multiple && Array.isArray(value)) {
         console.log("🔄 Updating multiple choices:", value);
+
+        // Clean up promotion context for items no longer selected
+        const currentValues = new Set(value.map(String));
+        for (const [contextKey] of promotedItemContext) {
+          if (!currentValues.has(contextKey)) {
+            console.log(
+              "🧹 Cleaning up promotion context for removed item:",
+              contextKey,
+            );
+            promotedItemContext.delete(contextKey);
+          }
+        }
+
+        // When value changes programmatically (e.g., postcode promotion), the choice object
+        // for the new value might not exist in the instance's current list (e.g., if it's
+        // showing API results). We need to merge our static "source of truth" with the
+        // current choices so that `setChoiceByValue` can find the item and render its chip.
+        const currentChoices = Array.isArray((choicesInstance as any)?.choices)
+          ? (choicesInstance as any).choices
+          : Array.isArray((choicesInstance as any)?._store?.choices)
+            ? (choicesInstance as any)._store.choices
+            : [];
+        const mergedChoices = new Map<string, any>();
+
+        // Prioritize static choices for labels and context
+        staticChoices.forEach((c) => mergedChoices.set(String(c.value), c));
+        // Add any other choices (e.g., from API) that aren't static
+        for (const c of currentChoices) {
+          const key = String((c as any).value);
+          if (!mergedChoices.has(key)) {
+            mergedChoices.set(key, c);
+          }
+        }
+
+        // For any selected value with promotion context, manually build its choice object
+        // This ensures the chip renders correctly even if staticChoices hasn't re-derived
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            const key = String(val);
+            if (promotedItemContext.has(key)) {
+              const staticChoice = staticChoices.find(
+                (c) => String(c.value) === key,
+              );
+              if (staticChoice) {
+                const context = promotedItemContext.get(key)!;
+                const newLabel = `<span class="choices__item-label">
+                   <span class="choices__item-main">${escapeHtml(staticChoice.labelPlain ?? "")}</span>
+                   <span class="gem-c-select-with-search__suggestion-group">${escapeHtml(context)}</span>
+                 </span>`;
+                mergedChoices.set(key, {
+                  ...staticChoice,
+                  label: newLabel,
+                  customProperties: {
+                    parentValue: key,
+                    parentLabel:
+                      staticChoice.labelPlain ?? String(staticChoice.value),
+                    childLabel: context.replace(/^\(containing |\)$/g, ""), // Extract just the postcode from "(containing TW5 0AA)"
+                  },
+                });
+                console.log("🛠️ Manually crafted choice for promoted item:", {
+                  key,
+                  newLabel,
+                  context,
+                });
+              }
+            }
+          });
+        }
+
+        // Silently update the full list of available choices.
+        // This ensures the instance knows about the promoted LAD option.
+        choicesInstance.setChoices(
+          Array.from(mergedChoices.values()),
+          "value",
+          "label",
+          true,
+        );
         choicesInstance.removeActiveItems();
-        value.forEach((val: string | number) => {
-          choicesInstance.setChoiceByValue(String(val));
-        });
+        choicesInstance.setChoiceByValue(value.map(String));
       } else if (!multiple && !Array.isArray(value)) {
         console.log("🔄 Updating single choice:", value);
         choicesInstance.setChoiceByValue(String(value));
@@ -2223,19 +2510,46 @@
     }
   });
 
+  // Update Choices.js when items change externally (e.g., when options are modified with context)
+  $effect(() => {
+    if (!choicesInstance || !choicesInstance.initialised) return;
+
+    // Watch for changes to items and groups
+    const itemsLength = items.length;
+    const groupsLength = groups.length;
+    const staticChoicesLength = staticChoices.length;
+
+    console.log("🔄 Items changed externally:", {
+      itemsLength,
+      groupsLength,
+      staticChoicesLength,
+      currentMode,
+    });
+
+    // Only refresh static choices if we're in options mode or options-only
+    if (currentMode === "options" || isOptionsOnly) {
+      setTimeout(() => {
+        if (choicesInstance && choicesInstance.initialised) {
+          console.log("🔄 Refreshing static choices due to items change");
+          resetToStaticChoices();
+        }
+      }, 0);
+    }
+  });
+
   // Cleanup
   onDestroy(() => {
     console.log("🧹 MultiSelectSearchAutocomplete: onDestroy called");
     if (choicesInstance) {
-      // No more MutationObserver to clean up
       selectElement?.removeEventListener("change", handleChoicesChange);
       selectElement?.removeEventListener("choice", () => {});
+
       choicesInstance.destroy();
       console.log("✅ Choices instance destroyed");
     }
   });
 
-  // Log component state changes
+  // Log component state changes (using $inspect to avoid console warnings)
   $inspect(
     id,
     name,

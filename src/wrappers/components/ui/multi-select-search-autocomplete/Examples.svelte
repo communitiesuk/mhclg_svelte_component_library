@@ -9,12 +9,12 @@
   import { SvelteMap } from "svelte/reactivity";
 
   // State variables for two-way binding example
-  let globalColorMap = new SvelteMap();
-  let globalNextIndex = 0;
-  let globalSelectedValues = []; // Shared selected values between components
+  let globalColorMap = $state(new SvelteMap());
+  let globalNextIndex = $state(0);
+  let globalSelectedValues = $state([]); // Shared selected values between components
 
   // State variable for submit button demo
-  let selectedValuesForSubmit = [];
+  let selectedValuesForSubmit = $state([]);
 
   // GOV.UK color palette for the example
   const selectedItemCircleColorPalette = [
@@ -83,6 +83,11 @@
       id: "9",
       heading: "9. LAD ↔ Postcode cross-selection messages",
       content: Example9,
+    },
+    {
+      id: "10",
+      heading: "10. Promote postcode selection to parent LAD (with context)",
+      content: Example10,
     },
   ];
 
@@ -189,6 +194,20 @@
     `${parent} contains ${children.join(", ")}, which ${
       children.length > 1 ? "are" : "is"
     } already selected`;
+
+  // Example 10: simple state for promotion demo
+  let ladSelections10 = $state([]);
+
+  // Debug Example 10 state changes
+  $effect(() => {
+    console.log("📋 Example 10 ladSelections10 changed:", {
+      value: ladSelections10,
+      length: ladSelections10?.length,
+      type: typeof ladSelections10,
+      isArray: Array.isArray(ladSelections10),
+      stringified: JSON.stringify(ladSelections10),
+    });
+  });
 </script>
 
 <div>
@@ -827,4 +846,53 @@
   </div>
 
   <CodeBlock code={codeBlocks.codeBlock9} language="svelte"></CodeBlock>
+{/snippet}
+
+<!-- Example 10: Promote postcode to LAD selection with context -->
+{#snippet Example10()}
+  <div class="p-5 bg-white space-y-6">
+    <div>
+      <h6 class="govuk-heading-s">Promote postcode to LAD selection</h6>
+      <p class="govuk-body">
+        Selecting a postcode will instead select its parent LAD. The chip shows
+        contextual text with the originating postcode.
+      </p>
+    </div>
+
+    <MultiSelectSearchAutocomplete
+      id="promote-postcode-to-lad"
+      name="promote-postcode-to-lad"
+      label="Find your local authority"
+      hint="Type a postcode; selecting it will select the parent LAD"
+      items={ladOptions}
+      multiple={true}
+      bind:value={ladSelections10}
+      source_url="https://api.postcodes.io/postcodes/"
+      source_key="result"
+      source_property="postcode"
+      minLength={3}
+      resetApiSuggestionsAfterSelection={true}
+      promoteApiChildToParent={true}
+      groupKey="context"
+      sourceSelector={(query) => {
+        const q = query.toUpperCase().trim();
+        if (q.length < 3) return "options";
+        const looksPc = /\d/.test(q);
+        return looksPc ? "api" : "options";
+      }}
+      {apiParentResolver}
+      {staticChildrenResolver}
+      {selectedChildParentResolver}
+      {tApiChildInSelectedParent}
+      {tApiChildCoveredBySelectedChild}
+      {tStaticParentContainsSelectedChildren}
+    />
+    <p class="govuk-body">
+      Selected: {ladSelections10.length > 0
+        ? ladSelections10.join(", ")
+        : "None selected"}
+    </p>
+  </div>
+
+  <CodeBlock code={codeBlocks.codeBlock10} language="svelte"></CodeBlock>
 {/snippet}

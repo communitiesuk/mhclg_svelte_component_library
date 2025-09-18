@@ -527,11 +527,11 @@ export const codeBlock9 = `
 
   const tApiChildInSelectedParent = (child, parent) =>
     \
-\`${'${child}'} is in ${'${parent}'}, which is already selected\`;
+\`${"${child}"} is in ${"${parent}"}, which is already selected\`;
 
   const tStaticParentContainsSelectedChildren = (parent, children) =>
     \
-\`${'${parent}'} contains ${'${children.join(", ")}'}, which ${'${children.length > 1 ? "are" : "is"}'} already selected\`;
+\`${"${parent}"} contains ${'${children.join(", ")}'}, which ${'${children.length > 1 ? "are" : "is"}'} already selected\`;
 </script>
 
 <MultiSelectSearchAutocomplete
@@ -549,4 +549,38 @@ export const codeBlock9 = `
   {staticChildrenResolver}
   {tApiChildInSelectedParent}
   {tStaticParentContainsSelectedChildren}
+/>`;
+
+export const codeBlock10 = `
+<script>
+  import MultiSelectSearchAutocomplete from '$lib/components/ui/MultiSelectSearchAutocomplete.svelte';
+
+  const ladOptions10 = [
+    { value: 'E09000018', text: 'London Borough of Hounslow' },
+    { value: 'E09000033', text: 'City of Westminster' },
+    { value: 'E08000003', text: 'Manchester' }
+  ];
+
+  let ladSelections10 = [];
+</script>
+
+<MultiSelectSearchAutocomplete
+  id="promote-postcode-to-lad"
+  name="promote-postcode-to-lad"
+  label="Find your local authority"
+  hint="Type a postcode; selecting it will select the parent LAD"
+  items={ladOptions10}
+  multiple={true}
+  bind:value={ladSelections10}
+  source_url="https://api.postcodes.io/postcodes/"
+  source_key="result"
+  source_property="postcode"
+  minLength={3}
+  resetApiSuggestionsAfterSelection={true}
+  groupKey="context"
+  sourceSelector={(query) => {
+    const q = query.toUpperCase().trim();
+    if (q.length < 3) return 'options';
+    return /\d/.test(q) ? 'api' : 'options';
+  }}
 />`;

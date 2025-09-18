@@ -766,7 +766,8 @@
             const option = document.createElement("option");
             option.value = String(choice.value);
             option.textContent = String(choice.text);
-            option.disabled = choice.disabled || false || group.disabled || false;
+            option.disabled =
+              choice.disabled || false || group.disabled || false;
 
             // Check if this option is currently selected
             if (selectedValues.includes(String(choice.value))) {
@@ -782,7 +783,8 @@
         });
 
         // Store the existing template callback before destroying
-        const existingTemplateCallback = choicesInstance.config.callbackOnCreateTemplates;
+        const existingTemplateCallback =
+          choicesInstance.config.callbackOnCreateTemplates;
 
         // Reinitialize Choices.js with the restored structure
         choicesInstance.destroy();
@@ -795,7 +797,10 @@
             itemSelectText: "",
             searchResultLimit,
             removeItemButton: computedRemoveItemButton,
-            labelId: id + "-label " + (selectElement.getAttribute("aria-describedby") || ""),
+            labelId:
+              id +
+              "-label " +
+              (selectElement.getAttribute("aria-describedby") || ""),
             searchFloor: minLength,
             duplicateItemsAllowed: false,
             fuseOptions: {
@@ -809,7 +814,7 @@
 
           // Store reference on the element for external access
           (selectElement as any).choices = choicesInstance;
-          
+
           console.log("✅ Grouped structure restored with reinit");
         }
       }
@@ -922,9 +927,9 @@
 
     // Pass grouped data to Choices so it renders headings properly
     choicesInstance.setChoices(list, "value", "label", true);
-    
+
     console.log("✅ Grouped options restored in-place");
-  }  // Initialize Choices.js
+  } // Initialize Choices.js
   onMount(async () => {
     console.log("🔧 MultiSelectSearchAutocomplete: onMount started", {
       id,

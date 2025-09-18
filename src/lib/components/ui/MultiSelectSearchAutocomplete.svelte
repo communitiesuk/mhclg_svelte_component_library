@@ -226,6 +226,8 @@
 
   // Track context for promoted items (postcode -> LAD promotions)
   const promotedItemContext = $state(new Map<string, string>());
+  // Track parent labels for promoted items when not present in static options
+  const promotedParentLabelMap = $state(new Map<string, string>());
 
   // Dev inspect: track selection history without logging proxies
   let __lastSnapshot: string[] = [];
@@ -1425,12 +1427,15 @@
         ) {
           const parentValue = choice.customProperties.parentValue;
           const childLabel = choice.customProperties.childLabel;
+          const parentLabel = choice.customProperties.parentLabel || undefined;
           const context = `(containing ${childLabel})`;
           promotedItemContext.set(parentValue, context);
+          if (parentLabel) promotedParentLabelMap.set(parentValue, parentLabel);
           console.log("🏷️ Stored promotion context:", {
             parentValue,
             childLabel,
             context,
+            parentLabel,
           });
         }
 
@@ -2054,6 +2059,15 @@
                           const parent = apiParentResolver((c as any).raw);
                           if (parent && parent.value != null) {
                             const parentValue = String(parent.value);
+                            // Cache parent label so chips can render even if parent not in static items
+                            try {
+                              const parentLabelCache =
+                                parent.label || parentValue;
+                              promotedParentLabelMap.set(
+                                parentValue,
+                                parentLabelCache,
+                              );
+                            } catch {}
                             const childValue = String(c.value);
                             // Use composite value to ensure uniqueness while storing parent info
                             const compositeValue = `${parentValue}::${childValue}`;
@@ -2464,31 +2478,37 @@
           value.forEach((val) => {
             const key = String(val);
             if (promotedItemContext.has(key)) {
-              const staticChoice = staticChoices.find(
-                (c) => String(c.value) === key,
-              );
-              if (staticChoice) {
-                const context = promotedItemContext.get(key)!;
-                const newLabel = `<span class="choices__item-label">
-                   <span class="choices__item-main">${escapeHtml(staticChoice.labelPlain ?? "")}</span>
-                   <span class="gem-c-select-with-search__suggestion-group">${escapeHtml(context)}</span>
-                 </span>`;
-                mergedChoices.set(key, {
-                  ...staticChoice,
-                  label: newLabel,
-                  customProperties: {
-                    parentValue: key,
-                    parentLabel:
-                      staticChoice.labelPlain ?? String(staticChoice.value),
-                    childLabel: context.replace(/^\(containing |\)$/g, ""), // Extract just the postcode from "(containing TW5 0AA)"
-                  },
-                });
-                console.log("🛠️ Manually crafted choice for promoted item:", {
-                  key,
-                  newLabel,
-                  context,
-                });
-              }
+              const context = promotedItemContext.get(key)!;
+              const parentLabelFallback =
+                promotedParentLabelMap.get(key) || undefined;
+              const baseChoice =
+                staticChoices.find((c) => String(c.value) === key) ||
+                ({
+                  value: key,
+                  label: parentLabelFallback ?? String(key),
+                  labelPlain: parentLabelFallback ?? String(key),
+                } as any);
+
+              const newLabel = `<span class="choices__item-label">
+                 <span class="choices__item-main">${escapeHtml(baseChoice.labelPlain ?? "")}</span>
+                 <span class="gem-c-select-with-search__suggestion-group">${escapeHtml(context)}</span>
+               </span>`;
+              mergedChoices.set(key, {
+                ...baseChoice,
+                label: newLabel,
+                customProperties: {
+                  parentValue: key,
+                  parentLabel:
+                    baseChoice.labelPlain ?? String(baseChoice.value),
+                  childLabel: context.replace(/^\(containing |\)$/g, ""),
+                },
+              });
+              console.log("🛠️ Manually crafted choice for promoted item:", {
+                key,
+                newLabel,
+                context,
+                parentLabelFallback,
+              });
             }
           });
         }

@@ -1418,27 +1418,6 @@
       selectElement.addEventListener("choice", (ev: any) => {
         console.log("🎯 Choice selected, resetting search");
 
-        // Check if this was a promoted choice and store context
-        const choice = ev?.detail?.choice;
-        if (
-          choice?.customProperties?.isPromoted &&
-          choice.customProperties.parentValue &&
-          choice.customProperties.childLabel
-        ) {
-          const parentValue = choice.customProperties.parentValue;
-          const childLabel = choice.customProperties.childLabel;
-          const parentLabel = choice.customProperties.parentLabel || undefined;
-          const context = `(containing ${childLabel})`;
-          promotedItemContext.set(parentValue, context);
-          if (parentLabel) promotedParentLabelMap.set(parentValue, parentLabel);
-          console.log("🏷️ Stored promotion context:", {
-            parentValue,
-            childLabel,
-            context,
-            parentLabel,
-          });
-        }
-
         // When an item is selected, clear the search and show all unselected options
         if (searchInputElement) {
           searchInputElement.value = "";

@@ -737,6 +737,7 @@
     if (groups && groups.length > 0) {
       console.log("📋 Restoring grouped options structure");
 
+      // For grouped options, revert to destroy/recreate approach (only reliable method)
       // Clear current choices
       choicesInstance.clearChoices();
 
@@ -752,7 +753,7 @@
           const placeholderOption = document.createElement("option");
           placeholderOption.value = "";
           placeholderOption.textContent = computedPlaceholderText;
-          placeholderOption.selected = true;
+          placeholderOption.selected = selectedValues.length === 0;
           selectElement.appendChild(placeholderOption);
         }
 
@@ -765,8 +766,7 @@
             const option = document.createElement("option");
             option.value = String(choice.value);
             option.textContent = String(choice.text);
-            option.disabled =
-              choice.disabled || false || group.disabled || false;
+            option.disabled = choice.disabled || false || group.disabled || false;
 
             // Check if this option is currently selected
             if (selectedValues.includes(String(choice.value))) {
@@ -781,117 +781,39 @@
           }
         });
 
+        // Store the existing template callback before destroying
+        const existingTemplateCallback = choicesInstance.config.callbackOnCreateTemplates;
+
         // Reinitialize Choices.js with the restored structure
         choicesInstance.destroy();
         if (selectElement) {
           choicesInstance = new Choices(selectElement, {
             allowHTML,
             searchPlaceholderValue: searchPlaceholder,
-            shouldSort: false, // Force false to preserve placeholder position
-            placeholder: true, // Ensure placeholder option is treated as placeholder
+            shouldSort: false,
+            placeholder: true,
             itemSelectText: "",
             searchResultLimit,
             removeItemButton: computedRemoveItemButton,
-            labelId:
-              id +
-              "-label " +
-              (selectElement.getAttribute("aria-describedby") || ""),
+            labelId: id + "-label " + (selectElement.getAttribute("aria-describedby") || ""),
             searchFloor: minLength,
-            // Don't set searchChoices here - let applyMode handle it
-            // Don't set noChoicesText here - let the search logic handle it
             duplicateItemsAllowed: false,
             fuseOptions: {
               ignoreLocation: true,
               threshold: 0,
             },
-            // Add the custom template callback to preserve colored circles
-            callbackOnCreateTemplates: function (strToEl: any) {
-              // public class names exposed by Choices
-              const cn = this.config.classNames;
-              const isMulti = this.passedElement?.element?.multiple === true;
-
-              // small escape for when allowHTML=false
-              const esc = (s: string) =>
-                String(s)
-                  .replace(/&/g, "&amp;")
-                  .replace(/</g, "&lt;")
-                  .replace(/>/g, "&gt;");
-
-              // try to keep any existing templates if your build exposes them
-              const base = (this as any)._templates ?? {};
-
-              return {
-                ...base,
-
-                // Custom item template for chips (selected items), not dropdown choices
-                item: (_classNames: any, data: any) => {
-                  const classes = [
-                    cn.item,
-                    data.highlighted ? cn.highlightedState : cn.itemSelectable,
-                    data.placeholder ? cn.placeholder : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ");
-
-                  // ✅ Decide if this chip should be deletable
-                  const showRemove =
-                    isMulti && this.config.removeItemButton && !data.disabled;
-
-                  // Circle
-                  let circle = "";
-                  if (enableSelectedItemCircles && isMulti && data.active) {
-                    const color = colorForValue(data.value); // ✅ value-only, stable
-                    circle = `<span class="choices__item-circle" style="background:${color}"></span>`;
-                  }
-
-                  // Label
-                  const labelHtml = allowHTML ? data.label : esc(data.label);
-
-                  // Remove button (same markup Choices normally generates)
-                  const removeBtn = showRemove
-                    ? `<button type="button"
-                               class="${cn.button}"
-                               data-button
-                               aria-label="Remove ${esc(String(data.value))}"></button>`
-                    : "";
-
-                  return strToEl(
-                    `<div class="${classes}"
-                          data-item
-                          data-id="${data.id}"
-                          data-value="${String(data.value)}"
-                          ${showRemove ? "data-deletable" : ""}
-                          ${data.active ? 'aria-selected="true"' : ""}
-                          ${data.disabled ? 'aria-disabled="true"' : ""}>
-                        ${circle}${labelHtml}${removeBtn}
-                     </div>`,
-                  );
-                },
-              };
-            },
+            // Reuse the existing template callback (no duplication)
+            callbackOnCreateTemplates: existingTemplateCallback,
             ...choicesOptions,
           });
 
           // Store reference on the element for external access
           (selectElement as any).choices = choicesInstance;
-
-          // For grouped options, don't re-apply mode as it would overwrite the grouped structure
-          // The grouped structure is already restored above
-          console.log(
-            "✅ Grouped structure restored, skipping mode re-application",
-          );
-
-          // Restore focus to the main Choices container after reinitialization
-          setTimeout(() => {
-            if (choicesInstance?.containerOuter?.element) {
-              choicesInstance.containerOuter.element.focus();
-              console.log("🎯 Focus restored to Choices container");
-            }
-          }, 0);
+          
+          console.log("✅ Grouped structure restored with reinit");
         }
-
-        console.log("✅ Restored grouped options structure");
       }
+      console.log("✅ Restored grouped options structure");
     } else {
       // For non-grouped options, use the existing logic
       console.log("📋 Restoring flat options structure");
@@ -972,7 +894,7 @@
     // Clear current list but keep the instance intact (preserves focus)
     choicesInstance.clearChoices();
 
-    // Build grouped payload excluding currently selected values
+    // Build grouped payload EXCLUDING selected values (same as original approach)
     const groupedPayload = groups.map((grp: any) => ({
       label: grp.label,
       disabled: !!grp.disabled,
@@ -1000,10 +922,9 @@
 
     // Pass grouped data to Choices so it renders headings properly
     choicesInstance.setChoices(list, "value", "label", true);
+    
     console.log("✅ Grouped options restored in-place");
-  }
-
-  // Initialize Choices.js
+  }  // Initialize Choices.js
   onMount(async () => {
     console.log("🔧 MultiSelectSearchAutocomplete: onMount started", {
       id,

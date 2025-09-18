@@ -640,31 +640,6 @@
     // Force refresh to show the message
   }
 
-  // Default selection logic between API and static options
-  function selectSource(query: string): "api" | "options" {
-    if (typeof sourceSelector === "function") {
-      try {
-        return sourceSelector(query, staticPlainOptions);
-      } catch {
-        // fall through to default
-      }
-    }
-
-    // Check if we have static options (items or groups with choices)
-    const hasStaticOptions =
-      (items && items.length > 0) ||
-      (groups && groups.some((g) => g.choices && g.choices.length > 0));
-
-    // If we have static options, use them; otherwise default to API if configured
-    if (hasStaticOptions) {
-      return "options";
-    } else if (source_url && source_key && query.trim().length >= minLength) {
-      return "api";
-    } else {
-      return "options"; // fallback to options even if empty
-    }
-  }
-
   // Build URL for API requests. Replaces {query} placeholder or appends ?q=
   function buildApiUrl(query: string): string {
     if (!source_url) return "";
@@ -689,12 +664,6 @@
     } catch {
       return String(o);
     }
-  }
-
-  function toValue(o: any, label: string): string | number {
-    if (o && typeof o === "object" && "value" in o && o.value != null)
-      return o.value as string | number;
-    return label;
   }
 
   async function fetchApiChoices(query: string): Promise<ChoiceItem[]> {
@@ -1194,11 +1163,8 @@
         ? baseNoChoicesText
         : tTooShort(minLength);
 
-      const hasApiConfig = source_url && source_key;
-
       console.log("📊 Initial configuration:", {
         hasStaticOptions,
-        hasApiConfig,
         initialNoChoicesText,
         staticChoices: staticChoices.length,
         enhancedItems: enhancedItems.length,
@@ -1449,7 +1415,6 @@
         // When an item is selected, clear the search and show all unselected options
         if (searchInputElement) {
           searchInputElement.value = "";
-          lastQuery = "";
         }
 
         // Only reset to static choices if we're in "options" mode
@@ -1530,7 +1495,6 @@
         // Always add custom search handling to filter out selected values
         searchInputElement.addEventListener("input", () => {
           const raw = searchInputElement!.value || "";
-          lastQuery = raw;
           if (debounceTimer) clearTimeout(debounceTimer);
           debounceTimer = setTimeout(async () => {
             const q = raw.trim();

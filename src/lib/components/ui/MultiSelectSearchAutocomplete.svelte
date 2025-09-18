@@ -220,9 +220,7 @@
   let choicesInstance: any;
   let searchInputElement: HTMLInputElement | null = null;
   let debounceTimer: any = null;
-  let lastQuery = "";
   const baseNoChoicesText = "No choices to choose from";
-  let isProcessingPromotion = false;
 
   // Track context for promoted items (postcode -> LAD promotions)
   const promotedItemContext = $state(new Map<string, string>());
@@ -614,30 +612,7 @@
     // Force refresh to show the message
   }
 
-  // Default selection logic between API and static options
-  function selectSource(query: string): "api" | "options" {
-    if (typeof sourceSelector === "function") {
-      try {
-        return sourceSelector(query, staticPlainOptions);
-      } catch {
-        // fall through to default
-      }
-    }
-
-    // Check if we have static options (items or groups with choices)
-    const hasStaticOptions =
-      (items && items.length > 0) ||
-      (groups && groups.some((g) => g.choices && g.choices.length > 0));
-
-    // If we have static options, use them; otherwise default to API if configured
-    if (hasStaticOptions) {
-      return "options";
-    } else if (source_url && source_key && query.trim().length >= minLength) {
-      return "api";
-    } else {
-      return "options"; // fallback to options even if empty
-    }
-  }
+  // selectSource removed (decideMode handles mode selection)
 
   // Build URL for API requests. Replaces {query} placeholder or appends ?q=
   function buildApiUrl(query: string): string {
@@ -665,11 +640,7 @@
     }
   }
 
-  function toValue(o: any, label: string): string | number {
-    if (o && typeof o === "object" && "value" in o && o.value != null)
-      return o.value as string | number;
-    return label;
-  }
+  // toValue removed (no longer used)
 
   async function fetchApiChoices(query: string): Promise<ChoiceItem[]> {
     const url = buildApiUrl(query);
@@ -1173,11 +1144,8 @@
         ? baseNoChoicesText
         : tTooShort(minLength);
 
-      const hasApiConfig = source_url && source_key;
-
       console.log("📊 Initial configuration:", {
         hasStaticOptions,
-        hasApiConfig,
         initialNoChoicesText,
         staticChoices: staticChoices.length,
         enhancedItems: enhancedItems.length,
@@ -1421,7 +1389,6 @@
         // When an item is selected, clear the search and show all unselected options
         if (searchInputElement) {
           searchInputElement.value = "";
-          lastQuery = "";
         }
 
         // Only reset to static choices if we're in "options" mode
@@ -1502,7 +1469,6 @@
         // Always add custom search handling to filter out selected values
         searchInputElement.addEventListener("input", () => {
           const raw = searchInputElement!.value || "";
-          lastQuery = raw;
           if (debounceTimer) clearTimeout(debounceTimer);
           debounceTimer = setTimeout(async () => {
             const q = raw.trim();
@@ -1510,7 +1476,6 @@
               query: q,
               queryLength: q.length,
               minLength,
-              lastQuery,
               currentMode,
             });
 

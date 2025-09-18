@@ -80,6 +80,7 @@
     ga4BaseEvent = { event_name: "select_content", type: "finder" },
     filterPanelSectionsExpanded = false,
     filterPanelExpanded = true,
+    includeApplyButton = true,
   } = $props<{
     resultsCount?: string;
     sectionsData?: Section[];
@@ -88,6 +89,7 @@
     ga4BaseEvent?: Record<string, any>;
     filterPanelSectionsExpanded?: boolean;
     filterPanelExpanded?: boolean;
+    includeApplyButton?: boolean;
   }>();
 
   let sections = $derived(sectionsData);
@@ -288,21 +290,23 @@
           </details>
         {/each}
 
-        <div class="app-c-filter-panel__actions">
-          <input
-            type="submit"
-            value={applyButtonText}
-            class="govuk-button app-c-filter-panel__action app-c-filter-panel__action--submit"
-            data-ga4-event={getGa4Event({
-              text: applyButtonText,
-              section: filterButtonText,
-              action: "apply",
-              index_section: 0,
-              index_section_count: sections.length,
-            })}
-            data-disable-with={applyButtonText}
-          />
-        </div>
+        {#if includeApplyButton}
+          <div class="app-c-filter-panel__actions">
+            <input
+              type="submit"
+              value={applyButtonText}
+              class="govuk-button app-c-filter-panel__action app-c-filter-panel__action--submit"
+              data-ga4-event={getGa4Event({
+                text: applyButtonText,
+                section: filterButtonText,
+                action: "apply",
+                index_section: 0,
+                index_section_count: sections.length,
+              })}
+              data-disable-with={applyButtonText}
+            />
+          </div>
+        {/if}
       </div>
     {/if}
   </div>

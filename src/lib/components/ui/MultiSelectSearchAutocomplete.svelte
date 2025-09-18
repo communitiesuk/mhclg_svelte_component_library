@@ -220,7 +220,9 @@
   let choicesInstance: any;
   let searchInputElement: HTMLInputElement | null = null;
   let debounceTimer: any = null;
+  let lastQuery = "";
   const baseNoChoicesText = "No choices to choose from";
+  let isProcessingPromotion = false;
 
   // Track context for promoted items (postcode -> LAD promotions)
   const promotedItemContext = $state(new Map<string, string>());
@@ -592,7 +594,33 @@
       choicesInstance.config.searchChoices = false;
 
       if (hasStatic) {
-        resetToStaticChoices(); // ensure full dataset is present with group text
+        // For grouped options, use grouped restoration method
+        console.log("🔍 Checking for grouped options:", {
+          groups: groups?.length || 0,
+          hasGroups: !!(groups && groups.length > 0),
+        });
+        if (groups && groups.length > 0) {
+          console.log("📋 Applying grouped options mode");
+          let selectedValues: string[] = [];
+          try {
+            const currentValue = choicesInstance.getValue(true);
+            if (Array.isArray(currentValue)) {
+              selectedValues = currentValue.map((item: any) =>
+                String(item.value || item),
+              );
+            } else if (currentValue && typeof currentValue === "object") {
+              selectedValues = [String(currentValue.value || currentValue)];
+            } else if (currentValue) {
+              selectedValues = [String(currentValue)];
+            }
+          } catch (error) {
+            console.warn("⚠️ Error getting current value:", error);
+            selectedValues = [];
+          }
+          restoreGroupedChoicesWithoutReinit(selectedValues);
+        } else {
+          resetToStaticChoices(); // ensure full dataset is present with group text
+        }
         // Don't set noChoicesText here - let the search logic handle it
         // This allows us to show "No results found" vs "No choices to choose from"
       } else {
@@ -612,7 +640,30 @@
     // Force refresh to show the message
   }
 
-  // selectSource removed (decideMode handles mode selection)
+  // Default selection logic between API and static options
+  function selectSource(query: string): "api" | "options" {
+    if (typeof sourceSelector === "function") {
+      try {
+        return sourceSelector(query, staticPlainOptions);
+      } catch {
+        // fall through to default
+      }
+    }
+
+    // Check if we have static options (items or groups with choices)
+    const hasStaticOptions =
+      (items && items.length > 0) ||
+      (groups && groups.some((g) => g.choices && g.choices.length > 0));
+
+    // If we have static options, use them; otherwise default to API if configured
+    if (hasStaticOptions) {
+      return "options";
+    } else if (source_url && source_key && query.trim().length >= minLength) {
+      return "api";
+    } else {
+      return "options"; // fallback to options even if empty
+    }
+  }
 
   // Build URL for API requests. Replaces {query} placeholder or appends ?q=
   function buildApiUrl(query: string): string {
@@ -640,7 +691,11 @@
     }
   }
 
-  // toValue removed (no longer used)
+  function toValue(o: any, label: string): string | number {
+    if (o && typeof o === "object" && "value" in o && o.value != null)
+      return o.value as string | number;
+    return label;
+  }
 
   async function fetchApiChoices(query: string): Promise<ChoiceItem[]> {
     const url = buildApiUrl(query);
@@ -851,16 +906,11 @@
           // Store reference on the element for external access
           (selectElement as any).choices = choicesInstance;
 
-          // Re-apply the current mode after reinitialization
-          setTimeout(() => {
-            if (choicesInstance) {
-              applyMode(currentMode);
-              console.log(
-                "🔄 Re-applied current mode after reinitialization:",
-                currentMode,
-              );
-            }
-          }, 0);
+          // For grouped options, don't re-apply mode as it would overwrite the grouped structure
+          // The grouped structure is already restored above
+          console.log(
+            "✅ Grouped structure restored, skipping mode re-application",
+          );
 
           // Restore focus to the main Choices container after reinitialization
           setTimeout(() => {
@@ -1144,8 +1194,11 @@
         ? baseNoChoicesText
         : tTooShort(minLength);
 
+      const hasApiConfig = source_url && source_key;
+
       console.log("📊 Initial configuration:", {
         hasStaticOptions,
+        hasApiConfig,
         initialNoChoicesText,
         staticChoices: staticChoices.length,
         enhancedItems: enhancedItems.length,
@@ -1374,8 +1427,15 @@
         config: choicesInstance.config,
       });
 
-      // Initialize static choices
-      choicesInstance.setChoices(staticChoices, "value", "label", true);
+      // Initialize static choices - skip for grouped options as they'll be handled by applyMode
+      if (!(groups && groups.length > 0)) {
+        choicesInstance.setChoices(staticChoices, "value", "label", true);
+        console.log("✅ Initialized with flat static choices");
+      } else {
+        console.log(
+          "⏭️ Skipping initial static choices setup for grouped options",
+        );
+      }
 
       // Keep the bound value in sync by reading from the Choices instance
       selectElement.addEventListener("change", async (_event: Event) => {
@@ -1386,9 +1446,31 @@
       selectElement.addEventListener("choice", (ev: any) => {
         console.log("🎯 Choice selected, resetting search");
 
+        // Check if this was a promoted choice and store context
+        const choice = ev?.detail?.choice;
+        if (
+          choice?.customProperties?.isPromoted &&
+          choice.customProperties.parentValue &&
+          choice.customProperties.childLabel
+        ) {
+          const parentValue = choice.customProperties.parentValue;
+          const childLabel = choice.customProperties.childLabel;
+          const parentLabel = choice.customProperties.parentLabel || undefined;
+          const context = `(containing ${childLabel})`;
+          promotedItemContext.set(parentValue, context);
+          if (parentLabel) promotedParentLabelMap.set(parentValue, parentLabel);
+          console.log("🏷️ Stored promotion context:", {
+            parentValue,
+            childLabel,
+            context,
+            parentLabel,
+          });
+        }
+
         // When an item is selected, clear the search and show all unselected options
         if (searchInputElement) {
           searchInputElement.value = "";
+          lastQuery = "";
         }
 
         // Only reset to static choices if we're in "options" mode
@@ -1469,6 +1551,7 @@
         // Always add custom search handling to filter out selected values
         searchInputElement.addEventListener("input", () => {
           const raw = searchInputElement!.value || "";
+          lastQuery = raw;
           if (debounceTimer) clearTimeout(debounceTimer);
           debounceTimer = setTimeout(async () => {
             const q = raw.trim();
@@ -1476,6 +1559,7 @@
               query: q,
               queryLength: q.length,
               minLength,
+              lastQuery,
               currentMode,
             });
 

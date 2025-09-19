@@ -8,7 +8,7 @@
     href = undefined,
     callToActionBackgroundColor = "white",
     bodyText = undefined,
-    bodyTextColor = undefined,
+    bodyTextColor = "#0B0C0C",
     bodyBackgroundColor = "#FBFCFD",
     bodyTopBorderColor = "#F4F8FB",
     bodyBottomBorderColor = "#c3d9e9",
@@ -23,15 +23,13 @@
     style="background-color: {callToActionBackgroundColor};"
   >
     {#if linkCard}
-      <div
-        class="link"
-        style="display: flex; align-items: center; justify-content: space-between;"
-      >
-        <span class="govuk-heading-m">
-          <a {href} class="govuk-link" style="color: {linkTextColor};"
-            >{linkText}</a
-          >
-        </span>
+      <a class="link" {href}>
+        <h3
+          class="govuk-link link-heading govuk-heading-m"
+          style="--link-text-color: {linkTextColor}"
+        >
+          {linkText}
+        </h3>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="10"
@@ -44,17 +42,19 @@
             fill={linkTextColor}
           ></path>
         </svg>
-      </div>
+      </a>
     {:else}
       {@render cardSnippet()}
     {/if}
   </div>
 
   <div
-    class="body govuk-body"
-    style="background-color: {bodyBackgroundColor}; color: {bodyTextColor}; border-bottom: 1px solid {bodyBottomBorderColor}; border-top: 1px solid {bodyTopBorderColor};"
+    class="body-div"
+    style="--body-bg-color: {bodyBackgroundColor}; --body-bottom-border-color: {bodyBottomBorderColor}; --body-top-border-color: {bodyTopBorderColor};"
   >
-    {bodyText}
+    <p class="govuk-body body-text" style="--body-text-color: {bodyTextColor};">
+      {bodyText}
+    </p>
   </div>
 </div>
 
@@ -68,9 +68,27 @@
     padding: 15px 20px;
   }
 
-  .body {
+  .link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  .link-heading {
+    color: var(--link-text-color);
+  }
+
+  .body-div {
+    background-color: var(--body-bg-color);
+    border-bottom: 1px solid var(--body-bottom-border-color);
+    border-top: 1px solid var(--body-top-border-color);
     padding: 10px 20px 15px 20px;
     flex: 1;
+  }
+
+  .body-text {
+    color: var(--body-text-color);
   }
 
   .govuk-heading-m {

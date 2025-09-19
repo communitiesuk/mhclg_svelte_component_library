@@ -106,12 +106,27 @@
     }),
   );
 
-  let openLabel = $state();
+  // holds open/closed state for each label
+  let openStates = {};
+
+  function toggle(label) {
+    openStates = {
+      ...openStates,
+      [label]: !openStates[label], // flip true/false
+    };
+  }
+
   let annotation = $state(true);
 
-  let annotationArrowPosition = $derived(
-    Object.values(allDataNormalized[0].rowData)[0][0].value,
+  let dataFirstChart = $derived(Object.values(allDataNormalized[0].rowData)[0]);
+
+  let annotationArrowTarget = $derived(
+    Object.values(allDataNormalized[0].rowData)[0],
   );
+
+  $inspect(annotationArrowTarget);
+
+  let annotationArrowPosition = $derived(annotationArrowTarget.value);
 
   let annotationText = $state("Bournemouth, Christchurch and Poole 008A");
 
@@ -234,9 +249,7 @@
 {#if annotation}
   <div bind:clientWidth={topWidth}>
     <svg width={topWidth} height="88">
-      <!-- {#if !activeMarkerId} -->
       <g>
-        <!-- Example text inside SVG -->
         <text
           id="label"
           x="0"
@@ -252,7 +265,6 @@
         </text>
       </g>
       <defs>
-        <!-- Reusable arrow marker -->
         <marker
           id="arrow-down"
           markerWidth="10"
@@ -281,7 +293,6 @@
           ? 0.2
           : 1}
       ></path>
-      <!-- {/if} -->
     </svg>
   </div>
 {/if}
@@ -302,7 +313,7 @@
     {#if showIcon}
       <button
         id="info-{positionChart.label}"
-        onclick={() => onClickIcon(positionChart.label)}>ⓘ</button
+        onclick={() => toggle(positionChart.label)}>ⓘ</button
       >
     {/if}
     <div
@@ -372,8 +383,10 @@
         {/each}
       </svg>
     </div>
-    {#if openLabel === positionChart.label}
-      <div style="grid-column:1 / -1; background-color:lightgrey; padding:10px">
+    {#if openStates[positionChart.label]}
+      <div
+        style="grid-column:1 / -1; background-color:lightgrey; padding:10px; margin-right:{markerRadius}px"
+      >
         <p>
           Description for {positionChart.label}
         </p>

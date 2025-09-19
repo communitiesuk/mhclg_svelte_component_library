@@ -1,6 +1,4 @@
 <script>
-  import PostcodeOrAreaSearch from "./PostcodeOrAreaSearch.svelte";
-
   let {
     linkCard = true,
     linkText = undefined,

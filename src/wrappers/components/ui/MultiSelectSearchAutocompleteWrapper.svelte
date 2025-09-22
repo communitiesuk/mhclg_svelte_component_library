@@ -354,7 +354,7 @@
       {
         name: "searchResultLimit",
         category: "Search options",
-        value: 100,
+        value: 6,
         description: {
           markdown: true,
           arr: [`Maximum number of options to show in search results.`],
@@ -1018,7 +1018,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette].join("|")}
+    {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.searchPlaceholder, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette].join("|")}
       <MultiSelectSearchAutocomplete
         bind:value={selectedValue}
         bind:bindSelectedItemIndexMap

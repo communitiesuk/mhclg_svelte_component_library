@@ -38,7 +38,7 @@
     searchPlaceholder = "Search in list",
     allowHTML = true,
     shouldSort = false,
-    searchResultLimit = 100,
+    searchResultLimit = 6,
     removeItemButton = true, // Will default to multiple if not specified
 
     // Styling and layout - pass through to Select component
@@ -2274,9 +2274,12 @@
                   // Have choices to show
                   // Don't set noChoicesText when we have choices - let Choices.js handle it
 
+                  // Apply searchResultLimit to the filtered choices
+                  const limitedChoices = filteredStaticChoicesByParent.slice(0, searchResultLimit);
+
                   // Ensure group text is applied to filtered choices
                   const choicesWithGroupText = ensureGroupTextApplied(
-                    filteredStaticChoicesByParent.map((c) => ({
+                    limitedChoices.map((c) => ({
                       value: String(c.value),
                       label: c.label,
                       disabled: c.disabled,
@@ -2295,7 +2298,7 @@
 
                   console.log(
                     "✅ Set filtered static choices:",
-                    filteredStaticChoicesByParent.length,
+                    limitedChoices.length,
                   );
                 }
               }

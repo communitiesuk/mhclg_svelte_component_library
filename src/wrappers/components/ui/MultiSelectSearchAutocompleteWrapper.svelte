@@ -133,6 +133,8 @@
    */
   let selectedValue = $state([]);
   let selectedValues = $state([]);
+  let bindSelectedItemIndexMap = $state(new Map());
+  let bindNextSelectionIndex = $state(0);
 
   /**
    * ! Step 3 - Add your props
@@ -240,7 +242,7 @@
         name: "value",
         category: "Core attributes",
         isBinded: true,
-        value: selectedValue,
+        value: null,
         description: {
           markdown: true,
           arr: [
@@ -721,7 +723,8 @@
         name: "bindSelectedItemIndexMap",
         category: "Bindable state",
         propType: "fixed",
-        value: undefined,
+        value: null,
+        isBinded: true,
         description: {
           markdown: true,
           arr: [
@@ -733,7 +736,8 @@
         name: "bindNextSelectionIndex",
         category: "Bindable state",
         propType: "fixed",
-        value: undefined,
+        value: null,
+        isBinded: true,
         description: {
           markdown: true,
           arr: [
@@ -791,7 +795,13 @@
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
 
-  let derivedParametersObject = $derived({});
+  let derivedParametersObject = $derived({
+    value: selectedValue,
+    bindSelectedItemIndexMap: bindSelectedItemIndexMap instanceof Map 
+      ? Object.fromEntries(bindSelectedItemIndexMap) 
+      : bindSelectedItemIndexMap,
+    bindNextSelectionIndex: bindNextSelectionIndex
+  });
 
   /**
    * DONOTTOUCH *
@@ -885,6 +895,8 @@
     {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette].join("|")}
       <MultiSelectSearchAutocomplete
         bind:value={selectedValue}
+        bind:bindSelectedItemIndexMap={bindSelectedItemIndexMap}
+        bind:bindNextSelectionIndex={bindNextSelectionIndex}
         {...parametersObject}
       ></MultiSelectSearchAutocomplete>
     {/key}

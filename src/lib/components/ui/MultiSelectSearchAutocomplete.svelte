@@ -40,6 +40,7 @@
     shouldSort = false,
     searchResultLimit = 6,
     removeItemButton = true, // Will default to multiple if not specified
+    showSearchIcon = true,
 
     // Styling and layout - pass through to Select component
     formGroupClasses = "",
@@ -161,6 +162,7 @@
     shouldSort?: boolean;
     searchResultLimit?: number;
     removeItemButton?: boolean;
+    showSearchIcon?: boolean;
     formGroupClasses?: string;
     fullWidth?: boolean;
     describedBy?: string;
@@ -2593,7 +2595,7 @@
     {describedBy}
     {disabled}
     bind:selectElement
-    renderRight={rightIcon}
+    renderRight={showSearchIcon ? rightIcon : undefined}
     {...attributes}
   />
 </div>

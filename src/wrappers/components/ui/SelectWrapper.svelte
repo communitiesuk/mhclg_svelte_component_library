@@ -215,6 +215,21 @@
         },
       },
       {
+        name: "groups",
+        category: "Core attributes",
+        isEditable: true,
+        value: [],
+        description: {
+          markdown: true,
+          arr: [
+            `An array of objects defining option groups. Each group object should have:`,
+            `<code>label</code>: The label for the option group.`,
+            `<code>choices</code>: An array of options in the same format as the <code>items</code> prop.`,
+            `<code>disabled</code> (optional): Set to <code>true</code> to disable all options in the group.`,
+          ],
+        },
+      },
+      {
         name: "value",
         category: "Core attributes",
         isBinded: true,
@@ -330,6 +345,17 @@
           markdown: true,
           arr: [
             `Optional override for the <code>aria-describedby</code> attribute. If not provided, it's automatically generated based on the presence of hint and error messages.`,
+          ],
+        },
+      },
+      {
+        name: "disabled",
+        category: "Styling and layout",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, disables the select element, preventing user interaction.`,
           ],
         },
       },

@@ -388,6 +388,17 @@
           ],
         },
       },
+      {
+        name: "showSearchIcon",
+        category: "Search options",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Whether to show the search icon button.</strong> When <code>true</code>, displays a search icon on the right side of the input. When <code>false</code>, hides the search icon for a cleaner appearance.`,
+          ],
+        },
+      },
 
       // Styling and Layout
       {
@@ -1037,7 +1048,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.searchPlaceholder, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette, parametersObject.disabled, parametersObject.fullWidth].join("|")}
+    {#key [parametersObject.removeItemButton, parametersObject.showSearchIcon, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.searchPlaceholder, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette, parametersObject.disabled, parametersObject.fullWidth].join("|")}
       <MultiSelectSearchAutocomplete
         bind:value={selectedValue}
         bind:bindSelectedItemIndexMap

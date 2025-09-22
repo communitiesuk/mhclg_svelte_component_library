@@ -1022,13 +1022,13 @@
       <h6 class="govuk-heading-s">Postcode to LSOA promotion demo</h6>
       <p class="govuk-body">
         This example shows how postcodes can be promoted to their parent LSOA
-        (Lower Layer Super Output Area). Static options are LSOAs; API suggestions are
-        postcodes from postcodes.io. When you select a postcode, it gets promoted to
-        its containing LSOA automatically.
+        (Lower Layer Super Output Area). Static options are LSOAs; API
+        suggestions are postcodes from postcodes.io. When you select a postcode,
+        it gets promoted to its containing LSOA automatically.
       </p>
       <p class="govuk-body">
-        <strong>Try this:</strong> Type "TW5 0AA" (Hounslow postcode) and select it.
-        It will be promoted to "Hounslow 018A" LSOA. Or type "SW1A 1AA" (Westminster)
+        <strong>Try this:</strong> Type "TW5 0AA" (Hounslow postcode) and select
+        it. It will be promoted to "Hounslow 018A" LSOA. Or type "SW1A 1AA" (Westminster)
         to see it promoted to "Westminster 018F" LSOA.
       </p>
     </div>

@@ -310,7 +310,22 @@
       {
         name: "validate",
         category: "Error handling",
-        value: undefined,
+        value: (value) => {
+          // Default validation: require at least one selection
+          if (!value || (Array.isArray(value) && value.length === 0)) {
+            return "Please select at least one option";
+          }
+          return undefined;
+        },
+        functionElements: {
+          functionAsString: `function(value) {
+  // Default validation: require at least one selection
+  if (!value || (Array.isArray(value) && value.length === 0)) {
+    return "Please select at least one option";
+  }
+  return undefined;
+}`,
+        },
         description: {
           markdown: true,
           arr: [

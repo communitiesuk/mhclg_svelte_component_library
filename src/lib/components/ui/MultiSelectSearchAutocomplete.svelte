@@ -1216,7 +1216,7 @@
 
               // Color calculation (needed for both circles and border matching)
               let color = "#b1b4b6"; // Default fallback color
-              
+
               // Circle (color keyed by parent if present, else extract parent from composite value)
               let colorKey;
               if (enableSelectedItemCircles && isMulti) {
@@ -1231,7 +1231,7 @@
                 color = colorForValue(colorKey);
               }
 
-              // Circle 
+              // Circle
               let circle = "";
               if (enableSelectedItemCircles && isMulti) {
                 circle = `<span class="choices__item-circle" style="background:${color}"></span>`;
@@ -1256,9 +1256,10 @@
                 : "";
 
               // Border styling for matching circle color
-              const borderStyle = matchBorderToCircleColor && enableSelectedItemCircles && isMulti 
-                ? `style="border: 2px solid ${color}; box-shadow: none;"` 
-                : "";
+              const borderStyle =
+                matchBorderToCircleColor && enableSelectedItemCircles && isMulti
+                  ? `style="border: 2px solid ${color}; box-shadow: none;"`
+                  : "";
 
               return strToEl(
                 `<div class="${classes}"

@@ -1079,7 +1079,7 @@
       tPartialPostcodeInSelectedParent={tLsoaPartialPostcodeInSelectedParent}
       bind:value={lsoaSelections11}
       enableSelectedItemCircles={true}
-      selectedItemCircleColorPalette={selectedItemCircleColorPalette}
+      {selectedItemCircleColorPalette}
       matchBorderToCircleColor={true}
       selectedChipBackgroundColor="#FFF"
       choicesItemBorderRadius="5px"

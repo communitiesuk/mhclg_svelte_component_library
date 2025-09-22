@@ -621,41 +621,93 @@
         name: "apiParentResolver",
         category: "Advanced features",
         propType: "fixed",
-        value: undefined,
+        value: function(apiItem) {
+          // Extract parent value from API response
+          // Example: return apiItem.codes?.lau2 || apiItem.lau2;
+          return apiItem.parentCode;
+        },
+        functionElements: {
+          functionAsString: `function(apiItem) {
+  // Extract parent value from API response
+  // Example: return apiItem.codes?.lau2 || apiItem.lau2;
+  return apiItem.parentCode;
+}`,
+        },
         description: {
           markdown: true,
-          arr: [`Function to resolve parent options from API data.`],
+          arr: [
+            `<strong>Function to resolve parent options from API data.</strong> Required when using dual-mode (API + static options) with cross-selection logic. Receives API response item, should return parent identifier for coverage checking.`,
+            `<strong>Dependencies:</strong> Used with dual-mode configurations when both <code>source_url</code> and static <code>items</code> are provided.`,
+            `<strong>Default:</strong> <code>undefined</code> (no parent resolution)`,
+          ],
         },
       },
       {
         name: "staticChildrenResolver",
         category: "Advanced features",
         propType: "fixed",
-        value: undefined,
+        value: function(staticItem) {
+          // Extract child values from static option
+          // Example: return staticItem.children || [];
+          return staticItem.postcodes || [];
+        },
+        functionElements: {
+          functionAsString: `function(staticItem) {
+  // Extract child values from static option
+  // Example: return staticItem.children || [];
+  return staticItem.postcodes || [];
+}`,
+        },
         description: {
           markdown: true,
-          arr: [`Function to resolve child options from static data.`],
+          arr: [
+            `<strong>Function to resolve child options from static data.</strong> Used for hierarchical relationships where static options contain child items that should be checked against API selections.`,
+            `<strong>Dependencies:</strong> Used with dual-mode configurations when static options contain hierarchical data.`,
+            `<strong>Default:</strong> <code>undefined</code> (no child resolution)`,
+          ],
         },
       },
       {
         name: "selectedChildParentResolver",
         category: "Advanced features",
         propType: "fixed",
-        value: undefined,
+        value: function(selectedValue) {
+          // Resolve parent from selected child value
+          // Example: Look up postcode's LAD
+          return postcodeToLADMapping[selectedValue];
+        },
+        functionElements: {
+          functionAsString: `function(selectedValue) {
+  // Resolve parent from selected child value
+  // Example: Look up postcode's LAD
+  return postcodeToLADMapping[selectedValue];
+}`,
+        },
         description: {
           markdown: true,
-          arr: [`Function to resolve parent from selected child value.`],
+          arr: [
+            `<strong>Function to resolve parent from selected child value.</strong> Used to determine what parent option a selected child belongs to for coverage checking and conflict resolution.`,
+            `<strong>Dependencies:</strong> Used when dealing with child-parent relationships in selected values.`,
+            `<strong>Default:</strong> <code>undefined</code> (no parent resolution from selected values)`,
+          ],
         },
       },
       {
         name: "tApiChildInSelectedParent",
         category: "Advanced features",
         propType: "fixed",
-        value: undefined,
+        value: (child, parent) => `${child} is in ${parent}, which is already selected`,
+        functionElements: {
+          functionAsString: `function(child, parent) {
+  return \`\${child} is in \${parent}, which is already selected\`;
+}`,
+        },
         description: {
           markdown: true,
           arr: [
-            `Function to generate message when API child is in selected parent.`,
+            `<strong>Function to generate message when API child is in selected parent.</strong> Called when user searches for an API item (e.g., postcode) that belongs to an already selected parent option (e.g., LAD).`,
+            `<strong>Dependencies:</strong> Used with <code>apiParentResolver</code> when API items can be contained within static selections.`,
+            `<strong>Default:</strong> <code>(child, parent) => \`\${child} is in \${parent}, which is already selected\`</code>`,
           ],
         },
       },
@@ -663,11 +715,18 @@
         name: "tApiChildCoveredBySelectedChild",
         category: "Advanced features",
         propType: "fixed",
-        value: undefined,
+        value: (child, parent, selectedChild) => `${child} is in ${parent}, which is already covered by the selected postcode ${selectedChild}`,
+        functionElements: {
+          functionAsString: `function(child, parent, selectedChild) {
+  return \`\${child} is in \${parent}, which is already covered by the selected postcode \${selectedChild}\`;
+}`,
+        },
         description: {
           markdown: true,
           arr: [
-            `Function to generate message when API child is covered by selected child.`,
+            `<strong>Function to generate message when API child is covered by selected child.</strong> Called when user searches for an API item that belongs to the same parent as an already selected child item.`,
+            `<strong>Dependencies:</strong> Used with <code>apiParentResolver</code> and <code>selectedChildParentResolver</code> for child-parent conflict detection.`,
+            `<strong>Default:</strong> <code>(child, parent, selectedChild) => \`\${child} is in \${parent}, which is already covered by the selected postcode \${selectedChild}\`</code>`,
           ],
         },
       },
@@ -675,11 +734,18 @@
         name: "tStaticParentContainsSelectedChildren",
         category: "Advanced features",
         propType: "fixed",
-        value: undefined,
+        value: (parent, children) => `${parent} contains ${children.join(", ")}, which ${children.length > 1 ? "are" : "is"} already selected`,
+        functionElements: {
+          functionAsString: `function(parent, children) {
+  return \`\${parent} contains \${children.join(", ")}, which \${children.length > 1 ? "are" : "is"} already selected\`;
+}`,
+        },
         description: {
           markdown: true,
           arr: [
-            `Function to generate message when static parent contains selected children.`,
+            `<strong>Function to generate message when static parent contains selected children.</strong> Called when user tries to select a parent option that would encompass already selected child items.`,
+            `<strong>Dependencies:</strong> Used with <code>staticChildrenResolver</code> to check if parent options conflict with existing child selections.`,
+            `<strong>Default:</strong> <code>(parent, children) => \`\${parent} contains \${children.join(", ")}, which \${children.length > 1 ? "are" : "is"} already selected\`</code>`,
           ],
         },
       },
@@ -687,11 +753,18 @@
         name: "tPartialPostcodeInSelectedParent",
         category: "Advanced features",
         propType: "fixed",
-        value: undefined,
+        value: (partialPostcode, parent) => `Postcodes beginning ${partialPostcode}... are in ${parent}, which is already selected`,
+        functionElements: {
+          functionAsString: `function(partialPostcode, parent) {
+  return \`Postcodes beginning \${partialPostcode}... are in \${parent}, which is already selected\`;
+}`,
+        },
         description: {
           markdown: true,
           arr: [
-            `Function to generate message for partial postcode in selected parent.`,
+            `<strong>Function to generate message for partial postcode in selected parent.</strong> Called when <code>promoteApiChildToParent</code> is enabled and user searches partial postcode that belongs to already selected parent.`,
+            `<strong>Dependencies:</strong> Used when <code>promoteApiChildToParent</code> is true and partial postcode searches conflict with selected parents.`,
+            `<strong>Default:</strong> <code>(partialPostcode, parent) => \`Postcodes beginning \${partialPostcode}... are in \${parent}, which is already selected\`</code>`,
           ],
         },
       },

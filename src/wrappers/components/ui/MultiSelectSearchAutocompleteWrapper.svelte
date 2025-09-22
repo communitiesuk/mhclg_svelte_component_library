@@ -460,7 +460,9 @@
         value: undefined,
         description: {
           markdown: true,
-          arr: [`Function to decide whether to use 'api' or 'options' for a given query.`],
+          arr: [
+            `Function to decide whether to use 'api' or 'options' for a given query.`,
+          ],
         },
       },
       {
@@ -635,7 +637,7 @@
       },
       {
         name: "selectedChildParentResolver",
-        category: "Advanced features", 
+        category: "Advanced features",
         propType: "fixed",
         value: undefined,
         description: {
@@ -650,7 +652,9 @@
         value: undefined,
         description: {
           markdown: true,
-          arr: [`Function to generate message when API child is in selected parent.`],
+          arr: [
+            `Function to generate message when API child is in selected parent.`,
+          ],
         },
       },
       {
@@ -660,7 +664,9 @@
         value: undefined,
         description: {
           markdown: true,
-          arr: [`Function to generate message when API child is covered by selected child.`],
+          arr: [
+            `Function to generate message when API child is covered by selected child.`,
+          ],
         },
       },
       {
@@ -670,7 +676,9 @@
         value: undefined,
         description: {
           markdown: true,
-          arr: [`Function to generate message when static parent contains selected children.`],
+          arr: [
+            `Function to generate message when static parent contains selected children.`,
+          ],
         },
       },
       {
@@ -680,7 +688,9 @@
         value: undefined,
         description: {
           markdown: true,
-          arr: [`Function to generate message for partial postcode in selected parent.`],
+          arr: [
+            `Function to generate message for partial postcode in selected parent.`,
+          ],
         },
       },
 
@@ -700,7 +710,9 @@
         value: false,
         description: {
           markdown: true,
-          arr: [`Promote API child (e.g., postcode) to its parent option (e.g., LAD).`],
+          arr: [
+            `Promote API child (e.g., postcode) to its parent option (e.g., LAD).`,
+          ],
         },
       },
 
@@ -712,7 +724,9 @@
         value: undefined,
         description: {
           markdown: true,
-          arr: [`Bindable map of item values to their color indices for external synchronization.`],
+          arr: [
+            `Bindable map of item values to their color indices for external synchronization.`,
+          ],
         },
       },
       {
@@ -722,7 +736,9 @@
         value: undefined,
         description: {
           markdown: true,
-          arr: [`Bindable next available color index for external synchronization.`],
+          arr: [
+            `Bindable next available color index for external synchronization.`,
+          ],
         },
       },
     ]),

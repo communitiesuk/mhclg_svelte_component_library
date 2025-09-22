@@ -797,10 +797,11 @@
 
   let derivedParametersObject = $derived({
     value: selectedValue,
-    bindSelectedItemIndexMap: bindSelectedItemIndexMap instanceof Map 
-      ? Object.fromEntries(bindSelectedItemIndexMap) 
-      : bindSelectedItemIndexMap,
-    bindNextSelectionIndex: bindNextSelectionIndex
+    bindSelectedItemIndexMap:
+      bindSelectedItemIndexMap instanceof Map
+        ? Object.fromEntries(bindSelectedItemIndexMap)
+        : bindSelectedItemIndexMap,
+    bindNextSelectionIndex: bindNextSelectionIndex,
   });
 
   /**
@@ -895,8 +896,8 @@
     {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette].join("|")}
       <MultiSelectSearchAutocomplete
         bind:value={selectedValue}
-        bind:bindSelectedItemIndexMap={bindSelectedItemIndexMap}
-        bind:bindNextSelectionIndex={bindNextSelectionIndex}
+        bind:bindSelectedItemIndexMap
+        bind:bindNextSelectionIndex
         {...parametersObject}
       ></MultiSelectSearchAutocomplete>
     {/key}

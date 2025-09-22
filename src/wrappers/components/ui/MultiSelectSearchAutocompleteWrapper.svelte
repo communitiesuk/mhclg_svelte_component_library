@@ -326,7 +326,11 @@
         value: "Search in list",
         description: {
           markdown: true,
-          arr: [`Placeholder text shown in the search input field.`],
+          arr: [
+            `<strong>Placeholder text for the search query input field in single select mode only.</strong> This text appears inside the search input box to guide users on what to type. Due to Choices.js library limitations, this property only works with single select (<code>multiple: false</code>). Has no effect in multiple select mode.`,
+            `<strong>Dependencies:</strong> Only functional with single select mode. Choices.js does not support search placeholders for multiple select elements.`,
+            `<strong>Default:</strong> <code>"Search in list"</code> (single select only)`,
+          ],
         },
       },
       {

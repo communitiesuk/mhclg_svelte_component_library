@@ -621,7 +621,7 @@
         name: "apiParentResolver",
         category: "Advanced features",
         propType: "fixed",
-        value: function(apiItem) {
+        value: function (apiItem) {
           // Extract parent value from API response
           // Example: return apiItem.codes?.lau2 || apiItem.lau2;
           return apiItem.parentCode;
@@ -646,7 +646,7 @@
         name: "staticChildrenResolver",
         category: "Advanced features",
         propType: "fixed",
-        value: function(staticItem) {
+        value: function (staticItem) {
           // Extract child values from static option
           // Example: return staticItem.children || [];
           return staticItem.postcodes || [];
@@ -671,7 +671,7 @@
         name: "selectedChildParentResolver",
         category: "Advanced features",
         propType: "fixed",
-        value: function(selectedValue) {
+        value: function (selectedValue) {
           // Resolve parent from selected child value
           // Example: Look up postcode's LAD
           return postcodeToLADMapping[selectedValue];
@@ -696,7 +696,8 @@
         name: "tApiChildInSelectedParent",
         category: "Advanced features",
         propType: "fixed",
-        value: (child, parent) => `${child} is in ${parent}, which is already selected`,
+        value: (child, parent) =>
+          `${child} is in ${parent}, which is already selected`,
         functionElements: {
           functionAsString: `function(child, parent) {
   return \`\${child} is in \${parent}, which is already selected\`;
@@ -715,7 +716,8 @@
         name: "tApiChildCoveredBySelectedChild",
         category: "Advanced features",
         propType: "fixed",
-        value: (child, parent, selectedChild) => `${child} is in ${parent}, which is already covered by the selected postcode ${selectedChild}`,
+        value: (child, parent, selectedChild) =>
+          `${child} is in ${parent}, which is already covered by the selected postcode ${selectedChild}`,
         functionElements: {
           functionAsString: `function(child, parent, selectedChild) {
   return \`\${child} is in \${parent}, which is already covered by the selected postcode \${selectedChild}\`;
@@ -734,7 +736,8 @@
         name: "tStaticParentContainsSelectedChildren",
         category: "Advanced features",
         propType: "fixed",
-        value: (parent, children) => `${parent} contains ${children.join(", ")}, which ${children.length > 1 ? "are" : "is"} already selected`,
+        value: (parent, children) =>
+          `${parent} contains ${children.join(", ")}, which ${children.length > 1 ? "are" : "is"} already selected`,
         functionElements: {
           functionAsString: `function(parent, children) {
   return \`\${parent} contains \${children.join(", ")}, which \${children.length > 1 ? "are" : "is"} already selected\`;
@@ -753,7 +756,8 @@
         name: "tPartialPostcodeInSelectedParent",
         category: "Advanced features",
         propType: "fixed",
-        value: (partialPostcode, parent) => `Postcodes beginning ${partialPostcode}... are in ${parent}, which is already selected`,
+        value: (partialPostcode, parent) =>
+          `Postcodes beginning ${partialPostcode}... are in ${parent}, which is already selected`,
         functionElements: {
           functionAsString: `function(partialPostcode, parent) {
   return \`Postcodes beginning \${partialPostcode}... are in \${parent}, which is already selected\`;

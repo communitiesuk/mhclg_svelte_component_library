@@ -410,11 +410,13 @@
       {
         name: "placeholderText",
         category: "Other options",
-        value: "placeholder",
+        value: "",
         description: {
           markdown: true,
           arr: [
-            `Custom placeholder text for single select mode. If not provided, defaults to "Select all that apply" for multiple select or "Select one" for single select.`,
+            `<strong>Custom placeholder text for single select mode only.</strong> This text appears as the initial/empty state option in the dropdown before any selections are made. Has no visible effect in multiple select mode.`,
+            `<strong>Dependencies:</strong> Only applies to single select mode (<code>multiple: false</code>). Ignored when <code>multiple: true</code>.`,
+            `<strong>Default:</strong> <code>"Select one"</code> for single select mode`,
           ],
         },
       },

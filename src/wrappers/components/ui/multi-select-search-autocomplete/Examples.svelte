@@ -1078,6 +1078,11 @@
       tStaticParentContainsSelectedChildren={tLsoaStaticParentContainsSelectedChildren}
       tPartialPostcodeInSelectedParent={tLsoaPartialPostcodeInSelectedParent}
       bind:value={lsoaSelections11}
+      enableSelectedItemCircles={true}
+      selectedItemCircleColorPalette={selectedItemCircleColorPalette}
+      matchBorderToCircleColor={true}
+      selectedChipBackgroundColor="#FFF"
+      choicesItemBorderRadius="5px"
     />
     <p class="govuk-body">
       Selected: {lsoaSelections11.length > 0

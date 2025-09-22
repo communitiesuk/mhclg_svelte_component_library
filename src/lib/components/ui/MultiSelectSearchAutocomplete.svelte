@@ -76,6 +76,9 @@
     choicesItemBorderColor = "#b1b4b6",
     choicesItemTextColor = "black",
     choicesItemDividerPadding = "10px",
+    choicesItemBorderRadius = "0",
+    // Selected chip/pill specific styling
+    selectedChipBackgroundColor = "#f3f2f1",
     // Circle feature props
     enableSelectedItemCircles = true,
     selectedItemCircleColor = "#1d70b8", // Default color when not using palette
@@ -100,7 +103,9 @@
       "#626a6e", // Mid grey
       "#b1b4b6", // Light grey
       "#0b0c0c", // Black
-    ], // Complete GOV.UK Design System palette (19 colors)
+    ],
+    // Enable border colors to match circle colors for selected items
+    matchBorderToCircleColor = false,
 
     // Cross-selection relationship resolvers (optional)
     // If provided, they enable dynamic messages when results map to already-selected parents/children
@@ -173,9 +178,12 @@
     choicesItemBorderColor?: string;
     choicesItemTextColor?: string;
     choicesItemDividerPadding?: string;
+    choicesItemBorderRadius?: string;
+    selectedChipBackgroundColor?: string;
     enableSelectedItemCircles?: boolean;
     selectedItemCircleColor?: string;
     selectedItemCircleColorPalette?: string[];
+    matchBorderToCircleColor?: boolean;
 
     // Cross-selection relationship resolvers (optional)
     apiParentResolver?:
@@ -1206,10 +1214,12 @@
               const meta = (data as any)?.customProperties;
               const hasParent = meta && meta.parentValue && meta.parentLabel;
 
+              // Color calculation (needed for both circles and border matching)
+              let color = "#b1b4b6"; // Default fallback color
+              
               // Circle (color keyed by parent if present, else extract parent from composite value)
-              let circle = "";
+              let colorKey;
               if (enableSelectedItemCircles && isMulti) {
-                let colorKey;
                 if (hasParent) {
                   colorKey = meta.parentValue;
                 } else if (String(data.value).includes("::")) {
@@ -1218,7 +1228,12 @@
                 } else {
                   colorKey = data.value;
                 }
-                const color = colorForValue(colorKey);
+                color = colorForValue(colorKey);
+              }
+
+              // Circle 
+              let circle = "";
+              if (enableSelectedItemCircles && isMulti) {
                 circle = `<span class="choices__item-circle" style="background:${color}"></span>`;
               }
 
@@ -1240,6 +1255,11 @@
                            aria-label="Remove ${esc(String(data.value))}"></button>`
                 : "";
 
+              // Border styling for matching circle color
+              const borderStyle = matchBorderToCircleColor && enableSelectedItemCircles && isMulti 
+                ? `style="border: 2px solid ${color}; box-shadow: none;"` 
+                : "";
+
               return strToEl(
                 `<div class="${classes}"
                       data-item
@@ -1247,7 +1267,8 @@
                       data-value="${String(data.value)}"
                       ${showRemove ? "data-deletable" : ""}
                       ${data.active ? 'aria-selected="true"' : ""}
-                      ${data.disabled ? 'aria-disabled="true"' : ""}>
+                      ${data.disabled ? 'aria-disabled="true"' : ""}
+                      ${borderStyle}>
                     ${circle}${displayLabel}${removeBtn}
                  </div>`,
               );
@@ -2513,10 +2534,11 @@
 
 <div
   class="gem-c-select-with-search"
-  style={`--cross-icon-url: url("${crossIconUrl}"); --choices-item-bg-color: ${choicesItemBackgroundColor}; --choices-item-border-color: ${choicesItemBorderColor}; --choices-item-text-color: ${choicesItemTextColor}; --choices-item-divider-padding: ${choicesItemDividerPadding}; --selected-item-circle-color: ${selectedItemCircleColor};`}
+  style={`--cross-icon-url: url("${crossIconUrl}"); --choices-item-bg-color: ${choicesItemBackgroundColor}; --choices-item-border-color: ${choicesItemBorderColor}; --choices-item-text-color: ${choicesItemTextColor}; --choices-item-divider-padding: ${choicesItemDividerPadding}; --choices-item-border-radius: ${choicesItemBorderRadius}; --selected-chip-bg-color: ${selectedChipBackgroundColor}; --selected-item-circle-color: ${selectedItemCircleColor};`}
   data-group-key={groupKey}
   data-enable-circles={enableSelectedItemCircles}
   data-circle-palette={selectedItemCircleColorPalette.join(",")}
+  data-match-border-to-circle={matchBorderToCircleColor}
 >
   {#snippet rightIcon()}
     <button
@@ -3394,10 +3416,11 @@
     border: 0;
     padding: 0 0px 0 10px; /* right padding for button divider */
     margin: 10px 10px 0 0;
-    background-color: #f3f2f1;
-    box-shadow: 0 2px 0 #b1b4b6;
+    background-color: var(--selected-chip-bg-color, #f3f2f1);
+    box-shadow: 0 2px 0 var(--choices-item-border-color, #b1b4b6);
+    border-radius: var(--choices-item-border-radius, 0);
     line-height: 1;
-    color: #0b0c0c;
+    color: var(--choices-item-text-color, #0b0c0c);
   }
 
   /* Circle */

@@ -472,7 +472,7 @@
         name: "sourceSelector",
         category: "API options",
         propType: "fixed",
-        value: function(query, options) {
+        value: function (query, options) {
           // Default logic: use API when source_url/source_key present and query >= 3 chars
           return query.length >= 3 ? "api" : "options";
         },

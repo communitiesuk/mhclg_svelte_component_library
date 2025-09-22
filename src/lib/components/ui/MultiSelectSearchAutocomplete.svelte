@@ -1822,10 +1822,7 @@
                             const parentLabel =
                               first.parent.label ?? String(first.parent.value);
                             choicesInstance.config.noChoicesText =
-                              tPartialPostcodeInSelectedParent(
-                                q,
-                                parentLabel,
-                              );
+                              tPartialPostcodeInSelectedParent(q, parentLabel);
                             usedResolverMessage = true;
                             console.log(
                               "ℹ️ Partial postcode in selected parent (promotion mode)",
@@ -2242,7 +2239,8 @@
                       console.warn("⚠️ staticChildrenResolver failed:", err);
                     }
                     if (!usedDynamic) {
-                      choicesInstance.config.noChoicesText = "All results are already selected";
+                      choicesInstance.config.noChoicesText =
+                        "All results are already selected";
                     }
                     console.log(
                       "ℹ️ Found static matches but all are already selected",

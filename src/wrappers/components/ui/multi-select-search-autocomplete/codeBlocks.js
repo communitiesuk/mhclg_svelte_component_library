@@ -785,3 +785,161 @@ export const codeBlock10 = `
   {tStaticParentContainsSelectedChildren}
   {tPartialPostcodeInSelectedParent}
 />`;
+
+export const codeBlock11 = `
+<script>
+  import MultiSelectSearchAutocomplete from '$lib/components/ui/MultiSelectSearchAutocomplete.svelte';
+
+  // Demo LSOA options (static) - using actual LSOA codes and names
+  const lsoaOptions = [
+    { value: "E01002766", text: "Hounslow 018A" }, // LSOA in London Borough of Hounslow
+    { value: "E01004736", text: "Westminster 018F" }, // LSOA in City of Westminster
+    { value: "E01005212", text: "Manchester 057A" }, // LSOA in Manchester
+    { value: "E01025287", text: "Islington 023B" }, // LSOA in Islington
+  ];
+
+  let lsoaSelections11 = $state([]);
+
+  // Fallback lookup table for postcodes.io API logic (postcode -> LSOA)
+  const postcodeToLsoaDemo = {
+    \"TW5 0AA\": \"E01002766\", // Hounslow postcode → Hounslow 018A LSOA
+    \"TW3 1LR\": \"E01002766\", // Another Hounslow postcode → Same LSOA
+    \"SW1A 1AA\": \"E01004736\", // Westminster postcode → Westminster 018F LSOA
+    \"M1 1AE\": \"E01005212\", // Manchester postcode → Manchester 057A LSOA
+    \"N1 2AB\": \"E01025287\", // Islington postcode → Islington 023B LSOA
+  };
+
+  // Cache resolved LSOA codes per postcode to avoid repeated lookups
+  const lsoaByPostcodeCache = new Map();
+
+  /** Map a postcodes.io entry to its parent LSOA (postcodes.io uses \`codes.lsoa\`) */
+  const lsoaApiParentResolver = (entry) => {
+    if (!entry) return null;
+    const code = entry?.codes?.lsoa; // e.g. E01002766
+    const label = entry?.lsoa ?? undefined; // e.g. "Hounslow 018A"
+    if (!code) return null;
+    return { value: code, label };
+  };
+
+  /** Given an LSOA code, return selected postcode strings that belong to it */
+  const lsoaStaticChildrenResolver = async (lsoaCode, selectedValues) => {
+    const all = (selectedValues || []).map((v) => String(v));
+    const pcs = all.filter((s) =>
+      /[A-Z]{1,2}[0-9][A-Z0-9]?\\s*[0-9][A-Z]{2}/i.test(s),
+    );
+
+    const found = [];
+    const toFetch = [];
+
+    for (const pcRaw of pcs) {
+      const pc = pcRaw.toUpperCase();
+      const cached = lsoaByPostcodeCache.get(pc) || postcodeToLsoaDemo[pc];
+      if (cached) {
+        lsoaByPostcodeCache.set(pc, cached);
+        if (cached === lsoaCode) found.push(pcRaw);
+      } else {
+        toFetch.push(pc);
+      }
+    }
+
+    if (toFetch.length > 0) {
+      try {
+        const res = await fetch("https://api.postcodes.io/postcodes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ postcodes: toFetch }),
+        });
+        const json = await res.json();
+        const results = Array.isArray(json?.result) ? json.result : [];
+        for (const r of results) {
+          const pc = (r?.query || "").toUpperCase();
+          const code = r?.result?.codes?.lsoa;
+          if (pc && code) {
+            lsoaByPostcodeCache.set(pc, code);
+            if (code === lsoaCode) {
+              // find original casing from pcs
+              const original = pcs.find((p) => p.toUpperCase() === pc) ?? pc;
+              found.push(original);
+            }
+          }
+        }
+      } catch (e) {
+        // ignore lookup errors in demo
+      }
+    }
+
+    return found;
+  };
+
+  const lsoaSelectedChildParentResolver = (selectedValue) => {
+    // For demo: selectedValue is a postcode string — look up its LSOA via cache/map
+    const pc = String(selectedValue).toUpperCase();
+    const code = lsoaByPostcodeCache.get(pc) || postcodeToLsoaDemo[pc];
+    if (!code) return null;
+    // Map LSOA codes to human-readable labels for demo resolver functions
+    const lsoaLabelMap = {
+      E01002766: "Hounslow 018A",
+      E01004736: "Westminster 018F",
+      E01005212: "Manchester 057A",
+      E01025287: "Islington 023B",
+    };
+    return { value: code, label: lsoaLabelMap[code] };
+  };
+
+  // Template functions for LSOA messaging
+  const tLsoaApiChildInSelectedParent = (child, parent) =>
+    \`${"${child}"} is in ${"${parent}"}, which is already selected\`;
+  const tLsoaApiChildCoveredBySelectedChild = (child, parent, selectedChild) =>
+    \`${"${child}"} is in ${"${parent}"}, which is already covered by the selected postcode ${"${selectedChild}"}\`;
+  const tLsoaStaticParentContainsSelectedChildren = (parent, children) =>
+    \`${"${parent}"} contains ${'${children.join(", ")}'}, which ${'${children.length > 1 ? "are" : "is"}'} already selected\`;
+  const tLsoaPartialPostcodeInSelectedParent = (partialPostcode, parent) =>
+    \`Postcodes beginning ${"${partialPostcode}"}... are in ${"${parent}"}, which is already selected\`;
+</script>
+
+<MultiSelectSearchAutocomplete
+  id="lsoa-promotion-demo"
+  name="lsoa-promotion"
+  label="Search and select LSOAs or postcodes"
+  hint="Type an LSOA name or postcode - postcodes will be promoted to their parent LSOA"
+  items={lsoaOptions}
+  multiple={true}
+  source_url="https://api.postcodes.io/postcodes/"
+  source_key="result"
+  source_property="postcode"
+  minLength={3}
+  groupKey={undefined}
+  sourceSelector={(query) => {
+    const q = query.toUpperCase().trim();
+    if (q.length < 3) return "options";
+
+    // Postcode detection patterns (same as Example 10)
+    const full = [
+      /^[A-Z]{1,2}[0-9][A-Z0-9]?\\s*[0-9][A-Z]{2}$/,
+      /^[A-Z]{1,2}[0-9][A-Z0-9]?[0-9][A-Z]{2}$/,
+    ];
+    const partial = [
+      /^[A-Z]{1,2}$/,
+      /^[A-Z]{1,2}[0-9]$/,
+      /^[A-Z]{1,2}[0-9][A-Z0-9]?$/,
+      /^[A-Z]{1,2}[0-9][A-Z0-9]?\\s*$/,
+      /^[A-Z]{1,2}[0-9][A-Z0-9]?\\s*[0-9]$/,
+    ];
+    const looksPc =
+      full.some((p) => p.test(q)) ||
+      partial.some((p) => p.test(q)) ||
+      /\\d/.test(q); // heuristic: contains a digit
+
+    return looksPc ? "api" : "options";
+  }}
+  resetApiSuggestionsAfterSelection={true}
+  promoteApiChildToParent={true}
+  apiParentResolver={lsoaApiParentResolver}
+  staticChildrenResolver={lsoaStaticChildrenResolver}
+  selectedChildParentResolver={lsoaSelectedChildParentResolver}
+  tApiChildInSelectedParent={tLsoaApiChildInSelectedParent}
+  tApiChildCoveredBySelectedChild={tLsoaApiChildCoveredBySelectedChild}
+  tStaticParentContainsSelectedChildren={tLsoaStaticParentContainsSelectedChildren}
+  tPartialPostcodeInSelectedParent={tLsoaPartialPostcodeInSelectedParent}
+  bind:value={lsoaSelections11}
+/>`;

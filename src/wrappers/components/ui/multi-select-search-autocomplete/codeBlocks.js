@@ -500,35 +500,78 @@ export const codeBlock9 = `
   const ladOptions = [
     { value: "E09000018", text: "London Borough of Hounslow" },
     { value: "E09000033", text: "City of Westminster" },
-    { value: "E08000003", text: "Manchester" }
+    { value: "E08000003", text: "Manchester" },
+    { value: "E07000173", text: "Mansfield" },
   ];
 
-  // Tiny demo lookup from specific postcodes to LAD codes
+  // Fallback lookup table for postcodes.io API logic
   const postcodeToLadDemo = {
-    "TW5 0AA": "E09000018",
-    "TW3 1LR": "E09000018",
-    "SW1A 1AA": "E09000033",
-    "M1 1AE": "E08000003"
+    "TW5 0AA": "E09000018", // Hounslow postcode → London Borough of Hounslow
+    "TW3 1LR": "E09000018", // Another Hounslow postcode
+    "SW1A 1AA": "E09000033", // Westminster postcode → City of Westminster
+    "M1 1AE": "E08000003", // Manchester postcode → Manchester
   };
 
-  /** Map a postcodes.io entry to its parent LAD */
+  // Cache resolved LAD codes per postcode to avoid repeated lookups
+  const ladByPostcodeCache = new Map();
+
+  /** Map a postcodes.io entry to its parent LAD (postcodes.io uses \`codes.lau2\`) */
   const apiParentResolver = (entry) => {
     if (!entry) return null;
-    const code = entry?.codes?.lad;
-    const label = entry?.admin_district ?? undefined;
+    const code = entry?.codes?.lau2; // e.g. E09000018
+    const label = entry?.admin_district ?? undefined; // e.g. Hounslow
     if (!code) return null;
     return { value: code, label };
   };
 
   /** Given a LAD code, return selected postcode strings that belong to it */
-  const staticChildrenResolver = (ladCode, selectedValues) => {
-    return (selectedValues || []).filter((v) => {
-      const s = String(v);
-      const looksLikePc = /[A-Z]{1,2}[0-9][A-Z0-9]?\s*[0-9][A-Z]{2}/i.test(s);
-      if (!looksLikePc) return false;
-      const mapped = postcodeToLadDemo[s.toUpperCase()];
-      return mapped === ladCode;
-    });
+  const staticChildrenResolver = async (ladCode, selectedValues) => {
+    const all = (selectedValues || []).map((v) => String(v));
+    const pcs = all.filter((s) =>
+      /[A-Z]{1,2}[0-9][A-Z0-9]?\\s*[0-9][A-Z]{2}/i.test(s),
+    );
+
+    const found = [];
+    const toFetch = [];
+
+    for (const pcRaw of pcs) {
+      const pc = pcRaw.toUpperCase();
+      const cached = ladByPostcodeCache.get(pc) || postcodeToLadDemo[pc];
+      if (cached) {
+        ladByPostcodeCache.set(pc, cached);
+        if (cached === ladCode) found.push(pcRaw);
+      } else {
+        toFetch.push(pc);
+      }
+    }
+
+    if (toFetch.length > 0) {
+      try {
+        const res = await fetch("https://api.postcodes.io/postcodes", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ postcodes: toFetch }),
+        });
+        const json = await res.json();
+        const results = Array.isArray(json?.result) ? json.result : [];
+        for (const r of results) {
+          const pc = (r?.query || "").toUpperCase();
+          const code = r?.result?.codes?.lau2 || r?.result?.codes?.lad;
+          if (pc && code) {
+            ladByPostcodeCache.set(pc, code);
+            if (code === ladCode) {
+              // find original casing from pcs
+              const original = pcs.find((p) => p.toUpperCase() === pc) ?? pc;
+              found.push(original);
+            }
+          }
+        }
+      } catch (e) {
+        // ignore lookup errors in demo
+      }
+    }
+
+    return found;
   };
 
   const tApiChildInSelectedParent = (child, parent) =>
@@ -538,6 +581,24 @@ export const codeBlock9 = `
   const tStaticParentContainsSelectedChildren = (parent, children) =>
     \
 \`${"${parent}"} contains ${'${children.join(", ")}'}, which ${'${children.length > 1 ? "are" : "is"}'} already selected\`;
+
+  const selectedChildParentResolver = (selectedValue) => {
+    // For demo: selectedValue is a postcode string — look up its LAD via cache/map
+    const pc = String(selectedValue).toUpperCase();
+    const code = ladByPostcodeCache.get(pc) || postcodeToLadDemo[pc];
+    if (!code) return null;
+    // Map LAD codes to human-readable labels for demo resolver functions
+    const labelMap = {
+      E09000018: "London Borough of Hounslow",
+      E09000033: "City of Westminster",
+      E08000003: "Manchester",
+    };
+    return { value: code, label: labelMap[code] };
+  };
+
+  const tApiChildCoveredBySelectedChild = (child, parent, selectedChild) =>
+    \
+\`${"${child}"} is in ${"${parent}"}, which is already covered by the selected postcode ${"${selectedChild}"}\`;
 </script>
 
 <MultiSelectSearchAutocomplete
@@ -551,9 +612,36 @@ export const codeBlock9 = `
   source_key="result"
   source_property="postcode"
   minLength={3}
+  groupKey={undefined}
+  sourceSelector={(query) => {
+    const q = query.toUpperCase().trim();
+    if (q.length < 3) return "options"; // mirror Example 5 gating
+
+    // Consider partial postcodes as postcode-like (similar to Example 7)
+    const full = [
+      /^[A-Z]{1,2}[0-9][A-Z0-9]?\\s*[0-9][A-Z]{2}$/,
+      /^[A-Z]{1,2}[0-9][A-Z0-9]?[0-9][A-Z]{2}$/,
+    ];
+    const partial = [
+      /^[A-Z]{1,2}$/,
+      /^[A-Z]{1,2}[0-9]$/,
+      /^[A-Z]{1,2}[0-9][A-Z0-9]?$/,
+      /^[A-Z]{1,2}[0-9][A-Z0-9]?\\s*$/,
+      /^[A-Z]{1,2}[0-9][A-Z0-9]?\\s*[0-9]$/,
+    ];
+    const looksPc =
+      full.some((p) => p.test(q)) ||
+      partial.some((p) => p.test(q)) ||
+      /\\d/.test(q); // heuristic: contains a digit
+
+    return looksPc ? "api" : "options";
+  }}
+  resetApiSuggestionsAfterSelection={true}
   {apiParentResolver}
   {staticChildrenResolver}
+  {selectedChildParentResolver}
   {tApiChildInSelectedParent}
+  {tApiChildCoveredBySelectedChild}
   {tStaticParentContainsSelectedChildren}
 />`;
 

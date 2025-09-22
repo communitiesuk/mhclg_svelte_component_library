@@ -2275,7 +2275,10 @@
                   // Don't set noChoicesText when we have choices - let Choices.js handle it
 
                   // Apply searchResultLimit to the filtered choices
-                  const limitedChoices = filteredStaticChoicesByParent.slice(0, searchResultLimit);
+                  const limitedChoices = filteredStaticChoicesByParent.slice(
+                    0,
+                    searchResultLimit,
+                  );
 
                   // Ensure group text is applied to filtered choices
                   const choicesWithGroupText = ensureGroupTextApplied(

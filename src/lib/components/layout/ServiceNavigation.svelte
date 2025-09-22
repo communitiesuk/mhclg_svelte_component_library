@@ -16,16 +16,18 @@ Use the component with or without navigation items based on your needs. -->
     serviceName = "Service name",
     serviceUrl = "#",
     navigationItems = undefined,
+    collapseOnDesktop = false,
   } = $props<{
     serviceName?: string;
     serviceUrl?: string;
     navigationItems?: NavigationItem[];
+    collapseOnDesktop?: boolean;
   }>();
 
   // Reactive state declarations
   let hasNavigation = $derived(navigationItems && navigationItems.length > 0);
   let menuIsOpen = $state(false);
-  let isDesktopView = $state(true); // Default to desktop view until we can check
+  let isDesktopView = $state(!collapseOnDesktop); // Default to desktop view until we can check
   let tabletBreakpoint = $state("");
 
   // References to DOM elements
@@ -58,7 +60,7 @@ Use the component with or without navigation items based on your needs. -->
     const mql = window.matchMedia(`(min-width: ${tabletBreakpoint})`);
 
     // Set initial state
-    isDesktopView = mql.matches;
+    isDesktopView = collapseOnDesktop ? isDesktopView : mql.matches;
 
     // Set up event listener for viewport changes
     const handleViewportChange = (e: MediaQueryListEvent) => {
@@ -69,7 +71,9 @@ Use the component with or without navigation items based on your needs. -->
       }
     };
 
-    mql.addEventListener("change", handleViewportChange);
+    if (!collapseOnDesktop) {
+      mql.addEventListener("change", handleViewportChange);
+    }
 
     return () => {
       mql.removeEventListener("change", handleViewportChange);

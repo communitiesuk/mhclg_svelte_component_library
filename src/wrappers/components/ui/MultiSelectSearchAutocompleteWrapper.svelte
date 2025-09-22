@@ -404,7 +404,7 @@
       {
         name: "formGroupClasses",
         category: "Styling and layout",
-        value: "w-1/3",
+        value: "w-1/2",
         description: {
           markdown: true,
           arr: [`Additional CSS classes for the form group wrapper.`],

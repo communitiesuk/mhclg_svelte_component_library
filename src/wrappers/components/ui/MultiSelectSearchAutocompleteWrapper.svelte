@@ -432,38 +432,62 @@
       {
         name: "source_url",
         category: "API options",
-        value: undefined,
+        value: "",
         description: {
           markdown: true,
-          arr: [`URL for fetching dynamic options from an API.`],
+          arr: [
+            `<strong>URL for fetching dynamic options from an API.</strong> When provided, enables API-based search functionality alongside or instead of static options. Component will make HTTP requests to this URL with query parameters.`,
+            `<strong>Dependencies:</strong> Works with <code>source_key</code> and <code>source_property</code> to parse API responses. Optional <code>sourceSelector</code> can control when API vs static options are used.`,
+            `<strong>Default:</strong> <code>undefined</code> (no API integration)`,
+          ],
         },
       },
       {
         name: "source_key",
         category: "API options",
-        value: undefined,
+        value: "",
         description: {
           markdown: true,
-          arr: [`Key to extract data from API response.`],
+          arr: [
+            `<strong>Key to extract data from API response.</strong> Specifies the property path in the API response that contains the array of options. Uses dot notation for nested properties.`,
+            `<strong>Dependencies:</strong> Required when <code>source_url</code> is provided and API response is not a direct array.`,
+            `<strong>Default:</strong> <code>undefined</code> (expects API response to be direct array)`,
+          ],
         },
       },
       {
         name: "source_property",
         category: "API options",
-        value: undefined,
+        value: "",
         description: {
           markdown: true,
-          arr: [`Property to use as the display text from API data.`],
+          arr: [
+            `<strong>Property to use as the display text from API data.</strong> Specifies which field from each API result item should be shown to users in the dropdown. If not provided, entire item will be converted to string.`,
+            `<strong>Dependencies:</strong> Used when <code>source_url</code> is provided to format API results for display.`,
+            `<strong>Default:</strong> <code>undefined</code> (uses entire item as display text)`,
+          ],
         },
       },
       {
         name: "sourceSelector",
         category: "API options",
-        value: undefined,
+        propType: "fixed",
+        value: function(query, options) {
+          // Default logic: use API when source_url/source_key present and query >= 3 chars
+          return query.length >= 3 ? "api" : "options";
+        },
+        functionElements: {
+          functionAsString: `function(query, options) {
+  // Default logic: use API when source_url/source_key present and query >= 3 chars
+  return query.length >= 3 ? "api" : "options";
+}`,
+        },
         description: {
           markdown: true,
           arr: [
-            `Function to decide whether to use 'api' or 'options' for a given query.`,
+            `<strong>Function to decide whether to use 'api' or 'options' for a given query.</strong> Controls whether to search static options or make API request based on user input. Returns either "api" or "options".`,
+            `<strong>Dependencies:</strong> Used when both <code>source_url</code> and static <code>items</code> are provided for dual-mode operation.`,
+            `<strong>Default:</strong> Uses API when query length >= 3 characters, otherwise uses static options`,
           ],
         },
       },
@@ -473,25 +497,43 @@
         value: 0,
         description: {
           markdown: true,
-          arr: [`Minimum length before triggering API search.`],
+          arr: [
+            `<strong>Minimum length before triggering API search.</strong> Prevents API calls for very short queries. When user input is shorter, shows <code>tTooShort</code> message instead of making API request.`,
+            `<strong>Dependencies:</strong> Used with <code>source_url</code> for API-based searching. Works with <code>tTooShort</code> function for user messaging.`,
+            `<strong>Default:</strong> <code>0</code> (no minimum length requirement)`,
+          ],
         },
       },
       {
         name: "tTooShort",
         category: "API options",
-        value: undefined,
+        propType: "fixed",
+        value: (n) => `Enter ${n} or more characters for suggestions`,
+        functionElements: {
+          functionAsString: `function(n) {
+  return \`Enter \${n} or more characters for suggestions\`;
+}`,
+        },
         description: {
           markdown: true,
-          arr: [`Function to generate message when query is too short.`],
+          arr: [
+            `<strong>Function to generate message when query is too short.</strong> Called when user input length is below <code>minLength</code> threshold. Receives the minimum required length as parameter.`,
+            `<strong>Dependencies:</strong> Used with <code>minLength</code> and <code>source_url</code> to provide user feedback for short queries.`,
+            `<strong>Default:</strong> <code>(n) => \`Enter \${n} or more characters for suggestions\`</code>`,
+          ],
         },
       },
       {
         name: "groupKey",
         category: "API options",
-        value: undefined,
+        value: "",
         description: {
           markdown: true,
-          arr: [`Key for displaying additional context in options.`],
+          arr: [
+            `<strong>Key for displaying additional context in options.</strong> When provided, shows secondary information from API results alongside the main display text. Useful for disambiguation (e.g., showing region alongside place names).`,
+            `<strong>Dependencies:</strong> Used with <code>source_url</code> to enhance API result presentation with contextual information.`,
+            `<strong>Default:</strong> <code>undefined</code> (no additional context shown)`,
+          ],
         },
       },
 

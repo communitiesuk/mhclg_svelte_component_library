@@ -367,7 +367,9 @@
         description: {
           markdown: true,
           arr: [
-            `Whether to show remove buttons on selected items. Defaults to true for multiple select.`,
+            `<strong>Whether to show X remove buttons on selected items (chips/pills).</strong> When <code>true</code>, selected items display with clickable X buttons for removal. When <code>false</code>, selected items appear without remove buttons (can only be removed by deselecting from dropdown).`,
+            `<strong>Dependencies:</strong> Only applies to multiple select mode (<code>multiple: true</code>). In single select mode, there are no selected item chips to display remove buttons on.`,
+            `<strong>Default:</strong> <code>true</code> for multiple select mode (automatically computed based on <code>multiple</code> prop if not explicitly set)`,
           ],
         },
       },

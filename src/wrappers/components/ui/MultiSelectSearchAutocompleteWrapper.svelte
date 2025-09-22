@@ -611,7 +611,7 @@
         description: {
           markdown: true,
           arr: [
-            `Complete GOV.UK Design System color palette (19 colors) with infinite extension capability. Uses the full official GDS palette first, then automatically generates additional unique colors using proven data visualization algorithms (similar to Plotly.js) when more than 19 selections are made. This ensures every selection gets a unique color while maintaining accessibility standards.`,
+            `Complete GOV.UK Design System color palette (19 colors). Colors are assigned based on selection order (not deterministic by item value), but each item remembers its assigned color. When more than 19 items are selected, colors cycle back to the beginning of the palette.`,
           ],
         },
       },

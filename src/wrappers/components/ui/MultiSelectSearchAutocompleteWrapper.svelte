@@ -557,7 +557,7 @@
         description: {
           markdown: true,
           arr: [
-            `Color of the circle indicator shown on selected items in the button (not in dropdown options).`,
+            `Fallback color for circle indicators on selected items. **Multi-select only** - circles are only shown when both <code>enableSelectedItemCircles</code> is true and <code>multiple</code> is true. In practice, actual colors come from <code>selectedItemCircleColorPalette</code> which provides unique colors for each selection.`,
           ],
         },
       },

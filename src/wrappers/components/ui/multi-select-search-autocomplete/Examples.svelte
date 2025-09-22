@@ -195,6 +195,9 @@
       children.length > 1 ? "are" : "is"
     } already selected`;
 
+  const tPartialPostcodeInSelectedParent = (partialPostcode, parent) =>
+    `Postcodes beginning ${partialPostcode}... are in ${parent}, which is already selected`;
+
   // Example 10: simple state for promotion demo
   let ladSelections10 = $state([]);
 
@@ -886,6 +889,7 @@
       {tApiChildInSelectedParent}
       {tApiChildCoveredBySelectedChild}
       {tStaticParentContainsSelectedChildren}
+      {tPartialPostcodeInSelectedParent}
     />
     <p class="govuk-body">
       Selected: {ladSelections10.length > 0

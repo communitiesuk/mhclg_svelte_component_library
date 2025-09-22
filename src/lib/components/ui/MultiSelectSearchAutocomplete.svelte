@@ -110,7 +110,7 @@
 
     // Dynamic message builders (optional)
     tApiChildInSelectedParent = (child: string, parent: string) =>
-      `${child} result found is in ${parent} which is already selected`,
+      `${child} is in ${parent}, which is already selected`,
     tApiChildCoveredBySelectedChild = (
       child: string,
       parent: string,
@@ -121,9 +121,16 @@
       parent: string,
       children: string[],
     ) =>
-      `${parent} result found contains ${children.join(", ")} which ${
+      `${parent} contains ${children.join(", ")}, which ${
         children.length > 1 ? "are" : "is"
       } already selected`,
+
+    // Partial postcode promotion message (when promoteApiChildToParent is enabled)
+    tPartialPostcodeInSelectedParent = (
+      partialPostcode: string,
+      parent: string,
+    ) =>
+      `Postcodes beginning ${partialPostcode}... are in ${parent}, which is already selected`,
 
     // Behavioural tweaks
     resetApiSuggestionsAfterSelection = false,
@@ -194,6 +201,10 @@
     tStaticParentContainsSelectedChildren?: (
       parent: string,
       children: string[],
+    ) => string;
+    tPartialPostcodeInSelectedParent?: (
+      partialPostcode: string,
+      parent: string,
     ) => string;
 
     // Behavioural tweaks
@@ -1801,6 +1812,31 @@
                                 ),
                               },
                             );
+                          } else if (
+                            !isFullPostcode &&
+                            promoteApiChildToParent &&
+                            mappings.length > 0
+                          ) {
+                            // For partial postcodes with promotion enabled, show specific partial message
+                            const first = parentsSelected[0];
+                            const parentLabel =
+                              first.parent.label ?? String(first.parent.value);
+                            choicesInstance.config.noChoicesText =
+                              tPartialPostcodeInSelectedParent(
+                                q,
+                                parentLabel,
+                              );
+                            usedResolverMessage = true;
+                            console.log(
+                              "ℹ️ Partial postcode in selected parent (promotion mode)",
+                              {
+                                partialQuery: q,
+                                parentLabel,
+                                parents: parentsSelected.map(
+                                  (p) => p.parent.value,
+                                ),
+                              },
+                            );
                           }
                         }
                       }
@@ -2206,11 +2242,7 @@
                       console.warn("⚠️ staticChildrenResolver failed:", err);
                     }
                     if (!usedDynamic) {
-                      const hasStaticResolver =
-                        typeof staticChildrenResolver === "function";
-                      choicesInstance.config.noChoicesText = hasStaticResolver
-                        ? "All matching areas already covered by selected postcodes"
-                        : "All matching options are already selected";
+                      choicesInstance.config.noChoicesText = "All results are already selected";
                     }
                     console.log(
                       "ℹ️ Found static matches but all are already selected",

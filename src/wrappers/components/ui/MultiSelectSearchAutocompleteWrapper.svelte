@@ -408,11 +408,11 @@
       {
         name: "placeholderText",
         category: "Other options",
-        value: undefined,
+        value: "placeholder",
         description: {
           markdown: true,
           arr: [
-            `Custom placeholder text. If not provided, defaults to "Select all that apply" for multiple select or "Select one" for single select.`,
+            `Custom placeholder text for single select mode. If not provided, defaults to "Select all that apply" for multiple select or "Select one" for single select.`,
           ],
         },
       },
@@ -423,6 +423,71 @@
         description: {
           markdown: true,
           arr: [`Additional options to pass to the Choices.js library.`],
+        },
+      },
+
+      // API and Dynamic Options
+      {
+        name: "source_url",
+        category: "API options",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`URL for fetching dynamic options from an API.`],
+        },
+      },
+      {
+        name: "source_key",
+        category: "API options",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Key to extract data from API response.`],
+        },
+      },
+      {
+        name: "source_property",
+        category: "API options",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Property to use as the display text from API data.`],
+        },
+      },
+      {
+        name: "sourceSelector",
+        category: "API options",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Function to decide whether to use 'api' or 'options' for a given query.`],
+        },
+      },
+      {
+        name: "minLength",
+        category: "API options",
+        value: 0,
+        description: {
+          markdown: true,
+          arr: [`Minimum length before triggering API search.`],
+        },
+      },
+      {
+        name: "tTooShort",
+        category: "API options",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Function to generate message when query is too short.`],
+        },
+      },
+      {
+        name: "groupKey",
+        category: "API options",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Key for displaying additional context in options.`],
         },
       },
 
@@ -464,6 +529,24 @@
         },
       },
       {
+        name: "choicesItemBorderRadius",
+        category: "Choices.js styling",
+        value: "0",
+        description: {
+          markdown: true,
+          arr: [`Border radius for dropdown items.`],
+        },
+      },
+      {
+        name: "selectedChipBackgroundColor",
+        category: "Choices.js styling",
+        value: "#f3f2f1",
+        description: {
+          markdown: true,
+          arr: [`Background color specifically for selected chips/pills.`],
+        },
+      },
+      {
         name: "selectedItemCircleColor",
         category: "Choices.js styling",
         value: "#1d70b8",
@@ -482,6 +565,17 @@
           markdown: true,
           arr: [
             `Enable or disable the colored circle indicators on selected items.`,
+          ],
+        },
+      },
+      {
+        name: "matchBorderToCircleColor",
+        category: "Choices.js styling",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Enable border colors to match circle colors for selected items.`,
           ],
         },
       },
@@ -515,6 +609,120 @@
           arr: [
             `Complete GOV.UK Design System color palette (19 colors) with infinite extension capability. Uses the full official GDS palette first, then automatically generates additional unique colors using proven data visualization algorithms (similar to Plotly.js) when more than 19 selections are made. This ensures every selection gets a unique color while maintaining accessibility standards.`,
           ],
+        },
+      },
+
+      // Advanced Cross-Selection Features
+      {
+        name: "apiParentResolver",
+        category: "Advanced features",
+        propType: "fixed",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Function to resolve parent options from API data.`],
+        },
+      },
+      {
+        name: "staticChildrenResolver",
+        category: "Advanced features",
+        propType: "fixed",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Function to resolve child options from static data.`],
+        },
+      },
+      {
+        name: "selectedChildParentResolver",
+        category: "Advanced features", 
+        propType: "fixed",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Function to resolve parent from selected child value.`],
+        },
+      },
+      {
+        name: "tApiChildInSelectedParent",
+        category: "Advanced features",
+        propType: "fixed",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Function to generate message when API child is in selected parent.`],
+        },
+      },
+      {
+        name: "tApiChildCoveredBySelectedChild",
+        category: "Advanced features",
+        propType: "fixed",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Function to generate message when API child is covered by selected child.`],
+        },
+      },
+      {
+        name: "tStaticParentContainsSelectedChildren",
+        category: "Advanced features",
+        propType: "fixed",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Function to generate message when static parent contains selected children.`],
+        },
+      },
+      {
+        name: "tPartialPostcodeInSelectedParent",
+        category: "Advanced features",
+        propType: "fixed",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Function to generate message for partial postcode in selected parent.`],
+        },
+      },
+
+      // Behavioral Options
+      {
+        name: "resetApiSuggestionsAfterSelection",
+        category: "Behavioral options",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [`Reset API suggestions after making a selection.`],
+        },
+      },
+      {
+        name: "promoteApiChildToParent",
+        category: "Behavioral options",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [`Promote API child (e.g., postcode) to its parent option (e.g., LAD).`],
+        },
+      },
+
+      // Bindable State Props
+      {
+        name: "bindSelectedItemIndexMap",
+        category: "Bindable state",
+        propType: "fixed",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Bindable map of item values to their color indices for external synchronization.`],
+        },
+      },
+      {
+        name: "bindNextSelectionIndex",
+        category: "Bindable state",
+        propType: "fixed",
+        value: undefined,
+        description: {
+          markdown: true,
+          arr: [`Bindable next available color index for external synchronization.`],
         },
       },
     ]),

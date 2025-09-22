@@ -100,13 +100,12 @@
     { value: "E07000173", text: "Mansfield" },
   ];
 
-  // Tiny demo lookup from specific postcodes to LAD codes
-  // In a real app this would come from your own data service
+  // Fallback lookup table for postcodes.io API logic
   const postcodeToLadDemo = {
-    "TW5 0AA": "E09000018",
-    "TW3 1LR": "E09000018",
-    "SW1A 1AA": "E09000033",
-    "M1 1AE": "E08000003",
+    "TW5 0AA": "E09000018", // Hounslow postcode → London Borough of Hounslow
+    "TW3 1LR": "E09000018", // Another Hounslow postcode
+    "SW1A 1AA": "E09000033", // Westminster postcode → City of Westminster
+    "M1 1AE": "E08000003", // Manchester postcode → Manchester
   };
 
   // Cache resolved LAD codes per postcode to avoid repeated lookups
@@ -179,7 +178,7 @@
     const pc = String(selectedValue).toUpperCase();
     const code = ladByPostcodeCache.get(pc) || postcodeToLadDemo[pc];
     if (!code) return null;
-    // We only have a few labels; map known codes to labels
+    // Map LAD codes to human-readable labels for demo resolver functions
     const labelMap = {
       E09000018: "London Borough of Hounslow",
       E09000033: "City of Westminster",

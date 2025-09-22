@@ -437,9 +437,14 @@
     if (fullWidth) {
       // Remove existing width classes and add w-full
       const withoutWidthClasses = formGroupClasses
-        .split(' ')
-        .filter(cls => !cls.startsWith('w-') && !cls.startsWith('max-w-') && !cls.startsWith('min-w-'))
-        .join(' ');
+        .split(" ")
+        .filter(
+          (cls) =>
+            !cls.startsWith("w-") &&
+            !cls.startsWith("max-w-") &&
+            !cls.startsWith("min-w-"),
+        )
+        .join(" ");
       return `${withoutWidthClasses} w-full`.trim();
     }
     return formGroupClasses;

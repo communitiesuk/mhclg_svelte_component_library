@@ -393,7 +393,7 @@
       {
         name: "formGroupClasses",
         category: "Styling and layout",
-        value: "",
+        value: "w-1/3",
         description: {
           markdown: true,
           arr: [`Additional CSS classes for the form group wrapper.`],
@@ -405,7 +405,9 @@
         value: false,
         description: {
           markdown: true,
-          arr: [`Makes the select element full width if true.`],
+          arr: [
+            `<strong>Makes the component take full width when true.</strong> This appends <code>w-full</code> class to the <code>formGroupClasses</code>, overriding any width restrictions. Works for both the enhanced Choices.js version and the fallback <code>&lt;select&gt;</code> element.`,
+          ],
         },
       },
       {
@@ -1035,7 +1037,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.searchPlaceholder, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette].join("|")}
+    {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.searchPlaceholder, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette, parametersObject.disabled, parametersObject.fullWidth].join("|")}
       <MultiSelectSearchAutocomplete
         bind:value={selectedValue}
         bind:bindSelectedItemIndexMap

@@ -432,6 +432,19 @@
     removeItemButton !== undefined ? removeItemButton : multiple,
   );
 
+  // Computed form group classes with optional full width override
+  let computedFormGroupClasses = $derived.by(() => {
+    if (fullWidth) {
+      // Remove existing width classes and add w-full
+      const withoutWidthClasses = formGroupClasses
+        .split(' ')
+        .filter(cls => !cls.startsWith('w-') && !cls.startsWith('max-w-') && !cls.startsWith('min-w-'))
+        .join(' ');
+      return `${withoutWidthClasses} w-full`.trim();
+    }
+    return formGroupClasses;
+  });
+
   // Enhanced items with placeholder for single select
   let enhancedItems = $derived.by(() => {
     if (multiple) return items;
@@ -2570,7 +2583,7 @@
     {hint}
     {error}
     {validate}
-    {formGroupClasses}
+    formGroupClasses={computedFormGroupClasses}
     {fullWidth}
     {describedBy}
     {disabled}

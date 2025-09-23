@@ -189,12 +189,12 @@
       {
         name: "bodyText",
         category: "Input props",
-        value: `This is the text that gives more information about call to action in the card heading test.`,
+        value: `This is the text that gives more information about the call to action in the card heading.`,
       },
       {
         name: "bodyTextColor",
         category: "Input props",
-        value: ``,
+        value: `#0B0C0C`,
       },
       {
         name: "bodyBackgroundColor",

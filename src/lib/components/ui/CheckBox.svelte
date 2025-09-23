@@ -142,6 +142,7 @@
           buttonType={allSelected ? "warning" : "secondary"}
           textContent={allSelected ? "De-select all" : "Select all"}
           onClickFunction={toggleSelectAll}
+          noPadding={true}
         ></Button>
       {/if}
       {#each options as option, i}

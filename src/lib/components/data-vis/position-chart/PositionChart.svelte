@@ -10,15 +10,27 @@
     showAxis = true,
     chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,
-    colour = "purple",
+    colour = "#CA357C",
     nSegments = 10,
     startColor = "#8EB8DC",
     endColor = "#0F385C",
     midColor = undefined,
     colorScale = undefined,
     opacity = 1,
-    rowData = [{ value: value, colour: colour, opacity: opacity }],
-    allData = [{ rowData, label: label, chartHeight: chartHeight }],
+    annotation = undefined,
+    showIcon = false,
+    moreInfo = undefined,
+    rowData = [
+      {
+        value: value,
+        colour: colour,
+        opacity: opacity,
+        annotation: annotation,
+      },
+    ],
+    allData = [
+      { rowData, label: label, chartHeight: chartHeight, moreInfo: moreInfo },
+    ],
     markerStyles = { all: {} },
     assignMarkerTier = (tier, el) => {
       return true;
@@ -26,7 +38,6 @@
     interactiveMarkers = true,
     labelText = "hello world",
     tooltipContent = undefined,
-    topLabel = true,
     container = undefined,
     yFunction = () => 10,
     x = 0,
@@ -67,7 +78,7 @@
   } = $props();
 
   // base defaults that apply to every row
-  const baseRow = { value, colour, opacity };
+  const baseRow = { value, colour, opacity, annotation };
 
   // base defaults that apply to every chart
   const baseChart = { label, chartHeight, min, max, showAxis };
@@ -106,8 +117,10 @@
     }),
   );
 
+  $inspect(allDataNormalized);
+
   // holds open/closed state for each label
-  let openStates = {};
+  let openStates = $state({});
 
   function toggle(label) {
     openStates = {
@@ -116,38 +129,28 @@
     };
   }
 
-  let annotation = $state(true);
-
-  let dataFirstChart = $derived(Object.values(allDataNormalized[0].rowData)[0]);
-
-  let annotationArrowTarget = $derived(
-    Object.values(allDataNormalized[0].rowData)[0],
-  );
-
-  $inspect(annotationArrowTarget);
-
-  let annotationArrowPosition = $derived(annotationArrowTarget.value);
-
-  let annotationText = $state("Bournemouth, Christchurch and Poole 008A");
-
   let showLabel = $derived(
     allDataNormalized.some((obj) => obj.label !== undefined),
   );
-  let showIcon = $state(true);
   let numberOfPositionCharts = $derived(allDataNormalized.length);
   let gridTemplateColumns = $derived(
-    showIcon && showLabel
-      ? "auto auto 1fr"
-      : showIcon
-        ? "auto 1fr"
-        : showLabel
+    showLabel && showIcon
+      ? "30% auto 1fr"
+      : showLabel
+        ? "30% 1fr"
+        : showIcon
           ? "auto 1fr"
           : "1fr",
+  );
+
+  let divider = $derived(
+    allDataNormalized.some((obj) => obj.divider !== undefined),
   );
 
   let gridTemplateRows = $derived(() => {
     let rows = showAxis ? numberOfPositionCharts + 2 : numberOfPositionCharts;
     if (open) rows += 1;
+    if (divider) rows += 1;
     return `repeat(${rows}, auto)`;
   });
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
@@ -232,69 +235,66 @@
     return scaleLinear().domain([min, max]).range([0, barWidth]);
   }
 
-  // const colorScale = [
-  //   "#090C50",
-  //   "#1B3E70",
-  //   "#2B658F",
-  //   "#357EA2",
-  //   "#4297AD",
-  //   "#5BB1AE",
-  //   "#7ABFA8",
-  //   "#98CCA2",
-  //   "#B6D89F",
-  //   "#D2E49D",
-  // ];
+  let annotations = $derived(
+    Object.values(allDataNormalized[0].rowData)
+      .flat()
+      .filter(
+        (d) => typeof d.annotation === "string" && d.annotation.length > 0,
+      ),
+  );
 </script>
 
-{#if annotation}
-  <div bind:clientWidth={topWidth}>
-    <svg width={topWidth} height="88">
-      <g>
-        <text
-          id="label"
-          x="0"
-          y="50"
-          fill="purple"
-          font-size="20"
-          stroke-width="3"
+{#if annotations.length}
+  {#each annotations as d (d.value)}
+    <div bind:clientWidth={topWidth}>
+      <svg width={topWidth} height="60">
+        <g>
+          <text
+            font-family="GDS Transport"
+            id="label"
+            x={d.value}
+            y="20"
+            fill={d.colour}
+            font-size="18"
+            opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
+              ? 0.2
+              : 1}
+          >
+            {d.annotation}
+          </text>
+        </g>
+        <defs>
+          <marker
+            id="arrow-down"
+            markerWidth="10"
+            markerHeight="10"
+            refX="3"
+            refY="3"
+            orient="auto"
+            markerUnits="strokeWidth"
+            opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
+              ? 0.2
+              : 1}
+          >
+            <path d="M 0 0 L 6 3 L 0 6 z" fill={d.colour}></path>
+          </marker>
+        </defs>
+        <path
+          d="M 4 25 v 10 h {xFunction(min, max)(d.value) +
+            markerRadius -
+            4 +
+            (topWidth - chartWidth)}  v 15"
+          fill="none"
+          stroke={d.colour}
+          stroke-width="1.5"
+          marker-end="url(#arrow-down)"
           opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
             ? 0.2
             : 1}
-        >
-          {annotationText}
-        </text>
-      </g>
-      <defs>
-        <marker
-          id="arrow-down"
-          markerWidth="10"
-          markerHeight="10"
-          refX="3"
-          refY="3"
-          orient="auto"
-          markerUnits="strokeWidth"
-          opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
-            ? 0.2
-            : 1}
-        >
-          <path d="M 0 0 L 6 3 L 0 6 z" fill="purple"></path>
-        </marker>
-      </defs>
-      <path
-        d="M 4 55 v 10 h {xFunction(min, max)(annotationArrowPosition) +
-          markerRadius -
-          4 +
-          (topWidth - chartWidth)}  v 15"
-        fill="none"
-        stroke="purple"
-        stroke-width="2"
-        marker-end="url(#arrow-down)"
-        opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
-          ? 0.2
-          : 1}
-      ></path>
-    </svg>
-  </div>
+        ></path>
+      </svg>
+    </div>
+  {/each}
 {/if}
 
 <div
@@ -385,14 +385,30 @@
     </div>
     {#if openStates[positionChart.label]}
       <div
+        class="accordion"
         style="grid-column:1 / -1; background-color:lightgrey; padding:10px; margin-right:{markerRadius}px"
       >
         <p>
-          Description for {positionChart.label}
+          {positionChart.moreInfo}
         </p>
       </div>
     {/if}
+    {#if positionChart.divider}
+      <div style="grid-column:1 / -1">
+        <svg width="100%" height="10">
+          <line
+            x1="0"
+            y1="5"
+            x2="100%"
+            y2="5"
+            stroke="black"
+            stroke-width="2"
+            stroke-dasharray="2,6"
+          ></line>
+        </svg>
+      </div>{/if}
   {/each}
+
   {#if showAxis}
     {#if showIcon}
       <div class="empty"></div>
@@ -426,7 +442,7 @@
     display: grid;
     align-items: center;
     column-gap: 2%;
-    row-gap: 0;
+    row-gap: 2%;
   }
   .label {
     text-align: right;
@@ -438,5 +454,8 @@
     flex-direction: column;
     justify-content: flex-end;
     min-width: 0;
+  }
+  .accordion {
+    max-height: 500px !important; /* large enough to fit content */
   }
 </style>

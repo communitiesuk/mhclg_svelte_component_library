@@ -28,6 +28,7 @@ const config = {
       },
       entries: [
         "/404.html/",
+        "/cookies-page",
         "/privacy-policy/",
         "/get-started/component-statuses",
         "/components-update/data-vis/axis/axis",

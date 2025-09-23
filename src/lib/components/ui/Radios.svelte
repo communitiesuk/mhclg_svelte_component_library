@@ -1,6 +1,8 @@
 <script lang="ts">
   import type { SvelteComponent, Snippet } from "svelte";
   import { onMount } from "svelte";
+  import Button from "./Button.svelte";
+  import InsetText from "../content/InsetText.svelte";
   // Define the RadioOption type
   export type RadioOption = {
     value: string;
@@ -50,6 +52,16 @@
   let validationError = $derived<string | undefined>(
     isSupported && validate ? validate(selectedValue ?? "") : undefined,
   );
+
+  let moreInfoTogglesArray = $state(
+    Array.from({ length: options.length }, () => false),
+  );
+
+  function updateMoreInfoTogglesArray(index) {
+    moreInfoTogglesArray = moreInfoTogglesArray.map((el, i) =>
+      i === index ? !el : el,
+    );
+  }
 </script>
 
 <div
@@ -101,6 +113,12 @@
       aria-labelledby="{name}-legend"
     >
       {#each options as option, i}
+        {#if option.divider}
+          <div
+            class="mt-2"
+            style="border-bottom: solid; border-color: #e8ebed; border-width: 0.5px;"
+          ></div>
+        {/if}
         {#if option.exclusive && i > 0}
           <div
             class="govuk-radios__divider"
@@ -112,42 +130,55 @@
         {/if}
 
         <div
-          class="govuk-radios__item"
-          role="radio"
-          aria-checked={isSupported ? selectedValue === option.value : null}
+          class={option.moreInfo ? "item-and-more-info-button-container" : ""}
         >
-          <input
-            type="radio"
-            {name}
-            id="{name}-{i}"
-            class="govuk-radios__input"
-            value={option.value}
-            bind:group={selectedValue}
-            data-aria-controls={option.conditional?.id}
-            aria-describedby={[
-              option.hint ? `${name}-${i}-hint` : null,
-              option.conditional ? option.conditional.id : null,
-            ]
-              .filter(Boolean)
-              .join(" ")}
-            data-behaviour={option.exclusive ? "exclusive" : undefined}
-          />
-          <label
-            class="govuk-label govuk-radios__label"
-            for="{name}-{i}"
-            id="{name}-${i}-label"
+          <div
+            class="govuk-radios__item item-container"
+            role="radio"
+            aria-checked={isSupported ? selectedValue === option.value : null}
           >
-            {option.label}
-          </label>
-
-          {#if option.hint}
-            <div
-              id="{name}-{i}-hint"
-              class="govuk-hint govuk-radios__hint"
-              role="note"
+            <input
+              type="radio"
+              {name}
+              id="{name}-{i}"
+              class="govuk-radios__input"
+              value={option.value}
+              bind:group={selectedValue}
+              data-aria-controls={option.conditional?.id}
+              aria-describedby={[
+                option.hint ? `${name}-${i}-hint` : null,
+                option.conditional ? option.conditional.id : null,
+              ]
+                .filter(Boolean)
+                .join(" ")}
+              data-behaviour={option.exclusive ? "exclusive" : undefined}
+            />
+            <label
+              class="govuk-label govuk-radios__label"
+              for="{name}-{i}"
+              id="{name}-${i}-label"
             >
-              {option.hint}
-            </div>
+              {option.label}
+            </label>
+
+            {#if option.hint}
+              <div
+                id="{name}-{i}-hint"
+                class="govuk-hint govuk-radios__hint"
+                role="note"
+              >
+                {option.hint}
+              </div>
+            {/if}
+          </div>
+
+          {#if option.moreInfo}
+            <Button
+              textContent="i"
+              buttonType="moreInfo"
+              noPadding={true}
+              onClickFunction={() => updateMoreInfoTogglesArray(i)}
+            ></Button>
           {/if}
         </div>
 
@@ -170,7 +201,25 @@
             {/if}
           </div>
         {/if}
+
+        {#if moreInfoTogglesArray[i]}
+          <InsetText content={option.moreInfo} renderStringAsHTML={true}
+          ></InsetText>
+        {/if}
       {/each}
     </div>
   </fieldset>
 </div>
+
+<style>
+  .item-and-more-info-button-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .item-container {
+    flex: 1;
+  }
+</style>

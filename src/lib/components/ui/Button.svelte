@@ -1,4 +1,6 @@
 <script>
+  import Icon from "./../../assets/icons/MaterialIcon.svelte";
+
   let {
     textContent = undefined,
     buttonType,
@@ -21,7 +23,13 @@
 </script>
 
 {#if noPadding}
-  {#if buttonType === "start"}
+  {#if buttonType === "moreInfo"}
+    <div>
+      <button class="more-info-button" onclick={onClickFunction}>
+        <Icon kind="info" />
+      </button>
+    </div>
+  {:else if buttonType === "start"}
     <a
       href={"#"}
       role="button"
@@ -166,5 +174,21 @@
   .text-header {
     display: flex;
     color: #005ea5;
+  }
+
+  .more-info-button {
+    flex: none;
+    font-size: 1.25rem;
+    padding-top: 2px;
+    transition: all 75ms ease;
+    cursor: pointer;
+  }
+
+  /* For the scale on hover of group parent */
+  :hover .more-info-button {
+    transform: scale(1.25);
+  }
+  .more-info-button.custom-ring {
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 1);
   }
 </style>

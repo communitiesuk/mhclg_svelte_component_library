@@ -1,5 +1,6 @@
 <script lang="ts">
   import type { SvelteComponent, Snippet } from "svelte";
+  import Button from "./Button.svelte";
   import { onMount } from "svelte";
   // Define the CheckboxOption type
   export type CheckboxOption = {
@@ -25,6 +26,7 @@
     options = [],
     validate = undefined,
     selectedValues = $bindable([]),
+    selectAllButton = false,
   } = $props<{
     legend: string;
     hint?: string;
@@ -36,6 +38,7 @@
     options?: CheckboxOption[];
     validate?: (values: string[]) => string | undefined;
     selectedValues?: string[];
+    selectAllButton?: boolean;
   }>();
 
   // Add support detection
@@ -70,6 +73,20 @@
             ),
             option.value,
           ];
+    }
+  }
+
+  let allSelected = $derived(
+    selectedValues.length === options.length && options.length > 0,
+  );
+
+  function toggleSelectAll() {
+    if (allSelected) {
+      selectedValues = [];
+      allSelected = false;
+    } else {
+      selectedValues = options.map((option) => option.value);
+      allSelected = true;
     }
   }
 </script>
@@ -120,6 +137,14 @@
       role="group"
       aria-labelledby="{name}-legend"
     >
+      {#if selectAllButton}
+        <Button
+          buttonType={allSelected ? "warning" : "secondary"}
+          textContent={allSelected ? "De-select all" : "Select all"}
+          onClickFunction={toggleSelectAll}
+          noPadding={true}
+        ></Button>
+      {/if}
       {#each options as option, i}
         {#if option.exclusive && i > 0}
           <div

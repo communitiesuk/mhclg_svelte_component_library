@@ -267,6 +267,11 @@
         }`,
         },
       },
+      {
+        name: "selectAllButton",
+        category: "UI Options",
+        value: false,
+      },
     ]),
   );
 

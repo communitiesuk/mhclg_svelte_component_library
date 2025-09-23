@@ -133,6 +133,8 @@
    */
   let selectedValue = $state([]);
   let selectedValues = $state([]);
+  let bindSelectedItemIndexMap = $state(new Map());
+  let bindNextSelectionIndex = $state(0);
 
   /**
    * ! Step 3 - Add your props
@@ -240,7 +242,7 @@
         name: "value",
         category: "Core attributes",
         isBinded: true,
-        value: selectedValue,
+        value: null,
         description: {
           markdown: true,
           arr: [
@@ -308,7 +310,22 @@
       {
         name: "validate",
         category: "Error handling",
-        value: undefined,
+        value: (value) => {
+          // Default validation: require at least one selection
+          if (!value || (Array.isArray(value) && value.length === 0)) {
+            return "Please select at least one option";
+          }
+          return undefined;
+        },
+        functionElements: {
+          functionAsString: `function(value) {
+  // Default validation: require at least one selection
+  if (!value || (Array.isArray(value) && value.length === 0)) {
+    return "Please select at least one option";
+  }
+  return undefined;
+}`,
+        },
         description: {
           markdown: true,
           arr: [
@@ -324,7 +341,11 @@
         value: "Search in list",
         description: {
           markdown: true,
-          arr: [`Placeholder text shown in the search input field.`],
+          arr: [
+            `<strong>Placeholder text for the search query input field in single select mode only.</strong> This text appears inside the search input box to guide users on what to type. Due to Choices.js library limitations, this property only works with single select (<code>multiple: false</code>). Has no effect in multiple select mode.`,
+            `<strong>Dependencies:</strong> Only functional with single select mode. Choices.js does not support search placeholders for multiple select elements.`,
+            `<strong>Default:</strong> <code>"Search in list"</code> (single select only)`,
+          ],
         },
       },
       {
@@ -348,7 +369,7 @@
       {
         name: "searchResultLimit",
         category: "Search options",
-        value: 100,
+        value: 6,
         description: {
           markdown: true,
           arr: [`Maximum number of options to show in search results.`],
@@ -361,7 +382,20 @@
         description: {
           markdown: true,
           arr: [
-            `Whether to show remove buttons on selected items. Defaults to true for multiple select.`,
+            `<strong>Whether to show X remove buttons on selected items (chips/pills).</strong> When <code>true</code>, selected items display with clickable X buttons for removal. When <code>false</code>, selected items appear without remove buttons (can only be removed by deselecting from dropdown).`,
+            `<strong>Dependencies:</strong> Only applies to multiple select mode (<code>multiple: true</code>). In single select mode, there are no selected item chips to display remove buttons on.`,
+            `<strong>Default:</strong> <code>true</code> for multiple select mode (automatically computed based on <code>multiple</code> prop if not explicitly set)`,
+          ],
+        },
+      },
+      {
+        name: "showSearchIcon",
+        category: "Search options",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Whether to show the search icon button.</strong> When <code>true</code>, displays a search icon on the right side of the input. When <code>false</code>, hides the search icon for a cleaner appearance.`,
           ],
         },
       },
@@ -370,7 +404,7 @@
       {
         name: "formGroupClasses",
         category: "Styling and layout",
-        value: "",
+        value: "w-1/2",
         description: {
           markdown: true,
           arr: [`Additional CSS classes for the form group wrapper.`],
@@ -382,7 +416,9 @@
         value: false,
         description: {
           markdown: true,
-          arr: [`Makes the select element full width if true.`],
+          arr: [
+            `<strong>Makes the component take full width when true.</strong> This appends <code>w-full</code> class to the <code>formGroupClasses</code>, overriding any width restrictions. Works for both the enhanced Choices.js version and the fallback <code>&lt;select&gt;</code> element.`,
+          ],
         },
       },
       {
@@ -408,11 +444,13 @@
       {
         name: "placeholderText",
         category: "Other options",
-        value: undefined,
+        value: "",
         description: {
           markdown: true,
           arr: [
-            `Custom placeholder text. If not provided, defaults to "Select all that apply" for multiple select or "Select one" for single select.`,
+            `<strong>Custom placeholder text for single select mode only.</strong> This text appears as the initial/empty state option in the dropdown before any selections are made. Has no visible effect in multiple select mode.`,
+            `<strong>Dependencies:</strong> Only applies to single select mode (<code>multiple: false</code>). Ignored when <code>multiple: true</code>.`,
+            `<strong>Default:</strong> <code>"Select one"</code> for single select mode`,
           ],
         },
       },
@@ -423,6 +461,115 @@
         description: {
           markdown: true,
           arr: [`Additional options to pass to the Choices.js library.`],
+        },
+      },
+
+      // API and Dynamic Options
+      {
+        name: "source_url",
+        category: "API options",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>URL for fetching dynamic options from an API.</strong> When provided, enables API-based search functionality alongside or instead of static options. Component will make HTTP requests to this URL with query parameters.`,
+            `<strong>Dependencies:</strong> Works with <code>source_key</code> and <code>source_property</code> to parse API responses. Optional <code>sourceSelector</code> can control when API vs static options are used.`,
+            `<strong>Default:</strong> <code>undefined</code> (no API integration)`,
+          ],
+        },
+      },
+      {
+        name: "source_key",
+        category: "API options",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Key to extract data from API response.</strong> Specifies the property path in the API response that contains the array of options. Uses dot notation for nested properties.`,
+            `<strong>Dependencies:</strong> Required when <code>source_url</code> is provided and API response is not a direct array.`,
+            `<strong>Default:</strong> <code>undefined</code> (expects API response to be direct array)`,
+          ],
+        },
+      },
+      {
+        name: "source_property",
+        category: "API options",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Property to use as the display text from API data.</strong> Specifies which field from each API result item should be shown to users in the dropdown. If not provided, entire item will be converted to string.`,
+            `<strong>Dependencies:</strong> Used when <code>source_url</code> is provided to format API results for display.`,
+            `<strong>Default:</strong> <code>undefined</code> (uses entire item as display text)`,
+          ],
+        },
+      },
+      {
+        name: "sourceSelector",
+        category: "API options",
+        propType: "fixed",
+        value: function (query, options) {
+          // Default logic: use API when source_url/source_key present and query >= 3 chars
+          return query.length >= 3 ? "api" : "options";
+        },
+        functionElements: {
+          functionAsString: `function(query, options) {
+  // Default logic: use API when source_url/source_key present and query >= 3 chars
+  return query.length >= 3 ? "api" : "options";
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Function to decide whether to use 'api' or 'options' for a given query.</strong> Controls whether to search static options or make API request based on user input. Returns either "api" or "options".`,
+            `<strong>Dependencies:</strong> Used when both <code>source_url</code> and static <code>items</code> are provided for dual-mode operation.`,
+            `<strong>Default:</strong> Uses API when query length >= 3 characters, otherwise uses static options`,
+          ],
+        },
+      },
+      {
+        name: "minLength",
+        category: "API options",
+        value: 0,
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Minimum length before triggering API search.</strong> Prevents API calls for very short queries. When user input is shorter, shows <code>tTooShort</code> message instead of making API request.`,
+            `<strong>Dependencies:</strong> Used with <code>source_url</code> for API-based searching. Works with <code>tTooShort</code> function for user messaging.`,
+            `<strong>Default:</strong> <code>0</code> (no minimum length requirement)`,
+          ],
+        },
+      },
+      {
+        name: "tTooShort",
+        category: "API options",
+        propType: "fixed",
+        value: (n) => `Enter ${n} or more characters for suggestions`,
+        functionElements: {
+          functionAsString: `function(n) {
+  return \`Enter \${n} or more characters for suggestions\`;
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Function to generate message when query is too short.</strong> Called when user input length is below <code>minLength</code> threshold. Receives the minimum required length as parameter.`,
+            `<strong>Dependencies:</strong> Used with <code>minLength</code> and <code>source_url</code> to provide user feedback for short queries.`,
+            `<strong>Default:</strong> <code>(n) => \`Enter \${n} or more characters for suggestions\`</code>`,
+          ],
+        },
+      },
+      {
+        name: "groupKey",
+        category: "API options",
+        value: "",
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Key for displaying additional context in options.</strong> When provided, shows secondary information from API results alongside the main display text. Useful for disambiguation (e.g., showing region alongside place names).`,
+            `<strong>Dependencies:</strong> Used with <code>source_url</code> to enhance API result presentation with contextual information.`,
+            `<strong>Default:</strong> <code>undefined</code> (no additional context shown)`,
+          ],
         },
       },
 
@@ -464,13 +611,31 @@
         },
       },
       {
+        name: "choicesItemBorderRadius",
+        category: "Choices.js styling",
+        value: "0",
+        description: {
+          markdown: true,
+          arr: [`Border radius for dropdown items.`],
+        },
+      },
+      {
+        name: "selectedChipBackgroundColor",
+        category: "Choices.js styling",
+        value: "#f3f2f1",
+        description: {
+          markdown: true,
+          arr: [`Background color specifically for selected chips/pills.`],
+        },
+      },
+      {
         name: "selectedItemCircleColor",
         category: "Choices.js styling",
         value: "#1d70b8",
         description: {
           markdown: true,
           arr: [
-            `Color of the circle indicator shown on selected items in the button (not in dropdown options).`,
+            `Fallback color for circle indicators on selected items. **Multi-select only** - circles are only shown when both <code>enableSelectedItemCircles</code> is true and <code>multiple</code> is true. In practice, actual colors come from <code>selectedItemCircleColorPalette</code> which provides unique colors for each selection.`,
           ],
         },
       },
@@ -482,6 +647,17 @@
           markdown: true,
           arr: [
             `Enable or disable the colored circle indicators on selected items.`,
+          ],
+        },
+      },
+      {
+        name: "matchBorderToCircleColor",
+        category: "Choices.js styling",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Enable border colors to match circle colors for selected items.`,
           ],
         },
       },
@@ -513,7 +689,214 @@
         description: {
           markdown: true,
           arr: [
-            `Complete GOV.UK Design System color palette (19 colors) with infinite extension capability. Uses the full official GDS palette first, then automatically generates additional unique colors using proven data visualization algorithms (similar to Plotly.js) when more than 19 selections are made. This ensures every selection gets a unique color while maintaining accessibility standards.`,
+            `Complete GOV.UK Design System color palette (19 colors). Colors are assigned based on selection order (not deterministic by item value), but each item remembers its assigned color. When more than 19 items are selected, colors cycle back to the beginning of the palette.`,
+          ],
+        },
+      },
+
+      // Advanced Cross-Selection Features
+      {
+        name: "apiParentResolver",
+        category: "Advanced features",
+        propType: "fixed",
+        value: function (apiItem) {
+          // Extract parent value from API response
+          // Example: return apiItem.codes?.lau2 || apiItem.lau2;
+          return apiItem.parentCode;
+        },
+        functionElements: {
+          functionAsString: `function(apiItem) {
+  // Extract parent value from API response
+  // Example: return apiItem.codes?.lau2 || apiItem.lau2;
+  return apiItem.parentCode;
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Function to resolve parent options from API data.</strong> Required when using dual-mode (API + static options) with cross-selection logic. Receives API response item, should return parent identifier for coverage checking.`,
+            `<strong>Dependencies:</strong> Used with dual-mode configurations when both <code>source_url</code> and static <code>items</code> are provided.`,
+            `<strong>Default:</strong> <code>undefined</code> (no parent resolution)`,
+          ],
+        },
+      },
+      {
+        name: "staticChildrenResolver",
+        category: "Advanced features",
+        propType: "fixed",
+        value: function (staticItem) {
+          // Extract child values from static option
+          // Example: return staticItem.children || [];
+          return staticItem.postcodes || [];
+        },
+        functionElements: {
+          functionAsString: `function(staticItem) {
+  // Extract child values from static option
+  // Example: return staticItem.children || [];
+  return staticItem.postcodes || [];
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Function to resolve child options from static data.</strong> Used for hierarchical relationships where static options contain child items that should be checked against API selections.`,
+            `<strong>Dependencies:</strong> Used with dual-mode configurations when static options contain hierarchical data.`,
+            `<strong>Default:</strong> <code>undefined</code> (no child resolution)`,
+          ],
+        },
+      },
+      {
+        name: "selectedChildParentResolver",
+        category: "Advanced features",
+        propType: "fixed",
+        value: function (selectedValue) {
+          // Resolve parent from selected child value
+          // Example: Look up postcode's LAD
+          return postcodeToLADMapping[selectedValue];
+        },
+        functionElements: {
+          functionAsString: `function(selectedValue) {
+  // Resolve parent from selected child value
+  // Example: Look up postcode's LAD
+  return postcodeToLADMapping[selectedValue];
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Function to resolve parent from selected child value.</strong> Used to determine what parent option a selected child belongs to for coverage checking and conflict resolution.`,
+            `<strong>Dependencies:</strong> Used when dealing with child-parent relationships in selected values.`,
+            `<strong>Default:</strong> <code>undefined</code> (no parent resolution from selected values)`,
+          ],
+        },
+      },
+      {
+        name: "tApiChildInSelectedParent",
+        category: "Advanced features",
+        propType: "fixed",
+        value: (child, parent) =>
+          `${child} is in ${parent}, which is already selected`,
+        functionElements: {
+          functionAsString: `function(child, parent) {
+  return \`\${child} is in \${parent}, which is already selected\`;
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Function to generate message when API child is in selected parent.</strong> Called when user searches for an API item (e.g., postcode) that belongs to an already selected parent option (e.g., LAD).`,
+            `<strong>Dependencies:</strong> Used with <code>apiParentResolver</code> when API items can be contained within static selections.`,
+            `<strong>Default:</strong> <code>(child, parent) => \`\${child} is in \${parent}, which is already selected\`</code>`,
+          ],
+        },
+      },
+      {
+        name: "tApiChildCoveredBySelectedChild",
+        category: "Advanced features",
+        propType: "fixed",
+        value: (child, parent, selectedChild) =>
+          `${child} is in ${parent}, which is already covered by the selected postcode ${selectedChild}`,
+        functionElements: {
+          functionAsString: `function(child, parent, selectedChild) {
+  return \`\${child} is in \${parent}, which is already covered by the selected postcode \${selectedChild}\`;
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Function to generate message when API child is covered by selected child.</strong> Called when user searches for an API item that belongs to the same parent as an already selected child item.`,
+            `<strong>Dependencies:</strong> Used with <code>apiParentResolver</code> and <code>selectedChildParentResolver</code> for child-parent conflict detection.`,
+            `<strong>Default:</strong> <code>(child, parent, selectedChild) => \`\${child} is in \${parent}, which is already covered by the selected postcode \${selectedChild}\`</code>`,
+          ],
+        },
+      },
+      {
+        name: "tStaticParentContainsSelectedChildren",
+        category: "Advanced features",
+        propType: "fixed",
+        value: (parent, children) =>
+          `${parent} contains ${children.join(", ")}, which ${children.length > 1 ? "are" : "is"} already selected`,
+        functionElements: {
+          functionAsString: `function(parent, children) {
+  return \`\${parent} contains \${children.join(", ")}, which \${children.length > 1 ? "are" : "is"} already selected\`;
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Function to generate message when static parent contains selected children.</strong> Called when user tries to select a parent option that would encompass already selected child items.`,
+            `<strong>Dependencies:</strong> Used with <code>staticChildrenResolver</code> to check if parent options conflict with existing child selections.`,
+            `<strong>Default:</strong> <code>(parent, children) => \`\${parent} contains \${children.join(", ")}, which \${children.length > 1 ? "are" : "is"} already selected\`</code>`,
+          ],
+        },
+      },
+      {
+        name: "tPartialPostcodeInSelectedParent",
+        category: "Advanced features",
+        propType: "fixed",
+        value: (partialPostcode, parent) =>
+          `Postcodes beginning ${partialPostcode}... are in ${parent}, which is already selected`,
+        functionElements: {
+          functionAsString: `function(partialPostcode, parent) {
+  return \`Postcodes beginning \${partialPostcode}... are in \${parent}, which is already selected\`;
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `<strong>Function to generate message for partial postcode in selected parent.</strong> Called when <code>promoteApiChildToParent</code> is enabled and user searches partial postcode that belongs to already selected parent.`,
+            `<strong>Dependencies:</strong> Used when <code>promoteApiChildToParent</code> is true and partial postcode searches conflict with selected parents.`,
+            `<strong>Default:</strong> <code>(partialPostcode, parent) => \`Postcodes beginning \${partialPostcode}... are in \${parent}, which is already selected\`</code>`,
+          ],
+        },
+      },
+
+      // Behavioral Options
+      {
+        name: "resetApiSuggestionsAfterSelection",
+        category: "Behavioral options",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [`Reset API suggestions after making a selection.`],
+        },
+      },
+      {
+        name: "promoteApiChildToParent",
+        category: "Behavioral options",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `Promote API child (e.g., postcode) to its parent option (e.g., LAD).`,
+          ],
+        },
+      },
+
+      // Bindable State Props
+      {
+        name: "bindSelectedItemIndexMap",
+        category: "Bindable state",
+        propType: "fixed",
+        value: null,
+        isBinded: true,
+        description: {
+          markdown: true,
+          arr: [
+            `Bindable map of item values to their color indices for external synchronization.`,
+          ],
+        },
+      },
+      {
+        name: "bindNextSelectionIndex",
+        category: "Bindable state",
+        propType: "fixed",
+        value: null,
+        isBinded: true,
+        description: {
+          markdown: true,
+          arr: [
+            `Bindable next available color index for external synchronization.`,
           ],
         },
       },
@@ -567,7 +950,14 @@
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
 
-  let derivedParametersObject = $derived({});
+  let derivedParametersObject = $derived({
+    value: selectedValue,
+    bindSelectedItemIndexMap:
+      bindSelectedItemIndexMap instanceof Map
+        ? Object.fromEntries(bindSelectedItemIndexMap)
+        : bindSelectedItemIndexMap,
+    bindNextSelectionIndex: bindNextSelectionIndex,
+  });
 
   /**
    * DONOTTOUCH *
@@ -658,9 +1048,11 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    {#key [parametersObject.removeItemButton, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette].join("|")}
+    {#key [parametersObject.removeItemButton, parametersObject.showSearchIcon, parametersObject.multiple, parametersObject.allowHTML, parametersObject.shouldSort, parametersObject.searchResultLimit, parametersObject.searchPlaceholder, parametersObject.choicesItemBackgroundColor, parametersObject.choicesItemBorderColor, parametersObject.choicesItemTextColor, parametersObject.choicesItemDividerPadding, parametersObject.selectedItemCircleColor, parametersObject.enableSelectedItemCircles, parametersObject.selectedItemCircleColorPalette, parametersObject.disabled, parametersObject.fullWidth].join("|")}
       <MultiSelectSearchAutocomplete
         bind:value={selectedValue}
+        bind:bindSelectedItemIndexMap
+        bind:bindNextSelectionIndex
         {...parametersObject}
       ></MultiSelectSearchAutocomplete>
     {/key}

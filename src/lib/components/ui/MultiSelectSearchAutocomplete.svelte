@@ -38,8 +38,9 @@
     searchPlaceholder = "Search in list",
     allowHTML = true,
     shouldSort = false,
-    searchResultLimit = 100,
+    searchResultLimit = 6,
     removeItemButton = true, // Will default to multiple if not specified
+    showSearchIcon = true,
 
     // Styling and layout - pass through to Select component
     formGroupClasses = "",
@@ -76,6 +77,9 @@
     choicesItemBorderColor = "#b1b4b6",
     choicesItemTextColor = "black",
     choicesItemDividerPadding = "10px",
+    choicesItemBorderRadius = "0",
+    // Selected chip/pill specific styling
+    selectedChipBackgroundColor = "#f3f2f1",
     // Circle feature props
     enableSelectedItemCircles = true,
     selectedItemCircleColor = "#1d70b8", // Default color when not using palette
@@ -100,7 +104,45 @@
       "#626a6e", // Mid grey
       "#b1b4b6", // Light grey
       "#0b0c0c", // Black
-    ], // Complete GOV.UK Design System palette (19 colors)
+    ],
+    // Enable border colors to match circle colors for selected items
+    matchBorderToCircleColor = false,
+
+    // Cross-selection relationship resolvers (optional)
+    // If provided, they enable dynamic messages when results map to already-selected parents/children
+    apiParentResolver = undefined,
+    staticChildrenResolver = undefined,
+    selectedChildParentResolver = undefined,
+
+    // Dynamic message builders (optional)
+    tApiChildInSelectedParent = (child: string, parent: string) =>
+      `${child} is in ${parent}, which is already selected`,
+    tApiChildCoveredBySelectedChild = (
+      child: string,
+      parent: string,
+      selectedChild: string,
+    ) =>
+      `${child} is in ${parent}, which is already covered by the selected postcode ${selectedChild}`,
+    tStaticParentContainsSelectedChildren = (
+      parent: string,
+      children: string[],
+    ) =>
+      `${parent} contains ${children.join(", ")}, which ${
+        children.length > 1 ? "are" : "is"
+      } already selected`,
+
+    // Partial postcode promotion message (when promoteApiChildToParent is enabled)
+    tPartialPostcodeInSelectedParent = (
+      partialPostcode: string,
+      parent: string,
+    ) =>
+      `Postcodes beginning ${partialPostcode}... are in ${parent}, which is already selected`,
+
+    // Behavioural tweaks
+    resetApiSuggestionsAfterSelection = false,
+    // Promote API child (e.g., postcode) to its parent option (e.g., LAD)
+    // so that only the parent is ever selected (accessibility-friendly)
+    promoteApiChildToParent = false,
 
     ...attributes
   }: {
@@ -120,6 +162,7 @@
     shouldSort?: boolean;
     searchResultLimit?: number;
     removeItemButton?: boolean;
+    showSearchIcon?: boolean;
     formGroupClasses?: string;
     fullWidth?: boolean;
     describedBy?: string;
@@ -137,9 +180,46 @@
     choicesItemBorderColor?: string;
     choicesItemTextColor?: string;
     choicesItemDividerPadding?: string;
+    choicesItemBorderRadius?: string;
+    selectedChipBackgroundColor?: string;
     enableSelectedItemCircles?: boolean;
     selectedItemCircleColor?: string;
     selectedItemCircleColorPalette?: string[];
+    matchBorderToCircleColor?: boolean;
+
+    // Cross-selection relationship resolvers (optional)
+    apiParentResolver?:
+      | undefined
+      | ((entry: any) => { value: string | number; label?: string } | null);
+    staticChildrenResolver?:
+      | undefined
+      | ((
+          staticValue: string | number,
+          selectedValues: (string | number)[],
+        ) => (string | number)[] | Promise<(string | number)[]>);
+    selectedChildParentResolver?:
+      | undefined
+      | ((
+          selectedValue: string | number,
+        ) => { value: string | number; label?: string } | null);
+    tApiChildInSelectedParent?: (child: string, parent: string) => string;
+    tApiChildCoveredBySelectedChild?: (
+      child: string,
+      parent: string,
+      selectedChild: string,
+    ) => string;
+    tStaticParentContainsSelectedChildren?: (
+      parent: string,
+      children: string[],
+    ) => string;
+    tPartialPostcodeInSelectedParent?: (
+      partialPostcode: string,
+      parent: string,
+    ) => string;
+
+    // Behavioural tweaks
+    resetApiSuggestionsAfterSelection?: boolean;
+    promoteApiChildToParent?: boolean;
 
     // Bindable state props for external synchronization
     // Use these to sync color state with other components
@@ -163,11 +243,64 @@
   let debounceTimer: any = null;
   let lastQuery = "";
   const baseNoChoicesText = "No choices to choose from";
+  let isProcessingPromotion = false;
+
+  // Track context for promoted items (postcode -> LAD promotions)
+  const promotedItemContext = $state(new Map<string, string>());
+  // Track parent labels for promoted items when not present in static options
+  const promotedParentLabelMap = $state(new Map<string, string>());
+
+  // Dev inspect: track selection history without logging proxies
+  let __lastSnapshot: string[] = [];
+  let __history: Array<{
+    seq: number;
+    type: string;
+    prev: string[];
+    next: string[];
+  }> = [];
+  let __seq = 0;
+  $inspect(value).with((type: string, current: unknown) => {
+    const next = Array.isArray(current)
+      ? current.map((x) => String(x))
+      : current == null
+        ? []
+        : [String(current as any)];
+    const prev = __lastSnapshot;
+    __seq += 1;
+    __history.push({ seq: __seq, type, prev, next });
+    // Keep history bounded
+    if (__history.length > 50) __history.shift();
+    console.log("🧭 [inspect:value]", {
+      seq: __seq,
+      type,
+      prev,
+      next,
+      historyLen: __history.length,
+    });
+    __lastSnapshot = next.slice();
+  });
 
   // Helper function for getting group text
   function getGroupText(item: any): string | undefined {
     if (!groupKey || !item || typeof item !== "object") return undefined;
-    return item[groupKey] ? String(item[groupKey]) : undefined;
+
+    // Check for promoted context first (for items that were promoted from postcode to LAD)
+    if (promotedItemContext.has(String(item.value))) {
+      const context = promotedItemContext.get(String(item.value));
+      console.log("🏷️ Found promotion context for", item.value, "→", context);
+      return context;
+    }
+
+    const regularContext = item[groupKey] ? String(item[groupKey]) : undefined;
+    if (regularContext) {
+      console.log(
+        "🏷️ Found regular context for",
+        item.value,
+        "→",
+        regularContext,
+      );
+    }
+    return regularContext;
   }
 
   // Helper function to ensure group text is applied to choices
@@ -290,6 +423,8 @@
     return color;
   }
 
+  // rollbackColorAssignmentForValue removed; no transient child is created now
+
   // Computed values for component configuration
   let computedPlaceholderText = $derived(
     placeholderText || (multiple ? "Select all that apply" : "Select one"),
@@ -298,6 +433,24 @@
   let computedRemoveItemButton = $derived(
     removeItemButton !== undefined ? removeItemButton : multiple,
   );
+
+  // Computed form group classes with optional full width override
+  let computedFormGroupClasses = $derived.by(() => {
+    if (fullWidth) {
+      // Remove existing width classes and add w-full
+      const withoutWidthClasses = formGroupClasses
+        .split(" ")
+        .filter(
+          (cls) =>
+            !cls.startsWith("w-") &&
+            !cls.startsWith("max-w-") &&
+            !cls.startsWith("min-w-"),
+        )
+        .join(" ");
+      return `${withoutWidthClasses} w-full`.trim();
+    }
+    return formGroupClasses;
+  });
 
   // Enhanced items with placeholder for single select
   let enhancedItems = $derived.by(() => {
@@ -313,8 +466,13 @@
     value: string | number;
     label: string;
     disabled?: boolean;
+    labelPlain?: string;
+    raw?: any;
   };
   const staticChoices = $derived.by<ChoiceItem[]>(() => {
+    // Include promotedItemContext.size to make this reactive to promotion changes
+    promotedItemContext.size;
+
     /** @type {ChoiceItem[]} */
     const flattened: ChoiceItem[] = [];
     // Include enhancedItems() first (single-select placeholder support)
@@ -331,6 +489,7 @@
                <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
              </span>`
           : safeLabel,
+        labelPlain: String(it.text),
         disabled: it.disabled,
       });
     }
@@ -349,6 +508,7 @@
                  <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
                </span>`
             : safeLabel,
+          labelPlain: String(choice.text),
           disabled: g.disabled || choice.disabled,
         });
       }
@@ -377,9 +537,9 @@
 
   // Determine component configuration type
   const hasApi = Boolean(source_url && source_key);
-  const hasStatic = staticChoices.length > (multiple ? 0 : 1); // (>1 if single because of placeholder)
-  const isDual = hasApi && hasStatic;
-  const isOptionsOnly = !hasApi && hasStatic;
+  const hasStatic = $derived(staticChoices.length > (multiple ? 0 : 1)); // (>1 if single because of placeholder)
+  const isDual = $derived(hasApi && hasStatic);
+  const isOptionsOnly = $derived(!hasApi && hasStatic);
 
   // Decide which search mode to use based on query and configuration
   function decideMode(query: string): Mode {
@@ -473,7 +633,33 @@
       choicesInstance.config.searchChoices = false;
 
       if (hasStatic) {
-        resetToStaticChoices(); // ensure full dataset is present with group text
+        // For grouped options, use grouped restoration method
+        console.log("🔍 Checking for grouped options:", {
+          groups: groups?.length || 0,
+          hasGroups: !!(groups && groups.length > 0),
+        });
+        if (groups && groups.length > 0) {
+          console.log("📋 Applying grouped options mode");
+          let selectedValues: string[] = [];
+          try {
+            const currentValue = choicesInstance.getValue(true);
+            if (Array.isArray(currentValue)) {
+              selectedValues = currentValue.map((item: any) =>
+                String(item.value || item),
+              );
+            } else if (currentValue && typeof currentValue === "object") {
+              selectedValues = [String(currentValue.value || currentValue)];
+            } else if (currentValue) {
+              selectedValues = [String(currentValue)];
+            }
+          } catch (error) {
+            console.warn("⚠️ Error getting current value:", error);
+            selectedValues = [];
+          }
+          restoreGroupedChoicesWithoutReinit(selectedValues);
+        } else {
+          resetToStaticChoices(); // ensure full dataset is present with group text
+        }
         // Don't set noChoicesText here - let the search logic handle it
         // This allows us to show "No results found" vs "No choices to choose from"
       } else {
@@ -491,31 +677,6 @@
     choicesInstance.clearChoices();
     choicesInstance.setChoices([], "value", "label", true);
     // Force refresh to show the message
-  }
-
-  // Default selection logic between API and static options
-  function selectSource(query: string): "api" | "options" {
-    if (typeof sourceSelector === "function") {
-      try {
-        return sourceSelector(query, staticPlainOptions);
-      } catch {
-        // fall through to default
-      }
-    }
-
-    // Check if we have static options (items or groups with choices)
-    const hasStaticOptions =
-      (items && items.length > 0) ||
-      (groups && groups.some((g) => g.choices && g.choices.length > 0));
-
-    // If we have static options, use them; otherwise default to API if configured
-    if (hasStaticOptions) {
-      return "options";
-    } else if (source_url && source_key && query.trim().length >= minLength) {
-      return "api";
-    } else {
-      return "options"; // fallback to options even if empty
-    }
   }
 
   // Build URL for API requests. Replaces {query} placeholder or appends ?q=
@@ -544,12 +705,6 @@
     }
   }
 
-  function toValue(o: any, label: string): string | number {
-    if (o && typeof o === "object" && "value" in o && o.value != null)
-      return o.value as string | number;
-    return label;
-  }
-
   async function fetchApiChoices(query: string): Promise<ChoiceItem[]> {
     const url = buildApiUrl(query);
     if (!url) return [];
@@ -566,14 +721,17 @@
       const safeLabel = escapeHtml(label);
       const safeGroup = groupText ? escapeHtml(groupText) : "";
 
+      // Keep CHILD (e.g. postcode) as value so it never collides with static LAD values
       return {
-        value: toValue(entry, label),
+        value: label,
         label: safeGroup
           ? `<span class="choices__item-label">
                <span class="choices__item-main">${safeLabel}</span>
                <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
              </span>`
           : safeLabel,
+        labelPlain: label,
+        raw: entry,
       };
     });
 
@@ -618,6 +776,7 @@
     if (groups && groups.length > 0) {
       console.log("📋 Restoring grouped options structure");
 
+      // For grouped options, revert to destroy/recreate approach (only reliable method)
       // Clear current choices
       choicesInstance.clearChoices();
 
@@ -633,7 +792,7 @@
           const placeholderOption = document.createElement("option");
           placeholderOption.value = "";
           placeholderOption.textContent = computedPlaceholderText;
-          placeholderOption.selected = true;
+          placeholderOption.selected = selectedValues.length === 0;
           selectElement.appendChild(placeholderOption);
         }
 
@@ -662,14 +821,18 @@
           }
         });
 
+        // Store the existing template callback before destroying
+        const existingTemplateCallback =
+          choicesInstance.config.callbackOnCreateTemplates;
+
         // Reinitialize Choices.js with the restored structure
         choicesInstance.destroy();
         if (selectElement) {
           choicesInstance = new Choices(selectElement, {
             allowHTML,
             searchPlaceholderValue: searchPlaceholder,
-            shouldSort: false, // Force false to preserve placeholder position
-            placeholder: true, // Ensure placeholder option is treated as placeholder
+            shouldSort: false,
+            placeholder: true,
             itemSelectText: "",
             searchResultLimit,
             removeItemButton: computedRemoveItemButton,
@@ -678,106 +841,23 @@
               "-label " +
               (selectElement.getAttribute("aria-describedby") || ""),
             searchFloor: minLength,
-            // Don't set searchChoices here - let applyMode handle it
-            // Don't set noChoicesText here - let the search logic handle it
             duplicateItemsAllowed: false,
             fuseOptions: {
               ignoreLocation: true,
               threshold: 0,
             },
-            // Add the custom template callback to preserve colored circles
-            callbackOnCreateTemplates: function (strToEl: any) {
-              // public class names exposed by Choices
-              const cn = this.config.classNames;
-              const isMulti = this.passedElement?.element?.multiple === true;
-
-              // small escape for when allowHTML=false
-              const esc = (s: string) =>
-                String(s)
-                  .replace(/&/g, "&amp;")
-                  .replace(/</g, "&lt;")
-                  .replace(/>/g, "&gt;");
-
-              // try to keep any existing templates if your build exposes them
-              const base = (this as any)._templates ?? {};
-
-              return {
-                ...base,
-
-                // Custom item template for chips (selected items), not dropdown choices
-                item: (_classNames: any, data: any) => {
-                  const classes = [
-                    cn.item,
-                    data.highlighted ? cn.highlightedState : cn.itemSelectable,
-                    data.placeholder ? cn.placeholder : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" ");
-
-                  // ✅ Decide if this chip should be deletable
-                  const showRemove =
-                    isMulti && this.config.removeItemButton && !data.disabled;
-
-                  // Circle
-                  let circle = "";
-                  if (enableSelectedItemCircles && isMulti && data.active) {
-                    const color = colorForValue(data.value); // ✅ value-only, stable
-                    circle = `<span class="choices__item-circle" style="background:${color}"></span>`;
-                  }
-
-                  // Label
-                  const labelHtml = allowHTML ? data.label : esc(data.label);
-
-                  // Remove button (same markup Choices normally generates)
-                  const removeBtn = showRemove
-                    ? `<button type="button"
-                               class="${cn.button}"
-                               data-button
-                               aria-label="Remove ${esc(String(data.value))}"></button>`
-                    : "";
-
-                  return strToEl(
-                    `<div class="${classes}"
-                          data-item
-                          data-id="${data.id}"
-                          data-value="${String(data.value)}"
-                          ${showRemove ? "data-deletable" : ""}
-                          ${data.active ? 'aria-selected="true"' : ""}
-                          ${data.disabled ? 'aria-disabled="true"' : ""}>
-                        ${circle}${labelHtml}${removeBtn}
-                     </div>`,
-                  );
-                },
-              };
-            },
+            // Reuse the existing template callback (no duplication)
+            callbackOnCreateTemplates: existingTemplateCallback,
             ...choicesOptions,
           });
 
           // Store reference on the element for external access
           (selectElement as any).choices = choicesInstance;
 
-          // Re-apply the current mode after reinitialization
-          setTimeout(() => {
-            if (choicesInstance) {
-              applyMode(currentMode);
-              console.log(
-                "🔄 Re-applied current mode after reinitialization:",
-                currentMode,
-              );
-            }
-          }, 0);
-
-          // Restore focus to the main Choices container after reinitialization
-          setTimeout(() => {
-            if (choicesInstance?.containerOuter?.element) {
-              choicesInstance.containerOuter.element.focus();
-              console.log("🎯 Focus restored to Choices container");
-            }
-          }, 0);
+          console.log("✅ Grouped structure restored with reinit");
         }
-
-        console.log("✅ Restored grouped options structure");
       }
+      console.log("✅ Restored grouped options structure");
     } else {
       // For non-grouped options, use the existing logic
       console.log("📋 Restoring flat options structure");
@@ -858,7 +938,7 @@
     // Clear current list but keep the instance intact (preserves focus)
     choicesInstance.clearChoices();
 
-    // Build grouped payload excluding currently selected values
+    // Build grouped payload EXCLUDING selected values (same as original approach)
     const groupedPayload = groups.map((grp: any) => ({
       label: grp.label,
       disabled: !!grp.disabled,
@@ -886,10 +966,9 @@
 
     // Pass grouped data to Choices so it renders headings properly
     choicesInstance.setChoices(list, "value", "label", true);
-    console.log("✅ Grouped options restored in-place");
-  }
 
-  // Initialize Choices.js
+    console.log("✅ Grouped options restored in-place");
+  } // Initialize Choices.js
   onMount(async () => {
     console.log("🔧 MultiSelectSearchAutocomplete: onMount started", {
       id,
@@ -1049,11 +1128,8 @@
         ? baseNoChoicesText
         : tTooShort(minLength);
 
-      const hasApiConfig = source_url && source_key;
-
       console.log("📊 Initial configuration:", {
         hasStaticOptions,
-        hasApiConfig,
         initialNoChoicesText,
         staticChoices: staticChoices.length,
         enhancedItems: enhancedItems.length,
@@ -1154,19 +1230,42 @@
               const showRemove =
                 isMulti && this.config.removeItemButton && !data.disabled;
 
+              // If this selected item was promoted, render parent label + context
+              const meta = (data as any)?.customProperties;
+              const hasParent = meta && meta.parentValue && meta.parentLabel;
+
+              // Color calculation (needed for both circles and border matching)
+              let color = "#b1b4b6"; // Default fallback color
+
+              // Circle (color keyed by parent if present, else extract parent from composite value)
+              let colorKey;
+              if (enableSelectedItemCircles && isMulti) {
+                if (hasParent) {
+                  colorKey = meta.parentValue;
+                } else if (String(data.value).includes("::")) {
+                  // Extract parent from composite value for color consistency
+                  colorKey = String(data.value).split("::")[0];
+                } else {
+                  colorKey = data.value;
+                }
+                color = colorForValue(colorKey);
+              }
+
               // Circle
               let circle = "";
               if (enableSelectedItemCircles && isMulti) {
-                const color = colorForValue(data.value); // ✅ value-only, stable
                 circle = `<span class="choices__item-circle" style="background:${color}"></span>`;
-                console.log("🎨 Adding circle with color:", {
-                  value: data.value,
-                  color,
-                });
               }
 
               // Label
-              const labelHtml = allowHTML ? data.label : esc(data.label);
+              const displayLabel = hasParent
+                ? `<span class="choices__item-label">
+                     <span class="choices__item-main">${escapeHtml(meta.parentLabel)}</span>
+                     <span class="gem-c-select-with-search__suggestion-group">${escapeHtml(`(containing ${meta.childLabel ?? data.value})`)}</span>
+                   </span>`
+                : allowHTML
+                  ? data.label
+                  : esc(data.label);
 
               // Remove button (same markup Choices normally generates)
               const removeBtn = showRemove
@@ -1176,6 +1275,12 @@
                            aria-label="Remove ${esc(String(data.value))}"></button>`
                 : "";
 
+              // Border styling for matching circle color
+              const borderStyle =
+                matchBorderToCircleColor && enableSelectedItemCircles && isMulti
+                  ? `style="border: 2px solid ${color}; box-shadow: none;"`
+                  : "";
+
               return strToEl(
                 `<div class="${classes}"
                       data-item
@@ -1183,8 +1288,9 @@
                       data-value="${String(data.value)}"
                       ${showRemove ? "data-deletable" : ""}
                       ${data.active ? 'aria-selected="true"' : ""}
-                      ${data.disabled ? 'aria-disabled="true"' : ""}>
-                    ${circle}${labelHtml}${removeBtn}
+                      ${data.disabled ? 'aria-disabled="true"' : ""}
+                      ${borderStyle}>
+                    ${circle}${displayLabel}${removeBtn}
                  </div>`,
               );
             },
@@ -1266,16 +1372,28 @@
         config: choicesInstance.config,
       });
 
-      // Handle value changes from Choices.js
-      selectElement.addEventListener("change", handleChoicesChange);
+      // Initialize static choices - skip for grouped options as they'll be handled by applyMode
+      if (!(groups && groups.length > 0)) {
+        choicesInstance.setChoices(staticChoices, "value", "label", true);
+        console.log("✅ Initialized with flat static choices");
+      } else {
+        console.log(
+          "⏭️ Skipping initial static choices setup for grouped options",
+        );
+      }
+
+      // Keep the bound value in sync by reading from the Choices instance
+      selectElement.addEventListener("change", async (_event: Event) => {
+        handleChoicesChange(_event);
+      });
 
       // Listen for choice selection to reset search
-      selectElement.addEventListener("choice", () => {
+      selectElement.addEventListener("choice", (ev: any) => {
         console.log("🎯 Choice selected, resetting search");
+
         // When an item is selected, clear the search and show all unselected options
         if (searchInputElement) {
           searchInputElement.value = "";
-          lastQuery = "";
         }
 
         // Only reset to static choices if we're in "options" mode
@@ -1304,6 +1422,19 @@
                   );
                 }
               }, 0);
+            }
+          }, 0);
+        } else if (currentMode === "api" && resetApiSuggestionsAfterSelection) {
+          // Clear API suggestions after a selection and close dropdown
+          setTimeout(() => {
+            try {
+              choicesInstance.clearChoices();
+              choicesInstance.setChoices([], "value", "label", true);
+              // Force dropdown to close
+              choicesInstance.hideDropdown(true);
+              console.log("🔄 Cleared API suggestions after selection");
+            } catch (e) {
+              console.warn("⚠️ Failed to clear API suggestions:", e);
             }
           }, 0);
         } else {
@@ -1343,7 +1474,6 @@
         // Always add custom search handling to filter out selected values
         searchInputElement.addEventListener("input", () => {
           const raw = searchInputElement!.value || "";
-          lastQuery = raw;
           if (debounceTimer) clearTimeout(debounceTimer);
           debounceTimer = setTimeout(async () => {
             const q = raw.trim();
@@ -1455,42 +1585,335 @@
                   })),
                 });
 
-                if (filteredApiChoices.length === 0) {
+                // Note: No need to build child->parent map anymore since promotion happens at data-time
+
+                // Determine if the query is a full postcode (used to gate messages)
+                const isFullPostcode = looksLikePostcode(q);
+
+                // If resolver is provided, optionally hide results that all map to selected parents
+                try {
+                  if (
+                    isFullPostcode &&
+                    typeof apiParentResolver === "function" &&
+                    filteredApiChoices.length > 0
+                  ) {
+                    const covered = filteredApiChoices
+                      .map((c) => ({
+                        childValue: String(c.value),
+                        childLabel: c.labelPlain ?? String(c.value),
+                        parent: apiParentResolver(c.raw),
+                      }))
+                      .filter(
+                        (m) => m.parent && m.parent.value != null,
+                      ) as Array<{
+                      childValue: string;
+                      childLabel: string;
+                      parent: { value: string | number; label?: string };
+                    }>;
+
+                    const allCovered =
+                      covered.length === filteredApiChoices.length &&
+                      covered.every((m) =>
+                        selectedValues.includes(String(m.parent.value)),
+                      );
+
+                    if (allCovered) {
+                      const first = covered[0];
+                      const parentLabel =
+                        first.parent.label ?? String(first.parent.value);
+                      choicesInstance.config.noChoicesText =
+                        tApiChildInSelectedParent(
+                          first.childLabel,
+                          parentLabel,
+                        );
+                      choicesInstance.setChoices([], "value", "label", true);
+                      return;
+                    }
+                  }
+                } catch (err) {
+                  console.warn(
+                    "⚠️ apiParentResolver coverage check failed:",
+                    err,
+                  );
+                }
+
+                // Full vs partial postcode handling
+
+                // If full postcode exactly and it maps to a selected parent, show message
+                if (isFullPostcode && typeof apiParentResolver === "function") {
+                  const normalize = (s: string) =>
+                    String(s).replace(/\s+/g, "").toUpperCase();
+                  const exact = apiChoices.find(
+                    (c) =>
+                      normalize(String(c.value)) === normalize(q) ||
+                      normalize(c.labelPlain ?? "") === normalize(q),
+                  );
+                  if (exact) {
+                    try {
+                      const parent = apiParentResolver((exact as any).raw);
+                      if (parent && parent.value != null) {
+                        const parentLabel =
+                          parent.label ?? String(parent.value);
+                        if (selectedValues.includes(String(parent.value))) {
+                          choicesInstance.config.noChoicesText =
+                            tApiChildInSelectedParent(
+                              String(exact.labelPlain ?? exact.value),
+                              parentLabel,
+                            );
+                          choicesInstance.setChoices(
+                            [],
+                            "value",
+                            "label",
+                            true,
+                          );
+                          return;
+                        }
+                        {
+                          // Check if any selected postcode maps to the same LAD
+                          const coverParents = await Promise.all(
+                            (selectedValues || []).map(async (sv) => {
+                              try {
+                                if (
+                                  typeof selectedChildParentResolver ===
+                                  "function"
+                                ) {
+                                  const r = selectedChildParentResolver(sv);
+                                  if (r) return r;
+                                }
+                                // Fallback for postcodes.io
+                                if (
+                                  typeof sv === "string" &&
+                                  typeof source_url === "string" &&
+                                  /postcodes\.io\/postcodes\/?$/.test(
+                                    source_url,
+                                  )
+                                ) {
+                                  const pc = sv.replace(/\s+/g, "");
+                                  const url = `${source_url}${encodeURIComponent(pc)}`;
+                                  const res = await fetch(url);
+                                  const json = await res.json();
+                                  const result = json?.result;
+                                  const code =
+                                    result?.codes?.lau2 || result?.codes?.lad;
+                                  const label =
+                                    result?.admin_district ?? undefined;
+                                  if (code) return { value: code, label };
+                                }
+                              } catch (e) {
+                                console.warn("⚠️ Parent resolution failed:", e);
+                              }
+                              return null;
+                            }),
+                          );
+                          const idx = coverParents.findIndex(
+                            (rel) =>
+                              rel && String(rel.value) === String(parent.value),
+                          );
+                          const coveringChild =
+                            idx >= 0 ? selectedValues[idx] : null;
+                          if (coveringChild) {
+                            choicesInstance.config.noChoicesText =
+                              tApiChildCoveredBySelectedChild(
+                                String(exact.labelPlain ?? exact.value),
+                                parentLabel,
+                                String(coveringChild),
+                              );
+                            choicesInstance.setChoices(
+                              [],
+                              "value",
+                              "label",
+                              true,
+                            );
+                            return;
+                          }
+                        }
+                      }
+                    } catch {}
+                  }
+                }
+
+                // For partial postcodes, hide suggestions that belong to already-selected parents
+                let filteredByParent = filteredApiChoices;
+                if (
+                  !isFullPostcode &&
+                  typeof apiParentResolver === "function"
+                ) {
+                  // Build a set of parent LAD codes covered by any currently selected postcode(s)
+                  let selectedParentSet = new Set<string>();
+                  try {
+                    const rels = await Promise.all(
+                      (selectedValues || []).map(async (sv) => {
+                        try {
+                          if (
+                            typeof selectedChildParentResolver === "function"
+                          ) {
+                            const r = selectedChildParentResolver(sv);
+                            if (r) return r;
+                          }
+                          // Fallback for postcodes.io
+                          if (
+                            typeof sv === "string" &&
+                            typeof source_url === "string" &&
+                            /postcodes\.io\/postcodes\/?$/.test(source_url)
+                          ) {
+                            const pc = sv.replace(/\s+/g, "");
+                            const url = `${source_url}${encodeURIComponent(pc)}`;
+                            const res = await fetch(url);
+                            const json = await res.json();
+                            const result = json?.result;
+                            const code =
+                              result?.codes?.lau2 || result?.codes?.lad;
+                            const label = result?.admin_district ?? undefined;
+                            if (code) return { value: code, label };
+                          }
+                        } catch (e) {
+                          console.warn("⚠️ Parent resolution failed:", e);
+                        }
+                        return null;
+                      }),
+                    );
+                    for (const r of rels)
+                      if (r && r.value != null)
+                        selectedParentSet.add(String(r.value));
+                  } catch (e) {
+                    console.warn(
+                      "⚠️ Failed to build selected parents set for partial filtering:",
+                      e,
+                    );
+                  }
+
+                  filteredByParent = filteredApiChoices.filter((c) => {
+                    try {
+                      const parent = apiParentResolver((c as any).raw);
+                      return !(
+                        parent &&
+                        parent.value != null &&
+                        (selectedValues.includes(String(parent.value)) ||
+                          selectedParentSet.has(String(parent.value)))
+                      );
+                    } catch {
+                      return true;
+                    }
+                  });
+                }
+
+                if (filteredByParent.length === 0) {
                   // No new results from API. Determine the correct message.
                   if (apiChoices.length === 0) {
                     // API returned no results for the query.
                     choicesInstance.config.noChoicesText = "No results found";
                     console.log("❌ API returned no results");
                   } else {
-                    // API returned results, but they are all already selected.
-                    // Double-check this by looking at the actual values
-                    const allResultsSelected = apiChoices.every((choice) =>
-                      selectedValues.includes(String(choice.value)),
-                    );
+                    // API returned results, but they are all already selected or map to selected parents.
+                    // Prefer resolver-based message if available.
+                    let usedResolverMessage = false;
+                    try {
+                      if (typeof apiParentResolver === "function") {
+                        // Map each API choice to its parent and check if parent is selected
+                        const mappings = apiChoices
+                          .map((c) => ({
+                            childValue: String(c.value),
+                            childLabel: c.labelPlain ?? String(c.value),
+                            parent: apiParentResolver(c.raw),
+                          }))
+                          .filter(
+                            (m) => !!m.parent && m.parent.value != null,
+                          ) as Array<{
+                          childValue: string;
+                          childLabel: string;
+                          parent: { value: string | number; label?: string };
+                        }>;
 
-                    if (allResultsSelected) {
-                      choicesInstance.config.noChoicesText =
-                        "All results are already selected";
-                      console.log(
-                        "ℹ️ API returned results but all are already selected",
-                        {
-                          apiResults: apiChoices.map((c) => c.value),
-                          selectedValues,
-                          allResultsSelected,
-                        },
+                        const parentsSelected = mappings.filter((m) =>
+                          selectedValues.includes(String(m.parent.value)),
+                        );
+
+                        if (
+                          mappings.length > 0 &&
+                          parentsSelected.length === mappings.length
+                        ) {
+                          // Only show specific message if single candidate or full postcode
+                          if (isFullPostcode || apiChoices.length === 1) {
+                            const first = parentsSelected[0];
+                            const parentLabel =
+                              first.parent.label ?? String(first.parent.value);
+                            const childLabel = first.childLabel;
+                            choicesInstance.config.noChoicesText =
+                              tApiChildInSelectedParent(
+                                childLabel,
+                                parentLabel,
+                              );
+                            usedResolverMessage = true;
+                            console.log(
+                              "ℹ️ API choices map to already-selected parents (specific)",
+                              {
+                                parentLabel,
+                                childLabel,
+                                parents: parentsSelected.map(
+                                  (p) => p.parent.value,
+                                ),
+                              },
+                            );
+                          } else if (
+                            !isFullPostcode &&
+                            promoteApiChildToParent &&
+                            mappings.length > 0
+                          ) {
+                            // For partial postcodes with promotion enabled, show specific partial message
+                            const first = parentsSelected[0];
+                            const parentLabel =
+                              first.parent.label ?? String(first.parent.value);
+                            choicesInstance.config.noChoicesText =
+                              tPartialPostcodeInSelectedParent(q, parentLabel);
+                            usedResolverMessage = true;
+                            console.log(
+                              "ℹ️ Partial postcode in selected parent (promotion mode)",
+                              {
+                                partialQuery: q,
+                                parentLabel,
+                                parents: parentsSelected.map(
+                                  (p) => p.parent.value,
+                                ),
+                              },
+                            );
+                          }
+                        }
+                      }
+                    } catch (err) {
+                      console.warn("⚠️ apiParentResolver failed:", err);
+                    }
+
+                    if (!usedResolverMessage) {
+                      // Fallback to previous messages
+                      const allResultsSelected = apiChoices.every((choice) =>
+                        selectedValues.includes(String(choice.value)),
                       );
-                    } else {
-                      // This shouldn't happen, but fallback to a generic message
-                      choicesInstance.config.noChoicesText =
-                        "No new results available";
-                      console.log(
-                        "⚠️ Unexpected: API returned results but filtering logic failed",
-                        {
-                          apiResults: apiChoices.map((c) => c.value),
-                          selectedValues,
-                          filteredCount: filteredApiChoices.length,
-                        },
-                      );
+
+                      if (allResultsSelected) {
+                        choicesInstance.config.noChoicesText =
+                          "All results are already selected";
+                        console.log(
+                          "ℹ️ API returned results but all are already selected",
+                          {
+                            apiResults: apiChoices.map((c) => c.value),
+                            selectedValues,
+                            allResultsSelected,
+                          },
+                        );
+                      } else {
+                        // This shouldn't happen, but fallback to a generic message
+                        choicesInstance.config.noChoicesText = isFullPostcode
+                          ? "No new results available"
+                          : "All postcode suggestions cover an area that is already covered by a currently selected postcode or area";
+                        console.log(
+                          "⚠️ Unexpected: API returned results but filtering logic failed",
+                          {
+                            apiResults: apiChoices.map((c) => c.value),
+                            selectedValues,
+                            filteredCount: filteredByParent.length,
+                          },
+                        );
+                      }
                     }
                   }
                   // Clear the list and show the message.
@@ -1511,8 +1934,45 @@
                   );
 
                   if (allResultsSimilarToSelected) {
-                    choicesInstance.config.noChoicesText =
-                      "All results are already selected";
+                    // Try resolver-based message first, otherwise default
+                    let setMsg = false;
+                    try {
+                      if (typeof apiParentResolver === "function") {
+                        const mappings = apiChoices
+                          .map((c) => ({
+                            childValue: String(c.value),
+                            childLabel: c.labelPlain ?? String(c.value),
+                            parent: apiParentResolver(c.raw),
+                          }))
+                          .filter(
+                            (m) => !!m.parent && m.parent.value != null,
+                          ) as Array<{
+                          childValue: string;
+                          childLabel: string;
+                          parent: { value: string | number; label?: string };
+                        }>;
+
+                        const match = mappings.find((m) =>
+                          selectedValues.includes(String(m.parent.value)),
+                        );
+                        if (match) {
+                          const parentLabel =
+                            match.parent.label ?? String(match.parent.value);
+                          choicesInstance.config.noChoicesText =
+                            tApiChildInSelectedParent(
+                              match.childLabel,
+                              parentLabel,
+                            );
+                          setMsg = true;
+                        }
+                      }
+                    } catch (err) {
+                      console.warn("⚠️ apiParentResolver failed:", err);
+                    }
+                    if (!setMsg) {
+                      choicesInstance.config.noChoicesText =
+                        "All results are already selected";
+                    }
                     console.log(
                       "🎯 Query matches selected items, showing 'all selected' message",
                       {
@@ -1530,7 +1990,7 @@
                     // Ensure group text is applied to filtered API choices
                     const filteredApiChoicesWithGroupText =
                       ensureGroupTextApplied(
-                        filteredApiChoices.map((c) => ({
+                        filteredByParent.map((c) => ({
                           value: String(c.value),
                           label: c.label,
                         })),
@@ -1544,23 +2004,86 @@
                     );
                     console.log(
                       "✅ Set filtered API choices (some similar to selected):",
-                      filteredApiChoices.length,
+                      filteredByParent.length,
                     );
                   }
                 } else {
                   // We have new, unselected results to show.
                   // Don't set noChoicesText when we have results - let Choices.js handle it
 
-                  // Ensure group text is applied to API choices
-                  const apiChoicesWithGroupText = ensureGroupTextApplied(
-                    filteredApiChoices.map((c) => ({
+                  let finalChoices;
+
+                  // If promotion is enabled, construct parent-valued choices at data time
+                  if (
+                    promoteApiChildToParent &&
+                    typeof apiParentResolver === "function"
+                  ) {
+                    console.log(
+                      "🔄 Building parent-valued API choices (promotion at data time)",
+                    );
+
+                    // Map every API record to a parent-valued choice with composite unique values
+                    // This ensures all postcodes show in dropdown while mapping to parent on selection
+                    const selectedSet = new Set(selectedValues.map(String));
+                    finalChoices = filteredByParent
+                      .map((c) => {
+                        try {
+                          const parent = apiParentResolver((c as any).raw);
+                          if (parent && parent.value != null) {
+                            const parentValue = String(parent.value);
+                            // Cache parent label so chips can render even if parent not in static items
+                            try {
+                              const parentLabelCache =
+                                parent.label || parentValue;
+                              promotedParentLabelMap.set(
+                                parentValue,
+                                parentLabelCache,
+                              );
+                            } catch {}
+                            const childValue = String(c.value);
+                            // Use composite value to ensure uniqueness while storing parent info
+                            const compositeValue = `${parentValue}::${childValue}`;
+                            return {
+                              value: compositeValue, // composite value ensures uniqueness
+                              label: c.label, // keep postcode in label
+                              customProperties: {
+                                parentValue,
+                                parentLabel: parent.label || parentValue,
+                                childLabel: c.labelPlain ?? childValue,
+                                isPromoted: true,
+                              },
+                            };
+                          }
+                        } catch (e) {
+                          console.warn("⚠️ Failed to resolve parent:", e);
+                        }
+                        // Fallback: no parent — keep child as-is
+                        return { value: String(c.value), label: c.label };
+                      })
+                      .filter((ch) => {
+                        // For promoted choices, check if parent is already selected
+                        // For regular choices, check if child is already selected
+                        const meta = (ch as any).customProperties;
+                        if (meta?.isPromoted) {
+                          return !selectedSet.has(meta.parentValue);
+                        }
+                        return !selectedSet.has(String(ch.value));
+                      });
+                    console.log(
+                      "✅ Built parent-valued API choices:",
+                      finalChoices.length,
+                    );
+                  } else {
+                    // No promotion - use original API choices
+                    finalChoices = filteredByParent.map((c) => ({
                       value: String(c.value),
                       label: c.label,
-                    })),
-                  );
+                    }));
+                  }
 
+                  // Render API choices as-is so the dropdown shows postcodes while values are LAD codes
                   choicesInstance.setChoices(
-                    apiChoicesWithGroupText,
+                    finalChoices,
                     "value",
                     "label",
                     true,
@@ -1569,10 +2092,7 @@
                   // Custom templates are automatically applied when setChoices is called
                   // No need for additional refresh calls
 
-                  console.log(
-                    "✅ Set new API choices:",
-                    filteredApiChoices.length,
-                  );
+                  console.log("✅ Set final API choices:", finalChoices.length);
                 }
               } catch (e) {
                 console.error("❌ Failed to fetch API choices:", e);
@@ -1644,18 +2164,126 @@
                     matchingChoices.length - filteredStaticChoices.length,
                 });
 
+                // Further exclude parents that already contain selected postcodes
+                let filteredStaticChoicesByParent = filteredStaticChoices;
+                try {
+                  if (
+                    typeof staticChildrenResolver === "function" &&
+                    filteredStaticChoices.length > 0
+                  ) {
+                    const checks = await Promise.all(
+                      filteredStaticChoices.map(async (ch) => {
+                        try {
+                          const children = await Promise.resolve(
+                            staticChildrenResolver(ch.value, selectedValues),
+                          );
+                          return {
+                            choice: ch,
+                            hasChildren: (children || []).length > 0,
+                          };
+                        } catch (e) {
+                          return { choice: ch, hasChildren: false };
+                        }
+                      }),
+                    );
+                    filteredStaticChoicesByParent = checks
+                      .filter((x) => !x.hasChildren)
+                      .map((x) => x.choice);
+                    console.log("🔍 Static choices after parent exclusion:", {
+                      before: filteredStaticChoices.length,
+                      after: filteredStaticChoicesByParent.length,
+                    });
+                  }
+                } catch (err) {
+                  console.warn(
+                    "⚠️ staticChildrenResolver exclusion failed:",
+                    err,
+                  );
+                }
+
+                // Before rendering, if resolver says this typed parent contains selected children,
+                // show a dynamic message instead of suggestions — but only when the query uniquely
+                // identifies a single parent (i.e. exactly one matching choice)
+                try {
+                  if (
+                    typeof staticChildrenResolver === "function" &&
+                    matchingChoices.length === 1
+                  ) {
+                    const parentChoice = matchingChoices[0];
+                    const children = await Promise.resolve(
+                      staticChildrenResolver(
+                        parentChoice.value,
+                        selectedValues,
+                      ),
+                    );
+                    const childStrings = (children || []).map((c) => String(c));
+                    if (childStrings.length > 0) {
+                      const parentLabelCandidate =
+                        parentChoice.labelPlain ?? parentChoice.label;
+                      choicesInstance.config.noChoicesText =
+                        tStaticParentContainsSelectedChildren(
+                          String(parentLabelCandidate),
+                          childStrings,
+                        );
+                      choicesInstance.clearChoices();
+                      choicesInstance.setChoices([], "value", "label", true);
+                      return;
+                    }
+                  }
+                } catch (err) {
+                  console.warn(
+                    "⚠️ staticChildrenResolver dynamic message failed:",
+                    err,
+                  );
+                }
+
                 choicesInstance.clearChoices();
 
-                if (filteredStaticChoices.length === 0) {
+                if (filteredStaticChoicesByParent.length === 0) {
                   // No choices to show - distinguish between no matches vs all selected
                   if (matchingChoices.length === 0) {
                     // No search matches at all
                     choicesInstance.config.noChoicesText = "No results found";
                     console.log("❌ No static choices match search term");
                   } else {
-                    // Found matches but all are already selected
-                    choicesInstance.config.noChoicesText =
-                      "All matching options are already selected";
+                    // Found matches but all are already selected.
+                    // Try child mapping detection: selected children that belong to a typed parent
+                    let usedDynamic = false;
+                    try {
+                      if (
+                        typeof staticChildrenResolver === "function" &&
+                        matchingChoices.length === 1
+                      ) {
+                        // Determine which selected values belong to the typed parent (only when unique)
+                        const parentLabelCandidate =
+                          matchingChoices[0]?.labelPlain ??
+                          matchingChoices[0]?.label ??
+                          "";
+                        const children = await Promise.resolve(
+                          staticChildrenResolver(
+                            matchingChoices[0]?.value,
+                            selectedValues,
+                          ),
+                        );
+                        const childrenStrings = (children || []).map((c) =>
+                          String(c),
+                        );
+                        if (childrenStrings.length > 0) {
+                          choicesInstance.config.noChoicesText =
+                            tStaticParentContainsSelectedChildren(
+                              String(parentLabelCandidate),
+                              childrenStrings,
+                            );
+                          usedDynamic = true;
+                        }
+                      }
+                    } catch (err) {
+                      console.warn("⚠️ staticChildrenResolver failed:", err);
+                    }
+                    if (!usedDynamic) {
+                      choicesInstance.config.noChoicesText =
+                        "All results are already selected";
+                    }
                     console.log(
                       "ℹ️ Found static matches but all are already selected",
                     );
@@ -1666,9 +2294,15 @@
                   // Have choices to show
                   // Don't set noChoicesText when we have choices - let Choices.js handle it
 
+                  // Apply searchResultLimit to the filtered choices
+                  const limitedChoices = filteredStaticChoicesByParent.slice(
+                    0,
+                    searchResultLimit,
+                  );
+
                   // Ensure group text is applied to filtered choices
                   const choicesWithGroupText = ensureGroupTextApplied(
-                    filteredStaticChoices.map((c) => ({
+                    limitedChoices.map((c) => ({
                       value: String(c.value),
                       label: c.label,
                       disabled: c.disabled,
@@ -1687,7 +2321,7 @@
 
                   console.log(
                     "✅ Set filtered static choices:",
-                    filteredStaticChoices.length,
+                    limitedChoices.length,
                   );
                 }
               }
@@ -1704,28 +2338,66 @@
 
   // Handle changes from Choices.js
   function handleChoicesChange(event: Event) {
-    const target = event.target as HTMLSelectElement;
-    console.log("🔄 Choices change event:", {
-      event: event.type,
-      target: target.tagName,
-      value: target.value,
-      selectedOptions: Array.from(target.selectedOptions).map((opt) => ({
-        value: opt.value,
-        text: opt.text,
-        selected: opt.selected,
-      })),
-      multiple: target.multiple,
-    });
+    if (!choicesInstance) return;
+
+    // Read values directly from Choices.js instance for accurate state
+    const raw = choicesInstance.getValue(true);
+    console.log("🔄 Choices change event - raw getValue:", raw);
 
     if (multiple) {
-      const selectedValues = Array.from(target.selectedOptions).map(
-        (option) => option.value,
-      );
-      console.log("📝 Setting multiple value:", selectedValues);
-      value = selectedValues;
+      const arr = Array.isArray(raw) ? raw : raw ? [raw] : [];
+      // Extract parent values from composite values for promoted choices
+      const processedValues = arr.map((x: any) => {
+        const val = String(x.value ?? x);
+        // Check if this is a composite value from promotion
+        if (val.includes("::")) {
+          const [parentValue, childLabel] = val.split("::");
+          // Persist context so the chip can render parent + (containing child)
+          try {
+            if (parentValue && childLabel) {
+              const context = `(containing ${childLabel})`;
+              promotedItemContext.set(parentValue, context);
+              console.log("🏷️ Stored promotion context (change):", {
+                parentValue,
+                childLabel,
+                context,
+              });
+            }
+          } catch {}
+          console.log(
+            "🔄 Extracting parent from composite:",
+            val,
+            "→",
+            parentValue,
+          );
+          return parentValue;
+        }
+        return val;
+      });
+      console.log("📝 Setting multiple value:", processedValues);
+      value = processedValues;
     } else {
-      console.log("📝 Setting single value:", target.value);
-      value = target.value;
+      const val = raw ? String((raw as any).value ?? raw) : "";
+      // Extract parent value from composite if needed and persist context
+      if (val.includes("::")) {
+        const [parentValue, childLabel] = val.split("::");
+        try {
+          if (parentValue && childLabel) {
+            const context = `(containing ${childLabel})`;
+            promotedItemContext.set(parentValue, context);
+            console.log("🏷️ Stored promotion context (change single):", {
+              parentValue,
+              childLabel,
+              context,
+            });
+          }
+        } catch {}
+        console.log("📝 Setting single value:", parentValue);
+        value = parentValue;
+      } else {
+        console.log("📝 Setting single value:", val);
+        value = val;
+      }
     }
   }
 
@@ -1741,10 +2413,91 @@
     if (choicesInstance && choicesInstance.initialised && value !== undefined) {
       if (multiple && Array.isArray(value)) {
         console.log("🔄 Updating multiple choices:", value);
+
+        // Clean up promotion context for items no longer selected
+        const currentValues = new Set(value.map(String));
+        for (const [contextKey] of promotedItemContext) {
+          if (!currentValues.has(contextKey)) {
+            console.log(
+              "🧹 Cleaning up promotion context for removed item:",
+              contextKey,
+            );
+            promotedItemContext.delete(contextKey);
+          }
+        }
+
+        // When value changes programmatically (e.g., postcode promotion), the choice object
+        // for the new value might not exist in the instance's current list (e.g., if it's
+        // showing API results). We need to merge our static "source of truth" with the
+        // current choices so that `setChoiceByValue` can find the item and render its chip.
+        const currentChoices = Array.isArray((choicesInstance as any)?.choices)
+          ? (choicesInstance as any).choices
+          : Array.isArray((choicesInstance as any)?._store?.choices)
+            ? (choicesInstance as any)._store.choices
+            : [];
+        const mergedChoices = new Map<string, any>();
+
+        // Prioritize static choices for labels and context
+        staticChoices.forEach((c) => mergedChoices.set(String(c.value), c));
+        // Add any other choices (e.g., from API) that aren't static
+        for (const c of currentChoices) {
+          const key = String((c as any).value);
+          if (!mergedChoices.has(key)) {
+            mergedChoices.set(key, c);
+          }
+        }
+
+        // For any selected value with promotion context, manually build its choice object
+        // This ensures the chip renders correctly even if staticChoices hasn't re-derived
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            const key = String(val);
+            if (promotedItemContext.has(key)) {
+              const context = promotedItemContext.get(key)!;
+              const parentLabelFallback =
+                promotedParentLabelMap.get(key) || undefined;
+              const baseChoice =
+                staticChoices.find((c) => String(c.value) === key) ||
+                ({
+                  value: key,
+                  label: parentLabelFallback ?? String(key),
+                  labelPlain: parentLabelFallback ?? String(key),
+                } as any);
+
+              const newLabel = `<span class="choices__item-label">
+                 <span class="choices__item-main">${escapeHtml(baseChoice.labelPlain ?? "")}</span>
+                 <span class="gem-c-select-with-search__suggestion-group">${escapeHtml(context)}</span>
+               </span>`;
+              mergedChoices.set(key, {
+                ...baseChoice,
+                label: newLabel,
+                customProperties: {
+                  parentValue: key,
+                  parentLabel:
+                    baseChoice.labelPlain ?? String(baseChoice.value),
+                  childLabel: context.replace(/^\(containing |\)$/g, ""),
+                },
+              });
+              console.log("🛠️ Manually crafted choice for promoted item:", {
+                key,
+                newLabel,
+                context,
+                parentLabelFallback,
+              });
+            }
+          });
+        }
+
+        // Silently update the full list of available choices.
+        // This ensures the instance knows about the promoted LAD option.
+        choicesInstance.setChoices(
+          Array.from(mergedChoices.values()),
+          "value",
+          "label",
+          true,
+        );
         choicesInstance.removeActiveItems();
-        value.forEach((val: string | number) => {
-          choicesInstance.setChoiceByValue(String(val));
-        });
+        choicesInstance.setChoiceByValue(value.map(String));
       } else if (!multiple && !Array.isArray(value)) {
         console.log("🔄 Updating single choice:", value);
         choicesInstance.setChoiceByValue(String(value));
@@ -1752,19 +2505,46 @@
     }
   });
 
+  // Update Choices.js when items change externally (e.g., when options are modified with context)
+  $effect(() => {
+    if (!choicesInstance || !choicesInstance.initialised) return;
+
+    // Watch for changes to items and groups
+    const itemsLength = items.length;
+    const groupsLength = groups.length;
+    const staticChoicesLength = staticChoices.length;
+
+    console.log("🔄 Items changed externally:", {
+      itemsLength,
+      groupsLength,
+      staticChoicesLength,
+      currentMode,
+    });
+
+    // Only refresh static choices if we're in options mode or options-only
+    if (currentMode === "options" || isOptionsOnly) {
+      setTimeout(() => {
+        if (choicesInstance && choicesInstance.initialised) {
+          console.log("🔄 Refreshing static choices due to items change");
+          resetToStaticChoices();
+        }
+      }, 0);
+    }
+  });
+
   // Cleanup
   onDestroy(() => {
     console.log("🧹 MultiSelectSearchAutocomplete: onDestroy called");
     if (choicesInstance) {
-      // No more MutationObserver to clean up
       selectElement?.removeEventListener("change", handleChoicesChange);
       selectElement?.removeEventListener("choice", () => {});
+
       choicesInstance.destroy();
       console.log("✅ Choices instance destroyed");
     }
   });
 
-  // Log component state changes
+  // Log component state changes (using $inspect to avoid console warnings)
   $inspect(
     id,
     name,
@@ -1781,10 +2561,11 @@
 
 <div
   class="gem-c-select-with-search"
-  style={`--cross-icon-url: url("${crossIconUrl}"); --choices-item-bg-color: ${choicesItemBackgroundColor}; --choices-item-border-color: ${choicesItemBorderColor}; --choices-item-text-color: ${choicesItemTextColor}; --choices-item-divider-padding: ${choicesItemDividerPadding}; --selected-item-circle-color: ${selectedItemCircleColor};`}
+  style={`--cross-icon-url: url("${crossIconUrl}"); --choices-item-bg-color: ${choicesItemBackgroundColor}; --choices-item-border-color: ${choicesItemBorderColor}; --choices-item-text-color: ${choicesItemTextColor}; --choices-item-divider-padding: ${choicesItemDividerPadding}; --choices-item-border-radius: ${choicesItemBorderRadius}; --selected-chip-bg-color: ${selectedChipBackgroundColor}; --selected-item-circle-color: ${selectedItemCircleColor};`}
   data-group-key={groupKey}
   data-enable-circles={enableSelectedItemCircles}
   data-circle-palette={selectedItemCircleColorPalette.join(",")}
+  data-match-border-to-circle={matchBorderToCircleColor}
 >
   {#snippet rightIcon()}
     <button
@@ -1809,12 +2590,12 @@
     {hint}
     {error}
     {validate}
-    {formGroupClasses}
+    formGroupClasses={computedFormGroupClasses}
     {fullWidth}
     {describedBy}
     {disabled}
     bind:selectElement
-    renderRight={rightIcon}
+    renderRight={showSearchIcon ? rightIcon : undefined}
     {...attributes}
   />
 </div>
@@ -2662,10 +3443,11 @@
     border: 0;
     padding: 0 0px 0 10px; /* right padding for button divider */
     margin: 10px 10px 0 0;
-    background-color: #f3f2f1;
-    box-shadow: 0 2px 0 #b1b4b6;
+    background-color: var(--selected-chip-bg-color, #f3f2f1);
+    box-shadow: 0 2px 0 var(--choices-item-border-color, #b1b4b6);
+    border-radius: var(--choices-item-border-radius, 0);
     line-height: 1;
-    color: #0b0c0c;
+    color: var(--choices-item-text-color, #0b0c0c);
   }
 
   /* Circle */

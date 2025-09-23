@@ -3,13 +3,14 @@
     activeMarkerId,
     labelColor = "red",
     labelTextColor,
-    tooltipContent = activeMarkerId.y,
+    tooltipContent = undefined,
     xFunction,
     yFunction,
-    x,
-    y,
-    markerRect,
+    x = undefined,
+    y = undefined,
+    markerRect = undefined,
     tooltipSnippet,
+    labelText = undefined,
   } = $props();
 
   let textDimensions = $state();
@@ -17,14 +18,21 @@
   let horizontalPadding = $derived(verticalPadding * 2);
 </script>
 
-<div
+<!-- <div
   style="position:absolute;
   top: {markerRect?.y - (textDimensions?.height ?? 0) - 15}px;
 left: {markerRect?.x +
     (markerRect?.width ?? 0) / 2 -
     (textDimensions?.width ?? 0) / 2}px;
-  pointer-events: none;
+  pointer-events: none; border 1px solid blue
   "
+> -->
+<div
+  style="position:absolute; left: {markerRect?.x - textDimensions?.width / 2}px;
+      top: {markerRect?.y -
+    textDimensions?.height -
+    20}px; pointer-events: none"
+  bind:contentRect={textDimensions}
 >
   {#if tooltipSnippet === undefined}
     <div
@@ -32,10 +40,17 @@ left: {markerRect?.x +
   padding: 5px;
   border-radius: 5px;"
     >
-      <div bind:contentRect={textDimensions}>{activeMarkerId.y}</div>
+      {#if tooltipContent}
+        <div>
+          {activeMarkerId[tooltipContent]}
+        </div>
+      {:else}
+        <div>
+          <div>{activeMarkerId?.value ?? activeMarkerId}</div>
+        </div>{/if}
     </div>
   {:else}
-    <div bind:contentRect={textDimensions}>
+    <div>
       {@render tooltipSnippet(activeMarkerId)}
     </div>
   {/if}

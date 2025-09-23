@@ -16,10 +16,10 @@
         fill="#B1B4B6"
       ></path>
     </svg>
-    <span>More deprived</span>
+    <span style="font-family:GDS Transport">More deprived</span>
   </div>
   <div class="less-deprived">
-    <span>Less deprived</span>
+    <span style="font-family:GDS Transport">Less deprived</span>
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="12"

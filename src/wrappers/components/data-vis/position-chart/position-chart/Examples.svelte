@@ -106,10 +106,16 @@
       colour="grey"
       opacity={0.5}
       tooltipContent="value"
+      showIcon
       allData={[
         {
-          rowData: [{ value: 4, opacity: 1 }, { value: 5 }, { value: 5.5 }],
+          rowData: [
+            { value: 4, opacity: 1, annotation: "hello" },
+            { value: 5 },
+            { value: 5.5 },
+          ],
           label: "first",
+          moreInfo: "eo",
         },
         {
           rowData: [{ value: 80, opacity: 1 }, { value: 30 }, { value: 10 }],
@@ -153,6 +159,8 @@
       max={100}
       label="Education"
       {tooltipSnippet}
+      annotation="hello"
+      moreInfo="this is some additional information"
     ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

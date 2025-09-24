@@ -179,7 +179,7 @@
       {
         name: "href",
         category: "Input props",
-        value: `/download-data`,
+        value: `/download-all`,
       },
       {
         name: "callToActionBackgroundColor",

@@ -94,4 +94,8 @@
     margin: 0;
     line-height: 1;
   }
+
+  a {
+    color: #1d70b8;
+  }
 </style>

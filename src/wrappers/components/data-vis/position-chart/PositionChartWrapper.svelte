@@ -168,7 +168,8 @@
         name: "value",
         category: "Data",
         value: 3,
-        description: "The numerical value to be plotted.",
+        description:
+          "The numerical value to be plotted. This accepts a numerical value and must only be used for a single position chart. To create multiple position charts, use the dataObject prop.",
       },
       {
         name: "min",
@@ -195,6 +196,75 @@
         value: 24,
         description:
           "The height of the chart (which is made up of the bar and the marker)",
+      },
+      {
+        name: "nSegments",
+        category: "Display",
+        value: 10,
+        description: "The number of segments to display in the chart.",
+      },
+      {
+        name: "colorScale",
+        category: "Colours",
+        value: [
+          "#090C50",
+          "#1B3E70",
+          "#2B658F",
+          "#357EA2",
+          "#4297AD",
+          "#5BB1AE",
+          "#7ABFA8",
+          "#98CCA2",
+          "#B6D89F",
+          "#D2E49D",
+        ],
+        description:
+          "Use this prop if you want to specify every colour in the chart. Optional array of colours to apply to segments. Length must be greater than or equal to the number of segments. Otherwise, supply start, end (and optionally mid) colours, and intervening colours will be calculated for you.",
+      },
+      {
+        name: "startColor",
+        category: "Colours",
+        value: "#8EB8DC",
+        description:
+          "Use this prop if you want only want to set a start, end (and optional mid) color for your colour scale. The component will interpolate colours for intermediate segments. You must make colorScale an empty array to use this colouring method. Otherwise, supply an array of every colour, using `colorScale`.",
+      },
+      {
+        name: "endColor",
+        category: "Colours",
+        value: "#0F385C",
+        description:
+          "Use this prop if you want only want to set a start, end (and optional mid) color for your colour scale. The component will interpolate colours for intermediate segments. You must make colorScale an empty array to use this colouring method. Otherwise, supply an array of every colour, using `colorScale`",
+      },
+      {
+        name: "midColor",
+        category: "Colours",
+        value: "",
+        description:
+          "Use this prop if you want only want to set a start, end (and optional mid) color for your colour scale. The component will interpolate colours for intermediate segments. You must make colorScale an empty array to use this colouring method. Otherwise, supply an array of every colour, using `colorScale`",
+      },
+      {
+        name: "dataObject",
+        category: "Input props",
+        value: [
+          {
+            label: "Pikachu",
+            value: 5,
+          },
+          {
+            label: "Charmander",
+            value: 4,
+          },
+          {
+            label: "Bulbasaur",
+            value: 2,
+          },
+          {
+            label: "Charazard",
+            value: 3,
+          },
+        ],
+        description:
+          "Use this prop to create multiple position charts. Provide an array of objects. Each object must contain a value key. And may also contain a label key.",
       },
     ]),
   );
@@ -336,7 +406,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <PositionChart {...parametersObject} bind:chartWidth></PositionChart>
+    <PositionChart {...parametersObject}></PositionChart>
   </div>
 {/snippet}
 

@@ -20,8 +20,18 @@
     },
     {
       id: "3",
-      heading: "3. Example 3 - stacked position chart",
+      heading: "3. Example 3 - single position chart with multiple values",
       content: Example3,
+    },
+    {
+      id: "4",
+      heading: "4. Example 4 - stacked position chart",
+      content: Example4,
+    },
+    {
+      id: "5",
+      heading: "5. Example 5 - stacked position chart",
+      content: Example5,
     },
   ];
 
@@ -61,41 +71,97 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <PositionChart value="7" min="0" max="10" label="Education"></PositionChart>
+    <PositionChart value={7} min={0} max={10} label="Education"></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
-    <PositionChart value="7" min="0" max="10"></PositionChart>
+    <PositionChart value={7} min={0} max={10}></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example3()}
   <div class="p-5 bg-white">
-    <div
-      class="grid"
-      style="display: grid;
-    grid-template-columns: minmax(100px, 30%) 1fr;
-    grid-auto-rows: 1fr;
-    align-items: center;
-    column-gap: 2%;
-    row-gap: 0;"
-    >
-      {#each dummyData as item, i}
-        <PositionChart
-          value={item[1]}
-          min="0"
-          max="10"
-          label={item[0]}
-          stacked={true}
-          numberOfPositionCharts={dummyData.length}
-          showAxis={dummyData.length == i + 1}
-        ></PositionChart>
-      {/each}
-    </div>
+    <PositionChart
+      min={0}
+      max={10}
+      rowData={[
+        { value: 2, colour: "orange" },
+        { value: 3, colour: "purple" },
+      ]}
+      label="Hello"
+    />
   </div>
   <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example4()}
+  <div class="p-5 bg-white">
+    <PositionChart
+      min={0}
+      max={10}
+      colour="grey"
+      opacity={0.5}
+      tooltipContent="value"
+      showIcon
+      allData={[
+        {
+          rowData: [
+            { value: 4, opacity: 1, annotation: "hello" },
+            { value: 5 },
+            { value: 5.5 },
+          ],
+          label: "first",
+          moreInfo: "eo",
+        },
+        {
+          rowData: [{ value: 80, opacity: 1 }, { value: 30 }, { value: 10 }],
+          label: "second",
+          min: 0,
+          max: 100,
+        },
+      ]}
+      markerStyles={{
+        primary: { colour: "blue", opacity: 1 },
+        secondary: { colour: "red", opacity: 0.6 },
+      }}
+      assignMarkerTier={(tier, chart, rowData, idx) => {
+        if (tier === "primary") {
+          return rowData.value == 5;
+        }
+        if (tier === "secondary") {
+          return true;
+        }
+        return false;
+      }}
+    ></PositionChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet tooltipSnippet(activeMarkerId)}
+  <div
+    style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"
+  >
+    More deprived than
+    <b>{100 - activeMarkerId.value}%</b> of neighbourhoods
+  </div>
+{/snippet}
+
+{#snippet Example5()}
+  <div class="p-5 bg-white">
+    <PositionChart
+      value={70}
+      min={0}
+      max={100}
+      label="Education"
+      {tooltipSnippet}
+      annotation="hello"
+      moreInfo="this is some additional information"
+    ></PositionChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}

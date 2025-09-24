@@ -63,7 +63,7 @@
       : simpleItems.filter((item) => item.category === category);
   }
 
-  // One filter section 
+  // One filter section
   let oneFilterSection = [
     {
       id: "category",
@@ -405,20 +405,39 @@
       are passed back via the `form` prop.
     </p>
 
-    <form method="POST">
+    <form
+      method="POST"
+      use:enhance={({ formData, cancel }) => {
+        // Cancel server submission - process client-side only for demo
+        cancel();
+
+        // Get filter values
+        const selectedMetric = formData.get("metric")?.toString() || null;
+        const selectedAreas = Array.from(formData.getAll("areas[]")).map(
+          (value) => value.toString(),
+        );
+        const selectedYear = formData.get("year")?.toString() || "all";
+
+        // Process client-side (prevents server submission)
+        const results = filterData(selectedMetric, selectedAreas, selectedYear);
+
+        // Update client state for display
+        clientFilteredResults = results;
+        clientResultsCount = `${results.length} results found`;
+        clientFormSubmitted = true;
+      }}
+    >
       <FilterPanel
         sectionsData={metricsFilterSections}
-        resultsCount={form?.filterData?.count !== undefined
-          ? `${form.filterData.count} results found`
-          : "Select filters"}
+        resultsCount={clientResultsCount}
         filterButtonText="Filter metrics"
-        applyButtonText="Submit to server"
+        applyButtonText="Submit to server (Demo - Client-side)"
         ga4BaseEvent={{ event_name: "filter_data", type: "server_submit" }}
       />
     </form>
 
-    <!-- Display results returned from the server via the form prop -->
-    {#if form?.filterData?.results && form.filterData.results.length > 0}
+    <!-- Display results (now processed client-side for demo) -->
+    {#if clientFormSubmitted && clientFilteredResults.length > 0}
       <div class="mt-8 border-t pt-4">
         <div
           class="govuk-notification-banner govuk-notification-banner--success"
@@ -426,18 +445,16 @@
           aria-labelledby="form-success"
         >
           <h2 class="govuk-notification-banner__title" id="form-success">
-            Form submitted to server
+            Form submitted to server (Demo - Client-side)
           </h2>
           <div class="govuk-notification-banner__content">
             <p>
-              The server processed your request and found {form.filterData
-                .count} results.
+              The form would have been processed by the server and found {clientFilteredResults.length}
+              results.
             </p>
             <p class="mt-2 text-sm italic">
-              Selected Filters: Metric: {form.filterData.metric || "Any"},
-              Areas: {form.filterData["areas[]"]?.length > 0
-                ? form.filterData["areas[]"].join(", ")
-                : "Any"}, Year: {form.filterData.year || "Any"}
+              Note: This is a demo - actual server processing is disabled for
+              prerendering compatibility.
             </p>
           </div>
         </div>
@@ -455,7 +472,7 @@
               </tr>
             </thead>
             <tbody>
-              {#each form.filterData.results.slice(0, 5) as result}
+              {#each clientFilteredResults.slice(0, 5) as result}
                 <tr>
                   <td class="px-4 py-2 border">{result.metric}</td>
                   <td class="px-4 py-2 border">{result.areaName}</td>
@@ -467,10 +484,10 @@
                   >
                 </tr>
               {/each}
-              {#if form.filterData.results.length > 5}
+              {#if clientFilteredResults.length > 5}
                 <tr>
                   <td colspan="4" class="px-4 py-2 border text-center italic">
-                    ...and {form.filterData.results.length - 5} more results
+                    ...and {clientFilteredResults.length - 5} more results
                   </td>
                 </tr>
               {/if}
@@ -478,10 +495,10 @@
           </table>
         </div>
       </div>
-    {:else if form?.filterData?.count === 0 && form?.filterData?.results !== undefined}
+    {:else if clientFormSubmitted}
       <div class="mt-8 border-t pt-4">
         <p class="italic">
-          No results match your filter criteria (processed by server).
+          No results match your filter criteria (demo - processed client-side).
         </p>
       </div>
     {/if}
@@ -504,14 +521,33 @@
       the server's response.
     </p>
 
-    <form method="POST" use:enhance>
+    <form
+      method="POST"
+      use:enhance={({ formData, cancel }) => {
+        // Cancel server submission - process client-side only for demo
+        cancel();
+
+        // Get filter values
+        const selectedMetric = formData.get("metric")?.toString() || null;
+        const selectedAreas = Array.from(formData.getAll("areas[]")).map(
+          (value) => value.toString(),
+        );
+        const selectedYear = formData.get("year")?.toString() || "all";
+
+        // Process client-side (prevents server submission)
+        const results = filterData(selectedMetric, selectedAreas, selectedYear);
+
+        // Update client state for display
+        clientFilteredResults = results;
+        clientResultsCount = `${results.length} results found`;
+        clientFormSubmitted = true;
+      }}
+    >
       <FilterPanel
         sectionsData={metricsFilterSections}
-        resultsCount={form?.filterData?.count !== undefined
-          ? `${form.filterData.count} results found`
-          : "Select filters"}
+        resultsCount={clientResultsCount}
         filterButtonText="Filter metrics"
-        applyButtonText="Submit (Enhanced)"
+        applyButtonText="Submit (Enhanced Demo - Client-side)"
         ga4BaseEvent={{
           event_name: "filter_data",
           type: "server_enhanced_submit",
@@ -519,8 +555,8 @@
       />
     </form>
 
-    <!-- Display results returned from the server via the form prop (updated by use:enhance) -->
-    {#if form?.filterData?.results && form.filterData.results.length > 0}
+    <!-- Display results (now processed client-side for demo) -->
+    {#if clientFormSubmitted && clientFilteredResults.length > 0}
       <div class="mt-8 border-t pt-4">
         <div
           class="govuk-notification-banner govuk-notification-banner--success"
@@ -531,18 +567,16 @@
             class="govuk-notification-banner__title"
             id="form-success-basic-enhance"
           >
-            Form submitted (Enhanced by SvelteKit)
+            Form submitted (Enhanced Demo - Client-side)
           </h2>
           <div class="govuk-notification-banner__content">
             <p>
-              The server processed your request and found {form.filterData
-                .count} results. (Submitted without full page reload.)
+              The form would have been processed by the server and found {clientFilteredResults.length}
+              results. (Would be submitted without full page reload.)
             </p>
             <p class="mt-2 text-sm italic">
-              Selected Filters: Metric: {form.filterData.metric || "Any"},
-              Areas: {form.filterData["areas[]"]?.length > 0
-                ? form.filterData["areas[]"].join(", ")
-                : "Any"}, Year: {form.filterData.year || "Any"}
+              Note: This is a demo - actual server processing is disabled for
+              prerendering compatibility.
             </p>
           </div>
         </div>
@@ -559,7 +593,7 @@
               </tr>
             </thead>
             <tbody>
-              {#each form.filterData.results.slice(0, 5) as result}
+              {#each clientFilteredResults.slice(0, 5) as result}
                 <tr>
                   <td class="px-4 py-2 border">{result.metric}</td>
                   <td class="px-4 py-2 border">{result.areaName}</td>
@@ -571,10 +605,10 @@
                   >
                 </tr>
               {/each}
-              {#if form.filterData.results.length > 5}
+              {#if clientFilteredResults.length > 5}
                 <tr>
                   <td colspan="4" class="px-4 py-2 border text-center italic">
-                    ...and {form.filterData.results.length - 5} more results
+                    ...and {clientFilteredResults.length - 5} more results
                   </td>
                 </tr>
               {/if}
@@ -582,11 +616,11 @@
           </table>
         </div>
       </div>
-    {:else if form?.filterData?.count === 0 && form?.filterData?.results !== undefined}
+    {:else if clientFormSubmitted}
       <div class="mt-8 border-t pt-4">
         <p class="italic">
-          No results match your filter criteria (processed by server with
-          enhancement).
+          No results match your filter criteria (demo - processed client-side
+          with enhancement).
         </p>
       </div>
     {/if}

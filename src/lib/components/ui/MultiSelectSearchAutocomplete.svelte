@@ -39,7 +39,7 @@
     allowHTML = true,
     shouldSort = false,
     searchResultLimit = 6,
-    removeItemButton = false, // Will default to multiple if not specified
+    removeItemButton = true, // Will default to multiple if not specified
     showSearchIcon = true,
 
     // Styling and layout - pass through to Select component

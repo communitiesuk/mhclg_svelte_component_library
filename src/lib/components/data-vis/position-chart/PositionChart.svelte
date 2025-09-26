@@ -2,6 +2,8 @@
   import { scaleLinear } from "d3-scale";
   import PositionChartAxis from "./PositionChartAxis.svelte";
   import ValueLabel from "../line-chart/ValueLabel.svelte";
+  import Button from "../../ui/Button.svelte";
+  import InsetText from "../../content/InsetText.svelte";
   let {
     value = undefined,
     min = undefined,
@@ -20,6 +22,8 @@
     annotation = undefined,
     showIcon = false,
     moreInfo = undefined,
+    markerRadius = chartHeight / 2,
+    options = [],
     rowData = [
       {
         value: value,
@@ -117,16 +121,12 @@
     }),
   );
 
-  $inspect(allDataNormalized);
+  let moreInfoTogglesArray = $state(
+    Array.from({ length: options.length }, () => false),
+  );
 
-  // holds open/closed state for each label
-  let openStates = $state({});
-
-  function toggle(label) {
-    openStates = {
-      ...openStates,
-      [label]: !openStates[label], // flip true/false
-    };
+  function updateMoreInfoTogglesArray(index) {
+    moreInfoTogglesArray[index] = !moreInfoTogglesArray[index];
   }
 
   let showLabel = $derived(
@@ -224,9 +224,6 @@
     return result;
   }
 
-  // the 'marker' is the circle
-  let markerRadius = $derived(chartHeight / 2);
-
   // the 'bar' is the 10 rectangles side by side
   let barWidth = $derived(chartWidth - markerRadius * 2);
   let barHeight = $derived((chartHeight * 5) / 6);
@@ -308,13 +305,22 @@
 >
   {#each allDataNormalized as positionChart, i}
     {#if showLabel}
-      <p class="label">{positionChart.label}</p>
+      <p
+        class="govuk-body-s"
+        style=" text-align: right;
+    margin: 0;
+    line-height: 1.05;"
+      >
+        {positionChart.label}
+      </p>
     {/if}
     {#if showIcon}
-      <button
-        id="info-{positionChart.label}"
-        onclick={() => toggle(positionChart.label)}>ⓘ</button
-      >
+      <Button
+        textContent="i"
+        buttonType="moreInfo"
+        noPadding={true}
+        onClickFunction={() => updateMoreInfoTogglesArray(i)}
+      ></Button>
     {/if}
     <div
       class="chart"
@@ -340,70 +346,68 @@
           >{/each}
         {#each Object.entries(positionChart.rowData) as [tier, points]}
           {#each points as rowValue, i}
-            {@const markerId = "marker-" + rowValue.value}
-            <g
-              data-id={markerId}
-              onclick={interactiveMarkers
-                ? (event) => onClickMarker(event, rowValue, markerId)
-                : null}
-              onmouseenter={interactiveMarkers
-                ? (event) =>
-                    onMouseEnterMarker(
-                      event,
-                      rowValue,
-                      markerId,
-                      event.currentTarget.getBoundingClientRect(),
-                    )
-                : null}
-              onmouseleave={interactiveMarkers
-                ? (event) => onMouseLeaveMarker(event, rowValue, markerId)
-                : null}
-              role="button"
-              tabindex="0"
-              onkeydown={interactiveMarkers
-                ? (e) => e.key === "Enter" && onClickMarker(e, value)
-                : null}
-              pointer-events={interactiveMarkers ? null : "none"}
-              transform="translate({xFunction(
-                positionChart.min,
-                positionChart.max,
-              )(rowValue.value) + markerRadius},{positionChart.chartHeight /
-                2})"
-            >
-              <circle
-                r={markerRadius}
-                cx="0"
-                cy="0"
-                fill={rowValue.colour}
-                stroke="white"
-                opacity={rowValue.opacity}
-              ></circle>
-            </g>
+            {#if !isNaN(Number(rowValue.value))}
+              {@const markerId = "marker-" + rowValue.value}
+              <g
+                data-id={markerId}
+                onclick={interactiveMarkers
+                  ? (event) => onClickMarker(event, rowValue, markerId)
+                  : null}
+                onmouseenter={interactiveMarkers
+                  ? (event) =>
+                      onMouseEnterMarker(
+                        event,
+                        rowValue,
+                        markerId,
+                        event.currentTarget.getBoundingClientRect(),
+                      )
+                  : null}
+                onmouseleave={interactiveMarkers
+                  ? (event) => onMouseLeaveMarker(event, rowValue, markerId)
+                  : null}
+                role="button"
+                tabindex="0"
+                onkeydown={interactiveMarkers
+                  ? (e) => e.key === "Enter" && onClickMarker(e, value)
+                  : null}
+                pointer-events={interactiveMarkers ? null : "none"}
+                transform="translate({xFunction(
+                  positionChart.min,
+                  positionChart.max,
+                )(rowValue.value) + markerRadius},{positionChart.chartHeight /
+                  2})"
+              >
+                <circle
+                  r={markerRadius}
+                  cx="0"
+                  cy="0"
+                  fill={rowValue.colour}
+                  stroke="white"
+                  opacity={rowValue.opacity}
+                ></circle>
+              </g>
+            {/if}
           {/each}
         {/each}
       </svg>
     </div>
-    {#if openStates[positionChart.label]}
-      <div
-        class="accordion"
-        style="grid-column:1 / -1; background-color:lightgrey; padding:10px; margin-right:{markerRadius}px"
-      >
-        <p>
-          {positionChart.moreInfo}
-        </p>
+    {#if moreInfoTogglesArray[i]}
+      <div class="accordion" style="grid-column:1 / -1;">
+        <p class="govuk-body-s">{positionChart.moreInfo}</p>
+        <!-- <InsetText content={positionChart.moreInfo} renderStringAsHTML={true}
+        ></InsetText> -->
       </div>
     {/if}
     {#if positionChart.divider}
       <div style="grid-column:1 / -1">
-        <svg width="100%" height="10">
+        <svg width="100%" height="5">
           <line
             x1="0"
-            y1="5"
+            y1="2.5"
             x2="100%"
-            y2="5"
-            stroke="black"
-            stroke-width="2"
-            stroke-dasharray="2,6"
+            y2="2.55"
+            stroke="grey"
+            stroke-width="0.5"
           ></line>
         </svg>
       </div>{/if}
@@ -443,11 +447,6 @@
     align-items: center;
     column-gap: 2%;
     row-gap: 2%;
-  }
-  .label {
-    text-align: right;
-    margin: 0;
-    line-height: 1.05;
   }
   .chart {
     display: flex;

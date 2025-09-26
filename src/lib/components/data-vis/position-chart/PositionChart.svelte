@@ -2,6 +2,8 @@
   import { scaleLinear } from "d3-scale";
   import PositionChartAxis from "./PositionChartAxis.svelte";
   import ValueLabel from "../line-chart/ValueLabel.svelte";
+  import Button from "../../ui/Button.svelte";
+  import InsetText from "../../content/InsetText.svelte";
   let {
     value = undefined,
     min = undefined,
@@ -21,6 +23,7 @@
     showIcon = false,
     moreInfo = undefined,
     markerRadius = chartHeight / 2,
+    options = [],
     rowData = [
       {
         value: value,
@@ -118,16 +121,12 @@
     }),
   );
 
-  $inspect(allDataNormalized);
+  let moreInfoTogglesArray = $state(
+    Array.from({ length: options.length }, () => false),
+  );
 
-  // holds open/closed state for each label
-  let openStates = $state({});
-
-  function toggle(label) {
-    openStates = {
-      ...openStates,
-      [label]: !openStates[label], // flip true/false
-    };
+  function updateMoreInfoTogglesArray(index) {
+    moreInfoTogglesArray[index] = !moreInfoTogglesArray[index];
   }
 
   let showLabel = $derived(
@@ -316,10 +315,12 @@
       </p>
     {/if}
     {#if showIcon}
-      <button
-        id="info-{positionChart.label}"
-        onclick={() => toggle(positionChart.label)}>ⓘ</button
-      >
+      <Button
+        textContent="i"
+        buttonType="moreInfo"
+        noPadding={true}
+        onClickFunction={() => updateMoreInfoTogglesArray(i)}
+      ></Button>
     {/if}
     <div
       class="chart"
@@ -390,9 +391,11 @@
         {/each}
       </svg>
     </div>
-    {#if openStates[positionChart.label]}
+    {#if moreInfoTogglesArray[i]}
       <div class="accordion" style="grid-column:1 / -1;">
         <p class="govuk-body-s">{positionChart.moreInfo}</p>
+        <!-- <InsetText content={positionChart.moreInfo} renderStringAsHTML={true}
+        ></InsetText> -->
       </div>
     {/if}
     {#if positionChart.divider}

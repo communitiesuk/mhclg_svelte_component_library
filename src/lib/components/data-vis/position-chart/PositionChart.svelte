@@ -147,12 +147,6 @@
     allDataNormalized.some((obj) => obj.divider !== undefined),
   );
 
-  let gridTemplateRows = $derived(() => {
-    let rows = showAxis ? numberOfPositionCharts + 2 : numberOfPositionCharts;
-    if (open) rows += 1;
-    if (divider) rows += 1;
-    return `repeat(${rows}, auto)`;
-  });
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
 
   function interpolateColors(hex1, hex2, steps, hexMid = null) {
@@ -238,6 +232,18 @@
       .filter(
         (d) => typeof d.annotation === "string" && d.annotation.length > 0,
       ),
+  );
+
+  let gridTemplateRows = $derived(
+    allDataNormalized
+      .map((item, i) => {
+        const sizes = ["minmax(0,1fr)"];
+        if (moreInfoTogglesArray[i]) sizes.push("minmax(0,auto)");
+        if (item.divider === "true") sizes.push("minmax(0,auto)");
+        return sizes.join(" "); // still fine because number of rows matches
+      })
+      .concat(showAxis ? ["minmax(0,auto)"] : [])
+      .join(" "),
   );
 </script>
 

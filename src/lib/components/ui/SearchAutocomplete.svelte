@@ -51,6 +51,9 @@
     hint?: string; // Add hint prop
     selectedValue?: any; // Bindable selected value, updated on selection
     maxSuggestions?: number; // Maximum number of suggestions to display
+    autoselect?: boolean; // Auto-highlight first suggestion
+    hideHint?: boolean; // Hide the hint input element when autoselect is true
+    prefixMatchOnly?: boolean; // Only show suggestions that start with the query (better for hint behavior)
   };
 
   let {
@@ -85,6 +88,9 @@
     hint = undefined, // Add hint destructuring
     selectedValue = $bindable(), // Bindable prop for selected value
     maxSuggestions = undefined, // Maximum number of suggestions to display
+    autoselect = true, // Default to false as per library default
+    hideHint = false, // Default to false - show hint by default
+    prefixMatchOnly = false, // Default to false - show all matches
     ...restSearchProps // Other props for the base Search component
   }: Props = $props();
 
@@ -254,19 +260,50 @@
           populateResults([]);
           return;
         }
+        
         const lowerQuery = query.toLowerCase();
-        const filtered = options.filter((option) => {
-          const label = typeof option === "string" ? option : option.label;
-          return label.toLowerCase().includes(lowerQuery);
-        });
+        
+        if (prefixMatchOnly) {
+          // Only show suggestions that start with the query
+          const filtered = options.filter((option) => {
+            const label = typeof option === "string" ? option : option.label;
+            return label.toLowerCase().startsWith(lowerQuery);
+          });
+          
+          // Apply maxSuggestions limit if specified
+          const limitedResults =
+            maxSuggestions && maxSuggestions > 0
+              ? filtered.slice(0, maxSuggestions)
+              : filtered;
 
-        // Apply maxSuggestions limit if specified
-        const limitedResults =
-          maxSuggestions && maxSuggestions > 0
-            ? filtered.slice(0, maxSuggestions)
-            : filtered;
+          populateResults(limitedResults);
+        } else {
+          // Split results into two groups: starts-with and contains (existing behavior)
+          const startsWithResults: Suggestion[] = [];
+          const containsResults: Suggestion[] = [];
+          
+          options.forEach((option) => {
+            const label = typeof option === "string" ? option : option.label;
+            const lowerLabel = label.toLowerCase();
+            
+            if (lowerLabel.startsWith(lowerQuery)) {
+              startsWithResults.push(option);
+            } else if (lowerLabel.includes(lowerQuery)) {
+              containsResults.push(option);
+            }
+          });
+          
+          // Combine results: starts-with first (for better hint behavior), then contains
+          const filtered = [...startsWithResults, ...containsResults];
 
-        populateResults(limitedResults);
+          // Apply maxSuggestions limit if specified
+          const limitedResults =
+            maxSuggestions && maxSuggestions > 0
+              ? filtered.slice(0, maxSuggestions)
+              : filtered;
+
+          populateResults(limitedResults);
+        }
       };
 
       // Determine which source to use
@@ -297,6 +334,7 @@
       const dynamicSourceFunction = sourceSelector
         ? (query: string, populateResults: (results: Suggestion[]) => void) => {
             const selectedSource = sourceSelector(query, options || []);
+            
             // Handle invalid returns by falling back to default logic
             if (selectedSource === "api") {
               getResultsFromApi(query, populateResults);
@@ -406,6 +444,8 @@
         inputClasses: searchInput.classList, // Pass original classes directly
         source: finalSourceFunction,
         minLength: minLength,
+        autoselect: autoselect,
+        hintClasses: hideHint ? 'hidden-hint' : '',
         confirmOnBlur: confirmOnBlur,
         showNoOptionsFound: showNoOptionsFound,
         defaultValue: defaultValue,
@@ -430,11 +470,9 @@
       const autocompleteInputElement = containerElement?.querySelector(
         ".gem-c-search-with-autocomplete__input",
       ) as HTMLInputElement | null;
-      // console.log(
-      //   "SearchAutocomplete: Input element queried from DOM:",
-      //   autocompleteInputElement,
-      // ); // Updated log
-
+      
+      // Apply hint visibility classes via hintClasses API
+      
       // Post-initialisation tweaks
       if (autocompleteInputElement) {
         // Post-init: dynamically show a 'too-short' warning when the user types fewer than minLength characters
@@ -537,6 +575,54 @@
   :global {
     .gem-c-search-with-autocomplete__wrapper {
       position: relative;
+    }
+
+    /* Hide hint when requested via hintClasses - must come AFTER the default styling for proper cascade */
+    .gem-c-search-with-autocomplete .gem-c-search-with-autocomplete__hint.hidden-hint {
+      display: none !important;
+      visibility: hidden !important;
+    }
+    
+    /* Default hint styling when visible - ensure smooth overlapping with main input */
+    .gem-c-search-with-autocomplete .gem-c-search-with-autocomplete__hint {
+      /* Use identical positioning and sizing as main input */
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      z-index: 99 !important;
+      
+      /* Visual styling for hint */
+      color: rgba(0, 0, 0, 0.4);
+      background: transparent;
+      pointer-events: none;
+      
+      /* Copy EXACT styling from main input */
+      margin: 0;
+      width: 100%;
+      height: 2.1052631579em;
+      padding: 0.3157894737em;
+      border: 2px solid transparent; /* Transparent instead of visible */
+      border-radius: 0;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      font-family: "GDS Transport", arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-weight: 400;
+      font-size: 1.1875rem;
+      line-height: 1.4736842105;
+      
+      /* Text alignment */
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      
+      /* Ensure visibility - but allow hidden-hint to override */
+      display: block;
+      visibility: visible;
+      opacity: 1;
     }
 
     .gem-c-search-with-autocomplete__menu {

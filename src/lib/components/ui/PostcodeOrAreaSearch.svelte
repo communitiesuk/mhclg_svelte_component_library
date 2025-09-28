@@ -57,6 +57,9 @@
     homepage?: boolean;
     minLength?: number;
     required?: boolean;
+    autoselect?: boolean; // Auto-highlight first suggestion
+    hideHint?: boolean; // Hide the hint input element when autoselect is true
+    prefixMatchOnly?: boolean; // Only show suggestions that start with the query
     [key: string]: any; // Allow other props
   };
 
@@ -83,6 +86,9 @@
     homepage = false,
     minLength = 2,
     required = false,
+    autoselect = true,
+    hideHint = false,
+    prefixMatchOnly = false,
     ...restProps
   }: Props = $props();
 
@@ -222,6 +228,9 @@
     homepage,
     minLength,
     required,
+    autoselect,
+    hideHint,
+    prefixMatchOnly,
     ...restProps,
   });
 </script>

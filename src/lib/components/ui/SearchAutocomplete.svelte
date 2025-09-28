@@ -260,16 +260,16 @@
           populateResults([]);
           return;
         }
-        
+
         const lowerQuery = query.toLowerCase();
-        
+
         if (prefixMatchOnly) {
           // Only show suggestions that start with the query
           const filtered = options.filter((option) => {
             const label = typeof option === "string" ? option : option.label;
             return label.toLowerCase().startsWith(lowerQuery);
           });
-          
+
           // Apply maxSuggestions limit if specified
           const limitedResults =
             maxSuggestions && maxSuggestions > 0
@@ -281,18 +281,18 @@
           // Split results into two groups: starts-with and contains (existing behavior)
           const startsWithResults: Suggestion[] = [];
           const containsResults: Suggestion[] = [];
-          
+
           options.forEach((option) => {
             const label = typeof option === "string" ? option : option.label;
             const lowerLabel = label.toLowerCase();
-            
+
             if (lowerLabel.startsWith(lowerQuery)) {
               startsWithResults.push(option);
             } else if (lowerLabel.includes(lowerQuery)) {
               containsResults.push(option);
             }
           });
-          
+
           // Combine results: starts-with first (for better hint behavior), then contains
           const filtered = [...startsWithResults, ...containsResults];
 
@@ -334,7 +334,7 @@
       const dynamicSourceFunction = sourceSelector
         ? (query: string, populateResults: (results: Suggestion[]) => void) => {
             const selectedSource = sourceSelector(query, options || []);
-            
+
             // Handle invalid returns by falling back to default logic
             if (selectedSource === "api") {
               getResultsFromApi(query, populateResults);
@@ -445,7 +445,7 @@
         source: finalSourceFunction,
         minLength: minLength,
         autoselect: autoselect,
-        hintClasses: hideHint ? 'hidden-hint' : '',
+        hintClasses: hideHint ? "hidden-hint" : "",
         confirmOnBlur: confirmOnBlur,
         showNoOptionsFound: showNoOptionsFound,
         defaultValue: defaultValue,
@@ -470,9 +470,9 @@
       const autocompleteInputElement = containerElement?.querySelector(
         ".gem-c-search-with-autocomplete__input",
       ) as HTMLInputElement | null;
-      
+
       // Apply hint visibility classes via hintClasses API
-      
+
       // Post-initialisation tweaks
       if (autocompleteInputElement) {
         // Post-init: dynamically show a 'too-short' warning when the user types fewer than minLength characters
@@ -578,11 +578,12 @@
     }
 
     /* Hide hint when requested via hintClasses - must come AFTER the default styling for proper cascade */
-    .gem-c-search-with-autocomplete .gem-c-search-with-autocomplete__hint.hidden-hint {
+    .gem-c-search-with-autocomplete
+      .gem-c-search-with-autocomplete__hint.hidden-hint {
       display: none !important;
       visibility: hidden !important;
     }
-    
+
     /* Default hint styling when visible - ensure smooth overlapping with main input */
     .gem-c-search-with-autocomplete .gem-c-search-with-autocomplete__hint {
       /* Use identical positioning and sizing as main input */
@@ -590,12 +591,12 @@
       top: 0 !important;
       left: 0 !important;
       z-index: 99 !important;
-      
+
       /* Visual styling for hint */
       color: rgba(0, 0, 0, 0.4);
       background: transparent;
       pointer-events: none;
-      
+
       /* Copy EXACT styling from main input */
       margin: 0;
       width: 100%;
@@ -613,12 +614,12 @@
       font-weight: 400;
       font-size: 1.1875rem;
       line-height: 1.4736842105;
-      
+
       /* Text alignment */
       text-align: left;
       white-space: nowrap;
       overflow: hidden;
-      
+
       /* Ensure visibility - but allow hidden-hint to override */
       display: block;
       visibility: visible;

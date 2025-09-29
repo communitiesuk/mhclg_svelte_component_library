@@ -54,6 +54,7 @@
     autoselect?: boolean; // Auto-highlight first suggestion
     hideHint?: boolean; // Hide the hint input element when autoselect is true
     prefixMatchOnly?: boolean; // Only show suggestions that start with the query (better for hint behavior)
+    autoFocusSubmitOnSelection?: boolean; // Auto-focus submit button when selection is confirmed
   };
 
   let {
@@ -91,6 +92,7 @@
     autoselect = true, // Default to false as per library default
     hideHint = false, // Default to false - show hint by default
     prefixMatchOnly = false, // Default to false - show all matches
+    autoFocusSubmitOnSelection = false, // Default to false - don't auto-focus by default
     ...restSearchProps // Other props for the base Search component
   }: Props = $props();
 
@@ -102,6 +104,8 @@
   let currentSourceUrl = $state<string | undefined>(undefined);
   let currentSourceKey = $state<string | undefined>(undefined);
   let currentSourceProperty = $state<string | undefined>(undefined);
+
+
 
   // --- Derived Values ---
   const wrapperClasses = $derived(
@@ -404,7 +408,12 @@
       // Define confirm function
       let isSubmitting = false; // Prevent double submit
       const handleConfirm = (confirmedValue: Suggestion | undefined) => {
-        if (confirmedValue === undefined || isSubmitting) return;
+        console.log('handleConfirm called with:', confirmedValue, 'isSubmitting:', isSubmitting); // Debug log
+        
+        if (confirmedValue === undefined) return;
+        
+        // Reset submitting flag at the start of each new confirmation
+        isSubmitting = false;
 
         // Re-assign selectedValue before any form-based guard checks (!form) so bindings still update
         // (e.g. when no <form> exists around the component usage) and search component value is being used clienside without a page reload
@@ -417,23 +426,37 @@
         const inputElement =
           autocompleteInstance?.inputElement as HTMLInputElement;
         const form = containerElement?.closest("form");
+        const submitButton = containerElement?.querySelector('button[type="submit"]') as HTMLButtonElement;
+        
+        console.log('Submit button found:', !!submitButton); // Debug log
 
-        if (!inputElement || !form) return;
-
-        isSubmitting = true;
-        inputElement.value = inputValueTemplate(confirmedValue);
-        inputElement.dataset.autocompleteAccepted = "true"; // Set tracking attribute
-
-        // Submit form
-        if (form.requestSubmit) {
-          form.requestSubmit();
-        } else {
-          form.submit(); // Fallback for older browsers
+        // Always focus the submit button first, regardless of form presence (if feature is enabled)
+        if (autoFocusSubmitOnSelection && submitButton) {
+          console.log('Focusing submit button'); // Debug log
+          // Use requestAnimationFrame to ensure the focus happens after DOM updates
+          requestAnimationFrame(() => {
+            submitButton.focus();
+            console.log('Submit button focused, document.activeElement:', document.activeElement === submitButton);
+          });
         }
-        // Reset flag after a short delay in case submission fails/is prevented
-        setTimeout(() => {
+
+        // Handle form submission separately
+        if (inputElement && form) {
+          isSubmitting = true;
+          inputElement.value = inputValueTemplate(confirmedValue);
+          inputElement.dataset.autocompleteAccepted = "true"; // Set tracking attribute
+
+          // Submit form immediately
+          console.log('Submitting form'); // Debug log
+          if (form.requestSubmit) {
+            form.requestSubmit();
+          } else {
+            form.submit(); // Fallback for older browsers
+          }
+          
+          // Reset flag after submission
           isSubmitting = false;
-        }, 500);
+        }
       };
 
       // Initialise accessible-autocomplete
@@ -484,6 +507,13 @@
         // Listen for input changes on the autocomplete field
         autocompleteInputElement.addEventListener("input", () => {
           const val = autocompleteInputElement.value;
+          
+          // Reset isSubmitting flag when user starts typing again
+          if (isSubmitting) {
+            console.log('User typing, resetting isSubmitting flag');
+            isSubmitting = false;
+          }
+          
           // Remove any existing 'too-short' warning before adding a new one to ensure we don't accumulate multiple warning items.
           suggestionsMenu
             ?.querySelector(
@@ -624,6 +654,15 @@
       display: block;
       visibility: visible;
       opacity: 1;
+    }
+
+    /* Custom focus styles for submit button (when focused after autocomplete selection) */
+    .gem-c-search-with-autocomplete .gem-c-search__submit:focus {
+      background-color: #ffdd00; /* GDS focus yellow */
+      border-color: #0b0c0c; /* GDS text color for contrast */
+      color: #0b0c0c; /* Dark text on yellow background */
+      outline: 3px solid #ffdd00;
+      outline-offset: 0;
     }
 
     .gem-c-search-with-autocomplete__menu {

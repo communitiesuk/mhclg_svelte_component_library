@@ -60,6 +60,7 @@
     autoselect?: boolean; // Auto-highlight first suggestion
     hideHint?: boolean; // Hide the hint input element when autoselect is true
     prefixMatchOnly?: boolean; // Only show suggestions that start with the query
+    autoFocusSubmitOnSelection?: boolean; // Auto-focus submit button when selection is confirmed
     [key: string]: any; // Allow other props
   };
 
@@ -89,6 +90,7 @@
     autoselect = true,
     hideHint = false,
     prefixMatchOnly = false,
+    autoFocusSubmitOnSelection = false,
     ...restProps
   }: Props = $props();
 
@@ -231,6 +233,7 @@
     autoselect,
     hideHint,
     prefixMatchOnly,
+    autoFocusSubmitOnSelection,
     ...restProps,
   });
 </script>

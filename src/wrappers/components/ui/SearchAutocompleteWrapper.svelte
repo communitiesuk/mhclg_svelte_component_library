@@ -355,6 +355,22 @@
         },
       },
       {
+        name: "autoFocusSubmitOnSelection",
+        category: "Interaction",
+        type: "boolean",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, automatically focuses the submit button when a user confirms an autocomplete suggestion.`,
+            `Provides clear visual feedback with GDS focus styling (yellow background) when a selection is made.`,
+            `The focus styling automatically disappears when focus moves away from the button.`,
+            `Uses native browser focus behavior - no manual state management required.`,
+            `Helps users understand that their selection has been confirmed and is ready to submit.`,
+          ],
+        },
+      },
+      {
         name: "showNoOptionsFound",
         category: "Autocomplete",
         value: true,
@@ -933,7 +949,7 @@
       : "#fff"}
   <div class="p-8" style="background-color: {bgColor};">
     {#if parametersObject.source_url && parametersObject.source_key}
-      {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.autoselect, parametersObject.hideHint, parametersObject.prefixMatchOnly, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}}
+            {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.autoselect, parametersObject.hideHint, parametersObject.prefixMatchOnly, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}
         <SearchAutocomplete {...parametersObject} bind:selectedValue />
       {/key}
     {:else}

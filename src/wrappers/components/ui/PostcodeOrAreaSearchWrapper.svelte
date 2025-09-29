@@ -527,6 +527,23 @@
           ],
         },
       },
+      {
+        name: "autoFocusSubmitOnSelection",
+        category: "Behaviour",
+        type: "boolean",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, automatically focuses the submit button when a postcode or area is confirmed.`,
+            `Provides clear visual feedback with GDS focus styling (yellow background) when a location selection is made.`,
+            `The focus styling automatically disappears when focus moves away from the button.`,
+            `Helps users understand that their location selection has been confirmed and is ready to submit.`,
+            `Uses native browser focus behavior for reliable and accessible interaction.`,
+            `Inherited from the underlying SearchAutocomplete component.`,
+          ],
+        },
+      },
     ]),
   );
 
@@ -672,7 +689,7 @@
       ? "#1d70b8"
       : "#fff"}
   <div class="p-8" style="background-color: {bgColor};">
-    {#key [parametersObject.autoselect, parametersObject.hideHint, parametersObject.prefixMatchOnly, parametersObject.minLength, parametersObject.essOnly, JSON.stringify(parametersObject.customPlacesData)].join("|")}
+    {#key [parametersObject.autoselect, parametersObject.hideHint, parametersObject.prefixMatchOnly, parametersObject.minLength, parametersObject.essOnly, JSON.stringify(parametersObject.customPlacesData)].join("|")}))}
       <PostcodeOrAreaSearch {...parametersObject} bind:selectedValue />
     {/key}
   </div>

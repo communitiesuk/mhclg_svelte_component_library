@@ -398,10 +398,9 @@
       </svg>
     </div>
     {#if moreInfoTogglesArray[i]}
-      <div class="accordion" style="grid-column:1 / -1;">
-        <p class="govuk-body-s">{positionChart.moreInfo}</p>
-        <!-- <InsetText content={positionChart.moreInfo} renderStringAsHTML={true}
-        ></InsetText> -->
+      <div class="accordion" style="grid-column:1 / -1">
+        <InsetText content={positionChart.moreInfo} renderStringAsHTML={true}
+        ></InsetText>
       </div>
     {/if}
     {#if positionChart.divider}
@@ -459,8 +458,5 @@
     flex-direction: column;
     justify-content: flex-end;
     min-width: 0;
-  }
-  .accordion {
-    max-height: 500px !important; /* large enough to fit content */
   }
 </style>

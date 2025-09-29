@@ -313,6 +313,64 @@
         },
       },
       {
+        name: "autoselect",
+        category: "Autocomplete",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, the first suggestion is automatically highlighted and a hint input element is created to show the remaining text.`,
+            `When enabled, users can press Tab or Right Arrow to accept the highlighted suggestion.`,
+            `<strong>Note:</strong> Hints only appear when the first suggestion starts with the typed query. Use <code>prefixMatchOnly</code> to ensure consistent hint behavior.`,
+            `From <a href="https://github.com/alphagov/accessible-autocomplete?tab=readme-ov-file#options-reference" target="_blank">accessible-autocomplete options</a>.`,
+          ],
+        },
+      },
+      {
+        name: "hideHint",
+        category: "Autocomplete",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, hides the hint input element that shows suggestion text when <code>autoselect</code> is enabled.`,
+            `Only has an effect when <code>autoselect</code> is <code>true</code>.`,
+            `Useful when you want the highlighting behavior of autoselect but prefer not to show the visual hint overlay.`,
+            `<strong>Note:</strong> Hints only work for suggestions that start with the typed query. If suggestions appear that contain the query mid-word, no hint will show for those.`,
+          ],
+        },
+      },
+      {
+        name: "prefixMatchOnly",
+        category: "Autocomplete",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, only shows suggestions that start with the typed query (prefix matching).`,
+            `When <code>false</code> (default), shows all suggestions that contain the query anywhere in the text.`,
+            `Setting this to <code>true</code> ensures consistent hint behavior since hints only work with prefix matches.`,
+            `Recommended when <code>autoselect</code> is enabled and you want predictable hint display.`,
+          ],
+        },
+      },
+      {
+        name: "autoFocusSubmitOnSelection",
+        category: "Interaction",
+        type: "boolean",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, automatically focuses the submit button when a user confirms an autocomplete suggestion.`,
+            `Provides clear visual feedback with GDS focus styling (yellow background) when a selection is made.`,
+            `The focus styling automatically disappears when focus moves away from the button.`,
+            `Uses native browser focus behavior - no manual state management required.`,
+            `Helps users understand that their selection has been confirmed and is ready to submit.`,
+          ],
+        },
+      },
+      {
         name: "showNoOptionsFound",
         category: "Autocomplete",
         value: true,
@@ -891,7 +949,7 @@
       : "#fff"}
   <div class="p-8" style="background-color: {bgColor};">
     {#if parametersObject.source_url && parametersObject.source_key}
-      {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}
+            {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.autoselect, parametersObject.hideHint, parametersObject.prefixMatchOnly, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}
         <SearchAutocomplete {...parametersObject} bind:selectedValue />
       {/key}
     {:else}

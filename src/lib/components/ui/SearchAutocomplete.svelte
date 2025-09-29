@@ -51,6 +51,10 @@
     hint?: string; // Add hint prop
     selectedValue?: any; // Bindable selected value, updated on selection
     maxSuggestions?: number; // Maximum number of suggestions to display
+    autoselect?: boolean; // Auto-highlight first suggestion
+    hideHint?: boolean; // Hide the hint input element when autoselect is true
+    prefixMatchOnly?: boolean; // Only show suggestions that start with the query (better for hint behavior)
+    autoFocusSubmitOnSelection?: boolean; // Auto-focus submit button when selection is confirmed
   };
 
   let {
@@ -85,6 +89,10 @@
     hint = undefined, // Add hint destructuring
     selectedValue = $bindable(), // Bindable prop for selected value
     maxSuggestions = undefined, // Maximum number of suggestions to display
+    autoselect = true, // Default to false as per library default
+    hideHint = false, // Default to false - show hint by default
+    prefixMatchOnly = false, // Default to false - show all matches
+    autoFocusSubmitOnSelection = false, // Default to false - don't auto-focus by default
     ...restSearchProps // Other props for the base Search component
   }: Props = $props();
 
@@ -96,6 +104,8 @@
   let currentSourceUrl = $state<string | undefined>(undefined);
   let currentSourceKey = $state<string | undefined>(undefined);
   let currentSourceProperty = $state<string | undefined>(undefined);
+
+
 
   // --- Derived Values ---
   const wrapperClasses = $derived(
@@ -254,19 +264,50 @@
           populateResults([]);
           return;
         }
+
         const lowerQuery = query.toLowerCase();
-        const filtered = options.filter((option) => {
-          const label = typeof option === "string" ? option : option.label;
-          return label.toLowerCase().includes(lowerQuery);
-        });
 
-        // Apply maxSuggestions limit if specified
-        const limitedResults =
-          maxSuggestions && maxSuggestions > 0
-            ? filtered.slice(0, maxSuggestions)
-            : filtered;
+        if (prefixMatchOnly) {
+          // Only show suggestions that start with the query
+          const filtered = options.filter((option) => {
+            const label = typeof option === "string" ? option : option.label;
+            return label.toLowerCase().startsWith(lowerQuery);
+          });
 
-        populateResults(limitedResults);
+          // Apply maxSuggestions limit if specified
+          const limitedResults =
+            maxSuggestions && maxSuggestions > 0
+              ? filtered.slice(0, maxSuggestions)
+              : filtered;
+
+          populateResults(limitedResults);
+        } else {
+          // Split results into two groups: starts-with and contains (existing behavior)
+          const startsWithResults: Suggestion[] = [];
+          const containsResults: Suggestion[] = [];
+
+          options.forEach((option) => {
+            const label = typeof option === "string" ? option : option.label;
+            const lowerLabel = label.toLowerCase();
+
+            if (lowerLabel.startsWith(lowerQuery)) {
+              startsWithResults.push(option);
+            } else if (lowerLabel.includes(lowerQuery)) {
+              containsResults.push(option);
+            }
+          });
+
+          // Combine results: starts-with first (for better hint behavior), then contains
+          const filtered = [...startsWithResults, ...containsResults];
+
+          // Apply maxSuggestions limit if specified
+          const limitedResults =
+            maxSuggestions && maxSuggestions > 0
+              ? filtered.slice(0, maxSuggestions)
+              : filtered;
+
+          populateResults(limitedResults);
+        }
       };
 
       // Determine which source to use
@@ -297,6 +338,7 @@
       const dynamicSourceFunction = sourceSelector
         ? (query: string, populateResults: (results: Suggestion[]) => void) => {
             const selectedSource = sourceSelector(query, options || []);
+
             // Handle invalid returns by falling back to default logic
             if (selectedSource === "api") {
               getResultsFromApi(query, populateResults);
@@ -366,7 +408,12 @@
       // Define confirm function
       let isSubmitting = false; // Prevent double submit
       const handleConfirm = (confirmedValue: Suggestion | undefined) => {
-        if (confirmedValue === undefined || isSubmitting) return;
+        console.log('handleConfirm called with:', confirmedValue, 'isSubmitting:', isSubmitting); // Debug log
+        
+        if (confirmedValue === undefined) return;
+        
+        // Reset submitting flag at the start of each new confirmation
+        isSubmitting = false;
 
         // Re-assign selectedValue before any form-based guard checks (!form) so bindings still update
         // (e.g. when no <form> exists around the component usage) and search component value is being used clienside without a page reload
@@ -379,23 +426,37 @@
         const inputElement =
           autocompleteInstance?.inputElement as HTMLInputElement;
         const form = containerElement?.closest("form");
+        const submitButton = containerElement?.querySelector('button[type="submit"]') as HTMLButtonElement;
+        
+        console.log('Submit button found:', !!submitButton); // Debug log
 
-        if (!inputElement || !form) return;
-
-        isSubmitting = true;
-        inputElement.value = inputValueTemplate(confirmedValue);
-        inputElement.dataset.autocompleteAccepted = "true"; // Set tracking attribute
-
-        // Submit form
-        if (form.requestSubmit) {
-          form.requestSubmit();
-        } else {
-          form.submit(); // Fallback for older browsers
+        // Always focus the submit button first, regardless of form presence (if feature is enabled)
+        if (autoFocusSubmitOnSelection && submitButton) {
+          console.log('Focusing submit button'); // Debug log
+          // Use requestAnimationFrame to ensure the focus happens after DOM updates
+          requestAnimationFrame(() => {
+            submitButton.focus();
+            console.log('Submit button focused, document.activeElement:', document.activeElement === submitButton);
+          });
         }
-        // Reset flag after a short delay in case submission fails/is prevented
-        setTimeout(() => {
+
+        // Handle form submission separately
+        if (inputElement && form) {
+          isSubmitting = true;
+          inputElement.value = inputValueTemplate(confirmedValue);
+          inputElement.dataset.autocompleteAccepted = "true"; // Set tracking attribute
+
+          // Submit form immediately
+          console.log('Submitting form'); // Debug log
+          if (form.requestSubmit) {
+            form.requestSubmit();
+          } else {
+            form.submit(); // Fallback for older browsers
+          }
+          
+          // Reset flag after submission
           isSubmitting = false;
-        }, 500);
+        }
       };
 
       // Initialise accessible-autocomplete
@@ -406,6 +467,8 @@
         inputClasses: searchInput.classList, // Pass original classes directly
         source: finalSourceFunction,
         minLength: minLength,
+        autoselect: autoselect,
+        hintClasses: hideHint ? "hidden-hint" : "",
         confirmOnBlur: confirmOnBlur,
         showNoOptionsFound: showNoOptionsFound,
         defaultValue: defaultValue,
@@ -430,10 +493,8 @@
       const autocompleteInputElement = containerElement?.querySelector(
         ".gem-c-search-with-autocomplete__input",
       ) as HTMLInputElement | null;
-      // console.log(
-      //   "SearchAutocomplete: Input element queried from DOM:",
-      //   autocompleteInputElement,
-      // ); // Updated log
+
+      // Apply hint visibility classes via hintClasses API
 
       // Post-initialisation tweaks
       if (autocompleteInputElement) {
@@ -446,6 +507,13 @@
         // Listen for input changes on the autocomplete field
         autocompleteInputElement.addEventListener("input", () => {
           const val = autocompleteInputElement.value;
+          
+          // Reset isSubmitting flag when user starts typing again
+          if (isSubmitting) {
+            console.log('User typing, resetting isSubmitting flag');
+            isSubmitting = false;
+          }
+          
           // Remove any existing 'too-short' warning before adding a new one to ensure we don't accumulate multiple warning items.
           suggestionsMenu
             ?.querySelector(
@@ -537,6 +605,64 @@
   :global {
     .gem-c-search-with-autocomplete__wrapper {
       position: relative;
+    }
+
+    /* Hide hint when requested via hintClasses - must come AFTER the default styling for proper cascade */
+    .gem-c-search-with-autocomplete
+      .gem-c-search-with-autocomplete__hint.hidden-hint {
+      display: none !important;
+      visibility: hidden !important;
+    }
+
+    /* Default hint styling when visible - ensure smooth overlapping with main input */
+    .gem-c-search-with-autocomplete .gem-c-search-with-autocomplete__hint {
+      /* Use identical positioning and sizing as main input */
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      z-index: 99 !important;
+
+      /* Visual styling for hint */
+      color: rgba(0, 0, 0, 0.4);
+      background: transparent;
+      pointer-events: none;
+
+      /* Copy EXACT styling from main input */
+      margin: 0;
+      width: 100%;
+      height: 2.1052631579em;
+      padding: 0.3157894737em;
+      border: 2px solid transparent; /* Transparent instead of visible */
+      border-radius: 0;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      appearance: none;
+      font-family: "GDS Transport", arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      font-weight: 400;
+      font-size: 1.1875rem;
+      line-height: 1.4736842105;
+
+      /* Text alignment */
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+
+      /* Ensure visibility - but allow hidden-hint to override */
+      display: block;
+      visibility: visible;
+      opacity: 1;
+    }
+
+    /* Custom focus styles for submit button (when focused after autocomplete selection) */
+    .gem-c-search-with-autocomplete .gem-c-search__submit:focus {
+      background-color: #ffdd00; /* GDS focus yellow */
+      border-color: #0b0c0c; /* GDS text color for contrast */
+      color: #0b0c0c; /* Dark text on yellow background */
+      outline: 3px solid #ffdd00;
+      outline-offset: 0;
     }
 
     .gem-c-search-with-autocomplete__menu {

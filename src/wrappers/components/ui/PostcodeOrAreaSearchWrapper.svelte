@@ -483,6 +483,67 @@
           arr: [`Adds the <code>required</code> attribute to the input field.`],
         },
       },
+      {
+        name: "autoselect",
+        category: "Behaviour",
+        value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, the first suggestion is automatically highlighted and a hint input element is created to show the remaining text.`,
+            `When enabled, users can press Tab or Right Arrow to accept the highlighted suggestion.`,
+            `<strong>Note:</strong> Hints only appear when the first area name starts with the typed query. Use <code>prefixMatchOnly</code> to ensure consistent hint behavior.`,
+            `Inherited from the underlying SearchAutocomplete component.`,
+          ],
+        },
+      },
+      {
+        name: "hideHint",
+        category: "Behaviour",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, hides the hint input element that shows suggestion text when <code>autoselect</code> is enabled.`,
+            `Only has an effect when <code>autoselect</code> is <code>true</code>.`,
+            `Useful when you want the highlighting behavior of autoselect but prefer not to show the visual hint overlay.`,
+            `<strong>Note:</strong> Hints only work for area names that start with the typed query. Areas containing the query mid-name won't show hints.`,
+            `Inherited from the underlying SearchAutocomplete component.`,
+          ],
+        },
+      },
+      {
+        name: "prefixMatchOnly",
+        category: "Behaviour",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, only shows area names that start with the typed query (prefix matching).`,
+            `When <code>false</code> (default), shows all areas that contain the query anywhere in the name (e.g., "westmin" matches both "Westminster" and "Cities of London and Westminster").`,
+            `Setting this to <code>true</code> ensures consistent hint behavior and can improve search relevance.`,
+            `Recommended when <code>autoselect</code> is enabled and you want predictable hint display for area searches.`,
+            `Inherited from the underlying SearchAutocomplete component.`,
+          ],
+        },
+      },
+      {
+        name: "autoFocusSubmitOnSelection",
+        category: "Behaviour",
+        type: "boolean",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, automatically focuses the submit button when a postcode or area is confirmed.`,
+            `Provides clear visual feedback with GDS focus styling (yellow background) when a location selection is made.`,
+            `The focus styling automatically disappears when focus moves away from the button.`,
+            `Helps users understand that their location selection has been confirmed and is ready to submit.`,
+            `Uses native browser focus behavior for reliable and accessible interaction.`,
+            `Inherited from the underlying SearchAutocomplete component.`,
+          ],
+        },
+      },
     ]),
   );
 
@@ -628,7 +689,9 @@
       ? "#1d70b8"
       : "#fff"}
   <div class="p-8" style="background-color: {bgColor};">
-    <PostcodeOrAreaSearch {...parametersObject} bind:selectedValue />
+    {#key [parametersObject.autoselect, parametersObject.hideHint, parametersObject.prefixMatchOnly, parametersObject.minLength, parametersObject.essOnly, JSON.stringify(parametersObject.customPlacesData)].join("|")}))}
+      <PostcodeOrAreaSearch {...parametersObject} bind:selectedValue />
+    {/key}
   </div>
 {/snippet}
 

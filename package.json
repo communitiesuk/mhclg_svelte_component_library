@@ -93,6 +93,7 @@
     "vite": "^5.0.11"
   },
   "dependencies": {
+    "@communitiesuk/svelte-component-library": "^0.1.19-beta.3",
     "@dwp/dwp-frontend": "^3.3.0",
     "@maptiler/sdk": "^3.0.1",
     "@ministryofjustice/frontend": "^4.0.1",

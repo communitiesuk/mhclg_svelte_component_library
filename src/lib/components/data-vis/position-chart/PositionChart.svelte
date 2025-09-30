@@ -147,12 +147,6 @@
     allDataNormalized.some((obj) => obj.divider !== undefined),
   );
 
-  let gridTemplateRows = $derived(() => {
-    let rows = showAxis ? numberOfPositionCharts + 2 : numberOfPositionCharts;
-    if (open) rows += 1;
-    if (divider) rows += 1;
-    return `repeat(${rows}, auto)`;
-  });
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
 
   function interpolateColors(hex1, hex2, steps, hexMid = null) {
@@ -239,6 +233,18 @@
         (d) => typeof d.annotation === "string" && d.annotation.length > 0,
       ),
   );
+
+  let gridTemplateRows = $derived(
+    allDataNormalized
+      .map((item, i) => {
+        const sizes = ["minmax(0,1fr)"];
+        if (moreInfoTogglesArray[i]) sizes.push("minmax(0,auto)");
+        if (item.divider === "true") sizes.push("minmax(0,auto)");
+        return sizes.join(" "); // still fine because number of rows matches
+      })
+      .concat(showAxis ? ["minmax(0,auto)"] : [])
+      .join(" "),
+  );
 </script>
 
 {#if annotations.length}
@@ -315,12 +321,14 @@
       </p>
     {/if}
     {#if showIcon}
-      <Button
-        textContent="i"
-        buttonType="moreInfo"
-        noPadding={true}
-        onClickFunction={() => updateMoreInfoTogglesArray(i)}
-      ></Button>
+      <div class="button-container">
+        <Button
+          textContent="i"
+          buttonType="moreInfo"
+          noPadding={true}
+          onClickFunction={() => updateMoreInfoTogglesArray(i)}
+        ></Button>
+      </div>
     {/if}
     <div
       class="chart"
@@ -392,10 +400,9 @@
       </svg>
     </div>
     {#if moreInfoTogglesArray[i]}
-      <div class="accordion" style="grid-column:1 / -1;">
-        <p class="govuk-body-s">{positionChart.moreInfo}</p>
-        <!-- <InsetText content={positionChart.moreInfo} renderStringAsHTML={true}
-        ></InsetText> -->
+      <div class="accordion" style="grid-column:1 / -1">
+        <InsetText content={positionChart.moreInfo} renderStringAsHTML={true}
+        ></InsetText>
       </div>
     {/if}
     {#if positionChart.divider}
@@ -453,8 +460,5 @@
     flex-direction: column;
     justify-content: flex-end;
     min-width: 0;
-  }
-  .accordion {
-    max-height: 500px !important; /* large enough to fit content */
   }
 </style>

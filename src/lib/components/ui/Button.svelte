@@ -177,6 +177,7 @@
   }
 
   .more-info-button {
+    display: flex;
     flex: none;
     font-size: 1.25rem;
     padding-top: 2px;

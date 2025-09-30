@@ -1,5 +1,5 @@
 <script>
-  let { summaryText, detailedText } = $props();
+  let { summaryText, detailedText, renderStringAsHTML = false } = $props();
 </script>
 
 <details class="govuk-details">
@@ -7,6 +7,14 @@
     <span class="govuk-details__summary-text">{summaryText}</span>
   </summary>
   <div class="govuk-details__text">
-    {detailedText}
+    {#if typeof detailedText === "string"}
+      {#if renderStringAsHTML}
+        {@html detailedText}
+      {:else}
+        {detailedText}
+      {/if}
+    {:else if detailedText}
+      {@render detailedText()}
+    {/if}
   </div>
 </details>

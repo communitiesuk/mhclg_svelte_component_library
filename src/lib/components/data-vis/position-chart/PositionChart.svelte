@@ -321,12 +321,14 @@
       </p>
     {/if}
     {#if showIcon}
-      <Button
-        textContent="i"
-        buttonType="moreInfo"
-        noPadding={true}
-        onClickFunction={() => updateMoreInfoTogglesArray(i)}
-      ></Button>
+      <div class="button-container">
+        <Button
+          textContent="i"
+          buttonType="moreInfo"
+          noPadding={true}
+          onClickFunction={() => updateMoreInfoTogglesArray(i)}
+        ></Button>
+      </div>
     {/if}
     <div
       class="chart"
@@ -458,5 +460,8 @@
     flex-direction: column;
     justify-content: flex-end;
     min-width: 0;
+  }
+  .button-container {
+    align-items: center;
   }
 </style>

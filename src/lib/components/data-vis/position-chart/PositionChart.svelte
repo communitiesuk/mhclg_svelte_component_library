@@ -461,7 +461,4 @@
     justify-content: flex-end;
     min-width: 0;
   }
-  .button-container {
-    align-items: center;
-  }
 </style>

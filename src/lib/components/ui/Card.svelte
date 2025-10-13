@@ -22,12 +22,12 @@
   >
     {#if linkCard}
       <a class="link" {href}>
-        <h3
+        <h2
           class="govuk-link link-heading govuk-heading-m"
           style="--link-text-color: {linkTextColor}"
         >
           {linkText}
-        </h3>
+        </h2>
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="10"

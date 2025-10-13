@@ -21,26 +21,28 @@
     style="background-color: {callToActionBackgroundColor};"
   >
     {#if linkCard}
-      <a class="link" {href}>
-        <h2
-          class="govuk-link link-heading govuk-heading-m"
+      <h2 class="link-heading govuk-heading-m">
+        <a
+          class="govuk-link link"
+          {href}
           style="--link-text-color: {linkTextColor}"
         >
           {linkText}
-        </h2>
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="10"
-          height="17"
-          viewBox="0 0 10 17"
-          fill="none"
-        >
-          <path
-            d="M6.21622 8.5L0 2.36667L1.89189 0.5L10 8.5L1.89189 16.5L0 14.6333L6.21622 8.5Z"
-            fill={linkTextColor}
-          ></path>
-        </svg>
-      </a>
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="10"
+            height="17"
+            viewBox="0 0 10 17"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M6.21622 8.5L0 2.36667L1.89189 0.5L10 8.5L1.89189 16.5L0 14.6333L6.21622 8.5Z"
+              fill={linkTextColor}
+            ></path>
+          </svg>
+        </a>
+      </h2>
     {:else}
       {@render cardSnippet()}
     {/if}

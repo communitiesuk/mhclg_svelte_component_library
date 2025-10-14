@@ -17,11 +17,15 @@ Use the component with or without navigation items based on your needs. -->
     serviceUrl = "#",
     navigationItems = undefined,
     collapseOnDesktop = false,
+    customiseServiceNameLink = false,
+    serviceNameLinkStyle = "govuk-link no-underline",
   } = $props<{
     serviceName?: string;
     serviceUrl?: string;
     navigationItems?: NavigationItem[];
     collapseOnDesktop?: boolean;
+    customiseServiceNameLink?: boolean;
+    serviceNameLinkStyle?: string;
   }>();
 
   // Reactive state declarations
@@ -94,7 +98,12 @@ Use the component with or without navigation items based on your needs. -->
   <div class="govuk-width-container">
     <div class="govuk-service-navigation__container">
       <span class="govuk-service-navigation__service-name">
-        <a href={serviceUrl} class="govuk-service-navigation__link">
+        <a
+          href={serviceUrl}
+          class={customiseServiceNameLink
+            ? serviceNameLinkStyle
+            : "govuk-service-navigation__link"}
+        >
           {serviceName}
         </a>
       </span>
@@ -145,3 +154,12 @@ Use the component with or without navigation items based on your needs. -->
     </div>
   </div>
 </section>
+
+<style>
+  .no-underline {
+    text-decoration: none;
+  }
+  .no-underline:hover {
+    text-decoration: underline;
+  }
+</style>

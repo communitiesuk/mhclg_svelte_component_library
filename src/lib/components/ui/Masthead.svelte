@@ -15,6 +15,7 @@
     imgMarginTop = "15px",
     paddingTop = "30px",
     titlePaddingTop = false,
+    paddingBottom = "30px",
   } = $props<{
     title?: string;
     description?: string;
@@ -28,12 +29,13 @@
     imgMarginTop?: string;
     paddingTop?: string;
     titlePaddingTop?: boolean;
+    paddingBottom?: string;
   }>();
 </script>
 
 <div
   class="app-masthead"
-  style="background-color: {backgroundColor}; border-bottom-color: {backgroundColor}; --masthead-text-color: {textColor}; --padding-top: {paddingTop};"
+  style="background-color: {backgroundColor}; border-bottom-color: {backgroundColor}; --masthead-text-color: {textColor}; --padding-top: {paddingTop}; --padding-bottom: {paddingBottom};"
 >
   <div class="govuk-width-container">
     <div class="govuk-grid-row">
@@ -100,7 +102,7 @@
     .app-masthead.app-masthead {
       /* Responsive spacing unit 6: 30px on large screens */
       padding-top: var(--padding-top);
-      padding-bottom: 30px;
+      padding-bottom: var(--padding-bottom);
     }
   }
 
@@ -139,12 +141,19 @@
   }
 
   /* @include govuk-media-query($from: desktop) - Desktop breakpoint is 769px */
-  @media (min-width: 48.0625em) {
+  @media (min-width: 53em) {
     .app-masthead .app-masthead__image.app-masthead__image {
       display: block;
       width: 100%;
       /* margin-top: govuk-spacing(3); - Static spacing unit 3 is 15px */
       margin-top: var(--img-margin-top);
+    }
+  }
+
+  @media (max-width: 52.9375em) {
+    .govuk-grid-column-two-thirds-from-desktop {
+      width: 100%;
+      float: none;
     }
   }
 

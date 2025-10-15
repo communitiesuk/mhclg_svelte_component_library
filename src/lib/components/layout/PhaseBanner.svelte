@@ -5,15 +5,21 @@
     bannerText = "This is a new service. Help us improve it and ",
     linkText = "give your feedback by email",
     linkHref = "#",
+    bottomBorder = true,
   } = $props<{
     tagText?: string;
     bannerText?: string;
     linkText?: string;
     linkHref?: string;
+    bottomBorder?: boolean;
   }>();
 </script>
 
-<div class="govuk-phase-banner govuk-width-container">
+<div
+  class="govuk-phase-banner govuk-width-container {bottomBorder
+    ? ''
+    : 'no-bottom-border'}"
+>
   <p class="govuk-phase-banner__content">
     <strong class="govuk-tag govuk-phase-banner__content__tag">
       {tagText}
@@ -25,4 +31,7 @@
 </div>
 
 <style>
+  .no-bottom-border {
+    border-bottom: none;
+  }
 </style>

@@ -51,6 +51,7 @@
     copyrightHref = "https://www.nationalarchives.gov.uk/information-management/re-using-public-sector-information/uk-government-licensing-framework/crown-copyright/",
     rebrand = true,
     borderTopColor = "#00625E",
+    removeCopyrightPadding = false,
   } = $props<{
     sections?: FooterSection[];
     inlineLinks?: FooterItem[];
@@ -68,6 +69,7 @@
     copyrightHref?: string;
     rebrand?: boolean;
     borderTopColor?: string;
+    removeCopyrightPadding?: boolean;
   }>();
 </script>
 
@@ -218,6 +220,7 @@
           <a
             class={[
               "govuk-footer__link",
+              { "no-copyright-padding": removeCopyrightPadding },
               {
                 "govuk-footer__copyright-logo": !copyrightLogoUrl && rebrand,
               },
@@ -234,3 +237,9 @@
     </div>
   </div>
 </footer>
+
+<style>
+  .no-copyright-padding {
+    padding: 0;
+  }
+</style>

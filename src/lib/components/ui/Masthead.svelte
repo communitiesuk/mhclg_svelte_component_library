@@ -12,6 +12,10 @@
     imageAlt = "",
     backgroundColor = "#1d70b8", // GOV.UK blue by default
     textColor = "#FFFFFF",
+    imgMarginTop = "15px",
+    paddingTop = "30px",
+    titlePaddingTop = false,
+    paddingBottom = "30px",
   } = $props<{
     title?: string;
     description?: string;
@@ -22,16 +26,24 @@
     imageAlt?: string;
     backgroundColor?: string;
     textColor?: string;
+    imgMarginTop?: string;
+    paddingTop?: string;
+    titlePaddingTop?: boolean;
+    paddingBottom?: string;
   }>();
 </script>
 
 <div
   class="app-masthead"
-  style="background-color: {backgroundColor}; border-bottom-color: {backgroundColor}; --masthead-text-color: {textColor};"
+  style="background-color: {backgroundColor}; border-bottom-color: {backgroundColor}; --masthead-text-color: {textColor}; --padding-top: {paddingTop}; --padding-bottom: {paddingBottom};"
 >
   <div class="govuk-width-container">
     <div class="govuk-grid-row">
-      <div class="govuk-grid-column-two-thirds-from-desktop">
+      <div
+        class="govuk-grid-column-two-thirds-from-desktop {titlePaddingTop
+          ? 'custom-padding'
+          : ''}"
+      >
         <h1 class="govuk-heading-xl app-masthead__title">{@html title}</h1>
         <p class="app-masthead__description">{description}</p>
         {#if includeButton === true}
@@ -61,6 +73,7 @@
       <div class="govuk-grid-column-one-third-from-desktop">
         <img
           class="app-masthead__image"
+          style="--img-margin-top: {imgMarginTop}"
           src={imageSrc}
           alt={imageAlt}
           role="presentation"
@@ -88,8 +101,8 @@
   @media (min-width: 40.0625em) {
     .app-masthead.app-masthead {
       /* Responsive spacing unit 6: 30px on large screens */
-      padding-top: 30px;
-      padding-bottom: 30px;
+      padding-top: var(--padding-top);
+      padding-bottom: var(--padding-bottom);
     }
   }
 
@@ -128,12 +141,19 @@
   }
 
   /* @include govuk-media-query($from: desktop) - Desktop breakpoint is 769px */
-  @media (min-width: 48.0625em) {
+  @media (min-width: 53em) {
     .app-masthead .app-masthead__image.app-masthead__image {
       display: block;
       width: 100%;
       /* margin-top: govuk-spacing(3); - Static spacing unit 3 is 15px */
-      margin-top: 15px;
+      margin-top: var(--img-margin-top);
+    }
+  }
+
+  @media (max-width: 52.9375em) {
+    .govuk-grid-column-two-thirds-from-desktop {
+      width: 100%;
+      float: none;
     }
   }
 
@@ -275,5 +295,15 @@
 
   .app-masthead__description {
     color: var(--masthead-text-color);
+  }
+
+  .custom-padding {
+    padding-top: 32px;
+  }
+
+  @media (max-width: 820px) {
+    .custom-padding {
+      padding-top: 16px;
+    }
   }
 </style>

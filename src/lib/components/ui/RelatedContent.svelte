@@ -30,11 +30,13 @@
     headingLevel = 2 as 1 | 2 | 3 | 4 | 5 | 6, // Main heading level (used by first 'main' section)
     listTruncateThreshold = 5, // Default threshold, can be overridden per section
     disableGa4 = false,
+    marginBottom = "60px",
   } = $props<{
     sections?: RelatedContentSection[];
     headingLevel?: 1 | 2 | 3 | 4 | 5 | 6;
     listTruncateThreshold?: number; // Default threshold
     disableGa4?: boolean;
+    marginBottom?: string;
   }>();
 
   // Helper to check if a link is external
@@ -229,6 +231,7 @@
   class="gem-c-related-navigation govuk-!-display-none-print {hasJavaScript
     ? 'govuk-frontend-supported'
     : ''}"
+  style="margin-bottom: {marginBottom};"
   role="complementary"
 >
   {#if mainSection && mainSection.title}
@@ -304,7 +307,7 @@
 <style>
   .gem-c-related-navigation {
     border-top: 2px solid #1d70b8;
-    margin-bottom: 60px;
+    /* margin-bottom: 60px; */
     color: #0b0c0c;
   }
 

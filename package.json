@@ -1,6 +1,6 @@
 {
   "name": "@communitiesuk/svelte-component-library",
-  "version": "v0.1.19-beta.5",
+  "version": "0.1.19-beta.6",
   "repository": {
     "type": "git",
     "url": "https://github.com/communitiesuk/mhclg_svelte_component_library.git"

@@ -7,6 +7,7 @@
     componentNameProp = undefined,
     onClickFunction = undefined,
     noPadding = false,
+    ariaExpanded = false,
   } = $props();
 
   let buttonClass = $derived(
@@ -25,7 +26,12 @@
 {#if noPadding}
   {#if buttonType === "moreInfo"}
     <div>
-      <button class="more-info-button" onclick={onClickFunction}>
+      <button
+        aria-label={textContent}
+        aria-expanded={ariaExpanded}
+        class="more-info-button"
+        onclick={onClickFunction}
+      >
         <Icon kind="info" />
       </button>
     </div>
@@ -98,8 +104,19 @@
     </button>
   {/if}
 {:else}
-  <div>
-    {#if buttonType === "start"}
+  <div class="p-4">
+    {#if buttonType === "moreInfo"}
+      <div>
+        <button
+          aria-label={textContent}
+          aria-expanded={ariaExpanded}
+          class="more-info-button"
+          onclick={onClickFunction}
+        >
+          <Icon kind="info" />
+        </button>
+      </div>
+    {:else if buttonType === "start"}
       <a
         href={"#"}
         role="button"

@@ -23,6 +23,7 @@
   class="c inline h-16 w-16"
   viewBox="0 0 48 48"
   style={`transform: rotate(${rotation}deg)`}
+  aria-hidden={true}
 >
   {#each paths as path}
     <path d={path}></path>

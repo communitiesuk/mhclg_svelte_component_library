@@ -79,6 +79,7 @@
       activeMarkerId = null;
     },
     activeMarkerId = undefined,
+    ariaLabel,
   } = $props();
 
   // base defaults that apply to every row
@@ -247,205 +248,237 @@
   );
 </script>
 
-{#if annotations.length}
-  {#each annotations as d (d.value)}
-    <div bind:clientWidth={topWidth}>
-      <svg width={topWidth} height="60">
-        <g>
-          <text
-            font-family="GDS Transport"
-            id="label"
-            x={d.value}
-            y="20"
-            fill={d.colour}
-            font-size="18"
+<div role="img" aria-label={ariaLabel}>
+  {#if annotations.length}
+    {#each annotations as d (d.value)}
+      <div bind:clientWidth={topWidth} aria-hidden={true}>
+        <svg width={topWidth} height="60">
+          <g>
+            <text
+              font-family="GDS Transport"
+              id="label"
+              x={d.value}
+              y="20"
+              fill={d.colour}
+              font-size="18"
+              opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
+                ? 0.2
+                : 1}
+            >
+              {d.annotation}
+            </text>
+          </g>
+          <defs>
+            <marker
+              id="arrow-down"
+              markerWidth="10"
+              markerHeight="10"
+              refX="3"
+              refY="3"
+              orient="auto"
+              markerUnits="strokeWidth"
+              opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
+                ? 0.2
+                : 1}
+            >
+              <path d="M 0 0 L 6 3 L 0 6 z" fill={d.colour}></path>
+            </marker>
+          </defs>
+          <path
+            d="M 4 25 v 10 h {xFunction(min, max)(d.value) +
+              markerRadius -
+              4 +
+              (topWidth - chartWidth)}  v 15"
+            fill="none"
+            stroke={d.colour}
+            stroke-width="1.5"
+            marker-end="url(#arrow-down)"
             opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
               ? 0.2
               : 1}
-          >
-            {d.annotation}
-          </text>
-        </g>
-        <defs>
-          <marker
-            id="arrow-down"
-            markerWidth="10"
-            markerHeight="10"
-            refX="3"
-            refY="3"
-            orient="auto"
-            markerUnits="strokeWidth"
-            opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
-              ? 0.2
-              : 1}
-          >
-            <path d="M 0 0 L 6 3 L 0 6 z" fill={d.colour}></path>
-          </marker>
-        </defs>
-        <path
-          d="M 4 25 v 10 h {xFunction(min, max)(d.value) +
-            markerRadius -
-            4 +
-            (topWidth - chartWidth)}  v 15"
-          fill="none"
-          stroke={d.colour}
-          stroke-width="1.5"
-          marker-end="url(#arrow-down)"
-          opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
-            ? 0.2
-            : 1}
-        ></path>
-      </svg>
-    </div>
-  {/each}
-{/if}
+          ></path>
+        </svg>
+      </div>
+    {/each}
+  {/if}
 
-<div
-  class="grid-container"
-  bind:this={container}
-  style="
+  <div
+    class="grid-container"
+    bind:this={container}
+    style="
   position: relative;
     grid-template-columns: {gridTemplateColumns};
     grid-template-rows: {gridTemplateRows};
   "
->
-  {#each allDataNormalized as positionChart, i}
-    {#if showLabel}
-      <p
-        class="govuk-body-s"
-        style=" text-align: right;
+  >
+    {#each allDataNormalized as positionChart, i}
+      {#if showLabel}
+        <p
+          aria-hidden={true}
+          class="govuk-body-s"
+          style=" text-align: right;
     margin: 0;
     line-height: 1.05;"
-      >
-        {positionChart.label}
-      </p>
-    {/if}
-    {#if showIcon}
-      <div class="button-container">
+        >
+          {positionChart.label}
+        </p>
+      {/if}
+      {#if showIcon}
         <Button
           textContent="i"
           buttonType="moreInfo"
           noPadding={true}
           onClickFunction={() => updateMoreInfoTogglesArray(i)}
+          ariaExpanded={moreInfoTogglesArray[i]}
         ></Button>
-      </div>
-    {/if}
-    <div
-      class="chart"
-      style="height: {positionChart.chartHeight}px"
-      bind:clientWidth={chartWidth}
-    >
-      <svg width={chartWidth} height={positionChart.chartHeight}>
-        {#each range as number}
-          <g
-            transform="translate({markerRadius +
-              (barWidth * number) / nSegments},{(positionChart.chartHeight -
-              barHeight) /
-              2})"
-            ><rect
-              width={barWidth / nSegments}
-              height={barHeight}
-              fill={colorScale && colorScale.length > 0
-                ? colorScale[number]
-                : interpolateColors(startColor, endColor, nSegments, midColor)[
-                    number
-                  ]}
-            ></rect></g
-          >{/each}
-        {#each Object.entries(positionChart.rowData) as [tier, points]}
-          {#each points as rowValue, i}
-            {#if !isNaN(Number(rowValue.value))}
-              {@const markerId = "marker-" + rowValue.value}
-              <g
-                data-id={markerId}
-                onclick={interactiveMarkers
-                  ? (event) => onClickMarker(event, rowValue, markerId)
-                  : null}
-                onmouseenter={interactiveMarkers
-                  ? (event) =>
-                      onMouseEnterMarker(
-                        event,
-                        rowValue,
-                        markerId,
-                        event.currentTarget.getBoundingClientRect(),
-                      )
-                  : null}
-                onmouseleave={interactiveMarkers
-                  ? (event) => onMouseLeaveMarker(event, rowValue, markerId)
-                  : null}
-                role="button"
-                tabindex="0"
-                onkeydown={interactiveMarkers
-                  ? (e) => e.key === "Enter" && onClickMarker(e, value)
-                  : null}
-                pointer-events={interactiveMarkers ? null : "none"}
-                transform="translate({xFunction(
-                  positionChart.min,
-                  positionChart.max,
-                )(rowValue.value) + markerRadius},{positionChart.chartHeight /
-                  2})"
-              >
-                <circle
-                  r={markerRadius}
-                  cx="0"
-                  cy="0"
-                  fill={rowValue.colour}
-                  stroke="white"
-                  opacity={rowValue.opacity}
-                ></circle>
-              </g>
-            {/if}
-          {/each}
-        {/each}
-      </svg>
-    </div>
-    {#if moreInfoTogglesArray[i]}
-      <div class="accordion" style="grid-column:1 / -1">
-        <InsetText content={positionChart.moreInfo} renderStringAsHTML={true}
-        ></InsetText>
-      </div>
-    {/if}
-    {#if positionChart.divider}
-      <div style="grid-column:1 / -1">
-        <svg width="100%" height="5">
-          <line
-            x1="0"
-            y1="2.5"
-            x2="100%"
-            y2="2.55"
+      {/if}
+      <div
+        class="chart"
+        style="height: {positionChart.chartHeight}px"
+        bind:clientWidth={chartWidth}
+      >
+        <svg
+          width={chartWidth}
+          height={positionChart.chartHeight}
+          aria-hidden={true}
+        >
+          <rect
+            x={markerRadius}
+            y={(positionChart.chartHeight - barHeight) / 2}
+            width={barWidth}
+            height={barHeight}
+            fill="none"
             stroke="grey"
-            stroke-width="0.5"
-          ></line>
-        </svg>
-      </div>{/if}
-  {/each}
+            stroke-width="1"
+          ></rect>
+          {#each range as number}
+            <g
+              transform="translate({markerRadius +
+                (barWidth * number) / nSegments},{(positionChart.chartHeight -
+                barHeight) /
+                2})"
+              ><rect
+                width={barWidth / nSegments}
+                height={barHeight}
+                fill={colorScale && colorScale.length > 0
+                  ? colorScale[number]
+                  : interpolateColors(
+                      startColor,
+                      endColor,
+                      nSegments,
+                      midColor,
+                    )[number]}
+              ></rect></g
+            >{/each}
 
-  {#if showAxis}
-    {#if showIcon}
-      <div class="empty"></div>
+          {#each Object.entries(positionChart.rowData) as [tier, points]}
+            {#each points as rowValue, i}
+              {#if !isNaN(Number(rowValue.value))}
+                {@const markerId = "marker-" + rowValue.value}
+                <g
+                  data-id={markerId}
+                  onclick={interactiveMarkers
+                    ? (event) => onClickMarker(event, rowValue, markerId)
+                    : null}
+                  onmouseenter={interactiveMarkers
+                    ? (event) =>
+                        onMouseEnterMarker(
+                          event,
+                          rowValue,
+                          markerId,
+                          event.currentTarget.getBoundingClientRect(),
+                        )
+                    : null}
+                  onmouseleave={interactiveMarkers
+                    ? (event) => onMouseLeaveMarker(event, rowValue, markerId)
+                    : null}
+                  onfocus={interactiveMarkers
+                    ? (event) =>
+                        onMouseEnterMarker(
+                          event,
+                          rowValue,
+                          markerId,
+                          event.currentTarget.getBoundingClientRect(),
+                        )
+                    : null}
+                  onblur={interactiveMarkers
+                    ? (event) => onMouseLeaveMarker(event, rowValue, markerId)
+                    : null}
+                  role="button"
+                  aria-label={tooltipContent}
+                  tabindex="0"
+                  onkeydown={interactiveMarkers
+                    ? (event) => onClickMarker(event, rowValue, markerId)
+                    : null}
+                  pointer-events={interactiveMarkers ? null : "none"}
+                  transform="translate({xFunction(
+                    positionChart.min,
+                    positionChart.max,
+                  )(rowValue.value) + markerRadius},{positionChart.chartHeight /
+                    2})"
+                >
+                  <circle
+                    r={markerRadius}
+                    cx="0"
+                    cy="0"
+                    fill={rowValue.colour}
+                    stroke="white"
+                    opacity={rowValue.opacity}
+                  ></circle>
+                </g>
+              {/if}
+            {/each}
+          {/each}
+        </svg>
+      </div>
+      {#if moreInfoTogglesArray[i]}
+        <div class="accordion" style="grid-column:1 / -1" aria-live="assertive">
+          <InsetText content={positionChart.moreInfo} renderStringAsHTML={true}
+          ></InsetText>
+        </div>
+      {/if}
+      {#if positionChart.divider}
+        <div style="grid-column:1 / -1">
+          <svg width="100%" height="5">
+            <line
+              x1="0"
+              y1="2.5"
+              x2="100%"
+              y2="2.55"
+              stroke="grey"
+              stroke-width="0.5"
+            ></line>
+          </svg>
+        </div>{/if}
+    {/each}
+
+    {#if showAxis}
+      {#if showIcon}
+        <div class="empty"></div>
+      {/if}
+      {#if showLabel}
+        <div class="empty"></div>
+      {/if}
+      <div class="axis" aria-hidden="true">
+        <PositionChartAxis {markerRadius} {barWidth}></PositionChartAxis>
+      </div>
     {/if}
-    {#if showLabel}
-      <div class="empty"></div>
+    {#if activeMarkerId}
+      <ValueLabel
+        {activeMarkerId}
+        labelColor="lightgrey"
+        labelTextColor="black"
+        {labelText}
+        {tooltipContent}
+        {xFunction}
+        {yFunction}
+        {x}
+        {y}
+        {markerRect}
+        {tooltipSnippet}
+      ></ValueLabel>
     {/if}
-    <div class="axis">
-      <PositionChartAxis {markerRadius} {barWidth}></PositionChartAxis>
-    </div>
-  {/if}
-  {#if activeMarkerId}
-    <ValueLabel
-      {activeMarkerId}
-      labelColor="lightgrey"
-      labelTextColor="black"
-      {labelText}
-      {tooltipContent}
-      {xFunction}
-      {yFunction}
-      {x}
-      {y}
-      {markerRect}
-      {tooltipSnippet}
-    ></ValueLabel>
-  {/if}
+  </div>
 </div>
 
 <style>

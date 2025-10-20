@@ -161,6 +161,7 @@
       {tooltipSnippet}
       annotation="hello"
       moreInfo="this is some additional information"
+      showIcon={true}
     ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>

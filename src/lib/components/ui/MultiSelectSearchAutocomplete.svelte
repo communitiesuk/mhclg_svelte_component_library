@@ -13,6 +13,7 @@
   type ExtendedSelectGroup = SelectGroup & { choices: ExtendedSelectItem[] };
 
   let {
+    hoveredArea,
     // Core attributes - pass through to Select component
     id,
     name,
@@ -23,7 +24,6 @@
 
     // Bindable state props for external synchronization
     bindSelectedItemIndexMap = $bindable(new Map<string, number>()),
-    bindNextSelectionIndex = $bindable(0),
 
     // Label and hints - pass through to Select component
     label,
@@ -113,6 +113,9 @@
     apiParentResolver = undefined,
     staticChildrenResolver = undefined,
     selectedChildParentResolver = undefined,
+
+    pillOnMouseEnterFunction,
+    pillOnMouseLeaveFunction,
 
     // Dynamic message builders (optional)
     tApiChildInSelectedParent = (child: string, parent: string) =>
@@ -224,7 +227,6 @@
     // Bindable state props for external synchronization
     // Use these to sync color state with other components
     bindSelectedItemIndexMap?: Map<string, number> | SvelteMap<string, number>; // Maps item values to their color indices
-    bindNextSelectionIndex?: number; // Next available color index
   } & Omit<
     import("svelte/elements").HTMLSelectAttributes,
     | "id"
@@ -270,13 +272,13 @@
     __history.push({ seq: __seq, type, prev, next });
     // Keep history bounded
     if (__history.length > 50) __history.shift();
-    console.log("🧭 [inspect:value]", {
+    /*console.log("🧭 [inspect:value]", {
       seq: __seq,
       type,
       prev,
       next,
       historyLen: __history.length,
-    });
+    });*/
     __lastSnapshot = next.slice();
   });
 
@@ -287,18 +289,18 @@
     // Check for promoted context first (for items that were promoted from postcode to LAD)
     if (promotedItemContext.has(String(item.value))) {
       const context = promotedItemContext.get(String(item.value));
-      console.log("🏷️ Found promotion context for", item.value, "→", context);
+      //console.log("🏷️ Found promotion context for", item.value, "→", context);
       return context;
     }
 
     const regularContext = item[groupKey] ? String(item[groupKey]) : undefined;
     if (regularContext) {
-      console.log(
+      /*console.log(
         "🏷️ Found regular context for",
         item.value,
         "→",
         regularContext,
-      );
+      );*/
     }
     return regularContext;
   }
@@ -307,7 +309,7 @@
   function ensureGroupTextApplied(choices: any[]) {
     if (!groupKey || !choices || choices.length === 0) return choices;
 
-    console.log("🔧 Ensuring group text is applied to choices");
+    //console.log("🔧 Ensuring group text is applied to choices");
 
     return choices.map((choice) => {
       // Find the original item to get group text
@@ -316,11 +318,11 @@
       );
 
       if (originalItem && originalItem.label !== choice.label) {
-        console.log("✅ Applying group text to choice:", {
+        /*console.log("✅ Applying group text to choice:", {
           value: choice.value,
           originalLabel: choice.label,
           newLabel: originalItem.label,
-        });
+        });*/
         return {
           ...choice,
           label: originalItem.label,
@@ -350,21 +352,13 @@
   let selectedItemIndexMap = $derived(
     bindSelectedItemIndexMap || new SvelteMap<string, number>(),
   );
-  let nextSelectionIndex = $derived(bindNextSelectionIndex ?? 0);
-
-  // Helper function to update external bindings when we modify state
-  function updateNextSelectionIndex(newValue: number) {
-    if (bindNextSelectionIndex !== undefined) {
-      bindNextSelectionIndex = newValue;
-    }
-  }
 
   // Get the maximum number of selections allowed (limited by palette size)
   // With 19 GOV.UK colors, maximum selections = 19 before cycling begins
-  const maxSelections = selectedItemCircleColorPalette.length;
+  //const maxSelections = selectedItemCircleColorPalette.length;
 
   // Function to get color for a selected item based on its selection order
-  function getColorForSelectedItem(itemValue: string | number): string {
+  /*function getColorForSelectedItem(itemValue: string | number): string {
     const valueKey = String(itemValue);
 
     // If this item already has an index, use it
@@ -376,20 +370,24 @@
         existingColor: selectedItemCircleColorPalette[index],
         totalMappedItems: selectedItemIndexMap.size,
       });
-      return selectedItemCircleColorPalette[index];
+      return selectedItemCircleColorPalette[
+        index % selectedItemCircleColorPalette.length
+      ];
     }
 
     // If we've reached the palette limit, cycle back to the beginning
     // This means the 20th selection will get color[0], 21st will get color[1], etc.
-    if (nextSelectionIndex >= maxSelections) {
-      updateNextSelectionIndex(0);
+    const usedIndices = new Set<number>();
+    for (const index of selectedItemIndexMap.values()) {
+      usedIndices.add(index);
     }
 
-    // Assign the next available color index to this item
-    const colorIndex = nextSelectionIndex;
-    // SvelteMap.set() automatically triggers reactivity and updates external bindings
+    let colorIndex = 0;
+    while (usedIndices.has(colorIndex)) {
+      colorIndex++;
+    }
+
     selectedItemIndexMap.set(valueKey, colorIndex);
-    updateNextSelectionIndex(colorIndex + 1);
 
     // Log the index map update for debugging
     console.log("🎨 Color index map updated:", {
@@ -402,10 +400,7 @@
     });
 
     return selectedItemCircleColorPalette[colorIndex];
-  }
-
-  // Color cache to ensure consistent colors for the same values
-  const colorCache = new Map<string, string>();
+  }*/
 
   /**
    * Generate a consistent, deterministic color for a given value.
@@ -413,14 +408,12 @@
    * Each selected item gets a unique color based on selection order.
    */
   function colorForValue(val: unknown): string {
-    const key = String(val).toLowerCase().trim();
-    const cached = colorCache.get(key);
-    if (cached) return cached;
-
     // Use sequential color mapping instead of hash-based approach
-    const color = getColorForSelectedItem(String(val));
-    colorCache.set(key, color);
-    return color;
+
+    const index = selectedItemIndexMap.get(val);
+    return selectedItemCircleColorPalette[
+      index % selectedItemCircleColorPalette.length
+    ];
   }
 
   // rollbackColorAssignmentForValue removed; no transient child is created now
@@ -545,7 +538,7 @@
   function decideMode(query: string): Mode {
     const q = query.trim();
 
-    console.log("🔍 Mode decision factors:", {
+    /*console.log("🔍 Mode decision factors:", {
       query: q,
       queryLength: q.length,
       minLength,
@@ -555,12 +548,12 @@
       isOptionsOnly,
       itemsCount: items?.length || 0,
       groupsCount: groups?.length || 0,
-    });
+    });*/
 
     // For dual-mode, gate initially until user types
     if (isDual) {
       if (q.length < minLength) {
-        console.log("🎯 Dual-mode: gating initially (query too short)");
+        //console.log("🎯 Dual-mode: gating initially (query too short)");
         return "short";
       }
 
@@ -568,7 +561,7 @@
       if (typeof sourceSelector === "function") {
         try {
           const pick = sourceSelector(q, staticPlainOptions);
-          console.log("🎯 sourceSelector returned:", pick);
+          //console.log("🎯 sourceSelector returned:", pick);
           if (pick === "api" && hasApi) return "api";
           if (pick === "options" && hasStatic) return "options";
         } catch (error) {
@@ -578,28 +571,28 @@
 
       // Default dual-mode logic: postcode → API, else → options
       const defaultMode = looksLikePostcode(q) ? "api" : "options";
-      console.log("🎯 Dual-mode default decision:", defaultMode);
+      //console.log("🎯 Dual-mode default decision:", defaultMode);
       return defaultMode;
     }
 
     // For options-only, show immediately
     if (isOptionsOnly) {
-      console.log("🎯 Options-only: showing immediately");
+      //console.log("🎯 Options-only: showing immediately");
       return "options";
     }
 
     // For API-only, gate until minLength
     if (hasApi && !hasStatic) {
       if (q.length < minLength) {
-        console.log("🎯 API-only: gating until minLength");
+        //console.log("🎯 API-only: gating until minLength");
         return "short";
       }
-      console.log("🎯 API-only: using API");
+      //console.log("🎯 API-only: using API");
       return "api";
     }
 
     // Fallback
-    console.log("🎯 Fallback: using options");
+    //console.log("🎯 Fallback: using options");
     return "options";
   }
 
@@ -609,15 +602,15 @@
 
     // Ensure the instance is fully initialized
     if (!choicesInstance.initialised) {
-      console.log(
+      /*console.log(
         "⚠️ Choices instance not fully initialized, skipping mode application",
-      );
+      );*/
       return;
     }
 
     currentMode = newMode;
 
-    console.log("🔄 Applying mode:", newMode);
+    //console.log("🔄 Applying mode:", newMode);
 
     if (newMode === "short") {
       choicesInstance.config.searchChoices = false;
@@ -634,12 +627,12 @@
 
       if (hasStatic) {
         // For grouped options, use grouped restoration method
-        console.log("🔍 Checking for grouped options:", {
+        /*console.log("🔍 Checking for grouped options:", {
           groups: groups?.length || 0,
           hasGroups: !!(groups && groups.length > 0),
-        });
+        });*/
         if (groups && groups.length > 0) {
-          console.log("📋 Applying grouped options mode");
+          //console.log("📋 Applying grouped options mode");
           let selectedValues: string[] = [];
           try {
             const currentValue = choicesInstance.getValue(true);
@@ -740,19 +733,19 @@
 
   function resetToStaticChoices() {
     if (!choicesInstance || !choicesInstance.initialised) {
-      console.log(
+      /*console.log(
         "⚠️ Choices instance not ready, skipping resetToStaticChoices",
-      );
+      );*/
       return;
     }
 
-    console.log("🔄 resetToStaticChoices called");
+    //console.log("🔄 resetToStaticChoices called");
 
     // Get currently selected values to exclude from static choices
     let selectedValues: string[] = [];
     try {
       const currentValue = choicesInstance.getValue(true);
-      console.log("🎯 Current value from choicesInstance:", currentValue);
+      //console.log("🎯 Current value from choicesInstance:", currentValue);
 
       if (Array.isArray(currentValue)) {
         selectedValues = currentValue.map((item: any) =>
@@ -770,11 +763,11 @@
       selectedValues = [];
     }
 
-    console.log("🎯 Selected values to exclude:", selectedValues);
+    //console.log("🎯 Selected values to exclude:", selectedValues);
 
     // For grouped options, we need to restore the original structure
     if (groups && groups.length > 0) {
-      console.log("📋 Restoring grouped options structure");
+      //console.log("📋 Restoring grouped options structure");
 
       // For grouped options, revert to destroy/recreate approach (only reliable method)
       // Clear current choices
@@ -854,13 +847,13 @@
           // Store reference on the element for external access
           (selectElement as any).choices = choicesInstance;
 
-          console.log("✅ Grouped structure restored with reinit");
+          //console.log("✅ Grouped structure restored with reinit");
         }
       }
-      console.log("✅ Restored grouped options structure");
+      //console.log("✅ Restored grouped options structure");
     } else {
       // For non-grouped options, use the existing logic
-      console.log("📋 Restoring flat options structure");
+      //console.log("📋 Restoring flat options structure");
 
       // For options-only mode, show all choices; for search results, filter by selected values
       const choicesToShow =
@@ -870,14 +863,14 @@
               (choice) => !selectedValues.includes(String(choice.value)),
             ); // Filter for dual-mode
 
-      console.log("🔍 Static choices to show:", {
+      /*console.log("🔍 Static choices to show:", {
         total: staticChoices.length,
         toShow: choicesToShow.length,
         mode: currentMode,
         isDual,
         isOptionsOnly,
         excluded: staticChoices.length - choicesToShow.length,
-      });
+      });*/
 
       choicesInstance.clearChoices();
 
@@ -908,10 +901,10 @@
       );
 
       choicesInstance.setChoices(choicesWithGroupText, "value", "label", true);
-      console.log(
+      /*console.log(
         "✅ Set static choices with group text:",
         choicesWithGroupText.length,
-      );
+      );*/
 
       // Custom templates are automatically applied when setChoices is called
       // No need for additional refresh calls
@@ -921,19 +914,19 @@
   // Restore grouped dropdown (with real group headings) without reinitializing Choices
   function restoreGroupedChoicesWithoutReinit(selectedValues: string[]) {
     if (!choicesInstance || !choicesInstance.initialised) {
-      console.log(
+      /*console.log(
         "⚠️ Choices instance not ready, skipping restoreGroupedChoicesWithoutReinit",
-      );
+      );*/
       return;
     }
     if (!groups || groups.length === 0) {
-      console.log(
+      /*console.log(
         "ℹ️ No groups available; restoreGroupedChoicesWithoutReinit skipped",
-      );
+      );*/
       return;
     }
 
-    console.log("📋 Restoring grouped options via grouped payload (no reinit)");
+    //console.log("📋 Restoring grouped options via grouped payload (no reinit)");
 
     // Clear current list but keep the instance intact (preserves focus)
     choicesInstance.clearChoices();
@@ -967,10 +960,10 @@
     // Pass grouped data to Choices so it renders headings properly
     choicesInstance.setChoices(list, "value", "label", true);
 
-    console.log("✅ Grouped options restored in-place");
+    //console.log("✅ Grouped options restored in-place");
   } // Initialize Choices.js
   onMount(async () => {
-    console.log("🔧 MultiSelectSearchAutocomplete: onMount started", {
+    /*console.log("🔧 MultiSelectSearchAutocomplete: onMount started", {
       id,
       name,
       multiple,
@@ -979,13 +972,13 @@
       source_url,
       source_key,
       minLength,
-    });
+    });*/
 
     try {
       // Import Choices.js dynamically
       const ChoicesModule = await import("choices.js");
       Choices = ChoicesModule.default;
-      console.log("✅ Choices.js imported successfully");
+      //console.log("✅ Choices.js imported successfully");
 
       if (!selectElement) {
         console.error("❌ Select element not found");
@@ -994,10 +987,10 @@
 
       // Ensure the DOM structure is correct before Choices.js initializes
       if (!multiple && (items.length > 0 || groups.length > 0)) {
-        console.log("🔧 Ensuring correct DOM structure for placeholder");
+        //console.log("🔧 Ensuring correct DOM structure for placeholder");
 
         // Log the current DOM structure before any changes
-        console.log("📋 DOM structure BEFORE placeholder check:", {
+        /*console.log("📋 DOM structure BEFORE placeholder check:", {
           totalOptions: selectElement.options.length,
           options: Array.from(selectElement.options).map((opt, idx) => ({
             index: idx,
@@ -1006,13 +999,13 @@
             selected: (opt as HTMLOptionElement).selected,
             disabled: (opt as HTMLOptionElement).disabled,
           })),
-        });
+        });*/
 
         // Check if placeholder option already exists
         const existingPlaceholder = selectElement.querySelector(
           'option[value=""]',
         ) as HTMLOptionElement | null;
-        console.log("🔍 Existing placeholder check:", {
+        /*console.log("🔍 Existing placeholder check:", {
           found: !!existingPlaceholder,
           placeholder: existingPlaceholder
             ? {
@@ -1021,7 +1014,7 @@
                 selected: existingPlaceholder.selected,
               }
             : null,
-        });
+        });*/
 
         if (!existingPlaceholder) {
           // Create placeholder option if it doesn't exist
@@ -1033,12 +1026,12 @@
             placeholderOption,
             selectElement.firstChild,
           );
-          console.log("✅ Added placeholder option to DOM");
+          //console.log("✅ Added placeholder option to DOM");
         }
 
         // If groupKey is provided, update all existing options to include group text
         if (groupKey && selectElement) {
-          console.log("🔧 Updating DOM options with group text");
+          //console.log("🔧 Updating DOM options with group text");
           // Update items options
           items.forEach((item, index) => {
             const optionIndex = multiple ? index : index + 1; // +1 for placeholder
@@ -1053,10 +1046,10 @@
                   <span class="choices__item-main">${safeLabel}</span>
                   <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
                 </span>`;
-                console.log(
+                /*console.log(
                   "✅ Updated item option with group text:",
                   option.innerHTML,
-                );
+                );*/
               }
             }
           });
@@ -1076,10 +1069,10 @@
                   <span class="choices__item-main">${safeLabel}</span>
                   <span class="gem-c-select-with-search__suggestion-group">${safeGroup}</span>
                 </span>`;
-                  console.log(
+                  /*console.log(
                     "✅ Updated grouped option with group text:",
                     option.innerHTML,
-                  );
+                  );*/
                 }
               }
               optionIndex++;
@@ -1088,7 +1081,7 @@
         }
 
         // Log the DOM structure after ensuring placeholder exists
-        console.log("📋 DOM structure AFTER placeholder check:", {
+        /*console.log("📋 DOM structure AFTER placeholder check:", {
           totalOptions: selectElement.options.length,
           options: Array.from(selectElement.options).map((opt, idx) => ({
             index: idx,
@@ -1098,10 +1091,10 @@
             selected: (opt as HTMLOptionElement).selected,
             disabled: (opt as HTMLOptionElement).disabled,
           })),
-        });
+        });*/
       }
 
-      console.log("🎯 Select element found:", {
+      /*console.log("🎯 Select element found:", {
         tagName: selectElement.tagName,
         id: selectElement.id,
         name: selectElement.name,
@@ -1115,7 +1108,7 @@
             selected: opt.selected,
           }),
         ),
-      });
+      });*/
 
       const ariaDescribedBy =
         selectElement.getAttribute("aria-describedby") || "";
@@ -1128,12 +1121,12 @@
         ? baseNoChoicesText
         : tTooShort(minLength);
 
-      console.log("📊 Initial configuration:", {
+      /*console.log("📊 Initial configuration:", {
         hasStaticOptions,
         initialNoChoicesText,
         staticChoices: staticChoices.length,
         enhancedItems: enhancedItems.length,
-      });
+      });*/
 
       // Initialize Choices.js with GOV.UK settings
       const defaultOptions = {
@@ -1152,7 +1145,7 @@
         // Prevent duplicate selections
         duplicateItemsAllowed: false,
         callbackOnInit: function () {
-          console.log("🎉 Choices.js initialized successfully");
+          //console.log("🎉 Choices.js initialized successfully");
 
           // Remove the MutationObserver setup and circle refresh logic
           // Circles are now handled by callbackOnCreateTemplates
@@ -1165,21 +1158,21 @@
             const inner = this.containerInner.element;
             const input = this.input.element;
             inner.prepend(input);
-            console.log("🔄 Moved input field to top for multiple select");
+            //console.log("🔄 Moved input field to top for multiple select");
           }
 
           // Set initial mode after Choices.js is fully initialized
           setTimeout(() => {
             // Determine initial mode based on component configuration
             const initialMode = decideMode("");
-            console.log("🎯 Initial mode decision:", {
+            /*console.log("🎯 Initial mode decision:", {
               mode: initialMode,
               isDual,
               isOptionsOnly,
               hasApi,
               hasStatic,
               minLength,
-            });
+            });*/
 
             // Apply the initial mode - this will show options immediately for options-only mode
             applyMode(initialMode);
@@ -1207,7 +1200,7 @@
             // Custom item template for chips (selected items), not dropdown choices
             item: (_classNames: any, data: any) => {
               // Debug: Log template data to understand what we're working with
-              console.log("🎨 Template data for item:", {
+              /*console.log("🎨 Template data for item:", {
                 value: data.value,
                 label: data.label,
                 active: data.active,
@@ -1216,7 +1209,7 @@
                 disabled: data.disabled,
                 isMulti,
                 enableSelectedItemCircles,
-              });
+              });*/
 
               const classes = [
                 cn.item,
@@ -1281,7 +1274,7 @@
                   ? `style="border: 2px solid ${color}; box-shadow: none;"`
                   : "";
 
-              return strToEl(
+              const pill = strToEl(
                 `<div class="${classes}"
                       data-item
                       data-id="${data.id}"
@@ -1293,6 +1286,20 @@
                     ${circle}${displayLabel}${removeBtn}
                  </div>`,
               );
+
+              // ✅ Attach hover listener
+              if (typeof pillOnMouseEnterFunction === "function") {
+                pill.addEventListener("mouseenter", () => {
+                  pillOnMouseEnterFunction(data.value);
+                });
+              }
+              if (typeof pillOnMouseLeaveFunction === "function") {
+                pill.addEventListener("mouseleave", () => {
+                  pillOnMouseLeaveFunction();
+                });
+              }
+
+              return pill;
             },
           };
         },
@@ -1304,7 +1311,7 @@
         ...choicesOptions,
       };
 
-      console.log("⚙️ Choices.js options:", defaultOptions);
+      //console.log("⚙️ Choices.js options:", defaultOptions);
 
       choicesInstance = new Choices(selectElement, defaultOptions);
 
@@ -1319,9 +1326,9 @@
         choicesInstance &&
         staticChoices.length > 0
       ) {
-        console.log(
+        /*console.log(
           "🔧 Options-only component: applying group text immediately",
-        );
+        );*/
         // Force refresh of choices with group text
         setTimeout(() => {
           if (choicesInstance) {
@@ -1336,9 +1343,9 @@
               "label",
               true,
             );
-            console.log(
+            /*console.log(
               "✅ Initial choices refreshed with group text for options-only component",
-            );
+            );*/
           }
         }, 0);
       }
@@ -1350,7 +1357,7 @@
       // }, 0);
 
       // Log the DOM structure after Choices.js initialization
-      console.log("🔍 DOM structure AFTER Choices.js initialization:", {
+      /*console.log("🔍 DOM structure AFTER Choices.js initialization:", {
         totalOptions: selectElement.options.length,
         options: Array.from(selectElement.options).map((opt, idx) => ({
           index: idx,
@@ -1364,22 +1371,22 @@
           choices: choicesInstance.choices,
           items: choicesInstance.items,
         },
-      });
+      });*/
 
-      console.log("🎯 Choices instance created:", {
+      /*console.log("🎯 Choices instance created:", {
         instance: choicesInstance,
         element: selectElement,
         config: choicesInstance.config,
-      });
+      });*/
 
       // Initialize static choices - skip for grouped options as they'll be handled by applyMode
       if (!(groups && groups.length > 0)) {
         choicesInstance.setChoices(staticChoices, "value", "label", true);
-        console.log("✅ Initialized with flat static choices");
+        //console.log("✅ Initialized with flat static choices");
       } else {
-        console.log(
+        /*console.log(
           "⏭️ Skipping initial static choices setup for grouped options",
-        );
+        );*/
       }
 
       // Keep the bound value in sync by reading from the Choices instance
@@ -1389,7 +1396,7 @@
 
       // Listen for choice selection to reset search
       selectElement.addEventListener("choice", (ev: any) => {
-        console.log("🎯 Choice selected, resetting search");
+        //console.log("🎯 Choice selected, resetting search");
 
         // When an item is selected, clear the search and show all unselected options
         if (searchInputElement) {
@@ -1409,17 +1416,17 @@
               choicesInstance.initialised
             ) {
               resetToStaticChoices();
-              console.log(
+              /*console.log(
                 "🔄 Reset to static choices after selection (options mode)",
-              );
+              );*/
 
               // Restore focus to the main Choices container after reset
               setTimeout(() => {
                 if (choicesInstance?.containerOuter?.element) {
                   choicesInstance.containerOuter.element.focus();
-                  console.log(
+                  /*console.log(
                     "🎯 Focus restored to Choices container after reset",
-                  );
+                  );*/
                 }
               }, 0);
             }
@@ -1432,16 +1439,16 @@
               choicesInstance.setChoices([], "value", "label", true);
               // Force dropdown to close
               choicesInstance.hideDropdown(true);
-              console.log("🔄 Cleared API suggestions after selection");
+              //console.log("🔄 Cleared API suggestions after selection");
             } catch (e) {
               console.warn("⚠️ Failed to clear API suggestions:", e);
             }
           }, 0);
         } else {
-          console.log(
+          /*console.log(
             "🔄 Staying in current mode after selection:",
             currentMode,
-          );
+          );*/
           // For "short" or "api" modes, just clear the search input
           // The mode will be re-evaluated on the next search input
         }
@@ -1451,9 +1458,9 @@
       selectElement.addEventListener("showDropdown", () => {
         // Ensure choicesInstance is ready before proceeding
         if (!choicesInstance || !choicesInstance.initialised) {
-          console.log(
+          /*console.log(
             "⚠️ Choices instance not ready, skipping dropdown mode application",
-          );
+          );*/
           return;
         }
 
@@ -1464,12 +1471,12 @@
       // Capture the internal search input and attach API search handling
       searchInputElement = choicesInstance?.input?.element ?? null;
       if (searchInputElement) {
-        console.log("🔍 Search input element captured:", {
+        /*console.log("🔍 Search input element captured:", {
           element: searchInputElement,
           type: searchInputElement.type,
           placeholder: searchInputElement.placeholder,
           value: searchInputElement.value,
-        });
+        });*/
 
         // Always add custom search handling to filter out selected values
         searchInputElement.addEventListener("input", () => {
@@ -1477,26 +1484,26 @@
           if (debounceTimer) clearTimeout(debounceTimer);
           debounceTimer = setTimeout(async () => {
             const q = raw.trim();
-            console.log("🔍 Search input changed:", {
+            /*console.log("🔍 Search input changed:", {
               query: q,
               queryLength: q.length,
               minLength,
               lastQuery,
               currentMode,
-            });
+            });*/
 
             // Ensure choicesInstance is ready before proceeding
             if (!choicesInstance || !choicesInstance.initialised) {
-              console.log("⚠️ Choices instance not ready, skipping search");
+              //console.log("⚠️ Choices instance not ready, skipping search");
               return;
             }
 
             const newMode = decideMode(q);
-            console.log("🎯 Mode decision:", {
+            /*console.log("🎯 Mode decision:", {
               from: currentMode,
               to: newMode,
               query: q,
-            });
+            });*/
             applyMode(newMode);
 
             // For short mode, don't process search - just return early
@@ -1506,10 +1513,10 @@
             let selectedValues: string[] = [];
             try {
               const currentValue = choicesInstance.getValue(true);
-              console.log(
+              /*console.log(
                 "🎯 Current value from choicesInstance (search):",
                 currentValue,
-              );
+              );*/
 
               if (Array.isArray(currentValue)) {
                 selectedValues = currentValue.map((item: any) =>
@@ -1530,10 +1537,10 @@
               selectedValues = [];
             }
 
-            console.log("🎯 Currently selected values:", selectedValues);
+            //console.log("🎯 Currently selected values:", selectedValues);
 
             if (newMode === "api") {
-              console.log("🌐 Using API mode for search");
+              //console.log("🌐 Using API mode for search");
 
               // Check if the query exactly matches what's already selected
               const queryMatchesSelected = selectedValues.some(
@@ -1542,7 +1549,7 @@
                   q.toLowerCase().includes(selected.toLowerCase()),
               );
 
-              console.log("🔍 Query vs selected values check:", {
+              /*console.log("🔍 Query vs selected values check:", {
                 query: q,
                 selectedValues,
                 queryMatchesSelected,
@@ -1551,15 +1558,15 @@
                     selected.toLowerCase().includes(q.toLowerCase()) ||
                     q.toLowerCase().includes(selected.toLowerCase()),
                 ),
-              });
+              });*/
 
               try {
                 const apiChoices = await fetchApiChoices(q);
-                console.log("📡 API response:", {
+                /*console.log("📡 API response:", {
                   query: q,
                   apiChoices: apiChoices.length,
                   rawChoices: apiChoices,
-                });
+                });*/
 
                 if (!choicesInstance) return;
 
@@ -1568,7 +1575,7 @@
                   (choice) => !selectedValues.includes(String(choice.value)),
                 );
 
-                console.log("🔍 Filtered API choices:", {
+                /*console.log("🔍 Filtered API choices:", {
                   total: apiChoices.length,
                   filtered: filteredApiChoices.length,
                   excluded: apiChoices.length - filteredApiChoices.length,
@@ -1583,7 +1590,7 @@
                     isSelected: selectedValues.includes(String(choice.value)),
                     selectedValuesMatch: selectedValues,
                   })),
-                });
+                });*/
 
                 // Note: No need to build child->parent map anymore since promotion happens at data-time
 
@@ -1802,7 +1809,7 @@
                   if (apiChoices.length === 0) {
                     // API returned no results for the query.
                     choicesInstance.config.noChoicesText = "No results found";
-                    console.log("❌ API returned no results");
+                    //console.log("❌ API returned no results");
                   } else {
                     // API returned results, but they are all already selected or map to selected parents.
                     // Prefer resolver-based message if available.
@@ -1844,7 +1851,7 @@
                                 parentLabel,
                               );
                             usedResolverMessage = true;
-                            console.log(
+                            /*console.log(
                               "ℹ️ API choices map to already-selected parents (specific)",
                               {
                                 parentLabel,
@@ -1853,7 +1860,7 @@
                                   (p) => p.parent.value,
                                 ),
                               },
-                            );
+                            );*/
                           } else if (
                             !isFullPostcode &&
                             promoteApiChildToParent &&
@@ -1866,7 +1873,7 @@
                             choicesInstance.config.noChoicesText =
                               tPartialPostcodeInSelectedParent(q, parentLabel);
                             usedResolverMessage = true;
-                            console.log(
+                            /*console.log(
                               "ℹ️ Partial postcode in selected parent (promotion mode)",
                               {
                                 partialQuery: q,
@@ -1875,7 +1882,7 @@
                                   (p) => p.parent.value,
                                 ),
                               },
-                            );
+                            );*/
                           }
                         }
                       }
@@ -1892,27 +1899,27 @@
                       if (allResultsSelected) {
                         choicesInstance.config.noChoicesText =
                           "All results are already selected";
-                        console.log(
+                        /*console.log(
                           "ℹ️ API returned results but all are already selected",
                           {
                             apiResults: apiChoices.map((c) => c.value),
                             selectedValues,
                             allResultsSelected,
                           },
-                        );
+                        );*/
                       } else {
                         // This shouldn't happen, but fallback to a generic message
                         choicesInstance.config.noChoicesText = isFullPostcode
                           ? "No new results available"
                           : "All postcode suggestions cover an area that is already covered by a currently selected postcode or area";
-                        console.log(
+                        /*console.log(
                           "⚠️ Unexpected: API returned results but filtering logic failed",
                           {
                             apiResults: apiChoices.map((c) => c.value),
                             selectedValues,
                             filteredCount: filteredByParent.length,
                           },
-                        );
+                        );*/
                       }
                     }
                   }
@@ -1973,7 +1980,7 @@
                       choicesInstance.config.noChoicesText =
                         "All results are already selected";
                     }
-                    console.log(
+                    /*console.log(
                       "🎯 Query matches selected items, showing 'all selected' message",
                       {
                         query: q,
@@ -1981,7 +1988,7 @@
                         selectedValues,
                         allResultsSimilarToSelected,
                       },
-                    );
+                    );*/
                     // Clear choices to show the message
                     choicesInstance.setChoices([], "value", "label", true);
                   } else {
@@ -2002,10 +2009,10 @@
                       "label",
                       true,
                     );
-                    console.log(
+                    /*console.log(
                       "✅ Set filtered API choices (some similar to selected):",
                       filteredByParent.length,
-                    );
+                    );*/
                   }
                 } else {
                   // We have new, unselected results to show.
@@ -2018,9 +2025,9 @@
                     promoteApiChildToParent &&
                     typeof apiParentResolver === "function"
                   ) {
-                    console.log(
+                    /*console.log(
                       "🔄 Building parent-valued API choices (promotion at data time)",
-                    );
+                    );*/
 
                     // Map every API record to a parent-valued choice with composite unique values
                     // This ensures all postcodes show in dropdown while mapping to parent on selection
@@ -2069,10 +2076,10 @@
                         }
                         return !selectedSet.has(String(ch.value));
                       });
-                    console.log(
+                    /*console.log(
                       "✅ Built parent-valued API choices:",
                       finalChoices.length,
-                    );
+                    );*/
                   } else {
                     // No promotion - use original API choices
                     finalChoices = filteredByParent.map((c) => ({
@@ -2092,10 +2099,10 @@
                   // Custom templates are automatically applied when setChoices is called
                   // No need for additional refresh calls
 
-                  console.log("✅ Set final API choices:", finalChoices.length);
+                  //console.log("✅ Set final API choices:", finalChoices.length);
                 }
               } catch (e) {
-                console.error("❌ Failed to fetch API choices:", e);
+                //console.error("❌ Failed to fetch API choices:", e);
                 if (choicesInstance) {
                   choicesInstance.config.noChoicesText = "No results found";
                   // Clear choices and force refresh to show error message
@@ -2104,7 +2111,7 @@
               }
             } else {
               // newMode === "options": Choices handles filtering automatically
-              console.log("📋 Using static choices mode for search");
+              //console.log("📋 Using static choices mode for search");
 
               // For empty queries, restore the full grouped structure (with real headings) without reinit
               if (q === "" && groups && groups.length > 0) {
@@ -2142,7 +2149,7 @@
                   choice.label.toLowerCase().includes(searchTerm),
                 );
 
-                console.log("🔍 Static choices matching search:", {
+                /*console.log("🔍 Static choices matching search:", {
                   searchTerm,
                   totalStatic: staticChoices.length,
                   matching: matchingChoices.length,
@@ -2150,19 +2157,19 @@
                     value: c.value,
                     label: c.label,
                   })),
-                });
+                });*/
 
                 // Then filter out selected values from the matching choices
                 const filteredStaticChoices = matchingChoices.filter(
                   (choice) => !selectedValues.includes(String(choice.value)),
                 );
 
-                console.log("🔍 Final filtered static choices:", {
+                /*console.log("🔍 Final filtered static choices:", {
                   matching: matchingChoices.length,
                   filtered: filteredStaticChoices.length,
                   excluded:
                     matchingChoices.length - filteredStaticChoices.length,
-                });
+                });*/
 
                 // Further exclude parents that already contain selected postcodes
                 let filteredStaticChoicesByParent = filteredStaticChoices;
@@ -2189,10 +2196,10 @@
                     filteredStaticChoicesByParent = checks
                       .filter((x) => !x.hasChildren)
                       .map((x) => x.choice);
-                    console.log("🔍 Static choices after parent exclusion:", {
+                    /*console.log("🔍 Static choices after parent exclusion:", {
                       before: filteredStaticChoices.length,
                       after: filteredStaticChoicesByParent.length,
-                    });
+                    });*/
                   }
                 } catch (err) {
                   console.warn(
@@ -2244,7 +2251,7 @@
                   if (matchingChoices.length === 0) {
                     // No search matches at all
                     choicesInstance.config.noChoicesText = "No results found";
-                    console.log("❌ No static choices match search term");
+                    //console.log("❌ No static choices match search term");
                   } else {
                     // Found matches but all are already selected.
                     // Try child mapping detection: selected children that belong to a typed parent
@@ -2284,9 +2291,9 @@
                       choicesInstance.config.noChoicesText =
                         "All results are already selected";
                     }
-                    console.log(
+                    /*console.log(
                       "ℹ️ Found static matches but all are already selected",
-                    );
+                    );*/
                   }
                   // Clear choices to show the message
                   choicesInstance.setChoices([], "value", "label", true);
@@ -2319,10 +2326,10 @@
                   // Custom templates are automatically applied when setChoices is called
                   // No need for additional refresh calls
 
-                  console.log(
+                  /*console.log(
                     "✅ Set filtered static choices:",
                     limitedChoices.length,
-                  );
+                  );*/
                 }
               }
             }
@@ -2342,7 +2349,7 @@
 
     // Read values directly from Choices.js instance for accurate state
     const raw = choicesInstance.getValue(true);
-    console.log("🔄 Choices change event - raw getValue:", raw);
+    //console.log("🔄 Choices change event - raw getValue:", raw);
 
     if (multiple) {
       const arr = Array.isArray(raw) ? raw : raw ? [raw] : [];
@@ -2357,24 +2364,24 @@
             if (parentValue && childLabel) {
               const context = `(containing ${childLabel})`;
               promotedItemContext.set(parentValue, context);
-              console.log("🏷️ Stored promotion context (change):", {
+              /*console.log("🏷️ Stored promotion context (change):", {
                 parentValue,
                 childLabel,
                 context,
-              });
+              });*/
             }
           } catch {}
-          console.log(
+          /*console.log(
             "🔄 Extracting parent from composite:",
             val,
             "→",
             parentValue,
-          );
+          );*/
           return parentValue;
         }
         return val;
       });
-      console.log("📝 Setting multiple value:", processedValues);
+      //console.log("📝 Setting multiple value:", processedValues);
       value = processedValues;
     } else {
       const val = raw ? String((raw as any).value ?? raw) : "";
@@ -2385,17 +2392,17 @@
           if (parentValue && childLabel) {
             const context = `(containing ${childLabel})`;
             promotedItemContext.set(parentValue, context);
-            console.log("🏷️ Stored promotion context (change single):", {
+            /*console.log("🏷️ Stored promotion context (change single):", {
               parentValue,
               childLabel,
               context,
-            });
+            });*/
           }
         } catch {}
-        console.log("📝 Setting single value:", parentValue);
+        //console.log("📝 Setting single value:", parentValue);
         value = parentValue;
       } else {
-        console.log("📝 Setting single value:", val);
+        //console.log("📝 Setting single value:", val);
         value = val;
       }
     }
@@ -2412,16 +2419,16 @@
 
     if (choicesInstance && choicesInstance.initialised && value !== undefined) {
       if (multiple && Array.isArray(value)) {
-        console.log("🔄 Updating multiple choices:", value);
+        //console.log("🔄 Updating multiple choices:", value);
 
         // Clean up promotion context for items no longer selected
         const currentValues = new Set(value.map(String));
         for (const [contextKey] of promotedItemContext) {
           if (!currentValues.has(contextKey)) {
-            console.log(
+            /*console.log(
               "🧹 Cleaning up promotion context for removed item:",
               contextKey,
-            );
+            );*/
             promotedItemContext.delete(contextKey);
           }
         }
@@ -2478,12 +2485,12 @@
                   childLabel: context.replace(/^\(containing |\)$/g, ""),
                 },
               });
-              console.log("🛠️ Manually crafted choice for promoted item:", {
+              /*console.log("🛠️ Manually crafted choice for promoted item:", {
                 key,
                 newLabel,
                 context,
                 parentLabelFallback,
-              });
+              });*/
             }
           });
         }
@@ -2499,7 +2506,7 @@
         choicesInstance.removeActiveItems();
         choicesInstance.setChoiceByValue(value.map(String));
       } else if (!multiple && !Array.isArray(value)) {
-        console.log("🔄 Updating single choice:", value);
+        //console.log("🔄 Updating single choice:", value);
         choicesInstance.setChoiceByValue(String(value));
       }
     }
@@ -2514,33 +2521,58 @@
     const groupsLength = groups.length;
     const staticChoicesLength = staticChoices.length;
 
-    console.log("🔄 Items changed externally:", {
+    /*console.log("🔄 Items changed externally:", {
       itemsLength,
       groupsLength,
       staticChoicesLength,
       currentMode,
-    });
+    });*/
 
     // Only refresh static choices if we're in options mode or options-only
     if (currentMode === "options" || isOptionsOnly) {
       setTimeout(() => {
         if (choicesInstance && choicesInstance.initialised) {
-          console.log("🔄 Refreshing static choices due to items change");
+          //console.log("🔄 Refreshing static choices due to items change");
           resetToStaticChoices();
         }
       }, 0);
     }
   });
 
+  $inspect("check is running", value);
+
+  /*$effect(() => {
+    const currentValues = Array.isArray(value)
+      ? value.map((v) => String(v))
+      : value == null
+        ? []
+        : [String(value)];
+
+    for (const key of selectedItemIndexMap.keys()) {
+      if (!currentValues.includes(key)) {
+        selectedItemIndexMap.delete(key);
+        console.log("🧹 Removed from selectedItemIndexMap:", key);
+      }
+    }
+
+    // Add missing entries
+    for (const val of currentValues) {
+      if (!selectedItemIndexMap.has(val)) {
+        const color = getColorForSelectedItem(val);
+        console.log("🎨 Re-added to selectedItemIndexMap:", val, color);
+      }
+    }
+  });*/
+
   // Cleanup
   onDestroy(() => {
-    console.log("🧹 MultiSelectSearchAutocomplete: onDestroy called");
+    //console.log("🧹 MultiSelectSearchAutocomplete: onDestroy called");
     if (choicesInstance) {
       selectElement?.removeEventListener("change", handleChoicesChange);
       selectElement?.removeEventListener("choice", () => {});
 
       choicesInstance.destroy();
-      console.log("✅ Choices instance destroyed");
+      //console.log("✅ Choices instance destroyed");
     }
   });
 
@@ -2557,6 +2589,52 @@
     computedPlaceholderText,
     computedRemoveItemButton,
   );
+
+  $effect(() => {
+    if (hoveredArea) {
+      // Loop through all pills
+      const pills = document.querySelectorAll(".choices__item[data-value]");
+      pills.forEach((pill) => {
+        const value = pill.getAttribute("data-value");
+        if (!value) return;
+
+        const color = colorForValue(value);
+
+        // Update circle color
+        const circle = pill.querySelector(".choices__item-circle");
+        if (circle) {
+          circle.style.backgroundColor = color;
+        }
+
+        // Update border if enabled
+        if (matchBorderToCircleColor) {
+          pill.style.border = `2px solid ${color}`;
+          pill.style.boxShadow = "none";
+        }
+      });
+    } else {
+      // Loop through all pills
+      const pills = document.querySelectorAll(".choices__item[data-value]");
+      pills.forEach((pill) => {
+        const value = pill.getAttribute("data-value");
+        if (!value) return;
+
+        const color = colorForValue(value);
+
+        // Update circle color
+        const circle = pill.querySelector(".choices__item-circle");
+        if (circle) {
+          circle.style.backgroundColor = color;
+        }
+
+        // Update border if enabled
+        if (matchBorderToCircleColor) {
+          pill.style.border = `2px solid ${color}`;
+          pill.style.boxShadow = "none";
+        }
+      });
+    }
+  });
 </script>
 
 <div

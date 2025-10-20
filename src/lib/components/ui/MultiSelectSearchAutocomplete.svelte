@@ -2593,7 +2593,9 @@
   $effect(() => {
     if (hoveredArea) {
       // Loop through all pills
-      const pills = document.querySelectorAll(".choices__item[data-value]");
+      const pills = document.querySelectorAll(
+        ".choices__inner .choices__item[data-value]",
+      );
       pills.forEach((pill) => {
         const value = pill.getAttribute("data-value");
         if (!value) return;
@@ -2614,7 +2616,9 @@
       });
     } else {
       // Loop through all pills
-      const pills = document.querySelectorAll(".choices__item[data-value]");
+      const pills = document.querySelectorAll(
+        ".choices__inner .choices__item[data-value]",
+      );
       pills.forEach((pill) => {
         const value = pill.getAttribute("data-value");
         if (!value) return;

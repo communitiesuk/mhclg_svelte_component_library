@@ -41,16 +41,15 @@ left: {markerRect?.x +
   border-radius: 5px;"
     >
       {#if tooltipContent}
-        <div>
+        <div role="tooltip">
           {activeMarkerId[tooltipContent]}
         </div>
       {:else}
-        <div>
-          <div>{activeMarkerId?.value ?? activeMarkerId}</div>
-        </div>{/if}
+        <div role="tooltip">{activeMarkerId?.value ?? activeMarkerId}</div>
+      {/if}
     </div>
   {:else}
-    <div>
+    <div role="tooltip">
       {@render tooltipSnippet(activeMarkerId)}
     </div>
   {/if}

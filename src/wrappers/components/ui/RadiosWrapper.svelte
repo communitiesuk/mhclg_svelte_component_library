@@ -256,6 +256,13 @@
         category: "UI Options",
         value: false,
       },
+      {
+        name: "infoButtons",
+        category: "UI Options",
+        value: false,
+        description:
+          "If the radio option has a moreInfo key, make this information available by clicking a button. If false this information is automatically revealed when the radio is selected. Use with caution - in accessibility testing there were issues with focus order when using the buttons.",
+      },
     ]),
   );
 

@@ -190,12 +190,21 @@
           "dark background",
           "disabled",
           "table header",
+          "moreInfo",
         ],
         description: {
           markdown: true,
           arr: [`This is the type of <code>${pageName}</code> you want.`],
         },
         rows: 5,
+      },
+      {
+        name: "ariaExpanded",
+        category: "Input props",
+        value: false,
+        description:
+          "Use this value to keep the aria-expanded state of the moreInfo button in sync with the button clicks - you'll probably want to update this value automatically when the onClickFunction runs.",
+        visible: { name: "buttonType", value: "moreInfo" },
       },
       {
         name: "onClickFunction",

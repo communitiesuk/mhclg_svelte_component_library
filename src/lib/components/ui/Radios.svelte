@@ -28,6 +28,7 @@
     inline = false,
     options = [],
     validate = undefined,
+    infoButtons = false,
     onChangeFunction = null,
   } = $props<{
     legend: string;
@@ -41,6 +42,7 @@
     options?: RadioOption[];
     validate?: (value: string) => string | undefined;
     selectedValue?: string | null;
+    infoButtons?: boolean;
   }>();
 
   // Add support detection
@@ -174,12 +176,13 @@
             {/if}
           </div>
 
-          {#if option.moreInfo}
+          {#if infoButtons && option.moreInfo}
             <Button
-              textContent="i"
+              textContent={"More information about " + option.label}
               buttonType="moreInfo"
               noPadding={true}
               onClickFunction={() => updateMoreInfoTogglesArray(i)}
+              ariaExpanded={moreInfoTogglesArray[i]}
             ></Button>
           {/if}
         </div>
@@ -204,7 +207,12 @@
           </div>
         {/if}
 
-        {#if moreInfoTogglesArray[i]}
+        {#if infoButtons}
+          {#if moreInfoTogglesArray[i]}
+            <InsetText content={option.moreInfo} renderStringAsHTML={true}
+            ></InsetText>
+          {/if}
+        {:else if option.value === selectedValue && option.moreInfo}
           <InsetText content={option.moreInfo} renderStringAsHTML={true}
           ></InsetText>
         {/if}

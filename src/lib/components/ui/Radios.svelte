@@ -28,6 +28,7 @@
     inline = false,
     options = [],
     validate = undefined,
+    onChangeFunction = null,
   } = $props<{
     legend: string;
     hint?: string;
@@ -138,6 +139,7 @@
             aria-checked={isSupported ? selectedValue === option.value : null}
           >
             <input
+              onchange={onChangeFunction}
               type="radio"
               {name}
               id="{name}-{i}"

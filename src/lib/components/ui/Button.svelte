@@ -98,7 +98,7 @@
     </button>
   {/if}
 {:else}
-  <div class="p-4">
+  <div>
     {#if buttonType === "start"}
       <a
         href={"#"}

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import legacyDefaultCopyrightLogo from "./../../assets/images/govuk-crest.svg";
   // Define component props with default values
   // sections: array of footer navigation sections
   // inlineLinks: array of inline footer links
@@ -227,7 +226,7 @@
             ]}
             href={copyrightHref}
             style={copyrightLogoUrl || !rebrand
-              ? `background-image: url(${copyrightLogoUrl ?? legacyDefaultCopyrightLogo}); display: block; width: 100%; padding-top: 112px; background-repeat: no-repeat; background-position: 50% 0; background-size: 125px 102px; text-align: center;`
+              ? `background-image: url(${copyrightLogoUrl ?? "/images/govuk-crest.svg"}); display: block; width: 100%; padding-top: 112px; background-repeat: no-repeat; background-position: 50% 0; background-size: 125px 102px; text-align: center;`
               : ""}
           >
             {copyrightText}

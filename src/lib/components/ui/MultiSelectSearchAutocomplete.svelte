@@ -13,7 +13,7 @@
   type ExtendedSelectGroup = SelectGroup & { choices: ExtendedSelectItem[] };
 
   let {
-    hoveredArea,
+    hoveredArea = $bindable(),
     // Core attributes - pass through to Select component
     id,
     name,
@@ -841,6 +841,7 @@
             },
             // Reuse the existing template callback (no duplication)
             callbackOnCreateTemplates: existingTemplateCallback,
+
             ...choicesOptions,
           });
 
@@ -1296,6 +1297,15 @@
               if (typeof pillOnMouseLeaveFunction === "function") {
                 pill.addEventListener("mouseleave", () => {
                   pillOnMouseLeaveFunction();
+                  console.log("hello");
+                });
+              }
+
+              const removeButton = pill.querySelector("[data-button]");
+              if (removeButton) {
+                removeButton.addEventListener("mousedown", () => {
+                  hoveredArea = null;
+                  console.log("hello");
                 });
               }
 
@@ -2410,12 +2420,14 @@
 
   // Update Choices.js when value changes externally
   $effect(() => {
-    console.log("🔄 Value changed externally:", {
+    /*console.log("🔄 Value changed externally:", {
       value,
       type: typeof value,
       isArray: Array.isArray(value),
       choicesInstance: !!choicesInstance,
-    });
+    });*/
+
+    void value;
 
     if (choicesInstance && choicesInstance.initialised && value !== undefined) {
       if (multiple && Array.isArray(value)) {
@@ -2538,8 +2550,6 @@
       }, 0);
     }
   });
-
-  $inspect("check is running", value);
 
   /*$effect(() => {
     const currentValues = Array.isArray(value)

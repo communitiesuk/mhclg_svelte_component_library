@@ -57,7 +57,7 @@
   );
 
   let moreInfoTogglesArray = $state(
-    Array.from({ length: options.length }, () => false),
+    options.map((el) => el.value === selectedValue),
   );
 
   function updateMoreInfoTogglesArray(index) {
@@ -117,10 +117,7 @@
     >
       {#each options as option, i}
         {#if option.divider}
-          <div
-            class="mt-2"
-            style="border-bottom: solid; border-color: #e8ebed; border-width: 0.5px;"
-          ></div>
+          <div class="divider-element"></div>
         {/if}
         {#if option.exclusive && i > 0}
           <div
@@ -231,5 +228,13 @@
 
   .item-container {
     flex: 1;
+  }
+
+  .divider-element {
+    margin-top: 6px;
+    margin-bottom: 2px;
+    border-bottom: solid;
+    border-color: #e8ebed;
+    border-width: 0.5px;
   }
 </style>

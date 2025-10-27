@@ -1,19 +1,27 @@
 <script>
-  let { markerRadius = undefined, barWidth = undefined } = $props();
+  let {
+    markerRadius = undefined,
+    barWidth = undefined,
+    textSize = "s",
+  } = $props();
 </script>
 
-<div class="axis" style="--axis-padding:{markerRadius}px; width: {barWidth}">
+<div
+  class="axis govuk-body-{textSize}"
+  style="--axis-padding:{markerRadius}px; width: {barWidth}"
+>
   <div class="more-deprived">
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="11"
+      width="18"
       height="16"
-      viewBox="0 0 11 16"
+      viewBox="0 0 11 20"
       fill="none"
     >
       <path
-        d="M0.292893 7.29289C-0.0976315 7.68342 -0.0976314 8.31658 0.292893 8.70711L6.65685 15.0711C7.04738 15.4616 7.68054 15.4616 8.07107 15.0711C8.46159 14.6805 8.46159 14.0474 8.07107 13.6569L2.41421 8L8.07107 2.34315C8.46159 1.95262 8.46159 1.31946 8.07107 0.928932C7.68054 0.538408 7.04738 0.538408 6.65685 0.928933L0.292893 7.29289ZM11 8L11 7L1 7L1 8L1 9L11 9L11 8Z"
-        fill="#555555"
+        transform="translate(20,21)rotate(180)"
+        d="M 19.7071 12.7071 C 20.0976 12.3166 20.0976 11.6834 19.7071 11.2929 L 13.3431 4.9289 C 12.9526 4.5384 12.3195 4.5384 11.9289 4.9289 C 11.5384 5.3195 11.5384 5.9526 11.9289 6.3431 L 17.5858 12 L 11.9289 17.6568 C 11.5384 18.0474 11.5384 18.6805 11.9289 19.0711 C 12.3195 19.4616 12.9526 19.4616 13.3431 19.0711 L 19.7071 12.7071 Z M 4 12 L 4 13 L 19 13 L 19 12 L 19 11 L 9 11 L 4 11 Z"
+        fill="black"
       ></path>
     </svg>
     <span class="axis-text">More deprived</span>
@@ -22,14 +30,15 @@
     <span class="axis-text">Less deprived</span>
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      width="12"
+      width="18"
       height="16"
-      viewBox="0 0 12 16"
+      viewBox="0 0 11 20"
       fill="none"
     >
       <path
-        d="M11.2071 8.70711C11.5976 8.31658 11.5976 7.68342 11.2071 7.2929L4.84315 0.928933C4.45262 0.538409 3.81946 0.538408 3.42893 0.928933C3.03841 1.31946 3.03841 1.95262 3.42893 2.34315L9.08579 8L3.42893 13.6569C3.03841 14.0474 3.03841 14.6805 3.42893 15.0711C3.81946 15.4616 4.45262 15.4616 4.84314 15.0711L11.2071 8.70711ZM0.5 8L0.5 9L10.5 9L10.5 8L10.5 7L0.5 7L0.5 8Z"
-        fill="#555555"
+        transform="translate(-5,-3)"
+        d="M 19.7071 12.7071 C 20.0976 12.3166 20.0976 11.6834 19.7071 11.2929 L 13.3431 4.9289 C 12.9526 4.5384 12.3195 4.5384 11.9289 4.9289 C 11.5384 5.3195 11.5384 5.9526 11.9289 6.3431 L 17.5858 12 L 11.9289 17.6568 C 11.5384 18.0474 11.5384 18.6805 11.9289 19.0711 C 12.3195 19.4616 12.9526 19.4616 13.3431 19.0711 L 19.7071 12.7071 Z M 4 12 L 4 13 L 19 13 L 19 12 L 19 11 L 9 11 L 4 11 Z"
+        fill="black"
       ></path>
     </svg>
   </div>
@@ -47,7 +56,18 @@
   .more-deprived {
     display: flex;
     align-items: top;
-    gap: 5px;
+
+    gap: 2px;
+  }
+
+  .more-deprived {
+    width: 45%;
+  }
+
+  .less-deprived {
+    text-align: end;
+    justify-content: end;
+    width: 43%;
   }
 
   /* Tell the parent to act as a container */
@@ -58,19 +78,7 @@
   .axis-text {
     font-family: "GDS Transport";
     line-height: 0.9;
-    color: #444444;
-  }
-
-  /* Container query: hide the child if parent's width is less than 400px */
-  @container (max-width: 18rem) {
-    .less-deprived {
-      display: none;
-    }
-  }
-
-  @container (max-width: 25rem) {
-    .average {
-      display: none;
-    }
+    color: black;
+    font-style: italic;
   }
 </style>

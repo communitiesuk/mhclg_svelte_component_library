@@ -12,7 +12,7 @@
     showAxis = true,
     chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,
-    colour = "#CA357C",
+    color = "#CA357C",
     nSegments = 10,
     startColor = "#8EB8DC",
     endColor = "#0F385C",
@@ -27,7 +27,7 @@
     rowData = [
       {
         value: value,
-        colour: colour,
+        color: color,
         opacity: opacity,
         annotation: annotation,
       },
@@ -80,10 +80,11 @@
     },
     activeMarkerId = undefined,
     ariaLabel,
+    axisTextSize,
   } = $props();
 
   // base defaults that apply to every row
-  const baseRow = { value, colour, opacity, annotation };
+  const baseRow = { value, color, opacity, annotation };
 
   // base defaults that apply to every chart
   const baseChart = { label, chartHeight, min, max, showAxis };
@@ -235,15 +236,17 @@
       ),
   );
 
+  $inspect(allDataNormalized, "allDataNormalized");
+
   let gridTemplateRows = $derived(
     allDataNormalized
       .map((item, i) => {
-        const sizes = ["minmax(0,1fr)"];
-        if (moreInfoTogglesArray[i]) sizes.push("minmax(0,auto)");
-        if (item.divider === "true") sizes.push("minmax(0,auto)");
+        const sizes = ["minmax(28px,1fr)"];
+        if (moreInfoTogglesArray[i]) sizes.push("minmax(50px,auto)");
+        if (item.divider) sizes.push("0px");
         return sizes.join(" "); // still fine because number of rows matches
       })
-      .concat(showAxis ? ["minmax(0,auto)"] : [])
+      .concat(showAxis ? ["minmax(0px,auto)"] : [])
       .join(" "),
   );
 </script>
@@ -259,7 +262,7 @@
               id="label"
               x={d.value}
               y="20"
-              fill={d.colour}
+              fill={d.color}
               font-size="18"
               opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
                 ? 0.2
@@ -281,7 +284,7 @@
                 ? 0.2
                 : 1}
             >
-              <path d="M 0 0 L 6 3 L 0 6 z" fill={d.colour}></path>
+              <path d="M 0 0 L 6 3 L 0 6 z" fill={d.color}></path>
             </marker>
           </defs>
           <path
@@ -290,7 +293,7 @@
               4 +
               (topWidth - chartWidth)}  v 15"
             fill="none"
-            stroke={d.colour}
+            stroke={d.color}
             stroke-width="1.5"
             marker-end="url(#arrow-down)"
             opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
@@ -421,7 +424,7 @@
                     r={markerRadius}
                     cx="0"
                     cy="0"
-                    fill={rowValue.colour}
+                    fill={rowValue.color}
                     stroke="white"
                     opacity={rowValue.opacity}
                   ></circle>
@@ -438,18 +441,9 @@
         </div>
       {/if}
       {#if positionChart.divider}
-        <div style="grid-column:1 / -1">
-          <svg width="100%" height="5">
-            <line
-              x1="0"
-              y1="2.5"
-              x2="100%"
-              y2="2.55"
-              stroke="grey"
-              stroke-width="0.5"
-            ></line>
-          </svg>
-        </div>{/if}
+        <div
+          style="grid-column:1 / -1; border-bottom: solid 1px #d5dade;"
+        ></div>{/if}
     {/each}
 
     {#if showAxis}
@@ -460,7 +454,8 @@
         <div class="empty"></div>
       {/if}
       <div class="axis" aria-hidden="true">
-        <PositionChartAxis {markerRadius} {barWidth}></PositionChartAxis>
+        <PositionChartAxis {markerRadius} {barWidth} textSize={axisTextSize}
+        ></PositionChartAxis>
       </div>
     {/if}
     {#if activeMarkerId}

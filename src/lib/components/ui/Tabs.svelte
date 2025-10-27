@@ -19,18 +19,23 @@
     idPrefix = "tab",
     selectedTabId = $bindable(),
     autoAddHeadings = true,
+    forceTabBehavior = false,
   } = $props<{
     title?: string;
     tabs: TabItem[];
     idPrefix?: string;
     selectedTabId?: string | null;
     autoAddHeadings?: boolean;
+    forceTabBehavior?: boolean;
   }>();
 
   // Component state variables
   let isInitialized = $state(false);
   let isSupported = $state(false);
   let isMobile = $state(false);
+
+  // Derived value: use mobile behavior only if isMobile is true AND forceTabBehavior is false
+  let useMobileBehavior = $derived(isMobile && !forceTabBehavior);
 
   // DOM element references for programmatic focus
   let tabElements: { [key: string]: HTMLAnchorElement } = {};
@@ -56,7 +61,7 @@
     }
 
     // Update URL hash on non-mobile views
-    if (!isMobile) {
+    if (!useMobileBehavior) {
       // Use history.replaceState to update the displayed URL hash without causing scroll/navigation.
       const currentUrl = window.location.href;
       const hashIndex = currentUrl.indexOf("#");
@@ -70,7 +75,7 @@
   // Handle keyboard navigation
   function handleKeydown(event: KeyboardEvent, currentIndex: number): void {
     // Skip navigation on mobile or if component isn't ready
-    if (isMobile || !isSupported || !isInitialized) return;
+    if (useMobileBehavior || !isSupported || !isInitialized) return;
 
     // Initialize to null, indicating no valid navigation key pressed yet.
     // Will be updated to a valid index (0+) if ArrowLeft/Right is pressed.
@@ -107,7 +112,7 @@
   // Handle tab click
   function handleTabClick(event: MouseEvent, tabId: string): void {
     // On mobile or without JS support, let default browser behavior happen
-    if (isMobile || !isSupported) return;
+    if (useMobileBehavior || !isSupported) return;
     event.preventDefault();
     selectTab(tabId);
   }
@@ -115,7 +120,7 @@
   // Handle hash change
   function handleHashChange(): void {
     // Skip on mobile or when not properly initialized
-    if (isMobile || !isSupported || !isInitialized) return;
+    if (useMobileBehavior || !isSupported || !isInitialized) return;
 
     const hash = window.location.hash.substring(1);
     if (hash && tabs.some((tab) => tab.id === hash)) {
@@ -225,32 +230,45 @@
   });
 </script>
 
-<div class="govuk-tabs" data-module="govuk-tabs">
+<div
+  class="govuk-tabs"
+  data-module="govuk-tabs"
+  data-force-desktop={forceTabBehavior || null}
+>
   <h2 class="govuk-tabs__title">
     {title}
   </h2>
 
   <ul
     class="govuk-tabs__list"
-    role={isSupported && !isMobile ? "tablist" : null}
+    role={isSupported && !useMobileBehavior ? "tablist" : null}
   >
     {#each tabs as tab, index}
       {@const isSelected = selectedTabId === tab.id}
       {#key tab.id}
         <li
           class="govuk-tabs__list-item"
-          class:govuk-tabs__list-item--selected={isSelected && !isMobile}
-          role={isSupported && !isMobile ? "presentation" : null}
+          class:govuk-tabs__list-item--selected={isSelected &&
+            !useMobileBehavior}
+          role={isSupported && !useMobileBehavior ? "presentation" : null}
         >
           <!-- svelte-ignore binding_property_non_reactive -->
           <a
             class="govuk-tabs__tab"
             href={"#" + tab.id}
-            id={isSupported && !isMobile ? `${idPrefix}_${tab.id}` : null}
-            role={isSupported && !isMobile ? "tab" : null}
-            aria-controls={isSupported && !isMobile ? tab.id : null}
-            aria-selected={isSupported && !isMobile ? isSelected : null}
-            tabindex={isSupported && !isMobile ? (isSelected ? 0 : -1) : null}
+            id={isSupported && !useMobileBehavior
+              ? `${idPrefix}_${tab.id}`
+              : null}
+            role={isSupported && !useMobileBehavior ? "tab" : null}
+            aria-controls={isSupported && !useMobileBehavior ? tab.id : null}
+            aria-selected={isSupported && !useMobileBehavior
+              ? isSelected
+              : null}
+            tabindex={isSupported && !useMobileBehavior
+              ? isSelected
+                ? 0
+                : -1
+              : null}
             onclick={(e) => handleTabClick(e, tab.id)}
             onkeydown={(e) => handleKeydown(e, index)}
             bind:this={tabElements[tab.id]}
@@ -266,13 +284,15 @@
     {@const isSelected = selectedTabId === tab.id}
     <div
       class="govuk-tabs__panel"
-      class:govuk-tabs__panel--hidden={!isSelected && isSupported && !isMobile}
+      class:govuk-tabs__panel--hidden={!isSelected &&
+        isSupported &&
+        !useMobileBehavior}
       id={tab.id}
-      role={isSupported && !isMobile ? "tabpanel" : null}
-      aria-labelledby={isSupported && !isMobile
+      role={isSupported && !useMobileBehavior ? "tabpanel" : null}
+      aria-labelledby={isSupported && !useMobileBehavior
         ? `${idPrefix}_${tab.id}`
         : null}
-      hidden={!isSelected && isSupported && !isMobile}
+      hidden={!isSelected && isSupported && !useMobileBehavior}
     >
       {#if autoAddHeadings}
         <h2 class="govuk-heading-l">{tab.label}</h2>
@@ -287,7 +307,8 @@
       {:else if tab.content satisfies Snippet}
         {@render tab.content()}
       {:else if tab.content}
-        <svelte:component this={tab.content} />
+        {@const Component = tab.content}
+        <Component />
       {/if}
     </div>
   {/each}
@@ -302,5 +323,156 @@
   /* Ensure hidden panels are truly hidden */
   .govuk-tabs__panel--hidden {
     display: none;
+  }
+
+  /* 
+   * Force desktop tab appearance when forceTabBehavior is enabled
+   * These styles are copied verbatim from GOV.UK Frontend's desktop (40.0625em+) styles
+   * but applied at mobile breakpoints when data-force-desktop attribute is present
+   */
+  @media (max-width: 40.0624em) {
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__list {
+      margin-bottom: 0;
+      border-bottom: 1px solid #b1b4b6;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__list:after {
+      content: "";
+      display: block;
+      clear: both;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__title {
+      display: none;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__list-item {
+      position: relative;
+      margin-right: 5px;
+      margin-bottom: 0;
+      margin-left: 0;
+      padding: 10px 20px;
+      float: left;
+      background-color: #f3f2f1;
+      text-align: center;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__list-item:before {
+      content: none;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__list-item--selected {
+      position: relative;
+      margin-top: -5px;
+      margin-bottom: -1px;
+      padding: 14px 19px 16px;
+      border: 1px solid #b1b4b6;
+      border-bottom: 0;
+      background-color: #fff;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__list-item--selected
+      .govuk-tabs__tab {
+      text-decoration: none;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__tab {
+      margin-bottom: 0;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__tab:link,
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__tab:visited {
+      color: #0b0c0c;
+    }
+
+    @media print {
+      :global(.govuk-frontend-supported)
+        .govuk-tabs[data-force-desktop]
+        .govuk-tabs__tab:link,
+      :global(.govuk-frontend-supported)
+        .govuk-tabs[data-force-desktop]
+        .govuk-tabs__tab:visited {
+        color: #000;
+      }
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__tab:hover {
+      color: rgba(11, 12, 12, 0.99);
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__tab:active,
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__tab:focus {
+      color: #0b0c0c;
+    }
+
+    @media print {
+      :global(.govuk-frontend-supported)
+        .govuk-tabs[data-force-desktop]
+        .govuk-tabs__tab:active,
+      :global(.govuk-frontend-supported)
+        .govuk-tabs[data-force-desktop]
+        .govuk-tabs__tab:focus {
+        color: #000;
+      }
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__tab:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__panel {
+      margin-bottom: 0;
+      padding: 30px 20px;
+      border: 1px solid #b1b4b6;
+      border-top: 0;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__panel
+      > :last-child {
+      margin-bottom: 0;
+    }
+
+    :global(.govuk-frontend-supported)
+      .govuk-tabs[data-force-desktop]
+      .govuk-tabs__panel--hidden {
+      display: none;
+    }
   }
 </style>

@@ -323,6 +323,18 @@
           ],
         },
       },
+      {
+        name: "forceTabBehavior",
+        category: "UI Options",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            "Forces the desktop tab behavior (with ARIA attributes and keyboard navigation) even on mobile devices.",
+            "By default, the component switches to a simpler link-based layout on smaller screens. Set this to <code>true</code> to maintain the full tab functionality across all screen sizes.",
+          ],
+        },
+      },
     ]),
   );
 

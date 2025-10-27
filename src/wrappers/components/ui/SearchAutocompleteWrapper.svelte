@@ -355,6 +355,23 @@
         },
       },
       {
+        name: "allowFreeTextSubmission",
+        category: "Autocomplete",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `If <code>true</code>, allows users to submit free-typed text that doesn't match any suggestions.`,
+            `Works both inside and outside of <code>&lt;form&gt;</code> elements.`,
+            `When enabled, the <code>selectedValue</code> will be updated with the typed text when:`,
+            `• User types text and clicks the submit button (with or without form)`,
+            `• User types text and presses Enter inside a form (without selecting from dropdown)`,
+            `When <code>false</code> (default), only confirmed selections from the dropdown will update <code>selectedValue</code>.`,
+            `Useful when you want to allow both structured suggestions and free-form search queries.`,
+          ],
+        },
+      },
+      {
         name: "autoFocusSubmitOnSelection",
         category: "Interaction",
         type: "boolean",
@@ -949,7 +966,7 @@
       : "#fff"}
   <div class="p-8" style="background-color: {bgColor};">
     {#if parametersObject.source_url && parametersObject.source_key}
-            {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.autoselect, parametersObject.hideHint, parametersObject.prefixMatchOnly, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}
+      {#key [parametersObject.source_url, parametersObject.source_key, parametersObject.minLength, parametersObject.confirmOnBlur, parametersObject.autoselect, parametersObject.hideHint, parametersObject.prefixMatchOnly, parametersObject.allowFreeTextSubmission, parametersObject.showNoOptionsFound, parametersObject.defaultValue, parametersObject.placeholder, parametersObject.required, JSON.stringify(parametersObject.menuAttributes), parametersObject.menuClasses, JSON.stringify(parametersObject.options)].join("|")}
         <SearchAutocomplete {...parametersObject} bind:selectedValue />
       {/key}
     {:else}

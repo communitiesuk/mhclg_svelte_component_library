@@ -8,6 +8,7 @@
     onClickFunction = undefined,
     noPadding = false,
     ariaExpanded = false,
+    formButton = false,
   } = $props();
 
   let buttonClass = $derived(
@@ -176,7 +177,7 @@
       </button>
     {:else}
       <button
-        type="button"
+        type={formButton ? "submit" : "button"}
         class={buttonClass}
         data-module="govuk-button"
         onclick={onClickFunction}

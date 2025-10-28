@@ -46,6 +46,8 @@
   // Handle tab selection - integrate focus and hash logic directly
   function selectTab(tabId: string, shouldFocus = false): void {
     // Skip if component isn't ready, or tab is already selected
+    console.log(isSupported, isInitialized, selectedTabId, tabId);
+
     if (!isSupported || !isInitialized || selectedTabId === tabId) return;
 
     // Update the core bindable state
@@ -137,11 +139,14 @@
     isSupported =
       document.body?.classList.contains("govuk-frontend-supported") ?? false;
 
+    isInitialized = true;
+
     // Check URL hash for deep linking AFTER initial prop value is set
     const hash = window.location.hash.substring(1);
+    console.log(hash, "hash");
     if (hash) {
       const tabFromHash = tabs.find((tab) => tab.id === hash);
-      if (tabFromHash && tabFromHash.id !== selectedTabId) {
+      if (tabFromHash.id && tabFromHash.id !== selectedTabId) {
         // Update state if hash points to a valid, different tab
         // Use selectTab to handle focus and potential URL update if needed
         selectTab(tabFromHash.id, true);
@@ -172,8 +177,6 @@
 
     // Listen for hash changes
     window.addEventListener("hashchange", handleHashChange);
-
-    isInitialized = true;
 
     // Cleanup
     return () => {

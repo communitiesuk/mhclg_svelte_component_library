@@ -1,7 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { clsx } from "clsx";
-  import { on } from "svelte/events";
   import Search from "./Search.svelte"; // Base component
   import "accessible-autocomplete/dist/accessible-autocomplete.min.css";
   import { browser } from "$app/environment";
@@ -56,7 +55,6 @@
     hideHint?: boolean; // Hide the hint input element when autoselect is true
     prefixMatchOnly?: boolean; // Only show suggestions that start with the query (better for hint behavior)
     autoFocusSubmitOnSelection?: boolean; // Auto-focus submit button when selection is confirmed
-    allowFreeTextSubmission?: boolean; // Treat free-typed input as confirmed when submitted (works with or without form)
   };
 
   let {
@@ -95,7 +93,6 @@
     hideHint = false, // Default to false - show hint by default
     prefixMatchOnly = false, // Default to false - show all matches
     autoFocusSubmitOnSelection = false, // Default to false - don't auto-focus by default
-    allowFreeTextSubmission = false, // Default to false - only confirmed suggestions submit
     ...restSearchProps // Other props for the base Search component
   }: Props = $props();
 
@@ -107,6 +104,8 @@
   let currentSourceUrl = $state<string | undefined>(undefined);
   let currentSourceKey = $state<string | undefined>(undefined);
   let currentSourceProperty = $state<string | undefined>(undefined);
+
+
 
   // --- Derived Values ---
   const wrapperClasses = $derived(
@@ -409,41 +408,55 @@
       // Define confirm function
       let isSubmitting = false; // Prevent double submit
       const handleConfirm = (confirmedValue: Suggestion | undefined) => {
-        if (confirmedValue === undefined || isSubmitting) return;
+        console.log('handleConfirm called with:', confirmedValue, 'isSubmitting:', isSubmitting); // Debug log
+        
+        if (confirmedValue === undefined) return;
+        
+        // Reset submitting flag at the start of each new confirmation
+        isSubmitting = false;
 
-        isSubmitting = true;
-
-        // Update selectedValue
+        // Re-assign selectedValue before any form-based guard checks (!form) so bindings still update
+        // (e.g. when no <form> exists around the component usage) and search component value is being used clienside without a page reload
         selectedValue =
           typeof confirmedValue === "string"
             ? confirmedValue
             : confirmedValue.value;
 
-        // Mark as accepted to prevent form submit handler from processing again
+        // Type assertion needed here
         const inputElement =
           autocompleteInstance?.inputElement as HTMLInputElement;
-        if (inputElement) {
-          inputElement.value = inputValueTemplate(confirmedValue);
-          inputElement.dataset.autocompleteAccepted = "true";
-        }
-
-        // Auto-focus submit button if enabled
-        if (autoFocusSubmitOnSelection) {
-          const submitButton = containerElement?.querySelector(
-            'button[type="submit"]',
-          ) as HTMLButtonElement | null;
-          if (submitButton) {
-            requestAnimationFrame(() => submitButton.focus());
-          }
-        }
-
-        // Submit form if present
         const form = containerElement?.closest("form");
-        if (form) {
-          form.requestSubmit?.() ?? form.submit();
+        const submitButton = containerElement?.querySelector('button[type="submit"]') as HTMLButtonElement;
+        
+        console.log('Submit button found:', !!submitButton); // Debug log
+
+        // Always focus the submit button first, regardless of form presence (if feature is enabled)
+        if (autoFocusSubmitOnSelection && submitButton) {
+          console.log('Focusing submit button'); // Debug log
+          // Use requestAnimationFrame to ensure the focus happens after DOM updates
+          requestAnimationFrame(() => {
+            submitButton.focus();
+            console.log('Submit button focused, document.activeElement:', document.activeElement === submitButton);
+          });
         }
 
-        isSubmitting = false;
+        // Handle form submission separately
+        if (inputElement && form) {
+          isSubmitting = true;
+          inputElement.value = inputValueTemplate(confirmedValue);
+          inputElement.dataset.autocompleteAccepted = "true"; // Set tracking attribute
+
+          // Submit form immediately
+          console.log('Submitting form'); // Debug log
+          if (form.requestSubmit) {
+            form.requestSubmit();
+          } else {
+            form.submit(); // Fallback for older browsers
+          }
+          
+          // Reset flag after submission
+          isSubmitting = false;
+        }
       };
 
       // Initialise accessible-autocomplete
@@ -492,15 +505,15 @@
             ".gem-c-search-with-autocomplete__menu",
           );
         // Listen for input changes on the autocomplete field
-        on(autocompleteInputElement, "input", () => {
+        autocompleteInputElement.addEventListener("input", () => {
           const val = autocompleteInputElement.value;
-
+          
           // Reset isSubmitting flag when user starts typing again
           if (isSubmitting) {
-            console.log("User typing, resetting isSubmitting flag");
+            console.log('User typing, resetting isSubmitting flag');
             isSubmitting = false;
           }
-
+          
           // Remove any existing 'too-short' warning before adding a new one to ensure we don't accumulate multiple warning items.
           suggestionsMenu
             ?.querySelector(
@@ -531,7 +544,7 @@
         // autocompleteInputElement.classList.add("autocomplete__input"); // Add specific class if needed
 
         // Add Enter key workaround from original JS
-        on(autocompleteInputElement, "keydown", (e) => {
+        autocompleteInputElement.addEventListener("keydown", (e) => {
           if (isSubmitting) return; // Don't interfere if already submitting
           const dropdownVisible =
             autocompleteInputElement.getAttribute("aria-expanded") === "true";
@@ -552,44 +565,6 @@
         //   "Autocomplete input classes AFTER add:",
         //   Array.from(autocompleteInputElement.classList),
         // );
-      }
-
-      // Handle free-text submission when allowFreeTextSubmission is enabled
-      // handleConfirm is only called by the library when selecting from dropdown
-      // We need to catch: (1) form submit events, (2) button clicks outside forms
-      if (allowFreeTextSubmission) {
-        const updateFreeText = () => {
-          if (!autocompleteInputElement) return;
-
-          const wasAccepted =
-            autocompleteInputElement.dataset.autocompleteAccepted === "true";
-          const value = autocompleteInputElement.value?.trim();
-
-          if (value && !wasAccepted) {
-            selectedValue = value;
-          }
-
-          // Reset flag after submission
-          setTimeout(() => {
-            if (autocompleteInputElement) {
-              autocompleteInputElement.dataset.autocompleteAccepted = "false";
-            }
-          }, 100);
-        };
-
-        // Handle form submission
-        const form = containerElement?.closest("form");
-        if (form) {
-          on(form, "submit", updateFreeText);
-        }
-
-        // Handle button clicks (for non-form usage)
-        const submitButton = containerElement?.querySelector(
-          'button[type="submit"]',
-        ) as HTMLButtonElement | null;
-        if (submitButton && !form) {
-          on(submitButton, "click", updateFreeText);
-        }
       }
 
       // IMPORTANT: Remove the original Search.svelte input, as accessible-autocomplete replaces it.

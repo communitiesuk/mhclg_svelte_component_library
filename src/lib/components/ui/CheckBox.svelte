@@ -139,6 +139,7 @@
     >
       {#if selectAllButton}
         <Button
+          formButton={false}
           buttonType={allSelected ? "warning" : "secondary"}
           textContent={allSelected ? "De-select all" : "Select all"}
           onClickFunction={toggleSelectAll}

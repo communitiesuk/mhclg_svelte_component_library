@@ -28,6 +28,7 @@
   {#if buttonType === "moreInfo"}
     <div>
       <button
+        type={formButton ? "submit" : "button"}
         aria-label={textContent}
         aria-expanded={ariaExpanded}
         class="more-info-button"
@@ -60,7 +61,7 @@
     </a>
   {:else if buttonType === "disabled"}
     <button
-      type="submit"
+      type={formButton ? "submit" : "button"}
       disabled
       aria-disabled="true"
       class="govuk-button"
@@ -70,7 +71,11 @@
       {textContent}
     </button>
   {:else if buttonType === "table header"}
-    <button type="button" class="text-header" onclick={onClickFunction}>
+    <button
+      type={formButton ? "submit" : "button"}
+      class="text-header"
+      onclick={onClickFunction}
+    >
       {textContent}
       <svg
         width="22"
@@ -96,7 +101,7 @@
     </button>
   {:else}
     <button
-      type="submit"
+      type={formButton ? "submit" : "button"}
       class={buttonClass}
       data-module="govuk-button"
       onclick={onClickFunction}
@@ -109,6 +114,7 @@
     {#if buttonType === "moreInfo"}
       <div>
         <button
+          type={formButton ? "submit" : "button"}
           aria-label={textContent}
           aria-expanded={ariaExpanded}
           class="more-info-button"
@@ -141,7 +147,7 @@
       </a>
     {:else if buttonType === "disabled"}
       <button
-        type="submit"
+        type={formButton ? "submit" : "button"}
         disabled
         aria-disabled="true"
         class="govuk-button"

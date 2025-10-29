@@ -13,6 +13,7 @@
   type ExtendedSelectGroup = SelectGroup & { choices: ExtendedSelectItem[] };
 
   let {
+    onChangeFunction,
     hoveredArea = $bindable(),
     // Core attributes - pass through to Select component
     id,
@@ -261,27 +262,43 @@
     next: string[];
   }> = [];
   let __seq = 0;
+  let suppressInitialChangeEvents = true;
+  let suppressCounter = 0;
+
+  let debounceTimerX: any = null;
+  let hasInitialized = false;
+
   $inspect(value).with((type: string, current: unknown) => {
     const next = Array.isArray(current)
       ? current.map((x) => String(x))
       : current == null
         ? []
         : [String(current as any)];
-    const prev = __lastSnapshot;
-    __seq += 1;
-    __history.push({ seq: __seq, type, prev, next });
-    // Keep history bounded
-    if (__history.length > 50) __history.shift();
-    /*console.log("🧭 [inspect:value]", {
-      seq: __seq,
-      type,
-      prev,
-      next,
-      historyLen: __history.length,
-    });*/
-    __lastSnapshot = next.slice();
-  });
 
+    clearTimeout(debounceTimerX);
+    debounceTimerX = setTimeout(() => {
+      const prev = __lastSnapshot;
+
+      // ✅ Skip first diff to avoid triggering on initial load
+      if (!hasInitialized) {
+        __lastSnapshot = next.slice();
+        hasInitialized = true;
+        return;
+      }
+
+      const added = next.filter((x) => !prev.includes(x));
+      const removed = prev.filter((x) => !next.includes(x));
+
+      for (const val of added) {
+        onChangeFunction("added", val);
+      }
+      for (const val of removed) {
+        onChangeFunction("removed", val);
+      }
+
+      __lastSnapshot = next.slice();
+    }, 50);
+  });
   // Helper function for getting group text
   function getGroupText(item: any): string | undefined {
     if (!groupKey || !item || typeof item !== "object") return undefined;
@@ -1297,7 +1314,6 @@
               if (typeof pillOnMouseLeaveFunction === "function") {
                 pill.addEventListener("mouseleave", () => {
                   pillOnMouseLeaveFunction();
-                  console.log("hello");
                 });
               }
 
@@ -1305,7 +1321,6 @@
               if (removeButton) {
                 removeButton.addEventListener("mousedown", () => {
                   hoveredArea = null;
-                  console.log("hello");
                 });
               }
 

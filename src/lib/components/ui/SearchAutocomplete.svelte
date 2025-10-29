@@ -409,9 +409,12 @@
       // Define confirm function
       let isSubmitting = false; // Prevent double submit
       const handleConfirm = (confirmedValue: Suggestion | undefined) => {
-        if (confirmedValue === undefined || isSubmitting) return;
-
-        isSubmitting = true;
+        console.log('handleConfirm called with:', confirmedValue, 'isSubmitting:', isSubmitting); // Debug log
+        
+        if (confirmedValue === undefined) return;
+        
+        // Reset submitting flag at the start of each new confirmation
+        isSubmitting = false;
 
         // Update selectedValue
         selectedValue =
@@ -419,13 +422,7 @@
             ? confirmedValue
             : confirmedValue.value;
 
-        // Mark as accepted to prevent form submit handler from processing again
-        const inputElement =
-          autocompleteInstance?.inputElement as HTMLInputElement;
-        if (inputElement) {
-          inputElement.value = inputValueTemplate(confirmedValue);
-          inputElement.dataset.autocompleteAccepted = "true";
-        }
+
 
         // Auto-focus submit button if enabled
         if (autoFocusSubmitOnSelection) {
@@ -437,13 +434,28 @@
           }
         }
 
-        // Submit form if present
+
+        // Handle form submission separately
+        const inputElement =
+        autocompleteInstance?.inputElement as HTMLInputElement;
         const form = containerElement?.closest("form");
-        if (form) {
-          form.requestSubmit?.() ?? form.submit();
+        if (inputElement && form) {
+          isSubmitting = true;
+          inputElement.value = inputValueTemplate(confirmedValue);
+          inputElement.dataset.autocompleteAccepted = "true"; // Set tracking attribute
+
+          // Submit form immediately
+          console.log('Submitting form'); // Debug log
+          if (form.requestSubmit) {
+            form.requestSubmit();
+          } else {
+            form.submit(); // Fallback for older browsers
+          }
+          
+          // Reset flag after submission
+          isSubmitting = false;
         }
 
-        isSubmitting = false;
       };
 
       // Initialise accessible-autocomplete

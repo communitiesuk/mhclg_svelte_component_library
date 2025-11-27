@@ -295,7 +295,7 @@
       hidden={!isSelected && isSupported && !useMobileBehavior}
     >
       {#if autoAddHeadings}
-        <h2 class="govuk-heading-l">{tab.label}</h2>
+        <h3 class="govuk-heading-l">{tab.label}</h3>
       {/if}
 
       {#if typeof tab.content === "string"}

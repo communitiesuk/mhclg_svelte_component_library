@@ -26,14 +26,14 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "To be developed",
+    progress: "In use",
     statusRows: [
       {
-        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
+        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },
         visibleOnHompepage: false,
       },
       {
-        obj: { Reviewed: false, Tested: false },
+        obj: { Reviewed: true, Tested: true },
         visibleOnHomepage: false,
       },
     ],

@@ -163,59 +163,59 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "cardWidth",
-        category: "Input props",
-        value: `100%`,
-      },
-      {
         name: "linkCard",
-        category: "Input props",
+        category: "Content",
         value: true,
       },
       {
         name: "linkText",
-        category: "Input props",
+        category: "Content",
         value: `Download data`,
       },
       {
-        name: "linkTextColor",
-        category: "Input props",
-        value: `#1D70B8`,
-      },
-      {
-        name: "href",
-        category: "Input props",
-        value: `/download-all`,
-      },
-      {
-        name: "callToActionBackgroundColor",
-        category: "Input props",
-        value: `white`,
+        name: "onlyTextInBody",
+        category: "Content",
+        value: true,
       },
       {
         name: "bodyText",
-        category: "Input props",
+        category: "Content",
         value: `This is the text that gives more information about the call to action in the card heading.`,
       },
       {
+        name: "linkTextColor",
+        category: "Colours",
+        value: `#1D70B8`,
+      },
+      {
         name: "bodyTextColor",
-        category: "Input props",
+        category: "Colours",
         value: `#0B0C0C`,
       },
       {
+        name: "callToActionBackgroundColor",
+        category: "Colours",
+        value: `white`,
+      },
+      {
         name: "bodyBackgroundColor",
-        category: "Input props",
+        category: "Colours",
         value: `#FBFCFD`,
       },
       {
         name: "bodyTopBorderColor",
-        category: "Input props",
+        category: "Colours",
         value: `#F4F8FB`,
       },
       {
         name: "bodyBottomBorderColor",
-        category: "Input props",
+        category: "Colours",
         value: `#c3d9e9`,
+      },
+      {
+        name: "href",
+        category: "href",
+        value: `/download-all`,
       },
     ]),
   );

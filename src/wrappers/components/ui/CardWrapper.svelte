@@ -46,10 +46,16 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "The card component acts a signpost for a user. It is a way for users to find the content on your service that is most relevant to them. It could be a link or something more complex like a search component, which lets the user find what they want.",
+    "It also gives the user some information about the content they would see so that they know whether to click on it or not.",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "There are multiple contexts where cards are appropriate.",
+    "They can be used on the home page to indicate the main functions of the service or options to the user. In this case they should be styled to make them prominent.",
+    "They can be used as links to supplementary content or information too.",
+    "They can be used in a grid layout as an alternative to a more simple list of items. The benefit of cards is that they can include content like graphics or charts which make them more engaging than a list of plain text links.",
   ];
 
   let detailsArray = [

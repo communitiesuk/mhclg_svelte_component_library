@@ -4,13 +4,20 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-import Card from "$lib/components/ui/Card.svelte";
+  import Card from "$lib/components/ui/Card.svelte";
+
+  import PositionChart from "$lib/components/data-vis/position-chart/PositionChart.svelte";
 
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
+      heading: "1. Example 1 - simple card with heading link, and body text",
       content: Example1,
+    },
+    {
+      id: "2",
+      heading: "2. Example 2 - card with a chart",
+      content: Example2,
     },
   ];
 </script>
@@ -37,32 +44,27 @@ import Card from "$lib/components/ui/Card.svelte";
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    <Card
+      linkCard={true}
+      linkText="Card heading"
+      bodyText="Text in the body of the card"
+    ></Card>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example2()}
+  <div class="p-5 bg-white">
+    <Card
+      linkCard={true}
+      linkText="Adult social care quality"
+      onlyTextInBody={false}
+      {cardBottomSnippet}
+    ></Card>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet cardBottomSnippet()}
+  <PositionChart></PositionChart>
 {/snippet}

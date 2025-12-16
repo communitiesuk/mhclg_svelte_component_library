@@ -11,7 +11,9 @@
     bodyTopBorderColor = "#F4F8FB",
     bodyBottomBorderColor = "#c3d9e9",
     selectedValue = $bindable(),
-    cardSnippet = undefined,
+    cardTopSnippet = undefined,
+    cardBottomSnippet = undefined,
+    onlyTextInBody = true,
   } = $props();
 </script>
 
@@ -44,7 +46,7 @@
         </a>
       </h2>
     {:else}
-      {@render cardSnippet()}
+      {@render cardTopSnippet()}
     {/if}
   </div>
 
@@ -52,9 +54,16 @@
     class="body-div"
     style="--body-bg-color: {bodyBackgroundColor}; --body-bottom-border-color: {bodyBottomBorderColor}; --body-top-border-color: {bodyTopBorderColor};"
   >
-    <p class="govuk-body body-text" style="--body-text-color: {bodyTextColor};">
-      {bodyText}
-    </p>
+    {#if onlyTextInBody}
+      <p
+        class="govuk-body body-text"
+        style="--body-text-color: {bodyTextColor};"
+      >
+        {bodyText}
+      </p>
+    {:else}
+      {@render cardBottomSnippet()}
+    {/if}
   </div>
 </div>
 

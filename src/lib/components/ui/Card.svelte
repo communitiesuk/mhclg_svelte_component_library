@@ -101,7 +101,6 @@
   }
 
   .govuk-heading-m {
-    /* overwriting margin and line-height to make link centered vertically */
     margin: 0;
     line-height: 1;
   }

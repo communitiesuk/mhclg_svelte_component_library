@@ -1,19 +1,19 @@
 <script>
   let {
     linkCard = true,
+    onlyTextInBody = true,
     linkText = undefined,
-    linkTextColor = "#1D70B8",
-    href = undefined,
-    callToActionBackgroundColor = "white",
     bodyText = undefined,
+    cardTopSnippet = undefined,
+    cardBottomSnippet = undefined,
+    linkTextColor = "#1D70B8",
     bodyTextColor = "#0B0C0C",
+    callToActionBackgroundColor = "white",
     bodyBackgroundColor = "#FBFCFD",
     bodyTopBorderColor = "#F4F8FB",
     bodyBottomBorderColor = "#c3d9e9",
+    href = undefined,
     selectedValue = $bindable(),
-    cardTopSnippet = undefined,
-    cardBottomSnippet = undefined,
-    onlyTextInBody = true,
   } = $props();
 </script>
 

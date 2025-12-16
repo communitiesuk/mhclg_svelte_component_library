@@ -5,7 +5,6 @@
   import * as codeBlocks from "./codeBlocks.js";
 
   import Card from "$lib/components/ui/Card.svelte";
-
   import PositionChart from "$lib/components/data-vis/position-chart/PositionChart.svelte";
   import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
 
@@ -23,8 +22,13 @@
     {
       id: "3",
       heading:
-        "3. Example 3 - a card with a search component instead heading link",
+        "3. Example 3 - a card with a search component instead of a heading link",
       content: Example3,
+    },
+    {
+      id: "4",
+      heading: "4. Example 4 - a card with a link in the body",
+      content: Example4,
     },
   ];
 </script>
@@ -66,13 +70,13 @@
       linkCard={true}
       linkText="Adult social care quality"
       onlyTextInBody={false}
-      {cardBottomSnippet}
+      cardBottomSnippet={cardBottomSnippet1}
     ></Card>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
 {/snippet}
 
-{#snippet cardBottomSnippet()}
+{#snippet cardBottomSnippet1()}
   <PositionChart
     value="4.5"
     min="0"
@@ -93,7 +97,7 @@
       {cardTopSnippet}
     ></Card>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet cardTopSnippet()}
@@ -112,4 +116,23 @@
     label_id="postcode-search"
     wrap_label_in_a_heading={true}
   ></PostcodeOrAreaSearch>
+{/snippet}
+
+{#snippet Example4()}
+  <div class="p-5 bg-white">
+    <Card
+      linkCard={true}
+      linkText="Download local outcomes data"
+      onlyTextInBody={false}
+      cardBottomSnippet={cardBottomSnippet2}
+    ></Card>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet cardBottomSnippet2()}
+  <p>
+    Download the complete, latest Local Government Outcomes Framework data.
+    Alternatively <a href="">search for an area</a> and download what you need
+  </p>
 {/snippet}

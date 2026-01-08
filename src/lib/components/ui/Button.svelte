@@ -7,17 +7,16 @@
     onClickFunction = undefined,
   } = $props();
 
-  let buttonClass = $derived(
-    buttonType === "default"
-      ? "govuk-button"
-      : buttonType === "secondary"
-        ? "govuk-button govuk-button--secondary"
-        : buttonType === "warning"
-          ? "govuk-button govuk-button--warning"
-          : buttonType === "dark background"
-            ? "govuk-button govuk-button--inverse"
-            : undefined,
-  );
+  const buttonClasses = {
+    default: "govuk-button",
+    secondary: "govuk-button govuk-button--secondary",
+    warning: "govuk-button govuk-button--warning",
+    darkBackground: "govuk-button govuk-button--inverse",
+  };
+
+  let buttonClass = $derived(buttonClasses[buttonType]);
+
+  $inspect(buttonType, buttonClass);
 </script>
 
 {#if buttonType === "moreInfo"}

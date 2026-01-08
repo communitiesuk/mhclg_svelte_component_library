@@ -181,7 +181,7 @@
           "secondary",
           "start",
           "warning",
-          "dark background",
+          "darkBackground",
           "disabled",
           "table header",
           "moreInfo",

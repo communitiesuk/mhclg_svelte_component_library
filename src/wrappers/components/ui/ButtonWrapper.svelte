@@ -162,12 +162,6 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
         name: "textContent",
         category: "Input props",
         value: `Click me`,
@@ -190,6 +184,7 @@
           "dark background",
           "disabled",
           "table header",
+          "moreInfo",
         ],
         description: {
           markdown: true,

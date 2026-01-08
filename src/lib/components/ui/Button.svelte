@@ -3,7 +3,7 @@
 
   let {
     textContent = undefined,
-    buttonType,
+    buttonType = "default",
     onClickFunction = undefined,
   } = $props();
 
@@ -12,19 +12,55 @@
     secondary: "govuk-button govuk-button--secondary",
     warning: "govuk-button govuk-button--warning",
     darkBackground: "govuk-button govuk-button--inverse",
+    moreInfo: "more-info-button",
+    tableHeader: "text-header",
   };
 
   let buttonClass = $derived(buttonClasses[buttonType]);
-
-  $inspect(buttonType, buttonClass);
 </script>
 
-{#if buttonType === "moreInfo"}
-  <div>
-    <button class="more-info-button" onclick={onClickFunction}>
-      <Icon kind="info" />
-    </button>
-  </div>
+{#if buttonType === "default"}
+  <button
+    type="button"
+    class={buttonClass}
+    data-module="govuk-button"
+    onclick={onClickFunction}
+  >
+    {textContent}
+  </button>
+{:else if buttonType === "secondary"}
+  <button
+    type="button"
+    class={buttonClass}
+    data-module="govuk-button"
+    onclick={onClickFunction}
+  >
+    {textContent}
+  </button>
+{:else if buttonType === "disabled"}
+  <button
+    type="submit"
+    disabled
+    aria-disabled="true"
+    class="govuk-button"
+    data-module="govuk-button"
+    onclick={onClickFunction}
+  >
+    {textContent}
+  </button>
+{:else if buttonType === "warning"}
+  <button
+    type="button"
+    class={buttonClass}
+    data-module="govuk-button"
+    onclick={onClickFunction}
+  >
+    {textContent}
+  </button>
+{:else if buttonType === "moreInfo"}
+  <button type="button" class={buttonClass} onclick={onClickFunction}>
+    <Icon kind="info" />
+  </button>
 {:else if buttonType === "start"}
   <a
     href={"#"}
@@ -47,19 +83,8 @@
       <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
     </svg>
   </a>
-{:else if buttonType === "disabled"}
-  <button
-    type="submit"
-    disabled
-    aria-disabled="true"
-    class="govuk-button"
-    data-module="govuk-button"
-    onclick={onClickFunction}
-  >
-    {textContent}
-  </button>
-{:else if buttonType === "table header"}
-  <button type="button" class="text-header" onclick={onClickFunction}>
+{:else if buttonType === "tableHeader"}
+  <button type="button" class={buttonClass} onclick={onClickFunction}>
     {textContent}
     <svg
       width="22"
@@ -82,15 +107,6 @@
         fill="currentColor"
       ></path>
     </svg>
-  </button>
-{:else}
-  <button
-    type="submit"
-    class={buttonClass}
-    data-module="govuk-button"
-    onclick={onClickFunction}
-  >
-    {textContent}
   </button>
 {/if}
 

@@ -183,7 +183,7 @@
           "warning",
           "darkBackground",
           "disabled",
-          "table header",
+          "tableHeader",
           "moreInfo",
         ],
         description: {
@@ -208,6 +208,16 @@
           arr: [
             `This prop passes a function to the <code>${pageName}</code> component that is executed when the button is clicked`,
           ],
+        },
+        rows: 5,
+      },
+      {
+        name: "typeAttribute",
+        category: "Input props",
+        options: ["button", "submit", "reset"],
+        description: {
+          markdown: true,
+          arr: [`This is the type of <code>${pageName}</code> you want.`],
         },
         rows: 5,
       },

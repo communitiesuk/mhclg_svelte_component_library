@@ -5,6 +5,7 @@
     textContent = undefined,
     buttonType = "default",
     onClickFunction = undefined,
+    typeAttribute = "button",
   } = $props();
 
   const buttonClasses = {
@@ -21,7 +22,7 @@
 
 {#if buttonType === "default"}
   <button
-    type="button"
+    type={typeAttribute}
     class={buttonClass}
     data-module="govuk-button"
     onclick={onClickFunction}

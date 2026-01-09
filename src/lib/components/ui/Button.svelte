@@ -5,7 +5,10 @@
     textContent = "Click me",
     buttonType = "default",
     onClickFunction = function () {
-      window.alert(`The button function has been triggered.`);
+      window.alert(`The button function has been triggered by a click.`);
+    },
+    onKeydownFunction = function () {
+      window.alert(`The button function has been triggered by pressing a key.`);
     },
     typeAttribute = "button",
   } = $props();
@@ -23,29 +26,23 @@
   let buttonClass = $derived(buttonClasses[buttonType]);
 </script>
 
-{#if buttonType === "default"}
-  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
-    {textContent}
-  </button>
-{:else if buttonType === "secondary"}
-  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
-    {textContent}
-  </button>
-{:else if buttonType === "warning"}
-  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
-    {textContent}
-  </button>
-{:else if buttonType === "darkBackground"}
-  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
+{#if ["default", "secondary", "warning", "darkBackground"].includes(buttonType)}
+  <button
+    type={typeAttribute}
+    class={buttonClass}
+    onclick={onClickFunction}
+    onkeydown={onKeydownFunction}
+  >
     {textContent}
   </button>
 {:else if buttonType === "disabled"}
   <button
     type={typeAttribute}
-    disabled
-    aria-disabled="true"
     class={buttonClass}
     onclick={onClickFunction}
+    onkeydown={onKeydownFunction}
+    disabled
+    aria-disabled="true"
   >
     {textContent}
   </button>
@@ -54,40 +51,18 @@
     type={typeAttribute}
     class={buttonClass}
     onclick={onClickFunction}
+    onkeydown={onKeydownFunction}
     aria-label="More information"
   >
     <Icon kind="info" />
   </button>
-{:else if buttonType === "start"}
-  <a
-    href={"#"}
-    role="button"
-    draggable="false"
+{:else if buttonType === "tableHeader"}
+  <button
+    type={typeAttribute}
     class={buttonClass}
     onclick={onClickFunction}
-    onkeydown={(e) => {
-      // pressing space on <a> buttons does not trigger the on click function so adding here
-      if (e.code === "Space") {
-        e.preventDefault(); // prevent page scroll
-        onClickFunction();
-      }
-    }}
+    onkeydown={onKeydownFunction}
   >
-    {textContent}
-    <svg
-      class="govuk-button__start-icon"
-      xmlns="http://www.w3.org/2000/svg"
-      width="17.5"
-      height="19"
-      viewBox="0 0 33 40"
-      aria-hidden="true"
-      focusable="false"
-    >
-      <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
-    </svg>
-  </a>
-{:else if buttonType === "tableHeader"}
-  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
     {textContent}
     <svg
       width="22"
@@ -111,6 +86,28 @@
       ></path>
     </svg>
   </button>
+{:else if buttonType === "start"}
+  <a
+    href={"#"}
+    role="button"
+    draggable="false"
+    class={buttonClass}
+    onclick={onClickFunction}
+    onkeydown={onKeydownFunction}
+  >
+    {textContent}
+    <svg
+      class="govuk-button__start-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="17.5"
+      height="19"
+      viewBox="0 0 33 40"
+      aria-hidden="true"
+      focusable="false"
+    >
+      <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
+    </svg>
+  </a>
 {/if}
 
 <style>

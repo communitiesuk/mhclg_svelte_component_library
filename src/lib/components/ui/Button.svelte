@@ -33,6 +33,10 @@
   <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
     {textContent}
   </button>
+{:else if buttonType === "darkBackground"}
+  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
+    {textContent}
+  </button>
 {:else if buttonType === "disabled"}
   <button
     type={typeAttribute}
@@ -44,7 +48,12 @@
     {textContent}
   </button>
 {:else if buttonType === "moreInfo"}
-  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
+  <button
+    type={typeAttribute}
+    class={buttonClass}
+    onclick={onClickFunction}
+    aria-label="More information"
+  >
     <Icon kind="info" />
   </button>
 {:else if buttonType === "start"}

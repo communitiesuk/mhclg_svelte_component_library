@@ -217,7 +217,9 @@
         options: ["button", "submit", "reset"],
         description: {
           markdown: true,
-          arr: [`This is the type of <code>${pageName}</code> you want.`],
+          arr: [
+            `This sets the 'type' attribute for the <button> element. It must have a value of 'button', 'submit' or 'reset'.`,
+          ],
         },
         rows: 5,
       },

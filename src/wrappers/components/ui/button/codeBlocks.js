@@ -1,4 +1,7 @@
 export const codeBlock1 = `
+<Button textContent="Click me" buttonType="default"></Button>`;
+
+export const codeBlock2 = `
 <script>
 
     let name = "";
@@ -21,3 +24,17 @@ export const codeBlock1 = `
     {#if confirmed}
       <p style="color: green;">Form submitted successfully!</p>
     {/if}`;
+
+export const codeBlock3 = `
+<Button textContent="Start" buttonType="start"></Button>`;
+
+export const codeBlock4 = `
+<Button buttonType="moreInfo"></Button>`;
+
+export const codeBlock5 = `
+<Button
+buttonType="default"
+onClickFunction={function () {
+  console.log("Button clicked");
+}}
+></Button>`;

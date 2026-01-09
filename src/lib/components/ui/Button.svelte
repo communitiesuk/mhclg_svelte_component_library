@@ -2,9 +2,11 @@
   import Icon from "./../../assets/icons/MaterialIcon.svelte";
 
   let {
-    textContent = undefined,
+    textContent = "Click me",
     buttonType = "default",
-    onClickFunction = undefined,
+    onClickFunction = function () {
+      window.alert(`The button function has been triggered.`);
+    },
     typeAttribute = "button",
   } = $props();
 

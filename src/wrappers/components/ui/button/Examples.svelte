@@ -9,8 +9,28 @@
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - button for a form",
+      heading: "1. Example 1 - default button",
       content: Example1,
+    },
+    {
+      id: "2",
+      heading: "2. Example 2 - button for a form",
+      content: Example2,
+    },
+    {
+      id: "3",
+      heading: "3. Example 3 - start button",
+      content: Example3,
+    },
+    {
+      id: "4",
+      heading: "4. Example 4 - more info icon button",
+      content: Example4,
+    },
+    {
+      id: "5",
+      heading: "5. Example 5 - specify the on click function",
+      content: Example5,
     },
   ];
 
@@ -21,8 +41,6 @@
     event.preventDefault();
     confirmed = true;
   }
-
-  $inspect(confirmed);
 </script>
 
 <div class="my-20 p-2">
@@ -47,6 +65,17 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
+    <Button textContent="Click me" buttonType="default"></Button>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example2()}
+  <div class="p-5 bg-white">
+    <p>
+      Use the typeAttribute prop to set the button's type attribute. If the
+      button is being used to submit a form set the type to 'submit';
+    </p>
     <form onsubmit={handleSubmit}>
       <label
         >Enter your name:
@@ -58,5 +87,44 @@
       <p style="color: green;">Form submitted successfully!</p>
     {/if}
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example3()}
+  <div class="p-5 bg-white">
+    <p>
+      Use a start button for the main call to action on your service’s Start
+      page. Start buttons do not usually submit form data so a link tag is used
+      instead of a button tag.
+    </p>
+    <Button textContent="Start" buttonType="start"></Button>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example4()}
+  <div class="p-5 bg-white">
+    <p>
+      Use the more info icon button to give users access to information that you
+      want hidden by default.
+    </p>
+    <Button buttonType="moreInfo"></Button>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example5()}
+  <div class="p-5 bg-white">
+    <p>
+      Use the more info icon button to give users access to information that you
+      want hidden by default.
+    </p>
+    <Button
+      buttonType="default"
+      onClickFunction={function () {
+        console.log("Button clicked");
+      }}
+    ></Button>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>
 {/snippet}

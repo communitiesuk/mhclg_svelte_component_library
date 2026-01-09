@@ -14,6 +14,7 @@
     warning: "govuk-button govuk-button--warning",
     darkBackground: "govuk-button govuk-button--inverse",
     moreInfo: "more-info-button",
+    start: "govuk-button govuk-button--start",
     tableHeader: "text-header",
   };
 
@@ -21,45 +22,29 @@
 </script>
 
 {#if buttonType === "default"}
-  <button
-    type={typeAttribute}
-    class={buttonClass}
-    data-module="govuk-button"
-    onclick={onClickFunction}
-  >
+  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
     {textContent}
   </button>
 {:else if buttonType === "secondary"}
-  <button
-    type="button"
-    class={buttonClass}
-    data-module="govuk-button"
-    onclick={onClickFunction}
-  >
+  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
+    {textContent}
+  </button>
+{:else if buttonType === "warning"}
+  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
     {textContent}
   </button>
 {:else if buttonType === "disabled"}
   <button
-    type="submit"
+    type={typeAttribute}
     disabled
     aria-disabled="true"
-    class="govuk-button"
-    data-module="govuk-button"
-    onclick={onClickFunction}
-  >
-    {textContent}
-  </button>
-{:else if buttonType === "warning"}
-  <button
-    type="button"
     class={buttonClass}
-    data-module="govuk-button"
     onclick={onClickFunction}
   >
     {textContent}
   </button>
 {:else if buttonType === "moreInfo"}
-  <button type="button" class={buttonClass} onclick={onClickFunction}>
+  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
     <Icon kind="info" />
   </button>
 {:else if buttonType === "start"}
@@ -67,8 +52,7 @@
     href={"#"}
     role="button"
     draggable="false"
-    class="govuk-button govuk-button--start"
-    data-module="govuk-button"
+    class={buttonClass}
     onclick={onClickFunction}
   >
     {textContent}
@@ -85,7 +69,7 @@
     </svg>
   </a>
 {:else if buttonType === "tableHeader"}
-  <button type="button" class={buttonClass} onclick={onClickFunction}>
+  <button type={typeAttribute} class={buttonClass} onclick={onClickFunction}>
     {textContent}
     <svg
       width="22"

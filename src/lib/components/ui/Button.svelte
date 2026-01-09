@@ -63,6 +63,13 @@
     draggable="false"
     class={buttonClass}
     onclick={onClickFunction}
+    onkeydown={(e) => {
+      // pressing space on <a> buttons does not trigger the on click function so adding here
+      if (e.code === "Space") {
+        e.preventDefault(); // prevent page scroll
+        onClickFunction();
+      }
+    }}
   >
     {textContent}
     <svg

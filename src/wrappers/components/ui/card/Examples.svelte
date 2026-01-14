@@ -71,7 +71,7 @@
       true by default.
     </p>
     <Card
-      headingIsLink={true}
+      headerIsLink={true}
       linkText="Card heading"
       bodyText="Text in the body of the card"
     ></Card>
@@ -82,7 +82,7 @@
 {#snippet Example2()}
   <div class="p-5 bg-white">
     <Card
-      headingIsLink={true}
+      headerIsLink={true}
       linkText="Adult social care quality"
       onlyTextInBody={false}
     >
@@ -103,16 +103,16 @@
 {#snippet Example3()}
   <div class="p-5 bg-white">
     <Card
-      headingIsLink={false}
+      headerIsLink={false}
       onlyTextInBody={true}
       bodyText="The interaction in the card header is a search component instead of a link."
-      {cardTopSnippet}
+      {headerSnippet}
     ></Card>
   </div>
   <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
 {/snippet}
 
-{#snippet cardTopSnippet()}
+{#snippet headerSnippet()}
   <PostcodeOrAreaSearch
     hint=""
     label_text="Search for a postcode"
@@ -132,7 +132,7 @@
 {#snippet Example4()}
   <div class="p-5 bg-white">
     <Card
-      headingIsLink={true}
+      headerIsLink={true}
       linkText="Download local outcomes data"
       onlyTextInBody={false}
     >
@@ -149,7 +149,7 @@
   <div class="p-5 bg-white">
     {#each [1, 2, 3] as number}
       <Card
-        headingIsLink={true}
+        headerIsLink={true}
         linkText="Adult social care quality"
         onlyTextInBody={false}
         ><PositionChart value={number} min="0" max="10"></PositionChart>
@@ -157,7 +157,6 @@
       >
     {/each}
   </div>
-  <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>
 {/snippet}
 
 <!-- {#snippet Example6()}

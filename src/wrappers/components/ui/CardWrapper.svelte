@@ -163,24 +163,44 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "headingIsLink",
+        name: "headerIsLink",
         category: "Content",
         value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `This is a boolean prop which is set to true by default. If true you get the govuk styled header with a chevron svg on the right-hand side.`,
+          ],
+        },
       },
       {
         name: "linkText",
         category: "Content",
         value: `Download data`,
+        description: {
+          markdown: true,
+          arr: [`This is the header text. headerIsLink must be true.`],
+        },
       },
       {
         name: "onlyTextInBody",
         category: "Content",
         value: true,
+        description: {
+          markdown: true,
+          arr: [
+            `Set to true when there is plain text in the bottom section of the card. It is true by default.`,
+          ],
+        },
       },
       {
         name: "bodyText",
         category: "Content",
         value: `This is the text that gives more information about the call to action in the card heading.`,
+        description: {
+          markdown: true,
+          arr: [`This is the body text. onlyTextInBody must be true.`],
+        },
       },
       {
         name: "linkTextColor",
@@ -191,31 +211,59 @@
         name: "bodyTextColor",
         category: "Colours",
         value: `#0B0C0C`,
+        description: {
+          markdown: true,
+          arr: [
+            `The color of the text in the body. onlyTextInBody must be true. Text color must be specified in snippets or children if you are passing them.`,
+          ],
+        },
       },
       {
-        name: "callToActionBackgroundColor",
+        name: "headerBackgroundColor",
         category: "Colours",
         value: `white`,
+        description: {
+          markdown: true,
+          arr: [`The background color of the header section of the card.`],
+        },
       },
       {
         name: "bodyBackgroundColor",
         category: "Colours",
         value: `#FBFCFD`,
+        description: {
+          markdown: true,
+          arr: [`The background color of the body section of the card.`],
+        },
       },
       {
         name: "bodyTopBorderColor",
         category: "Colours",
         value: `#F4F8FB`,
+        description: {
+          markdown: true,
+          arr: [`The color of the top border of the body section of the card.`],
+        },
       },
       {
         name: "bodyBottomBorderColor",
         category: "Colours",
         value: `#c3d9e9`,
+        description: {
+          markdown: true,
+          arr: [
+            `The color of the bottom border of the body section of the card.`,
+          ],
+        },
       },
       {
         name: "href",
         category: "href",
         value: `/download-all`,
+        description: {
+          markdown: true,
+          arr: [`Hyperlink URL. headerIsLink must be true.`],
+        },
       },
     ]),
   );

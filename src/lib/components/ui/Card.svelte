@@ -1,10 +1,10 @@
 <script>
   let {
     headerIsLink = true,
-    headerText = undefined,
+    headerText = "Card heading",
     href = undefined,
     onlyTextInBody = true,
-    bodyText = undefined,
+    bodyText = "Text in the body of the card",
     headerSnippet = undefined,
     bodySnippet = undefined,
     children = undefined,
@@ -25,11 +25,7 @@
   >
     {#if headerIsLink}
       <h2 class="link-heading govuk-heading-m">
-        <a
-          class="govuk-link link"
-          {href}
-          style="--link-text-color: {headerTextColor}"
-        >
+        <a class="govuk-link link" {href} style="color: {headerTextColor}">
           {headerText}
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -85,10 +81,6 @@
     align-items: center;
     justify-content: space-between;
     width: 100%;
-  }
-
-  .link-heading {
-    color: var(--link-text-color);
   }
 
   .body-div {

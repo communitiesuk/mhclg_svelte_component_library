@@ -94,3 +94,27 @@ export const codeBlock5 = `
 ></PositionChart>
 <p class="pt-4 pl-3">East Sussex: around average.</p>
 </Card>`;
+
+export const codeBlock6 = `
+<script>
+  import Card from "$lib/components/ui/Card.svelte";
+  import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
+</script>
+
+<Card
+  headerIsLink={false}
+  headerText="Adult social care quality"
+  onlyTextInBody={false}
+  headerSnippet={headerSnippet2}
+  ><p>Some text with a <a href="">link</a></p>
+</Card>
+
+{#snippet headerSnippet2()}
+  <PostcodeOrAreaSearch
+    label_text="Search for a postcode"
+    placeholder="e.g. NG8 5GT"
+    margin_bottom="2"
+    customPlacesData={[]}
+    customSourceSelector={() => "api"}
+  ></PostcodeOrAreaSearch>
+{/snippet}`;

@@ -45,11 +45,11 @@
         "6. Example 6 - a card with non-standard content in the header and body",
       content: Example6,
     },
-    // {
-    //   id: "7",
-    //   heading: "7. Example 7 - multiple cards in a grid with dynamic props",
-    //   content: Example7,
-    // }
+    {
+      id: "7",
+      heading: "7. Example 7 - multiple cards in a grid with dynamic props",
+      content: Example7,
+    },
   ];
 </script>
 
@@ -196,28 +196,38 @@
 {#snippet Example6()}
   <div class="p-5 bg-white">
     <p>
-      If you something more complex in the body you can pass a snippet or child
-      component.
+      If you want something more complex in the header and the body you can pass
+      a snippet and a child component respectively or you can pass a snippet to
+      each. The reason the child option is only available to the body is because
+      with two '@render children' in the component it renders all children in
+      both places it is called (there might be a way around this).
     </p>
     <p class="pb-6">
-      In this example a chart is passed in as a child component.
+      In this example the postcode search component is passed into the header
+      with a snippet and some text with a link is passed into body via children.
     </p>
     <Card
       headerIsLink={false}
       headerText="Adult social care quality"
       onlyTextInBody={false}
       headerSnippet={headerSnippet2}
-      ><InsetText></InsetText>
+      ><p>Some text with a <a href="">link</a></p>
     </Card>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock6} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet headerSnippet2()}
-  <Button buttonType="default" textContent="Click me"></Button>
+  <PostcodeOrAreaSearch
+    label_text="Search for a postcode"
+    placeholder="e.g. NG8 5GT"
+    margin_bottom="2"
+    customPlacesData={[]}
+    customSourceSelector={() => "api"}
+  ></PostcodeOrAreaSearch>
 {/snippet}
 
-<!-- {#snippet Example5()}
+{#snippet Example7()}
   <div class="p-5 bg-white">
     {#each [1, 2, 3] as number}
       <Card
@@ -225,8 +235,7 @@
         headerText="Adult social care quality"
         onlyTextInBody={false}
         ><PositionChart value={number} min="0" max="10"></PositionChart>
-        <p>some text</p></Card
-      >
+      </Card>
     {/each}
   </div>
-{/snippet} -->
+{/snippet}

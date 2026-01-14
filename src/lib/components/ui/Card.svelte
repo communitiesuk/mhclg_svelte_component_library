@@ -1,15 +1,15 @@
 <script>
   let {
-    headingIsLink = true,
+    headerIsLink = true,
     onlyTextInBody = true,
     linkText = undefined,
     bodyText = undefined,
-    cardTopSnippet = undefined,
-    cardBottomSnippet = undefined,
+    headerSnippet = undefined,
+    bodySnippet = undefined,
     children = undefined,
     linkTextColor = "#1D70B8",
     bodyTextColor = "#0B0C0C",
-    callToActionBackgroundColor = "white",
+    headerBackgroundColor = "white",
     bodyBackgroundColor = "#FBFCFD",
     bodyTopBorderColor = "#F4F8FB",
     bodyBottomBorderColor = "#c3d9e9",
@@ -21,9 +21,9 @@
 <div class="card">
   <div
     class="call-to-action"
-    style="background-color: {callToActionBackgroundColor};"
+    style="background-color: {headerBackgroundColor};"
   >
-    {#if headingIsLink}
+    {#if headerIsLink}
       <h2 class="link-heading govuk-heading-m">
         <a
           class="govuk-link link"
@@ -47,7 +47,7 @@
         </a>
       </h2>
     {:else}
-      {@render cardTopSnippet()}
+      {@render headerSnippet()}
     {/if}
   </div>
 
@@ -65,7 +65,7 @@
     {:else if children}
       {@render children?.()}
     {:else}
-      {@render cardBottomSnippet()}
+      {@render bodySnippet()}
     {/if}
   </div>
 </div>

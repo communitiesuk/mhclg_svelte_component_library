@@ -164,7 +164,7 @@
     addIndexAndInitalValue([
       {
         name: "headerIsLink",
-        category: "Content",
+        category: "Card header",
         value: true,
         description: {
           markdown: true,
@@ -174,8 +174,8 @@
         },
       },
       {
-        name: "linkText",
-        category: "Content",
+        name: "headerText",
+        category: "Card header",
         value: `Download data`,
         description: {
           markdown: true,
@@ -183,8 +183,17 @@
         },
       },
       {
+        name: "href",
+        category: "Card header",
+        value: `/download-all`,
+        description: {
+          markdown: true,
+          arr: [`Hyperlink URL. headerIsLink must be true.`],
+        },
+      },
+      {
         name: "onlyTextInBody",
-        category: "Content",
+        category: "Card body",
         value: true,
         description: {
           markdown: true,
@@ -195,7 +204,7 @@
       },
       {
         name: "bodyText",
-        category: "Content",
+        category: "Card body",
         value: `This is the text that gives more information about the call to action in the card heading.`,
         description: {
           markdown: true,
@@ -203,18 +212,13 @@
         },
       },
       {
-        name: "linkTextColor",
+        name: "headerTextColor",
         category: "Colours",
         value: `#1D70B8`,
-      },
-      {
-        name: "bodyTextColor",
-        category: "Colours",
-        value: `#0B0C0C`,
         description: {
           markdown: true,
           arr: [
-            `The color of the text in the body. onlyTextInBody must be true. Text color must be specified in snippets or children if you are passing them.`,
+            `The color of the text in the header. It depends on headerIsLink being true. [Currently not working]`,
           ],
         },
       },
@@ -225,6 +229,17 @@
         description: {
           markdown: true,
           arr: [`The background color of the header section of the card.`],
+        },
+      },
+      {
+        name: "bodyTextColor",
+        category: "Colours",
+        value: `#0B0C0C`,
+        description: {
+          markdown: true,
+          arr: [
+            `The color of the text in the body. onlyTextInBody must be true. Text color must be specified in snippets or children if you are passing them.`,
+          ],
         },
       },
       {
@@ -254,15 +269,6 @@
           arr: [
             `The color of the bottom border of the body section of the card.`,
           ],
-        },
-      },
-      {
-        name: "href",
-        category: "href",
-        value: `/download-all`,
-        description: {
-          markdown: true,
-          arr: [`Hyperlink URL. headerIsLink must be true.`],
         },
       },
     ]),

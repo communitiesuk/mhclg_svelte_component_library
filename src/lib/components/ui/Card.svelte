@@ -1,19 +1,19 @@
 <script>
   let {
     headerIsLink = true,
+    headerText = undefined,
+    href = undefined,
     onlyTextInBody = true,
-    linkText = undefined,
     bodyText = undefined,
     headerSnippet = undefined,
     bodySnippet = undefined,
     children = undefined,
-    linkTextColor = "#1D70B8",
+    headerTextColor = "#1D70B8",
     bodyTextColor = "#0B0C0C",
     headerBackgroundColor = "white",
     bodyBackgroundColor = "#FBFCFD",
     bodyTopBorderColor = "#F4F8FB",
     bodyBottomBorderColor = "#c3d9e9",
-    href = undefined,
     selectedValue = $bindable(),
   } = $props();
 </script>
@@ -28,9 +28,9 @@
         <a
           class="govuk-link link"
           {href}
-          style="--link-text-color: {linkTextColor}"
+          style="--link-text-color: {headerTextColor}"
         >
-          {linkText}
+          {headerText}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             width="10"
@@ -41,7 +41,7 @@
           >
             <path
               d="M6.21622 8.5L0 2.36667L1.89189 0.5L10 8.5L1.89189 16.5L0 14.6333L6.21622 8.5Z"
-              fill={linkTextColor}
+              fill={headerTextColor}
             ></path>
           </svg>
         </a>

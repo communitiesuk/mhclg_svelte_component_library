@@ -163,7 +163,7 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "linkCard",
+        name: "headingIsLink",
         category: "Content",
         value: true,
       },

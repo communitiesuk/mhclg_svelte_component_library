@@ -86,7 +86,7 @@
 </div>
 
 {#snippet Example1()}
-  <div class="p-5 bg-white">
+  <div class="p-5 bg-grey">
     <p>
       This is the default card. If you don't pass any snippets or childen into
       the component you get this.
@@ -105,7 +105,7 @@
 {/snippet}
 
 {#snippet Example2()}
-  <div class="p-5 bg-white">
+  <div class="p-5 bg-grey">
     <p class="pb-6">
       A card with different colors for the text, background and borders.
     </p>
@@ -122,7 +122,7 @@
 {/snippet}
 
 {#snippet Example3()}
-  <div class="p-5 bg-white">
+  <div class="p-5 bg-grey">
     <p class="pb-6">
       A card with a snippet passed to the header instead of the default link and
       chevron. In this example the snippet contains the postcode search
@@ -148,7 +148,7 @@
   ></PostcodeOrAreaSearch>{/snippet}
 
 {#snippet Example4()}
-  <div class="p-5 bg-white">
+  <div class="p-5 bg-grey">
     <p>
       If you want something more complex in the body you can pass a snippet or a
       child component.
@@ -179,7 +179,7 @@
 {/snippet}
 
 {#snippet Example5()}
-  <div class="p-5 bg-white">
+  <div class="p-5 bg-grey">
     <p>
       If you want something more complex in the body you can pass a snippet or a
       child component.
@@ -206,7 +206,7 @@
 {/snippet}
 
 {#snippet Example6()}
-  <div class="p-5 bg-white">
+  <div class="p-5 bg-grey">
     <p>
       If you want something more complex in the header and the body you can pass
       a snippet and a child component respectively or you can pass a snippet to
@@ -240,7 +240,7 @@
 {/snippet}
 
 {#snippet Example7()}
-  <div class="p-5 bg-white">
+  <div class="p-5 bg-grey">
     <p>
       Multiple cards with charts in a grid using an each block. A metric name
       and value is passed down through the card and into the chart.

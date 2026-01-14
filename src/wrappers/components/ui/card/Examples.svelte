@@ -248,7 +248,7 @@
     <p class="pb-6">
       The charts must be called as a child component rather than a snippet for
       this to work. If you're using a snippet you can achieve this with
-      ''...restProps'.
+      '...restProps'.
     </p>
     <div class="card-grid">
       {#each metrics as { metric, value }}

@@ -2,6 +2,7 @@
   let {
     headerIsLink = true,
     headerText = "Card heading",
+    headerSize = "m",
     href = undefined,
     onlyTextInBody = true,
     bodyText = "Text in the body of the card",
@@ -19,12 +20,9 @@
 </script>
 
 <div class="card">
-  <div
-    class="call-to-action"
-    style="background-color: {headerBackgroundColor};"
-  >
+  <div class="header-div" style="background-color: {headerBackgroundColor};">
     {#if headerIsLink}
-      <h2 class="link-heading govuk-heading-m">
+      <h2 class="link-heading govuk-heading-{headerSize}">
         <a class="govuk-link link" {href} style="color: {headerTextColor}">
           {headerText}
           <svg
@@ -72,7 +70,7 @@
     flex-direction: column;
   }
 
-  .call-to-action {
+  .header-div {
     padding: 15px 20px;
   }
 

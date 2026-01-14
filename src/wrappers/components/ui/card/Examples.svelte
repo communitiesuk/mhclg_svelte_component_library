@@ -51,6 +51,18 @@
       content: Example7,
     },
   ];
+
+  const metrics = [
+    { metric: "Adult social care", value: 3 },
+    { metric: "Best start in life", value: 8 },
+    { metric: "Transport and local infrastructure", value: 4 },
+    { metric: "Housing", value: 1 },
+    { metric: "Neighbourhoods", value: 1 },
+    { metric: "Homelessness and rough sleeping", value: 6 },
+    { metric: "Environment, waste and climate change", value: 1 },
+    { metric: "Every child achieving and thriving", value: 1 },
+    { metric: "Adult social care independence", value: 6 },
+  ];
 </script>
 
 <div>
@@ -229,13 +241,34 @@
 
 {#snippet Example7()}
   <div class="p-5 bg-white">
-    {#each [1, 2, 3] as number}
-      <Card
-        headerIsLink={true}
-        headerText="Adult social care quality"
-        onlyTextInBody={false}
-        ><PositionChart value={number} min="0" max="10"></PositionChart>
-      </Card>
-    {/each}
+    <p>
+      Multiple cards with charts in a grid using an each block. A metric name
+      and value is passed down through the card and into the chart.
+    </p>
+    <p class="pb-6">
+      The charts must be called as a child component rather than a snippet for
+      this to work. If you're using a snippet you can achieve this with
+      ''...restProps'.
+    </p>
+    <div class="card-grid">
+      {#each metrics as { metric, value }}
+        <Card
+          headerIsLink={true}
+          headerText={metric}
+          headerSize="s"
+          onlyTextInBody={false}
+          ><PositionChart {value} min="0" max="10" chartHeight="20"
+          ></PositionChart>
+        </Card>
+      {/each}
+    </div>
   </div>
 {/snippet}
+
+<style>
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+</style>

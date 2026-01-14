@@ -7,6 +7,8 @@
   import Card from "$lib/components/ui/Card.svelte";
   import PositionChart from "$lib/components/data-vis/position-chart/PositionChart.svelte";
   import PostcodeOrAreaSearch from "$lib/components/ui/PostcodeOrAreaSearch.svelte";
+  import InsetText from "$lib/components/content/InsetText.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
 
   let accordionSnippetSections = [
     {
@@ -37,12 +39,12 @@
         "5. Example 5 - a card with a chart in the body using the children method",
       content: Example5,
     },
-    // {
-    //   id: "6",
-    //   heading:
-    //     "6. Example 6 - a card with non-standard content in header and body",
-    //   content: Example6,
-    // },
+    {
+      id: "6",
+      heading:
+        "6. Example 6 - a card with non-standard content in the header and body",
+      content: Example6,
+    },
     // {
     //   id: "7",
     //   heading: "7. Example 7 - multiple cards in a grid with dynamic props",
@@ -136,8 +138,8 @@
 {#snippet Example4()}
   <div class="p-5 bg-white">
     <p>
-      If you something more complex in the body you can pass a snippet or child
-      component.
+      If you want something more complex in the body you can pass a snippet or a
+      child component.
     </p>
     <p class="pb-6">
       In this example a chart is passed in using the snippet method.
@@ -167,8 +169,8 @@
 {#snippet Example5()}
   <div class="p-5 bg-white">
     <p>
-      If you something more complex in the body you can pass a snippet or child
-      component.
+      If you want something more complex in the body you can pass a snippet or a
+      child component.
     </p>
     <p class="pb-6">
       In this example a chart is passed in as a child component.
@@ -189,6 +191,30 @@
     >
   </div>
   <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example6()}
+  <div class="p-5 bg-white">
+    <p>
+      If you something more complex in the body you can pass a snippet or child
+      component.
+    </p>
+    <p class="pb-6">
+      In this example a chart is passed in as a child component.
+    </p>
+    <Card
+      headerIsLink={false}
+      headerText="Adult social care quality"
+      onlyTextInBody={false}
+      headerSnippet={headerSnippet2}
+      ><InsetText></InsetText>
+    </Card>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet headerSnippet2()}
+  <Button buttonType="default" textContent="Click me"></Button>
 {/snippet}
 
 <!-- {#snippet Example5()}

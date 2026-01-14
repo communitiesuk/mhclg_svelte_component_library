@@ -11,35 +11,35 @@
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - a simple card with heading link, and body text",
+      heading:
+        "1. Example 1 - a simple card with a link in the header and plain text in the body",
       content: Example1,
     },
     {
       id: "2",
-      heading: "2. Example 2 - a card with a chart in the body",
+      heading: "2. Example 2 - a card with different colors",
       content: Example2,
     },
-    {
-      id: "3",
-      heading:
-        "3. Example 3 - a card with a search component instead of a heading link",
-      content: Example3,
-    },
-    {
-      id: "4",
-      heading: "4. Example 4 - a card with a link in the body",
-      content: Example4,
-    },
-    {
-      id: "5",
-      heading: "5. Example 5 - multiple cards",
-      content: Example5,
-    },
     // {
-    //   id: "6",
-    //   heading: "6. Example 6 - render children in top and bottom",
-    //   content: Example6,
+    //   id: "2",
+    //   heading: "2. Example 2 - a card with a chart in the body",
+    //   content: Example2,
     // },
+    // {
+    //   id: "3",
+    //   heading:
+    //     "3. Example 3 - a card with a search component instead of a heading link",
+    //   content: Example3,
+    // },
+    // {
+    //   id: "4",
+    //   heading: "4. Example 4 - a card with a link in the body",
+    //   content: Example4,
+    // },
+    // {
+    //   id: "5",
+    //   heading: "5. Example 5 - multiple cards",
+    //   content: Example5,
   ];
 </script>
 
@@ -67,12 +67,15 @@
   <div class="p-5 bg-white">
     <p>
       This is the default card. If you don't pass any snippets or childen into
-      the component you get this. headingIsLink and onlyTextInBody are set to
-      true by default.
+      the component you get this.
+    </p>
+    <p class="pb-6">
+      headerIsLink and onlyTextInBody are set to their default values of true.
     </p>
     <Card
       headerIsLink={true}
-      linkText="Card heading"
+      headerText="Card heading"
+      onlyTextInBody={true}
       bodyText="Text in the body of the card"
     ></Card>
   </div>
@@ -81,9 +84,26 @@
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
+    <p class="pb-6">
+      A card with different colors for the text, background and borders.
+    </p>
+    <Card
+      headerTextColor="black"
+      headerBackgroundColor="lightblue"
+      bodyTextColor="grey"
+      bodyBackgroundColor="lightgreen"
+      bodyBottomBorderColor="red"
+      bodyTopBorderColor="purple"
+    ></Card>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+<!-- {#snippet Example2()}
+  <div class="p-5 bg-white">
     <Card
       headerIsLink={true}
-      linkText="Adult social care quality"
+      headerText="Adult social care quality"
       onlyTextInBody={false}
     >
       <PositionChart
@@ -133,7 +153,7 @@
   <div class="p-5 bg-white">
     <Card
       headerIsLink={true}
-      linkText="Download local outcomes data"
+      headerText="Download local outcomes data"
       onlyTextInBody={false}
     >
       <p>
@@ -150,14 +170,14 @@
     {#each [1, 2, 3] as number}
       <Card
         headerIsLink={true}
-        linkText="Adult social care quality"
+        headerText="Adult social care quality"
         onlyTextInBody={false}
         ><PositionChart value={number} min="0" max="10"></PositionChart>
         <p>some text</p></Card
       >
     {/each}
   </div>
-{/snippet}
+{/snippet} -->
 
 <!-- {#snippet Example6()}
   <div class="p-5 bg-white">

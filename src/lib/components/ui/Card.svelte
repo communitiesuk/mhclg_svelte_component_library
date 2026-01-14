@@ -1,11 +1,12 @@
 <script>
   let {
-    linkCard = true,
+    headingIsLink = true,
     onlyTextInBody = true,
     linkText = undefined,
     bodyText = undefined,
     cardTopSnippet = undefined,
     cardBottomSnippet = undefined,
+    children = undefined,
     linkTextColor = "#1D70B8",
     bodyTextColor = "#0B0C0C",
     callToActionBackgroundColor = "white",
@@ -22,7 +23,7 @@
     class="call-to-action"
     style="background-color: {callToActionBackgroundColor};"
   >
-    {#if linkCard}
+    {#if headingIsLink}
       <h2 class="link-heading govuk-heading-m">
         <a
           class="govuk-link link"
@@ -61,6 +62,8 @@
       >
         {bodyText}
       </p>
+    {:else if children}
+      {@render children?.()}
     {:else}
       {@render cardBottomSnippet()}
     {/if}

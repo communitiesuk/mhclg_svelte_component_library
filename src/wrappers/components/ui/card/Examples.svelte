@@ -20,26 +20,34 @@
       heading: "2. Example 2 - a card with different colors",
       content: Example2,
     },
+    {
+      id: "3",
+      heading: "3. Example 3 - a card with a search component in the header",
+      content: Example3,
+    },
+    {
+      id: "4",
+      heading:
+        "4. Example 4 - a card with a chart in the body using the snippet method",
+      content: Example4,
+    },
+    {
+      id: "5",
+      heading:
+        "5. Example 5 - a card with a chart in the body using the children method",
+      content: Example5,
+    },
     // {
-    //   id: "2",
-    //   heading: "2. Example 2 - a card with a chart in the body",
-    //   content: Example2,
-    // },
-    // {
-    //   id: "3",
+    //   id: "6",
     //   heading:
-    //     "3. Example 3 - a card with a search component instead of a heading link",
-    //   content: Example3,
+    //     "6. Example 6 - a card with non-standard content in header and body",
+    //   content: Example6,
     // },
     // {
-    //   id: "4",
-    //   heading: "4. Example 4 - a card with a link in the body",
-    //   content: Example4,
-    // },
-    // {
-    //   id: "5",
-    //   heading: "5. Example 5 - multiple cards",
-    //   content: Example5,
+    //   id: "7",
+    //   heading: "7. Example 7 - multiple cards in a grid with dynamic props",
+    //   content: Example7,
+    // }
   ];
 </script>
 
@@ -96,17 +104,80 @@
       bodyTopBorderColor="purple"
     ></Card>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
 {/snippet}
 
-<!-- {#snippet Example2()}
+{#snippet Example3()}
   <div class="p-5 bg-white">
+    <p class="pb-6">
+      A card with a snippet passed to the header instead of the default link and
+      chevron. In this example the snippet contains the postcode search
+      component.
+    </p>
+    <Card
+      headerIsLink={false}
+      onlyTextInBody={true}
+      bodyText="Enter your postcode to find out about deprivation in your local area."
+      {headerSnippet}
+    ></Card>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet headerSnippet()}
+  <PostcodeOrAreaSearch
+    label_text="Search for a postcode"
+    placeholder="e.g. NG8 5GT"
+    margin_bottom="2"
+    customPlacesData={[]}
+    customSourceSelector={() => "api"}
+  ></PostcodeOrAreaSearch>{/snippet}
+
+{#snippet Example4()}
+  <div class="p-5 bg-white">
+    <p>
+      If you something more complex in the body you can pass a snippet or child
+      component.
+    </p>
+    <p class="pb-6">
+      In this example a chart is passed in using the snippet method.
+    </p>
     <Card
       headerIsLink={true}
       headerText="Adult social care quality"
       onlyTextInBody={false}
-    >
-      <PositionChart
+      {bodySnippet}
+    ></Card>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet bodySnippet()}
+  <PositionChart
+    value="4.5"
+    min="0"
+    max="10"
+    annotation="East Sussex"
+    showAxis={false}
+    chartHeight={30}
+  ></PositionChart>
+  <p class="pt-4 pl-3">East Sussex: around average.</p>
+{/snippet}
+
+{#snippet Example5()}
+  <div class="p-5 bg-white">
+    <p>
+      If you something more complex in the body you can pass a snippet or child
+      component.
+    </p>
+    <p class="pb-6">
+      In this example a chart is passed in as a child component.
+    </p>
+    <Card
+      headerIsLink={true}
+      headerText="Adult social care quality"
+      onlyTextInBody={false}
+      ><PositionChart
         value="4.5"
         min="0"
         max="10"
@@ -117,55 +188,10 @@
       <p class="pt-4 pl-3">East Sussex: around average.</p></Card
     >
   </div>
-  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
+  <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>
 {/snippet}
 
-{#snippet Example3()}
-  <div class="p-5 bg-white">
-    <Card
-      headerIsLink={false}
-      onlyTextInBody={true}
-      bodyText="The interaction in the card header is a search component instead of a link."
-      {headerSnippet}
-    ></Card>
-  </div>
-  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
-{/snippet}
-
-{#snippet headerSnippet()}
-  <PostcodeOrAreaSearch
-    hint=""
-    label_text="Search for a postcode"
-    label_size="m"
-    placeholder="e.g. NG8 5GT"
-    margin_bottom="2"
-    autoFocusSubmitOnSelection={true}
-    hideHint={false}
-    autoselect={false}
-    customPlacesData={[]}
-    customSourceSelector={() => "api"}
-    minLength={3}
-    label_id="postcode-search"
-    wrap_label_in_a_heading={true}
-  ></PostcodeOrAreaSearch>{/snippet}
-
-{#snippet Example4()}
-  <div class="p-5 bg-white">
-    <Card
-      headerIsLink={true}
-      headerText="Download local outcomes data"
-      onlyTextInBody={false}
-    >
-      <p>
-        Download the complete, latest Local Government Outcomes Framework data.
-        Alternatively <a href="">search for an area</a> and download what you need
-      </p></Card
-    >
-  </div>
-  <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
-{/snippet}
-
-{#snippet Example5()}
+<!-- {#snippet Example5()}
   <div class="p-5 bg-white">
     {#each [1, 2, 3] as number}
       <Card
@@ -177,17 +203,4 @@
       >
     {/each}
   </div>
-{/snippet} -->
-
-<!-- {#snippet Example6()}
-  <div class="p-5 bg-white">
-    <Card
-      linkCard={false}
-      linkText="Adult social care quality"
-      onlyTextInBody={false}
-      ><PositionChart value="4.5" min="0" max="10"></PositionChart>
-      <PostcodeOrAreaSearch></PostcodeOrAreaSearch></Card
-    >
-  </div>
-  <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>
 {/snippet} -->

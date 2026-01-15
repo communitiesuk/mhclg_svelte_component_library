@@ -3,10 +3,10 @@
 
   let {
     headerIsLink = true,
-    text = "Card header",
-    fontSize = "1.5rem",
-    textColor = "#1D70B8",
-    backgroundColor = "white",
+    headerText = "Card header",
+    headerTextSize = "1.5rem",
+    headerTextColor = "#1D70B8",
+    headerBackgroundColor = "white",
     href = undefined,
     onlyTextInBody = true,
     bodyText = "Text in the body of the card",
@@ -14,7 +14,6 @@
     bodySnippet = undefined,
     children = undefined,
     bodyTextColor = "#0B0C0C",
-    headerBackgroundColor = "white",
     bodyBackgroundColor = "#FBFCFD",
     bodyTopBorderColor = "#F4F8FB",
     bodyBottomBorderColor = "#c3d9e9",
@@ -25,10 +24,15 @@
 <div class="card">
   <div class="header-div" style="background-color: {headerBackgroundColor};">
     {#if headerIsLink}
-      <CardHeader {text} {fontSize} {textColor} {backgroundColor} {href}
+      <CardHeader
+        text={headerText}
+        textSize={headerTextSize}
+        textColor={headerTextColor}
+        backgroundColor={headerBackgroundColor}
+        {href}
       ></CardHeader>
     {:else}
-      {@render headerSnippet()}
+      {@render headerSnippet?.()}
     {/if}
   </div>
 
@@ -46,7 +50,7 @@
     {:else if children}
       {@render children?.()}
     {:else}
-      {@render bodySnippet()}
+      {@render bodySnippet?.()}
     {/if}
   </div>
 </div>

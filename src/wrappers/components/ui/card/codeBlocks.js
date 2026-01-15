@@ -118,3 +118,28 @@ export const codeBlock6 = `
     customSourceSelector={() => "api"}
   ></PostcodeOrAreaSearch>
 {/snippet}`;
+
+export const codeBlock7 = `
+<script>
+  import Card from "$lib/components/ui/Card.svelte";
+  import PositionChart from "$lib/components/data-vis/position-chart/PositionChart.svelte";
+</script>
+
+{#each metrics as { metric, value }}
+  <Card
+    headerIsLink={true}
+    headerText={metric}
+    onlyTextInBody={false}
+    headerTextSize="1.25rem"
+    ><PositionChart {value} min="0" max="10" chartHeight="20"
+    ></PositionChart>
+  </Card>
+{/each}
+
+<style>
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+</style>`;

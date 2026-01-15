@@ -1,7 +1,7 @@
 <script>
   let {
     text = "Card header",
-    fontSize = "1.5rem",
+    textSize = "1.5rem",
     textColor = "#1D70B8",
     backgroundColor = "white",
     href = undefined,
@@ -11,7 +11,7 @@
 <a
   class="link govuk-heading-m"
   {href}
-  style="font-size: {fontSize}; color: {textColor}; background-color: {backgroundColor}"
+  style="font-size: {textSize}; color: {textColor}; background-color: {backgroundColor}"
 >
   {text}
   <svg

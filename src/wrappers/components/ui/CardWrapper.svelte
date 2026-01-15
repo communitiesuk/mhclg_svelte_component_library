@@ -184,6 +184,17 @@
         },
       },
       {
+        name: "headerTextSize",
+        category: "Card header",
+        value: `1.5rem`,
+        description: {
+          markdown: true,
+          arr: [
+            `This is the header font size. Set to 1.5 * the root by default.`,
+          ],
+        },
+      },
+      {
         name: "href",
         category: "Card header",
         value: `/download-all`,

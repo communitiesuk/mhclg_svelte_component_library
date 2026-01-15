@@ -3,6 +3,11 @@
 
   let {
     headerIsLink = true,
+    text = "Card header",
+    fontSize = "1.5rem",
+    textColor = "#1D70B8",
+    backgroundColor = "white",
+    href = undefined,
     onlyTextInBody = true,
     bodyText = "Text in the body of the card",
     headerSnippet = undefined,
@@ -20,7 +25,8 @@
 <div class="card">
   <div class="header-div" style="background-color: {headerBackgroundColor};">
     {#if headerIsLink}
-      <CardHeader></CardHeader>
+      <CardHeader {text} {fontSize} {textColor} {backgroundColor} {href}
+      ></CardHeader>
     {:else}
       {@render headerSnippet()}
     {/if}
@@ -59,7 +65,7 @@
     background-color: var(--body-bg-color);
     border-bottom: 1px solid var(--body-bottom-border-color);
     border-top: 1px solid var(--body-top-border-color);
-    padding: 10px 20px 15px 20px;
+    padding: 15px 20px;
     flex: 1;
   }
 

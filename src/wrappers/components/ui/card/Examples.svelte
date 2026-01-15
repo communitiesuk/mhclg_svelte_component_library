@@ -254,9 +254,9 @@
       {#each metrics as { metric, value }}
         <Card
           headerIsLink={true}
-          headerText={metric}
-          headerSize="s"
+          text={metric}
           onlyTextInBody={false}
+          fontSize="1.25rem"
           ><PositionChart {value} min="0" max="10" chartHeight="20"
           ></PositionChart>
         </Card>

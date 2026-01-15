@@ -245,18 +245,26 @@
       Multiple cards with charts in a grid using an each block. A metric name
       and value is passed down through the card and into the chart.
     </p>
-    <p class="pb-6">
+    <p>
       The charts must be called as a child component rather than a snippet for
       this to work. If you're using a snippet you can achieve this with
       '...restProps'.
     </p>
+    <p>
+      In this example the headers and the charts are not aligned across the same
+      row and I haven't come up with a satisfactory solution. Making each card a
+      grid container and setting the row heights to fixed fractions of the card
+      height (see below) does solve the problem, but it means adding lots of
+      complexity to the component for only one use case.
+    </p>
+    <p class="pb-6">display: grid; grid-template-rows: 50% 50%;</p>
     <div class="card-grid">
       {#each metrics as { metric, value }}
         <Card
           headerIsLink={true}
-          text={metric}
+          headerText={metric}
           onlyTextInBody={false}
-          fontSize="1.25rem"
+          headerTextSize="1.25rem"
           ><PositionChart {value} min="0" max="10" chartHeight="20"
           ></PositionChart>
         </Card>

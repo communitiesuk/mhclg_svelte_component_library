@@ -56,6 +56,7 @@
     "They can be used on the home page to indicate the main functions of the service or options to the user. In this case they should be styled to make them prominent.",
     "They can be used as links to supplementary content or information too.",
     "They can be used in a grid layout as an alternative to a more simple list of items. The benefit of cards is that they can include content like graphics or charts which make them more engaging than a list of plain text links.",
+    "The dashed border around the card is only there to help you see the card on this wrapper page.",
   ];
 
   let detailsArray = [
@@ -412,7 +413,9 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <Card {...parametersObject}></Card>
+    <div style="border: 1px dashed grey;">
+      <Card {...parametersObject}></Card>
+    </div>
   </div>
 {/snippet}
 

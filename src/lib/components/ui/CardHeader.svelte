@@ -4,12 +4,13 @@
     fontSize = "1.5rem",
     textColor = "#1D70B8",
     backgroundColor = "white",
+    href = undefined,
   } = $props();
 </script>
 
 <a
-  class="govuk-heading-m link"
-  href="/"
+  class="link govuk-heading-m"
+  {href}
   style="font-size: {fontSize}; color: {textColor}; background-color: {backgroundColor}"
 >
   {text}
@@ -28,6 +29,10 @@
 </a>
 
 <style>
+  * {
+    margin: 0; /* this removes the margin applied by govuk-heading-m */
+  }
+
   .link {
     display: flex;
     justify-content: space-between;

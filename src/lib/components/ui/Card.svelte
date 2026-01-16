@@ -18,11 +18,17 @@
     bodyTopBorderColor = "#F4F8FB",
     bodyBottomBorderColor = "#c3d9e9",
     selectedValue = $bindable(),
+    display = "flex",
+    gridPosition = undefined,
   } = $props();
 </script>
 
-<div class="card">
-  <div class="header-div" style="background-color: {headerBackgroundColor};">
+<div class="card" style="display: {display}">
+  <div
+    class="header-div"
+    style="background-color: {headerBackgroundColor}; grid-row: {gridPosition?.[0]
+      ?.row ?? null}; grid-column: {gridPosition?.[0]?.col ?? null};"
+  >
     {#if headerIsLink}
       <CardHeader
         text={headerText}
@@ -38,7 +44,8 @@
 
   <div
     class="body-div"
-    style="--body-bg-color: {bodyBackgroundColor}; --body-bottom-border-color: {bodyBottomBorderColor}; --body-top-border-color: {bodyTopBorderColor};"
+    style="--body-bg-color: {bodyBackgroundColor}; --body-bottom-border-color: {bodyBottomBorderColor}; --body-top-border-color: {bodyTopBorderColor}; grid-row: {gridPosition?.[1]
+      ?.row ?? null}; grid-column: {gridPosition?.[1]?.col ?? null};"
   >
     {#if onlyTextInBody}
       <p
@@ -57,7 +64,6 @@
 
 <style>
   .card {
-    display: flex;
     flex-direction: column;
   }
 

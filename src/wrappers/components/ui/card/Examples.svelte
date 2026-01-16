@@ -53,16 +53,53 @@
   ];
 
   const metrics = [
-    { metric: "Adult social care", value: 3 },
-    { metric: "Best start in life", value: 8 },
-    { metric: "Transport and local infrastructure", value: 4 },
-    { metric: "Housing", value: 1 },
-    { metric: "Neighbourhoods", value: 1 },
-    { metric: "Homelessness and rough sleeping", value: 6 },
-    { metric: "Environment, waste and climate change", value: 1 },
-    { metric: "Every child achieving and thriving", value: 1 },
-    { metric: "Adult social care independence", value: 6 },
+    { metric: "Adult social care", value: 3, words: "could improve" },
+    { metric: "Best start in life", value: 8, words: "doing well" },
+    {
+      metric: "Transport and local infrastructure",
+      value: 4,
+      words: "around average",
+    },
+    { metric: "Housing", value: 1, words: "could improve" },
+    { metric: "Neighbourhoods", value: 1, words: "could improve" },
+    {
+      metric: "Homelessness and rough sleeping",
+      value: 6,
+      words: "around average",
+    },
+    {
+      metric: "Environment, waste and climate change",
+      value: 1,
+      words: "could improve",
+    },
+    {
+      metric: "Every child achieving and thriving",
+      value: 1,
+      words: "could improve",
+    },
+    {
+      metric: "Adult social care independence",
+      value: 6,
+      words: "around average",
+    },
   ];
+
+  const columns = 2;
+
+  function position(cardIndex) {
+    const baseItemIndex = cardIndex * 2;
+
+    return [0, 1].map((offset) => {
+      const itemIndex = baseItemIndex + offset;
+
+      const pairIndex = Math.floor(itemIndex / 2);
+      const col = (pairIndex % columns) + 1;
+      const rowBlock = Math.floor(pairIndex / columns);
+      const row = rowBlock * 2 + (itemIndex % 2 === 0 ? 1 : 2);
+
+      return { row, col };
+    });
+  }
 </script>
 
 <div>
@@ -258,25 +295,25 @@
       complexity to the component for only one use case.
     </p>
     <p class="pb-6">display: grid; grid-template-rows: 50% 50%;</p>
-    <div class="card-grid">
-      {#each metrics as { metric, value }}
+    <div
+      class="card-grid"
+      style="display: grid; grid-template-columns: repeat({columns}, 1fr); gap: 0 1rem;"
+    >
+      {#each metrics as { metric, value, words }, i}
         <Card
           headerIsLink={true}
           headerText={metric}
           onlyTextInBody={false}
           headerTextSize="1.25rem"
+          gridPosition={position(i)}
+          display="contents"
           ><PositionChart {value} min="0" max="10" chartHeight="20"
           ></PositionChart>
+          <p class="pl-3" style="font-size: 1.1rem">
+            East Sussex: {words}
+          </p>
         </Card>
       {/each}
     </div>
   </div>
 {/snippet}
-
-<style>
-  .card-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-</style>

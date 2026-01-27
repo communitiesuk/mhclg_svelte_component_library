@@ -3,18 +3,18 @@
   import Ticks from "./Ticks.svelte";
 
   let {
-    chartHeight,
-    chartWidth,
-    numberOfTicks,
+    chartHeight = undefined,
+    chartWidth = undefined,
+    numberOfTicks = undefined,
     ticksArray = $bindable(),
-    axisFunction,
-    values,
+    axisFunction = undefined,
+    values = undefined,
     orientation,
-    prefix,
-    suffix,
-    floor,
-    ceiling,
-    yearsInput,
+    prefix = undefined,
+    suffix = undefined,
+    floor = undefined,
+    ceiling = undefined,
+    yearsInput = undefined,
   } = $props();
 </script>
 

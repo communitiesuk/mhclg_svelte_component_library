@@ -30,8 +30,19 @@
     },
     {
       id: "5",
-      heading: "5. Example 5 - stacked position chart",
+      heading:
+        "5. Example 5 - stacked position chart with annotation and tooltip",
       content: Example5,
+    },
+    {
+      id: "6",
+      heading: "6. Example 6 - single position chart with multiple values",
+      content: Example6,
+    },
+    {
+      id: "7",
+      heading: "7. Example 7 - barcode",
+      content: Example7,
     },
   ];
 
@@ -71,14 +82,25 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <PositionChart value={7} min={0} max={10} label="Education"></PositionChart>
+    <PositionChart
+      value={7}
+      min={0}
+      max={10}
+      label="Education"
+      annotation="hello"
+    ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}
 
 {#snippet Example2()}
   <div class="p-5 bg-white">
-    <PositionChart value={7} min={0} max={10}></PositionChart>
+    <PositionChart
+      value={7}
+      min={0}
+      max={10}
+      axisLabels={["Below average", "Above average"]}
+    ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
 {/snippet}
@@ -103,7 +125,7 @@
     <PositionChart
       min={0}
       max={10}
-      colour="grey"
+      color="grey"
       opacity={0.5}
       tooltipContent="value"
       showIcon
@@ -147,21 +169,108 @@
     style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"
   >
     More deprived than
-    <b>{100 - activeMarkerId.value}%</b> of neighbourhoods
+    <b>{100 - activeMarkerId.value}%</b> of hi hi hi hi and even longer
+  </div>
+{/snippet}
+
+{#snippet tooltipSnippet2(activeMarkerId)}
+  <div
+    style="border: 1px solid black; padding: 0.5rem; background-color: white; pointer-events: none"
+  >
+    More deprived than
+    <b>{100 - activeMarkerId.value}%</b> of neighbourhoods but with some extra additional
+    text
   </div>
 {/snippet}
 
 {#snippet Example5()}
   <div class="p-5 bg-white">
     <PositionChart
-      value={70}
+      value={99}
+      color="inherit"
       min={0}
       max={100}
-      label="Education"
+      {tooltipSnippet}
+      annotation="hello"
+      moreInfo="this is some additional information"
+    ></PositionChart>
+    <PositionChart
+      value={1}
+      color="inherit"
+      min={0}
+      max={100}
+      tooltipSnippet={tooltipSnippet2}
+      annotation="hello"
+      moreInfo="this is some additional information"
+    ></PositionChart>
+    <PositionChart
+      value={50}
+      shape="circle"
+      min={0}
+      max={100}
+      showAxis={false}
       {tooltipSnippet}
       annotation="hello"
       moreInfo="this is some additional information"
     ></PositionChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example6()}
+  <div class="p-5 bg-white">
+    <PositionChart
+      min={0}
+      max={10}
+      markerStyles={{ blue: { color: "blue" }, black: { color: "black" } }}
+      assignMarkerTier={(tier, el, chart, idx) => {
+        console.log("$$$$", el?.rowData[idx].tier);
+        if (tier === "black") {
+          return el.rowData.tier === "black";
+        }
+        if (tier === "blue") {
+          return el.rowData.tier === "blue";
+        }
+      }}
+      allData={[
+        {
+          rowData: [
+            {
+              value: 2,
+              annotation: "first",
+            },
+            {
+              value: 3,
+              annotation: "second",
+            },
+          ],
+        },
+      ]}
+      label="Hello"
+    />
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example7()}
+  <div class="p-5 bg-white">
+    <PositionChart
+      min={0}
+      max={10}
+      shape="line"
+      nSegments={2}
+      startColor="#CCCCCC"
+      endColor="#CCCCCC"
+      midColor="#CCCCCC"
+      rowData={[
+        ...[2.4, 3.3, 4.8, 5.4, 6.3, 2, 3, 4, 5, 6].map((n) => ({
+          value: n,
+          opacity: 0.4,
+          color: "grey",
+        })),
+        { value: 6, markerRadius: 27 },
+      ]}
+    ></PositionChart>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
 {/snippet}

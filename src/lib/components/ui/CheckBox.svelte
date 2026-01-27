@@ -16,7 +16,7 @@
 
   // Component props
   let {
-    legend,
+    legend = "hello",
     hint,
     error,
     name,
@@ -41,6 +41,7 @@
     selectAllButton?: boolean;
   }>();
 
+  $inspect({ selectedValues });
   // Add support detection
   let isSupported = $state(false);
   // Check for browser support on mount

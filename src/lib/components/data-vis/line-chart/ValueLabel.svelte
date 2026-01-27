@@ -11,24 +11,35 @@
     markerRect = undefined,
     tooltipSnippet,
     labelText = undefined,
+    topWidth = undefined,
   } = $props();
 
   let textDimensions = $state();
   let verticalPadding = $state(8);
   let horizontalPadding = $derived(verticalPadding * 2);
+
+  let xPosition = $derived(markerRect?.x ?? 0);
+  let textWidth = $derived(textDimensions?.width ?? 0);
+  let containerWidth = $derived(topWidth ?? 0);
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(value, max));
+  }
+
+  let left = $derived(
+    clamp(xPosition - textWidth / 2, 0, containerWidth - textWidth),
+  );
+
+  let right = $derived(containerWidth - left - textWidth);
+
+  let useRight = $derived(xPosition > containerWidth / 2);
 </script>
 
-<!-- <div
-  style="position:absolute;
-  top: {markerRect?.y - (textDimensions?.height ?? 0) - 15}px;
-left: {markerRect?.x +
-    (markerRect?.width ?? 0) / 2 -
-    (textDimensions?.width ?? 0) / 2}px;
-  pointer-events: none; border 1px solid blue
-  "
-> -->
 <div
-  style="position:absolute; left: {markerRect?.x - textDimensions?.width / 2}px;
+  style="position:absolute; 
+  max-width: {topWidth}px;
+    left: {useRight ? 'auto' : `${left}px`};
+    right: {useRight ? `${right}px` : 'auto'};
       top: {markerRect?.y -
     textDimensions?.height -
     20}px; pointer-events: none"

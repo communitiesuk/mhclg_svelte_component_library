@@ -12,6 +12,7 @@
     bodyBottomBorderColor = "#c3d9e9",
     selectedValue = $bindable(),
     cardSnippet = undefined,
+    n = 1,
   } = $props();
 </script>
 
@@ -44,7 +45,7 @@
         </a>
       </h2>
     {:else}
-      {@render cardSnippet()}
+      {@render cardSnippet(n)}
     {/if}
   </div>
 

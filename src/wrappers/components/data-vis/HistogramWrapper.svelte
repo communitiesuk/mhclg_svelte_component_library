@@ -29,7 +29,7 @@
     progress: "To be developed",
     statusRows: [
       {
-        obj: { Accessible: false, Responsive: true, "Prog. enhanced": false },
+        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
         visibleOnHompepage: false,
       },
       {
@@ -46,12 +46,10 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = [
-    "This component renders a horizontal bar with a marker to visually represent a single value within a defined range. The bar has ten color-coded segments, each representing a decile, but the marker is plotted on a continuous scale using a linear function. The user can include an axis or label.",
-  ];
+  let descriptionArray = ["Explain here what the component does."];
 
   let contextArray = [
-    "Use this component to show where a value sits within a range. Use the stacked version of the component when you want to compare values.",
+    "Explain here the different contexts in which the component should be used.",
   ];
 
   let detailsArray = [
@@ -93,8 +91,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import PositionChart from "$lib/components/data-vis/position-chart/PositionChart.svelte";
-  import Examples from "./position-chart/Examples.svelte";
+import Histogram from "$lib/components/data-vis/Histogram.svelte";
+import Examples from "./histogram/Examples.svelte";
 
   let { data } = $props();
 
@@ -117,7 +115,7 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let chartWidth = $state(500);
+
   /**
    * ! Step 3 - Add your props
    * CUSTOMISETHIS  Add your parameters to the array.
@@ -159,118 +157,142 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "showAxis",
-        category: "Display",
-        value: true,
-        description: "Whether to display an axis. Boolean.",
+        name: "componentNameProp",
+        category: "Input props",
+        propType: "fixed",
+        value: pageName,
       },
       {
-        name: "value",
-        category: "Data",
-        value: 3,
-        description:
-          "The numerical value to be plotted. This accepts a numerical value and must only be used for a single position chart. To create multiple position charts, use the dataObject prop.",
+        name: "textProp",
+        category: "Input props",
+        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 2,
       },
       {
-        name: "min",
-        category: "Data",
-        value: 0,
-        description: "The minimum value for the scale.",
+        name: "numberProp",
+        category: "Input props",
+        value: 9,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 5,
       },
       {
-        name: "max",
-        category: "Data",
-        value: 10,
-        description: "The maximum value for the scale.",
+        name: "checkboxProp",
+        category: "Input props",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
+          ],
+        },
       },
       {
-        name: "shape",
-        category: "Data",
-        value: "line",
-        description: "The shape of the marker.",
+        name: "dropdownProp",
+        category: "Input props",
+        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes the selected <code>option</code> to the component as a string.`,
+          ],
+        },
       },
       {
-        name: "label",
-        category: "Display",
-        value: "Label",
-        description:
-          "Text label to display alongside the chart. If specified, the component uses a grid container, otherwise it uses a flex container.",
+        name: "radioProp",
+        category: "Input props",
+        propType: "radio",
+        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes the selected <code>option</code> to the component as a string.`,
+          ],
+        },
       },
       {
-        name: "chartHeight",
-        category: "Display",
-        value: 24,
-        description:
-          "The height of the chart (which is made up of the bar and the marker)",
-      },
-      {
-        name: "nSegments",
-        category: "Display",
-        value: 10,
-        description: "The number of segments to display in the chart.",
-      },
-      {
-        name: "colorScale",
-        category: "Colours",
-        value: [
-          "#090C50",
-          "#1B3E70",
-          "#2B658F",
-          "#357EA2",
-          "#4297AD",
-          "#5BB1AE",
-          "#7ABFA8",
-          "#98CCA2",
-          "#B6D89F",
-          "#D2E49D",
-        ],
-        description:
-          "Use this prop if you want to specify every colour in the chart. Optional array of colours to apply to segments. Length must be greater than or equal to the number of segments. Otherwise, supply start, end (and optionally mid) colours, and intervening colours will be calculated for you.",
-      },
-      {
-        name: "startColor",
-        category: "Colours",
-        value: "#8EB8DC",
-        description:
-          "Use this prop if you want only want to set a start, end (and optional mid) color for your colour scale. The component will interpolate colours for intermediate segments. You must make colorScale an empty array to use this colouring method. Otherwise, supply an array of every colour, using `colorScale`.",
-      },
-      {
-        name: "endColor",
-        category: "Colours",
-        value: "#0F385C",
-        description:
-          "Use this prop if you want only want to set a start, end (and optional mid) color for your colour scale. The component will interpolate colours for intermediate segments. You must make colorScale an empty array to use this colouring method. Otherwise, supply an array of every colour, using `colorScale`",
-      },
-      {
-        name: "midColor",
-        category: "Colours",
-        value: "",
-        description:
-          "Use this prop if you want only want to set a start, end (and optional mid) color for your colour scale. The component will interpolate colours for intermediate segments. You must make colorScale an empty array to use this colouring method. Otherwise, supply an array of every colour, using `colorScale`",
-      },
-      {
-        name: "dataObject",
+        name: "jsObjectProp",
         category: "Input props",
         value: [
           {
-            label: "Pikachu",
-            value: 5,
+            name: "Pikachu",
+            type: "Electric",
+            color: "#fde047",
           },
           {
-            label: "Charmander",
-            value: 4,
+            name: "Charmander",
+            type: "Fire",
+            color: "#fca5a5",
           },
           {
-            label: "Bulbasaur",
-            value: 2,
+            name: "Squirtle",
+            type: "Water",
+            color: "#93c5fd",
           },
           {
-            label: "Charazard",
-            value: 3,
+            name: "Bulbasaur",
+            type: "Grass",
+            color: "#86efac",
           },
         ],
-        description:
-          "Use this prop to create multiple position charts. Provide an array of objects. Each object must contain a value key. And may also contain a label key.",
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes the selected a JS object to the component.`,
+            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
+          ],
+        },
+      },
+      {
+        name: "functionProp",
+        category: "Fixed props",
+
+        isRequired: true,
+        value: function (event, pokemon) {
+          window.alert(
+            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
+          );
+
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
+        },
+        functionElements: {
+          dataset: { role: null, id: null },
+          counter: 0,
+          functionAsString: `function (event, pokemon) {
+window.alert(
+  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
+);
+
+this.functionElements.counter += 1;
+Object.keys(this.functionElements.dataset).forEach((el) => {
+  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+});
+}`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
+            `Firstly, it is not editable via the UI.`,
+            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
+            ,
+            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
+            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
+          ],
+        },
       },
     ]),
   );
@@ -321,6 +343,7 @@
    *  &&    You must then also combine them into the derivedParametersObject below so that they are passed to the component.
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
+
   let derivedParametersObject = $derived({});
 
   /**
@@ -412,7 +435,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <PositionChart {...parametersObject}></PositionChart>
+<Histogram {...parametersObject}></Histogram>
   </div>
 {/snippet}
 
@@ -459,9 +482,5 @@ DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
 <div id="examples" data-role="examples-section">
-  <p>
-    !!!!,
-    {data.output}
-  </p>
-  <Examples data={data.deprivationDomainData}></Examples>
+  <Examples></Examples>
 </div>

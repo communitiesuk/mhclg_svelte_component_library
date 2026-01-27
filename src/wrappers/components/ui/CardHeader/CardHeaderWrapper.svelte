@@ -26,14 +26,14 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "In use",
+    progress: "To be developed",
     statusRows: [
       {
-        obj: { Accessible: true, Responsive: true, "Prog. enhanced": true },
+        obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
         visibleOnHompepage: false,
       },
       {
-        obj: { Reviewed: true, Tested: true },
+        obj: { Reviewed: false, Tested: false },
         visibleOnHomepage: false,
       },
     ],
@@ -46,17 +46,10 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = [
-    "The card component acts a signpost for a user. It is a way for users to find the content on your service that is most relevant to them. It could be a link or something more complex like a search component, which lets the user find what they want.",
-    "It also gives the user some information about the content they would see so that they know whether to click on it or not.",
-  ];
+  let descriptionArray = ["Explain here what the component does."];
 
   let contextArray = [
-    "There are multiple contexts where cards are appropriate.",
-    "They can be used on the home page to indicate the main functions of the service or options to the user. In this case they should be styled to make them prominent.",
-    "They can be used as links to supplementary content or information too.",
-    "They can be used in a grid layout as an alternative to a more simple list of items. The benefit of cards is that they can include content like graphics or charts which make them more engaging than a list of plain text links.",
-    "The dashed border around the card is only there to help you see the card on this wrapper page.",
+    "Explain here the different contexts in which the component should be used.",
   ];
 
   let detailsArray = [
@@ -98,8 +91,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Card from "$lib/components/ui/Card.svelte";
-  import Examples from "./card/Examples.svelte";
+  import CardHeader from "$lib/components/ui/CardHeader.svelte";
+  import Examples from "./card-header/Examples.svelte";
 
   let { data } = $props();
 
@@ -164,122 +157,140 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "headerIsLink",
-        category: "Card header",
-        value: true,
+        name: "componentNameProp",
+        category: "Input props",
+        propType: "fixed",
+        value: pageName,
+      },
+      {
+        name: "textProp",
+        category: "Input props",
+        value: `This is a string input - edit me using the UI and see it reflected in the component.`,
         description: {
           markdown: true,
           arr: [
-            `This is a boolean prop which is set to true by default. If true you get the govuk styled header with a chevron svg on the right-hand side.`,
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 2,
+      },
+      {
+        name: "numberProp",
+        category: "Input props",
+        value: 9,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes a text string to the <code>${pageName}</code> component.`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "checkboxProp",
+        category: "Input props",
+        value: false,
+        description: {
+          markdown: true,
+          arr: [
+            `This prop passes <code>false</code> to the component when unchecked, <code>true</code> when checked.`,
           ],
         },
       },
       {
-        name: "headerText",
-        category: "Card header",
-        value: `Download data`,
-        description: {
-          markdown: true,
-          arr: [`This is the header text. headerIsLink must be true.`],
-        },
-      },
-      {
-        name: "headerTextSize",
-        category: "Card header",
-        value: `1.5rem`,
+        name: "dropdownProp",
+        category: "Input props",
+        options: ["apple", "banana", "kiwi", "strawberry", "orange"],
         description: {
           markdown: true,
           arr: [
-            `This is the header font size. Set to 1.5 * the root by default.`,
+            `This prop passes the selected <code>option</code> to the component as a string.`,
           ],
         },
       },
       {
-        name: "href",
-        category: "Card header",
-        value: `/download-all`,
-        description: {
-          markdown: true,
-          arr: [`Hyperlink URL. headerIsLink must be true.`],
-        },
-      },
-      {
-        name: "onlyTextInBody",
-        category: "Card body",
-        value: true,
+        name: "radioProp",
+        category: "Input props",
+        propType: "radio",
+        options: ["carrot", "potato", "broccoli", "mushroom", "tomato"],
         description: {
           markdown: true,
           arr: [
-            `Set to true when there is plain text in the bottom section of the card. It is true by default.`,
+            `This prop passes the selected <code>option</code> to the component as a string.`,
           ],
         },
       },
       {
-        name: "bodyText",
-        category: "Card body",
-        value: `This is the text that gives more information about the call to action in the card heading.`,
-        description: {
-          markdown: true,
-          arr: [`This is the body text. onlyTextInBody must be true.`],
-        },
-      },
-      {
-        name: "headerTextColor",
-        category: "Colours",
-        value: `#1D70B8`,
+        name: "jsObjectProp",
+        category: "Input props",
+        value: [
+          {
+            name: "Pikachu",
+            type: "Electric",
+            color: "#fde047",
+          },
+          {
+            name: "Charmander",
+            type: "Fire",
+            color: "#fca5a5",
+          },
+          {
+            name: "Squirtle",
+            type: "Water",
+            color: "#93c5fd",
+          },
+          {
+            name: "Bulbasaur",
+            type: "Grass",
+            color: "#86efac",
+          },
+        ],
         description: {
           markdown: true,
           arr: [
-            `The color of the text in the header. It depends on headerIsLink being true. [Currently not working]`,
+            `This prop passes the selected a JS object to the component.`,
+            `The object can be directly edited. A notification will alert the user is any edits create an invalid object`,
           ],
         },
       },
       {
-        name: "headerBackgroundColor",
-        category: "Colours",
-        value: `white`,
-        description: {
-          markdown: true,
-          arr: [`The background color of the header section of the card.`],
+        name: "functionProp",
+        category: "Fixed props",
+
+        isRequired: true,
+        value: function (event, pokemon) {
+          window.alert(
+            `The ${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.`,
+          );
+
+          this.functionElements.counter += 1;
+          Object.keys(this.functionElements.dataset).forEach((el) => {
+            this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+          });
         },
-      },
-      {
-        name: "bodyTextColor",
-        category: "Colours",
-        value: `#0B0C0C`,
+        functionElements: {
+          dataset: { role: null, id: null },
+          counter: 0,
+          functionAsString: `function (event, pokemon) {
+window.alert(
+  "The \${this.name} function has been triggered. Open the 'Fixed props' panel to see updated values.",
+);
+
+this.functionElements.counter += 1;
+Object.keys(this.functionElements.dataset).forEach((el) => {
+  this.functionElements.dataset[el] = event.currentTarget.dataset[el];
+});
+}`,
+        },
         description: {
           markdown: true,
           arr: [
-            `The color of the text in the body. onlyTextInBody must be true. Text color must be specified in snippets or children if you are passing them.`,
-          ],
-        },
-      },
-      {
-        name: "bodyBackgroundColor",
-        category: "Colours",
-        value: `#FBFCFD`,
-        description: {
-          markdown: true,
-          arr: [`The background color of the body section of the card.`],
-        },
-      },
-      {
-        name: "bodyTopBorderColor",
-        category: "Colours",
-        value: `#F4F8FB`,
-        description: {
-          markdown: true,
-          arr: [`The color of the top border of the body section of the card.`],
-        },
-      },
-      {
-        name: "bodyBottomBorderColor",
-        category: "Colours",
-        value: `#c3d9e9`,
-        description: {
-          markdown: true,
-          arr: [
-            `The color of the bottom border of the body section of the card.`,
+            `This prop passes a function to the ${pageName} component. It works slightly differently to other props.`,
+            `Firstly, it is not editable via the UI.`,
+            `Secondly, the code snippet on the left is not actually based on the value. Instead, it is example code based on the <code>functionElements.functionAsString</code> property, and is optional.`,
+            ,
+            `For event functions, you can define your function so that it updates the <code>functionElements.counter</code> property each time it runs.`,
+            `For event functions, you can also define your function so that it grabs data from its target, which are then stored in <code>functionElements.dataset</code> and displayed in the UI (trigger your event to see this in action).`,
           ],
         },
       },
@@ -424,9 +435,7 @@
  -->
 {#snippet Component()}
   <div class="p-8">
-    <div style="border: 1px dashed grey;">
-      <Card {...parametersObject}></Card>
-    </div>
+    <CardHeader {...parametersObject}></CardHeader>
   </div>
 {/snippet}
 

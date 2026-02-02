@@ -18,6 +18,13 @@
   import { getColorsForValues } from "./position-chart/getColorsForValues";
   import { splitGroupsAndAverages } from "./position-chart/splitGroupsAndAverages";
   import PositionChartAxis from "./position-chart/PositionChartAxis.svelte";
+  import { bin } from "d3-array";
+
+  const bin1 = bin();
+
+  let buckets = bin1(dist);
+
+  $inspect({ buckets });
 
   let binObject = $derived(
     binX({ data: dist }, { y: "count", thresholds: thresholds }),
@@ -25,6 +32,17 @@
   let binnedMetricData = $derived(binObject.data);
   let binnedValues = $derived(binObject.data.map((d) => d.__y));
   let nBins = $derived(binnedValues.length);
+
+  $inspect({ binObject });
+
+  const bins = buckets.map((b) => ({
+    x0: b.x0,
+    x1: b.x1,
+    values: b,
+    count: b.length,
+  }));
+
+  $inspect({ bins });
 
   // I want each block to get a colour which indicates its distance from the median
   // In order to do that, we need to assign each value a color, according to its distance from the median

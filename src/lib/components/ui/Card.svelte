@@ -37,6 +37,10 @@
         backgroundColor={headerBackgroundColor}
         {href}
       ></CardHeader>
+    {:else if !headerSnippet}
+      <h2 class="govuk-heading-m" style="font-size: {headerTextSize}">
+        {headerText}
+      </h2>
     {:else}
       {@render headerSnippet?.()}
     {/if}

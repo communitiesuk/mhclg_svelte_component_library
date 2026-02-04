@@ -1,8 +1,18 @@
-<script>
+<script lang="ts">
   import Decimal from "decimal.js";
 
+  // Types
+  type Axis = "x" | "y";
+  type Position = "left" | "right" | "top" | "bottom";
+
+  interface Orientation {
+    axis: Axis;
+    position: Position;
+  }
+
+  // Props with defaults (Svelte 5 runes)
   let {
-    ticksArray = $bindable(),
+    ticksArray = $bindable<number[]>(),
     prefix,
     suffix,
     chartWidth,
@@ -14,60 +24,85 @@
     ceiling,
     orientation,
     yearsInput,
+  }: {
+    ticksArray?: number[]; // bindable
+    prefix?: string;
+    suffix?: string;
+    chartWidth: number;
+    chartHeight: number;
+    axisFunction: (value: number) => number;
+    values: number[]; // numeric array for domain
+    numberOfTicks?: number;
+    floor?: number;
+    ceiling?: number;
+    orientation: Orientation;
+    yearsInput?: boolean;
   } = $props();
 
   $inspect(ticksArray);
 
-  function generateTicks(data, numTicks, floor, ceiling) {
-    let minValueFromData = Decimal.min(...data);
+  function generateTicks(
+    data: number[],
+    numTicks: number,
+    floorVal?: number,
+    ceilingVal?: number,
+  ): number[] {
+    // Determine min/max from data (Decimal can accept numbers)
+    const minValueFromData = Decimal.min(...data);
+    const maxValueFromData = Decimal.max(...data);
 
-    let minVal = floor
-      ? Decimal.max(floor, minValueFromData)
-      : minValueFromData;
+    const minVal =
+      floorVal !== undefined
+        ? Decimal.max(new Decimal(floorVal), minValueFromData)
+        : new Decimal(minValueFromData);
 
-    let maxValueFromData = Decimal.max(...data);
+    const maxVal =
+      ceilingVal !== undefined
+        ? Decimal.min(new Decimal(ceilingVal), maxValueFromData)
+        : new Decimal(maxValueFromData);
 
-    let maxVal = ceiling
-      ? Decimal.min(ceiling, maxValueFromData)
-      : maxValueFromData;
+    const rangeVal = maxVal.minus(minVal);
 
-    let rangeVal = maxVal.minus(minVal);
+    const roughStep = rangeVal.div(numTicks - 1);
+    const normalizedSteps = [1, 2, 5, 10];
 
-    let roughStep = rangeVal.div(numTicks - 1);
-    let normalizedSteps = [1, 2, 5, 10];
-
-    let stepPower = Decimal.pow(
+    const stepPower = Decimal.pow(
       10,
       -Math.floor(Math.log10(roughStep.toNumber())),
     );
-    let normalizedStep = roughStep.mul(stepPower);
-    let optimalStep = new Decimal(
-      normalizedSteps.find((step) => step >= normalizedStep.toNumber()),
-    ).div(stepPower);
 
-    let scaleMin = minVal.div(optimalStep).floor().mul(optimalStep);
-    let scaleMax = maxVal.div(optimalStep).ceil().mul(optimalStep);
+    const normalizedStep = roughStep.mul(stepPower);
 
-    let ticks = [];
+    const chosen = normalizedSteps.find(
+      (step) => step >= normalizedStep.toNumber(),
+    );
+
+    const optimalStep = new Decimal(chosen ?? 10).div(stepPower);
+
+    const scaleMin = minVal.div(optimalStep).floor().mul(optimalStep);
+    const scaleMax = maxVal.div(optimalStep).ceil().mul(optimalStep);
+
+    const ticks: number[] = [];
     for (let i = scaleMin; i.lte(scaleMax); i = i.plus(optimalStep)) {
       ticks.push(i.toNumber());
     }
     return ticks;
   }
 
-  function tickCount(chartWidth, chartHeight) {
-    let tickNum = orientation.axis === "y" ? chartHeight / 50 : chartWidth / 50;
+  function tickCount(w: number, h: number): number {
+    const tickNum = orientation.axis === "y" ? h / 50 : w / 50;
     return tickNum;
   }
 
-  function yearsFormat(ticks) {
+  function yearsFormat(ticks: number[]): string[] {
     return ticks.map((tick) => `FY ${tick % 100}-${(tick % 100) + 1}`);
   }
 
+  // Compute ticks
   numberOfTicks = tickCount(chartWidth, chartHeight);
-
   ticksArray = generateTicks(values, numberOfTicks, floor, ceiling);
-  let yearTicks = yearsInput ? yearsFormat(ticksArray) : [];
+
+  const yearTicks: string[] = yearsInput ? yearsFormat(ticksArray) : [];
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
@@ -106,7 +141,9 @@
             : "start"}
         fill="black"
       >
-        {yearsInput ? yearTicks[index] : prefix + tick + suffix}
+        {yearsInput
+          ? yearTicks[index]
+          : `${prefix ?? ""}${tick}${suffix ?? ""}`}
       </text>
     </g>
   {/each}

@@ -13,8 +13,6 @@
   // Props with defaults (Svelte 5 runes)
   let {
     ticksArray = $bindable<number[]>(),
-    prefix,
-    suffix,
     chartWidth,
     chartHeight,
     axisFunction,
@@ -23,11 +21,9 @@
     floor,
     ceiling,
     orientation,
-    yearsInput,
+    labelFormatter,
   }: {
     ticksArray?: number[]; // bindable
-    prefix?: string;
-    suffix?: string;
     chartWidth: number;
     chartHeight: number;
     axisFunction: (value: number) => number;
@@ -36,7 +32,8 @@
     floor?: number;
     ceiling?: number;
     orientation: Orientation;
-    yearsInput?: boolean;
+    /** Mandatory custom label generator */
+    labelFormatter?: (tick: number, index: number) => string;
   } = $props();
 
   $inspect(ticksArray);
@@ -47,7 +44,6 @@
     floorVal?: number,
     ceilingVal?: number,
   ): number[] {
-    // Determine min/max from data (Decimal can accept numbers)
     const minValueFromData = Decimal.min(...data);
     const maxValueFromData = Decimal.max(...data);
 
@@ -62,7 +58,6 @@
         : new Decimal(maxValueFromData);
 
     const rangeVal = maxVal.minus(minVal);
-
     const roughStep = rangeVal.div(numTicks - 1);
     const normalizedSteps = [1, 2, 5, 10];
 
@@ -72,11 +67,9 @@
     );
 
     const normalizedStep = roughStep.mul(stepPower);
-
     const chosen = normalizedSteps.find(
       (step) => step >= normalizedStep.toNumber(),
     );
-
     const optimalStep = new Decimal(chosen ?? 10).div(stepPower);
 
     const scaleMin = minVal.div(optimalStep).floor().mul(optimalStep);
@@ -89,20 +82,20 @@
     return ticks;
   }
 
-  function tickCount(w: number, h: number): number {
-    const tickNum = orientation.axis === "y" ? h / 50 : w / 50;
-    return tickNum;
+  // Default label when no labelFormatter is supplied
+  function defaultLabel(tick: number): string {
+    return String(tick);
   }
 
-  function yearsFormat(ticks: number[]): string[] {
-    return ticks.map((tick) => `FY ${tick % 100}-${(tick % 100) + 1}`);
+  function tickCount(w: number, h: number): number {
+    // Keep behavior aligned with your original code.
+    const tickNum = orientation.axis === "y" ? h / 50 : w / 50;
+    return tickNum;
   }
 
   // Compute ticks
   numberOfTicks = tickCount(chartWidth, chartHeight);
   ticksArray = generateTicks(values, numberOfTicks, floor, ceiling);
-
-  const yearTicks: string[] = yearsInput ? yearsFormat(ticksArray) : [];
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
@@ -141,9 +134,7 @@
             : "start"}
         fill="black"
       >
-        {yearsInput
-          ? yearTicks[index]
-          : `${prefix ?? ""}${tick}${suffix ?? ""}`}
+        {labelFormatter ? labelFormatter(tick, index) : defaultLabel(tick)}
       </text>
     </g>
   {/each}

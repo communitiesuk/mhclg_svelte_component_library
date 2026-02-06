@@ -245,19 +245,6 @@
         value: 5,
       },
       {
-        name: "prefix",
-        category: "formattingTick",
-        value: "",
-      },
-      {
-        name: "suffix",
-        category: "formattingTick",
-        value: "",
-      },
-      { name: "floor", category: "formatting", value: 0 },
-      { name: "ceiling", category: "formatting", value: 100 },
-      { name: "yearsInput", category: "formattingTick", value: false },
-      {
         name: "orientationAxis",
         category: "customisations",
         isProp: false,
@@ -274,6 +261,24 @@
       {
         name: "orientation",
         category: "customisations",
+      },
+      {
+        name: "labelFormatter",
+        category: "formattingTick",
+        // isRequired: false, // optional—default is false
+        value: function (tick, index) {
+          // You can swap this to a currency or % if preferred.
+          return `${tick}`;
+        },
+        functionElements: {
+          functionAsString: `function labelFormatter(tick, index) { return \`\${tick}\`; }`,
+        },
+        description: {
+          markdown: true,
+          arr: [
+            'Optional function: <code>(tick: number, index: number) => string</code>. Example: <code>function labelFormatter(tick) {return \`£${Number(tick).toLocaleString("en-GB")}`\;\}</code>',
+          ],
+        },
       },
     ]),
   );

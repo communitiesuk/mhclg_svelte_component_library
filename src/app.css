@@ -88,3 +88,9 @@ code {
 [aria-sort="descending"].govuk-table__header .bottom-triangle {
   fill: #222;
 }
+.axis {
+  overflow: visible;
+}
+.ticks {
+  overflow: visible;
+}

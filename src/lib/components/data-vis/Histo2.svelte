@@ -17,14 +17,24 @@
   import { getColorsForValues } from "./position-chart/getColorsForValues";
   import { splitGroupsAndAverages } from "./position-chart/splitGroupsAndAverages";
   import PositionChartAxis from "./position-chart/PositionChartAxis.svelte";
-  import { bin } from "d3-array";
+  import { bin, ticks } from "d3-array";
   import PositionChart from "./position-chart/PositionChart.svelte";
 
+  let domainMin = min ?? Math.min(...dist);
+  let domainMax = max ?? Math.max(...dist);
+
+  //  min and max at extremes
+  //  let histogram = bin().domain([domainMin, domainMax]).thresholds(thresholds);
+
+  let thresholdsArray = ticks(domainMin, domainMax, thresholds);
+
   let histogram = bin()
-    .domain([min ?? Math.min(...dist), max ?? Math.max(...dist)])
-    .thresholds(thresholds);
+    .domain([thresholdsArray[0], thresholdsArray[thresholdsArray.length - 1]])
+    .thresholds(thresholdsArray);
 
   let buckets = histogram(dist);
+
+  $inspect({ buckets });
 
   const bins = buckets.map((b) => ({
     x0: b.x0,
@@ -33,10 +43,11 @@
     count: b.length,
   }));
 
+  $inspect({ bins });
+
   let nBins = $derived(bins.length);
 
-  let histWidth = 60;
-  let histHeight = 60;
+  let histHeight = 50;
 
   let xMin = bins[0]?.x0 ?? 0;
   let xMax = bins[bins.length - 1]?.x1 ?? 1;
@@ -45,9 +56,11 @@
 
   let containerWidth = $state(100);
 
-  let xScale = $derived((x) => ((x - xMin) / (xMax - xMin)) * containerWidth);
+  let xScale = (x) =>
+    ((x - domainMin) / (domainMax - domainMin)) * containerWidth;
 
-  let yScale = (count) => (count / maxCount) * histHeight;
+  let yScale = (count) =>
+    (count / Math.max(...bins.map((b) => b.count))) * histHeight;
 
   let barWidth = bins.length ? xScale(bins[0].x1) - xScale(bins[0].x0) : 0;
 
@@ -67,8 +80,8 @@
 
 {#key containerWidth}
   <div class="scale-container" bind:clientWidth={containerWidth}>
-    <svg width={containerWidth - 10} height={histHeight}>
-      <g transform="translate(10,0)">
+    <svg width={containerWidth} height={histHeight}>
+      <g transform="translate(-10,0)">
         {#each bins as bin, i}
           {#key bin.x0}
             <rect

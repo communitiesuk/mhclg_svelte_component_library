@@ -35,9 +35,7 @@
     /** Mandatory custom label generator */
     labelFormatter?: (tick: number, index: number) => string;
   } = $props();
-
-  $inspect(ticksArray);
-
+  $inspect(axisFunction);
   function generateTicks(
     data: number[],
     numTicks: number,
@@ -100,6 +98,7 @@
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
   {#each ticksArray as tick, index}
+    {console.log("ticks", ticksArray)}
     <g
       transform="translate({orientation.axis === 'x'
         ? axisFunction(tick)

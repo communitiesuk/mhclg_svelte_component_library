@@ -1,130 +1,112 @@
 <script lang="ts">
   import {
     scaleLinear,
-    scaleLog,
-    scaleTime,
+    type ScaleContinuousNumeric,
     type ScaleLinear,
-    type ScaleLogarithmic,
-    type scaleMin,
   } from "d3-scale";
   import Ticks from "./Ticks.svelte";
 
-  // --- Types (numeric-only) ---
   type AxisName = "x" | "y";
   type AxisPosition = "bottom" | "top" | "left" | "right";
-
-  type Orientation = {
-    axis: AxisName;
-    position: AxisPosition;
-  };
-
-  type XScaleType = "scaleLinear()" | "scaleLog()";
-
-  // Project a numeric data value -> pixel
+  type Orientation = { axis: AxisName; position: AxisPosition };
   type AxisProjector = (value: number) => number;
-
-  // Optional tick label formatter
   type LabelFormatter = (tick: number, index: number) => string | number;
 
-  // --- Props ---
   let {
     chartHeight = 100,
     chartWidth = $bindable<number>(200),
 
     numberOfTicks = undefined as number | undefined,
 
-    // Parent can bind to this; Ticks can also update it
+    // Bindable, but avoid binding undefined – initialize as [] for safety
     ticksArray = $bindable<number[] | undefined>(undefined),
 
-    // Scale selection for X (numeric only)
-    xScaleType = "scaleLinear()" as XScaleType,
-
-    // Values to derive ticks from if ticksArray not provided
+    // Values to derive ticks/domain from if ticksArray not provided
     values = undefined as number[] | undefined,
 
-    // Axis orientation
     orientation = { axis: "x", position: "bottom" } as Orientation,
 
-    // Domain hints
     floor = undefined as number | undefined,
     ceiling = undefined as number | undefined,
 
-    // Paddings
     paddingTop = 100,
     paddingBottom = 100,
     paddingLeft = 0,
     paddingRight = 0,
 
-    // Optional label formatter
     labelFormatter = undefined as LabelFormatter | undefined,
 
-    // For demos; not directly used here
-    demoScreenWidth = 1000,
+    // --- New inputs for D3 scale + optional overrides ---
+    // A ready-made D3 continuous scale (linear/log/time, etc.)
+    // For this component we use numeric-only; time scales also implement numeric mapping.
+    scale = undefined as ScaleContinuousNumeric<number, number> | undefined,
 
-    // Default axis projector functions (computed below)
-    xFunction = (number) => {
-      return {
-        "scaleLinear()": scaleLinear(),
-        "scaleLog()": scaleLog(),
-        "scaleTime()": scaleTime(),
-      }[xScaleType]
-        .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
-        .range([0, chartWidth - paddingLeft - paddingRight])(number);
-    },
-
-    yFunction = ((v: number) => {
-      // Y uses linear by default (numeric-only)
-      const scale: ScaleLinear<number, number> = scaleLinear<number, number>();
-
-      const arr = ticksArray ?? values;
-      const domainMin =
-        floor ??
-        (arr && arr.length ? arr.reduce((a, b) => (a < b ? a : b)) : 0);
-      const domainMax =
-        ceiling ??
-        (arr && arr.length ? arr.reduce((a, b) => (a > b ? a : b)) : 1);
-
-      scale.domain([domainMin, domainMax]);
-
-      // Range for Y: top->bottom
-      scale.range([0, Math.max(0, chartHeight - paddingTop - paddingBottom)]);
-      return scale(v);
-    }) as AxisProjector,
-
-    // Axis function is derived from orientation by default
-    axisFunction = (orientation?.axis === "x"
-      ? xFunction
-      : yFunction) as AxisProjector,
+    // Optional overrides for domain/range applied to a COPY of the provided scale
+    domain = undefined as [number, number] | undefined,
+    range = undefined as [number, number] | undefined,
   }: {
     chartHeight?: number;
     chartWidth?: number;
-
     numberOfTicks?: number;
-
-    ticksArray?: number[]; // bindable
-
-    xScaleType?: XScaleType;
-
+    ticksArray?: number[];
     values?: number[];
-
     orientation?: Orientation;
-
     floor?: number;
     ceiling?: number;
-
     paddingTop?: number;
     paddingBottom?: number;
     paddingLeft?: number;
     paddingRight?: number;
-
     labelFormatter?: LabelFormatter;
 
-    demoScreenWidth?: number;
-
-    xFunction?: AxisProjector;
-    yFunction?: AxisProjector;
-    axisFunction?: AxisProjector;
+    // New
+    scale?: ScaleContinuousNumeric<number, number>;
+    domain?: [number, number];
+    range?: [number, number];
   } = $props();
+
+  // --- Helpers to compute default domain/range when not supplied ---
+  const innerWidth = $derived(
+    Math.max(0, chartWidth - paddingLeft - paddingRight),
+  );
+  $inspect(innerWidth);
+  const innerHeight = $derived(
+    Math.max(0, chartHeight - paddingTop - paddingBottom),
+  );
+  $inspect(innerHeight);
+  function computeDefaultDomain(): [number, number] {
+    const arr = (ticksArray && ticksArray.length ? ticksArray : values) ?? [];
+    const dMin =
+      floor ?? (arr.length ? arr.reduce((a, b) => (a < b ? a : b)) : 0);
+    const dMax =
+      ceiling ?? (arr.length ? arr.reduce((a, b) => (a > b ? a : b)) : 1);
+    return [dMin, dMax];
+  }
+
+  function computeDefaultRange(innerWidth, innerHeight): [number, number] {
+    if (orientation.axis === "x") {
+      return [0, innerWidth];
+    } else {
+      return [innerHeight, 0];
+    }
+  }
+
+  const resolvedScale = $derived(() => {
+    const base: ScaleContinuousNumeric<number, number> = scale
+      ? scale.copy()
+      : scaleLinear<number, number>();
+
+    const useDomain = domain ?? computeDefaultDomain();
+    base.domain(useDomain);
+
+    const useRange = range ?? computeDefaultRange(innerWidth, innerHeight);
+    base.range(useRange);
+    return base;
+  });
+
+  // Axis projector derived from the resolved scale
+  const axisFunction: AxisProjector = (v: number) => resolvedScale(v);
+  $inspect({ axisFunction });
 </script>
 
 <g

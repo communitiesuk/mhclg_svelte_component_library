@@ -229,16 +229,16 @@
         category: "axisFunctions",
         isProp: false,
       },
-      {
-        name: "axisFunction",
-        category: "axisFunctions",
-        description: {
-          markdown: true,
-          arr: [
-            "Uses <code>xFunction</code> if <code>orientation.axis === x</code> and uses <code>yFunction</code> if <code>orientation.axis === y</code>.",
-          ],
-        },
-      },
+      // {
+      //   name: "axisFunction",
+      //   category: "axisFunctions",
+      //   description: {
+      //     markdown: true,
+      //     arr: [
+      //       "Uses <code>xFunction</code> if <code>orientation.axis === x</code> and uses <code>yFunction</code> if <code>orientation.axis === y</code>.",
+      //     ],
+      //   },
+      // },
       {
         name: "numberOfTicks",
         category: "customisations",

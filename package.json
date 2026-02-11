@@ -108,6 +108,7 @@
     "flowbite-svelte-icons": "^2.0.3",
     "gh-pages": "^6.3.0",
     "govuk-frontend": "^5.11.1",
+    "html-to-image": "^1.11.13",
     "labelplacer": "^0.0.0",
     "leaflet": "^1.9.4",
     "mapbox-gl": "^1.13.3",

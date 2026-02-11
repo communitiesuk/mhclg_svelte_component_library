@@ -104,8 +104,21 @@
     return base;
   });
 
-  let scaleFuntion = resolvedScale;
-  console.log("sc", scaleFuntion(6));
+  let scaleFunction = $derived(resolvedScale);
+  $inspect("sc", scaleFunction()(6), typeof scaleFunction);
+
+  let objectOfFunctions = {
+    a: (x) => x * 2,
+    b: (x) => 3 * 2,
+  };
+
+  let actualFunction = function (input) {
+    return objectOfFunctions[input];
+  };
+
+  console.log(actualFunction("a"), "tagCheck");
+
+  console.log(actualFunction("a")(10), "tagCheck");
 
   // console.log("re", resolvedScale(6));
 

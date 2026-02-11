@@ -69,11 +69,9 @@
   const innerWidth = $derived(
     Math.max(0, chartWidth - paddingLeft - paddingRight),
   );
-  $inspect(innerWidth);
   const innerHeight = $derived(
     Math.max(0, chartHeight - paddingTop - paddingBottom),
   );
-  $inspect(innerHeight);
   function computeDefaultDomain(): [number, number] {
     const arr = (ticksArray && ticksArray.length ? ticksArray : values) ?? [];
     const dMin =
@@ -90,7 +88,7 @@
       return [innerHeight, 0];
     }
   }
-
+  //Should return a function
   const resolvedScale = $derived(() => {
     const base: ScaleContinuousNumeric<number, number> = scale
       ? scale.copy()
@@ -101,12 +99,20 @@
 
     const useRange = range ?? computeDefaultRange(innerWidth, innerHeight);
     base.range(useRange);
+    //console.log("Base", base(50)); //works
+    $inspect({ base });
     return base;
   });
 
-  // Axis projector derived from the resolved scale
-  const axisFunction: AxisProjector = (v: number) => resolvedScale(v);
-  $inspect({ axisFunction });
+  let scaleFuntion = resolvedScale;
+  console.log("sc", scaleFuntion(6));
+
+  // console.log("re", resolvedScale(6));
+
+  const axisFunction: AxisProjector = $derived((v: number) => resolvedScale(v));
+
+  //$inspect({ axisFunction });
+  //$inspect(axisFunction(6));
 </script>
 
 <g

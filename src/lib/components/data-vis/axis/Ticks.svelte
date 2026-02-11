@@ -26,7 +26,7 @@
     ticksArray?: number[]; // bindable
     chartWidth: number;
     chartHeight: number;
-    axisFunction: (value: number) => number;
+    axisFunction: any;
     values: number[]; // numeric array for domain
     numberOfTicks?: number;
     floor?: number;
@@ -35,7 +35,7 @@
     /** Mandatory custom label generator */
     labelFormatter?: (tick: number, index: number) => string;
   } = $props();
-  $inspect(axisFunction);
+  console.log(axisFunction(2));
   function generateTicks(
     data: number[],
     numTicks: number,
@@ -98,11 +98,11 @@
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
   {#each ticksArray as tick, index}
-    {console.log("ticks", ticksArray)}
     <g
-      transform="translate({orientation.axis === 'x'
-        ? axisFunction(tick)
-        : 0},{orientation.axis === 'y' ? axisFunction(tick) : 0})"
+      transform="translate(
+        {orientation.axis === 'x' ? axisFunction(tick) : 0},
+        {orientation.axis === 'y' ? axisFunction(tick) : 0}
+      )"
     >
       <path
         d={orientation.axis === "y"
@@ -116,15 +116,18 @@
         stroke-width="2px"
       ></path>
       <text
-        transform="translate({orientation.axis === 'x'
+        transform="translate(
+          {orientation.axis === 'x'
           ? 0
           : orientation.position === 'left'
             ? -10
-            : 10}, {orientation.axis === 'y'
+            : 10},
+          {orientation.axis === 'y'
           ? 5
           : orientation.position === 'top'
             ? -10
-            : 23})"
+            : 23}
+        )"
         font-size="19"
         text-anchor={orientation.axis === "x"
           ? "middle"

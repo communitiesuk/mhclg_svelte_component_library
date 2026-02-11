@@ -76,6 +76,31 @@
       splitGroupsAndAverages(dist, nBins).averages.reverse(),
     ),
   );
+
+  function findBinIndex(binned, value) {
+    if (!binned.length) return -1;
+
+    // Get the symbol keys for x1 and x2 from the first bin
+    const symbols = Object.getOwnPropertySymbols(binned[0]);
+    const x1Sym = symbols.find((s) => s.description === "x1");
+    const x2Sym = symbols.find((s) => s.description === "x2");
+
+    if (!x1Sym || !x2Sym) {
+      throw new Error("Bins do not have x1 and x2 symbols");
+    }
+
+    return binned.findIndex((bin) => {
+      const x1 = bin[x1Sym];
+      const x2 = bin[x2Sym];
+      return value >= x1 && value < x2; // half-open interval [x1, x2)
+    });
+  }
+
+  let highlightIndex = $derived(
+    highlightValue !== null ? findBinIndex(bins, highlightValue) : -1,
+  );
+
+  $inspect({ highlightValue });
 </script>
 
 {#key containerWidth}

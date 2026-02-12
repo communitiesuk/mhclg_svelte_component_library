@@ -66,12 +66,9 @@
   } = $props();
 
   // --- Helpers to compute default domain/range when not supplied ---
-  const innerWidth = $derived(
-    Math.max(0, chartWidth - paddingLeft - paddingRight),
-  );
-  const innerHeight = $derived(
-    Math.max(0, chartHeight - paddingTop - paddingBottom),
-  );
+  const innerWidth = $derived(Math.max(0, chartWidth));
+  const innerHeight = $derived(Math.max(0, chartHeight));
+
   function computeDefaultDomain(): [number, number] {
     const arr = (ticksArray && ticksArray.length ? ticksArray : values) ?? [];
     const dMin =
@@ -88,7 +85,7 @@
       return [innerHeight, 0];
     }
   }
-  //Should return a function
+  //Returns d3 scale funtion
   const resolvedScale = $derived(() => {
     const base: ScaleContinuousNumeric<number, number> = scale
       ? scale.copy()
@@ -99,33 +96,27 @@
 
     const useRange = range ?? computeDefaultRange(innerWidth, innerHeight);
     base.range(useRange);
-    //console.log("Base", base(50)); //works
-    $inspect({ base });
+
     return base;
   });
 
   let scaleFunction = $derived(resolvedScale);
   $inspect("sc", scaleFunction()(6), typeof scaleFunction);
 
-  let objectOfFunctions = {
-    a: (x) => x * 2,
-    b: (x) => 3 * 2,
-  };
+  // let objectOfFunctions = {
+  //   a: (x) => x * 2,
+  //   b: (x) => 3 * 2,
+  // };
 
-  let actualFunction = function (input) {
-    return objectOfFunctions[input];
-  };
+  // let actualFunction = function (input) {
+  //   return objectOfFunctions[input];
+  // };
 
-  console.log(actualFunction("a"), "tagCheck");
+  // console.log(actualFunction("a"), "tagCheck");
 
-  console.log(actualFunction("a")(10), "tagCheck");
-
-  // console.log("re", resolvedScale(6));
+  // console.log(actualFunction("a")(10), "tagCheck");
 
   const axisFunction: AxisProjector = $derived((v: number) => resolvedScale(v));
-
-  //$inspect({ axisFunction });
-  //$inspect(axisFunction(6));
 </script>
 
 <g

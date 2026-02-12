@@ -100,8 +100,8 @@
   {#each ticksArray as tick, index}
     <g
       transform="translate(
-        {orientation.axis === 'x' ? axisFunction(tick) : 0},
-        {orientation.axis === 'y' ? axisFunction(tick) : 0}
+        {orientation.axis === 'x' ? axisFunction()(tick) : 0},
+        {orientation.axis === 'y' ? axisFunction()(tick) : 0}
       )"
     >
       <path

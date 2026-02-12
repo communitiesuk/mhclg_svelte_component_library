@@ -85,7 +85,7 @@
       return [innerHeight, 0];
     }
   }
-  //Returns d3 scale funtion
+  //Returns d3 scale function
   const resolvedScale = $derived(() => {
     const base: ScaleContinuousNumeric<number, number> = scale
       ? scale.copy()
@@ -99,10 +99,7 @@
 
     return base;
   });
-
-  let scaleFunction = $derived(resolvedScale);
-  $inspect("sc", scaleFunction()(6), typeof scaleFunction);
-
+  const axisFunction: AxisProjector = $derived((v: number) => resolvedScale(v));
   // let objectOfFunctions = {
   //   a: (x) => x * 2,
   //   b: (x) => 3 * 2,
@@ -115,8 +112,6 @@
   // console.log(actualFunction("a"), "tagCheck");
 
   // console.log(actualFunction("a")(10), "tagCheck");
-
-  const axisFunction: AxisProjector = $derived((v: number) => resolvedScale(v));
 </script>
 
 <g

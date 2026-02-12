@@ -35,7 +35,20 @@
     /** Mandatory custom label generator */
     labelFormatter?: (tick: number, index: number) => string;
   } = $props();
-  console.log(axisFunction(2));
+  function axisValue(fn: any, tick: number): number {
+    // Try single-call first: axisFunction(tick)
+    try {
+      const v = fn(tick);
+      if (typeof v === "number") return v;
+    } catch {
+      // ignore
+    }
+
+    // Fallback: axisFunction()(tick)
+    const inner = fn();
+    return inner(tick);
+  }
+
   function generateTicks(
     data: number[],
     numTicks: number,
@@ -100,8 +113,8 @@
   {#each ticksArray as tick, index}
     <g
       transform="translate(
-        {orientation.axis === 'x' ? axisFunction()(tick) : 0},
-        {orientation.axis === 'y' ? axisFunction()(tick) : 0}
+        {orientation.axis === 'x' ? axisValue(axisFunction, tick) : 0},
+        {orientation.axis === 'y' ? axisValue(axisFunction, tick) : 0}
       )"
     >
       <path

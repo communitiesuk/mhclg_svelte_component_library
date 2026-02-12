@@ -207,38 +207,24 @@
         name: "chartHeight",
         category: "dimensions",
       },
-      // {
-      //   name: "xScaleType",
-      //   category: "axisFunctions",
-      //   isProp: false,
-      //   options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
-      // },
-      // {
-      //   name: "xFunction",
-      //   category: "axisFunctions",
-      //   isProp: false,
-      // },
-      // {
-      //   name: "yScaleType",
-      //   category: "axisFunctions",
-      //   isProp: false,
-      //   options: ["scaleLinear()", "scaleLog()", "scaleTime()"],
-      // },
-      // {
-      //   name: "yFunction",
-      //   category: "axisFunctions",
-      //   isProp: false,
-      // },
-      // {
-      //   name: "axisFunction",
-      //   category: "axisFunctions",
-      //   description: {
-      //     markdown: true,
-      //     arr: [
-      //       "Uses <code>xFunction</code> if <code>orientation.axis === x</code> and uses <code>yFunction</code> if <code>orientation.axis === y</code>.",
-      //     ],
-      //   },
-      // },
+      {
+        name: "axisFunction",
+        category: "axisFunctions",
+        isProp: true,
+        options: [scaleLinear(), scaleLog()],
+      },
+      {
+        name: "range",
+        category: "axisFunctions",
+        isProp: true,
+        value: [0, 350],
+      },
+      {
+        name: "domain",
+        category: "axisFunctions",
+        isProp: true,
+        value: [0, 100],
+      },
       {
         name: "numberOfTicks",
         category: "customisations",

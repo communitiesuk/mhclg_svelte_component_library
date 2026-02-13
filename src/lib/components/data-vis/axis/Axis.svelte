@@ -128,19 +128,20 @@
     stroke="black"
     stroke-width="2px"
   ></line>
-
-  {#key numberOfTicks}
-    <Ticks
-      bind:ticksArray
-      {chartWidth}
-      {chartHeight}
-      {axisFunction}
-      {values}
-      {numberOfTicks}
-      {orientation}
-      {floor}
-      {ceiling}
-      {labelFormatter}
-    />
-  {/key}
+  {#if values}
+    {#key numberOfTicks}
+      <Ticks
+        bind:ticksArray
+        {chartWidth}
+        {chartHeight}
+        {axisFunction}
+        {values}
+        {numberOfTicks}
+        {orientation}
+        {floor}
+        {ceiling}
+        {labelFormatter}
+      />
+    {/key}
+  {/if}
 </g>

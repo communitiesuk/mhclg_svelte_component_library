@@ -19,7 +19,7 @@
     numberOfTicks = undefined as number | undefined,
 
     // Bindable, but avoid binding undefined – initialize as [] for safety
-    ticksArray = $bindable<number[] | undefined>(undefined),
+    ticksArray = $bindable<number[]>([]),
 
     // Values to derive ticks/domain from if ticksArray not provided
     values = undefined as number[] | undefined,

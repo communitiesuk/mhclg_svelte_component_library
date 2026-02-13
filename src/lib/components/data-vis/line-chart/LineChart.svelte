@@ -8,24 +8,36 @@
   import { highlight } from "./../../../utils/syntax-highlighting/shikiHighlight";
   import Lines from "./Lines.svelte";
   import ValueLabel from "./ValueLabel.svelte";
+  import Axis from "../axis/Axis.svelte";
+  let xTicks = $state([]);
 
+  let yTicks = $state([]);
+  $inspect(yTicks);
+
+  const xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : undefined);
+
+  const xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : undefined);
+  const yTickMin = $derived(yTicks.length ? Math.min(...yTicks) : undefined);
+
+  const yTickMax = $derived(yTicks.length ? Math.max(...yTicks) : undefined);
   let {
     series,
     y,
     x,
     lineChartData,
 
-    xFunction = (number) => {
-      return scaleLinear()
-        .domain([2015, 2022])
-        .range([0, svgWidth - paddingLeft - paddingRight])(number);
+    xScale = (number) => {
+      return scaleLinear().domain([xTickMin, xTickMax]).range([0, chartWidth])(
+        number,
+      );
     },
-    yFunction = (number) => {
-      return scaleLinear()
-        .domain([0, 100])
-        .range([svgHeight - paddingTop - paddingBottom, 0])(number);
+    yScale = (number) => {
+      return scaleLinear().domain([yTickMin, yTickMax]).range([chartHeight, 0])(
+        number,
+      );
     },
-    lineFunction = line()
+
+    lineScale = line()
       .x((d) => xFunction(d[x]))
       .y((d) => yFunction(d[y]))
       .curve(curveLinear),
@@ -156,7 +168,9 @@
       slatePurple: "#64587C",
     },
   } = $props();
-
+  let xFunction = $derived((value) => xScale(value));
+  let yFunction = $derived((value) => yScale(value));
+  let lineFunction = $derived((value) => lineScale(value));
   const colorValues = Array.isArray(colors) ? colors : Object.values(colors);
   const lineColorMap = {};
 
@@ -292,17 +306,28 @@
   >
     {#if svgWidth}
       <g transform="translate({paddingLeft},{paddingTop})">
-        <g data-role="y-axis">
-          <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
-          ></path>
-        </g>
-        <g data-role="x-axis">
-          <path
-            d="M0 {chartHeight} l{chartWidth} 0"
-            stroke="black"
-            stroke-width="2px"
-          ></path>
-        </g>
+        <Axis
+          bind:ticksArray={yTicks}
+          {chartHeight}
+          {chartWidth}
+          orientation={{ axis: "y", position: "left" }}
+          range={[chartHeight, 0]}
+          floor={0}
+          domain={[yTickMin, yTickMax]}
+          values={lineChartData.lines.flatMap((l) => l.data.map((d) => d[y]))}
+        ></Axis>
+        <!--X axis-->
+        <Axis
+          bind:ticksArray={xTicks}
+          {chartWidth}
+          {chartHeight}
+          orientation={{ axis: "x", position: "bottom" }}
+          values={lineChartData.lines.flatMap((l) => l.data.map((d) => d[x]))}
+          range={[0, chartWidth]}
+          domain={[xTickMin, xTickMax]}
+          ceiling={2022}
+          floor={2015}
+        ></Axis>
         <g data-role="lines-group">
           <Lines
             {tieredDataObject}

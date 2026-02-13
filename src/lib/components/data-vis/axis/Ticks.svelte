@@ -103,10 +103,29 @@
     const tickNum = orientation.axis === "y" ? h / 50 : w / 50;
     return tickNum;
   }
+  function clampTickEnds(
+    ticks: number[],
+    floor?: number,
+    ceiling?: number,
+  ): number[] {
+    if (!ticks || ticks.length === 0) return ticks;
+
+    const out = ticks.slice();
+
+    if (floor !== undefined && out[0] <= floor) {
+      out[0] = floor;
+    }
+    if (ceiling !== undefined && out[out.length - 1] >= ceiling) {
+      out[out.length - 1] = ceiling;
+    }
+    return out;
+  }
 
   // Compute ticks
   numberOfTicks = tickCount(chartWidth, chartHeight);
-  ticksArray = generateTicks(values, numberOfTicks, floor, ceiling);
+  const rawTicks = generateTicks(values, numberOfTicks, floor, ceiling);
+
+  ticksArray = clampTickEnds(rawTicks, floor, ceiling);
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}

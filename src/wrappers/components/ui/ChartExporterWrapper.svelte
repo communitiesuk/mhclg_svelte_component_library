@@ -1,6 +1,7 @@
 <script module>
   import BaseNameAndStatus from "$lib/package-wrapping/BaseNameAndStatus.svelte";
   import BaseInformation from "$lib/package-wrapping/BaseInformation.svelte";
+  //import { PositionChart } from "../../../lib/components/data-vis/position-chart/PositionChart.svelte";
   export { WrapperNameAndStatus, WrapperInformation };
 
   /**
@@ -26,7 +27,7 @@
    * ?  Tested - The component's use within products or prototyping (i.e. in a real-use example, using real props) has been tested and approved.
    */
   let statusObject = {
-    progress: "In progress",
+    progress: "To be developed",
     statusRows: [
       {
         obj: { Accessible: false, Responsive: false, "Prog. enhanced": false },
@@ -46,10 +47,12 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
+  let descriptionArray = [
+    "This component allows for the user to export a divs contents. In order to this to be implemented the div tag needs to have <code>bind:this={node}</code> in the attributes",
+  ];
 
   let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+    "This component can be used to export divs. The main use case for exporting charts to the user so they can use them elsewhere for communication. As of writing this cannot not be used to make a .png download for the map component. During export, the chart is cloned and placed inside a fixed‑position container that sits far off‑screen. This sandbox ensures the chart can be measured and rendered cleanly without affecting the visible page or triggering layout shifts. The sand box images is the image used for export",
   ];
 
   let detailsArray = [
@@ -70,9 +73,7 @@
   /**
    * CUSTOMISETHIS  Update connectedComponentsArray to provide links to any children, parent or related components.
    */
-  let connectedComponentsArray = [
-    { label: "Child components", arr: [{ name: "Ticks", folder: "data-vis" }] },
-  ];
+  let connectedComponentsArray = [];
 </script>
 
 <script>
@@ -93,10 +94,12 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-  import Axis from "$lib/components/data-vis/axis/Axis.svelte";
-  import { scaleLinear, scaleLog, scaleTime } from "d3-scale";
+  import ChartExporter from "$lib/components/ui/ChartExporter.svelte";
+  import PositionChart from "$lib/components/data-vis/position-chart/PositionChart.svelte";
+  import Examples from "./chart-exporter/Examples.svelte";
 
   let { data } = $props();
+  let node = null;
 
   /**
    * DONOTTOUCH *
@@ -117,7 +120,6 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let ticksArray = $state();
 
   /**
    * ! Step 3 - Add your props
@@ -160,111 +162,16 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "ticksArray",
-        category: "data",
-        isBinded: true,
-      },
-      {
-        name: "values",
-        category: "data",
-        value: [0, 100],
-      },
-      {
-        name: "svgHeight",
-        category: "dimensions",
-        isProp: false,
-        value: 500,
-      },
-      {
-        name: "paddingTop",
-        category: "dimensions",
-        isProp: false,
-        value: 100,
-      },
-      {
-        name: "paddingRight",
-        category: "dimensions",
-        isProp: false,
-        value: 100,
-      },
-      {
-        name: "paddingBottom",
-        category: "dimensions",
-        isProp: false,
-        value: 100,
-      },
-      {
-        name: "paddingLeft",
-        category: "dimensions",
-        isProp: false,
-        value: 100,
-      },
-      {
-        name: "chartWidth",
-        category: "dimensions",
-      },
-      {
-        name: "chartHeight",
-        category: "dimensions",
-      },
-      {
-        name: "axisFunction",
-        category: "axisFunctions",
-        isProp: true,
-        options: [scaleLinear(), scaleLog()],
-      },
-      {
-        name: "range",
-        category: "axisFunctions",
-        isProp: true,
-        value: [0, 350],
-      },
-      {
-        name: "domain",
-        category: "axisFunctions",
-        isProp: true,
-        value: [0, 100],
-      },
-      {
-        name: "numberOfTicks",
-        category: "customisations",
-        value: 5,
-      },
-      {
-        name: "orientationAxis",
-        category: "customisations",
-        isProp: false,
-        options: ["x", "y"],
-        propType: "radio",
-      },
-      {
-        name: "orientationPosition",
-        category: "customisations",
-        isProp: false,
-        options: ["top", "bottom", "left", "right"],
-        propType: "radio",
-      },
-      {
-        name: "orientation",
-        category: "customisations",
-      },
-      {
-        name: "labelFormatter",
-        category: "formattingTick",
-        // isRequired: false, // optional—default is false
-        value: function (tick, index) {
-          // You can swap this to a currency or % if preferred.
-          return `${tick}`;
-        },
-        functionElements: {
-          functionAsString: `function labelFormatter(tick, index) { return \`\${tick}\`; }`,
-        },
+        name: "fileName",
+        category: "Input props",
+        value: "example.png",
         description: {
           markdown: true,
           arr: [
-            'Optional function: <code>(tick: number, index: number) => string</code>. Example: <code>function labelFormatter(tick) {return \`£${Number(tick).toLocaleString("en-GB")}`\;\}</code>',
+            `This prop passes a text string to the <code>${pageName}</code> component to be be used a the file name for the exported image.`,
           ],
         },
+        rows: 1,
       },
     ]),
   );
@@ -316,57 +223,7 @@
    *  &&     The getValue() function can be helpful for deriving props based on the value of $state() prop.
    */
 
-  let chartWidth = $derived(
-    demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
-  );
-
-  let chartHeight = $derived(
-    getValue("svgHeight") - getValue("paddingTop") - getValue("paddingBottom"),
-  );
-
-  let xFunction = $derived(function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("xScaleType")]
-      .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
-      .range([
-        0,
-        demoScreenWidth - getValue("paddingLeft") - getValue("paddingRight"),
-      ])(number);
-  });
-
-  let yFunction = $derived(function (number) {
-    return {
-      "scaleLinear()": scaleLinear(),
-      "scaleLog()": scaleLog(),
-      "scaleTime()": scaleTime(),
-    }[getValue("yScaleType")]
-      .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
-      .range([
-        getValue("svgHeight") -
-          getValue("paddingTop") -
-          getValue("paddingBottom"),
-        0,
-      ])(number);
-  });
-
-  let orientation = $derived({
-    axis: getValue("orientationAxis"),
-    position: getValue("orientationPosition"),
-  });
-
-  let axisFunction = $derived(
-    orientation?.axis === "x" ? xFunction : yFunction,
-  );
-
-  let derivedParametersObject = $derived({
-    chartWidth,
-    chartHeight,
-    orientation,
-    axisFunction,
-  });
+  let derivedParametersObject = $derived({});
 
   /**
    * DONOTTOUCH *
@@ -456,18 +313,13 @@
   CUSTOMISETHIS   Create a context in which your component is commonly used (e.g. wrap chart components within SVGs). Pass through binded props separately (e.g. <Component {...parametersOnject} bind:bindedProp></Component>)
  -->
 {#snippet Component()}
-  <div>
-    <svg width="100%" height={getValue("svgHeight")}>
-      <g
-        transform="translate({getValue('paddingLeft')},{getValue(
-          'paddingTop',
-        )})"
-      >
-        {#key parametersObject}
-          <Axis {...parametersObject} bind:ticksArray></Axis>
-        {/key}
-      </g>
-    </svg>
+  <div class="p-8">
+    <div bind:this={node}>
+      <PositionChart value="7" min="0" max="10" label="Education"
+      ></PositionChart>
+    </div>
+
+    <ChartExporter {...parametersObject} {node}></ChartExporter>
   </div>
 {/snippet}
 
@@ -498,21 +350,21 @@ DONOTTOUCH  *
     DONOTTOUCH  *
     &&          Renders the demo UI and the component itself.
 -->
-<div bind:clientWidth={demoScreenWidth}>
-  <ComponentDemo
-    {Component}
-    bind:demoScreenWidth
-    {parametersSourceArray}
-    bind:statedParametersValuesArray
-    {derivedParametersValuesArray}
-    {parametersVisibleArray}
-    {parametersParsingErrorsObject}
-    {copyParametersToClipboardObject}
-  ></ComponentDemo>
-</div>
+<ComponentDemo
+  {Component}
+  bind:demoScreenWidth
+  {parametersSourceArray}
+  bind:statedParametersValuesArray
+  {derivedParametersValuesArray}
+  {parametersVisibleArray}
+  {parametersParsingErrorsObject}
+  {copyParametersToClipboardObject}
+></ComponentDemo>
 
 <!--
     DONOTTOUCH  *
     &&          Creates a list of examples where the component is used (if any examples exist).
 -->
-<div id="examples" data-role="examples-section"></div>
+<div id="examples" data-role="examples-section">
+  <Examples></Examples>
+</div>

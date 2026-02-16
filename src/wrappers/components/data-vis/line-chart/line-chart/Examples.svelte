@@ -199,6 +199,8 @@
         areaFillColor: "lightgrey",
         pathStrokeColor: "darkgrey",
       }}
+      yCeiling={100}
+      yFloor={0}
     ></LineChart>
   </div>
   <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>

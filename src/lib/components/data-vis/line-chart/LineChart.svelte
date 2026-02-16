@@ -8,6 +8,7 @@
   import { highlight } from "./../../../utils/syntax-highlighting/shikiHighlight";
   import Lines from "./Lines.svelte";
   import ValueLabel from "./ValueLabel.svelte";
+  import Axis from "../axis/Axis.svelte";
 
   let {
     series,
@@ -15,17 +16,18 @@
     x,
     lineChartData,
 
-    xFunction = (number) => {
-      return scaleLinear()
-        .domain([2015, 2022])
-        .range([0, svgWidth - paddingLeft - paddingRight])(number);
+    xScale = (number) => {
+      return scaleLinear().domain([xTickMin, xTickMax]).range([0, chartWidth])(
+        number,
+      );
     },
-    yFunction = (number) => {
-      return scaleLinear()
-        .domain([0, 100])
-        .range([svgHeight - paddingTop - paddingBottom, 0])(number);
+    yScale = (number) => {
+      return scaleLinear().domain([yTickMin, yTickMax]).range([chartHeight, 0])(
+        number,
+      );
     },
-    lineFunction = line()
+
+    lineScale = line()
       .x((d) => xFunction(d[x]))
       .y((d) => yFunction(d[y]))
       .curve(curveLinear),
@@ -108,6 +110,10 @@
     paddingBottom = 50,
     paddingLeft = 50,
     paddingRight = 150,
+    xFloor = undefined,
+    xCeiling = undefined,
+    yFloor = undefined,
+    yCeiling = undefined,
     activeMarkerId = undefined,
     chartBackgroundColor = "#f5f5f5",
     seriesLabels = $bindable(false),
@@ -157,6 +163,18 @@
     },
   } = $props();
 
+  let xTicks = $state([]);
+  let yTicks = $state([]);
+
+  const xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : undefined);
+  const xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : undefined);
+  const yTickMin = $derived(yTicks.length ? Math.min(...yTicks) : undefined);
+  const yTickMax = $derived(yTicks.length ? Math.max(...yTicks) : undefined);
+
+  let xFunction = $derived((value) => xScale(value));
+  let yFunction = $derived((value) => yScale(value));
+  let lineFunction = $derived((value) => lineScale(value));
+
   const colorValues = Array.isArray(colors) ? colors : Object.values(colors);
   const lineColorMap = {};
 
@@ -197,7 +215,7 @@
   let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
   let areaFunction = $derived(
     area()
-      .y0((d) => yFunction(0))
+      .y0((d) => yFunction(yTickMin))
       .x((d) => xFunction(d.x))
       .y1((d) => yFunction(d.y))
       .curve(curveLinear),
@@ -292,17 +310,29 @@
   >
     {#if svgWidth}
       <g transform="translate({paddingLeft},{paddingTop})">
-        <g data-role="y-axis">
-          <path d="M0 0 l0 {chartHeight}" stroke="black" stroke-width="2px"
-          ></path>
-        </g>
-        <g data-role="x-axis">
-          <path
-            d="M0 {chartHeight} l{chartWidth} 0"
-            stroke="black"
-            stroke-width="2px"
-          ></path>
-        </g>
+        <Axis
+          bind:ticksArray={yTicks}
+          {chartHeight}
+          {chartWidth}
+          orientation={{ axis: "y", position: "left" }}
+          range={[chartHeight, 0]}
+          domain={[yTickMin, yTickMax]}
+          values={lineChartData.lines.flatMap((l) => l.data.map((d) => d[y]))}
+          ceiling={yCeiling ?? yTickMax}
+          floor={yFloor ?? yTickMin}
+        ></Axis>
+        <!--X axis-->
+        <Axis
+          bind:ticksArray={xTicks}
+          {chartWidth}
+          {chartHeight}
+          orientation={{ axis: "x", position: "bottom" }}
+          values={lineChartData.lines.flatMap((l) => l.data.map((d) => d[x]))}
+          range={[0, chartWidth]}
+          domain={[xTickMin, xTickMax]}
+          ceiling={xCeiling ?? xTickMax}
+          floor={xFloor ?? xTickMin}
+        ></Axis>
         <g data-role="lines-group">
           <Lines
             {tieredDataObject}

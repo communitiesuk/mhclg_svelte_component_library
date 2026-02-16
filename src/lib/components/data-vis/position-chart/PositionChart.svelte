@@ -4,6 +4,7 @@
   import ValueLabel from "../line-chart/ValueLabel.svelte";
   import Button from "../../ui/Button.svelte";
   import InsetText from "../../content/InsetText.svelte";
+  import Axis from "../axis/Axis.svelte";
   let {
     value = undefined,
     min = undefined,
@@ -80,6 +81,11 @@
     },
     activeMarkerId = undefined,
   } = $props();
+
+  let xTicks = $state([]);
+
+  let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : 0);
+  let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
 
   // base defaults that apply to every row
   const baseRow = { value, colour, opacity, annotation };
@@ -332,10 +338,10 @@
     {/if}
     <div
       class="chart"
-      style="height: {positionChart.chartHeight}px"
+      style="height: {positionChart.chartHeight * 2}px"
       bind:clientWidth={chartWidth}
     >
-      <svg width={chartWidth} height={positionChart.chartHeight}>
+      <svg width={chartWidth} height={positionChart.chartHeight * 2}>
         {#each range as number}
           <g
             transform="translate({markerRadius +
@@ -397,6 +403,19 @@
             {/if}
           {/each}
         {/each}
+
+        <Axis
+          bind:ticksArray={xTicks}
+          {chartHeight}
+          chartWidth={chartWidth - markerRadius * 2}
+          orientation={{ axis: "x", position: "bottom" }}
+          range={[markerRadius, chartWidth - markerRadius]}
+          domain={[xTickMin, xTickMax]}
+          values={[0, 2, 3, 4]}
+          fontSize={14}
+          floor={min}
+          ceiling={max}
+        ></Axis>
       </svg>
     </div>
     {#if moreInfoTogglesArray[i]}
@@ -427,9 +446,6 @@
     {#if showLabel}
       <div class="empty"></div>
     {/if}
-    <div class="axis">
-      <PositionChartAxis {markerRadius} {barWidth}></PositionChartAxis>
-    </div>
   {/if}
   {#if activeMarkerId}
     <ValueLabel

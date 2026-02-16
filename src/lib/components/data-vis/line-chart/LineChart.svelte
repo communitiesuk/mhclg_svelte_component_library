@@ -110,6 +110,10 @@
     paddingBottom = 50,
     paddingLeft = 50,
     paddingRight = 150,
+    xFloor = undefined,
+    xCeiling = undefined,
+    yFloor = undefined,
+    yCeiling = undefined,
     activeMarkerId = undefined,
     chartBackgroundColor = "#f5f5f5",
     seriesLabels = $bindable(false),
@@ -314,6 +318,8 @@
           range={[chartHeight, 0]}
           domain={[yTickMin, yTickMax]}
           values={lineChartData.lines.flatMap((l) => l.data.map((d) => d[y]))}
+          ceiling={yCeiling ?? yTickMax}
+          floor={yFloor ?? yTickMin}
         ></Axis>
         <!--X axis-->
         <Axis
@@ -324,8 +330,8 @@
           values={lineChartData.lines.flatMap((l) => l.data.map((d) => d[x]))}
           range={[0, chartWidth]}
           domain={[xTickMin, xTickMax]}
-          ceiling={xTickMax}
-          floor={xTickMin}
+          ceiling={xCeiling ?? xTickMax}
+          floor={xFloor ?? xTickMin}
         ></Axis>
         <g data-role="lines-group">
           <Lines

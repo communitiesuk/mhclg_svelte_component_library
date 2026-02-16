@@ -49,6 +49,8 @@
     return inner(tick);
   }
 
+  $inspect({ ceiling });
+
   function generateTicks(
     data: number[],
     numTicks: number,
@@ -60,12 +62,12 @@
 
     const minVal =
       floorVal !== undefined
-        ? Decimal.max(new Decimal(floorVal), minValueFromData)
+        ? Decimal.min(new Decimal(floorVal), minValueFromData)
         : new Decimal(minValueFromData);
 
     const maxVal =
       ceilingVal !== undefined
-        ? Decimal.min(new Decimal(ceilingVal), maxValueFromData)
+        ? Decimal.max(new Decimal(ceilingVal), maxValueFromData)
         : new Decimal(maxValueFromData);
 
     const rangeVal = maxVal.minus(minVal);
@@ -125,7 +127,11 @@
   numberOfTicks = tickCount(chartWidth, chartHeight);
   const rawTicks = generateTicks(values, numberOfTicks, floor, ceiling);
 
+  $inspect({ rawTicks });
+
   ticksArray = clampTickEnds(rawTicks, floor, ceiling);
+
+  $inspect({ ticksArray });
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}

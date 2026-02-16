@@ -4,7 +4,7 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-import Histogram from "$lib/components/data-vis/Histogram.svelte";
+  import Histogram from "$lib/components/data-vis/histogram/Histogram.svelte";
 
   let accordionSnippetSections = [
     {

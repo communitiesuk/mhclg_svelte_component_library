@@ -91,8 +91,8 @@
 
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
-import Histogram from "$lib/components/data-vis/Histogram.svelte";
-import Examples from "./histogram/Examples.svelte";
+  import Histogram from "$lib/components/data-vis//histogram/Histogram.svelte";
+  import Examples from "./Examples.svelte";
 
   let { data } = $props();
 
@@ -435,7 +435,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
  -->
 {#snippet Component()}
   <div class="p-8">
-<Histogram {...parametersObject}></Histogram>
+    <Histogram {...parametersObject}></Histogram>
   </div>
 {/snippet}
 

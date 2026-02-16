@@ -13,12 +13,12 @@
     thresholds = 20,
   } = $props();
 
-  import { interpolateColors } from "./position-chart/interpolateColors";
-  import { getColorsForValues } from "./position-chart/getColorsForValues";
-  import { splitGroupsAndAverages } from "./position-chart/splitGroupsAndAverages";
-  import PositionChartAxis from "./position-chart/PositionChartAxis.svelte";
+  import { interpolateColors } from "../position-chart/interpolateColors";
+  import { getColorsForValues } from "../position-chart/getColorsForValues";
+  import { splitGroupsAndAverages } from "../position-chart/splitGroupsAndAverages";
+  import PositionChartAxis from "../position-chart/PositionChartAxis.svelte";
   import { bin, ticks } from "d3-array";
-  import PositionChart from "./position-chart/PositionChart.svelte";
+  import PositionChart from "../position-chart/PositionChart.svelte";
 
   let domainMin = min ?? Math.min(...dist);
   let domainMax = max ?? Math.max(...dist);

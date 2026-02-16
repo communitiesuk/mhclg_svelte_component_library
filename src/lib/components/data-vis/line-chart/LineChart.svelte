@@ -211,7 +211,7 @@
   let chartHeight = $derived(svgHeight - paddingTop - paddingBottom);
   let areaFunction = $derived(
     area()
-      .y0((d) => yFunction(0))
+      .y0((d) => yFunction(yTickMin))
       .x((d) => xFunction(d.x))
       .y1((d) => yFunction(d.y))
       .curve(curveLinear),

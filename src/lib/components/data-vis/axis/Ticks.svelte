@@ -22,6 +22,7 @@
     ceiling,
     orientation,
     labelFormatter,
+    fontSize = 19,
   }: {
     ticksArray?: number[]; // bindable
     chartWidth: number;
@@ -34,6 +35,7 @@
     orientation: Orientation;
     /** Mandatory custom label generator */
     labelFormatter?: (tick: number, index: number) => string;
+    fontSize?: number;
   } = $props();
   function axisValue(fn: any, tick: number): number {
     // Try single-call first: axisFunction(tick)
@@ -48,8 +50,6 @@
     const inner = fn();
     return inner(tick);
   }
-
-  $inspect({ ceiling });
 
   function generateTicks(
     data: number[],
@@ -127,11 +127,7 @@
   numberOfTicks = tickCount(chartWidth, chartHeight);
   const rawTicks = generateTicks(values, numberOfTicks, floor, ceiling);
 
-  $inspect({ rawTicks });
-
   ticksArray = clampTickEnds(rawTicks, floor, ceiling);
-
-  $inspect({ ticksArray });
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
@@ -166,7 +162,7 @@
             ? -10
             : 23}
         )"
-        font-size="19"
+        font-size={fontSize}
         text-anchor={orientation.axis === "x"
           ? "middle"
           : orientation.position === "left"

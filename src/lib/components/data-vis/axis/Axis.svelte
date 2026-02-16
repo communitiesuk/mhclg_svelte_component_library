@@ -44,6 +44,7 @@
     // Optional overrides for domain/range applied to a COPY of the provided scale
     domain = undefined as [number, number] | undefined,
     range = undefined as [number, number] | undefined,
+    fontSize = 19,
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -63,6 +64,7 @@
     scale?: ScaleContinuousNumeric<number, number>;
     domain?: [number, number];
     range?: [number, number];
+    fontSize?: number;
   } = $props();
 
   // --- Helpers to compute default domain/range when not supplied ---
@@ -109,9 +111,9 @@
     : chartWidth},{orientation.position === 'bottom' ? chartHeight : 0})"
 >
   <line
-    x1="0"
+    x1={range[0]}
     y1="0"
-    x2={orientation.axis === "x" ? chartWidth : 0}
+    x2={orientation.axis === "x" ? range[1] : 0}
     y2={orientation.axis === "y" ? chartHeight : 0}
     stroke="black"
     stroke-width="2px"
@@ -129,6 +131,7 @@
         {floor}
         {ceiling}
         {labelFormatter}
+        {fontSize}
       />
     {/key}
   {/if}

@@ -9,17 +9,7 @@
   import Lines from "./Lines.svelte";
   import ValueLabel from "./ValueLabel.svelte";
   import Axis from "../axis/Axis.svelte";
-  let xTicks = $state([]);
 
-  let yTicks = $state([]);
-  $inspect(yTicks);
-
-  const xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : undefined);
-
-  const xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : undefined);
-  const yTickMin = $derived(yTicks.length ? Math.min(...yTicks) : undefined);
-
-  const yTickMax = $derived(yTicks.length ? Math.max(...yTicks) : undefined);
   let {
     series,
     y,
@@ -168,9 +158,19 @@
       slatePurple: "#64587C",
     },
   } = $props();
+
+  let xTicks = $state([]);
+  let yTicks = $state([]);
+
+  const xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : undefined);
+  const xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : undefined);
+  const yTickMin = $derived(yTicks.length ? Math.min(...yTicks) : undefined);
+  const yTickMax = $derived(yTicks.length ? Math.max(...yTicks) : undefined);
+
   let xFunction = $derived((value) => xScale(value));
   let yFunction = $derived((value) => yScale(value));
   let lineFunction = $derived((value) => lineScale(value));
+
   const colorValues = Array.isArray(colors) ? colors : Object.values(colors);
   const lineColorMap = {};
 
@@ -312,7 +312,6 @@
           {chartWidth}
           orientation={{ axis: "y", position: "left" }}
           range={[chartHeight, 0]}
-          floor={0}
           domain={[yTickMin, yTickMax]}
           values={lineChartData.lines.flatMap((l) => l.data.map((d) => d[y]))}
         ></Axis>
@@ -325,8 +324,8 @@
           values={lineChartData.lines.flatMap((l) => l.data.map((d) => d[x]))}
           range={[0, chartWidth]}
           domain={[xTickMin, xTickMax]}
-          ceiling={2022}
-          floor={2015}
+          ceiling={xTickMax}
+          floor={xTickMin}
         ></Axis>
         <g data-role="lines-group">
           <Lines

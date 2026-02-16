@@ -34,16 +34,12 @@
 
   let buckets = histogram(dist);
 
-  $inspect({ buckets });
-
   const bins = buckets.map((b) => ({
     x0: b.x0,
     x1: b.x1,
     values: b,
     count: b.length,
   }));
-
-  $inspect({ bins });
 
   let nBins = $derived(bins.length);
 
@@ -78,22 +74,7 @@
   );
 
   function findBinIndex(binned, value) {
-    if (!binned.length) return -1;
-
-    // Get the symbol keys for x1 and x2 from the first bin
-    const symbols = Object.getOwnPropertySymbols(binned[0]);
-    const x1Sym = symbols.find((s) => s.description === "x1");
-    const x2Sym = symbols.find((s) => s.description === "x2");
-
-    if (!x1Sym || !x2Sym) {
-      throw new Error("Bins do not have x1 and x2 symbols");
-    }
-
-    return binned.findIndex((bin) => {
-      const x1 = bin[x1Sym];
-      const x2 = bin[x2Sym];
-      return value >= x1 && value < x2; // half-open interval [x1, x2)
-    });
+    return binned.findIndex((bin) => value >= bin.x0 && value < bin.x1);
   }
 
   let highlightIndex = $derived(
@@ -101,6 +82,7 @@
   );
 
   $inspect({ highlightValue });
+  $inspect({ highlightIndex });
 </script>
 
 {#key containerWidth}
@@ -109,12 +91,16 @@
       <g transform="translate(-10,0)">
         {#each bins as bin, i}
           {#key bin.x0}
+            {console.log("i=", i)}
+            {console.log("highlightIndex=", highlightIndex)}
             <rect
               x={xScale(bin.x0)}
               y={histHeight - yScale(bin.count)}
               width={xScale(bin.x1) - xScale(bin.x0)}
               height={yScale(bin.count)}
               fill={interpolatedColors[i]}
+              stroke={i === highlightIndex ? "black" : "white"}
+              stroke-width={i === highlightIndex ? 3 : 0}
             ></rect>
           {/key}
         {/each}

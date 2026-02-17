@@ -19,9 +19,15 @@
   import PositionChartAxis from "../position-chart/PositionChartAxis.svelte";
   import { bin, ticks } from "d3-array";
   import PositionChart from "../position-chart/PositionChart.svelte";
+  import Axis from "../axis/Axis.svelte";
 
   let domainMin = min ?? Math.min(...dist);
   let domainMax = max ?? Math.max(...dist);
+
+  let xTicks = $state([]);
+
+  let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : 0);
+  let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
 
   //  min and max at extremes
   //  let histogram = bin().domain([domainMin, domainMax]).thresholds(thresholds);
@@ -87,7 +93,7 @@
 
 {#key containerWidth}
   <div class="scale-container" bind:clientWidth={containerWidth}>
-    <svg width={containerWidth} height={histHeight}>
+    <svg width={containerWidth} height={histHeight * 2}>
       <g transform="translate(-10,0)">
         {#each bins as bin, i}
           {#key bin.x0}
@@ -105,6 +111,16 @@
           {/key}
         {/each}
       </g>
+      <Axis
+        bind:ticksArray={xTicks}
+        chartHeight={histHeight}
+        chartWidth={containerWidth}
+        orientation={{ axis: "x", position: "bottom" }}
+        range={[histHeight, containerWidth]}
+        domain={[xTickMin, xTickMax]}
+        values={dist}
+        fontSize={14}
+      ></Axis>
     </svg>
   </div>
 {/key}

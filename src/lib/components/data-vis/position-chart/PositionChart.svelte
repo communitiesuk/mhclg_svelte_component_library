@@ -17,6 +17,7 @@
     max = undefined,
     label = undefined,
     showAxis = true,
+    showArrows = true,
     axisLabels = ["Below average", "Above average"],
     chartHeight = 24,
     color = "inherit",
@@ -91,6 +92,11 @@
     areaProfile = true,
     chartDescriptionSnippet,
   } = $props();
+
+  let xTicks = $state([]);
+
+  let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : 0);
+  let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
 
   let selectedAreasColorsPalette = ["#CA357C", "#750080", "#8A0000"];
 
@@ -389,8 +395,8 @@
                 aria-hidden={true}
                 class="govuk-body-s"
                 style=" text-align: right;
-      margin: 0;
-      line-height: 1.05;"
+          margin: 0;
+          line-height: 1.05;"
               >
                 {row.label}
               </p>
@@ -407,10 +413,10 @@
               ></Button>
             </div>
           {/if}
-          <div class="scale-container" style="height: {row.chartHeight}px">
+          <div class="scale-container" style="height: {row.chartHeight * 2}px">
             <svg
               width={chartWidth - 20}
-              height={row.chartHeight}
+              height={row.chartHeight * 2}
               aria-hidden={true}
             >
               <rect
@@ -581,6 +587,18 @@
                   {/if}
                 {/each}
               {/each}
+              {#if showAxis}
+                <Axis
+                  bind:ticksArray={xTicks}
+                  {chartHeight}
+                  {chartWidth}
+                  orientation={{ axis: "x", position: "bottom" }}
+                  range={[0, chartWidth]}
+                  domain={[xTickMin, xTickMax]}
+                  values={dist}
+                  fontSize={14}
+                ></Axis>
+              {/if}
             </svg>
           </div>
         </div>
@@ -591,7 +609,7 @@
           </div>
         {/if}
         {#if row.divider}
-          {#if showAxis}
+          {#if showArrows}
             <div class="data-row" aria-hidden="true">
               {#if axisFirst}
                 {#if showLabel}
@@ -626,7 +644,7 @@
           <div></div>
         {/if}
       {/each}
-      {#if showAxis}
+      {#if showArrows}
         <div class="data-row" aria-hidden="true">
           {#if showLabel}
             <div

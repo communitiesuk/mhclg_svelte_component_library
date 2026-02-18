@@ -88,9 +88,10 @@
     },
     activeMarkerId = undefined,
     ariaLabel,
-    axisTextSize,
+    axisTextSize = "xs",
     areaProfile = true,
     chartDescriptionSnippet,
+    numberOfTicks = undefined,
   } = $props();
 
   let xTicks = $state([]);
@@ -597,6 +598,7 @@
                   domain={[xTickMin, xTickMax]}
                   values={dist}
                   fontSize={14}
+                  {numberOfTicks}
                 ></Axis>
               {/if}
             </svg>

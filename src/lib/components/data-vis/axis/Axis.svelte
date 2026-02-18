@@ -115,7 +115,7 @@
     y1="0"
     x2={orientation.axis === "x" ? chartWidth : 0}
     y2={orientation.axis === "y" ? chartHeight : 0}
-    stroke="black"
+    stroke="darkgrey"
     stroke-width="2px"
   ></line>
   {#if values}

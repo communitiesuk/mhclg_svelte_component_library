@@ -73,7 +73,7 @@
 
     const rangeVal = maxVal.minus(minVal);
     const roughStep = rangeVal.div(numTicks - 1);
-    const normalizedSteps = [1, 2, 5, 10];
+    const normalizedSteps = [1, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15, 25, 35, 45];
 
     const stepPower = Decimal.pow(
       10,
@@ -147,7 +147,7 @@
           : orientation.position === "top"
             ? "M0 0 l0 -8"
             : "M0 0 l0 8"}
-        stroke="black"
+        stroke="darkgrey"
         stroke-width="2px"
       ></path>
       <text
@@ -169,7 +169,7 @@
           : orientation.position === "left"
             ? "end"
             : "start"}
-        fill="black"
+        fill="darkgrey"
       >
         {labelFormatter ? labelFormatter(tick, index) : defaultLabel(tick)}
       </text>

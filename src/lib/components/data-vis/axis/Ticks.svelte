@@ -23,6 +23,7 @@
     orientation,
     labelFormatter,
     fontSize = 19,
+    clamp = false,
   }: {
     ticksArray?: number[]; // bindable
     chartWidth: number;
@@ -36,6 +37,7 @@
     /** Mandatory custom label generator */
     labelFormatter?: (tick: number, index: number) => string;
     fontSize?: number;
+    clamp: boolean;
   } = $props();
 
   function axisValue(fn: any, tick: number): number {
@@ -58,22 +60,18 @@
     floorVal?: number,
     ceilingVal?: number,
   ): number[] {
-    const minValueFromData = Decimal.min(...data);
-    const maxValueFromData = Decimal.max(...data);
+    const dataMin = Decimal.min(...data);
+    const dataMax = Decimal.max(...data);
 
-    const minVal =
-      floorVal !== undefined
-        ? Decimal.min(new Decimal(floorVal), minValueFromData)
-        : new Decimal(minValueFromData);
+    const minVal = floorVal !== undefined ? new Decimal(floorVal) : dataMin;
 
-    const maxVal =
-      ceilingVal !== undefined
-        ? Decimal.max(new Decimal(ceilingVal), maxValueFromData)
-        : new Decimal(maxValueFromData);
+    const maxVal = ceilingVal !== undefined ? new Decimal(ceilingVal) : dataMax;
 
     const rangeVal = maxVal.minus(minVal);
     const roughStep = rangeVal.div(numTicks - 1);
-    const normalizedSteps = [1, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15, 25, 35, 45];
+    const normalizedSteps = [
+      1, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15, 25, 30, 35, 40, 45,
+    ];
 
     const stepPower = Decimal.pow(
       10,
@@ -128,7 +126,7 @@
   numberOfTicks = tickCount(chartWidth, chartHeight);
   const rawTicks = generateTicks(values, numberOfTicks, floor, ceiling);
 
-  ticksArray = clampTickEnds(rawTicks, floor, ceiling);
+  ticksArray = clamp ? clampTickEnds(rawTicks, floor, ceiling) : rawTicks;
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
@@ -169,7 +167,7 @@
           : orientation.position === "left"
             ? "end"
             : "start"}
-        fill="darkgrey"
+        fill="#666666"
       >
         {labelFormatter ? labelFormatter(tick, index) : defaultLabel(tick)}
       </text>

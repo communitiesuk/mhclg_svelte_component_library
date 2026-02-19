@@ -8,6 +8,7 @@
   import { splitGroupsAndAverages } from "./splitGroupsAndAverages.js";
   import { getColorsForValues } from "./getColorsForValues.js";
   import Axis from "../axis/Axis.svelte";
+  import { median, quantile } from "d3-array";
 
   let {
     data = undefined,
@@ -27,7 +28,7 @@
     endColor = "#2D6644",
     colorScale = undefined,
     opacity = 1,
-    shape = "rect",
+    shape = "circle",
     annotation = undefined,
     showIcon = false,
     moreInfo = undefined,
@@ -92,12 +93,25 @@
     areaProfile = true,
     chartDescriptionSnippet,
     numberOfTicks = undefined,
+    floor = undefined,
+    ceiling = undefined,
+    conversion = undefined,
   } = $props();
 
   let xTicks = $state([]);
 
   let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : 0);
   let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
+
+  let distSorted = $derived(dist.slice().sort((a, b) => a - b));
+  let q1 = $derived(quantile(distSorted, 0.25));
+  let q3 = $derived(quantile(distSorted, 0.75));
+  let rawMedian = $derived(median(distSorted));
+  let iqr = $derived(q3 - q1);
+
+  let newMin = $derived(conversion(xTickMin, iqr, rawMedian));
+  let newMax = $derived(conversion(xTickMax, iqr, rawMedian));
+  $inspect({ xTickMin, xTickMax, rawMedian, iqr, newMin, newMax });
 
   let selectedAreasColorsPalette = ["#CA357C", "#750080", "#8A0000"];
 
@@ -414,10 +428,13 @@
               ></Button>
             </div>
           {/if}
-          <div class="scale-container" style="height: {row.chartHeight * 2}px">
+          <div
+            class="scale-container"
+            style="height: {row.chartHeight * 2.5}px"
+          >
             <svg
               width={chartWidth - 20}
-              height={row.chartHeight * 2}
+              height={row.chartHeight * 2.5}
               aria-hidden={true}
             >
               <rect
@@ -450,6 +467,22 @@
                     stroke-width="0.5px"
                   ></line>
                 </g>{/each}
+
+              {#if showAxis}
+                <Axis
+                  bind:ticksArray={xTicks}
+                  {chartHeight}
+                  {chartWidth}
+                  orientation={{ axis: "x", position: "bottom" }}
+                  range={[0, chartWidth]}
+                  domain={[xTickMin, xTickMax]}
+                  values={dist}
+                  fontSize={14}
+                  {numberOfTicks}
+                  {floor}
+                  {ceiling}
+                ></Axis>
+              {/if}
 
               {#each Object.entries(row.rowData) as [tier, points]}
                 {#each points as rowValue, i}
@@ -494,8 +527,8 @@
                         : null}
                       pointer-events={interactiveMarkers ? null : "none"}
                       transform="translate({xFunction(
-                        row.min,
-                        row.max,
+                        newMin,
+                        newMax,
                       )(rowValue.value)},{row.chartHeight / 2})"
                     >
                       {#if rowValue.shape === "rect"}
@@ -508,8 +541,8 @@
                           fill={rowValue.color === "inherit"
                             ? segmentColor(
                                 rowValue.value,
-                                min,
-                                max,
+                                newMin,
+                                newMax,
                                 interpolatedColors,
                               )
                             : rowValue.color}
@@ -527,8 +560,8 @@
                           fill={rowValue.color === "inherit"
                             ? segmentColor(
                                 rowValue.value,
-                                min,
-                                max,
+                                newMin,
+                                newMax,
                                 interpolatedColors,
                               )
                             : rowValue.color}
@@ -546,8 +579,8 @@
                           fill={rowValue.color === "inherit"
                             ? segmentColor(
                                 rowValue.value,
-                                min,
-                                max,
+                                newMin,
+                                newMax,
                                 interpolatedColors,
                               )
                             : rowValue.color}
@@ -564,7 +597,12 @@
                           height={rowValue.markerRadius * 2}
                           rx="0"
                           fill={rowValue.color === "inherit"
-                            ? segmentColor(value, min, max, interpolatedColors)
+                            ? segmentColor(
+                                rowValue.value,
+                                newMin,
+                                newMax,
+                                interpolatedColors,
+                              )
                             : rowValue.color}
                           stroke="black"
                           stroke-width="3"
@@ -573,13 +611,35 @@
                         ></rect>
                       {:else}
                         <circle
+                          r={rowValue.markerRadius * 1.1}
+                          cx="0"
+                          cy="0"
+                          fill={rowValue.color === "inherit"
+                            ? segmentColor(
+                                rowValue.value,
+                                newMin,
+                                newMax,
+                                interpolatedColors,
+                              )
+                            : rowValue.color}
+                          stroke="white"
+                          stroke-width="2"
+                          opacity={rowValue.opacity}
+                          pointer-events={rowValue.pointerEvents}
+                        ></circle>
+                        <circle
                           r={rowValue.markerRadius}
                           cx="0"
                           cy="0"
                           fill={rowValue.color === "inherit"
-                            ? segmentColor(value, min, max, interpolatedColors)
+                            ? segmentColor(
+                                rowValue.value,
+                                newMin,
+                                newMax,
+                                interpolatedColors,
+                              )
                             : rowValue.color}
-                          stroke="white"
+                          stroke="black"
                           opacity={rowValue.opacity}
                           pointer-events={rowValue.pointerEvents}
                         ></circle>
@@ -588,19 +648,6 @@
                   {/if}
                 {/each}
               {/each}
-              {#if showAxis}
-                <Axis
-                  bind:ticksArray={xTicks}
-                  {chartHeight}
-                  {chartWidth}
-                  orientation={{ axis: "x", position: "bottom" }}
-                  range={[0, chartWidth]}
-                  domain={[xTickMin, xTickMax]}
-                  values={dist}
-                  fontSize={14}
-                  {numberOfTicks}
-                ></Axis>
-              {/if}
             </svg>
           </div>
         </div>

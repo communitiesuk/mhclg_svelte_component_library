@@ -11,6 +11,8 @@
     startColor = "#B70000",
     endColor = "#2D6644",
     thresholds = 20,
+    floor = undefined,
+    ceiling = undefined,
   } = $props();
 
   import { interpolateColors } from "../position-chart/interpolateColors";
@@ -93,8 +95,8 @@
 
 {#key containerWidth}
   <div class="scale-container" bind:clientWidth={containerWidth}>
-    <svg width={containerWidth} height={histHeight * 2}>
-      <g transform="translate(-10,0)">
+    <svg width={containerWidth} height={histHeight * 1.5}>
+      <g transform="translate(5,0)">
         {#each bins as bin, i}
           {#key bin.x0}
             {console.log("i=", i)}
@@ -110,17 +112,21 @@
             ></rect>
           {/key}
         {/each}
+        <g transform="translate(5,0)">
+          <Axis
+            bind:ticksArray={xTicks}
+            chartHeight={histHeight}
+            chartWidth={containerWidth * 0.9}
+            orientation={{ axis: "x", position: "bottom" }}
+            domain={[xTickMin, xTickMax]}
+            range={[0, containerWidth * 0.9]}
+            values={dist}
+            fontSize={14}
+            {floor}
+            {ceiling}
+          ></Axis>
+        </g>
       </g>
-      <Axis
-        bind:ticksArray={xTicks}
-        chartHeight={histHeight}
-        chartWidth={containerWidth}
-        orientation={{ axis: "x", position: "bottom" }}
-        range={[histHeight, containerWidth]}
-        domain={[xTickMin, xTickMax]}
-        values={dist}
-        fontSize={14}
-      ></Axis>
     </svg>
   </div>
 {/key}
@@ -128,4 +134,5 @@
 <PositionChartAxis
   chartWidth={containerWidth}
   axisLabels={["Below average", "Above average"]}
+  textSize="xs"
 ></PositionChartAxis>

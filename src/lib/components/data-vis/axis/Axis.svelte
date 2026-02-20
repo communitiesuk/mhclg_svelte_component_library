@@ -7,6 +7,8 @@
   import Ticks from "./Ticks.svelte";
 
   type AxisName = "x" | "y";
+  type Polarity = "standard" | "reverse";
+
   type AxisPosition = "bottom" | "top" | "left" | "right";
   type Orientation = { axis: AxisName; position: AxisPosition };
   type AxisProjector = (value: number) => number;
@@ -45,6 +47,7 @@
     domain = undefined as [number, number] | undefined,
     range = undefined as [number, number] | undefined,
     fontSize = 19,
+    polarity = "standard" as Polarity,
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -65,6 +68,7 @@
     domain?: [number, number];
     range?: [number, number];
     fontSize?: number;
+    polarity?: Polarity;
   } = $props();
 
   // --- Helpers to compute default domain/range when not supplied ---
@@ -96,8 +100,11 @@
     const useDomain = domain ?? computeDefaultDomain();
     base.domain(useDomain);
 
-    const useRange = range ?? computeDefaultRange(innerWidth, innerHeight);
-    base.range(useRange);
+    let useRange = range ?? computeDefaultRange(innerWidth, innerHeight);
+    if (polarity === "reverse") {
+      useRange = [...useRange].reverse();
+    }
+    base.range([...useRange]);
 
     return base;
   });
@@ -132,6 +139,7 @@
         {ceiling}
         {labelFormatter}
         {fontSize}
+        {polarity}
       />
     {/key}
   {/if}

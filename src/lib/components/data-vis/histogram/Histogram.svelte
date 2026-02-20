@@ -96,11 +96,37 @@
 {#key containerWidth}
   <div class="scale-container" bind:clientWidth={containerWidth}>
     <svg width={containerWidth} height={histHeight * 1.5}>
-      <g transform="translate(5,0)">
+      <defs>
+        <marker
+          id="arrow-down"
+          markerWidth="10"
+          markerHeight="10"
+          refX="0"
+          refY="3"
+          orient="auto"
+          markerUnits="strokeWidth"
+        >
+          <!-- Simple upward pointing arrow -->
+          <path d="M 0 0 L 6 3 L 0 6 z"></path>
+        </marker>
+      </defs>
+      <g transform="translate(0,0)">
+        <Axis
+          bind:ticksArray={xTicks}
+          chartHeight={histHeight}
+          chartWidth={containerWidth * 0.9}
+          orientation={{ axis: "x", position: "bottom" }}
+          domain={[xTickMin, xTickMax]}
+          range={[0, containerWidth * 0.9]}
+          values={dist}
+          fontSize={14}
+          {floor}
+          {ceiling}
+        ></Axis>
+      </g>
+      <g transform="translate(0,0)">
         {#each bins as bin, i}
           {#key bin.x0}
-            {console.log("i=", i)}
-            {console.log("highlightIndex=", highlightIndex)}
             <rect
               x={xScale(bin.x0)}
               y={histHeight - yScale(bin.count)}
@@ -108,24 +134,35 @@
               height={yScale(bin.count)}
               fill={interpolatedColors[i]}
               stroke={i === highlightIndex ? "black" : "white"}
-              stroke-width={i === highlightIndex ? 3 : 0}
+              stroke-width={i === highlightIndex ? 0 : 0}
             ></rect>
           {/key}
         {/each}
-        <g transform="translate(5,0)">
-          <Axis
-            bind:ticksArray={xTicks}
-            chartHeight={histHeight}
-            chartWidth={containerWidth * 0.9}
-            orientation={{ axis: "x", position: "bottom" }}
-            domain={[xTickMin, xTickMax]}
-            range={[0, containerWidth * 0.9]}
-            values={dist}
-            fontSize={14}
-            {floor}
-            {ceiling}
-          ></Axis>
-        </g>
+
+        {#if highlightIndex !== undefined && bins[highlightIndex]}
+          {#key bins[highlightIndex].x0}
+            <rect
+              x={xScale(bins[highlightIndex].x0)}
+              y={histHeight - yScale(bins[highlightIndex].count)}
+              width={xScale(bins[highlightIndex].x1) -
+                xScale(bins[highlightIndex].x0)}
+              height={yScale(bins[highlightIndex].count)}
+              fill={interpolatedColors[highlightIndex]}
+              stroke="black"
+              stroke-width={2}
+            ></rect>
+
+            <line
+              x1={xScale(bins[highlightIndex].x0)}
+              y2={histHeight - yScale(bins[highlightIndex].count) - 15}
+              x2={xScale(bins[highlightIndex].x0)}
+              y1={histHeight - yScale(bins[highlightIndex].count) - 45}
+              stroke="black"
+              stroke-width="2"
+              marker-end="url(#arrow-down)"
+            ></line>
+          {/key}
+        {/if}
       </g>
     </svg>
   </div>

@@ -35,7 +35,7 @@
     markerRadius = chartHeight / 2,
     options = [],
     skew = false,
-    dist = undefined,
+    dist = [],
     rowData = [
       {
         value: value,
@@ -95,7 +95,8 @@
     numberOfTicks = undefined,
     floor = undefined,
     ceiling = undefined,
-    conversion = undefined,
+    conversion = (x) => x,
+    polarity = "standard",
   } = $props();
 
   let xTicks = $state([]);
@@ -481,6 +482,7 @@
                   {numberOfTicks}
                   {floor}
                   {ceiling}
+                  {polarity}
                 ></Axis>
               {/if}
 

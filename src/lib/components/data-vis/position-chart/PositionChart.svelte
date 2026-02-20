@@ -208,12 +208,16 @@
       )
     : interpolateColors(startColor, endColor, nSegments, midColor);
 
-  function segmentColor(value, min, max, interpolatedColors) {
-    const n = interpolatedColors.length;
-    return interpolatedColors[
-      Math.min(n - 1, Math.floor((n * (value - min)) / (max - min)))
-    ];
+  function segmentColor(value, min, max, colors) {
+    const n = colors.length;
+    const idx = Math.floor((n * (value - min)) / (max - min));
+    return colors[Math.min(n - 1, Math.max(0, idx))];
   }
+
+  const activeColors =
+    polarity === "reverse"
+      ? [...interpolatedColors].reverse() // only done once
+      : interpolatedColors;
 
   // the 'bar' is the 10 rectangles side by side
   let barWidth = $derived(chartWidth);
@@ -558,7 +562,7 @@
                                 rowValue.value,
                                 newMin,
                                 newMax,
-                                interpolatedColors,
+                                activeColors,
                               )
                             : rowValue.color}
                           stroke="white"
@@ -577,7 +581,7 @@
                                 rowValue.value,
                                 newMin,
                                 newMax,
-                                interpolatedColors,
+                                activeColors,
                               )
                             : rowValue.color}
                           stroke="black"
@@ -596,7 +600,7 @@
                                 rowValue.value,
                                 newMin,
                                 newMax,
-                                interpolatedColors,
+                                activeColors,
                               )
                             : rowValue.color}
                           stroke="white"
@@ -616,7 +620,7 @@
                                 rowValue.value,
                                 newMin,
                                 newMax,
-                                interpolatedColors,
+                                activeColors,
                               )
                             : rowValue.color}
                           stroke="black"
@@ -634,7 +638,7 @@
                                 rowValue.value,
                                 newMin,
                                 newMax,
-                                interpolatedColors,
+                                activeColors,
                               )
                             : rowValue.color}
                           stroke="white"
@@ -651,7 +655,7 @@
                                 rowValue.value,
                                 newMin,
                                 newMax,
-                                interpolatedColors,
+                                activeColors,
                               )
                             : rowValue.color}
                           stroke="black"

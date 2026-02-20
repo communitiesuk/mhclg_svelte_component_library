@@ -20,6 +20,7 @@
     selectedValue = $bindable(),
     display = "flex",
     gridPosition = undefined,
+    subtitle = undefined,
   } = $props();
 </script>
 
@@ -44,6 +45,9 @@
     {:else}
       {@render headerSnippet?.()}
     {/if}
+    {#if subtitle}<p class="govuk-body-m" style="color:grey">
+        {subtitle}
+      </p>{/if}
   </div>
 
   <div

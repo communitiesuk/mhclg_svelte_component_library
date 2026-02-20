@@ -100,9 +100,12 @@
   } = $props();
 
   let xTicks = $state([]);
+  $inspect({ xTicks });
 
-  let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : 0);
-  let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
+  let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : -3);
+  let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 3);
+  let newMin = $derived(xTicks.length ? Math.min(...xTicks) : -3);
+  let newMax = $derived(xTicks.length ? Math.max(...xTicks) : 3);
 
   let distSorted = $derived(dist.slice().sort((a, b) => a - b));
   let q1 = $derived(quantile(distSorted, 0.25));
@@ -110,9 +113,9 @@
   let rawMedian = $derived(median(distSorted));
   let iqr = $derived(q3 - q1);
 
-  let newMin = $derived(conversion(xTickMin, iqr, rawMedian));
-  let newMax = $derived(conversion(xTickMax, iqr, rawMedian));
-  $inspect({ xTickMin, xTickMax, rawMedian, iqr, newMin, newMax });
+  // let newMin = $derived(conversion(xTickMin, iqr, rawMedian));
+  // let newMax = $derived(conversion(xTickMax, iqr, rawMedian));
+  $inspect({ newMin, newMax });
 
   let selectedAreasColorsPalette = ["#CA357C", "#750080", "#8A0000"];
 
@@ -216,9 +219,20 @@
   let barWidth = $derived(chartWidth);
   let barHeight = $derived((chartHeight * 5) / 6);
 
-  function xFunction(min, max) {
-    return scaleLinear().domain([min, max]).range([0, barWidth]);
-  }
+  let useRange = $derived(
+    polarity === "standard" ? [0, barWidth] : [barWidth, 0],
+  );
+
+  let xScale = $derived(() =>
+    scaleLinear().domain([newMin, newMax]).range(useRange).clamp(true),
+  );
+
+  $inspect({ barWidth });
+  $inspect(xScale().domain());
+  $inspect(xScale().range());
+
+  let test = $derived([xScale()(0), xScale()(0.5), xScale()(1)]);
+  $inspect({ test });
 
   let annotations = $derived(
     Object.values(allDataNormalized[0].rowData)
@@ -237,7 +251,7 @@
     annotations.length > 0
       ? (showIcon ? 20 : 0) +
           (showLabel ? labelsContainerWidth : 0) +
-          xFunction(min, max)(annotations[0].value)
+          xScale()(annotations[0].value)
       : null,
   );
 
@@ -304,7 +318,7 @@
 							</marker>
 						</defs>
 						<path
-							d="M 4 25 v 10 h {xFunction(min, max)(d.value) + (topWidth - chartWidth) - 2}  v 15"
+							d="M 4 25 v 10 h {xScale()(d.value) + (topWidth - chartWidth) - 2}  v 15"
 							fill="none"
 							stroke={d.color}
 							stroke-width="1.5"
@@ -528,10 +542,9 @@
                         ? (event) => onClickMarker(event, rowValue, markerId)
                         : null}
                       pointer-events={interactiveMarkers ? null : "none"}
-                      transform="translate({xFunction(
-                        newMin,
-                        newMax,
-                      )(rowValue.value)},{row.chartHeight / 2})"
+                      transform="translate({xScale()(
+                        rowValue.value,
+                      )},{row.chartHeight / 2})"
                     >
                       {#if rowValue.shape === "rect"}
                         <rect
@@ -802,7 +815,7 @@
         labelTextColor="black"
         {labelText}
         {tooltipContent}
-        {xFunction}
+        xFunction={xScale}
         {yFunction}
         {x}
         {y}
@@ -851,7 +864,7 @@
               </marker>
             </defs>
             <path
-              d="M 4 25 v 10 h {xFunction(min, max)(d.value) +
+              d="M 4 25 v 10 h {xScale()(d.value) +
                 markerRadius -
                 4 +
                 (topWidth - chartWidth)}  v 15"
@@ -977,9 +990,8 @@
                       ? (event) => onClickMarker(event, rowValue, markerId)
                       : null}
                     pointer-events={interactiveMarkers ? null : "none"}
-                    transform="translate({xFunction(
-                      positionChart.min,
-                      positionChart.max,
+                    transform="translate({xScale(
+                   
                     )(rowValue.value) + markerRadius},{positionChart.chartHeight /
                       2})"
                   >

@@ -3,6 +3,8 @@
 
   // Types
   type Axis = "x" | "y";
+  type Polarity = "standard" | "reverse";
+
   type Position = "left" | "right" | "top" | "bottom";
 
   interface Orientation {
@@ -24,6 +26,7 @@
     labelFormatter,
     fontSize = 19,
     clamp = false,
+    polarity = "standard",
   }: {
     ticksArray?: number[]; // bindable
     chartWidth: number;
@@ -38,6 +41,7 @@
     labelFormatter?: (tick: number, index: number) => string;
     fontSize?: number;
     clamp: boolean;
+    polarity: Polarity;
   } = $props();
 
   function axisValue(fn: any, tick: number): number {

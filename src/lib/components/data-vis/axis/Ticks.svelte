@@ -74,7 +74,8 @@
     const rangeVal = maxVal.minus(minVal);
     const roughStep = rangeVal.div(numTicks - 1);
     const normalizedSteps = [
-      1, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15, 25, 30, 35, 40, 45,
+      0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15,
+      25, 30, 35, 40, 45,
     ];
 
     const stepPower = Decimal.pow(

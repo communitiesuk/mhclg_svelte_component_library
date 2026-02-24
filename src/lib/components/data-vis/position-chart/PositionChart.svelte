@@ -344,11 +344,11 @@
         <div class="data-row" style="height: 40px;">
           <div
             class="scale-container"
-            style="height: 100%; width: 100%;"
+            style=" width: 100%;"
             bind:clientHeight={annotationsContainerHeight}
             bind:clientWidth={annotationsContainerWidth}
           >
-            <svg width="100%" height="100%" style="overflow: visible;">
+            <svg width="100%" style="overflow: visible;">
               <g
                 transform="translate({annotationXPosition},{annotationsContainerHeight})"
               >
@@ -412,13 +412,7 @@
         </div>
       {/if}
       {#each allDataNormalized as row, i}
-        <div
-          class="data-row"
-          style="height: {Math.max(
-            rowContainerHeight,
-            areaProfile ? 37 : 28,
-          )}px;"
-        >
+        <div class="data-row">
           {#if showLabel}
             <div
               class="label-container"
@@ -447,13 +441,10 @@
               ></Button>
             </div>
           {/if}
-          <div
-            class="scale-container"
-            style="height: {row.chartHeight * 2.5}px"
-          >
+          <div class="scale-container">
             <svg
               width={chartWidth - 20}
-              height={row.chartHeight * 2.5}
+              height={showAxis ? chartHeight * 2 : chartHeight}
               aria-hidden={true}
             >
               <rect

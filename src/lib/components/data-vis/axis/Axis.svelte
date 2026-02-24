@@ -12,7 +12,12 @@
   type AxisPosition = "bottom" | "top" | "left" | "right";
   type Orientation = { axis: AxisName; position: AxisPosition };
   type AxisProjector = (value: number) => number;
-  type LabelFormatter = (tick: number, index: number) => string | number;
+  type LabelFormatter = (
+    tick: number,
+    index: number,
+    numberOfTicks: number,
+    values: number[],
+  ) => string | number;
 
   let {
     chartHeight = 100,

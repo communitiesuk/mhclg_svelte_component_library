@@ -97,6 +97,11 @@
     ceiling = undefined,
     conversion = (x) => x,
     polarity = "standard",
+    labelFormatter = (tick, index, numberOfTicks, values) => {
+      return tick;
+    },
+    average = undefined,
+    showAverage = false,
   } = $props();
 
   let xTicks = $state([]);
@@ -234,9 +239,6 @@
   $inspect({ barWidth });
   $inspect(xScale().domain());
   $inspect(xScale().range());
-
-  let test = $derived([xScale()(0), xScale()(0.5), xScale()(1)]);
-  $inspect({ test });
 
   let annotations = $derived(
     Object.values(allDataNormalized[0].rowData)
@@ -444,7 +446,11 @@
           <div class="scale-container">
             <svg
               width={chartWidth - 20}
-              height={showAxis ? chartHeight * 2 : chartHeight}
+              height={showAxis && showAverage
+                ? chartHeight * 3
+                : showAxis || showAverage
+                  ? chartHeight * 2.1
+                  : chartHeight}
               aria-hidden={true}
             >
               <rect
@@ -477,22 +483,41 @@
                     stroke-width="0.5px"
                   ></line>
                 </g>{/each}
-
+              {#if showAverage}
+                <!-- <g
+                  transform="translate({xScale()(average)},{chartHeight * 2.7})"
+                  ><text fill="#333333" font-size={14} text-anchor="middle"
+                    >Average</text
+                  ><path d="M0 -10 l0 -30" stroke="#333333" stroke-width={2}
+                  ></path></g
+                > -->
+                <g
+                  fill="red"
+                  transform="translate({xScale()(average)},{chartHeight * 2.7})"
+                  ><text fill="#333333" font-size={14} text-anchor="middle">
+                    <tspan x="0" dy="-5">▲</tspan>
+                    <tspan x="0" dy="10">Average</tspan>
+                  </text></g
+                >
+              {/if}
               {#if showAxis}
-                <Axis
-                  bind:ticksArray={xTicks}
-                  {chartHeight}
-                  {chartWidth}
-                  orientation={{ axis: "x", position: "bottom" }}
-                  range={[0, chartWidth]}
-                  domain={[xTickMin, xTickMax]}
-                  values={dist}
-                  fontSize={14}
-                  {numberOfTicks}
-                  {floor}
-                  {ceiling}
-                  {polarity}
-                ></Axis>
+                <g stroke="white" stroke-width="3" paint-order="stroke">
+                  <Axis
+                    bind:ticksArray={xTicks}
+                    {chartHeight}
+                    {chartWidth}
+                    orientation={{ axis: "x", position: "bottom" }}
+                    range={[0, chartWidth]}
+                    domain={[xTickMin, xTickMax]}
+                    values={dist}
+                    fontSize={14}
+                    {numberOfTicks}
+                    {floor}
+                    {ceiling}
+                    {polarity}
+                    {labelFormatter}
+                  ></Axis>
+                </g>
               {/if}
 
               {#each Object.entries(row.rowData) as [tier, points]}

@@ -7,6 +7,7 @@
     highlight = "dodgerblue",
     highlightValue = undefined,
     showAxis = true,
+    showArrows = true,
     midColor = "#DDDDDD",
     startColor = "#B70000",
     endColor = "#2D6644",
@@ -17,6 +18,9 @@
     height = 50,
     polarity = "standard",
     annotationText = "",
+    labelFormatter = (tick, index, numberOfTicks, values) => {
+      return tick;
+    },
   } = $props();
 
   import { interpolateColors } from "../position-chart/interpolateColors";
@@ -26,6 +30,7 @@
   import { bin, ticks } from "d3-array";
   import PositionChart from "../position-chart/PositionChart.svelte";
   import Axis from "../axis/Axis.svelte";
+  import { scaleLinear } from "d3-scale";
 
   let domainMin = min ?? Math.min(...dist);
   let domainMax = max ?? Math.max(...dist);
@@ -130,32 +135,35 @@
           <path d="M 0 0 L 6 3 L 0 6 z"></path>
         </marker>
       </defs>
-      <g transform="translate(0,0)">
-        <Axis
-          bind:ticksArray={xTicks}
-          chartHeight={height}
-          chartWidth={containerWidth - padding}
-          orientation={{ axis: "x", position: "bottom" }}
-          domain={[xTickMin, xTickMax]}
-          range={useRange}
-          values={dist}
-          fontSize={14}
-          {floor}
-          {ceiling}
-        ></Axis>
-        <Axis
-          bind:ticksArray={yTicks}
-          chartHeight={height}
-          chartWidth={containerWidth - padding}
-          orientation={{ axis: "y", position: "left" }}
-          domain={[0, yTickMax]}
-          range={[height, 0]}
-          values={dist}
-          fontSize={0}
-          {floor}
-          {ceiling}
-        ></Axis>
-      </g>
+      {#if showAxis}
+        <g transform="translate(0,0)">
+          <Axis
+            bind:ticksArray={xTicks}
+            chartHeight={height}
+            chartWidth={containerWidth - padding}
+            orientation={{ axis: "x", position: "bottom" }}
+            domain={[xTickMin, xTickMax]}
+            range={useRange}
+            values={dist}
+            fontSize={14}
+            {floor}
+            {ceiling}
+            {labelFormatter}
+          ></Axis>
+          <Axis
+            bind:ticksArray={yTicks}
+            chartHeight={height}
+            chartWidth={containerWidth - padding}
+            orientation={{ axis: "y", position: "left" }}
+            domain={[0, yTickMax]}
+            range={[height, 0]}
+            values={dist}
+            fontSize={0}
+            {floor}
+            {ceiling}
+          ></Axis>
+        </g>
+      {/if}
       <g transform="translate(0,0)">
         {#each bins as bin, i}
           {#key bin.x0}
@@ -177,7 +185,7 @@
                 y={height - yScale(bins[highlightIndex].count)}
                 width={(xScale(bins[highlightIndex].x1) -
                   xScale(bins[highlightIndex].x0)) *
-                  0.9}
+                  0.95}
                 height={yScale(bins[highlightIndex].count)}
                 fill={interpolatedColors[highlightIndex]}
                 stroke="white"
@@ -188,7 +196,7 @@
                 y={height - yScale(bins[highlightIndex].count)}
                 width={(xScale(bins[highlightIndex].x1) -
                   xScale(bins[highlightIndex].x0)) *
-                  0.9}
+                  0.95}
                 height={yScale(bins[highlightIndex].count)}
                 fill={interpolatedColors[highlightIndex]}
                 stroke="black"
@@ -225,11 +233,13 @@
         <text font-size="0.8em" fill="#777777">↑ Number of areas</text>
       </g> -->
     </svg>
-    <PositionChartAxis
-      chartWidth={containerWidth - padding}
-      axisLabels={["Worse than average", "Better than average"]}
-      textSize="xs"
-    ></PositionChartAxis>
+    {#if showArrows}
+      <PositionChartAxis
+        chartWidth={containerWidth - padding}
+        axisLabels={["Worse than average", "Better than average"]}
+        textSize="xs"
+      ></PositionChartAxis>
+    {/if}
   </div>
 {/key}
 

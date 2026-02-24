@@ -38,7 +38,12 @@
     ceiling?: number;
     orientation: Orientation;
     /** Mandatory custom label generator */
-    labelFormatter?: (tick: number, index: number) => string;
+    labelFormatter?: (
+      tick: number,
+      index: number,
+      numberOfTicks: number,
+      values: number[],
+    ) => string;
     fontSize?: number;
     clamp: boolean;
     polarity: Polarity;
@@ -174,7 +179,9 @@
             : "start"}
         fill="#666666"
       >
-        {labelFormatter ? labelFormatter(tick, index) : defaultLabel(tick)}
+        {labelFormatter
+          ? labelFormatter(tick, index, ticksArray.length, values)
+          : defaultLabel(tick)}
       </text>
     </g>
   {/each}

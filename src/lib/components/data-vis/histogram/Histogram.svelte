@@ -107,12 +107,12 @@
   <div
     class="scale-container"
     bind:clientWidth={containerWidth}
-    style="height={height * 4}"
+    style="height={height}"
   >
     <svg
       class="chart-container"
       width={containerWidth - padding}
-      height={height * 2}
+      height={showAxis ? height * 1.3 : height}
       transform="translate({padding / 2},0)"
     >
       <defs>
@@ -175,12 +175,24 @@
               <rect
                 x={xScale(bins[highlightIndex].x0)}
                 y={height - yScale(bins[highlightIndex].count)}
-                width={xScale(bins[highlightIndex].x1) -
-                  xScale(bins[highlightIndex].x0)}
+                width={(xScale(bins[highlightIndex].x1) -
+                  xScale(bins[highlightIndex].x0)) *
+                  0.9}
                 height={yScale(bins[highlightIndex].count)}
                 fill={interpolatedColors[highlightIndex]}
-                stroke="#666666"
-                stroke-width={2}
+                stroke="white"
+                stroke-width={3}
+              ></rect>
+              <rect
+                x={xScale(bins[highlightIndex].x0)}
+                y={height - yScale(bins[highlightIndex].count)}
+                width={(xScale(bins[highlightIndex].x1) -
+                  xScale(bins[highlightIndex].x0)) *
+                  0.9}
+                height={yScale(bins[highlightIndex].count)}
+                fill={interpolatedColors[highlightIndex]}
+                stroke="black"
+                stroke-width={1}
               ></rect>
 
               <line
@@ -195,7 +207,7 @@
                     2}
                 y1={height - yScale(bins[highlightIndex].count) - 30}
                 stroke="#666666"
-                stroke-width="2"
+                stroke-width="1.5"
                 marker-end="url(#arrow-down)"
               ></line>
               <g
@@ -214,8 +226,8 @@
       </g> -->
     </svg>
     <PositionChartAxis
-      chartWidth={containerWidth}
-      axisLabels={["Below average", "Above average"]}
+      chartWidth={containerWidth - padding}
+      axisLabels={["Worse than average", "Better than average"]}
       textSize="xs"
     ></PositionChartAxis>
   </div>

@@ -62,6 +62,7 @@
     const inner = fn();
     return inner(tick);
   }
+  $inspect(floor);
 
   function generateTicks(
     data: number[],
@@ -72,9 +73,9 @@
     const dataMin = Decimal.min(...data);
     const dataMax = Decimal.max(...data);
 
-    const minVal = floorVal !== undefined ? new Decimal(floorVal) : dataMin;
+    const minVal = floorVal !== null ? new Decimal(floorVal) : dataMin;
 
-    const maxVal = ceilingVal !== undefined ? new Decimal(ceilingVal) : dataMax;
+    const maxVal = ceilingVal !== null ? new Decimal(ceilingVal) : dataMax;
 
     const rangeVal = maxVal.minus(minVal);
     const roughStep = rangeVal.div(numTicks - 1);
@@ -123,10 +124,10 @@
 
     const out = ticks.slice();
 
-    if (floor !== undefined && out[0] <= floor) {
+    if (floor !== null && out[0] <= floor) {
       out[0] = floor;
     }
-    if (ceiling !== undefined && out[out.length - 1] >= ceiling) {
+    if (ceiling !== null && out[out.length - 1] >= ceiling) {
       out[out.length - 1] = ceiling;
     }
     return out;
@@ -134,9 +135,14 @@
 
   // Compute ticks
   numberOfTicks = tickCount(chartWidth, chartHeight);
-  const rawTicks = generateTicks(values, numberOfTicks, floor, ceiling);
 
-  ticksArray = clamp ? clampTickEnds(rawTicks, floor, ceiling) : rawTicks;
+  let derivedTicks = $derived(() => {
+    const ticks = generateTicks(values, numberOfTicks, floor, ceiling);
+
+    return clamp ? clampTickEnds(ticks, floor, ceiling) : ticks;
+  });
+
+  ticksArray = derivedTicks();
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}

@@ -120,7 +120,7 @@
    * && 		Any props which are updated inside the component but accessed outside should be declared here using the $state() rune. They can then be added to the parameterSourceArray below.
    * &&     Also note that they must also be passed to component using the bind: directive (e.g. <ExampleComponent bind:exampleBindableProp>)
    */
-  let ticksArray = $state();
+  let ticksArray = $state([]);
 
   /**
    * ! Step 3 - Add your props

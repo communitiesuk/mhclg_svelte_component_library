@@ -11,7 +11,7 @@
     midColor = "#DDDDDD",
     startColor = "#B70000",
     endColor = "#2D6644",
-    thresholds = 20,
+    thresholds = 10,
     floor = undefined,
     ceiling = undefined,
     padding = 0,
@@ -32,6 +32,8 @@
   import Axis from "../axis/Axis.svelte";
   import { scaleLinear } from "d3-scale";
   import ValueLabel from "../line-chart/ValueLabel.svelte";
+  import { createEqualWidthBins } from "../position-chart/createEqualWidthBins";
+  import { assignBinColors } from "../position-chart/assignBinColors";
 
   let domainMin = min ?? Math.min(...dist);
   let domainMax = max ?? Math.max(...dist);
@@ -47,29 +49,38 @@
   //  min and max at extremes
   //  let histogram = bin().domain([domainMin, domainMax]).thresholds(thresholds);
 
-  // calculating thresholds
+  /////////
+  // calculating thresholds from raw data:
+  /////////
+  // let thresholdsArray = ticks(domainMin, domainMax, thresholds);
 
-  let thresholdsArray = ticks(domainMin, domainMax, thresholds);
+  // let histogram = bin()
+  //   .domain([thresholdsArray[0], thresholdsArray[thresholdsArray.length - 1]])
+  //   .thresholds(thresholdsArray);
 
-  let histogram = bin()
-    .domain([thresholdsArray[0], thresholdsArray[thresholdsArray.length - 1]])
-    .thresholds(thresholdsArray);
+  // let buckets = histogram(dist);
 
-  let buckets = histogram(dist);
+  // const obins = buckets.map((b) => ({
+  //   x0: b.x0,
+  //   x1: b.x1,
+  //   count: b.length,
+  // }));
+  /////////
 
-  const bins = buckets.map((b) => ({
-    x0: b.x0,
-    x1: b.x1,
-    values: b,
-    count: b.length,
-  }));
+  // won't get xTick and xTickMax if showAxis is false
+  // run it anyway inside an else block
+  let bins = $derived(createEqualWidthBins(xTickMin, xTickMax, 10, dist));
+  $inspect({ xTickMin, xTickMax, bins });
 
   let nBins = $derived(bins.length);
 
-  let xMin = bins[0]?.x0 ?? 0;
-  let xMax = bins[bins.length - 1]?.x1 ?? 1;
+  let binsr = $derived(bins.reverse());
+  $inspect({ binsr });
 
-  let maxCount = Math.max(...bins.map((b) => b.count));
+  let xMin = $derived(bins[0]?.x0 ?? 0);
+  let xMax = $derived(bins[bins.length - 1]?.x1 ?? 1);
+
+  let maxCount = $derived(Math.max(...bins.map((b) => b.count)));
 
   let containerWidth = $state(100);
 
@@ -80,27 +91,26 @@
   );
 
   let xScale = $derived(
+    scaleLinear().domain([xTickMin, xTickMax]).range(useRange),
+  );
+  let oldxScale = $derived(
     (x) =>
       ((x - domainMin) / (domainMax - domainMin)) * (containerWidth - padding),
   );
-
   let yScale = (count) =>
     (count / Math.max(...bins.map((b) => b.count))) * height;
 
-  let barWidth = bins.length ? xScale(bins[0].x1) - xScale(bins[0].x0) : 0;
+  let barWidth = $derived(
+    bins.length ? xScale(bins[0].x1) - xScale(bins[0].x0) : 0,
+  );
 
   let colors1000 = $derived(
     interpolateColors(startColor, endColor, 1000, midColor),
   );
 
-  let interpolatedColors = $derived(
-    getColorsForValues(
-      colors1000.reverse(),
-      min,
-      max,
-      splitGroupsAndAverages(dist, nBins).averages.reverse(),
-    ),
-  );
+  let binColors = $derived(assignBinColors(bins, colors1000));
+
+  let interpolatedColors = $derived(binColors);
 
   function findBinIndex(binned, value) {
     return binned.findIndex((bin) => value >= bin.x0 && value < bin.x1);
@@ -171,9 +181,9 @@
         {#each bins as bin, i}
           {#key bin.x0}
             <rect
-              x={xScale(bin.x0)}
+              x={polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)}
               y={height - yScale(bin.count)}
-              width={xScale(bin.x1) - xScale(bin.x0)}
+              width={Math.abs(xScale(bin.x1) - xScale(bin.x0))}
               height={yScale(bin.count)}
               fill={interpolatedColors[i]}
               stroke-width={i === highlightIndex ? 0 : 0}
@@ -247,12 +257,6 @@
 {/key}
 
 <style>
-  .chart-container {
-  }
-  .scale-container {
-    /* flex: 1 1 auto; */
-  }
-
   .scale-container svg {
     overflow: visible;
     display: block;

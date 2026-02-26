@@ -57,5 +57,4 @@
       annotationText=""
     ></Histogram>
   </div>
-  <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}

@@ -23,7 +23,7 @@
     chartHeight = 100,
     chartWidth = $bindable<number>(200),
 
-    numberOfTicks = undefined as number | undefined,
+    numberOfTicks = 2,
 
     // Bindable, but avoid binding undefined – initialize as [] for safety
     ticksArray = $bindable<number[]>([]),
@@ -33,8 +33,8 @@
 
     orientation = { axis: "x", position: "bottom" } as Orientation,
 
-    floor = undefined as number | undefined,
-    ceiling = undefined as number | undefined,
+    floor = null,
+    ceiling = null,
 
     paddingTop = 100,
     paddingBottom = 100,
@@ -60,8 +60,8 @@
     ticksArray?: number[];
     values?: number[];
     orientation?: Orientation;
-    floor?: number;
-    ceiling?: number;
+    floor?: number | null;
+    ceiling?: number | null;
     paddingTop?: number;
     paddingBottom?: number;
     paddingLeft?: number;

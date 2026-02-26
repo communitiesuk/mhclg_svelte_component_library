@@ -4,7 +4,6 @@
   // Types
   type Axis = "x" | "y";
   type Polarity = "standard" | "reverse";
-
   type Position = "left" | "right" | "top" | "bottom";
 
   interface Orientation {
@@ -12,7 +11,7 @@
     position: Position;
   }
 
-  // Props with defaults (Svelte 5 runes)
+  // Props with defaults
   let {
     ticksArray = $bindable<number[]>(),
     chartWidth,
@@ -28,16 +27,15 @@
     clamp = false,
     polarity = "standard",
   }: {
-    ticksArray?: number[]; // bindable
+    ticksArray?: number[];
     chartWidth: number;
     chartHeight: number;
     axisFunction: any;
-    values: number[]; // numeric array for domain
+    values: number[];
     numberOfTicks?: number;
-    floor?: number;
-    ceiling?: number;
+    floor?: number | null;
+    ceiling?: number | null;
     orientation: Orientation;
-    /** Mandatory custom label generator */
     labelFormatter?: (
       tick: number,
       index: number,
@@ -49,36 +47,37 @@
     polarity: Polarity;
   } = $props();
 
+  // Axis value helper
   function axisValue(fn: any, tick: number): number {
-    // Try single-call first: axisFunction(tick)
     try {
       const v = fn(tick);
       if (typeof v === "number") return v;
-    } catch {
-      // ignore
-    }
-
-    // Fallback: axisFunction()(tick)
+    } catch {}
     const inner = fn();
     return inner(tick);
   }
-  $inspect(floor);
 
+  // Generate ticks safely
   function generateTicks(
     data: number[],
     numTicks: number,
-    floorVal?: number,
-    ceilingVal?: number,
+    floorVal?: number | null,
+    ceilingVal?: number | null,
   ): number[] {
+    if (!data || data.length === 0) return [];
+
     const dataMin = Decimal.min(...data);
     const dataMax = Decimal.max(...data);
 
-    const minVal = floorVal !== null ? new Decimal(floorVal) : dataMin;
-
-    const maxVal = ceilingVal !== null ? new Decimal(ceilingVal) : dataMax;
+    const minVal = floorVal != null ? new Decimal(floorVal) : dataMin;
+    const maxVal = ceilingVal != null ? new Decimal(ceilingVal) : dataMax;
 
     const rangeVal = maxVal.minus(minVal);
-    const roughStep = rangeVal.div(numTicks - 1);
+
+    // Ensure at least 2 ticks
+    const stepCount = Math.max(2, numTicks - 1);
+    const roughStep = rangeVal.div(stepCount);
+
     const normalizedSteps = [
       0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15,
       25, 30, 35, 40, 45,
@@ -105,47 +104,47 @@
     return ticks;
   }
 
-  // Default label when no labelFormatter is supplied
+  // Default label generator
   function defaultLabel(tick: number): string {
     return String(tick);
   }
 
+  // Compute number of ticks
   function tickCount(w: number, h: number): number {
-    // Keep behavior aligned with your original code.
-    const tickNum = orientation.axis === "y" ? h / 50 : w / 50;
-    return tickNum;
+    const rawTicks = orientation.axis === "y" ? h / 50 : w / 50;
+    return Math.max(2, Math.floor(rawTicks));
   }
+
+  // Clamp ticks safely
   function clampTickEnds(
     ticks: number[],
-    floor?: number,
-    ceiling?: number,
+    floorVal?: number | null,
+    ceilingVal?: number | null,
   ): number[] {
     if (!ticks || ticks.length === 0) return ticks;
-
     const out = ticks.slice();
 
-    if (floor !== null && out[0] <= floor) {
-      out[0] = floor;
+    if (floorVal != null && out[0] < floorVal) {
+      out[0] = floorVal;
     }
-    if (ceiling !== null && out[out.length - 1] >= ceiling) {
-      out[out.length - 1] = ceiling;
+    if (ceilingVal != null && out[out.length - 1] > ceilingVal) {
+      out[out.length - 1] = ceilingVal;
     }
     return out;
   }
 
-  // Compute ticks
-  numberOfTicks = tickCount(chartWidth, chartHeight);
+  // Compute derived ticks
+  const computedTickCount = numberOfTicks ?? tickCount(chartWidth, chartHeight);
 
   let derivedTicks = $derived(() => {
-    const ticks = generateTicks(values, numberOfTicks, floor, ceiling);
-
+    const ticks = generateTicks(values, computedTickCount, floor, ceiling);
     return clamp ? clampTickEnds(ticks, floor, ceiling) : ticks;
   });
 
   ticksArray = derivedTicks();
 </script>
 
-{#if axisFunction && ticksArray && orientation.axis && orientation.position}
+{#if axisFunction && ticksArray?.length && orientation.axis && orientation.position}
   {#each ticksArray as tick, index}
     <g
       transform="translate(

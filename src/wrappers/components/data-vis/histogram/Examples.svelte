@@ -37,32 +37,25 @@
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    <Histogram
+      min={0}
+      max={6}
+      dist={[1, 2, 2, 3, 3, 3, 4, 4, 5]}
+      color="#eeff5a"
+      highlight="dodgerblue"
+      highlightValue={3}
+      showAxis={true}
+      showArrows={false}
+      midColor="#DDDDDD"
+      startColor="#B70000"
+      endColor="#2D6644"
+      floor={0}
+      ceiling={6}
+      padding={0}
+      height={50}
+      polarity="standard"
+      annotationText=""
+    ></Histogram>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
 {/snippet}

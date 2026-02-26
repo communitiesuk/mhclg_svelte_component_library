@@ -4,7 +4,7 @@
     max = undefined,
     dist = [],
     color = "grey",
-    highlight = "dodgerblue",
+    highlightColor = "dodgerblue",
     highlightValue = undefined,
     showAxis = true,
     showArrows = true,
@@ -31,6 +31,7 @@
   import PositionChart from "../position-chart/PositionChart.svelte";
   import Axis from "../axis/Axis.svelte";
   import { scaleLinear } from "d3-scale";
+  import ValueLabel from "../line-chart/ValueLabel.svelte";
 
   let domainMin = min ?? Math.min(...dist);
   let domainMax = max ?? Math.max(...dist);
@@ -45,6 +46,8 @@
 
   //  min and max at extremes
   //  let histogram = bin().domain([domainMin, domainMax]).thresholds(thresholds);
+
+  // calculating thresholds
 
   let thresholdsArray = ticks(domainMin, domainMax, thresholds);
 
@@ -199,8 +202,8 @@
                   0.95}
                 height={yScale(bins[highlightIndex].count)}
                 fill={interpolatedColors[highlightIndex]}
-                stroke="black"
-                stroke-width={1}
+                stroke={highlightColor}
+                stroke-width={2}
               ></rect>
 
               <line

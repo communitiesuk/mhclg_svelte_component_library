@@ -435,7 +435,7 @@ Object.keys(this.functionElements.dataset).forEach((el) => {
  -->
 {#snippet Component()}
   <div class="p-8">
-    <Histogram {...parametersObject}></Histogram>
+    <!-- <Histogram {...parametersObject}></Histogram> -->
   </div>
 {/snippet}
 

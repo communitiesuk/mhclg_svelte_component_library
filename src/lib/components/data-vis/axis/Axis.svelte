@@ -113,7 +113,15 @@
 
     return base;
   });
-  const axisFunction: AxisProjector = $derived((v: number) => resolvedScale(v));
+
+  const axisFunction: AxisProjector = (v) => {
+    const s = resolvedScale();
+    const r = s.range();
+    const lo = Math.min(r[0], r[1]);
+    const hi = Math.max(r[0], r[1]);
+    const px = s(v);
+    return Math.max(lo, Math.min(hi, px));
+  };
 </script>
 
 <g

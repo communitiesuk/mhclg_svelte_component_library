@@ -7,6 +7,9 @@
   import { interpolateColors } from "./interpolateColors.js";
   import { splitGroupsAndAverages } from "./splitGroupsAndAverages.js";
   import { getColorsForValues } from "./getColorsForValues.js";
+  import { createEqualWidthBins } from "./createEqualWidthBins.js";
+  import { assignBinColors } from "./assignBinColors.js";
+
   import Axis from "../axis/Axis.svelte";
   import { median, quantile } from "d3-array";
 
@@ -105,7 +108,6 @@
   } = $props();
 
   let xTicks = $state([]);
-  $inspect({ xTicks });
 
   let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : -3);
   let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 3);
@@ -120,7 +122,6 @@
 
   // let newMin = $derived(conversion(xTickMin, iqr, rawMedian));
   // let newMax = $derived(conversion(xTickMax, iqr, rawMedian));
-  $inspect({ newMin, newMax });
 
   let selectedAreasColorsPalette = ["#CA357C", "#750080", "#8A0000"];
 
@@ -200,18 +201,30 @@
       20,
   );
 
-  const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
+  let bins = $derived(
+    createEqualWidthBins(xTickMin, xTickMax, nSegments, dist),
+  );
 
-  let colors1000 = interpolateColors(startColor, endColor, 1000, midColor);
+  const range = $derived(
+    Array.from({ length: nSegments }, (_, i) => nSegments - 1 - i),
+  );
+  let colors1000 = interpolateColors(
+    startColor,
+    endColor,
+    1000,
+    midColor,
+  ).reverse();
+  let averagesForSegments = $derived(
+    splitGroupsAndAverages(dist, nSegments).averages,
+  );
 
-  let interpolatedColors = skew
-    ? getColorsForValues(
-        colors1000.reverse(),
-        min,
-        max,
-        splitGroupsAndAverages(dist, nSegments).averages.reverse(),
-      )
-    : interpolateColors(startColor, endColor, nSegments, midColor);
+  let binColors = $derived(assignBinColors(bins, colors1000));
+
+  let interpolatedColors = $derived(
+    skew
+      ? binColors
+      : interpolateColors(startColor, endColor, nSegments, midColor),
+  );
 
   function segmentColor(value, min, max, colors) {
     const n = colors.length;
@@ -219,10 +232,11 @@
     return colors[Math.min(n - 1, Math.max(0, idx))];
   }
 
-  const activeColors =
+  const activeColors = $derived(
     polarity === "reverse"
       ? [...interpolatedColors].reverse() // only done once
-      : interpolatedColors;
+      : interpolatedColors,
+  );
 
   // the 'bar' is the 10 rectangles side by side
   let barWidth = $derived(chartWidth);
@@ -235,10 +249,6 @@
   let xScale = $derived(() =>
     scaleLinear().domain([newMin, newMax]).range(useRange).clamp(true),
   );
-
-  $inspect({ barWidth });
-  $inspect(xScale().domain());
-  $inspect(xScale().range());
 
   let annotations = $derived(
     Object.values(allDataNormalized[0].rowData)

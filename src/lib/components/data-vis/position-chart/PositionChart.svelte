@@ -208,12 +208,7 @@
   const range = $derived(
     Array.from({ length: nSegments }, (_, i) => nSegments - 1 - i),
   );
-  let colors1000 = interpolateColors(
-    startColor,
-    endColor,
-    1000,
-    midColor,
-  ).reverse();
+  let colors1000 = interpolateColors(startColor, endColor, 1000, midColor);
   let averagesForSegments = $derived(
     splitGroupsAndAverages(dist, nSegments).averages,
   );

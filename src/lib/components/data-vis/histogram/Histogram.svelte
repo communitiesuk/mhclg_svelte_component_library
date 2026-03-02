@@ -74,9 +74,6 @@
 
   let nBins = $derived(bins.length);
 
-  let binsr = $derived(bins.reverse());
-  $inspect({ binsr });
-
   let xMin = $derived(bins[0]?.x0 ?? 0);
   let xMax = $derived(bins[bins.length - 1]?.x1 ?? 1);
 

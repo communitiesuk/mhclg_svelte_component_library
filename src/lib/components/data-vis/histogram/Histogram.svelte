@@ -150,35 +150,33 @@
           <path d="M 0 0 L 6 3 L 0 6 z"></path>
         </marker>
       </defs>
-      {#if showAxis}
-        <g transform="translate(0,0)">
-          <Axis
-            bind:ticksArray={xTicks}
-            chartHeight={height}
-            chartWidth={containerWidth - padding}
-            orientation={{ axis: "x", position: "bottom" }}
-            domain={[xTickMin, xTickMax]}
-            range={useRange}
-            values={dist}
-            fontSize={14}
-            {floor}
-            {ceiling}
-            {labelFormatter}
-          ></Axis>
-          <Axis
-            bind:ticksArray={yTicks}
-            chartHeight={height}
-            chartWidth={containerWidth - padding}
-            orientation={{ axis: "y", position: "left" }}
-            domain={[0, yTickMax]}
-            range={[height, 0]}
-            values={dist}
-            fontSize={0}
-            {floor}
-            {ceiling}
-          ></Axis>
-        </g>
-      {/if}
+      <g style="display: {showAxis ? 'block' : 'none'}">
+        <Axis
+          bind:ticksArray={xTicks}
+          chartHeight={height}
+          chartWidth={containerWidth - padding}
+          orientation={{ axis: "x", position: "bottom" }}
+          domain={[xTickMin, xTickMax]}
+          range={useRange}
+          values={dist}
+          fontSize={14}
+          {floor}
+          {ceiling}
+          {labelFormatter}
+        ></Axis>
+        <Axis
+          bind:ticksArray={yTicks}
+          chartHeight={height}
+          chartWidth={containerWidth - padding}
+          orientation={{ axis: "y", position: "left" }}
+          domain={[0, yTickMax]}
+          range={[height, 0]}
+          values={dist}
+          fontSize={0}
+          {floor}
+          {ceiling}
+        ></Axis>
+      </g>
       <g transform="translate(0,0)">
         {#each bins as bin, i}
           {#key bin.x0}
@@ -218,27 +216,15 @@
                 stroke-width={1}
               ></rect>
 
-              <line
-                x1={xScale(bins[highlightIndex].x1) -
-                  (xScale(bins[highlightIndex].x1) -
-                    xScale(bins[highlightIndex].x0)) /
-                    2}
-                y2={height - yScale(bins[highlightIndex].count) - 15}
-                x2={xScale(bins[highlightIndex].x1) -
-                  (xScale(bins[highlightIndex].x1) -
-                    xScale(bins[highlightIndex].x0)) /
-                    2}
-                y1={height - yScale(bins[highlightIndex].count) - 30}
-                stroke="#666666"
-                stroke-width="1.5"
-                marker-end="url(#arrow-down)"
-              ></line>
               <g
-                transform="translate({xScale(bins[highlightIndex].x0)},{height -
+                transform="translate({xScale(highlightValue)},{height -
                   yScale(bins[highlightIndex].count) -
-                  35})"
+                  15})"
               >
-                <text font-size="0.8em" fill="#777777">{annotationText}</text>
+                <text fill="#555555" font-size="0.8em" text-anchor="middle">
+                  <tspan x="0" dy="0">{annotationText}</tspan>
+                  <tspan x="0" dy="12">▼</tspan>
+                </text>
               </g>
             {/key}
           {/if}

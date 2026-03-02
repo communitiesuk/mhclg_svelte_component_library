@@ -127,12 +127,14 @@
   <div
     class="scale-container"
     bind:clientWidth={containerWidth}
-    style="height={height}"
+    style="height={height * 2}"
   >
     <svg
       class="chart-container"
       width={containerWidth - padding}
-      height={showAxis ? height * 1.3 : height}
+      height={height +
+        (showAxis ? height * 0.3 : height) +
+        (annotationText ?? height * 0.3)}
       transform="translate({padding / 2},0)"
     >
       <defs>

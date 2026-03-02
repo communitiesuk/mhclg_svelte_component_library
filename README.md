@@ -103,6 +103,13 @@ Make sure you are on your main development branch you want to release (e.g., `ma
 
 Use the `npm version` command to update `package.json` and `package-lock.json`, create a commit, and create an annotated Git tag. Choose **one** of the following based on [Semantic Versioning (SemVer)](https://semver.org/):
 
+
+- **Pre-Release:**
+
+  ```bash
+npm version prerelease --preid=alpha
+```
+
 - **Patch Release (Bug fixes, tiny changes - e.g., 1.0.0 → 1.0.1):**
 
   ```bash

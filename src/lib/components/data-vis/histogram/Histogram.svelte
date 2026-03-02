@@ -4,7 +4,7 @@
     max = undefined,
     dist = [],
     color = "grey",
-    highlightColor = "dodgerblue",
+    highlightColor = "black",
     highlightValue = undefined,
     showAxis = true,
     showArrows = true,
@@ -102,11 +102,16 @@
   );
 
   let colors1000 = $derived(
-    interpolateColors(startColor, endColor, 1000, midColor),
+    polarity === "reverse"
+      ? interpolateColors(startColor, endColor, 1000, midColor).reverse() // only done once
+      : interpolateColors(startColor, endColor, 1000, midColor),
   );
 
-  let binColors = $derived(assignBinColors(bins, colors1000));
-
+  let binColors = $derived(
+    polarity === "reverse"
+      ? assignBinColors(bins, colors1000) // only done once
+      : assignBinColors(bins, colors1000),
+  );
   let interpolatedColors = $derived(binColors);
 
   function findBinIndex(binned, value) {
@@ -210,7 +215,7 @@
                 height={yScale(bins[highlightIndex].count)}
                 fill={interpolatedColors[highlightIndex]}
                 stroke={highlightColor}
-                stroke-width={2}
+                stroke-width={1}
               ></rect>
 
               <line

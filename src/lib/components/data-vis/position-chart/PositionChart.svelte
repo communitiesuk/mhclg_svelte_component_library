@@ -208,12 +208,24 @@
   const range = $derived(
     Array.from({ length: nSegments }, (_, i) => nSegments - 1 - i),
   );
-  let colors1000 = interpolateColors(startColor, endColor, 1000, midColor);
+
+  let colors1000 = $derived(
+    polarity === "reverse"
+      ? interpolateColors(startColor, endColor, 1000, midColor).reverse() // only done once
+      : interpolateColors(startColor, endColor, 1000, midColor),
+  );
+
   let averagesForSegments = $derived(
     splitGroupsAndAverages(dist, nSegments).averages,
   );
 
-  let binColors = $derived(assignBinColors(bins, colors1000));
+  // let binColors = $derived(assignBinColors(bins, colors1000));
+
+  let binColors = $derived(
+    polarity === "reverse"
+      ? assignBinColors(bins, colors1000).reverse() // only done once
+      : assignBinColors(bins, colors1000),
+  );
 
   let interpolatedColors = $derived(
     skew

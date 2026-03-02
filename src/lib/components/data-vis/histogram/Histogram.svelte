@@ -132,9 +132,7 @@
     <svg
       class="chart-container"
       width={containerWidth - padding}
-      height={height +
-        (showAxis ? height * 0.3 : height) +
-        (annotationText ?? height * 0.3)}
+      {height}
       transform="translate({padding / 2},0)"
     >
       <defs>

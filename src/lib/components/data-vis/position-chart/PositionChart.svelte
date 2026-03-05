@@ -205,27 +205,61 @@
     createEqualWidthBins(xTickMin, xTickMax, nSegments, dist),
   );
 
+  let proportionInExtremeBins = $derived([
+    bins[0]["count"] / distSorted.length,
+    bins.at(-1)["count"] / distSorted.length,
+  ]);
+
   const range = $derived(
     Array.from({ length: nSegments }, (_, i) => nSegments - 1 - i),
   );
 
+  import chroma from "chroma-js";
+
+  let midPosition = $derived((rawMedian - newMin) / (newMax - newMin));
+
+  let c1000 = $derived(
+    chroma
+      .scale([startColor, midColor, endColor])
+      .domain([0, midPosition, 1])
+      .colors(1000),
+  );
+
   let colors1000 = $derived(
     polarity === "reverse"
-      ? interpolateColors(startColor, endColor, 1000, midColor).reverse() // only done once
-      : interpolateColors(startColor, endColor, 1000, midColor),
+      ? c1000.reverse() // only done once
+      : c1000,
   );
+
+  let thisDomain = $derived(
+    polarity === "reverse"
+      ? [0, midPosition, 1].reverse() // only done once
+      : [0, midPosition, 1],
+  );
+
+  // let colors1000 = $derived(
+  //   polarity === "reverse"
+  //     ? interpolateColors(startColor, endColor, 1000, midColor).reverse() // only done once
+  //     : interpolateColors(startColor, endColor, 1000, midColor),
+  // );
 
   let averagesForSegments = $derived(
     splitGroupsAndAverages(dist, nSegments).averages,
   );
 
-  // let binColors = $derived(assignBinColors(bins, colors1000));
-
   let binColors = $derived(
-    polarity === "reverse"
-      ? assignBinColors(bins, colors1000).reverse() // only done once
-      : assignBinColors(bins, colors1000),
+    chroma
+      .scale([startColor, midColor, endColor])
+      .domain(thisDomain)
+      .padding([proportionInExtremeBins[0] / 2, proportionInExtremeBins[1] / 2])
+      .colors(10),
   );
+
+  // let binColors = $derived(
+  //   polarity === "reverse"
+  //     ? assignBinColors(bins, colors1000).reverse() // only done once
+  //     : assignBinColors(bins, colors1000),
+  // );
 
   let interpolatedColors = $derived(
     skew
@@ -675,7 +709,7 @@
                               )
                             : rowValue.color}
                           stroke="white"
-                          stroke-width="2"
+                          stroke-width="5"
                           opacity={rowValue.opacity}
                           pointer-events={rowValue.pointerEvents}
                         ></circle>
@@ -691,7 +725,8 @@
                                 activeColors,
                               )
                             : rowValue.color}
-                          stroke="black"
+                          stroke="#333333"
+                          stroke-width="2"
                           opacity={rowValue.opacity}
                           pointer-events={rowValue.pointerEvents}
                         ></circle>

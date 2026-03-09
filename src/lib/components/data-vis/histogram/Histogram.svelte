@@ -6,7 +6,8 @@
     color = "grey",
     highlightColor = "black",
     highlightValue = undefined,
-    showAxis = true,
+    showXAxis = true,
+    showYAxis = true,
     showArrows = true,
     midColor = "#DDDDDD",
     startColor = "#B70000",
@@ -175,17 +176,23 @@
 </script>
 
 {#key containerWidth}
-  <div
-    class="scale-container"
-    bind:clientWidth={containerWidth}
-    style="height={height * 2}"
-  >
+  <div class="scale-container" bind:clientWidth={containerWidth}>
     <svg
-      class="chart-container"
       width={containerWidth - padding}
-      {height}
+      height={height + (annotationText ? 25 : 0) + (showXAxis ? 25 : 0)}
       transform="translate({padding / 2},0)"
     >
+      <g transform="translate({xScale(highlightValue)},0)">
+        <text
+          fill="#555555"
+          font-size="0.8em"
+          text-anchor="middle"
+          dominant-baseline="hanging"
+        >
+          <tspan x="0" dy="0">{annotationText}</tspan>
+          <tspan x="0" dy="12">▼</tspan>
+        </text>
+      </g>
       <defs>
         <marker
           id="arrow-down"
@@ -201,34 +208,42 @@
           <path d="M 0 0 L 6 3 L 0 6 z"></path>
         </marker>
       </defs>
-      <g style="display: {showAxis ? 'block' : 'none'}">
-        <Axis
-          bind:ticksArray={xTicks}
-          chartHeight={height}
-          chartWidth={containerWidth - padding}
-          orientation={{ axis: "x", position: "bottom" }}
-          domain={[xTickMin, xTickMax]}
-          range={useRange}
-          values={dist}
-          fontSize={14}
-          {floor}
-          {ceiling}
-          {labelFormatter}
-        ></Axis>
-        <Axis
-          bind:ticksArray={yTicks}
-          chartHeight={height}
-          chartWidth={containerWidth - padding}
-          orientation={{ axis: "y", position: "left" }}
-          domain={[0, yTickMax]}
-          range={[height, 0]}
-          values={dist}
-          fontSize={0}
-          {floor}
-          {ceiling}
-        ></Axis>
-      </g>
-      <g transform="translate(0,0)">
+
+      <g transform="translate(0,{annotationText ? 25 : 0})">
+        <g>
+          {#if showXAxis}
+            <Axis
+              bind:ticksArray={xTicks}
+              chartHeight={height}
+              chartWidth={containerWidth - padding}
+              orientation={{ axis: "x", position: "bottom" }}
+              domain={[xTickMin, xTickMax]}
+              range={useRange}
+              values={dist}
+              fontSize={14}
+              {floor}
+              {ceiling}
+              {labelFormatter}
+              numberOfTicks={2}
+            ></Axis>
+          {/if}
+          {#if showYAxis}
+            <Axis
+              bind:ticksArray={yTicks}
+              chartHeight={height}
+              chartWidth={containerWidth - padding}
+              orientation={{ axis: "y", position: "left" }}
+              domain={[0, yTickMax]}
+              range={[height, 0]}
+              values={[...dist, 0]}
+              fontSize={0}
+              numberOfTicks={5}
+              tickStrokeWidth={0.25}
+              axisStrokeWidth={0}
+              gridlines={true}
+            ></Axis>
+          {/if}
+        </g>
         {#each bins as bin, i}
           {#key bin.x0}
             <rect
@@ -264,19 +279,8 @@
                 height={yScale(bins[highlightIndex].count)}
                 fill={interpolatedColors[highlightIndex]}
                 stroke={highlightColor}
-                stroke-width={1}
+                stroke-width={0}
               ></rect>
-
-              <g
-                transform="translate({xScale(highlightValue)},{height -
-                  yScale(bins[highlightIndex].count) -
-                  15})"
-              >
-                <text fill="#555555" font-size="0.8em" text-anchor="middle">
-                  <tspan x="0" dy="0">{annotationText}</tspan>
-                  <tspan x="0" dy="12">▼</tspan>
-                </text>
-              </g>
             {/key}
           {/if}
         </g>
@@ -294,6 +298,34 @@
     {/if}
   </div>
 {/key}
+
+<g style="display: 'none'">
+  <Axis
+    bind:ticksArray={xTicks}
+    chartHeight={height}
+    chartWidth={containerWidth - padding}
+    orientation={{ axis: "x", position: "bottom" }}
+    domain={[xTickMin, xTickMax]}
+    range={useRange}
+    values={dist}
+    fontSize={14}
+    {floor}
+    {ceiling}
+    {labelFormatter}
+  ></Axis>
+  <Axis
+    bind:ticksArray={yTicks}
+    chartHeight={height}
+    chartWidth={containerWidth - padding}
+    orientation={{ axis: "y", position: "left" }}
+    domain={[0, yTickMax]}
+    range={[height, 0]}
+    values={dist}
+    fontSize={0}
+    {floor}
+    {ceiling}
+  ></Axis>
+</g>
 
 <style>
   .scale-container svg {

@@ -19,6 +19,7 @@
     axisFunction,
     values,
     numberOfTicks,
+    tickStrokeWidth,
     floor,
     ceiling,
     orientation,
@@ -26,6 +27,7 @@
     fontSize = 19,
     clamp = false,
     polarity = "standard",
+    gridlines = false,
   }: {
     ticksArray?: number[];
     chartWidth: number;
@@ -33,6 +35,8 @@
     axisFunction: any;
     values: number[];
     numberOfTicks?: number;
+    tickStrokeWidth?: number;
+
     floor?: number | null;
     ceiling?: number | null;
     orientation: Orientation;
@@ -45,6 +49,7 @@
     fontSize?: number;
     clamp: boolean;
     polarity: Polarity;
+    gridlines: boolean;
   } = $props();
 
   // Axis value helper
@@ -92,10 +97,26 @@
     const chosen = normalizedSteps.find(
       (step) => step >= normalizedStep.toNumber(),
     );
-    const optimalStep = new Decimal(chosen ?? 10).div(stepPower);
 
-    const scaleMin = minVal.div(optimalStep).floor().mul(optimalStep);
-    const scaleMax = maxVal.div(optimalStep).ceil().mul(optimalStep);
+    let chosenIdx = normalizedSteps.findIndex(
+      (step) => step >= normalizedStep.toNumber(),
+    );
+
+    let optimalStep: Decimal;
+    let scaleMin: Decimal;
+    let scaleMax: Decimal;
+
+    for (let i = chosenIdx; i >= 0; i--) {
+      optimalStep = new Decimal(normalizedSteps[i]).div(stepPower);
+      scaleMin = minVal.div(optimalStep).floor().mul(optimalStep);
+      scaleMax = maxVal.div(optimalStep).ceil().mul(optimalStep);
+
+      const axisRange = scaleMax.minus(scaleMin);
+      const dataRange = maxVal.minus(minVal);
+      const paddingRatio = axisRange.minus(dataRange).div(axisRange).toNumber();
+
+      if (paddingRatio <= 0.3) break;
+    }
 
     const ticks: number[] = [];
     for (let i = scaleMin; i.lte(scaleMax); i = i.plus(optimalStep)) {
@@ -155,13 +176,13 @@
       <path
         d={orientation.axis === "y"
           ? orientation.position === "left"
-            ? "M0 0 l-8 0"
+            ? `M0 0 l${gridlines ? chartWidth : -8} 0`
             : "M0 0 l8 0"
           : orientation.position === "top"
             ? "M0 0 l0 -8"
             : "M0 0 l0 8"}
         stroke="darkgrey"
-        stroke-width="2px"
+        stroke-width={tickStrokeWidth}
       ></path>
       <text
         transform="translate(

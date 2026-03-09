@@ -40,6 +40,8 @@
     paddingBottom = 100,
     paddingLeft = 0,
     paddingRight = 0,
+    tickStrokeWidth = 2,
+    axisStrokeWidth = 2,
 
     labelFormatter = undefined as LabelFormatter | undefined,
 
@@ -53,6 +55,7 @@
     range = undefined as [number, number] | undefined,
     fontSize = 19,
     polarity = "standard" as Polarity,
+    gridlines = false,
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -74,6 +77,7 @@
     range?: [number, number];
     fontSize?: number;
     polarity?: Polarity;
+    gridlines?: Boolean;
   } = $props();
 
   // --- Helpers to compute default domain/range when not supplied ---
@@ -136,7 +140,7 @@
     x2={orientation.axis === "x" ? chartWidth : 0}
     y2={orientation.axis === "y" ? chartHeight : 0}
     stroke="darkgrey"
-    stroke-width="2px"
+    stroke-width={axisStrokeWidth}
   ></line>
   {#if values}
     {#key numberOfTicks}
@@ -153,6 +157,8 @@
         {labelFormatter}
         {fontSize}
         {polarity}
+        {tickStrokeWidth}
+        {gridlines}
       />
     {/key}
   {/if}

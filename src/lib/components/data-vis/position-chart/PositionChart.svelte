@@ -543,16 +543,28 @@
                   ></path></g
                 > -->
                 <g
-                  fill="red"
-                  transform="translate({xScale()(average)},{chartHeight * 2.7})"
-                  ><text fill="#333333" font-size={14} text-anchor="middle">
-                    <tspan x="0" dy="-5">▲</tspan>
-                    <tspan x="0" dy="10">Average</tspan>
+                  transform="translate({xScale()(average) + 2},{chartHeight *
+                    1.7})"
+                  ><text
+                    fill="#333333"
+                    font-size={14}
+                    text-anchor="middle"
+                    font-weight="bold"
+                  >
+                    <tspan x="0" dy="-4">▲</tspan>
+                    <tspan x="0" dy="9">|</tspan>
+                    <tspan x="0" dy="5">|</tspan>
+                    <tspan x="0" dy="13">Average</tspan>
                   </text></g
                 >
               {/if}
               {#if showAxis}
-                <g stroke="white" stroke-width="3" paint-order="stroke">
+                <g
+                  stroke="white"
+                  stroke-width="4"
+                  paint-order="stroke"
+                  stroke-opacity="0.8"
+                >
                   <Axis
                     bind:ticksArray={xTicks}
                     {chartHeight}
@@ -657,7 +669,7 @@
                           pointer-events={rowValue.pointerEvents}
                         ></rect>
                         <rect
-                          x={-rowValue.markerRadius}
+                          x={0}
                           y={-rowValue.markerRadius}
                           width={rowValue.markerRadius * 2}
                           height={rowValue.markerRadius * 2}
@@ -676,13 +688,12 @@
                           pointer-events={rowValue.pointerEvents}
                         ></rect>
                       {:else if rowValue.shape === "line"}
-                        <rect
-                          x={-rowValue.markerRadius}
-                          y={-rowValue.markerRadius}
-                          width={rowValue.markerRadius / 10}
-                          height={rowValue.markerRadius * 2}
-                          rx="0"
-                          fill={rowValue.color === "inherit"
+                        <line
+                          x1={0}
+                          x2={0}
+                          y1={chartHeight / 2.4}
+                          y2={-chartHeight / 2.4}
+                          stroke={rowValue.color === "inherit"
                             ? segmentColor(
                                 rowValue.value,
                                 newMin,
@@ -690,11 +701,10 @@
                                 activeColors,
                               )
                             : rowValue.color}
-                          stroke="black"
-                          stroke-width="3"
+                          stroke-width={rowValue.markerRadius}
                           opacity={rowValue.opacity}
                           pointer-events={rowValue.pointerEvents}
-                        ></rect>
+                        ></line>
                       {:else}
                         <circle
                           r={rowValue.markerRadius * 1.1}

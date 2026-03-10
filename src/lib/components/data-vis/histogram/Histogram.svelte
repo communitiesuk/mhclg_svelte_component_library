@@ -220,7 +220,7 @@
               domain={[xTickMin, xTickMax]}
               range={useRange}
               values={dist}
-              fontSize={14}
+              fontSize={13}
               {floor}
               {ceiling}
               {labelFormatter}

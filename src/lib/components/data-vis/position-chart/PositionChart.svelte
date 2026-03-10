@@ -551,9 +551,8 @@
                     text-anchor="middle"
                     font-weight="bold"
                   >
-                    <tspan x="0" dy="-4">▲</tspan>
-                    <tspan x="0" dy="9">|</tspan>
-                    <tspan x="0" dy="5">|</tspan>
+                    <tspan x="0" dy="14">▲</tspan>
+                    <tspan x="0" dy="1">|</tspan>
                     <tspan x="0" dy="13">Average</tspan>
                   </text></g
                 >
@@ -573,7 +572,7 @@
                     range={[0, chartWidth]}
                     domain={[xTickMin, xTickMax]}
                     values={dist}
-                    fontSize={14}
+                    fontSize={13}
                     {numberOfTicks}
                     {floor}
                     {ceiling}

@@ -195,7 +195,7 @@
           ? 5
           : orientation.position === 'top'
             ? -10
-            : 23}
+            : fontSize * 1.5}
         )"
         font-size={fontSize}
         text-anchor={orientation.axis === "x"

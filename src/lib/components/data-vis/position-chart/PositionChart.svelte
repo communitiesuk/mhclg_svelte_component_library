@@ -551,7 +551,7 @@
                     text-anchor="middle"
                     font-weight="bold"
                   >
-                    <tspan x="0" dy="14">▲</tspan>
+                    <tspan x="0" dy="15">▲</tspan>
                     <tspan x="0" dy="1">|</tspan>
                     <tspan font-family="GDS Transport" x="0" dy="13"
                       >Average</tspan

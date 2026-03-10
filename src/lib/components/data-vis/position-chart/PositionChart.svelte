@@ -787,7 +787,7 @@
         {/if}
       {/each}
       {#if showArrows}
-        <div class="data-row" aria-hidden="true">
+        <div class="data-row arrow" aria-hidden="true">
           {#if showLabel}
             <div
               class="label-container"
@@ -1145,6 +1145,10 @@
     align-items: center;
     /* background-color: lightgreen; */
     padding: 0px 10px 0px 10px;
+  }
+
+  .data-row.arrow {
+    padding: 0px;
   }
 
   .icon-container {

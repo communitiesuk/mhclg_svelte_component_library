@@ -547,23 +547,20 @@
                     1.7})"
                   ><text
                     fill="#333333"
-                    font-size={14}
+                    font-size={15}
                     text-anchor="middle"
                     font-weight="bold"
                   >
                     <tspan x="0" dy="14">▲</tspan>
                     <tspan x="0" dy="1">|</tspan>
-                    <tspan x="0" dy="13">Average</tspan>
+                    <tspan font-family="GDS Transport" x="0" dy="13"
+                      >Average</tspan
+                    >
                   </text></g
                 >
               {/if}
               {#if showAxis}
-                <g
-                  stroke="white"
-                  stroke-width="4"
-                  paint-order="stroke"
-                  stroke-opacity="0.8"
-                >
+                <g>
                   <Axis
                     bind:ticksArray={xTicks}
                     {chartHeight}

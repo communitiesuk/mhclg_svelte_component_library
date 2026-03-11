@@ -205,10 +205,16 @@
     createEqualWidthBins(xTickMin, xTickMax, nSegments, dist),
   );
 
-  let proportionInExtremeBins = $derived([
+  let extremeBins = $derived([
     bins[0]["count"] / distSorted.length,
     bins.at(-1)["count"] / distSorted.length,
   ]);
+
+  let proportionInExtremeBins = $derived(
+    polarity === "reverse" ? extremeBins.reverse() : extremeBins,
+  );
+
+  $inspect({ proportionInExtremeBins });
 
   const range = $derived(
     Array.from({ length: nSegments }, (_, i) => nSegments - 1 - i),
@@ -233,7 +239,7 @@
 
   let thisDomain = $derived(
     polarity === "reverse"
-      ? [0, midPosition, 1].reverse() // only done once
+      ? [0, midPosition, 1].reverse()
       : [0, midPosition, 1],
   );
 
@@ -247,11 +253,17 @@
     splitGroupsAndAverages(dist, nSegments).averages,
   );
 
-  let binColors = $derived(
+  let extremeColors = $derived(
     chroma
       .scale([startColor, midColor, endColor])
-      .domain(thisDomain)
       .padding([proportionInExtremeBins[0] / 2, proportionInExtremeBins[1] / 2])
+      .colors(2),
+  );
+
+  let binColors = $derived(
+    chroma
+      .scale([extremeColors[0], midColor, extremeColors[1]])
+      .domain(thisDomain)
       .colors(10),
   );
 

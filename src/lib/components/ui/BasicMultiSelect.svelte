@@ -16,7 +16,7 @@
     label = "Choose options",
     hint,
 
-    // NEW: toggle colours/dots
+    // toggle colours/dots
     enableColors = true,
   }: {
     options?: Option[];
@@ -41,8 +41,10 @@
       used ??
       new Set(
         selected
-          .filter((s): s is SelectedWithColor => "color" in s && !!s.color)
-          .map((s) => s.color),
+          .filter(
+            (s): s is SelectedWithColor => "color" in s && !!(s as any).color,
+          )
+          .map((s) => (s as SelectedWithColor).color),
       );
 
     // 1) Prefer unused
@@ -57,7 +59,7 @@
 
   // ---------- Assign colours to incoming items (missing colours only) ----------
   $effect(() => {
-    if (!enableColors) return; // NEW: turn off all color assignment
+    if (!enableColors) return;
     if (!Array.isArray(selected)) return;
     if (!Array.isArray(colorArray) || colorArray.length === 0) return;
 
@@ -65,14 +67,16 @@
 
     const used = new Set(
       selected
-        .filter((s): s is SelectedWithColor => "color" in s && !!s.color)
-        .map((s) => s.color),
+        .filter(
+          (s): s is SelectedWithColor => "color" in s && !!(s as any).color,
+        )
+        .map((s) => (s as SelectedWithColor).color),
     );
 
     let changed = false;
 
     const updated = selected.map((item) => {
-      if ("color" in item && item.color) return item;
+      if ("color" in item && (item as any).color) return item;
 
       const color = nextColorPreferUnused(used);
       used.add(color);
@@ -100,7 +104,7 @@
       const color = nextColorPreferUnused();
       selected = [...selected, { ...option, color }];
     } else {
-      selected = [...selected, option]; // plain option, no color
+      selected = [...selected, option];
     }
 
     search = "";
@@ -147,8 +151,9 @@
     data-type="select-multiple"
     on:click={open}
   >
-    <!-- BOX wraps input + chips -->
+    <!-- ✅ Search row: BOX (input + divider + chips) + search button -->
     <div class="choices__search-row">
+      <!-- ✅ SINGLE BOX wraps input + divider + chips -->
       <div class="choices__box">
         <div class="choices__inner">
           <input
@@ -162,6 +167,39 @@
             on:input={() => (showDropdown = true)}
           />
         </div>
+
+        {#if selected.length}
+          <!-- ✅ Divider is now an INTERNAL border line -->
+          <div class="ms-divider" aria-hidden="true"></div>
+
+          <div
+            class="choices__list choices__list--multiple"
+            aria-label="Selected items"
+          >
+            {#each selected as item (item.id)}
+              <span class="choices__item">
+                {#if enableColors && "color" in item}
+                  <span
+                    class="choices__item-circle"
+                    style={`background:${(item as any).color}`}
+                  ></span>
+                {/if}
+
+                <span class="choices__item-label">{item.label}</span>
+
+                <button
+                  type="button"
+                  class="choices__button"
+                  on:click|stopPropagation={() => remove(item.id)}
+                  aria-label={`Remove ${item.label}`}
+                  title={`Remove ${item.label}`}
+                >
+                  ×
+                </button>
+              </span>
+            {/each}
+          </div>
+        {/if}
       </div>
 
       <button
@@ -173,37 +211,6 @@
         <span class="search-addon-icon"><IconSearch /></span>
       </button>
     </div>
-    {#if selected.length}
-      <div class="ms-divider" aria-hidden="true"></div>
-
-      <div
-        class="choices__list choices__list--multiple"
-        aria-label="Selected items"
-      >
-        {#each selected as item (item.id)}
-          <span class="choices__item">
-            {#if enableColors && "color" in item}
-              <span
-                class="choices__item-circle"
-                style={`background:${item.color}`}
-              ></span>
-            {/if}
-
-            <span class="choices__item-label">{item.label}</span>
-
-            <button
-              type="button"
-              class="choices__button"
-              on:click|stopPropagation={() => remove(item.id)}
-              aria-label={`Remove ${item.label}`}
-              title={`Remove ${item.label}`}
-            >
-              ×
-            </button>
-          </span>
-        {/each}
-      </div>
-    {/if}
   </div>
 
   {#if showDropdown}
@@ -245,10 +252,11 @@
 
     --select-height: 46px;
     --item-height: 44px;
+    --addon-width: 46px; /* ✅ used for dropdown width alignment */
   }
 
   /* ========================================
-     LABEL (your rules)
+     LABEL
   ======================================== */
 
   :global(.govuk-label) {
@@ -267,13 +275,20 @@
   :global(.gem-c-select-with-search) .choices {
     position: relative;
     font-size: 19px;
-    gap: 0; /* no gap between box and button */
+    gap: 0;
     display: flex;
-    flex-wrap: wrap; /* ✅ allows dropdown to go below */
-    align-items: flex-start; /* ✅ prevents stretch weirdness */
+    flex-wrap: wrap;
+    align-items: flex-start;
   }
 
-  /* Outer box contains BOTH input and chips */
+  .choices__search-row {
+    display: flex;
+    width: 100%;
+    flex-wrap: nowrap;
+    align-items: stretch;
+  }
+
+  /* ✅ ONE box around input + divider + chips */
   :global(.gem-c-select-with-search) .choices__box {
     border: 2px solid var(--govuk-black);
     border-radius: 0;
@@ -281,6 +296,10 @@
 
     flex: 1 1 auto;
     min-width: 0;
+
+    /* ✅ stacks input, divider, chips in one box */
+    display: flex;
+    flex-direction: column;
   }
 
   /* Yellow focus ring around WHOLE box */
@@ -314,38 +333,22 @@
     outline: none;
   }
 
-  .ms-searchIcon {
-    display: inline-flex;
-    color: #505a5f;
-    flex: 0 0 auto;
-    margin-left: 4px;
-  }
-  .choices__search-row {
-    display: flex;
-    width: 100%;
-    flex-wrap: nowrap;
-  }
-
-  .choices__box {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  /* Divider between input and chips */
+  /* ✅ Divider is now an internal border line */
   .ms-divider {
     border-top: 1px solid var(--govuk-grey);
-    margin: 0;
+    margin: 0 5px;
   }
 
   /* ========================================
-     MULTI SELECT CHIPS
+     MULTI SELECT CHIPS (now INSIDE the same box)
   ======================================== */
 
-  /* IMPORTANT: padding so chips don't clip the bottom */
   :global(.gem-c-select-with-search) .choices__list--multiple {
     padding: 0 5px 8px;
 
-    width: calc(100% - 46px);
+    /* ✅ IMPORTANT: no separate border now */
+    border: 0;
+    width: 100%;
     box-sizing: border-box;
   }
 
@@ -357,13 +360,12 @@
     box-shadow: 0 2px 0 var(--govuk-grey);
     border-radius: 0;
 
-    min-height: 32px; /* was 40px */
-    padding: 2px 0 2px 10px; /* trim top/bottom + remove right padding */
-    margin: 4px 10px 0 0; /* slightly less gap above */
-    line-height: 1.2; /* keeps text neat */
+    min-height: 32px;
+    padding: 2px 0 2px 10px;
+    margin: 4px 10px 0 0;
+    line-height: 1.2;
   }
 
-  /* circle indicator (only rendered when enableColors = true) */
   :global(.gem-c-select-with-search) .choices__item-circle {
     width: 16px;
     height: 16px;
@@ -381,7 +383,6 @@
     max-width: 26ch;
   }
 
-  /* Remove button: square, centered, slightly darker on hover */
   :global(.gem-c-select-with-search)
     .choices[data-type*="select-multiple"]
     .choices__button {
@@ -425,6 +426,43 @@
   }
 
   /* ========================================
+     SEARCH BUTTON
+  ======================================== */
+
+  .search-addon-btn {
+    flex: 0 0 auto;
+    width: var(--addon-width);
+    height: var(--select-height);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background-color: var(--govuk-blue);
+    color: #fff;
+    border: 0;
+    padding: 0;
+    font-size: 19px;
+    font-family: "GDS Transport", arial, sans-serif;
+
+    /* keeps it aligned with the top of the box */
+    align-self: flex-start;
+  }
+
+  .search-addon-btn:focus-visible {
+    outline: 3px solid var(--govuk-focus);
+    box-shadow: inset 0 0 0 4px var(--govuk-black);
+  }
+
+  .search-addon-icon {
+    position: relative;
+    width: var(--addon-width);
+    height: var(--addon-width);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* ========================================
      DROPDOWN
   ======================================== */
 
@@ -434,7 +472,10 @@
     background: white;
     max-height: 300px;
     overflow-y: auto;
-    width: calc(100% - 46px);
+
+    /* ✅ align dropdown to the single box width (exclude search button) */
+    width: calc(100% - var(--addon-width));
+    box-sizing: border-box;
   }
 
   :global(.gem-c-select-with-search) .choices__list--dropdown .choices__item {
@@ -446,7 +487,6 @@
     max-width: 100%;
   }
 
-  /* divider lines between dropdown items */
   :global(.gem-c-select-with-search)
     .choices__list--dropdown
     .choices__item::after {
@@ -465,43 +505,9 @@
     display: none;
   }
 
-  /* highlight on hover */
   :global(.gem-c-select-with-search) .choices__item--selectable:hover {
     background: var(--govuk-blue);
     color: white;
     cursor: pointer;
-  }
-  .search-addon-btn {
-    flex: 0 0 auto;
-    width: 46px;
-    height: var(--select-height); /* 46px */
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 40px;
-    height: 100%;
-    background-color: #1d70b8;
-    color: #fff;
-    border: 0;
-    padding: 0;
-    font-size: 19px;
-    font-family: "GDS Transport", arial, sans-serif;
-    align-self: flex-start;
-  }
-  .search-addon-btn:focus-visible {
-    outline: 3px solid #fd0;
-    box-shadow: inset 0 0 0 4px #0b0c0c;
-  }
-
-  .search-addon-icon {
-    position: relative;
-    width: 46px;
-    height: 46px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
   }
 </style>

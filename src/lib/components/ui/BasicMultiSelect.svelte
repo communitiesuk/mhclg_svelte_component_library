@@ -148,88 +148,87 @@
     on:click={open}
   >
     <!-- BOX wraps input + chips -->
-    <div class="choices__box">
-      <div class="choices__inner">
-        <input
-          id="ms-input"
-          class="choices__input"
-          bind:this={inputEl}
-          bind:value={search}
-          {placeholder}
-          autocomplete="off"
-          on:focus={() => (showDropdown = true)}
-          on:input={() => (showDropdown = true)}
-        />
+    <div class="choices__search-row">
+      <div class="choices__box">
+        <div class="choices__inner">
+          <input
+            id="ms-input"
+            class="choices__input"
+            bind:this={inputEl}
+            bind:value={search}
+            {placeholder}
+            autocomplete="off"
+            on:focus={() => (showDropdown = true)}
+            on:input={() => (showDropdown = true)}
+          />
+        </div>
       </div>
 
-      {#if selected.length}
-        <div class="ms-divider" aria-hidden="true"></div>
-
-        <div
-          class="choices__list choices__list--multiple"
-          aria-label="Selected items"
-        >
-          {#each selected as item (item.id)}
-            <span class="choices__item">
-              {#if enableColors && "color" in item}
-                <span
-                  class="choices__item-circle"
-                  style={`background:${item.color}`}
-                ></span>
-              {/if}
-
-              <span class="choices__item-label">{item.label}</span>
-
-              <button
-                type="button"
-                class="choices__button"
-                on:click|stopPropagation={() => remove(item.id)}
-                aria-label={`Remove ${item.label}`}
-                title={`Remove ${item.label}`}
-              >
-                ×
-              </button>
-            </span>
-          {/each}
-        </div>
-      {/if}
-    </div>
-
-    <!-- ICON BUTTON as sibling -->
-    <button
-      type="button"
-      class="search-addon-btn"
-      aria-label="Search"
-      title="Search"
-      on:click|stopPropagation={() => open()}
-    >
-      <span class="search-addon-icon"><IconSearch /></span>
-    </button>
-
-    {#if showDropdown}
-      <div
-        class="choices__list choices__list--dropdown"
-        role="listbox"
-        aria-label="Options"
+      <button
+        type="button"
+        class="search-addon-btn"
+        aria-label="Search"
+        on:click|stopPropagation={() => open()}
       >
-        {#each filteredOptions as o (o.id)}
-          <div
-            class="choices__item choices__item--selectable"
-            role="option"
-            on:click={() => selectOption(o)}
-          >
-            {o.label}
-          </div>
-        {/each}
+        <span class="search-addon-icon"><IconSearch /></span>
+      </button>
+    </div>
+    {#if selected.length}
+      <div class="ms-divider" aria-hidden="true"></div>
 
-        {#if filteredOptions.length === 0}
-          <div class="choices__item" aria-disabled="true" style="opacity:0.75">
-            No results found
-          </div>
-        {/if}
+      <div
+        class="choices__list choices__list--multiple"
+        aria-label="Selected items"
+      >
+        {#each selected as item (item.id)}
+          <span class="choices__item">
+            {#if enableColors && "color" in item}
+              <span
+                class="choices__item-circle"
+                style={`background:${item.color}`}
+              ></span>
+            {/if}
+
+            <span class="choices__item-label">{item.label}</span>
+
+            <button
+              type="button"
+              class="choices__button"
+              on:click|stopPropagation={() => remove(item.id)}
+              aria-label={`Remove ${item.label}`}
+              title={`Remove ${item.label}`}
+            >
+              ×
+            </button>
+          </span>
+        {/each}
       </div>
     {/if}
   </div>
+
+  {#if showDropdown}
+    <div
+      class="choices__list choices__list--dropdown"
+      role="listbox"
+      aria-label="Options"
+    >
+      {#each filteredOptions as o (o.id)}
+        <div
+          class="choices__item choices__item--selectable"
+          role="option"
+          on:click={() => selectOption(o)}
+        >
+          {o.label}
+        </div>
+      {/each}
+
+      {#if filteredOptions.length === 0}
+        <div class="choices__item" aria-disabled="true" style="opacity:0.75">
+          No results found
+        </div>
+      {/if}
+    </div>
+  {/if}
 </div>
 
 <style>
@@ -268,10 +267,10 @@
   :global(.gem-c-select-with-search) .choices {
     position: relative;
     font-size: 19px;
-
-    display: flex;
-    align-items: stretch; /* makes both children same height */
     gap: 0; /* no gap between box and button */
+    display: flex;
+    flex-wrap: wrap; /* ✅ allows dropdown to go below */
+    align-items: flex-start; /* ✅ prevents stretch weirdness */
   }
 
   /* Outer box contains BOTH input and chips */
@@ -321,6 +320,16 @@
     flex: 0 0 auto;
     margin-left: 4px;
   }
+  .choices__search-row {
+    display: flex;
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+
+  .choices__box {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
 
   /* Divider between input and chips */
   .ms-divider {
@@ -335,6 +344,9 @@
   /* IMPORTANT: padding so chips don't clip the bottom */
   :global(.gem-c-select-with-search) .choices__list--multiple {
     padding: 0 5px 8px;
+
+    width: calc(100% - 46px);
+    box-sizing: border-box;
   }
 
   :global(.gem-c-select-with-search) .choices__list--multiple .choices__item {
@@ -422,6 +434,7 @@
     background: white;
     max-height: 300px;
     overflow-y: auto;
+    width: calc(100% - 46px);
   }
 
   :global(.gem-c-select-with-search) .choices__list--dropdown .choices__item {
@@ -459,7 +472,7 @@
     cursor: pointer;
   }
   .search-addon-btn {
-    flex: 0 0 auto;
+    flex: 0 0 46px;
     width: 46px;
     height: var(--select-height); /* 46px */
     align-items: center;
@@ -476,6 +489,7 @@
     padding: 0;
     font-size: 19px;
     font-family: "GDS Transport", arial, sans-serif;
+    align-self: flex-start;
   }
   .search-addon-btn:focus-visible {
     outline: 3px solid #fd0;

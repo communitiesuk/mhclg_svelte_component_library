@@ -147,34 +147,9 @@
     data-type="select-multiple"
     on:click={open}
   >
-    <button
-      type="submit"
-      class="search-addon-btn"
-      aria-label="Search"
-      title="Search"
-    >
-      <span class="search-addon-icon"><IconSearch /></span>
-    </button>
-
-    <!-- BOX wraps input + chips so focus ring surrounds everything -->
+    <!-- BOX wraps input + chips -->
     <div class="choices__box">
       <div class="choices__inner">
-        <span class="ms-searchIcon" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-            <path
-              d="M10.5 18a7.5 7.5 0 1 1 0-15 7.5 7.5 0 0 1 0 15Z"
-              stroke="currentColor"
-              stroke-width="2"
-            ></path>
-            <path
-              d="M16.5 16.5 21 21"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-            ></path>
-          </svg>
-        </span>
-
         <input
           id="ms-input"
           class="choices__input"
@@ -188,7 +163,6 @@
       </div>
 
       {#if selected.length}
-        <!-- divider between search and tags -->
         <div class="ms-divider" aria-hidden="true"></div>
 
         <div
@@ -220,6 +194,17 @@
         </div>
       {/if}
     </div>
+
+    <!-- ICON BUTTON as sibling -->
+    <button
+      type="button"
+      class="search-addon-btn"
+      aria-label="Search"
+      title="Search"
+      on:click|stopPropagation={() => open()}
+    >
+      <span class="search-addon-icon"><IconSearch /></span>
+    </button>
 
     {#if showDropdown}
       <div
@@ -283,6 +268,10 @@
   :global(.gem-c-select-with-search) .choices {
     position: relative;
     font-size: 19px;
+
+    display: flex;
+    align-items: stretch; /* makes both children same height */
+    gap: 0; /* no gap between box and button */
   }
 
   /* Outer box contains BOTH input and chips */
@@ -290,6 +279,9 @@
     border: 2px solid var(--govuk-black);
     border-radius: 0;
     background: white;
+
+    flex: 1 1 auto;
+    min-width: 0;
   }
 
   /* Yellow focus ring around WHOLE box */
@@ -467,6 +459,11 @@
     cursor: pointer;
   }
   .search-addon-btn {
+    flex: 0 0 auto;
+    width: 46px;
+    height: var(--select-height); /* 46px */
+    align-items: center;
+    justify-content: center;
     position: relative;
     display: inline-flex;
     align-items: center;
@@ -479,5 +476,18 @@
     padding: 0;
     font-size: 19px;
     font-family: "GDS Transport", arial, sans-serif;
+  }
+  .search-addon-btn:focus-visible {
+    outline: 3px solid #fd0;
+    box-shadow: inset 0 0 0 4px #0b0c0c;
+  }
+
+  .search-addon-icon {
+    position: relative;
+    width: 46px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 </style>

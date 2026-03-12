@@ -472,7 +472,7 @@
     cursor: pointer;
   }
   .search-addon-btn {
-    flex: 0 0 46px;
+    flex: 0 0 auto;
     width: 46px;
     height: var(--select-height); /* 46px */
     align-items: center;

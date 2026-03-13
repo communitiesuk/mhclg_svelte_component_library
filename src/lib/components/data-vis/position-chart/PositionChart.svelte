@@ -157,8 +157,9 @@
 
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
 
-  function interpolateColors(hex1, hex2, steps, hexMid = null) {
-    return chroma.scale([hex1, hexMid, hex2]).colors(steps);
+  function interpolateColors(startColor, endColor, nSegments, midColor = null) {
+    let colorArray = [startColor, midColor, endColor].filter(Boolean);
+    return chroma.scale(colorArray).colors(nSegments);
   }
   let interpolatedColors = $derived(
     interpolateColors(startColor, endColor, nSegments, midColor),

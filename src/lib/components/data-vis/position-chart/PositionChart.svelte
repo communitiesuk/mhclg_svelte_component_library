@@ -1,5 +1,6 @@
 <script>
   import { scaleLinear } from "d3-scale";
+  import chroma from "chroma-js";
   import PositionChartAxis from "./PositionChartAxis.svelte";
   import ValueLabel from "../line-chart/ValueLabel.svelte";
   import Button from "../../ui/Button.svelte";
@@ -80,6 +81,7 @@
       activeMarkerId = null;
     },
     activeMarkerId = undefined,
+    distribution = undefined,
   } = $props();
 
   let xTicks = $state([]);
@@ -156,73 +158,11 @@
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
 
   function interpolateColors(hex1, hex2, steps, hexMid = null) {
-    // Convert hex to RGB
-    const hexToRgb = (hex) => {
-      hex = hex.replace(/^#/, "");
-      if (hex.length === 3) {
-        hex = hex
-          .split("")
-          .map((x) => x + x)
-          .join("");
-      }
-      const bigint = parseInt(hex, 16);
-      return {
-        r: (bigint >> 16) & 255,
-        g: (bigint >> 8) & 255,
-        b: bigint & 255,
-      };
-    };
-    // Convert RGB to hex
-    const rgbToHex = ({ r, g, b }) =>
-      "#" +
-      [r, g, b]
-        .map((x) => {
-          const hex = x.toString(16);
-          return hex.length === 1 ? "0" + hex : hex;
-        })
-        .join("");
-    // Helper: interpolate between two colors
-    const interpolate = (start, end, count) => {
-      const arr = [];
-      for (let i = 0; i < count; i++) {
-        const t = i / (count - 1);
-        const r = Math.round(start.r + (end.r - start.r) * t);
-        const g = Math.round(start.g + (end.g - start.g) * t);
-        const b = Math.round(start.b + (end.b - start.b) * t);
-        arr.push({ r, g, b });
-      }
-      return arr;
-    };
-    const start = hexToRgb(hex1);
-    const end = hexToRgb(hex2);
-    // Case 1: just two colors
-    if (!hexMid) {
-      return interpolate(start, end, steps).map(rgbToHex);
-    }
-    // Case 2: three colors
-    const mid = hexToRgb(hexMid);
-    const result = [];
-    if (steps % 2 === 1) {
-      // Odd steps → midpoint included
-      const half = (steps - 1) / 2;
-      const firstHalf = interpolate(start, mid, half + 1); // includes mid
-      const secondHalf = interpolate(mid, end, half + 1); // includes mid again
-      result.push(
-        ...firstHalf.slice(0, -1).map(rgbToHex), // drop duplicate mid
-        ...secondHalf.map(rgbToHex),
-      );
-    } else {
-      // Even steps → midpoint excluded
-      const half = steps / 2;
-      const firstHalf = interpolate(start, mid, half + 1); // includes mid
-      const secondHalf = interpolate(mid, end, half + 1); // includes mid again
-      result.push(
-        ...firstHalf.slice(0, -1).map(rgbToHex), // drop mid
-        ...secondHalf.slice(1).map(rgbToHex), // drop mid
-      );
-    }
-    return result;
+    return chroma.scale([hex1, hexMid, hex2]).colors(steps);
   }
+  let interpolatedColors = $derived(
+    interpolateColors(startColor, endColor, nSegments, midColor),
+  );
 
   // the 'bar' is the 10 rectangles side by side
   let barWidth = $derived(chartWidth - markerRadius * 2);
@@ -353,9 +293,7 @@
               height={barHeight}
               fill={colorScale && colorScale.length > 0
                 ? colorScale[number]
-                : interpolateColors(startColor, endColor, nSegments, midColor)[
-                    number
-                  ]}
+                : interpolatedColors[number]}
             ></rect></g
           >{/each}
         {#each Object.entries(positionChart.rowData) as [tier, points]}

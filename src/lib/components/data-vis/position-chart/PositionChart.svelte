@@ -341,19 +341,20 @@
             {/if}
           {/each}
         {/each}
-
-        <Axis
-          bind:ticksArray={xTicks}
-          {chartHeight}
-          chartWidth={chartWidth - markerRadius * 2}
-          orientation={{ axis: "x", position: "bottom" }}
-          range={[markerRadius, chartWidth - markerRadius]}
-          domain={[xTickMin, xTickMax]}
-          values={[0, 2, 3, 4]}
-          fontSize={14}
-          floor={min}
-          ceiling={max}
-        ></Axis>
+        {#if showAxis}
+          <Axis
+            bind:ticksArray={xTicks}
+            {chartHeight}
+            chartWidth={chartWidth - markerRadius * 2}
+            orientation={{ axis: "x", position: "bottom" }}
+            range={[markerRadius, chartWidth - markerRadius]}
+            domain={[xTickMin, xTickMax]}
+            values={[0, 2, 3, 4]}
+            fontSize={14}
+            floor={min}
+            ceiling={max}
+          ></Axis>
+        {/if}
       </svg>
     </div>
     {#if moreInfoTogglesArray[i]}

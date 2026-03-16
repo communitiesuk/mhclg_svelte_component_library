@@ -1,7 +1,6 @@
 <script>
-
   import { math } from "@maptiler/sdk";
-import { scaleLinear } from "d3-scale";
+  import { scaleLinear } from "d3-scale";
 
   let {
     dist = [],
@@ -41,10 +40,7 @@ import { scaleLinear } from "d3-scale";
   let xScale = $derived(
     scaleLinear().domain([xTickMin, xTickMax]).range(useRange),
   );
-
 </script>
-
-
 
 {#key containerWidth}
   <div class="scale-container" bind:clientWidth={containerWidth}>
@@ -53,18 +49,18 @@ import { scaleLinear } from "d3-scale";
       height={height + (annotationText ? 25 : 0) + (showXAxis ? 25 : 0)}
       transform="translate({padding / 2},0)"
     >
-    {#if annotationText}
-      <g transform="translate({xScale(annotationValue)},0)">
-        <text
-          fill="#555555"
-          font-size="0.8em"
-          text-anchor="middle"
-          dominant-baseline="hanging"
-        >
-          <tspan x="0" dy="0">{annotationText}</tspan>
-          <tspan x="0" dy="12">▼</tspan>
-        </text>
-      </g>
+      {#if annotationText}
+        <g transform="translate({xScale(annotationValue)},0)">
+          <text
+            fill="#555555"
+            font-size="0.8em"
+            text-anchor="middle"
+            dominant-baseline="hanging"
+          >
+            <tspan x="0" dy="0">{annotationText}</tspan>
+            <tspan x="0" dy="12">▼</tspan>
+          </text>
+        </g>
       {/if}
 
       <g transform="translate(0,{annotationText ? 25 : 0})">
@@ -114,7 +110,6 @@ import { scaleLinear } from "d3-scale";
             ></rect>
           {/key}
         {/each}
-        </g>
       </g>
     </svg>
   </div>

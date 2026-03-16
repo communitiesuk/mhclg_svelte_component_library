@@ -4,7 +4,7 @@
   import Axis from "./axis/Axis.svelte";
 
   let {
-    dist = [],
+    distribution = [],
     min = 0,
     max = 1,
     showXAxis = true,
@@ -52,9 +52,7 @@
     bin().domain([xTickMin, xTickMax]).thresholds(thresholds),
   );
 
-  let bins = $derived(
-    binX([0.1, 0.2, 0.3, 0.3, 0.3, 0.3, 0.4, 0.6, 0.6, 0.6, 0.7]),
-  );
+  let bins = $derived(binX(distribution));
 
   let yScale = $derived(
     scaleLinear()

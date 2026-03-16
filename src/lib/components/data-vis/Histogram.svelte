@@ -1,16 +1,19 @@
 <script>
-  import { math } from "@maptiler/sdk";
   import { scaleLinear } from "d3-scale";
+  import { bin, range } from "d3-array";
+  import Axis from "./axis/Axis.svelte";
 
   let {
     dist = [],
+    min = 0,
+    max = 1,
     showXAxis = true,
     showYAxis = true,
     showArrows = true,
     midColor = "#DDDDDD",
     startColor = "#B70000",
     endColor = "#2D6644",
-    thresholds = 10,
+    nBins = 10,
     padding = 0,
     height = 50,
     polarity = "standard",
@@ -26,10 +29,10 @@
   let xTicks = $state([]);
   let yTicks = $state([]);
 
-  let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : Math.min(dist));
-  let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : Math.max(dist));
+  let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : 0);
+  let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
   let yTickMin = $derived(yTicks.length ? Math.min(...yTicks) : 0);
-  let yTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
+  let yTickMax = $derived(yTicks.length ? Math.max(...yTicks) : 1);
 
   let useRange = $derived(
     polarity === "standard"
@@ -39,6 +42,24 @@
 
   let xScale = $derived(
     scaleLinear().domain([xTickMin, xTickMax]).range(useRange),
+  );
+
+  let thresholds = $derived(
+    range(xTickMin, xTickMax, (xTickMax - xTickMin) / nBins),
+  );
+
+  let binX = $derived(
+    bin().domain([xTickMin, xTickMax]).thresholds(thresholds),
+  );
+
+  let bins = $derived(
+    binX([0.1, 0.2, 0.3, 0.3, 0.3, 0.3, 0.4, 0.6, 0.6, 0.6, 0.7]),
+  );
+
+  let yScale = $derived(
+    scaleLinear()
+      .domain([0, Math.max(...bins.map((b) => b.length))])
+      .range([0, height]),
   );
 </script>
 
@@ -71,12 +92,13 @@
               chartHeight={height}
               chartWidth={containerWidth - padding}
               orientation={{ axis: "x", position: "bottom" }}
-              domain={[xTickMin, xTickMax]}
+              domain={[min, max]}
               range={useRange}
-              values={dist}
+              min={xTickMin}
+              max={xTickMax}
               fontSize={13}
-              {floor}
-              {ceiling}
+              floor={xTickMin}
+              ceiling={xTickMax}
               {labelFormatter}
               numberOfTicks={2}
             ></Axis>
@@ -88,8 +110,7 @@
               chartWidth={containerWidth - padding}
               orientation={{ axis: "y", position: "left" }}
               domain={[0, yTickMax]}
-              range={[height, 0]}
-              values={[...dist, 0]}
+              range={[0, height]}
               fontSize={0}
               numberOfTicks={5}
               tickStrokeWidth={0.25}
@@ -102,11 +123,11 @@
           {#key bin.x0}
             <rect
               x={polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)}
-              y={height - yScale(bin.count)}
+              y={height - yScale(bin.length)}
               width={Math.abs(xScale(bin.x1) - xScale(bin.x0))}
-              height={yScale(bin.count)}
-              fill={interpolatedColors[i]}
-              stroke-width={i === highlightIndex ? 0 : 0}
+              height={yScale(bin.length)}
+              fill="grey"
+              stroke-width={0}
             ></rect>
           {/key}
         {/each}

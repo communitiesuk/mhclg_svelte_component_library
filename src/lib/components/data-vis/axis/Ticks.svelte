@@ -16,7 +16,8 @@
     chartWidth,
     chartHeight,
     axisFunction,
-    values,
+    min,
+    max,
     numberOfTicks,
     floor,
     ceiling,
@@ -28,12 +29,12 @@
     chartWidth: number;
     chartHeight: number;
     axisFunction: any;
-    values: number[]; // numeric array for domain
+    min: number;
+    max: number;
     numberOfTicks?: number;
     floor?: number;
     ceiling?: number;
     orientation: Orientation;
-    /** Mandatory custom label generator */
     labelFormatter?: (tick: number, index: number) => string;
     fontSize?: number;
   } = $props();
@@ -52,23 +53,21 @@
   }
 
   function generateTicks(
-    data: number[],
+    min: number,
+    max: number,
     numTicks: number,
     floorVal?: number,
     ceilingVal?: number,
   ): number[] {
-    const minValueFromData = Decimal.min(...data);
-    const maxValueFromData = Decimal.max(...data);
-
     const minVal =
       floorVal !== undefined
-        ? Decimal.min(new Decimal(floorVal), minValueFromData)
-        : new Decimal(minValueFromData);
+        ? Decimal.min(new Decimal(floorVal), min)
+        : new Decimal(min);
 
     const maxVal =
       ceilingVal !== undefined
-        ? Decimal.max(new Decimal(ceilingVal), maxValueFromData)
-        : new Decimal(maxValueFromData);
+        ? Decimal.max(new Decimal(ceilingVal), max)
+        : new Decimal(max);
 
     const rangeVal = maxVal.minus(minVal);
     const roughStep = rangeVal.div(numTicks - 1);
@@ -125,7 +124,7 @@
 
   // Compute ticks
   numberOfTicks = tickCount(chartWidth, chartHeight);
-  const rawTicks = generateTicks(values, numberOfTicks, floor, ceiling);
+  const rawTicks = generateTicks(min, max, numberOfTicks, floor, ceiling);
 
   ticksArray = clampTickEnds(rawTicks, floor, ceiling);
 </script>

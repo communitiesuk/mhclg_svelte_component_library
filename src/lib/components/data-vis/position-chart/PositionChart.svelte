@@ -86,6 +86,8 @@
 
   let xTicks = $state([]);
 
+  $inspect({ xTicks });
+
   let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : 0);
   let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
 
@@ -350,7 +352,8 @@
             orientation={{ axis: "x", position: "bottom" }}
             range={[markerRadius, chartWidth - markerRadius]}
             domain={[xTickMin, xTickMax]}
-            values={[0, 2, 3, 4]}
+            {min}
+            {max}
             fontSize={14}
             floor={min}
             ceiling={max}

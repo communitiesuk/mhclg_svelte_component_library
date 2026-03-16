@@ -67,6 +67,7 @@
       width={containerWidth - padding}
       height={height + (annotationText ? 25 : 0) + (showXAxis ? 25 : 0)}
       transform="translate({padding / 2},0)"
+      style="overflow: visible"
     >
       {#if annotationText}
         <g transform="translate({xScale(annotationValue)},0)">
@@ -107,6 +108,8 @@
               chartHeight={height}
               chartWidth={containerWidth - padding}
               orientation={{ axis: "y", position: "left" }}
+              min={yTickMin}
+              max={yTickMax}
               domain={[0, yTickMax]}
               range={[0, height]}
               fontSize={0}

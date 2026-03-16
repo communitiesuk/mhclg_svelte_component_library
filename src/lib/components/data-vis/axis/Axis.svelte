@@ -22,7 +22,8 @@
     ticksArray = $bindable<number[]>([]),
 
     // Values to derive ticks/domain from if ticksArray not provided
-    values = undefined as number[] | undefined,
+    min = undefined as number | undefined,
+    max = undefined as number | undefined,
 
     orientation = { axis: "x", position: "bottom" } as Orientation,
 
@@ -50,7 +51,9 @@
     chartWidth?: number;
     numberOfTicks?: number;
     ticksArray?: number[];
-    values?: number[];
+    min?: number;
+    max?: number;
+
     orientation?: Orientation;
     floor?: number;
     ceiling?: number;
@@ -72,7 +75,8 @@
   const innerHeight = $derived(Math.max(0, chartHeight));
 
   function computeDefaultDomain(): [number, number] {
-    const arr = (ticksArray && ticksArray.length ? ticksArray : values) ?? [];
+    const arr =
+      (ticksArray && ticksArray.length ? ticksArray : [min, max]) ?? [];
     const dMin =
       floor ?? (arr.length ? arr.reduce((a, b) => (a < b ? a : b)) : 0);
     const dMax =
@@ -118,14 +122,15 @@
     stroke="black"
     stroke-width="2px"
   ></line>
-  {#if values}
+  {#if ticksArray || (min && max)}
     {#key numberOfTicks}
       <Ticks
         bind:ticksArray
         {chartWidth}
         {chartHeight}
         {axisFunction}
-        {values}
+        {min}
+        {max}
         {numberOfTicks}
         {orientation}
         {floor}

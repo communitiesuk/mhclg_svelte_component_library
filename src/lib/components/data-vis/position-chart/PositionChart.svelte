@@ -84,6 +84,8 @@
 
   let xTicks = $state([]);
 
+  $inspect({ xTicks });
+
   let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : 0);
   let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
 
@@ -403,19 +405,21 @@
             {/if}
           {/each}
         {/each}
-
-        <Axis
-          bind:ticksArray={xTicks}
-          {chartHeight}
-          chartWidth={chartWidth - markerRadius * 2}
-          orientation={{ axis: "x", position: "bottom" }}
-          range={[markerRadius, chartWidth - markerRadius]}
-          domain={[xTickMin, xTickMax]}
-          values={[0, 2, 3, 4]}
-          fontSize={14}
-          floor={min}
-          ceiling={max}
-        ></Axis>
+        {#if showAxis}
+          <Axis
+            bind:ticksArray={xTicks}
+            {chartHeight}
+            chartWidth={chartWidth - markerRadius * 2}
+            orientation={{ axis: "x", position: "bottom" }}
+            range={[markerRadius, chartWidth - markerRadius]}
+            domain={[xTickMin, xTickMax]}
+            {min}
+            {max}
+            fontSize={14}
+            floor={min}
+            ceiling={max}
+          ></Axis>
+        {/if}
       </svg>
     </div>
     {#if moreInfoTogglesArray[i]}

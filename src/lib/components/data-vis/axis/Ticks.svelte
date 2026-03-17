@@ -59,20 +59,17 @@
     floorVal?: number,
     ceilingVal?: number,
   ): number[] {
-    const minVal =
-      floorVal !== undefined
-        ? Decimal.min(new Decimal(floorVal), min)
-        : new Decimal(min);
+    let minVal =
+      floorVal !== undefined ? new Decimal(floorVal) : new Decimal(min);
 
-    const maxVal =
-      ceilingVal !== undefined
-        ? Decimal.max(new Decimal(ceilingVal), max)
-        : new Decimal(max);
+    let maxVal =
+      ceilingVal !== undefined ? new Decimal(ceilingVal) : new Decimal(max);
 
     const rangeVal = maxVal.minus(minVal);
     const roughStep = rangeVal.div(numTicks - 1);
-    const normalizedSteps = [1, 2, 5, 10];
-
+    const normalizedSteps = [
+      1, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15, 25, 30, 35, 40, 45,
+    ];
     const stepPower = Decimal.pow(
       10,
       -Math.floor(Math.log10(roughStep.toNumber())),
@@ -123,10 +120,14 @@
   }
 
   // Compute ticks
-  numberOfTicks = tickCount(chartWidth, chartHeight);
-  const rawTicks = generateTicks(min, max, numberOfTicks, floor, ceiling);
+  let computedTickCount = $derived(
+    numberOfTicks ?? tickCount(chartWidth, chartHeight),
+  );
 
-  ticksArray = clampTickEnds(rawTicks, floor, ceiling);
+  let rawTicks = $derived(
+    generateTicks(min, max, computedTickCount, floor, ceiling),
+  );
+  ticksArray = rawTicks;
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}

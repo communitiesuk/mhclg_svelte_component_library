@@ -82,6 +82,8 @@
     },
     activeMarkerId = undefined,
     distribution = undefined,
+    floor = undefined,
+    ceiling = undefined,
   } = $props();
 
   let xTicks = $state([]);
@@ -355,8 +357,8 @@
             {min}
             {max}
             fontSize={14}
-            floor={min}
-            ceiling={max}
+            {floor}
+            {ceiling}
           ></Axis>
         {/if}
       </svg>

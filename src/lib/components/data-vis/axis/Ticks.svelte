@@ -146,7 +146,7 @@
           : orientation.position === "top"
             ? "M0 0 l0 -8"
             : "M0 0 l0 8"}
-        stroke="black"
+        stroke="grey"
         stroke-width="2px"
       ></path>
       <text
@@ -168,7 +168,7 @@
           : orientation.position === "left"
             ? "end"
             : "start"}
-        fill="black"
+        fill="grey"
       >
         {labelFormatter ? labelFormatter(tick, index) : defaultLabel(tick)}
       </text>

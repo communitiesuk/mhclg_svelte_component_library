@@ -341,10 +341,19 @@
                   r={rowValue.markerRadius}
                   cx="0"
                   cy="0"
+                  stroke="white"
+                  stroke-width={3}
+                  opacity={rowValue.opacity}
+                ></circle>
+                <circle
+                  r={rowValue.markerRadius * 0.9}
+                  cx="0"
+                  cy="0"
                   fill={rowValue.color === "inherit"
                     ? colorScale[segmentIndex(rowValue.value)]
                     : rowValue.color}
-                  stroke="white"
+                  stroke="black"
+                  stroke-width={1.5}
                   opacity={rowValue.opacity}
                 ></circle>
               </g>
@@ -420,11 +429,13 @@
     align-items: center;
     column-gap: 2%;
     row-gap: 2%;
+    overflow: visible;
   }
   .chart {
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
     min-width: 0;
+    overflow: visible;
   }
 </style>

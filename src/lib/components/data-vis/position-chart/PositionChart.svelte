@@ -14,12 +14,12 @@
     showAxis = true,
     chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,
-    colour = "#CA357C",
+    color = "#CA357C",
     nSegments = 10,
     startColor = "#8EB8DC",
     endColor = "#0F385C",
     midColor = undefined,
-    colorScale = undefined,
+    customColorScale = undefined,
     opacity = 1,
     annotation = undefined,
     showIcon = false,
@@ -29,7 +29,7 @@
     rowData = [
       {
         value: value,
-        colour: colour,
+        color: color,
         opacity: opacity,
         annotation: annotation,
       },
@@ -92,7 +92,7 @@
   let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
 
   // base defaults that apply to every row
-  const baseRow = { value, colour, opacity, annotation };
+  const baseRow = { value, color, opacity, annotation };
 
   // base defaults that apply to every chart
   const baseChart = { label, chartHeight, min, max, showAxis };
@@ -163,8 +163,9 @@
     let colorArray = [startColor, midColor, endColor].filter(Boolean);
     return chroma.scale(colorArray).colors(nSegments);
   }
-  let interpolatedColors = $derived(
-    interpolateColors(startColor, endColor, nSegments, midColor),
+  let colorScale = $derived(
+    customColorScale ??
+      interpolateColors(startColor, endColor, nSegments, midColor),
   );
 
   // the 'bar' is the 10 rectangles side by side
@@ -194,6 +195,10 @@
       .concat(showAxis ? ["minmax(0,auto)"] : [])
       .join(" "),
   );
+
+  function segmentIndex(value) {
+    return Math.floor((nSegments * (value - xTickMin)) / (xTickMax - xTickMin));
+  }
 </script>
 
 {#if annotations.length}
@@ -206,7 +211,7 @@
             id="label"
             x={d.value}
             y="20"
-            fill={d.colour}
+            fill={d.color}
             font-size="18"
             opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
               ? 0.2
@@ -228,7 +233,7 @@
               ? 0.2
               : 1}
           >
-            <path d="M 0 0 L 6 3 L 0 6 z" fill={d.colour}></path>
+            <path d="M 0 0 L 6 3 L 0 6 z" fill={d.color}></path>
           </marker>
         </defs>
         <path
@@ -237,7 +242,7 @@
             4 +
             (topWidth - chartWidth)}  v 15"
           fill="none"
-          stroke={d.colour}
+          stroke={d.color}
           stroke-width="1.5"
           marker-end="url(#arrow-down)"
           opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
@@ -294,9 +299,7 @@
             ><rect
               width={barWidth / nSegments}
               height={barHeight}
-              fill={colorScale && colorScale.length > 0
-                ? colorScale[number]
-                : interpolatedColors[number]}
+              fill={colorScale[number]}
             ></rect></g
           >{/each}
         {#each Object.entries(positionChart.rowData) as [tier, points]}
@@ -336,7 +339,9 @@
                   r={markerRadius}
                   cx="0"
                   cy="0"
-                  fill={rowValue.colour}
+                  fill={rowValue.color === "inherit"
+                    ? colorScale[segmentIndex(rowValue.value)]
+                    : rowValue.color}
                   stroke="white"
                   opacity={rowValue.opacity}
                 ></circle>

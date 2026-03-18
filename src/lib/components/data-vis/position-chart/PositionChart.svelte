@@ -14,7 +14,7 @@
     showAxis = true,
     chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,
-    colour = "#CA357C",
+    color = "#CA357C",
     nSegments = 10,
     startColor = "#8EB8DC",
     endColor = "#0F385C",
@@ -29,7 +29,7 @@
     rowData = [
       {
         value: value,
-        colour: colour,
+        color: color,
         opacity: opacity,
         annotation: annotation,
       },
@@ -92,7 +92,7 @@
   let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
 
   // base defaults that apply to every row
-  const baseRow = { value, colour, opacity, annotation };
+  const baseRow = { value, color, opacity, annotation };
 
   // base defaults that apply to every chart
   const baseChart = { label, chartHeight, min, max, showAxis };
@@ -206,7 +206,7 @@
             id="label"
             x={d.value}
             y="20"
-            fill={d.colour}
+            fill={d.color}
             font-size="18"
             opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
               ? 0.2
@@ -228,7 +228,7 @@
               ? 0.2
               : 1}
           >
-            <path d="M 0 0 L 6 3 L 0 6 z" fill={d.colour}></path>
+            <path d="M 0 0 L 6 3 L 0 6 z" fill={d.color}></path>
           </marker>
         </defs>
         <path
@@ -237,7 +237,7 @@
             4 +
             (topWidth - chartWidth)}  v 15"
           fill="none"
-          stroke={d.colour}
+          stroke={d.color}
           stroke-width="1.5"
           marker-end="url(#arrow-down)"
           opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
@@ -336,7 +336,7 @@
                   r={markerRadius}
                   cx="0"
                   cy="0"
-                  fill={rowValue.colour}
+                  fill={rowValue.color}
                   stroke="white"
                   opacity={rowValue.opacity}
                 ></circle>

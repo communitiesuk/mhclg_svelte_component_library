@@ -19,7 +19,7 @@
     startColor = "#8EB8DC",
     endColor = "#0F385C",
     midColor = undefined,
-    colorScale = undefined,
+    customColorScale = undefined,
     opacity = 1,
     annotation = undefined,
     showIcon = false,
@@ -163,8 +163,9 @@
     let colorArray = [startColor, midColor, endColor].filter(Boolean);
     return chroma.scale(colorArray).colors(nSegments);
   }
-  let interpolatedColors = $derived(
-    interpolateColors(startColor, endColor, nSegments, midColor),
+  let colorScale = $derived(
+    customColorScale ??
+      interpolateColors(startColor, endColor, nSegments, midColor),
   );
 
   // the 'bar' is the 10 rectangles side by side
@@ -194,6 +195,10 @@
       .concat(showAxis ? ["minmax(0,auto)"] : [])
       .join(" "),
   );
+
+  function segmentIndex(value) {
+    return Math.floor((nSegments * (value - xTickMin)) / (xTickMax - xTickMin));
+  }
 </script>
 
 {#if annotations.length}
@@ -294,9 +299,7 @@
             ><rect
               width={barWidth / nSegments}
               height={barHeight}
-              fill={colorScale && colorScale.length > 0
-                ? colorScale[number]
-                : interpolatedColors[number]}
+              fill={colorScale[number]}
             ></rect></g
           >{/each}
         {#each Object.entries(positionChart.rowData) as [tier, points]}
@@ -336,7 +339,9 @@
                   r={markerRadius}
                   cx="0"
                   cy="0"
-                  fill={rowValue.color}
+                  fill={rowValue.color === "inherit"
+                    ? colorScale[segmentIndex(rowValue.value)]
+                    : rowValue.color}
                   stroke="white"
                   opacity={rowValue.opacity}
                 ></circle>

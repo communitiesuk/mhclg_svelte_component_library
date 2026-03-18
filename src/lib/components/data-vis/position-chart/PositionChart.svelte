@@ -94,7 +94,7 @@
   let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
 
   // base defaults that apply to every row
-  const baseRow = { value, color, opacity, annotation };
+  const baseRow = { value, color, opacity, annotation, markerRadius };
 
   // base defaults that apply to every chart
   const baseChart = { label, chartHeight, min, max, showAxis };
@@ -338,7 +338,7 @@
                   2})"
               >
                 <circle
-                  r={markerRadius}
+                  r={rowValue.markerRadius}
                   cx="0"
                   cy="0"
                   fill={rowValue.color === "inherit"

@@ -12,6 +12,8 @@
     max = undefined,
     label = undefined,
     showAxis = true,
+    showArrows = true,
+    showAverage = true,
     chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,
     color = "#CA357C",
@@ -25,6 +27,7 @@
     showIcon = false,
     moreInfo = undefined,
     markerRadius = chartHeight / 2,
+    numberOfTicks = undefined,
     options = [],
     rowData = [
       {
@@ -288,7 +291,10 @@
     {/if}
     <div
       class="chart"
-      style="height: {positionChart.chartHeight * 2}px"
+      style="height:{chartHeight +
+        (showAxis ? 20 : 0) +
+        (showArrows ? 20 : 0) +
+        (showAverage ? 20 : 0)}px"
       bind:clientWidth={chartWidth}
     >
       <svg width={chartWidth} height={positionChart.chartHeight * 2}>
@@ -364,8 +370,24 @@
             fontSize={14}
             {floor}
             {ceiling}
+            {numberOfTicks}
           ></Axis>
         {/if}
+        {#if showAverage}
+          <g transform="translate({xTickMax - (xTickMax - xTickMin)},0)"
+            ><text
+              fill="#333333"
+              font-size={15}
+              text-anchor="middle"
+              font-weight="bold"
+            >
+              <tspan x="0" dy="15">▲</tspan>
+              <tspan x="0" dy="4">|</tspan>
+              <tspan font-family="GDS Transport" x="0" dy="13">Average</tspan>
+            </text></g
+          >
+        {/if}
+        {#if showArrows}{/if}
       </svg>
     </div>
     {#if moreInfoTogglesArray[i]}

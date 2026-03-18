@@ -342,6 +342,9 @@
                   cx="0"
                   cy="0"
                   stroke="white"
+                  fill={rowValue.color === "inherit"
+                    ? colorScale[segmentIndex(rowValue.value)]
+                    : rowValue.color}
                   stroke-width={3}
                   opacity={rowValue.opacity}
                 ></circle>

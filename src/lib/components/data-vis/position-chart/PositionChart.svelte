@@ -89,14 +89,15 @@
     ceiling = undefined,
     averageValue = undefined,
     polarity = "standard",
+    skew = false,
   } = $props();
 
   let xTicks = $state([]);
 
   $inspect({ xTicks });
 
-  let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : 0);
-  let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
+  let xTickFirst = $derived(xTicks.length ? xTicks[0] : 0);
+  let xTickLast = $derived(xTicks.length ? xTicks.at(-1) : 1);
 
   // base defaults that apply to every row
   const baseRow = { value, color, opacity, annotation, markerRadius };
@@ -166,13 +167,38 @@
 
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
 
-  function interpolateColors(startColor, endColor, nSegments, midColor = null) {
-    let colorArray = [startColor, midColor, endColor].filter(Boolean);
-    return chroma.scale(colorArray).colors(nSegments);
+  let proportionsInBins = $state([
+    0.25, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 0.99, 1,
+  ]);
+
+  function interpolateColors(
+    startColor,
+    endColor,
+    nSegments,
+    midColor = null,
+    skew,
+  ) {
+    const colorArray = [startColor, midColor, endColor].filter(Boolean);
+
+    if (!skew) {
+      return chroma.scale(colorArray).colors(nSegments);
+    } else {
+      const adjustedMidpointScale = chroma
+        .scale(colorArray)
+        .domain([0, 0.8, 1]);
+      const proportionalColors = proportionsInBins.map((p) =>
+        adjustedMidpointScale(p).hex(),
+      );
+
+      console.log(proportionalColors);
+
+      return proportionalColors;
+    }
   }
+
   let colorScale = $derived(
     customColorScale ??
-      interpolateColors(startColor, endColor, nSegments, midColor),
+      interpolateColors(startColor, endColor, nSegments, midColor, skew),
   );
 
   // the 'bar' is the 10 rectangles side by side
@@ -204,7 +230,9 @@
   );
 
   function segmentIndex(value) {
-    return Math.floor((nSegments * (value - xTickMin)) / (xTickMax - xTickMin));
+    return Math.floor(
+      (nSegments * (value - xTickFirst)) / (xTickLast - xTickFirst),
+    );
   }
 </script>
 
@@ -343,8 +371,8 @@
                   : null}
                 pointer-events={interactiveMarkers ? null : "none"}
                 transform="translate({xFunction(
-                  positionChart.min,
-                  positionChart.max,
+                  xTickFirst,
+                  xTickLast,
                 )(rowValue.value) + markerRadius},{positionChart.chartHeight /
                   2})"
               >
@@ -381,20 +409,21 @@
             chartWidth={chartWidth - markerRadius * 2}
             orientation={{ axis: "x", position: "bottom" }}
             range={[markerRadius, chartWidth - markerRadius]}
-            domain={[xTickMin, xTickMax]}
+            domain={[xTickFirst, xTickLast]}
             {min}
             {max}
             fontSize={14}
             {floor}
             {ceiling}
             {numberOfTicks}
+            {polarity}
           ></Axis>
         {/if}
         {#if showAverage}
           <g
             transform="translate({xFunction(
-              positionChart.min,
-              positionChart.max,
+              xTickFirst,
+              xTickLast,
             )(averageValue)}, {chartHeight * 1.7})"
           >
             <text

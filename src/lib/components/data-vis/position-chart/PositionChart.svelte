@@ -88,6 +88,7 @@
     floor = undefined,
     ceiling = undefined,
     averageValue = undefined,
+    polarity = "standard",
   } = $props();
 
   let xTicks = $state([]);

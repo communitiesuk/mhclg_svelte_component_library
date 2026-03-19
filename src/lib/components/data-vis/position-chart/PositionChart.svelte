@@ -87,6 +87,7 @@
     distribution = undefined,
     floor = undefined,
     ceiling = undefined,
+    averageValue = undefined,
   } = $props();
 
   let xTicks = $state([]);
@@ -292,12 +293,15 @@
     <div
       class="chart"
       style="height:{chartHeight +
-        (showAxis ? 20 : 0) +
-        (showArrows ? 20 : 0) +
-        (showAverage ? 20 : 0)}px"
+        (showAxis ? 30 : 0) +
+        (showArrows ? 30 : 0) +
+        (showAverage ? 40 : 0)}px"
       bind:clientWidth={chartWidth}
     >
-      <svg width={chartWidth} height={positionChart.chartHeight * 2}>
+      <svg
+        width={chartWidth}
+        height={chartHeight + (showAxis ? 40 : 0) + (showAverage ? 40 : 0)}
+      >
         {#each range as number}
           <g
             transform="translate({markerRadius +
@@ -374,9 +378,14 @@
           ></Axis>
         {/if}
         {#if showAverage}
-          <g transform="translate({xTickMax - (xTickMax - xTickMin)},0)"
-            ><text
-              fill="#333333"
+          <g
+            transform="translate({xFunction(
+              positionChart.min,
+              positionChart.max,
+            )(averageValue)}, {chartHeight * 1.7})"
+          >
+            <text
+              fill="#666"
               font-size={15}
               text-anchor="middle"
               font-weight="bold"
@@ -384,11 +393,19 @@
               <tspan x="0" dy="15">▲</tspan>
               <tspan x="0" dy="4">|</tspan>
               <tspan font-family="GDS Transport" x="0" dy="13">Average</tspan>
-            </text></g
-          >
+            </text>
+          </g>
         {/if}
-        {#if showArrows}{/if}
       </svg>
+      {#if showArrows}
+        <PositionChartAxis
+          markerRadius={10}
+          barWidth={chartWidth}
+          textSize="xs"
+          {chartWidth}
+          axisLabels={["Worse than average", "Better than average"]}
+        ></PositionChartAxis>
+      {/if}
     </div>
     {#if moreInfoTogglesArray[i]}
       <div class="accordion" style="grid-column:1 / -1">

@@ -119,7 +119,7 @@
     y1="0"
     x2={orientation.axis === "x" ? range[1] : 0}
     y2={orientation.axis === "y" ? chartHeight : 0}
-    stroke="black"
+    stroke="grey"
     stroke-width="2px"
   ></line>
   {#if ticksArray || (min && max)}

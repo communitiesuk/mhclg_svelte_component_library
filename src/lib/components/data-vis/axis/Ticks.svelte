@@ -141,12 +141,12 @@
       <path
         d={orientation.axis === "y"
           ? orientation.position === "left"
-            ? "M0 0 l-8 0"
-            : "M0 0 l8 0"
+            ? "M0 -1 l-8 0"
+            : "M0 -1 l8 0"
           : orientation.position === "top"
-            ? "M0 0 l0 -8"
-            : "M0 0 l0 8"}
-        stroke="black"
+            ? "M0 -1 l0 -8"
+            : "M0 -1 l0 8"}
+        stroke="grey"
         stroke-width="2px"
       ></path>
       <text
@@ -160,7 +160,7 @@
           ? 5
           : orientation.position === 'top'
             ? -10
-            : 23}
+            : fontSize * 1.4}
         )"
         font-size={fontSize}
         text-anchor={orientation.axis === "x"
@@ -168,7 +168,7 @@
           : orientation.position === "left"
             ? "end"
             : "start"}
-        fill="black"
+        fill="grey"
       >
         {labelFormatter ? labelFormatter(tick, index) : defaultLabel(tick)}
       </text>

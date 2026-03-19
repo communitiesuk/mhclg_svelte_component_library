@@ -12,8 +12,8 @@
     max = undefined,
     label = undefined,
     showAxis = true,
-    showArrows = true,
-    showAverage = true,
+    showArrows = false,
+    showAverage = false,
     chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,
     color = "#CA357C",

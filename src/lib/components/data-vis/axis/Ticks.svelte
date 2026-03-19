@@ -9,6 +9,7 @@
     axis: Axis;
     position: Position;
   }
+  type Polarity = "standard" | "reverse";
 
   // Props with defaults (Svelte 5 runes)
   let {
@@ -24,6 +25,7 @@
     orientation,
     labelFormatter,
     fontSize = 19,
+    polarity = "standard",
   }: {
     ticksArray?: number[]; // bindable
     chartWidth: number;
@@ -37,6 +39,7 @@
     orientation: Orientation;
     labelFormatter?: (tick: number, index: number) => string;
     fontSize?: number;
+    polarity?: Polarity;
   } = $props();
   function axisValue(fn: any, tick: number): number {
     // Try single-call first: axisFunction(tick)
@@ -127,7 +130,14 @@
   let rawTicks = $derived(
     generateTicks(min, max, computedTickCount, floor, ceiling),
   );
-  ticksArray = rawTicks;
+
+  let ticksOrdered = $derived(
+    polarity === "standard" ? rawTicks : rawTicks.reverse(),
+  );
+
+  ticksArray = ticksOrdered;
+
+  $inspect(ticksOrdered.reverse());
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}

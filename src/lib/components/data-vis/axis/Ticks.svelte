@@ -136,8 +136,6 @@
   );
 
   ticksArray = ticksOrdered;
-
-  $inspect(ticksOrdered.reverse());
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}

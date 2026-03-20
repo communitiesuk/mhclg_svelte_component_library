@@ -238,7 +238,7 @@
   let barHeight = $derived((chartHeight * 5) / 6);
 
   function xFunction(min, max) {
-    return scaleLinear().domain([min, max]).range([0, barWidth]);
+    return scaleLinear().domain([min, max]).range([0, barWidth]).clamp(true);
   }
 
   let annotations = $derived(
@@ -262,8 +262,14 @@
   );
 
   function segmentIndex(value) {
-    return Math.floor(
-      (nSegments * (value - xTickFirst)) / (xTickLast - xTickFirst),
+    return Math.max(
+      0,
+      Math.min(
+        nSegments - 1,
+        Math.floor(
+          (nSegments * (value - xTickFirst)) / (xTickLast - xTickFirst),
+        ),
+      ),
     );
   }
 </script>

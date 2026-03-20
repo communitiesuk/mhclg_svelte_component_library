@@ -354,7 +354,7 @@
     <div
       class="chart"
       style="height:{chartHeight +
-        (showAxis ? 30 : 0) +
+        (showAxis ? 30 : 30) +
         (showArrows ? 30 : 0) +
         (showAverage ? 40 : 0)}px"
       bind:clientWidth={chartWidth}
@@ -480,7 +480,7 @@
               font-weight="bold"
             >
               <tspan x="1" dy="15">▲</tspan>
-              <tspan x="1" dy="3">|</tspan>
+              <tspan x="1" dy="4">|</tspan>
               <tspan font-family="GDS Transport" x="1" dy="13">Average</tspan>
             </text>
           </g>

@@ -474,13 +474,13 @@
             )(averageValue) + markerRadius}, {chartHeight * 1.7})"
           >
             <text
-              fill="#666"
+              fill="#444"
               font-size={15}
               text-anchor="middle"
               font-weight="bold"
             >
               <tspan x="1" dy="15">▲</tspan>
-              <tspan x="1" dy="4">|</tspan>
+              <tspan x="1" dy="3">|</tspan>
               <tspan font-family="GDS Transport" x="1" dy="13">Average</tspan>
             </text>
           </g>

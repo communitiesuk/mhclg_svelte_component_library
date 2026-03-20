@@ -471,7 +471,7 @@
             transform="translate({xFunction(
               xTickFirst,
               xTickLast,
-            )(averageValue)}, {chartHeight * 1.7})"
+            )(averageValue) + markerRadius}, {chartHeight * 1.7})"
           >
             <text
               fill="#666"
@@ -479,9 +479,9 @@
               text-anchor="middle"
               font-weight="bold"
             >
-              <tspan x="0" dy="15">▲</tspan>
-              <tspan x="0" dy="4">|</tspan>
-              <tspan font-family="GDS Transport" x="0" dy="13">Average</tspan>
+              <tspan x="1" dy="15">▲</tspan>
+              <tspan x="1" dy="4">|</tspan>
+              <tspan font-family="GDS Transport" x="1" dy="13">Average</tspan>
             </text>
           </g>
         {/if}

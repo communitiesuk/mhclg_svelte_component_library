@@ -1,5 +1,6 @@
 <script>
   import { scaleLinear } from "d3-scale";
+  import { bin, range as d3range } from "d3-array";
   import chroma from "chroma-js";
   import PositionChartAxis from "./PositionChartAxis.svelte";
   import ValueLabel from "../line-chart/ValueLabel.svelte";
@@ -84,7 +85,7 @@
       activeMarkerId = null;
     },
     activeMarkerId = undefined,
-    distribution = undefined,
+    distribution = [],
     floor = undefined,
     ceiling = undefined,
     averageValue = undefined,
@@ -98,6 +99,34 @@
 
   let xTickFirst = $derived(xTicks.length ? xTicks[0] : 0);
   let xTickLast = $derived(xTicks.length ? xTicks.at(-1) : 1);
+
+  let domainMin = $derived(Math.min(xTickFirst, xTickLast));
+  let domainMax = $derived(Math.max(xTickFirst, xTickLast));
+
+  const segmentScale = $derived(
+    scaleLinear().domain([0, nSegments]).range([domainMin, domainMax]),
+  );
+
+  const binThresholds = $derived(d3range(1, nSegments).map(segmentScale));
+
+  const binner = $derived(
+    bin().domain([domainMin, domainMax]).thresholds(binThresholds),
+  );
+
+  const bins = $derived(
+    polarity === "reverse"
+      ? binner(distribution).toReversed()
+      : binner(distribution),
+  );
+
+  const proportionsInBins = $derived(
+    bins.map((b) => b.length / distribution.length),
+  );
+
+  let proportionInExtremeBins = $derived([
+    proportionsInBins[0],
+    proportionsInBins.at(-1),
+  ]);
 
   // base defaults that apply to every row
   const baseRow = { value, color, opacity, annotation, markerRadius };
@@ -167,10 +196,6 @@
 
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
 
-  let proportionsInBins = $state([
-    0.25, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 0.99, 1,
-  ]);
-
   function interpolateColors(
     startColor,
     endColor,
@@ -183,16 +208,23 @@
     if (!skew) {
       return chroma.scale(colorArray).colors(nSegments);
     } else {
-      const adjustedMidpointScale = chroma
-        .scale(colorArray)
-        .domain([0, 0.8, 1]);
-      const proportionalColors = proportionsInBins.map((p) =>
-        adjustedMidpointScale(p).hex(),
-      );
+      const extremeColors = chroma
+        .scale([startColor, midColor, endColor])
+        .padding([
+          proportionInExtremeBins[0] / 2,
+          proportionInExtremeBins[1] / 2,
+        ])
+        .colors(2);
 
-      console.log(proportionalColors);
+      const averageNormalised =
+        (averageValue - xTickFirst) / (xTickLast - xTickFirst);
 
-      return proportionalColors;
+      const binColors = chroma
+        .scale([extremeColors[0], midColor, extremeColors[1]])
+        .domain([0, averageNormalised, 1])
+        .colors(10);
+
+      return binColors;
     }
   }
 
@@ -376,28 +408,43 @@
                 )(rowValue.value) + markerRadius},{positionChart.chartHeight /
                   2})"
               >
-                <circle
-                  r={rowValue.markerRadius}
-                  cx="0"
-                  cy="0"
-                  stroke="white"
-                  fill={rowValue.color === "inherit"
-                    ? colorScale[segmentIndex(rowValue.value)]
-                    : rowValue.color}
-                  stroke-width={3}
-                  opacity={rowValue.opacity}
-                ></circle>
-                <circle
-                  r={rowValue.markerRadius * 0.9}
-                  cx="0"
-                  cy="0"
-                  fill={rowValue.color === "inherit"
-                    ? colorScale[segmentIndex(rowValue.value)]
-                    : rowValue.color}
-                  stroke="black"
-                  stroke-width={1.5}
-                  opacity={rowValue.opacity}
-                ></circle>
+                {#if rowValue.shape === "line"}
+                  <line
+                    x1={0}
+                    x2={0}
+                    y1={chartHeight / 2.4}
+                    y2={-chartHeight / 2.4}
+                    stroke={rowValue.color === "inherit"
+                      ? colorScale[segmentIndex(rowValue.value)]
+                      : rowValue.color}
+                    stroke-width={rowValue.markerRadius}
+                    opacity={rowValue.opacity}
+                    pointer-events={rowValue.pointerEvents}
+                  ></line>
+                {:else}
+                  <circle
+                    r={rowValue.markerRadius}
+                    cx="0"
+                    cy="0"
+                    stroke="white"
+                    fill={rowValue.color === "inherit"
+                      ? colorScale[segmentIndex(rowValue.value)]
+                      : rowValue.color}
+                    stroke-width={3}
+                    opacity={rowValue.opacity}
+                  ></circle>
+                  <circle
+                    r={rowValue.markerRadius * 0.9}
+                    cx="0"
+                    cy="0"
+                    fill={rowValue.color === "inherit"
+                      ? colorScale[segmentIndex(rowValue.value)]
+                      : rowValue.color}
+                    stroke="black"
+                    stroke-width={1.5}
+                    opacity={rowValue.opacity}
+                  ></circle>
+                {/if}
               </g>
             {/if}
           {/each}

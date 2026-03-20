@@ -11,6 +11,7 @@
   type Orientation = { axis: AxisName; position: AxisPosition };
   type AxisProjector = (value: number) => number;
   type LabelFormatter = (tick: number, index: number) => string | number;
+  type Polarity = "standard" | "reverse";
 
   let {
     chartHeight = 100,
@@ -46,6 +47,7 @@
     domain = undefined as [number, number] | undefined,
     range = undefined as [number, number] | undefined,
     fontSize = 19,
+    polarity = "standard",
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -68,6 +70,7 @@
     domain?: [number, number];
     range?: [number, number];
     fontSize?: number;
+    polarity?: Polarity;
   } = $props();
 
   // --- Helpers to compute default domain/range when not supplied ---
@@ -137,6 +140,7 @@
         {ceiling}
         {labelFormatter}
         {fontSize}
+        {polarity}
       />
     {/key}
   {/if}

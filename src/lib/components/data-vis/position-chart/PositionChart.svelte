@@ -1,5 +1,6 @@
 <script>
   import { scaleLinear } from "d3-scale";
+  import { bin, range as d3range } from "d3-array";
   import chroma from "chroma-js";
   import PositionChartAxis from "./PositionChartAxis.svelte";
   import ValueLabel from "../line-chart/ValueLabel.svelte";
@@ -84,18 +85,48 @@
       activeMarkerId = null;
     },
     activeMarkerId = undefined,
-    distribution = undefined,
+    distribution = [],
     floor = undefined,
     ceiling = undefined,
     averageValue = undefined,
+    polarity = "standard",
+    skew = false,
   } = $props();
 
   let xTicks = $state([]);
 
   $inspect({ xTicks });
 
-  let xTickMin = $derived(xTicks.length ? Math.min(...xTicks) : 0);
-  let xTickMax = $derived(xTicks.length ? Math.max(...xTicks) : 1);
+  let xTickFirst = $derived(xTicks.length ? xTicks[0] : 0);
+  let xTickLast = $derived(xTicks.length ? xTicks.at(-1) : 1);
+
+  let domainMin = $derived(Math.min(xTickFirst, xTickLast));
+  let domainMax = $derived(Math.max(xTickFirst, xTickLast));
+
+  const segmentScale = $derived(
+    scaleLinear().domain([0, nSegments]).range([domainMin, domainMax]),
+  );
+
+  const binThresholds = $derived(d3range(1, nSegments).map(segmentScale));
+
+  const binner = $derived(
+    bin().domain([domainMin, domainMax]).thresholds(binThresholds),
+  );
+
+  const bins = $derived(
+    polarity === "reverse"
+      ? binner(distribution).toReversed()
+      : binner(distribution),
+  );
+
+  const proportionsInBins = $derived(
+    bins.map((b) => b.length / distribution.length),
+  );
+
+  let proportionInExtremeBins = $derived([
+    proportionsInBins[0],
+    proportionsInBins.at(-1),
+  ]);
 
   // base defaults that apply to every row
   const baseRow = { value, color, opacity, annotation, markerRadius };
@@ -165,13 +196,41 @@
 
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
 
-  function interpolateColors(startColor, endColor, nSegments, midColor = null) {
-    let colorArray = [startColor, midColor, endColor].filter(Boolean);
-    return chroma.scale(colorArray).colors(nSegments);
+  function interpolateColors(
+    startColor,
+    endColor,
+    nSegments,
+    midColor = null,
+    skew,
+  ) {
+    const colorArray = [startColor, midColor, endColor].filter(Boolean);
+
+    if (!skew) {
+      return chroma.scale(colorArray).colors(nSegments);
+    } else {
+      const extremeColors = chroma
+        .scale([startColor, midColor, endColor])
+        .padding([
+          proportionInExtremeBins[0] / 2,
+          proportionInExtremeBins[1] / 2,
+        ])
+        .colors(2);
+
+      const averageNormalised =
+        (averageValue - xTickFirst) / (xTickLast - xTickFirst);
+
+      const binColors = chroma
+        .scale([extremeColors[0], midColor, extremeColors[1]])
+        .domain([0, averageNormalised, 1])
+        .colors(10);
+
+      return binColors;
+    }
   }
+
   let colorScale = $derived(
     customColorScale ??
-      interpolateColors(startColor, endColor, nSegments, midColor),
+      interpolateColors(startColor, endColor, nSegments, midColor, skew),
   );
 
   // the 'bar' is the 10 rectangles side by side
@@ -203,7 +262,9 @@
   );
 
   function segmentIndex(value) {
-    return Math.floor((nSegments * (value - xTickMin)) / (xTickMax - xTickMin));
+    return Math.floor(
+      (nSegments * (value - xTickFirst)) / (xTickLast - xTickFirst),
+    );
   }
 </script>
 
@@ -293,7 +354,7 @@
     <div
       class="chart"
       style="height:{chartHeight +
-        (showAxis ? 30 : 0) +
+        (showAxis ? 30 : 30) +
         (showArrows ? 30 : 0) +
         (showAverage ? 40 : 0)}px"
       bind:clientWidth={chartWidth}
@@ -342,33 +403,48 @@
                   : null}
                 pointer-events={interactiveMarkers ? null : "none"}
                 transform="translate({xFunction(
-                  positionChart.min,
-                  positionChart.max,
+                  xTickFirst,
+                  xTickLast,
                 )(rowValue.value) + markerRadius},{positionChart.chartHeight /
                   2})"
               >
-                <circle
-                  r={rowValue.markerRadius}
-                  cx="0"
-                  cy="0"
-                  stroke="white"
-                  fill={rowValue.color === "inherit"
-                    ? colorScale[segmentIndex(rowValue.value)]
-                    : rowValue.color}
-                  stroke-width={3}
-                  opacity={rowValue.opacity}
-                ></circle>
-                <circle
-                  r={rowValue.markerRadius * 0.9}
-                  cx="0"
-                  cy="0"
-                  fill={rowValue.color === "inherit"
-                    ? colorScale[segmentIndex(rowValue.value)]
-                    : rowValue.color}
-                  stroke="black"
-                  stroke-width={1.5}
-                  opacity={rowValue.opacity}
-                ></circle>
+                {#if rowValue.shape === "line"}
+                  <line
+                    x1={0}
+                    x2={0}
+                    y1={chartHeight / 2.4}
+                    y2={-chartHeight / 2.4}
+                    stroke={rowValue.color === "inherit"
+                      ? colorScale[segmentIndex(rowValue.value)]
+                      : rowValue.color}
+                    stroke-width={rowValue.markerRadius}
+                    opacity={rowValue.opacity}
+                    pointer-events={rowValue.pointerEvents}
+                  ></line>
+                {:else}
+                  <circle
+                    r={rowValue.markerRadius}
+                    cx="0"
+                    cy="0"
+                    stroke="white"
+                    fill={rowValue.color === "inherit"
+                      ? colorScale[segmentIndex(rowValue.value)]
+                      : rowValue.color}
+                    stroke-width={3}
+                    opacity={rowValue.opacity}
+                  ></circle>
+                  <circle
+                    r={rowValue.markerRadius * 0.9}
+                    cx="0"
+                    cy="0"
+                    fill={rowValue.color === "inherit"
+                      ? colorScale[segmentIndex(rowValue.value)]
+                      : rowValue.color}
+                    stroke="black"
+                    stroke-width={1.5}
+                    opacity={rowValue.opacity}
+                  ></circle>
+                {/if}
               </g>
             {/if}
           {/each}
@@ -380,31 +456,32 @@
             chartWidth={chartWidth - markerRadius * 2}
             orientation={{ axis: "x", position: "bottom" }}
             range={[markerRadius, chartWidth - markerRadius]}
-            domain={[xTickMin, xTickMax]}
+            domain={[xTickFirst, xTickLast]}
             {min}
             {max}
             fontSize={14}
             {floor}
             {ceiling}
             {numberOfTicks}
+            {polarity}
           ></Axis>
         {/if}
         {#if showAverage}
           <g
             transform="translate({xFunction(
-              positionChart.min,
-              positionChart.max,
-            )(averageValue)}, {chartHeight * 1.7})"
+              xTickFirst,
+              xTickLast,
+            )(averageValue) + markerRadius}, {chartHeight * 1.7})"
           >
             <text
-              fill="#666"
+              fill="#444"
               font-size={15}
               text-anchor="middle"
               font-weight="bold"
             >
-              <tspan x="0" dy="15">▲</tspan>
-              <tspan x="0" dy="4">|</tspan>
-              <tspan font-family="GDS Transport" x="0" dy="13">Average</tspan>
+              <tspan x="1" dy="15">▲</tspan>
+              <tspan x="1" dy="4">|</tspan>
+              <tspan font-family="GDS Transport" x="1" dy="13">Average</tspan>
             </text>
           </g>
         {/if}

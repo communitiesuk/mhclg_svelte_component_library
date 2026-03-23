@@ -5,13 +5,15 @@
     textColor = "#1D70B8",
     backgroundColor = "white",
     href = undefined,
+    subtitle = undefined,
   } = $props();
 </script>
 
 <a
   class="link govuk-heading-m"
   {href}
-  style="font-size: {textSize}; color: {textColor}; background-color: {backgroundColor}"
+  style="font-size: {textSize}; color: {textColor}; background-color: {backgroundColor}; margin: {subtitle ??
+    0}"
 >
   {text}
   <svg
@@ -27,17 +29,18 @@
     ></path>
   </svg>
 </a>
+{#if subtitle !== undefined}
+  <p>{subtitle}</p>{/if}
 
 <style>
-  * {
-    margin: 0; /* this removes the margin applied by govuk-heading-m */
-  }
-
   .link {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
     gap: 0.5rem;
+  }
+  p {
+    color: #666;
   }
 </style>

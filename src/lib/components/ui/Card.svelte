@@ -20,6 +20,7 @@
     selectedValue = $bindable(),
     display = "flex",
     gridPosition = undefined,
+    subtitle = undefined,
   } = $props();
 </script>
 
@@ -36,6 +37,7 @@
         textColor={headerTextColor}
         backgroundColor={headerBackgroundColor}
         {href}
+        {subtitle}
       ></CardHeader>
     {:else}
       {@render headerSnippet?.()}

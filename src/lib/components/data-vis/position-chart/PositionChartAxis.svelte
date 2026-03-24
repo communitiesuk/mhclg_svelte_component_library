@@ -58,7 +58,6 @@
   .left-label,
   .right-label {
     display: flex;
-    width: 45%;
   }
 
   .left-label {

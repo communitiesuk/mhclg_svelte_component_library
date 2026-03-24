@@ -3,6 +3,7 @@ import "./main.css";
 
 export { default as InsetText } from './components/content/InsetText.svelte';
 export { default as WarningText } from './components/content/WarningText.svelte';
+export { default as Histogram } from './components/data-vis/Histogram.svelte';
 export { default as Axis } from './components/data-vis/axis/Axis.svelte';
 export { default as Ticks } from './components/data-vis/axis/Ticks.svelte';
 export { default as Line } from './components/data-vis/line-chart/Line.svelte';
@@ -30,8 +31,11 @@ export { default as MobileNav } from './components/layout/service-navigation-nes
 export { default as ServiceNavigationNestedMobile } from './components/layout/service-navigation-nested-mobile/ServiceNavigationNestedMobile.svelte';
 export { default as SideNav } from './components/layout/service-navigation-nested-mobile/SideNav.svelte';
 export { default as Accordion } from './components/ui/Accordion.svelte';
+export { default as BasicMultiSelect } from './components/ui/BasicMultiSelect.svelte';
 export { default as Button } from './components/ui/Button.svelte';
 export { default as Card } from './components/ui/Card.svelte';
+export { default as CardHeader } from './components/ui/CardHeader.svelte';
+export { default as ChartExporter } from './components/ui/ChartExporter.svelte';
 export { default as CheckBox } from './components/ui/CheckBox.svelte';
 export { default as ContentsList } from './components/ui/ContentsList.svelte';
 export { default as CookieBanner } from './components/ui/CookieBanner.svelte';

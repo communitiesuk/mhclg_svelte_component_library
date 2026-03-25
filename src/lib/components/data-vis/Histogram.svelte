@@ -2,8 +2,10 @@
   import { scaleLinear } from "d3-scale";
   import { bin, range as d3range } from "d3-array";
   import Axis from "./axis/Axis.svelte";
+  import chroma from "chroma-js";
 
   let {
+    averageValue = undefined,
     distribution = [],
     min = 0,
     max = 1,
@@ -25,12 +27,13 @@
       return tick;
     },
     containerWidth = $bindable(100),
+    numberOfTicks,
+    customColorScale = undefined,
+    skew = true,
   } = $props();
 
   let xTicks = $state([]);
   let yTicks = $state([]);
-
-  $inspect({ xTicks });
 
   let xTickFirst = $derived(xTicks.length ? xTicks[0] : 0);
   let xTickLast = $derived(xTicks.length ? xTicks.at(-1) : 1);
@@ -50,14 +53,15 @@
       : [containerWidth - padding, 0],
   );
 
-  let xScale = $derived(scaleLinear().domain([min, max]).range(useRange));
+  let xScale = $derived(
+    scaleLinear().domain([domainXMin, domainXMax]).range(useRange),
+  );
 
   const segmentScale = $derived(
-    scaleLinear().domain([0, nBins]).range([min, max]),
+    scaleLinear().domain([0, nBins]).range([domainXMin, domainXMax]),
   );
 
   const binThresholds = $derived(d3range(1, nBins).map(segmentScale));
-  $inspect({ binThresholds });
 
   const binner = $derived(bin().domain([min, max]).thresholds(binThresholds));
 
@@ -66,9 +70,6 @@
       ? binner(distribution).toReversed()
       : binner(distribution),
   );
-
-  let rr = $derived(bins[0].x0);
-  $inspect({ bins });
 
   const proportionsInBins = $derived(
     bins.map((b) => b.length / distribution.length),
@@ -84,6 +85,45 @@
       .domain([0, Math.max(...bins.map((b) => b.length))])
       .range([0, height]),
   );
+
+  function interpolateColors(
+    startColor,
+    endColor,
+    nSegments,
+    midColor = null,
+    skew,
+  ) {
+    const colorArray = [startColor, midColor, endColor].filter(Boolean);
+
+    if (!skew) {
+      return chroma.scale(colorArray).colors(nSegments);
+    } else {
+      const extremeColors = chroma
+        .scale([startColor, midColor, endColor])
+        .padding([
+          proportionInExtremeBins[0] / 2,
+          proportionInExtremeBins[1] / 2,
+        ])
+        .colors(2);
+
+      const averageNormalised =
+        (averageValue - xTickFirst) / (xTickLast - xTickFirst);
+
+      const binColors = chroma
+        .scale([extremeColors[0], midColor, extremeColors[1]])
+        .domain([0, averageNormalised, 1])
+        .colors(10);
+
+      return binColors;
+    }
+  }
+
+  let colorScale = $derived(
+    customColorScale ??
+      interpolateColors(startColor, endColor, nBins, midColor, skew),
+  );
+
+  $inspect({ colorScale });
 </script>
 
 {#key containerWidth}
@@ -124,7 +164,7 @@
               {floor}
               {ceiling}
               {labelFormatter}
-              numberOfTicks={2}
+              {numberOfTicks}
             ></Axis>
           {/if}
           {#if showYAxis}
@@ -152,7 +192,7 @@
               y={height - yScale(bin.length)}
               width={Math.abs(xScale(bin.x1) - xScale(bin.x0))}
               height={yScale(bin.length)}
-              fill="grey"
+              fill={colorScale[i]}
               stroke-width={0}
             ></rect>
           {/key}
@@ -161,3 +201,23 @@
     </svg>
   </div>
 {/key}
+
+<div style="content-visibility: hidden;">
+  {#if !showXAxis}
+    <Axis
+      bind:ticksArray={xTicks}
+      chartHeight={height}
+      chartWidth={containerWidth - padding}
+      orientation={{ axis: "x", position: "bottom" }}
+      domain={[xTickFirst, xTickLast]}
+      {min}
+      {max}
+      range={useRange}
+      fontSize={13}
+      {floor}
+      {ceiling}
+      {labelFormatter}
+      {numberOfTicks}
+    ></Axis>
+  {/if}
+</div>

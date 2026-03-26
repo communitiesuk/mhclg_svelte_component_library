@@ -67,6 +67,7 @@
 <style>
   .card {
     flex-direction: column;
+    min-width: 0;
   }
 
   .header-div {

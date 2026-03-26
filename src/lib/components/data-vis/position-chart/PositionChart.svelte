@@ -362,7 +362,7 @@
       style="height:{chartHeight +
         (showAxis ? 30 : 30) +
         (showArrows ? 30 : 0) +
-        (showAverage ? 30 : 0)}px"
+        (showAverage ? 40 : 0)}px"
       bind:clientWidth={chartWidth}
     >
       <svg

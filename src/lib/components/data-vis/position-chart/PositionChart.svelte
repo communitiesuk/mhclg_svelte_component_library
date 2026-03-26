@@ -91,6 +91,8 @@
     averageValue = undefined,
     polarity = "standard",
     skew = false,
+    showTickMarks = true,
+    showGridlines = false,
   } = $props();
 
   let xTicks = $state([]);
@@ -360,7 +362,7 @@
       style="height:{chartHeight +
         (showAxis ? 30 : 30) +
         (showArrows ? 30 : 0) +
-        (showAverage ? 40 : 0)}px"
+        (showAverage ? 30 : 0)}px"
       bind:clientWidth={chartWidth}
     >
       <svg
@@ -468,6 +470,8 @@
             {ceiling}
             {numberOfTicks}
             {polarity}
+            {showTickMarks}
+            {showGridlines}
           ></Axis>
         {/if}
         {#if showAverage}

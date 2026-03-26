@@ -72,6 +72,7 @@
 
   .header-div {
     padding: 20px;
+    flex: 1;
   }
 
   .body-div {

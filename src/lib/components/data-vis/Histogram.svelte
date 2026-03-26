@@ -7,8 +7,10 @@
   let {
     averageValue = undefined,
     distribution = [],
-    min = 0,
-    max = 1,
+    minX = 0,
+    maxX = 1,
+    minY = 0,
+    maxY = 100,
     showXAxis = true,
     showYAxis = true,
     showArrows = true,
@@ -163,8 +165,8 @@
               chartWidth={containerWidth - padding}
               orientation={{ axis: "x", position: "bottom" }}
               domain={[xTickFirst, xTickLast]}
-              {min}
-              {max}
+              min={minX}
+              max={maxX}
               range={useRange}
               fontSize={13}
               {floor}
@@ -179,8 +181,8 @@
               chartHeight={height}
               chartWidth={containerWidth - padding}
               orientation={{ axis: "y", position: "left" }}
-              {min}
-              {max}
+              min={minY}
+              max={maxY}
               domain={[0, yTickLast]}
               range={[0, height]}
               fontSize={0}
@@ -216,8 +218,8 @@
       chartWidth={containerWidth - padding}
       orientation={{ axis: "x", position: "bottom" }}
       domain={[xTickFirst, xTickLast]}
-      {min}
-      {max}
+      min={minX}
+      max={maxX}
       range={useRange}
       fontSize={13}
       {floor}

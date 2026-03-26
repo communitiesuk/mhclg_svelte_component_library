@@ -48,6 +48,9 @@
     range = undefined as [number, number] | undefined,
     fontSize = 19,
     polarity = "standard",
+    showGridlines = false,
+    showTickMarks = false,
+    strokeWidth = 2,
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -71,6 +74,10 @@
     range?: [number, number];
     fontSize?: number;
     polarity?: Polarity;
+    gridlines?: Boolean;
+    strokeWidth?: Number;
+    showGridlines?: Boolean;
+    showTickMarks?: Boolean;
   } = $props();
 
   // --- Helpers to compute default domain/range when not supplied ---
@@ -141,6 +148,9 @@
         {labelFormatter}
         {fontSize}
         {polarity}
+        {showGridlines}
+        {showTickMarks}
+        {strokeWidth}
       />
     {/key}
   {/if}

@@ -32,6 +32,9 @@
     numberOfTicks,
     customColorScale = undefined,
     skew = true,
+    showGridlines = true,
+    showTickMarks = false,
+    strokeWidth = 0.25,
   } = $props();
 
   let xTicks = $state([]);
@@ -137,74 +140,81 @@
 {#key containerWidth}
   <div class="scale-container" bind:clientWidth={containerWidth}>
     <svg
-      width={containerWidth - padding}
-      height={height + (annotationText ? 25 : 0) + (showXAxis ? 25 : 0)}
-      transform="translate({padding / 2},0)"
-      style="overflow: visible"
+      width={containerWidth}
+      height={height + 20 + (annotationText ? 25 : 0) + (showXAxis ? 25 : 0)}
+      style="overflow: visible;"
     >
-      {#if annotationText}
-        <g transform="translate({xScale(annotationValue)},0)">
-          <text
-            fill="#555555"
-            font-size="0.8em"
-            text-anchor="middle"
-            dominant-baseline="hanging"
-          >
-            <tspan x="0" dy="0">{annotationText}</tspan>
-            <tspan x="0" dy="12">▼</tspan>
-          </text>
-        </g>
-      {/if}
+      <g transform="translate({padding / 2},0)">
+        <g transform="translate(0,{annotationText ? 25 : 20})">
+          <text dx={-2} dy={-4} fill="#666" font-size="0.75em"
+            >Number of areas</text
+          ></g
+        >
 
-      <g transform="translate(0,{annotationText ? 25 : 0})">
-        <g>
-          {#if showXAxis}
-            <Axis
-              bind:ticksArray={xTicks}
-              chartHeight={height}
-              chartWidth={containerWidth - padding}
-              orientation={{ axis: "x", position: "bottom" }}
-              domain={[xTickFirst, xTickLast]}
-              min={minX}
-              max={maxX}
-              range={useRange}
-              fontSize={13}
-              {floor}
-              {ceiling}
-              {labelFormatter}
-              {numberOfTicks}
-            ></Axis>
-          {/if}
-          {#if showYAxis}
-            <Axis
-              bind:ticksArray={yTicks}
-              chartHeight={height}
-              chartWidth={containerWidth - padding}
-              orientation={{ axis: "y", position: "left" }}
-              min={minY}
-              max={maxY}
-              domain={[0, yTickLast]}
-              range={[0, height]}
-              fontSize={0}
-              numberOfTicks={5}
-              tickStrokeWidth={0.25}
-              axisStrokeWidth={0}
-              gridlines={true}
-            ></Axis>
-          {/if}
+        {#if annotationText}
+          <g transform="translate({xScale(annotationValue)},0)">
+            <text
+              fill="#555555"
+              font-size="0.8em"
+              text-anchor="middle"
+              dominant-baseline="hanging"
+            >
+              <tspan x="0" dy="0">{annotationText}</tspan>
+              <tspan x="0" dy="12">▼</tspan>
+            </text>
+          </g>
+        {/if}
+
+        <g transform="translate(0,{annotationText ? 25 : 20})">
+          <g>
+            {#if showXAxis}
+              <Axis
+                bind:ticksArray={xTicks}
+                chartHeight={height}
+                chartWidth={containerWidth - padding}
+                orientation={{ axis: "x", position: "bottom" }}
+                domain={[xTickFirst, xTickLast]}
+                min={minX}
+                max={maxX}
+                range={useRange}
+                fontSize={13}
+                {floor}
+                {ceiling}
+                {labelFormatter}
+                {numberOfTicks}
+              ></Axis>
+            {/if}
+            {#if showYAxis}
+              <Axis
+                bind:ticksArray={yTicks}
+                chartHeight={height}
+                chartWidth={containerWidth - padding}
+                orientation={{ axis: "y", position: "left" }}
+                min={minY}
+                max={maxY}
+                domain={[0, yTickLast]}
+                range={[0, height]}
+                fontSize={0}
+                numberOfTicks={4}
+                {showGridlines}
+                {showTickMarks}
+                strokeWidth={0.25}
+              ></Axis>
+            {/if}
+          </g>
+          {#each bins as bin, i}
+            {#key bin.x0}
+              <rect
+                x={polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)}
+                y={height - yScale(bin.length)}
+                width={Math.abs(xScale(bin.x1) - xScale(bin.x0))}
+                height={yScale(bin.length)}
+                fill={colorScale[i]}
+                stroke-width={0}
+              ></rect>
+            {/key}
+          {/each}
         </g>
-        {#each bins as bin, i}
-          {#key bin.x0}
-            <rect
-              x={polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)}
-              y={height - yScale(bin.length)}
-              width={Math.abs(xScale(bin.x1) - xScale(bin.x0))}
-              height={yScale(bin.length)}
-              fill={colorScale[i]}
-              stroke-width={0}
-            ></rect>
-          {/key}
-        {/each}
       </g>
     </svg>
   </div>

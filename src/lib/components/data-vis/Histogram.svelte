@@ -63,7 +63,9 @@
 
   const binThresholds = $derived(d3range(1, nBins).map(segmentScale));
 
-  const binner = $derived(bin().domain([min, max]).thresholds(binThresholds));
+  const binner = $derived(
+    bin().domain([domainXMin, domainXMax]).thresholds(binThresholds),
+  );
 
   const bins = $derived(
     polarity === "reverse"

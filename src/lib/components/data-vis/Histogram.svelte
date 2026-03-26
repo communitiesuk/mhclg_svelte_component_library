@@ -19,6 +19,7 @@
     endColor = "#2D6644",
     floor = undefined,
     ceiling = undefined,
+    fill = "grey",
     nBins = 10,
     padding = 0,
     height = 50,
@@ -34,7 +35,9 @@
     skew = true,
     showGridlines = true,
     showTickMarks = false,
-    strokeWidth = 0.25,
+    tickStrokeWidth = 0.25,
+    barStrokeWidth = 0,
+    barStrokeColor = "white",
   } = $props();
 
   let xTicks = $state([]);
@@ -198,7 +201,7 @@
                 numberOfTicks={4}
                 {showGridlines}
                 {showTickMarks}
-                strokeWidth={0.25}
+                strokeWidth={tickStrokeWidth}
               ></Axis>
             {/if}
           </g>
@@ -209,8 +212,9 @@
                 y={height - yScale(bin.length)}
                 width={Math.abs(xScale(bin.x1) - xScale(bin.x0))}
                 height={yScale(bin.length)}
-                fill={colorScale[i]}
-                stroke-width={0}
+                fill={fill ?? colorScale[i]}
+                stroke-width={barStrokeWidth}
+                stroke={barStrokeColor}
               ></rect>
             {/key}
           {/each}

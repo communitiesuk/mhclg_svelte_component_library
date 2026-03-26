@@ -26,6 +26,10 @@
     labelFormatter,
     fontSize = 19,
     polarity = "standard",
+    showGridlines = false,
+    showTickMarks = false,
+
+    strokeWidth = 2,
   }: {
     ticksArray?: number[]; // bindable
     chartWidth: number;
@@ -40,6 +44,10 @@
     labelFormatter?: (tick: number, index: number) => string;
     fontSize?: number;
     polarity?: Polarity;
+    showGridlines?: Boolean;
+    showTickMarks?: Boolean;
+
+    strokeWidth?: number;
   } = $props();
   function axisValue(fn: any, tick: number): number {
     // Try single-call first: axisFunction(tick)
@@ -146,17 +154,32 @@
         {orientation.axis === 'y' ? axisValue(axisFunction, tick) : 0}
       )"
     >
-      <path
-        d={orientation.axis === "y"
-          ? orientation.position === "left"
-            ? "M0 -1 l-8 0"
-            : "M0 -1 l8 0"
-          : orientation.position === "top"
-            ? "M0 -1 l0 -8"
-            : "M0 -1 l0 8"}
-        stroke="grey"
-        stroke-width="2px"
-      ></path>
+      {#if showTickMarks}
+        <path
+          d={orientation.axis === "y"
+            ? orientation.position === "left"
+              ? `M1 0 l-8 0`
+              : `M1 0 l8 0`
+            : orientation.position === "top"
+              ? "M0 -1 l0 -8"
+              : "M0 -1 l0 8"}
+          stroke="grey"
+          stroke-width={strokeWidth}
+        ></path>
+      {/if}
+      {#if showGridlines}
+        <path
+          d={orientation.axis === "y"
+            ? orientation.position === "left"
+              ? `M0 0 l${chartWidth} 0`
+              : `M0 0 l-${chartWidth} 0`
+            : orientation.position === "top"
+              ? `M0 0 l0 ${chartHeight}`
+              : `M0 0 l0 -${chartHeight}`}
+          stroke="grey"
+          stroke-width={strokeWidth}
+        ></path>
+      {/if}
       <text
         transform="translate(
           {orientation.axis === 'x'

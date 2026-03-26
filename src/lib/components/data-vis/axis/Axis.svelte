@@ -10,7 +10,13 @@
   type AxisPosition = "bottom" | "top" | "left" | "right";
   type Orientation = { axis: AxisName; position: AxisPosition };
   type AxisProjector = (value: number) => number;
-  type LabelFormatter = (tick: number, index: number) => string | number;
+  type LabelFormatter = (
+    tick: number,
+    index: number,
+    numberOfTicks: number,
+    values: number[],
+  ) => string | number;
+
   type Polarity = "standard" | "reverse";
 
   let {
@@ -48,6 +54,7 @@
     range = undefined as [number, number] | undefined,
     fontSize = 19,
     polarity = "standard",
+    distribution = undefined as number[] | undefined,
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -55,6 +62,7 @@
     ticksArray?: number[];
     min?: number;
     max?: number;
+    distribution?: number[];
 
     orientation?: Orientation;
     floor?: number;
@@ -141,6 +149,7 @@
         {labelFormatter}
         {fontSize}
         {polarity}
+        {distribution}
       />
     {/key}
   {/if}

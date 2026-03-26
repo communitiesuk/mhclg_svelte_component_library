@@ -11,6 +11,13 @@
   }
   type Polarity = "standard" | "reverse";
 
+  type LabelFormatter = (
+    tick: number,
+    index: number,
+    numberOfTicks: number,
+    distribution: number[],
+  ) => string | number;
+
   // Props with defaults (Svelte 5 runes)
   let {
     ticksArray = $bindable<number[]>(),
@@ -23,9 +30,10 @@
     floor,
     ceiling,
     orientation,
-    labelFormatter,
+    distribution,
     fontSize = 19,
     polarity = "standard",
+    labelFormatter = undefined as LabelFormatter | undefined,
   }: {
     ticksArray?: number[]; // bindable
     chartWidth: number;
@@ -37,9 +45,10 @@
     floor?: number;
     ceiling?: number;
     orientation: Orientation;
-    labelFormatter?: (tick: number, index: number) => string;
+    distribution?: number[];
     fontSize?: number;
     polarity?: Polarity;
+    labelFormatter?: LabelFormatter;
   } = $props();
   function axisValue(fn: any, tick: number): number {
     // Try single-call first: axisFunction(tick)
@@ -54,6 +63,8 @@
     const inner = fn();
     return inner(tick);
   }
+
+  $inspect({ distribution });
 
   function generateTicks(
     min: number,
@@ -141,6 +152,7 @@
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
   {#each ticksArray as tick, index}
     <g
+      overflow="visible"
       transform="translate(
         {orientation.axis === 'x' ? axisValue(axisFunction, tick) : 0},
         {orientation.axis === 'y' ? axisValue(axisFunction, tick) : 0}
@@ -158,6 +170,7 @@
         stroke-width="2px"
       ></path>
       <text
+        overflow="visible"
         transform="translate(
           {orientation.axis === 'x'
           ? 0
@@ -178,7 +191,9 @@
             : "start"}
         fill="grey"
       >
-        {labelFormatter ? labelFormatter(tick, index) : defaultLabel(tick)}
+        {labelFormatter
+          ? labelFormatter(tick, index, ticksArray.length, distribution)
+          : defaultLabel(tick)}
       </text>
     </g>
   {/each}

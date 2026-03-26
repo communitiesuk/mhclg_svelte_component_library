@@ -91,6 +91,9 @@
     averageValue = undefined,
     polarity = "standard",
     skew = false,
+    labelFormatter = (tick, index, numberOfTicks, values) => {
+      return tick;
+    },
   } = $props();
 
   let xTicks = $state([]);
@@ -470,6 +473,8 @@
             {ceiling}
             {numberOfTicks}
             {polarity}
+            {labelFormatter}
+            {distribution}
           ></Axis>
         {/if}
         {#if showAverage}

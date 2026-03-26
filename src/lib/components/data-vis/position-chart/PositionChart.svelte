@@ -95,8 +95,6 @@
 
   let xTicks = $state([]);
 
-  $inspect({ xTicks });
-
   let xTickFirst = $derived(xTicks.length ? xTicks[0] : 0);
   let xTickLast = $derived(xTicks.length ? xTicks.at(-1) : 1);
 

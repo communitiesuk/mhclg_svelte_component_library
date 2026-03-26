@@ -113,7 +113,11 @@
 
       const binColors = chroma
         .scale([extremeColors[0], midColor, extremeColors[1]])
-        .domain([0, averageNormalised, 1])
+        .domain([
+          0,
+          polarity === "reverse" ? 1 - averageNormalised : averageNormalised,
+          1,
+        ])
         .colors(10);
 
       return binColors;

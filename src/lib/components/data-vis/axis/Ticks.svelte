@@ -11,6 +11,12 @@
   }
   type Polarity = "standard" | "reverse";
 
+  type LabelFormatter = (
+    tick: number,
+    index: number,
+    numberOfTicks: number,
+  ) => string | number;
+
   // Props with defaults (Svelte 5 runes)
   let {
     ticksArray = $bindable<number[]>(),
@@ -23,13 +29,13 @@
     floor,
     ceiling,
     orientation,
-    labelFormatter,
     fontSize = 19,
     polarity = "standard",
     showGridlines = false,
     showTickMarks = false,
 
     strokeWidth = 2,
+    labelFormatter = undefined as LabelFormatter | undefined,
   }: {
     ticksArray?: number[]; // bindable
     chartWidth: number;
@@ -41,13 +47,13 @@
     floor?: number;
     ceiling?: number;
     orientation: Orientation;
-    labelFormatter?: (tick: number, index: number) => string;
     fontSize?: number;
     polarity?: Polarity;
     showGridlines?: Boolean;
     showTickMarks?: Boolean;
 
     strokeWidth?: number;
+    labelFormatter?: LabelFormatter;
   } = $props();
   function axisValue(fn: any, tick: number): number {
     // Try single-call first: axisFunction(tick)
@@ -201,7 +207,9 @@
             : "start"}
         fill="grey"
       >
-        {labelFormatter ? labelFormatter(tick, index) : defaultLabel(tick)}
+        {labelFormatter
+          ? labelFormatter(tick, index, ticksArray.length)
+          : defaultLabel(tick)}
       </text>
     </g>
   {/each}

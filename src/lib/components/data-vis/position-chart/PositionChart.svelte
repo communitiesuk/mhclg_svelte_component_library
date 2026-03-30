@@ -93,6 +93,9 @@
     skew = false,
     showTickMarks = true,
     showGridlines = false,
+    labelFormatter = (tick, index, numberOfTicks) => {
+      return tick;
+    },
   } = $props();
 
   let xTicks = $state([]);
@@ -472,6 +475,7 @@
             {polarity}
             {showTickMarks}
             {showGridlines}
+            {labelFormatter}
           ></Axis>
         {/if}
         {#if showAverage}

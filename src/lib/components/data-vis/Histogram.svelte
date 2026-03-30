@@ -38,6 +38,7 @@
     tickStrokeWidth = 0.25,
     barStrokeWidth = 0,
     barStrokeColor = "white",
+    includeOutliers = true,
   } = $props();
 
   let xTicks = $state([]);
@@ -74,11 +75,18 @@
   const binner = $derived(
     bin().domain([domainXMin, domainXMax]).thresholds(binThresholds),
   );
+  const clampedDistribution = $derived(
+    distribution.map((d) => Math.min(Math.max(d, domainXMin), domainXMax)),
+  );
+
+  const binnedDistribution = $derived(
+    binner(includeOutliers ? clampedDistribution : distribution),
+  );
 
   const bins = $derived(
     polarity === "reverse"
-      ? binner(distribution).toReversed()
-      : binner(distribution),
+      ? binnedDistribution.toReversed()
+      : binnedDistribution,
   );
 
   const proportionsInBins = $derived(

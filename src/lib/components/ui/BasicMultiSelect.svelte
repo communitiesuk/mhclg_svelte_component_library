@@ -2,12 +2,11 @@
   import { onMount } from "svelte";
   import { browser } from "$app/environment";
   import IconSearch from "../../icons/IconSearch.svelte";
-
+  import crossIconUrl from "./../../assets/govuk_publishing_components/images/cross-icon.svg";
   type Option = { id: string | number; label: string };
   type SelectedWithColor = Option & { color: string };
   type SelectedItem = Option | SelectedWithColor;
 
-  // ---------- Props ----------
   let {
     options = [],
     selected = $bindable<SelectedItem[]>([]),
@@ -15,9 +14,9 @@
     placeholder = "Search and select…",
     label = "Choose options",
     hint,
-
-    // toggle colours/dots
     enableColors = true,
+    maxResults = 5,
+    startsWithSearch = true,
   }: {
     options?: Option[];
     selected?: SelectedItem[];
@@ -26,6 +25,8 @@
     label?: string;
     hint?: string;
     enableColors?: boolean;
+    maxResults?: number;
+    startsWithSearch?: boolean;
   } = $props();
 
   let showDropdown = $state(false);
@@ -57,7 +58,6 @@
     return color;
   }
 
-  // ---------- Assign colours to incoming items (missing colours only) ----------
   $effect(() => {
     if (!enableColors) return;
     if (!Array.isArray(selected)) return;
@@ -88,17 +88,22 @@
     if (changed) selected = updated;
   });
 
-  // ---------- Compute filtered options ----------
   const filteredOptions = $derived.by(() => {
     const q = search.trim().toLowerCase();
     const selectedIds = new Set(selected.map((s) => s.id));
 
-    return options.filter(
-      (o) => !selectedIds.has(o.id) && o.label.toLowerCase().includes(q),
-    );
+    const available = options.filter((o) => !selectedIds.has(o.id));
+
+    const matched = q
+      ? available.filter((o) => {
+          const label = o.label.toLowerCase();
+          return startsWithSearch ? label.startsWith(q) : label.includes(q);
+        })
+      : available;
+
+    return matched.slice(0, maxResults);
   });
 
-  // ---------- Actions ----------
   function selectOption(option: Option) {
     if (enableColors) {
       const color = nextColorPreferUnused();
@@ -136,6 +141,9 @@
     document.addEventListener("mousedown", handleOutside);
     return () => document.removeEventListener("mousedown", handleOutside);
   });
+  $effect(() => {
+    console.log("Dropdown state:", showDropdown);
+  });
 </script>
 
 <div class="gem-c-select-with-search" bind:this={container}>
@@ -151,9 +159,7 @@
     data-type="select-multiple"
     on:click={open}
   >
-    <!-- ✅ Search row: BOX (input + divider + chips) + search button -->
     <div class="choices__search-row">
-      <!-- ✅ SINGLE BOX wraps input + divider + chips -->
       <div class="choices__box">
         <div class="choices__inner">
           <input
@@ -169,9 +175,6 @@
         </div>
 
         {#if selected.length}
-          <!-- ✅ Divider is now an INTERNAL border line -->
-          <div class="ms-divider" aria-hidden="true"></div>
-
           <div
             class="choices__list choices__list--multiple"
             aria-label="Selected items"
@@ -184,9 +187,7 @@
                     style={`background:${(item as any).color}`}
                   ></span>
                 {/if}
-
                 <span class="choices__item-label">{item.label}</span>
-
                 <button
                   type="button"
                   class="choices__button"
@@ -194,7 +195,13 @@
                   aria-label={`Remove ${item.label}`}
                   title={`Remove ${item.label}`}
                 >
-                  ×
+                  <img
+                    src={crossIconUrl}
+                    alt=""
+                    aria-hidden="true"
+                    width="18"
+                    height="18"
+                  />
                 </button>
               </span>
             {/each}
@@ -210,39 +217,40 @@
       >
         <span class="search-addon-icon"><IconSearch /></span>
       </button>
-    </div>
-  </div>
 
-  {#if showDropdown}
-    <div
-      class="choices__list choices__list--dropdown"
-      role="listbox"
-      aria-label="Options"
-    >
-      {#each filteredOptions as o (o.id)}
+      {#if showDropdown}
         <div
-          class="choices__item choices__item--selectable"
-          role="option"
-          on:click={() => selectOption(o)}
+          class="choices__list choices__list--dropdown"
+          class:is-open={showDropdown}
+          role="listbox"
+          aria-label="Options"
         >
-          {o.label}
-        </div>
-      {/each}
+          {#each filteredOptions as o (o.id)}
+            <div
+              class="choices__item choices__item--selectable"
+              role="option"
+              on:click={() => selectOption(o)}
+            >
+              {o.label}
+            </div>
+          {/each}
 
-      {#if filteredOptions.length === 0}
-        <div class="choices__item" aria-disabled="true" style="opacity:0.75">
-          No results found
+          {#if filteredOptions.length === 0}
+            <div
+              class="choices__item"
+              aria-disabled="true"
+              style="opacity:0.75"
+            >
+              No results found
+            </div>
+          {/if}
         </div>
       {/if}
     </div>
-  {/if}
+  </div>
 </div>
 
 <style>
-  /* ========================================
-     TOKENS
-  ======================================== */
-
   :root {
     --govuk-black: #0b0c0c;
     --govuk-blue: #1d70b8;
@@ -255,9 +263,12 @@
     --addon-width: 46px; /* ✅ used for dropdown width alignment */
   }
 
-  /* ========================================
-     LABEL
-  ======================================== */
+  :global(.gem-c-select-with-search) {
+    display: block;
+    width: 100%; /* ✅ inherit parent width */
+    max-width: 100%; /* ✅ never exceed parent */
+    box-sizing: border-box;
+  }
 
   :global(.govuk-label) {
     font-family: "GDS Transport", arial, sans-serif;
@@ -273,19 +284,20 @@
   ======================================== */
 
   :global(.gem-c-select-with-search) .choices {
-    position: relative;
-    font-size: 19px;
-    gap: 0;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
+    flex-direction: column;
+    align-items: stretch;
   }
 
   .choices__search-row {
     display: flex;
-    width: 100%;
-    flex-wrap: nowrap;
-    align-items: stretch;
+    flex-direction: row; /* side by side */
+    align-items: flex-start; /* ✅ align items to bottom of row */
+    gap: 0;
   }
 
   /* ✅ ONE box around input + divider + chips */
@@ -300,6 +312,9 @@
     /* ✅ stacks input, divider, chips in one box */
     display: flex;
     flex-direction: column;
+
+    padding-right: 0; /* reserve space for button */
+    box-sizing: border-box;
   }
 
   /* Yellow focus ring around WHOLE box */
@@ -319,6 +334,7 @@
     padding: 5px;
     gap: 8px;
     cursor: text;
+    flex: 0 0 var(--select-height);
   }
 
   :global(.gem-c-select-with-search) .choices__input {
@@ -344,11 +360,17 @@
   ======================================== */
 
   :global(.gem-c-select-with-search) .choices__list--multiple {
-    padding: 0 5px 8px;
-
-    /* ✅ IMPORTANT: no separate border now */
-    border: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 4px 10px;
     width: 100%;
+
+    border-top: 1px solid var(--govuk-grey); /* ✅ the ONE divider */
+    margin: 0 5px; /* aligns with input padding */
+    padding: 8px 8px 10px; /* slightly nicer spacing */
+    width: calc(100% - 10px);
+
     box-sizing: border-box;
   }
 
@@ -364,6 +386,9 @@
     padding: 2px 0 2px 10px;
     margin: 4px 10px 0 0;
     line-height: 1.2;
+
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   :global(.gem-c-select-with-search) .choices__item-circle {
@@ -376,18 +401,19 @@
 
   :global(.gem-c-select-with-search) .choices__item-label {
     flex: 1 1 auto;
-    min-width: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 26ch;
+    min-width: 0; /* important for flex shrink */
+    overflow: visible; /* allow growth vertically */
+    text-overflow: unset; /* remove ellipsis behaviour */
+    white-space: normal; /* ✅ allow wrapping */
+    word-break: break-word; /* wrap long words if needed */
+    max-width: 26ch; /* keep your “nice” readable width cap */
+    line-height: 1.2;
   }
 
   :global(.gem-c-select-with-search)
     .choices[data-type*="select-multiple"]
     .choices__button {
     width: 32px;
-    height: 32px;
     padding: 0;
 
     display: inline-flex;
@@ -408,6 +434,15 @@
     transition:
       background-color 120ms ease,
       opacity 120ms ease;
+
+    align-self: stretch; /* ✅ fills chip height */
+    height: auto; /* ✅ don't lock to 32px */
+    min-height: 100%;
+    padding: 0 10px; /* gives clickable area */
+    border-left: 1px solid var(--govuk-grey); /* ✅ full height divider */
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   :global(.gem-c-select-with-search)
@@ -430,22 +465,18 @@
   ======================================== */
 
   .search-addon-btn {
-    flex: 0 0 auto;
-    width: var(--addon-width);
-    height: var(--select-height);
+    width: var(--addon-width); /* keeps the width fixed */
+    height: var(--select-height); /* match the input box height */
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    background-color: var(--govuk-blue);
+    align-items: center; /* center the icon vertically */
+    justify-content: center; /* center the icon horizontally */
+    background-color: var(--govuk-blue); /* keep the blue */
     color: #fff;
     border: 0;
     padding: 0;
     font-size: 19px;
     font-family: "GDS Transport", arial, sans-serif;
-
-    /* keeps it aligned with the top of the box */
-    align-self: flex-start;
+    cursor: pointer;
   }
 
   .search-addon-btn:focus-visible {
@@ -462,20 +493,29 @@
     justify-content: center;
   }
 
-  /* ========================================
-     DROPDOWN
-  ======================================== */
-
   :global(.gem-c-select-with-search) .choices__list--dropdown {
+    /* ✅ Put it on a new row in the wrapping flex container */
+    flex: 0 0 100%;
+    order: 99; /* ✅ ensure it comes last */
+
+    /* ✅ align visually with the left edge of the input box */
+    margin-top: 0;
+
+    /* ✅ match input-box width (exclude addon button width) */
+    width: calc(100% - var(--addon-width));
+
+    /* ✅ push it under the input box, not under the button */
+    margin-right: 0;
+
+    box-sizing: border-box;
     border: 2px solid var(--govuk-black);
     border-top: none;
     background: white;
+
     max-height: 300px;
     overflow-y: auto;
 
-    /* ✅ align dropdown to the single box width (exclude search button) */
-    width: calc(100% - var(--addon-width));
-    box-sizing: border-box;
+    display: block;
   }
 
   :global(.gem-c-select-with-search) .choices__list--dropdown .choices__item {
@@ -484,7 +524,11 @@
     min-height: var(--item-height);
     padding: 12px 10px;
     position: relative;
-    max-width: 100%;
+    width: 100%;
+
+    box-sizing: border-box;
+    flex: 0 0 auto; /* don't shrink into columns */
+    white-space: normal; /* allow wrappintext */
   }
 
   :global(.gem-c-select-with-search)
@@ -499,15 +543,58 @@
     background: var(--govuk-grey);
   }
 
-  :global(.gem-c-select-with-search)
-    .choices__list--dropdown
-    .choices__item:last-child::after {
-    display: none;
-  }
-
   :global(.gem-c-select-with-search) .choices__item--selectable:hover {
     background: var(--govuk-blue);
     color: white;
     cursor: pointer;
+  }
+  :global(.gem-c-select-with-search) .choices__list--dropdown {
+    display: block !important;
+  }
+
+  :global(.gem-c-select-with-search)
+    .choices.is-open
+    .choices__box
+    .choices__inner,
+  :global(.gem-c-select-with-search)
+    .choices.is-focused
+    .choices__box
+    .choices__inner {
+    border-bottom: 0;
+    box-shadow: none;
+  }
+
+  /* Only when chips are present: make the inner section visually merge into chips */
+  :global(.gem-c-select-with-search)
+    .choices.is-open
+    .choices__box:has(.choices__list--multiple)
+    .choices__inner,
+  :global(.gem-c-select-with-search)
+    .choices.is-focused
+    .choices__box:has(.choices__list--multiple)
+    .choices__inner {
+    border-bottom: 0;
+    padding-bottom: 0; /* optional: removes gap above the divider */
+  }
+
+  :global(.gem-c-select-with-search) .choices.is-focused .choices__box,
+  :global(.gem-c-select-with-search) .choices.is-open .choices__box {
+    outline: none;
+    /* keep a subtle black inset so focus isn't invisible */
+    box-shadow: inset 0 0 0 2px var(--govuk-black);
+  }
+
+  /* Remove yellow outline on the blue search button */
+  .search-addon-btn:focus-visible {
+    outline: none;
+    box-shadow: inset 0 0 0 3px var(--govuk-black);
+  }
+
+  /* Remove yellow outline on the chip remove buttons */
+  :global(.gem-c-select-with-search)
+    .choices[data-type*="select-multiple"]
+    .choices__button:focus {
+    outline: none;
+    box-shadow: inset 0 0 0 3px var(--govuk-black);
   }
 </style>

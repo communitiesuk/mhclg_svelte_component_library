@@ -207,14 +207,16 @@
           </g>
           {#each bins as bin, i}
             {#key bin.x0}
+              {@const fullWidth = Math.abs(xScale(bin.x1) - xScale(bin.x0))}
+              {@const barWidth = fullWidth * 0.97}
+              {@const offset = (fullWidth - barWidth) / 2}
               <rect
-                x={polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)}
+                x={(polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)) +
+                  offset}
                 y={height - yScale(bin.length)}
-                width={Math.abs(xScale(bin.x1) - xScale(bin.x0))}
+                width={barWidth}
                 height={yScale(bin.length)}
                 fill={fill ?? colorScale[i]}
-                stroke-width={barStrokeWidth}
-                stroke={barStrokeColor}
               ></rect>
             {/key}
           {/each}

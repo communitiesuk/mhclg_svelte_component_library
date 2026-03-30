@@ -141,9 +141,13 @@
     document.addEventListener("mousedown", handleOutside);
     return () => document.removeEventListener("mousedown", handleOutside);
   });
-  $effect(() => {
-    console.log("Dropdown state:", showDropdown);
-  });
+
+  function clearAll() {
+    selected = [];
+    search = "";
+    showDropdown = false;
+    queueMicrotask(() => inputEl?.focus());
+  }
 </script>
 
 <div class="gem-c-select-with-search" bind:this={container}>
@@ -187,7 +191,9 @@
                     style={`background:${(item as any).color}`}
                   ></span>
                 {/if}
+
                 <span class="choices__item-label">{item.label}</span>
+
                 <button
                   type="button"
                   class="choices__button"
@@ -206,6 +212,18 @@
               </span>
             {/each}
           </div>
+
+          {#if !showDropdown}
+            <div class="choices__actions">
+              <button
+                type="button"
+                class="choices__clear-all"
+                on:click|stopPropagation={clearAll}
+              >
+                Remove all selected
+              </button>
+            </div>
+          {/if}
         {/if}
       </div>
 
@@ -596,5 +614,46 @@
     .choices__button:focus {
     outline: none;
     box-shadow: inset 0 0 0 3px var(--govuk-black);
+  }
+
+  .choices__actions {
+    /* stack inside the box under chips */
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+
+    /* spacing aligned with your chips area */
+    margin: 0 5px;
+    width: calc(100% - 10px);
+    padding: 8px 8px 10px;
+
+    /* optional divider line (remove if you don't want another line) */
+    .choices__actions {
+      border-top: 0;
+    }
+
+    text-align: left; /* keeps it looking like it belongs "under" */
+  }
+
+  .choices__clear-all {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    color: var(--govuk-blue);
+    font-family: "GDS Transport", arial, sans-serif;
+    font-size: 19px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .choices__clear-all:hover {
+    color: #003078; /* slightly darker GOV.UK blue */
+  }
+
+  .choices__clear-all:focus-visible {
+    outline: 3px solid var(--govuk-focus);
+    outline-offset: 0;
+    box-shadow: inset 0 0 0 3px var(--govuk-black);
+    text-decoration: none;
   }
 </style>

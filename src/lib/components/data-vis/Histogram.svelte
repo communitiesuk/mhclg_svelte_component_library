@@ -195,7 +195,7 @@
                 orientation={{ axis: "y", position: "left" }}
                 min={minY}
                 max={maxY}
-                domain={[0, yTickLast]}
+                domain={[yTickLast, 0]}
                 range={[0, height]}
                 fontSize={0}
                 numberOfTicks={4}

@@ -208,8 +208,8 @@
               chartHeight={height}
               chartWidth={containerWidth - padding}
               orientation={{ axis: "y", position: "left" }}
-              min={3}
-              max={9}
+              min={minY}
+              max={maxY}
               domain={[yTickLast, 0]}
               range={[0, height]}
               fontSize={0}

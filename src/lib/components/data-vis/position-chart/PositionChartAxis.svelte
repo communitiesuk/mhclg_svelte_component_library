@@ -53,6 +53,7 @@
   .axis {
     display: flex;
     justify-content: space-between;
+    margin-bottom: 0;
   }
 
   .left-label,

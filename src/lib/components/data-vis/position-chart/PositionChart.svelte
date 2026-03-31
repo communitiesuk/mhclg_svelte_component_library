@@ -93,7 +93,7 @@
     skew = false,
     showTickMarks = true,
     showGridlines = false,
-    labelFormatter = (tick, index, numberOfTicks) => {
+    labelFormatter = (tick, index, ticksArrayLength) => {
       return tick;
     },
   } = $props();

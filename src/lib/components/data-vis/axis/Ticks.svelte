@@ -14,7 +14,7 @@
   type LabelFormatter = (
     tick: number,
     index: number,
-    numberOfTicks: number,
+    ticksArrayLength: number,
   ) => string | number;
 
   // Props with defaults (Svelte 5 runes)

@@ -13,7 +13,7 @@
   type LabelFormatter = (
     tick: number,
     index: number,
-    numberOfTicks: number,
+    ticksArrayLength: number,
   ) => string | number;
 
   type Polarity = "standard" | "reverse";

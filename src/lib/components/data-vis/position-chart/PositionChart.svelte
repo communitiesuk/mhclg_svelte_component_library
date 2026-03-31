@@ -347,7 +347,7 @@
   style="
     position: relative;
     grid-template-columns: {gridTemplateColumns};
-    grid-template-columns: {gridTemplateRows};
+    grid-template-rows: {gridTemplateRows};
     height: {totalHeight}px;
   "
 >

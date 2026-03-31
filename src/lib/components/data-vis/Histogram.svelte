@@ -38,6 +38,7 @@
     tickStrokeWidth = 0.25,
     barStrokeWidth = 0,
     barStrokeColor = "white",
+    topLabel = true,
     includeOutliers = true,
   } = $props();
 
@@ -146,24 +147,48 @@
   );
 
   $inspect({ colorScale });
+
+  const layout = $derived.by(() => {
+    let y = 0;
+
+    const topLabelY = topLabel ? y : null;
+    if (topLabel) y += 20;
+
+    const annotationY = annotationText ? y : null;
+    if (annotationText) y += 25;
+
+    const chartY = y;
+    y += height;
+
+    const xAxisY = showXAxis ? y : null;
+    if (showXAxis) y += 25;
+
+    return {
+      topLabelY,
+      annotationY,
+      chartY,
+      xAxisY,
+      totalHeight: y,
+    };
+  });
 </script>
 
 {#key containerWidth}
   <div class="scale-container" bind:clientWidth={containerWidth}>
-    <svg
-      width={containerWidth}
-      height={height + 20 + (annotationText ? 25 : 0) + (showXAxis ? 25 : 0)}
-      style="overflow: visible;"
-    >
-      <g transform="translate({padding / 2},0)">
-        <g transform="translate(0,{annotationText ? 25 : 20})">
-          <text dx={-2} dy={-4} fill="#666" font-size="0.75em"
-            >Number of areas</text
-          ></g
-        >
+    <svg width={containerWidth} height={layout.totalHeight}>
+      <g transform="translate({padding / 2}, 0)">
+        {#if topLabel && layout.topLabelY !== null}
+          <text x={0} y={layout.topLabelY + 14} fill="#666" font-size="0.75em">
+            Number of areas
+          </text>
+        {/if}
 
-        {#if annotationText}
-          <g transform="translate({xScale(annotationValue)},0)">
+        {#if annotationText && layout.annotationY !== null}
+          <g
+            transform="translate({xScale(
+              annotationValue,
+            )}, {layout.annotationY})"
+          >
             <text
               fill="#555555"
               font-size="0.8em"
@@ -176,43 +201,25 @@
           </g>
         {/if}
 
-        <g transform="translate(0,{annotationText ? 25 : 20})">
-          <g>
-            {#if showXAxis}
-              <Axis
-                bind:ticksArray={xTicks}
-                chartHeight={height}
-                chartWidth={containerWidth - padding}
-                orientation={{ axis: "x", position: "bottom" }}
-                domain={[xTickFirst, xTickLast]}
-                min={minX}
-                max={maxX}
-                range={useRange}
-                fontSize={13}
-                {floor}
-                {ceiling}
-                {labelFormatter}
-                {numberOfTicks}
-              ></Axis>
-            {/if}
-            {#if showYAxis}
-              <Axis
-                bind:ticksArray={yTicks}
-                chartHeight={height}
-                chartWidth={containerWidth - padding}
-                orientation={{ axis: "y", position: "left" }}
-                min={minY}
-                max={maxY}
-                domain={[0, yTickLast]}
-                range={[0, height]}
-                fontSize={0}
-                numberOfTicks={4}
-                {showGridlines}
-                {showTickMarks}
-                strokeWidth={tickStrokeWidth}
-              ></Axis>
-            {/if}
-          </g>
+        <g transform="translate(0, {layout.chartY})">
+          {#if showYAxis}
+            <Axis
+              bind:ticksArray={yTicks}
+              chartHeight={height}
+              chartWidth={containerWidth - padding}
+              orientation={{ axis: "y", position: "left" }}
+              min={minY}
+              max={maxY}
+              domain={[0, yTickLast]}
+              range={[0, height]}
+              fontSize={0}
+              numberOfTicks={4}
+              {showGridlines}
+              {showTickMarks}
+              strokeWidth={tickStrokeWidth}
+            />
+          {/if}
+
           {#each bins as bin, i}
             {#key bin.x0}
               <rect
@@ -227,6 +234,26 @@
             {/key}
           {/each}
         </g>
+
+        {#if showXAxis && layout.xAxisY !== null}
+          <g transform="translate(0, {layout.xAxisY})">
+            <Axis
+              bind:ticksArray={xTicks}
+              chartHeight={height}
+              chartWidth={containerWidth - padding}
+              orientation={{ axis: "x", position: "bottom" }}
+              domain={[xTickFirst, xTickLast]}
+              min={minX}
+              max={maxX}
+              range={useRange}
+              fontSize={13}
+              {floor}
+              {ceiling}
+              {labelFormatter}
+              {numberOfTicks}
+            />
+          </g>
+        {/if}
       </g>
     </svg>
   </div>

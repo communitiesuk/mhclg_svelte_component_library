@@ -93,6 +93,9 @@
     skew = false,
     showTickMarks = true,
     showGridlines = false,
+    labelFormatter = (tick, index, ticksArrayLength) => {
+      return tick;
+    },
   } = $props();
 
   let xTicks = $state([]);
@@ -272,6 +275,17 @@
       ),
     );
   }
+
+  let totalHeight = $derived(
+    chartHeight +
+      (showAxis ? 25 : 0) +
+      (showAverage ? 35 : 0) +
+      (showArrows ? 25 : 0),
+  );
+
+  let svgHeight = $derived(
+    chartHeight + (showAxis ? 25 : 0) + (showAverage ? 35 : 0),
+  );
 </script>
 
 {#if annotations.length}
@@ -331,9 +345,10 @@
   class="grid-container"
   bind:this={container}
   style="
-  position: relative;
+    position: relative;
     grid-template-columns: {gridTemplateColumns};
-    grid-template-rows: {gridTemplateRows};
+    grid-template-columns: {gridTemplateRows};
+    height: {totalHeight}px;
   "
 >
   {#each allDataNormalized as positionChart, i}
@@ -357,18 +372,8 @@
         ></Button>
       </div>
     {/if}
-    <div
-      class="chart"
-      style="height:{chartHeight +
-        (showAxis ? 30 : 30) +
-        (showArrows ? 30 : 0) +
-        (showAverage ? 40 : 0)}px"
-      bind:clientWidth={chartWidth}
-    >
-      <svg
-        width={chartWidth}
-        height={chartHeight + (showAxis ? 40 : 0) + (showAverage ? 40 : 0)}
-      >
+    <div class="chart" bind:clientWidth={chartWidth}>
+      <svg width={chartWidth} height={svgHeight} overflow="visible">
         {#each range as number}
           <g
             transform="translate({markerRadius +
@@ -472,6 +477,7 @@
             {polarity}
             {showTickMarks}
             {showGridlines}
+            {labelFormatter}
           ></Axis>
         {/if}
         {#if showAverage}
@@ -479,7 +485,7 @@
             transform="translate({xFunction(
               xTickFirst,
               xTickLast,
-            )(averageValue) + markerRadius}, {chartHeight * 1.7})"
+            )(averageValue) + markerRadius}, 45)"
           >
             <text
               fill="#444"

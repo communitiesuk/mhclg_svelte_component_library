@@ -208,12 +208,12 @@
               chartHeight={height}
               chartWidth={containerWidth - padding}
               orientation={{ axis: "y", position: "left" }}
-              min={minY}
-              max={maxY}
-              domain={[0, yTickLast]}
+              min={3}
+              max={9}
+              domain={[yTickLast, 0]}
               range={[0, height]}
               fontSize={0}
-              numberOfTicks={4}
+              numberOfTicks={3}
               {showGridlines}
               {showTickMarks}
               strokeWidth={tickStrokeWidth}

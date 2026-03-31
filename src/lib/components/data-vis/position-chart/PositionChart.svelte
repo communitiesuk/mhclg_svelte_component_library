@@ -485,7 +485,8 @@
             transform="translate({xFunction(
               xTickFirst,
               xTickLast,
-            )(averageValue) + markerRadius}, 45)"
+            )(averageValue) + markerRadius}, {chartHeight +
+              (showAxis ? 20 : 0)})"
           >
             <text
               fill="#444"
@@ -553,6 +554,29 @@
       {markerRect}
       {tooltipSnippet}
     ></ValueLabel>
+  {/if}
+</div>
+
+<div style="content-visibility: hidden;">
+  {#if !showAxis}
+    <Axis
+      bind:ticksArray={xTicks}
+      {chartHeight}
+      chartWidth={chartWidth - markerRadius * 2}
+      orientation={{ axis: "x", position: "bottom" }}
+      range={[markerRadius, chartWidth - markerRadius]}
+      domain={[xTickFirst, xTickLast]}
+      {min}
+      {max}
+      fontSize={14}
+      {floor}
+      {ceiling}
+      {numberOfTicks}
+      {polarity}
+      {showTickMarks}
+      {showGridlines}
+      {labelFormatter}
+    ></Axis>
   {/if}
 </div>
 

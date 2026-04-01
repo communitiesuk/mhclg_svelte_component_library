@@ -1,5 +1,6 @@
 <script lang="ts">
   import homepageIllustration from "./../../assets/images/homepage-illustration.svg";
+  import type { Snippet } from "svelte";
 
   // Define component props with types and default values
   let {
@@ -16,6 +17,7 @@
     paddingTop = "30px",
     titlePaddingTop = false,
     paddingBottom = "30px",
+    contentSnippet = undefined,
   } = $props<{
     title?: string;
     description?: string;
@@ -30,7 +32,10 @@
     paddingTop?: string;
     titlePaddingTop?: boolean;
     paddingBottom?: string;
+    contentSnippet?: Snippet;
   }>();
+
+  let arg = "hello";
 </script>
 
 <div
@@ -46,6 +51,9 @@
       >
         <h1 class="govuk-heading-xl app-masthead__title">{@html title}</h1>
         <p class="app-masthead__description">{description}</p>
+        {#if contentSnippet}
+          {@render contentSnippet()}
+        {/if}
         {#if includeButton === true}
           <a
             href={buttonHref}

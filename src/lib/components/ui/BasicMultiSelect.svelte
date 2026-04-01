@@ -235,37 +235,32 @@
       >
         <span class="search-addon-icon"><IconSearch /></span>
       </button>
-
-      {#if showDropdown}
+    </div>
+  </div>
+  {#if showDropdown}
+    <div
+      class="choices__list choices__list--dropdown"
+      class:is-open={showDropdown}
+      role="listbox"
+      aria-label="Options"
+    >
+      {#each filteredOptions as o (o.id)}
         <div
-          class="choices__list choices__list--dropdown"
-          class:is-open={showDropdown}
-          role="listbox"
-          aria-label="Options"
+          class="choices__item choices__item--selectable"
+          role="option"
+          on:click={() => selectOption(o)}
         >
-          {#each filteredOptions as o (o.id)}
-            <div
-              class="choices__item choices__item--selectable"
-              role="option"
-              on:click={() => selectOption(o)}
-            >
-              {o.label}
-            </div>
-          {/each}
+          {o.label}
+        </div>
+      {/each}
 
-          {#if filteredOptions.length === 0}
-            <div
-              class="choices__item"
-              aria-disabled="true"
-              style="opacity:0.75"
-            >
-              No results found
-            </div>
-          {/if}
+      {#if filteredOptions.length === 0}
+        <div class="choices__item" aria-disabled="true" style="opacity:0.75">
+          No results found
         </div>
       {/if}
     </div>
-  </div>
+  {/if}
 </div>
 
 <style>
@@ -512,28 +507,26 @@
   }
 
   :global(.gem-c-select-with-search) .choices__list--dropdown {
-    /* ✅ Put it on a new row in the wrapping flex container */
-    flex: 0 0 100%;
-    order: 99; /* ✅ ensure it comes last */
+    /* IMPORTANT: ensure it participates in normal layout */
+    position: static !important;
+    inset: auto !important; /* cancels top/left/right/bottom if set somewhere */
+    transform: none !important;
 
-    /* ✅ align visually with the left edge of the input box */
-    margin-top: 0;
-
-    /* ✅ match input-box width (exclude addon button width) */
-    width: calc(100% - var(--addon-width));
-
-    /* ✅ push it under the input box, not under the button */
-    margin-right: 0;
-
+    /* layout */
+    display: block !important;
+    width: 100%;
     box-sizing: border-box;
+
+    margin-top: 0;
     border: 2px solid var(--govuk-black);
     border-top: none;
     background: white;
 
     max-height: 300px;
     overflow-y: auto;
-
-    display: block;
+    z-index: auto; /* z-index not needed when in normal flow */
+    width: calc(100%- var(--addon-width));
+    margin-left: 0;
   }
 
   :global(.gem-c-select-with-search) .choices__list--dropdown .choices__item {

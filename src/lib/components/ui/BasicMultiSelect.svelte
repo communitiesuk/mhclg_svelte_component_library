@@ -15,7 +15,6 @@
     label = "Choose options",
     hint,
     enableColors = true,
-    maxResults = 5,
     startsWithSearch = true,
     resetButton = false,
   }: {
@@ -26,7 +25,6 @@
     label?: string;
     hint?: string;
     enableColors?: boolean;
-    maxResults?: number;
     startsWithSearch?: boolean;
     resetButton?: boolean;
   } = $props();
@@ -102,8 +100,19 @@
     const q = search.trim().toLowerCase();
     const selectedIds = new Set(selected.map((s) => s.id));
 
-    const available = options.filter((o) => !selectedIds.has(o.id));
+    // remove already-selected
+    const available = options
+      .filter((o) => !selectedIds.has(o.id))
+      // ✅ alphabetical sort
+      .slice() // avoid mutating original
+      .sort((a, b) =>
+        a.label.localeCompare(b.label, undefined, {
+          sensitivity: "base", // case-insensitive
+          numeric: true, // "Item 2" < "Item 10"
+        }),
+      );
 
+    // apply search match after sort (or before—either is fine)
     const matched = q
       ? available.filter((o) => {
           const label = o.label.toLowerCase();
@@ -111,7 +120,7 @@
         })
       : available;
 
-    return matched.slice(0, maxResults);
+    return matched;
   });
 
   function selectOption(option: Option) {
@@ -673,5 +682,44 @@
   :global(.gem-c-select-with-search) .choices__list--dropdown {
     margin: 0 !important; /* ✅ kills the 16px */
     padding: 0;
+  }
+
+  .choices__reset {
+    background: transparent;
+    border: 0;
+    padding: 0;
+    margin-left: 16px;
+
+    color: var(--govuk-blue);
+    font-family: "GDS Transport", arial, sans-serif;
+    font-size: 19px;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .choices__reset:hover {
+    color: #003078;
+  }
+
+  .choices__reset:focus-visible {
+    outline: 3px solid var(--govuk-focus);
+    outline-offset: 0;
+    box-shadow: inset 0 0 0 3px var(--govuk-black);
+    text-decoration: none;
+  }
+
+  :global(.gem-c-select-with-search) .choices__list--dropdown {
+    scrollbar-width: thin;
+  }
+
+  :global(.gem-c-select-with-search)
+    .choices__list--dropdown::-webkit-scrollbar {
+    width: 10px;
+  }
+
+  :global(.gem-c-select-with-search)
+    .choices__list--dropdown::-webkit-scrollbar-thumb {
+    background-color: var(--govuk-grey);
+    border-radius: 0;
   }
 </style>

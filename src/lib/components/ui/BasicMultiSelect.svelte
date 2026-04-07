@@ -17,6 +17,7 @@
     enableColors = true,
     maxResults = 5,
     startsWithSearch = true,
+    resetButton = false,
   }: {
     options?: Option[];
     selected?: SelectedItem[];
@@ -27,10 +28,19 @@
     enableColors?: boolean;
     maxResults?: number;
     startsWithSearch?: boolean;
+    resetButton?: boolean;
   } = $props();
 
   let showDropdown = $state(false);
   let search = $state("");
+
+  let initialSelected = [];
+
+  function resetToInitial() {
+    selected = initialSelected.map((item) => ({ ...item }));
+    search = "";
+    queueMicrotask(() => inputEl?.focus());
+  }
 
   // Cursor used ONLY when palette is exhausted (Option 2)
   let colorCursor = $state(0);
@@ -113,7 +123,6 @@
     }
 
     search = "";
-    showDropdown = false;
   }
 
   function remove(id: Option["id"]) {
@@ -131,6 +140,9 @@
 
   onMount(() => {
     if (!browser) return;
+    if (resetButton === true) {
+      initialSelected = selected.map((item) => ({ ...item }));
+    }
 
     function handleOutside(e: MouseEvent) {
       if (container && !container.contains(e.target as Node)) {
@@ -145,7 +157,6 @@
   function clearAll() {
     selected = [];
     search = "";
-    showDropdown = false;
     queueMicrotask(() => inputEl?.focus());
   }
 </script>
@@ -213,17 +224,25 @@
             {/each}
           </div>
 
-          {#if !showDropdown}
-            <div class="choices__actions">
+          <div class="choices__actions">
+            <button
+              type="button"
+              class="choices__clear-all"
+              on:click|stopPropagation={clearAll}
+            >
+              Remove all selected
+            </button>
+
+            {#if resetButton === true}
               <button
                 type="button"
-                class="choices__clear-all"
-                on:click|stopPropagation={clearAll}
+                class="choices__reset"
+                on:click|stopPropagation={resetToInitial}
               >
-                Remove all selected
+                Reset to default
               </button>
-            </div>
-          {/if}
+            {/if}
+          </div>
         {/if}
       </div>
 
@@ -414,12 +433,12 @@
 
   :global(.gem-c-select-with-search) .choices__item-label {
     flex: 1 1 auto;
-    min-width: 0; /* important for flex shrink */
-    overflow: visible; /* allow growth vertically */
-    text-overflow: unset; /* remove ellipsis behaviour */
-    white-space: normal; /* ✅ allow wrapping */
-    word-break: break-word; /* wrap long words if needed */
-    max-width: 26ch; /* keep your “nice” readable width cap */
+    min-width: 0;
+    overflow: visible;
+    text-overflow: unset;
+    white-space: normal;
+    word-break: break-word;
+    max-width: 26ch;
     line-height: 1.2;
   }
 
@@ -448,11 +467,11 @@
       background-color 120ms ease,
       opacity 120ms ease;
 
-    align-self: stretch; /* ✅ fills chip height */
-    height: auto; /* ✅ don't lock to 32px */
+    align-self: stretch;
+    height: auto;
     min-height: 100%;
-    padding: 0 10px; /* gives clickable area */
-    border-left: 1px solid var(--govuk-grey); /* ✅ full height divider */
+    padding: 0 10px;
+    border-left: 1px solid var(--govuk-grey);
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -525,7 +544,7 @@
     max-height: 300px;
     overflow-y: auto;
     z-index: auto; /* z-index not needed when in normal flow */
-    width: calc(100%- var(--addon-width));
+    width: calc(100% - var(--addon-width));
     margin-left: 0;
   }
 
@@ -573,6 +592,7 @@
     .choices__inner {
     border-bottom: 0;
     box-shadow: none;
+    margin-bottom: 0 !important;
   }
 
   /* Only when chips are present: make the inner section visually merge into chips */
@@ -648,5 +668,10 @@
     outline-offset: 0;
     box-shadow: inset 0 0 0 3px var(--govuk-black);
     text-decoration: none;
+  }
+
+  :global(.gem-c-select-with-search) .choices__list--dropdown {
+    margin: 0 !important; /* ✅ kills the 16px */
+    padding: 0;
   }
 </style>

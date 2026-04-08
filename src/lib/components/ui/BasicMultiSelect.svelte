@@ -34,6 +34,23 @@
 
   let initialSelected = [];
 
+  const isAtDefault = $derived(() => {
+    if (!hasInitialSelection) return true;
+
+    const current = selected
+      .map((s) => s.id)
+      .sort()
+      .join(",");
+    const initial = initialSelected
+      .map((s) => s.id)
+      .sort()
+      .join(",");
+
+    return current === initial;
+  });
+
+  const hasInitialSelection = $derived(() => initialSelected.length > 0);
+
   function resetToInitial() {
     selected = initialSelected.map((item) => ({ ...item }));
     search = "";
@@ -232,17 +249,20 @@
               </span>
             {/each}
           </div>
-
+        {/if}
+        {#if selected.length || (resetButton && hasInitialSelection && !isAtDefault)}
           <div class="choices__actions">
-            <button
-              type="button"
-              class="choices__clear-all"
-              on:click|stopPropagation={clearAll}
-            >
-              Remove all selected
-            </button>
+            {#if selected.length}
+              <button
+                type="button"
+                class="choices__clear-all"
+                on:click|stopPropagation={clearAll}
+              >
+                Remove all selected
+              </button>
+            {/if}
 
-            {#if resetButton === true}
+            {#if resetButton && hasInitialSelection && !isAtDefault}
               <button
                 type="button"
                 class="choices__reset"
@@ -721,5 +741,9 @@
     .choices__list--dropdown::-webkit-scrollbar-thumb {
     background-color: var(--govuk-grey);
     border-radius: 0;
+  }
+
+  .choices__actions:empty {
+    display: none;
   }
 </style>

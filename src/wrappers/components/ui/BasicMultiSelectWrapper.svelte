@@ -177,6 +177,7 @@
           { id: 2, label: "Bravo" },
           { id: 3, label: "Charlie" },
           { id: 4, label: "Delta" },
+          { id: 5, label: "Bournemouth, Christchurch and Poole Council" },
         ],
         description: {
           markdown: true,
@@ -191,7 +192,7 @@
         description: {
           markdown: true,
           arr: [
-            "Pre selected options that can be passed in. Colour not needed to be passed in as welll",
+            "Pre selected options that can be passed in. Colour is not needed to be passed in as well",
           ],
         },
       },

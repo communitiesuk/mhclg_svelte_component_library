@@ -56,6 +56,7 @@
     showGridlines = false,
     showTickMarks = false,
     strokeWidth = 2,
+    niceTicks = true,
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -83,6 +84,7 @@
     strokeWidth?: Number;
     showGridlines?: Boolean;
     showTickMarks?: Boolean;
+    niceTicks?: Boolean;
   } = $props();
 
   // --- Helpers to compute default domain/range when not supplied ---
@@ -156,6 +158,7 @@
         {showGridlines}
         {showTickMarks}
         {strokeWidth}
+        {niceTicks}
       />
     {/key}
   {/if}

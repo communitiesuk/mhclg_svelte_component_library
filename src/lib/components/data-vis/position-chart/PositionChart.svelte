@@ -96,6 +96,7 @@
     labelFormatter = (tick, index, ticksArrayLength) => {
       return tick;
     },
+    niceTicks = true,
   } = $props();
 
   let xTicks = $state([]);
@@ -478,6 +479,7 @@
             {showTickMarks}
             {showGridlines}
             {labelFormatter}
+            {niceTicks}
           ></Axis>
         {/if}
         {#if showAverage}
@@ -576,6 +578,7 @@
       {showTickMarks}
       {showGridlines}
       {labelFormatter}
+      {niceTicks}
     ></Axis>
   {/if}
 </div>

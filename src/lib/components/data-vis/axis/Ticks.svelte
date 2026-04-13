@@ -36,6 +36,7 @@
 
     strokeWidth = 2,
     labelFormatter = undefined as LabelFormatter | undefined,
+    niceTicks = true,
   }: {
     ticksArray?: number[]; // bindable
     chartWidth: number;
@@ -54,6 +55,7 @@
 
     strokeWidth?: number;
     labelFormatter?: LabelFormatter;
+    niceTicks?: Boolean;
   } = $props();
   function axisValue(fn: any, tick: number): number {
     // Try single-call first: axisFunction(tick)
@@ -142,7 +144,9 @@
   );
 
   let rawTicks = $derived(
-    generateTicks(min, max, computedTickCount, floor, ceiling),
+    niceTicks
+      ? generateTicks(min, max, computedTickCount, floor, ceiling)
+      : [min, max],
   );
 
   let ticksOrdered = $derived(

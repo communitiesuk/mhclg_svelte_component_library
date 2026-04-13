@@ -58,6 +58,7 @@
   // Modify toggleCheckbox to handle non-JS scenarios
   function toggleCheckbox(option: CheckboxOption) {
     // If JS/modern features aren't supported, let the native checkbox behavior work
+
     if (!isSupported) return;
 
     if (option.exclusive) {

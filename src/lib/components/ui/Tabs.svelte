@@ -72,6 +72,8 @@
     }
   }
 
+  //$inspect(isSupported, "isSupported");
+
   // Handle keyboard navigation
   function handleKeydown(event: KeyboardEvent, currentIndex: number): void {
     // Skip navigation on mobile or if component isn't ready

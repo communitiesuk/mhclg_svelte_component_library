@@ -141,10 +141,24 @@
     }
   }
 
-  let colorScale = $derived(
-    customColorScale ??
-      interpolateColors(startColor, endColor, nBins, midColor, skew),
-  );
+  let colorScale = $derived(() => {
+    if (customColorScale) return customColorScale;
+
+    if (!startColor || !endColor || !nBins) return [];
+
+    if (skew) {
+      if (
+        !midColor ||
+        averageValue == null ||
+        xTickFirst == null ||
+        xTickLast == null
+      ) {
+        return [];
+      }
+    }
+
+    return interpolateColors(startColor, endColor, nBins, midColor, skew);
+  });
 
   $inspect({ colorScale });
 

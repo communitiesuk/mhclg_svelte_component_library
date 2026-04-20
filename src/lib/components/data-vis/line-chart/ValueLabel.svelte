@@ -11,6 +11,7 @@
     markerRect = undefined,
     tooltipSnippet,
     labelText = undefined,
+    yOffset = 20,
   } = $props();
 
   let textDimensions = $state();
@@ -31,7 +32,7 @@ left: {markerRect?.x +
   style="position:absolute; left: {markerRect?.x - textDimensions?.width / 2}px;
       top: {markerRect?.y -
     textDimensions?.height -
-    20}px; pointer-events: none"
+    yOffset}px; pointer-events: none"
   bind:contentRect={textDimensions}
 >
   {#if tooltipSnippet === undefined}

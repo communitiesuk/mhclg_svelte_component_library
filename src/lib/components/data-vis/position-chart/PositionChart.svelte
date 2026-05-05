@@ -30,12 +30,14 @@
     markerRadius = chartHeight / 2,
     numberOfTicks = undefined,
     options = [],
+    strokeColor = "#11E0F1",
     rowData = [
       {
         value: value,
         color: color,
         opacity: opacity,
         annotation: annotation,
+        strokeColor: strokeColor,
       },
     ],
     allData = [
@@ -133,7 +135,14 @@
   ]);
 
   // base defaults that apply to every row
-  const baseRow = { value, color, opacity, annotation, markerRadius };
+  const baseRow = {
+    value,
+    color,
+    opacity,
+    annotation,
+    markerRadius,
+    strokeColor,
+  };
 
   // base defaults that apply to every chart
   const baseChart = { label, chartHeight, min, max, showAxis };
@@ -435,25 +444,34 @@
                   ></line>
                 {:else}
                   <circle
-                    r={rowValue.markerRadius}
+                    r={rowValue.markerRadius * 1.2}
                     cx="0"
                     cy="0"
                     stroke="white"
                     fill={rowValue.color === "inherit"
                       ? colorScale[segmentIndex(rowValue.value)]
                       : rowValue.color}
-                    stroke-width={3}
+                    stroke-width={4}
                     opacity={rowValue.opacity}
                   ></circle>
                   <circle
-                    r={rowValue.markerRadius * 0.9}
+                    r={rowValue.markerRadius * 1}
+                    cx="0"
+                    cy="0"
+                    fill="none"
+                    stroke={rowValue.strokeColor}
+                    stroke-width={4}
+                    opacity={rowValue.opacity}
+                  ></circle>
+                  <circle
+                    r={rowValue.markerRadius * 0.8}
                     cx="0"
                     cy="0"
                     fill={rowValue.color === "inherit"
                       ? colorScale[segmentIndex(rowValue.value)]
                       : rowValue.color}
-                    stroke="black"
-                    stroke-width={1.5}
+                    stroke="white"
+                    stroke-width={1}
                     opacity={rowValue.opacity}
                   ></circle>
                 {/if}

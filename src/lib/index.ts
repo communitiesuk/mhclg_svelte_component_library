@@ -2,6 +2,7 @@
 import "./main.css";
 
 export { default as InsetText } from './components/content/InsetText.svelte';
+export { default as Tag } from './components/content/Tag.svelte';
 export { default as WarningText } from './components/content/WarningText.svelte';
 export { default as Histogram } from './components/data-vis/Histogram.svelte';
 export { default as Axis } from './components/data-vis/axis/Axis.svelte';

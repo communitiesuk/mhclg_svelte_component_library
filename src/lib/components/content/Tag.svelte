@@ -25,4 +25,8 @@
   .govuk-tag.trend-tag.govuk-tag--grey {
     border-bottom-color: #b1b4b6;
   }
+  .govuk-tag.trend-tag.govuk-tag--white {
+    background-color: #fbfbfb;
+    border-bottom-color: #cdcdcd;
+  }
 </style>

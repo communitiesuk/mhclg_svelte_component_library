@@ -70,6 +70,10 @@
     const inner = fn();
     return inner(tick);
   }
+  const NICE_STEPS = [1, 2, 2.5, 5, 10];
+  const TICK_PENALTY_WEIGHT = 1;
+  const PADDING_PENALTY_WEIGHT = 10;
+  const MAX_TICK_MULTIPLIER = 3;
 
   function generateTicks(
     min: number,
@@ -78,36 +82,56 @@
     floorVal?: number,
     ceilingVal?: number,
   ): number[] {
-    let minVal =
-      floorVal !== undefined ? new Decimal(floorVal) : new Decimal(min);
+    const lo = floorVal ?? min;
+    const hi = ceilingVal ?? max;
 
-    let maxVal =
-      ceilingVal !== undefined ? new Decimal(ceilingVal) : new Decimal(max);
+    if (numTicks < 2) return [lo];
+    if (hi <= lo) return [lo, hi];
 
-    const rangeVal = maxVal.minus(minVal);
-    const roughStep = rangeVal.div(numTicks - 1);
-    const normalizedSteps = [
-      1, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15, 25, 30, 35, 40, 45,
-    ];
-    const stepPower = Decimal.pow(
-      10,
-      -Math.floor(Math.log10(roughStep.toNumber())),
-    );
+    const roughStep = (hi - lo) / (numTicks - 1);
+    const magnitude = Math.pow(10, Math.floor(Math.log10(roughStep)));
 
-    const normalizedStep = roughStep.mul(stepPower);
-    const chosen = normalizedSteps.find(
-      (step) => step >= normalizedStep.toNumber(),
-    );
-    const optimalStep = new Decimal(chosen ?? 10).div(stepPower);
+    // Candidate steps: nice multiples at this magnitude and its neighbors
+    const candidates = [-1, 0, 1]
+      .flatMap((offset) =>
+        NICE_STEPS.map((s) => s * magnitude * Math.pow(10, offset)),
+      )
+      .filter((s, i, arr) => arr.indexOf(s) === i) // deduplicate
+      .sort((a, b) => a - b);
 
-    const scaleMin = minVal.div(optimalStep).floor().mul(optimalStep);
-    const scaleMax = maxVal.div(optimalStep).ceil().mul(optimalStep);
-
-    const ticks: number[] = [];
-    for (let i = scaleMin; i.lte(scaleMax); i = i.plus(optimalStep)) {
-      ticks.push(i.toNumber());
+    function tickBounds(step: number): {
+      start: number;
+      end: number;
+      count: number;
+    } {
+      const start = lo % step === 0 ? lo : Math.floor(lo / step) * step;
+      const end = Math.ceil(hi / step) * step;
+      const count = Math.round((end - start) / step) + 1;
+      return { start, end, count };
     }
-    return ticks;
+
+    function score(step: number): number {
+      const { start, end, count } = tickBounds(step);
+      const paddingPenalty = (end - start) / (hi - lo) - 1;
+      const countPenalty = Math.abs(count - numTicks);
+      return (
+        paddingPenalty * PADDING_PENALTY_WEIGHT +
+        countPenalty * TICK_PENALTY_WEIGHT
+      );
+    }
+
+    const bestStep = candidates
+      .filter(
+        (step) => tickBounds(step).count <= numTicks * MAX_TICK_MULTIPLIER,
+      )
+      .reduce((best, step) => (score(step) < score(best) ? step : best));
+
+    // Use Decimal only here, to avoid float drift in the loop
+    const { start, count } = tickBounds(bestStep);
+    const step = new Decimal(bestStep);
+    return Array.from({ length: count }, (_, i) =>
+      new Decimal(start).plus(step.mul(i)).toNumber(),
+    );
   }
 
   // Default label when no labelFormatter is supplied

@@ -424,6 +424,18 @@
                   <line
                     x1={0}
                     x2={0}
+                    y1={chartHeight / 1.5}
+                    y2={-chartHeight / 1.5}
+                    stroke={rowValue.color === "inherit"
+                      ? colorScale[segmentIndex(rowValue.value)]
+                      : rowValue.color}
+                    stroke-width={rowValue.markerRadius * 5}
+                    opacity={0}
+                    pointer-events={rowValue.pointerEvents}
+                  ></line>
+                  <line
+                    x1={0}
+                    x2={0}
                     y1={chartHeight / 2.4}
                     y2={-chartHeight / 2.4}
                     stroke={rowValue.color === "inherit"
@@ -431,7 +443,7 @@
                       : rowValue.color}
                     stroke-width={rowValue.markerRadius}
                     opacity={rowValue.opacity}
-                    pointer-events={rowValue.pointerEvents}
+                    pointer-events="none"
                   ></line>
                 {:else}
                   <circle

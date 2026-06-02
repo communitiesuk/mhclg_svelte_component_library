@@ -516,10 +516,7 @@
         {/if}
       </svg>
       {#if showArrows}
-        <div
-          class="axis-container"
-          style="margin-left: {markerRadius}px; margin-right: {markerRadius}px;"
-        >
+        <div class="axis-container" style="margin: 0px {markerRadius}px">
           <PositionChartAxis
             textSize="xs"
             axisLabels={["Worse than average", "Better than average"]}

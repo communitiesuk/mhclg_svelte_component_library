@@ -518,7 +518,7 @@
       {#if showArrows}
         <div class="axis-container" style="margin: 0px {markerRadius}px">
           <PositionChartAxis
-            textSize="xs"
+            textSize="s"
             axisLabels={["Worse than average", "Better than average"]}
           ></PositionChartAxis>
         </div>

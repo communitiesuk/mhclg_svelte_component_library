@@ -516,13 +516,12 @@
         {/if}
       </svg>
       {#if showArrows}
-        <PositionChartAxis
-          markerRadius={10}
-          barWidth={chartWidth}
-          textSize="xs"
-          {chartWidth}
-          axisLabels={["Worse than average", "Better than average"]}
-        ></PositionChartAxis>
+        <div class="axis-container" style="margin: 0px {markerRadius}px">
+          <PositionChartAxis
+            textSize="s"
+            axisLabels={["Worse than average", "Better than average"]}
+          ></PositionChartAxis>
+        </div>
       {/if}
     </div>
     {#if moreInfoTogglesArray[i]}

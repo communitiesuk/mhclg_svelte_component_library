@@ -165,6 +165,13 @@
         description: "Whether to display an axis. Boolean.",
       },
       {
+        name: "showArrows",
+        category: "Display",
+        value: true,
+        description:
+          "Whether to display an arrows explaining chart direction. Boolean.",
+      },
+      {
         name: "value",
         category: "Data",
         value: 3,

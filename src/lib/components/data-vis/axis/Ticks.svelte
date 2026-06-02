@@ -1,5 +1,6 @@
 <script lang="ts">
   import Decimal from "decimal.js";
+  import { ticks } from "d3-array";
 
   // Types
   type Axis = "x" | "y";

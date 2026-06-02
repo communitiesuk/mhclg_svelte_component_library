@@ -57,6 +57,8 @@
     showTickMarks = false,
     strokeWidth = 2,
     niceTicks = true,
+    leftPad = 0,
+    rightPad = 0,
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -85,10 +87,14 @@
     showGridlines?: Boolean;
     showTickMarks?: Boolean;
     niceTicks?: Boolean;
+    leftPad?: Number;
+    rightPad?: Number;
   } = $props();
 
   // --- Helpers to compute default domain/range when not supplied ---
-  const innerWidth = $derived(Math.max(0, chartWidth));
+  const innerWidth = $derived(
+    Math.max(0, chartWidth - chartWidth * leftPad - chartWidth * rightPad),
+  );
   const innerHeight = $derived(Math.max(0, chartHeight));
 
   function computeDefaultDomain(): [number, number] {
@@ -108,16 +114,19 @@
       return [innerHeight, 0];
     }
   }
-  //Returns d3 scale function
+
+  const useDomain = $derived(domain ?? computeDefaultDomain());
+  const useRange = $derived([
+    0,
+    chartWidth - chartWidth * leftPad - chartWidth * rightPad,
+  ]); //Returns d3 scale function
   const resolvedScale = $derived(() => {
     const base: ScaleContinuousNumeric<number, number> = scale
       ? scale.copy()
       : scaleLinear<number, number>();
 
-    const useDomain = domain ?? computeDefaultDomain();
     base.domain(useDomain);
 
-    const useRange = range ?? computeDefaultRange(innerWidth, innerHeight);
     base.range(useRange);
 
     return base;
@@ -139,27 +148,34 @@
     stroke="grey"
     stroke-width="2px"
   ></line>
-  {#if ticksArray || (min && max)}
-    {#key numberOfTicks}
-      <Ticks
-        bind:ticksArray
-        {chartWidth}
-        {chartHeight}
-        {axisFunction}
-        {min}
-        {max}
-        {numberOfTicks}
-        {orientation}
-        {floor}
-        {ceiling}
-        {labelFormatter}
-        {fontSize}
-        {polarity}
-        {showGridlines}
-        {showTickMarks}
-        {strokeWidth}
-        {niceTicks}
-      />
-    {/key}
-  {/if}
+  <g
+    data-role="{orientation.axis}-axis"
+    transform="translate({orientation.position !== 'right'
+      ? chartWidth * leftPad + 15
+      : chartWidth},{orientation.position === 'bottom' ? 0 : 0})"
+  >
+    {#if ticksArray || (min && max)}
+      {#key numberOfTicks}
+        <Ticks
+          bind:ticksArray
+          {chartWidth}
+          {chartHeight}
+          {axisFunction}
+          {min}
+          {max}
+          {numberOfTicks}
+          {orientation}
+          {floor}
+          {ceiling}
+          {labelFormatter}
+          {fontSize}
+          {polarity}
+          {showGridlines}
+          {showTickMarks}
+          {strokeWidth}
+          {niceTicks}
+        />
+      {/key}
+    {/if}
+  </g>
 </g>

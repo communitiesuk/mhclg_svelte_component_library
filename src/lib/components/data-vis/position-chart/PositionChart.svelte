@@ -97,6 +97,8 @@
       return tick;
     },
     niceTicks = true,
+    leftPad = 0.1,
+    rightPad = 0.05,
   } = $props();
 
   let xTicks = $state([]);
@@ -480,6 +482,8 @@
             {showGridlines}
             {labelFormatter}
             {niceTicks}
+            {leftPad}
+            {rightPad}
           ></Axis>
         {/if}
         {#if showAverage}
@@ -579,6 +583,8 @@
       {showGridlines}
       {labelFormatter}
       {niceTicks}
+      {leftPad}
+      {rightPad}
     ></Axis>
   {/if}
 </div>

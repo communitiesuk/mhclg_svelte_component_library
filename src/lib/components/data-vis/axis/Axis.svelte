@@ -57,8 +57,8 @@
     showTickMarks = false,
     strokeWidth = 2,
     niceTicks = true,
-    leftPad = 0,
-    rightPad = 0,
+    leftPad = 0 as number,
+    rightPad = 0 as number,
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -132,6 +132,32 @@
     return base;
   });
   const axisFunction: AxisProjector = $derived((v: number) => resolvedScale(v));
+
+  function calculateRangeFromTicks(ticksArray, leftPad, rightPad): number[] {
+    const arr = Array.from(ticksArray);
+    const min = Math.min(...arr);
+    const max = Math.max(...arr);
+
+    const ticksRange = Math.max(...ticksArray) - Math.min(...ticksArray);
+    console.log("ticksRange", ticksRange);
+    console.log("ticksArray", ticksArray);
+
+    const lowerLimit = min - ticksRange * leftPad;
+    const upperLimit = max + ticksRange * rightPad;
+
+    console.log("min", min);
+    console.log("max", max);
+
+    const limitsOrdered = $derived(
+      polarity === "standard"
+        ? [lowerLimit, upperLimit]
+        : [upperLimit, lowerLimit],
+    );
+    return limitsOrdered;
+  }
+
+  let xxx = calculateRangeFromTicks(ticksArray, leftPad, rightPad);
+  $inspect({ xxx });
 </script>
 
 <g

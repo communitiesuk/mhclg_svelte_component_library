@@ -79,7 +79,7 @@
     background-color: var(--body-bg-color);
     border-bottom: 1px solid var(--body-bottom-border-color);
     border-top: 1px solid var(--body-top-border-color);
-    padding: 15px 20px;
+    padding: 15px 1%;
     flex: 1;
   }
 

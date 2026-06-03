@@ -14,6 +14,7 @@
     label = undefined,
     showAxis = true,
     showArrows = false,
+    arrowTextSize = "s",
     showAverage = false,
     chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,
@@ -518,7 +519,7 @@
       {#if showArrows}
         <div class="axis-container" style="margin: 0px {markerRadius}px">
           <PositionChartAxis
-            textSize="s"
+            textSize={arrowTextSize}
             axisLabels={["Worse than average", "Better than average"]}
           ></PositionChartAxis>
         </div>

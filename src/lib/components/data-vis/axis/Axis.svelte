@@ -59,6 +59,7 @@
     niceTicks = true,
     leftPad = 0 as number,
     rightPad = 0 as number,
+    markerRadius = 0 as number,
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -89,6 +90,7 @@
     niceTicks?: Boolean;
     leftPad?: Number;
     rightPad?: Number;
+    markerRadius?: Number;
   } = $props();
 
   // --- Helpers to compute default domain/range when not supplied ---
@@ -114,12 +116,9 @@
       return [innerHeight, 0];
     }
   }
-
   const useDomain = $derived(domain ?? computeDefaultDomain());
-  const useRange = $derived([
-    0,
-    chartWidth - chartWidth * leftPad - chartWidth * rightPad,
-  ]); //Returns d3 scale function
+  const useRange = $derived(computeDefaultRange(innerWidth, innerHeight)); //Returns d3 scale function
+
   const resolvedScale = $derived(() => {
     const base: ScaleContinuousNumeric<number, number> = scale
       ? scale.copy()
@@ -156,8 +155,7 @@
     return limitsOrdered;
   }
 
-  let xxx = calculateRangeFromTicks(ticksArray, leftPad, rightPad);
-  $inspect({ xxx });
+  let fullRange = calculateRangeFromTicks(ticksArray, leftPad, rightPad);
 </script>
 
 <g
@@ -177,7 +175,7 @@
   <g
     data-role="{orientation.axis}-axis"
     transform="translate({orientation.position !== 'right'
-      ? chartWidth * leftPad + 15
+      ? chartWidth * leftPad + markerRadius // / 2
       : chartWidth},{orientation.position === 'bottom' ? 0 : 0})"
   >
     {#if ticksArray || (min && max)}
@@ -200,6 +198,8 @@
           {showTickMarks}
           {strokeWidth}
           {niceTicks}
+          {leftPad}
+          {rightPad}
         />
       {/key}
     {/if}

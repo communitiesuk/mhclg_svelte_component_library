@@ -155,7 +155,10 @@
     return limitsOrdered;
   }
 
-  let fullRange = calculateRangeFromTicks(ticksArray, leftPad, rightPad);
+  let fullRange = $derived(
+    calculateRangeFromTicks(ticksArray, leftPad, rightPad),
+  );
+  $inspect({ fullRange });
 </script>
 
 <g
@@ -175,7 +178,7 @@
   <g
     data-role="{orientation.axis}-axis"
     transform="translate({orientation.position !== 'right'
-      ? chartWidth * leftPad + markerRadius // / 2
+      ? chartWidth * leftPad + markerRadius
       : chartWidth},{orientation.position === 'bottom' ? 0 : 0})"
   >
     {#if ticksArray || (min && max)}

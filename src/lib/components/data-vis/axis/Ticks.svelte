@@ -196,7 +196,7 @@
 
   let rawTicks = $derived(
     niceTicks
-      ? generateTicks(min, max, computedTickCount, floor, ceiling)
+      ? asymmetricTicks(min, max, computedTickCount, leftPad, rightPad)
       : [min, max],
   );
 

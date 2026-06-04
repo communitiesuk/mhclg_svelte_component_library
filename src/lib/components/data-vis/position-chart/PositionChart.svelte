@@ -97,11 +97,12 @@
       return tick;
     },
     niceTicks = true,
-    leftPad = 0.1,
-    rightPad = 0.05,
+    leftPad = 0,
+    rightPad = 0,
+    xTicks = $bindable([[]]),
   } = $props();
 
-  let xTicks = $state([]);
+  $inspect({ leftPad, rightPad });
 
   let xTickFirst = $derived(xTicks.length ? xTicks[0] : 0);
   let xTickLast = $derived(xTicks.length ? xTicks.at(-1) : 1);
@@ -484,6 +485,7 @@
             {niceTicks}
             {leftPad}
             {rightPad}
+            {markerRadius}
           ></Axis>
         {/if}
         {#if showAverage}
@@ -585,6 +587,7 @@
       {niceTicks}
       {leftPad}
       {rightPad}
+      {markerRadius}
     ></Axis>
   {/if}
 </div>

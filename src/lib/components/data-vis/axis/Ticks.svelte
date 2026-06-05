@@ -1,6 +1,6 @@
 <script lang="ts">
   import Decimal from "decimal.js";
-  import { ticks, tickStep, range } from "d3-array";
+  import { ticks, tickStep, range, nice } from "d3-array";
 
   // Types
   type Axis = "x" | "y";
@@ -38,8 +38,6 @@
     strokeWidth = 2,
     labelFormatter = undefined as LabelFormatter | undefined,
     niceTicks = true,
-    leftPad = 0 as number,
-    rightPad = 0 as number,
   }: {
     ticksArray?: number[]; // bindable
     chartWidth: number;
@@ -167,34 +165,13 @@
     return out;
   }
 
-  function asymmetricTicks(min, max, computedTickCount, niceStart, niceStop) {
-    const step = tickStep(min, max, computedTickCount);
-    console.log(step);
-
-    const lo =
-      niceStart > 0
-        ? Math.floor(min / step) * step // snap outward (nice)
-        : Math.ceil(min / step) * step; // snap inward (inclusive)
-    console.log(niceStart > 0);
-    console.log(niceStop > 0);
-
-    const hi =
-      niceStop > 0
-        ? Math.ceil(max / step) * step // snap outward (nice)
-        : Math.floor(max / step) * step; // snap inward (inclusive)
-
-    return range(lo, hi + step / 2, step); // +step/2 avoids float exclusion of hi
-  }
-
   // Compute ticks
   let computedTickCount = $derived(
     numberOfTicks ?? tickCount(chartWidth, chartHeight),
   );
 
   let rawTicks = $derived(
-    niceTicks
-      ? asymmetricTicks(min, max, computedTickCount, leftPad, rightPad)
-      : [min, max],
+    niceTicks ? nice(min, max, computedTickCount) : [min, max],
   );
 
   let ticksOrdered = $derived(

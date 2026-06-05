@@ -97,8 +97,6 @@
       return tick;
     },
     niceTicks = true,
-    leftPad = 0,
-    rightPad = 0,
     xTicks = $bindable([[]]),
     xRange = $bindable([[]]),
   } = $props();
@@ -483,9 +481,8 @@
             {showGridlines}
             {labelFormatter}
             {niceTicks}
-            {leftPad}
-            {rightPad}
             {markerRadius}
+            {distribution}
           ></Axis>
         {/if}
         {#if showAverage}
@@ -564,9 +561,6 @@
     ></ValueLabel>
   {/if}
 </div>
-<p>L: {leftPad}, R: {rightPad}</p>
-<p>xTicks: {xTicks}</p>
-<p>xRange: {xRange}</p>
 
 <div style="content-visibility: hidden;">
   {#if !showAxis}
@@ -589,9 +583,8 @@
       {showGridlines}
       {labelFormatter}
       {niceTicks}
-      {leftPad}
-      {rightPad}
       {markerRadius}
+      {distribution}
     ></Axis>
   {/if}
 </div>

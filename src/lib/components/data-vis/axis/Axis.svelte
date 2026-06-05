@@ -58,9 +58,8 @@
     showTickMarks = false,
     strokeWidth = 2,
     niceTicks = true,
-    leftPad = 0 as number,
-    rightPad = 0 as number,
     markerRadius = 0 as number,
+    distribution = [],
   }: {
     chartHeight?: number;
     chartWidth?: number;
@@ -89,12 +88,40 @@
     showGridlines?: Boolean;
     showTickMarks?: Boolean;
     niceTicks?: Boolean;
-    leftPad?: Number;
-    rightPad?: Number;
     markerRadius?: Number;
+    distribution?: number[];
   } = $props();
 
-  // --- Helpers to compute default domain/range when not supplied ---
+  let minTick = $derived(Math.min(...ticksArray));
+  let maxTick = $derived(Math.max(...ticksArray));
+  let minValue = $derived(Math.min(...distribution));
+  let maxValue = $derived(Math.max(...distribution));
+
+  $inspect({ minTick, maxTick, minValue, maxValue, distribution });
+
+  let leftPad = $derived(
+    polarity === "standard"
+      ? minValue < minTick
+        ? 0.1
+        : 0
+      : polarity === "reverse"
+        ? maxValue > maxTick
+          ? 0.1
+          : 0
+        : 0,
+  );
+
+  let rightPad = $derived(
+    polarity === "standard"
+      ? maxValue > maxTick
+        ? 0.1
+        : 0
+      : polarity === "reverse"
+        ? minValue < minTick
+          ? 0.1
+          : 0
+        : 0,
+  );
   const innerWidth = $derived(
     Math.max(0, chartWidth - chartWidth * leftPad - chartWidth * rightPad),
   );
@@ -160,7 +187,7 @@
     fullRange = computedFullRange;
   });
 
-  $inspect({ fullRange });
+  $inspect({ leftPad, rightPad });
 </script>
 
 <g

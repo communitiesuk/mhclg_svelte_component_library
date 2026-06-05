@@ -25,6 +25,7 @@
     numberOfTicks = undefined as number | undefined,
 
     // Bindable, but avoid binding undefined – initialize as [] for safety
+    fullRange = $bindable<number[]>([]),
     ticksArray = $bindable<number[]>([]),
 
     // Values to derive ticks/domain from if ticksArray not provided
@@ -64,10 +65,10 @@
     chartHeight?: number;
     chartWidth?: number;
     numberOfTicks?: number;
+    fullRange?: number[];
     ticksArray?: number[];
     min?: number;
     max?: number;
-
     orientation?: Orientation;
     floor?: number;
     ceiling?: number;
@@ -138,14 +139,9 @@
     const max = Math.max(...arr);
 
     const ticksRange = Math.max(...ticksArray) - Math.min(...ticksArray);
-    console.log("ticksRange", ticksRange);
-    console.log("ticksArray", ticksArray);
 
     const lowerLimit = min - ticksRange * leftPad;
     const upperLimit = max + ticksRange * rightPad;
-
-    console.log("min", min);
-    console.log("max", max);
 
     const limitsOrdered = $derived(
       polarity === "standard"
@@ -155,9 +151,15 @@
     return limitsOrdered;
   }
 
-  let fullRange = $derived(
+  let computedFullRange = $derived(
     calculateRangeFromTicks(ticksArray, leftPad, rightPad),
   );
+
+  // Sync it upward whenever it changes
+  $effect(() => {
+    fullRange = computedFullRange;
+  });
+
   $inspect({ fullRange });
 </script>
 

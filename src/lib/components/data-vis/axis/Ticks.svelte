@@ -190,9 +190,6 @@
   let computedTickCount = $derived(
     numberOfTicks ?? tickCount(chartWidth, chartHeight),
   );
-  let testTicks = $derived(
-    asymmetricTicks(min, max, computedTickCount, leftPad, rightPad),
-  );
 
   let rawTicks = $derived(
     niceTicks

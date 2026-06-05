@@ -100,9 +100,8 @@
     leftPad = 0,
     rightPad = 0,
     xTicks = $bindable([[]]),
+    xRange = $bindable([[]]),
   } = $props();
-
-  $inspect({ leftPad, rightPad });
 
   let xTickFirst = $derived(xTicks.length ? xTicks[0] : 0);
   let xTickLast = $derived(xTicks.length ? xTicks.at(-1) : 1);
@@ -466,6 +465,7 @@
         {/each}
         {#if showAxis}
           <Axis
+            bind:fullRange={xRange}
             bind:ticksArray={xTicks}
             {chartHeight}
             chartWidth={chartWidth - markerRadius * 2}
@@ -564,10 +564,14 @@
     ></ValueLabel>
   {/if}
 </div>
+<p>L: {leftPad}, R: {rightPad}</p>
+<p>xTicks: {xTicks}</p>
+<p>xRange: {xRange}</p>
 
 <div style="content-visibility: hidden;">
   {#if !showAxis}
     <Axis
+      bind:fullRange={xRange}
       bind:ticksArray={xTicks}
       {chartHeight}
       chartWidth={chartWidth - markerRadius * 2}

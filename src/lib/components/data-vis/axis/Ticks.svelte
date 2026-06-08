@@ -171,7 +171,9 @@
   );
 
   let rawTicks = $derived(
-    niceTicks ? nice(min, max, computedTickCount) : [min, max],
+    niceTicks
+      ? ticks(...nice(min, max, computedTickCount), computedTickCount)
+      : [min, max],
   );
 
   let ticksOrdered = $derived(

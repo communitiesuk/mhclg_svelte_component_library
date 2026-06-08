@@ -186,8 +186,6 @@
   $effect(() => {
     fullRange = computedFullRange;
   });
-
-  $inspect({ leftPad, rightPad });
 </script>
 
 <g

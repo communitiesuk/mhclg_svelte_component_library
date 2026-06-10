@@ -21,35 +21,20 @@
   let {
     chartHeight = 100,
     chartWidth = $bindable<number>(200),
-
     numberOfTicks = undefined as number | undefined,
-
-    // Bindable, but avoid binding undefined – initialize as [] for safety
-    fullRange = $bindable<number[]>([]),
+    axisRange = $bindable<number[]>([]),
     ticksArray = $bindable<number[]>([]),
-
-    // Values to derive ticks/domain from if ticksArray not provided
     min = undefined as number | undefined,
     max = undefined as number | undefined,
-
     orientation = { axis: "x", position: "bottom" } as Orientation,
-
     floor = undefined as number | undefined,
     ceiling = undefined as number | undefined,
-
     paddingTop = 100,
     paddingBottom = 100,
     paddingLeft = 0,
     paddingRight = 0,
-
     labelFormatter = undefined as LabelFormatter | undefined,
-
-    // --- New inputs for D3 scale + optional overrides ---
-    // A ready-made D3 continuous scale (linear/log/time, etc.)
-    // For this component we use numeric-only; time scales also implement numeric mapping.
     scale = undefined as ScaleContinuousNumeric<number, number> | undefined,
-
-    // Optional overrides for domain/range applied to a COPY of the provided scale
     domain = undefined as [number, number] | undefined,
     range = undefined as [number, number] | undefined,
     fontSize = 19,
@@ -64,7 +49,7 @@
     chartHeight?: number;
     chartWidth?: number;
     numberOfTicks?: number;
-    fullRange?: number[];
+    axisRange?: number[];
     ticksArray?: number[];
     min?: number;
     max?: number;
@@ -76,19 +61,17 @@
     paddingLeft?: number;
     paddingRight?: number;
     labelFormatter?: LabelFormatter;
-
-    // New
     scale?: ScaleContinuousNumeric<number, number>;
     domain?: [number, number];
     range?: [number, number];
     fontSize?: number;
     polarity?: Polarity;
     gridlines?: Boolean;
-    strokeWidth?: Number;
+    strokeWidth?: number;
     showGridlines?: Boolean;
     showTickMarks?: Boolean;
     niceTicks?: Boolean;
-    markerRadius?: Number;
+    markerRadius?: number;
     distribution?: number[];
   } = $props();
 
@@ -96,8 +79,6 @@
   let maxTick = $derived(Math.max(...ticksArray));
   let minValue = $derived(Math.min(...distribution));
   let maxValue = $derived(Math.max(...distribution));
-
-  $inspect({ minTick, maxTick, minValue, maxValue, distribution });
 
   let leftPad = $derived(
     polarity === "standard"
@@ -122,70 +103,68 @@
           : 0
         : 0,
   );
-  const innerWidth = $derived(
-    Math.max(0, chartWidth - chartWidth * leftPad - chartWidth * rightPad),
+
+  let widthForTicks = $derived(
+    chartWidth - chartWidth * leftPad - chartWidth * rightPad,
   );
-  const innerHeight = $derived(Math.max(0, chartHeight));
+  let heightForTicks = $derived(Math.max(0, chartHeight));
 
-  function computeDefaultDomain(): [number, number] {
-    const arr =
-      (ticksArray && ticksArray.length ? ticksArray : [min, max]) ?? [];
-    const dMin =
-      floor ?? (arr.length ? arr.reduce((a, b) => (a < b ? a : b)) : 0);
-    const dMax =
-      ceiling ?? (arr.length ? arr.reduce((a, b) => (a > b ? a : b)) : 1);
-    return [dMin, dMax];
-  }
+  // function computeDefaultDomain(): [number, number] {
+  //   const arr =
+  //     (ticksArray && ticksArray.length ? ticksArray : [min, max]) ?? [];
+  //   const dMin =
+  //     floor ?? (arr.length ? arr.reduce((a, b) => (a < b ? a : b)) : 0);
+  //   const dMax =
+  //     ceiling ?? (arr.length ? arr.reduce((a, b) => (a > b ? a : b)) : 1);
+  //   return [dMin, dMax];
+  // }
 
-  function computeDefaultRange(innerWidth, innerHeight): [number, number] {
-    if (orientation.axis === "x") {
-      return [0, innerWidth];
-    } else {
-      return [innerHeight, 0];
-    }
-  }
-  const useDomain = $derived(domain ?? computeDefaultDomain());
-  const useRange = $derived(computeDefaultRange(innerWidth, innerHeight)); //Returns d3 scale function
+  // const tickDomain = $derived([minTick, maxTick]);
+  // let tickRange = $derived(
+  //   orientation.axis === "x" ? [0, widthForTicks] : [heightForTicks, 0],
+  // );
 
-  const resolvedScale = $derived(() => {
-    const base: ScaleContinuousNumeric<number, number> = scale
-      ? scale.copy()
-      : scaleLinear<number, number>();
+  function calculateFullAxisDomain(
+    minTick,
+    maxTick,
+    leftPad,
+    rightPad,
+    polarity,
+  ): number[] {
+    const ticksDomainRange = maxTick - minTick;
 
-    base.domain(useDomain);
+    const lowerLimit = minTick - ticksDomainRange * leftPad;
+    const upperLimit = maxTick + ticksDomainRange * rightPad;
 
-    base.range(useRange);
-
-    return base;
-  });
-  const axisFunction: AxisProjector = $derived((v: number) => resolvedScale(v));
-
-  function calculateRangeFromTicks(ticksArray, leftPad, rightPad): number[] {
-    const arr = Array.from(ticksArray);
-    const min = Math.min(...arr);
-    const max = Math.max(...arr);
-
-    const ticksRange = Math.max(...ticksArray) - Math.min(...ticksArray);
-
-    const lowerLimit = min - ticksRange * leftPad;
-    const upperLimit = max + ticksRange * rightPad;
-
-    const limitsOrdered = $derived(
+    const limitsOrdered =
       polarity === "standard"
         ? [lowerLimit, upperLimit]
-        : [upperLimit, lowerLimit],
-    );
+        : [upperLimit, lowerLimit];
+
     return limitsOrdered;
   }
 
-  let computedFullRange = $derived(
-    calculateRangeFromTicks(ticksArray, leftPad, rightPad),
+  let fullAxisDomain = $derived(
+    calculateFullAxisDomain(minTick, maxTick, leftPad, rightPad, polarity),
   );
 
-  // Sync it upward whenever it changes
   $effect(() => {
-    fullRange = computedFullRange;
+    axisRange = fullAxisDomain;
   });
+
+  // const resolvedScale = $derived(() => {
+  //   const base: ScaleContinuousNumeric<number, number> = scale
+  //     ? scale.copy()
+  //     : scaleLinear<number, number>();
+
+  //   base.domain(fullAxisDomain);
+
+  //   base.range(chartWidth);
+
+  //   return base;
+  // });
+
+  // const axisFunction: AxisProjector = $derived((v: number) => resolvedScale(v));
 </script>
 
 <g
@@ -195,9 +174,13 @@
     : chartWidth},{orientation.position === 'bottom' ? chartHeight : 0})"
 >
   <line
-    x1={range[0]}
+    x1={markerRadius ?? 0}
     y1="0"
-    x2={orientation.axis === "x" ? range[1] : 0}
+    x2={orientation.axis === "x"
+      ? markerRadius
+        ? chartWidth + markerRadius
+        : chartWidth
+      : 0}
     y2={orientation.axis === "y" ? chartHeight : 0}
     stroke="grey"
     stroke-width="2px"
@@ -212,9 +195,8 @@
       {#key numberOfTicks}
         <Ticks
           bind:ticksArray
-          {chartWidth}
-          {chartHeight}
-          {axisFunction}
+          tickWidth={widthForTicks}
+          chartHeight={heightForTicks}
           {min}
           {max}
           {numberOfTicks}

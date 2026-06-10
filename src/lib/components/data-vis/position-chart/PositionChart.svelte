@@ -415,8 +415,8 @@
                   : null}
                 pointer-events={interactiveMarkers ? null : "none"}
                 transform="translate({xFunction(
-                  xTickFirst,
-                  xTickLast,
+                  xRange[0],
+                  xRange[1],
                 )(rowValue.value) + markerRadius},{positionChart.chartHeight /
                   2})"
               >
@@ -463,7 +463,7 @@
         {/each}
         {#if showAxis}
           <Axis
-            bind:fullRange={xRange}
+            bind:fullAxisRange={xRange}
             bind:ticksArray={xTicks}
             {chartHeight}
             chartWidth={chartWidth - markerRadius * 2}
@@ -488,8 +488,8 @@
         {#if showAverage}
           <g
             transform="translate({xFunction(
-              xTickFirst,
-              xTickLast,
+              xRange[0],
+              xRange[1],
             )(averageValue) + markerRadius}, {chartHeight +
               (showAxis ? 20 : 0)})"
           >
@@ -565,7 +565,7 @@
 <div style="content-visibility: hidden;">
   {#if !showAxis}
     <Axis
-      bind:fullRange={xRange}
+      bind:fullAxisRange={xRange}
       bind:ticksArray={xTicks}
       {chartHeight}
       chartWidth={chartWidth - markerRadius * 2}

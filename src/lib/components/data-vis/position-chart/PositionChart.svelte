@@ -97,15 +97,18 @@
       return tick;
     },
     niceTicks = true,
-    xTicks = $bindable([[]]),
-    xRange = $bindable([[]]),
+    ticksDomain = $bindable([[]]),
+    axisDomain = $bindable([[]]),
   } = $props();
 
-  let xTickFirst = $derived(xTicks.length ? xTicks[0] : 0);
-  let xTickLast = $derived(xTicks.length ? xTicks.at(-1) : 1);
+  let xTickFirst = $derived(ticksDomain.length ? ticksDomain[0] : 0);
+  let xTickLast = $derived(ticksDomain.length ? ticksDomain.at(-1) : 1);
 
-  let domainMin = $derived(Math.min(xTickFirst, xTickLast));
-  let domainMax = $derived(Math.max(xTickFirst, xTickLast));
+  let domainMin = $derived(Math.min(...axisDomain));
+  let domainMax = $derived(Math.max(...axisDomain));
+  let chartDomain = $derived(
+    polarity === "standard" ? [domainMin, domainMax] : [domainMax, domainMin],
+  );
 
   const segmentScale = $derived(
     scaleLinear().domain([0, nSegments]).range([domainMin, domainMax]),
@@ -241,8 +244,8 @@
   let barWidth = $derived(chartWidth - markerRadius * 2);
   let barHeight = $derived((chartHeight * 5) / 6);
 
-  function xFunction(min, max) {
-    return scaleLinear().domain([min, max]).range([0, barWidth]).clamp(true);
+  function xFunction(chartDomain) {
+    return scaleLinear().domain(chartDomain).range([0, barWidth]).clamp(true);
   }
 
   let annotations = $derived(
@@ -325,7 +328,7 @@
           </marker>
         </defs>
         <path
-          d="M 4 25 v 10 h {xFunction(min, max)(d.value) +
+          d="M 4 25 v 10 h {xFunction(chartDomain)(d.value) +
             markerRadius -
             4 +
             (topWidth - chartWidth)}  v 15"
@@ -414,11 +417,8 @@
                   ? (e) => e.key === "Enter" && onClickMarker(e, value)
                   : null}
                 pointer-events={interactiveMarkers ? null : "none"}
-                transform="translate({xFunction(
-                  xRange[0],
-                  xRange[1],
-                )(rowValue.value) + markerRadius},{positionChart.chartHeight /
-                  2})"
+                transform="translate({xFunction(chartDomain)(rowValue.value) +
+                  markerRadius},{positionChart.chartHeight / 2})"
               >
                 {#if rowValue.shape === "line"}
                   <line
@@ -463,8 +463,8 @@
         {/each}
         {#if showAxis}
           <Axis
-            bind:fullAxisRange={xRange}
-            bind:ticksArray={xTicks}
+            bind:axisDomain
+            bind:ticksArray={ticksDomain}
             {chartHeight}
             chartWidth={chartWidth - markerRadius * 2}
             orientation={{ axis: "x", position: "bottom" }}
@@ -487,11 +487,8 @@
         {/if}
         {#if showAverage}
           <g
-            transform="translate({xFunction(
-              xRange[0],
-              xRange[1],
-            )(averageValue) + markerRadius}, {chartHeight +
-              (showAxis ? 20 : 0)})"
+            transform="translate({xFunction(chartDomain)(averageValue) +
+              markerRadius}, {chartHeight + (showAxis ? 20 : 0)})"
           >
             <text
               fill="#444"
@@ -565,8 +562,8 @@
 <div style="content-visibility: hidden;">
   {#if !showAxis}
     <Axis
-      bind:fullAxisRange={xRange}
-      bind:ticksArray={xTicks}
+      bind:axisDomain
+      bind:ticksArray={ticksDomain}
       {chartHeight}
       chartWidth={chartWidth - markerRadius * 2}
       orientation={{ axis: "x", position: "bottom" }}

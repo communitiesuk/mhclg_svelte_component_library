@@ -22,7 +22,7 @@
     chartHeight = 100,
     chartWidth = $bindable<number>(200),
     numberOfTicks = undefined as number | undefined,
-    axisRange = $bindable<number[]>([]),
+    axisDomain = $bindable<number[]>([]),
     ticksArray = $bindable<number[]>([]),
     min = undefined as number | undefined,
     max = undefined as number | undefined,
@@ -49,7 +49,7 @@
     chartHeight?: number;
     chartWidth?: number;
     numberOfTicks?: number;
-    axisRange?: number[];
+    axisDomain?: number[];
     ticksArray?: number[];
     min?: number;
     max?: number;
@@ -130,18 +130,20 @@
     leftPad,
     rightPad,
     polarity,
-  ): number[] {
+  ) {
     const ticksDomainRange = maxTick - minTick;
 
-    const lowerLimit = minTick - ticksDomainRange * leftPad;
-    const upperLimit = maxTick + ticksDomainRange * rightPad;
-
-    const limitsOrdered =
-      polarity === "standard"
-        ? [lowerLimit, upperLimit]
-        : [upperLimit, lowerLimit];
-
-    return limitsOrdered;
+    if (polarity === "standard") {
+      return [
+        minTick - ticksDomainRange * leftPad,
+        maxTick + ticksDomainRange * rightPad,
+      ];
+    } else {
+      return [
+        maxTick + ticksDomainRange * leftPad,
+        minTick - ticksDomainRange * rightPad,
+      ];
+    }
   }
 
   let fullAxisDomain = $derived(
@@ -149,7 +151,7 @@
   );
 
   $effect(() => {
-    axisRange = fullAxisDomain;
+    axisDomain = fullAxisDomain;
   });
 
   // const resolvedScale = $derived(() => {

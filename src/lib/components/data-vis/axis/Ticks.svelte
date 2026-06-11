@@ -100,10 +100,14 @@
     ticksArray = ticksOrdered;
   });
 
+  let ticksDomain = $derived(
+    polarity === "standard"
+      ? [Math.min(...ticksArray), Math.max(...ticksArray)]
+      : [Math.max(...ticksArray), Math.min(...ticksArray)],
+  );
+
   let axisFunction = $derived(
-    scaleLinear()
-      .domain([Math.min(...ticksArray), Math.max(...ticksArray)])
-      .range([0, tickWidth]),
+    scaleLinear().domain(ticksDomain).range([0, tickWidth]),
   );
 </script>
 

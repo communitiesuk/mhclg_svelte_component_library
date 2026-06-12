@@ -103,15 +103,25 @@
   );
 
   let rightPad = $derived(
-    polarity === "standard"
-      ? maxValue > maxTick
-        ? 0.1
-        : 0
-      : polarity === "reverse"
-        ? minValue < minTick
+    niceTicks
+      ? polarity === "standard"
+        ? maxValue > maxTick
           ? 0.1
           : 0
-        : 0,
+        : polarity === "reverse"
+          ? minValue < minTick
+            ? 0.1
+            : 0
+          : 0
+      : polarity === "standard"
+        ? maxValue > max
+          ? 0.1
+          : 0
+        : polarity === "reverse"
+          ? minValue < min
+            ? 0.1
+            : 0
+          : 0,
   );
 
   let widthForTicks = $derived(
@@ -142,16 +152,17 @@
     polarity,
   ) {
     const ticksDomainRange = maxTick - minTick;
+    const axisDomainRange = ticksDomainRange / (1 - leftPad - rightPad);
 
     if (polarity === "standard") {
       return [
-        minTick - ticksDomainRange * leftPad,
-        maxTick + ticksDomainRange * rightPad,
+        minTick - axisDomainRange * leftPad,
+        maxTick + axisDomainRange * rightPad,
       ];
     } else {
       return [
-        maxTick + ticksDomainRange * leftPad,
-        minTick - ticksDomainRange * rightPad,
+        maxTick + axisDomainRange * leftPad,
+        minTick - axisDomainRange * rightPad,
       ];
     }
   }

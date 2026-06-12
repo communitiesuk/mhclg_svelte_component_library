@@ -81,15 +81,25 @@
   let maxValue = $derived(Math.max(...distribution));
 
   let leftPad = $derived(
-    polarity === "standard"
-      ? minValue < minTick
-        ? 0.1
-        : 0
-      : polarity === "reverse"
-        ? maxValue > maxTick
+    niceTicks
+      ? polarity === "standard"
+        ? minValue < minTick
           ? 0.1
           : 0
-        : 0,
+        : polarity === "reverse"
+          ? maxValue > maxTick
+            ? 0.1
+            : 0
+          : 0
+      : polarity === "standard"
+        ? minValue < min
+          ? 0.1
+          : 0
+        : polarity === "reverse"
+          ? maxValue > max
+            ? 0.1
+            : 0
+          : 0,
   );
 
   let rightPad = $derived(
@@ -195,26 +205,47 @@
   >
     {#if ticksArray || (min && max)}
       {#key numberOfTicks}
-        <Ticks
-          bind:ticksArray
-          tickWidth={widthForTicks}
-          chartHeight={heightForTicks}
-          {min}
-          {max}
-          {numberOfTicks}
-          {orientation}
-          {floor}
-          {ceiling}
-          {labelFormatter}
-          {fontSize}
-          {polarity}
-          {showGridlines}
-          {showTickMarks}
-          {strokeWidth}
-          {niceTicks}
-          {leftPad}
-          {rightPad}
-        />
+        {#if niceTicks}
+          <Ticks
+            bind:ticksArray
+            tickWidth={widthForTicks}
+            chartHeight={heightForTicks}
+            {min}
+            {max}
+            {numberOfTicks}
+            {orientation}
+            {floor}
+            {ceiling}
+            {labelFormatter}
+            {fontSize}
+            {polarity}
+            {showGridlines}
+            {showTickMarks}
+            {strokeWidth}
+            {niceTicks}
+          />
+        {:else}
+          <Ticks
+            bind:ticksArray
+            tickWidth={widthForTicks}
+            chartHeight={heightForTicks}
+            {min}
+            {max}
+            {numberOfTicks}
+            {orientation}
+            {floor}
+            {ceiling}
+            {labelFormatter}
+            {fontSize}
+            {polarity}
+            {showGridlines}
+            {showTickMarks}
+            {strokeWidth}
+            {niceTicks}
+            {leftPad}
+            {rightPad}
+          />
+        {/if}
       {/key}
     {/if}
   </g>

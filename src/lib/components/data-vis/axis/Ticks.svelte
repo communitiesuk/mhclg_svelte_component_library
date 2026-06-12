@@ -28,8 +28,6 @@
     min,
     max,
     numberOfTicks,
-    floor,
-    ceiling,
     orientation,
     fontSize = 19,
     polarity = "standard",
@@ -47,16 +45,14 @@
     min: number;
     max: number;
     numberOfTicks?: number;
-    floor?: number;
-    ceiling?: number;
     orientation: Orientation;
     fontSize?: number;
     polarity?: Polarity;
-    showGridlines?: Boolean;
-    showTickMarks?: Boolean;
+    showGridlines?: boolean;
+    showTickMarks?: boolean;
     strokeWidth?: number;
     labelFormatter?: LabelFormatter;
-    niceTicks?: Boolean;
+    niceTicks?: boolean;
     leftPad?: number;
     rightPad?: number;
   } = $props();
@@ -99,7 +95,7 @@
   );
 
   let ticksOrdered = $derived(
-    polarity === "standard" ? rawTicks : rawTicks.reverse(),
+    polarity === "standard" ? rawTicks : [...rawTicks].toReversed(),
   );
 
   $effect(() => {

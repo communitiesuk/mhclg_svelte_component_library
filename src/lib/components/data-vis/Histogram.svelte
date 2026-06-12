@@ -238,6 +238,14 @@
                 height={yScale(bin.length)}
                 fill={fill ?? colorScale[i]}
               ></rect>
+              <text
+                x={(polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)) +
+                  offset}
+                y={height - yScale(bin.length)}
+                font-size={5}
+                >{bin.length} areas between
+                {Math.round(bin.x0)} and {Math.round(bin.x1)}
+              </text>
             {/key}
           {/each}
         </g>

@@ -1,5 +1,8 @@
 <script lang="ts">
   import Decimal from "decimal.js";
+  import { ticks, tickStep, range, nice } from "d3-array";
+  import { scaleLinear } from "d3-scale";
+  import Axis from "./Axis.svelte";
 
   // Types
   type Axis = "x" | "y";
@@ -20,95 +23,52 @@
   // Props with defaults (Svelte 5 runes)
   let {
     ticksArray = $bindable<number[]>(),
-    chartWidth,
+    tickWidth,
     chartHeight,
-    axisFunction,
     min,
     max,
     numberOfTicks,
-    floor,
-    ceiling,
     orientation,
     fontSize = 19,
     polarity = "standard",
     showGridlines = false,
     showTickMarks = false,
-
     strokeWidth = 2,
     labelFormatter = undefined as LabelFormatter | undefined,
     niceTicks = true,
+    leftPad = 0,
+    rightPad = 0,
   }: {
     ticksArray?: number[]; // bindable
-    chartWidth: number;
+    tickWidth: number;
     chartHeight: number;
-    axisFunction: any;
     min: number;
     max: number;
     numberOfTicks?: number;
-    floor?: number;
-    ceiling?: number;
     orientation: Orientation;
     fontSize?: number;
     polarity?: Polarity;
-    showGridlines?: Boolean;
-    showTickMarks?: Boolean;
-
+    showGridlines?: boolean;
+    showTickMarks?: boolean;
     strokeWidth?: number;
     labelFormatter?: LabelFormatter;
-    niceTicks?: Boolean;
+    niceTicks?: boolean;
+    leftPad?: number;
+    rightPad?: number;
   } = $props();
-  function axisValue(fn: any, tick: number): number {
-    // Try single-call first: axisFunction(tick)
-    try {
-      const v = fn(tick);
-      if (typeof v === "number") return v;
-    } catch {
-      // ignore
-    }
+  // function axisValue(fn: any, tick: number): number {
+  //   // Try single-call first: axisFunction(tick)
+  //   try {
+  //     const v = fn(tick);
+  //     if (typeof v === "number") return v;
+  //   } catch {
+  //     // ignore
+  //   }
 
-    // Fallback: axisFunction()(tick)
-    const inner = fn();
-    return inner(tick);
-  }
-
-  function generateTicks(
-    min: number,
-    max: number,
-    numTicks: number,
-    floorVal?: number,
-    ceilingVal?: number,
-  ): number[] {
-    let minVal =
-      floorVal !== undefined ? new Decimal(floorVal) : new Decimal(min);
-
-    let maxVal =
-      ceilingVal !== undefined ? new Decimal(ceilingVal) : new Decimal(max);
-
-    const rangeVal = maxVal.minus(minVal);
-    const roughStep = rangeVal.div(numTicks - 1);
-    const normalizedSteps = [
-      1, 2, 2.5, 3, 4, 5, 6, 8, 10, 12, 15, 25, 30, 35, 40, 45,
-    ];
-    const stepPower = Decimal.pow(
-      10,
-      -Math.floor(Math.log10(roughStep.toNumber())),
-    );
-
-    const normalizedStep = roughStep.mul(stepPower);
-    const chosen = normalizedSteps.find(
-      (step) => step >= normalizedStep.toNumber(),
-    );
-    const optimalStep = new Decimal(chosen ?? 10).div(stepPower);
-
-    const scaleMin = minVal.div(optimalStep).floor().mul(optimalStep);
-    const scaleMax = maxVal.div(optimalStep).ceil().mul(optimalStep);
-
-    const ticks: number[] = [];
-    for (let i = scaleMin; i.lte(scaleMax); i = i.plus(optimalStep)) {
-      ticks.push(i.toNumber());
-    }
-    return ticks;
-  }
+  //   // Fallback: axisFunction()(tick)
+  //   const inner = fn();
+  //   return inner(tick);
+  // }
 
   // Default label when no labelFormatter is supplied
   function defaultLabel(tick: number): string {
@@ -116,52 +76,49 @@
   }
 
   function tickCount(w: number, h: number): number {
-    // Keep behavior aligned with your original code.
     const tickNum = orientation.axis === "y" ? h / 50 : w / 50;
     return tickNum;
   }
-  function clampTickEnds(
-    ticks: number[],
-    floor?: number,
-    ceiling?: number,
-  ): number[] {
-    if (!ticks || ticks.length === 0) return ticks;
 
-    const out = ticks.slice();
-
-    if (floor !== undefined && out[0] <= floor) {
-      out[0] = floor;
-    }
-    if (ceiling !== undefined && out[out.length - 1] >= ceiling) {
-      out[out.length - 1] = ceiling;
-    }
-    return out;
-  }
-
-  // Compute ticks
   let computedTickCount = $derived(
-    numberOfTicks ?? tickCount(chartWidth, chartHeight),
+    numberOfTicks ?? tickCount(tickWidth, chartHeight),
   );
 
   let rawTicks = $derived(
     niceTicks
-      ? generateTicks(min, max, computedTickCount, floor, ceiling)
-      : [min, max],
+      ? ticks(...nice(min, max, computedTickCount), computedTickCount)
+      : leftPad || rightPad
+        ? polarity === "standard"
+          ? [min + (max - min) * leftPad, max - (max - min) * rightPad]
+          : [min + (max - min) * rightPad, max - (max - min) * leftPad]
+        : [min, max],
   );
 
   let ticksOrdered = $derived(
-    polarity === "standard" ? rawTicks : rawTicks.reverse(),
+    polarity === "standard" ? rawTicks : [...rawTicks].toReversed(),
   );
 
-  ticksArray = ticksOrdered;
+  $effect(() => {
+    ticksArray = ticksOrdered;
+  });
+
+  let ticksDomain = $derived(
+    polarity === "standard"
+      ? [Math.min(...ticksArray), Math.max(...ticksArray)]
+      : [Math.max(...ticksArray), Math.min(...ticksArray)],
+  );
+
+  let axisFunction = $derived(
+    scaleLinear().domain(ticksDomain).range([0, tickWidth]),
+  );
 </script>
 
 {#if axisFunction && ticksArray && orientation.axis && orientation.position}
   {#each ticksArray as tick, index}
     <g
       transform="translate(
-        {orientation.axis === 'x' ? axisValue(axisFunction, tick) : 0},
-        {orientation.axis === 'y' ? axisValue(axisFunction, tick) : 0}
+        {orientation.axis === 'x' ? axisFunction(tick) : 0},
+        {orientation.axis === 'y' ? axisFunction(tick) : 0}
       )"
     >
       {#if showTickMarks}
@@ -181,8 +138,8 @@
         <path
           d={orientation.axis === "y"
             ? orientation.position === "left"
-              ? `M0 0 l${chartWidth} 0`
-              : `M0 0 l-${chartWidth} 0`
+              ? `M0 0 l${tickWidth} 0`
+              : `M0 0 l-${tickWidth} 0`
             : orientation.position === "top"
               ? `M0 0 l0 ${chartHeight}`
               : `M0 0 l0 -${chartHeight}`}

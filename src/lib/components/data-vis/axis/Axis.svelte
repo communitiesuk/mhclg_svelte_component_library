@@ -20,35 +20,21 @@
 
   let {
     chartHeight = 100,
-    chartWidth = $bindable<number>(200),
-
+    chartWidth = 200,
     numberOfTicks = undefined as number | undefined,
-
-    // Bindable, but avoid binding undefined – initialize as [] for safety
+    axisDomain = $bindable<number[]>([]),
     ticksArray = $bindable<number[]>([]),
-
-    // Values to derive ticks/domain from if ticksArray not provided
     min = undefined as number | undefined,
     max = undefined as number | undefined,
-
     orientation = { axis: "x", position: "bottom" } as Orientation,
-
     floor = undefined as number | undefined,
     ceiling = undefined as number | undefined,
-
     paddingTop = 100,
     paddingBottom = 100,
     paddingLeft = 0,
     paddingRight = 0,
-
     labelFormatter = undefined as LabelFormatter | undefined,
-
-    // --- New inputs for D3 scale + optional overrides ---
-    // A ready-made D3 continuous scale (linear/log/time, etc.)
-    // For this component we use numeric-only; time scales also implement numeric mapping.
     scale = undefined as ScaleContinuousNumeric<number, number> | undefined,
-
-    // Optional overrides for domain/range applied to a COPY of the provided scale
     domain = undefined as [number, number] | undefined,
     range = undefined as [number, number] | undefined,
     fontSize = 19,
@@ -57,14 +43,16 @@
     showTickMarks = false,
     strokeWidth = 2,
     niceTicks = true,
+    markerRadius = 0 as number,
+    distribution = [],
   }: {
     chartHeight?: number;
     chartWidth?: number;
     numberOfTicks?: number;
+    axisDomain?: number[];
     ticksArray?: number[];
     min?: number;
     max?: number;
-
     orientation?: Orientation;
     floor?: number;
     ceiling?: number;
@@ -73,56 +61,104 @@
     paddingLeft?: number;
     paddingRight?: number;
     labelFormatter?: LabelFormatter;
-
-    // New
     scale?: ScaleContinuousNumeric<number, number>;
     domain?: [number, number];
     range?: [number, number];
     fontSize?: number;
     polarity?: Polarity;
-    gridlines?: Boolean;
-    strokeWidth?: Number;
-    showGridlines?: Boolean;
-    showTickMarks?: Boolean;
-    niceTicks?: Boolean;
+    gridlines?: boolean;
+    strokeWidth?: number;
+    showGridlines?: boolean;
+    showTickMarks?: boolean;
+    niceTicks?: boolean;
+    markerRadius?: number;
+    distribution?: number[];
   } = $props();
 
-  // --- Helpers to compute default domain/range when not supplied ---
-  const innerWidth = $derived(Math.max(0, chartWidth));
-  const innerHeight = $derived(Math.max(0, chartHeight));
+  let minTick = $derived(ticksArray.length ? Math.min(...ticksArray) : 0);
+  let maxTick = $derived(ticksArray.length ? Math.max(...ticksArray) : 1);
+  let minValue = $derived(distribution.length ? Math.min(...distribution) : 0);
+  let maxValue = $derived(distribution.length ? Math.max(...distribution) : 1);
 
-  function computeDefaultDomain(): [number, number] {
-    const arr =
-      (ticksArray && ticksArray.length ? ticksArray : [min, max]) ?? [];
-    const dMin =
-      floor ?? (arr.length ? arr.reduce((a, b) => (a < b ? a : b)) : 0);
-    const dMax =
-      ceiling ?? (arr.length ? arr.reduce((a, b) => (a > b ? a : b)) : 1);
-    return [dMin, dMax];
-  }
+  let leftPad = $derived(
+    niceTicks
+      ? polarity === "standard"
+        ? minValue < minTick
+          ? 0.1
+          : 0
+        : polarity === "reverse"
+          ? maxValue > maxTick
+            ? 0.1
+            : 0
+          : 0
+      : polarity === "standard"
+        ? minValue < min
+          ? 0.1
+          : 0
+        : polarity === "reverse"
+          ? maxValue > max
+            ? 0.1
+            : 0
+          : 0,
+  );
 
-  function computeDefaultRange(innerWidth, innerHeight): [number, number] {
-    if (orientation.axis === "x") {
-      return [0, innerWidth];
+  let rightPad = $derived(
+    niceTicks
+      ? polarity === "standard"
+        ? maxValue > maxTick
+          ? 0.1
+          : 0
+        : polarity === "reverse"
+          ? minValue < minTick
+            ? 0.1
+            : 0
+          : 0
+      : polarity === "standard"
+        ? maxValue > max
+          ? 0.1
+          : 0
+        : polarity === "reverse"
+          ? minValue < min
+            ? 0.1
+            : 0
+          : 0,
+  );
+
+  let widthForTicks = $derived(
+    chartWidth - chartWidth * leftPad - chartWidth * rightPad,
+  );
+  let heightForTicks = $derived(Math.max(0, chartHeight));
+
+  function calculateFullAxisDomain(
+    minTick,
+    maxTick,
+    leftPad,
+    rightPad,
+    polarity,
+  ) {
+    const ticksDomainRange = maxTick - minTick;
+    const axisDomainRange = ticksDomainRange / (1 - leftPad - rightPad);
+
+    if (polarity === "standard") {
+      return [
+        minTick - axisDomainRange * leftPad,
+        maxTick + axisDomainRange * rightPad,
+      ];
     } else {
-      return [innerHeight, 0];
+      return [
+        maxTick + axisDomainRange * leftPad,
+        minTick - axisDomainRange * rightPad,
+      ];
     }
   }
-  //Returns d3 scale function
-  const resolvedScale = $derived(() => {
-    const base: ScaleContinuousNumeric<number, number> = scale
-      ? scale.copy()
-      : scaleLinear<number, number>();
 
-    const useDomain = domain ?? computeDefaultDomain();
-    base.domain(useDomain);
+  let fullAxisDomain = $derived(
+    calculateFullAxisDomain(minTick, maxTick, leftPad, rightPad, polarity),
+  );
 
-    const useRange = range ?? computeDefaultRange(innerWidth, innerHeight);
-    base.range(useRange);
-
-    return base;
+  $effect(() => {
+    axisDomain = fullAxisDomain;
   });
-  const axisFunction: AxisProjector = $derived((v: number) => resolvedScale(v));
 </script>
 
 <g
@@ -132,34 +168,67 @@
     : chartWidth},{orientation.position === 'bottom' ? chartHeight : 0})"
 >
   <line
-    x1={range[0]}
+    x1={markerRadius ?? 0}
     y1="0"
-    x2={orientation.axis === "x" ? range[1] : 0}
+    x2={orientation.axis === "x"
+      ? markerRadius
+        ? chartWidth + markerRadius
+        : chartWidth
+      : 0}
     y2={orientation.axis === "y" ? chartHeight : 0}
     stroke="grey"
     stroke-width="2px"
   ></line>
-  {#if ticksArray || (min && max)}
-    {#key numberOfTicks}
-      <Ticks
-        bind:ticksArray
-        {chartWidth}
-        {chartHeight}
-        {axisFunction}
-        {min}
-        {max}
-        {numberOfTicks}
-        {orientation}
-        {floor}
-        {ceiling}
-        {labelFormatter}
-        {fontSize}
-        {polarity}
-        {showGridlines}
-        {showTickMarks}
-        {strokeWidth}
-        {niceTicks}
-      />
-    {/key}
-  {/if}
+  <g
+    data-role="{orientation.axis}-axis"
+    transform="translate({orientation.position !== 'right'
+      ? chartWidth * leftPad + markerRadius
+      : chartWidth},{orientation.position === 'bottom' ? 0 : 0})"
+  >
+    {#if ticksArray || (min && max)}
+      {#key numberOfTicks}
+        {#if niceTicks}
+          <Ticks
+            bind:ticksArray
+            tickWidth={widthForTicks}
+            chartHeight={heightForTicks}
+            {min}
+            {max}
+            {numberOfTicks}
+            {orientation}
+            {floor}
+            {ceiling}
+            {labelFormatter}
+            {fontSize}
+            {polarity}
+            {showGridlines}
+            {showTickMarks}
+            {strokeWidth}
+            {niceTicks}
+          />
+        {:else}
+          <Ticks
+            bind:ticksArray
+            tickWidth={widthForTicks}
+            chartHeight={heightForTicks}
+            {min}
+            {max}
+            {numberOfTicks}
+            {orientation}
+            {floor}
+            {ceiling}
+            {labelFormatter}
+            {fontSize}
+            {polarity}
+            {showGridlines}
+            {showTickMarks}
+            {strokeWidth}
+            {niceTicks}
+            {leftPad}
+            {rightPad}
+          />
+        {/if}
+      {/key}
+    {/if}
+  </g>
 </g>

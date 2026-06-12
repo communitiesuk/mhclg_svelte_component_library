@@ -42,42 +42,27 @@
     includeOutliers = true,
   } = $props();
 
-  let xTicks = $state([]);
-  let yTicks = $state([]);
-
-  let xTickFirst = $derived(xTicks.length ? xTicks[0] : 0);
-  let xTickLast = $derived(xTicks.length ? xTicks.at(-1) : 1);
-
-  let domainXMin = $derived(Math.min(xTickFirst, xTickLast));
-  let domainXMax = $derived(Math.max(xTickFirst, xTickLast));
-
-  let yTickFirst = $derived(yTicks.length ? yTicks[0] : 0);
-  let yTickLast = $derived(yTicks.length ? yTicks.at(-1) : 1);
-
-  let domainYMin = $derived(Math.min(yTickFirst, yTickLast));
-  let domainYMax = $derived(Math.max(yTickFirst, yTickLast));
-
   let useRange = $derived(
     polarity === "standard"
       ? [0, containerWidth - padding]
       : [containerWidth - padding, 0],
   );
 
-  let xScale = $derived(
-    scaleLinear().domain([domainXMin, domainXMax]).range(useRange),
-  );
+  let xValueFirst = $derived(polarity === "standard" ? minX : maxX);
+  let xValueLast = $derived(polarity === "standard" ? maxX : minX);
+
+  let xScale = $derived(scaleLinear().domain([minX, maxX]).range(useRange));
 
   const segmentScale = $derived(
-    scaleLinear().domain([0, nBins]).range([domainXMin, domainXMax]),
+    scaleLinear().domain([0, nBins]).range([minX, maxX]),
   );
 
   const binThresholds = $derived(d3range(1, nBins).map(segmentScale));
 
-  const binner = $derived(
-    bin().domain([domainXMin, domainXMax]).thresholds(binThresholds),
-  );
+  const binner = $derived(bin().domain([minX, maxX]).thresholds(binThresholds));
+
   const clampedDistribution = $derived(
-    distribution.map((d) => Math.min(Math.max(d, domainXMin), domainXMax)),
+    distribution.map((d) => Math.min(Math.max(d, minX), maxX)),
   );
 
   const binnedDistribution = $derived(
@@ -126,7 +111,7 @@
         .colors(2);
 
       const averageNormalised =
-        (averageValue - xTickFirst) / (xTickLast - xTickFirst);
+        (averageValue - xValueFirst) / (xValueLast - xValueFirst);
 
       const binColors = chroma
         .scale([extremeColors[0], midColor, extremeColors[1]])
@@ -150,8 +135,8 @@
       if (
         !midColor ||
         averageValue == null ||
-        xTickFirst == null ||
-        xTickLast == null
+        xValueFirst == null ||
+        xValueLast == null
       ) {
         return [];
       }
@@ -159,8 +144,6 @@
 
     return interpolateColors(startColor, endColor, nBins, midColor, skew);
   });
-
-  $inspect({ colorScale });
 
   const layout = $derived.by(() => {
     let y = 0;
@@ -194,6 +177,7 @@
         {#if topLabel && layout.topLabelY !== null}
           <text x={0} y={layout.topLabelY + 14} fill="#666" font-size="0.75em">
             Number of areas
+            {minX}, {maxX}
           </text>
         {/if}
 
@@ -217,21 +201,28 @@
 
         <g transform="translate(0, {layout.chartY})">
           {#if showYAxis}
-            <Axis
-              bind:ticksArray={yTicks}
-              chartHeight={height}
-              chartWidth={containerWidth - padding}
-              orientation={{ axis: "y", position: "left" }}
-              min={minY}
-              max={maxY}
-              domain={[yTickLast, 0]}
-              range={[0, height]}
-              fontSize={0}
-              numberOfTicks={3}
-              {showGridlines}
+            <!-- <Axis
+              bind:axisDomain
+              bind:ticksArray={ticksDomain}
+              {chartHeight}
+              chartWidth={chartWidth - markerRadius * 2}
+              orientation={{ axis: "x", position: "bottom" }}
+              range={[markerRadius, chartWidth - markerRadius]}
+              domain={[xValueFirst, xValueLast]}
+              {min}
+              {max}
+              fontSize={14}
+              {floor}
+              {ceiling}
+              {numberOfTicks}
+              {polarity}
               {showTickMarks}
-              strokeWidth={tickStrokeWidth}
-            />
+              {showGridlines}
+              {labelFormatter}
+              {niceTicks}
+              {markerRadius}
+              {distribution}
+            ></Axis> -->
           {/if}
 
           {#each bins as bin, i}
@@ -247,18 +238,26 @@
                 height={yScale(bin.length)}
                 fill={fill ?? colorScale[i]}
               ></rect>
+              <text
+                x={(polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)) +
+                  offset}
+                y={height - yScale(bin.length)}
+                font-size={5}
+                >{bin.length} areas between
+                {Math.round(bin.x0)} and {Math.round(bin.x1)}
+              </text>
             {/key}
           {/each}
         </g>
 
         {#if showXAxis && layout.xAxisY !== null}
           <g transform="translate(0, {layout.xAxisY})">
-            <Axis
+            <!-- <Axis
               bind:ticksArray={xTicks}
               chartHeight={height}
               chartWidth={containerWidth - padding}
               orientation={{ axis: "x", position: "bottom" }}
-              domain={[xTickFirst, xTickLast]}
+              domain={[xValueFirst, xValueLast]}
               min={minX}
               max={maxX}
               range={useRange}
@@ -267,7 +266,7 @@
               {ceiling}
               {labelFormatter}
               {numberOfTicks}
-            />
+            /> -->
           </g>
         {/if}
       </g>
@@ -277,20 +276,27 @@
 
 <div style="content-visibility: hidden;">
   {#if !showXAxis}
-    <Axis
-      bind:ticksArray={xTicks}
-      chartHeight={height}
-      chartWidth={containerWidth - padding}
+    <!-- <Axis
+      bind:axisDomain
+      bind:ticksArray={ticksDomain}
+      {chartHeight}
+      chartWidth={chartWidth - markerRadius * 2}
       orientation={{ axis: "x", position: "bottom" }}
-      domain={[xTickFirst, xTickLast]}
-      min={minX}
-      max={maxX}
-      range={useRange}
-      fontSize={13}
+      range={[markerRadius, chartWidth - markerRadius]}
+      domain={[xValueFirst, xValueLast]}
+      {min}
+      {max}
+      fontSize={14}
       {floor}
       {ceiling}
-      {labelFormatter}
       {numberOfTicks}
-    ></Axis>
+      {polarity}
+      {showTickMarks}
+      {showGridlines}
+      {labelFormatter}
+      {niceTicks}
+      {markerRadius}
+      {distribution}
+    ></Axis> -->
   {/if}
 </div>

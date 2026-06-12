@@ -38,6 +38,8 @@
     strokeWidth = 2,
     labelFormatter = undefined as LabelFormatter | undefined,
     niceTicks = true,
+    leftPad = 0,
+    rightPad = 0,
   }: {
     ticksArray?: number[]; // bindable
     tickWidth: number;
@@ -55,8 +57,8 @@
     strokeWidth?: number;
     labelFormatter?: LabelFormatter;
     niceTicks?: Boolean;
-    leftPad?: Number;
-    rightPad?: Number;
+    leftPad?: number;
+    rightPad?: number;
   } = $props();
   // function axisValue(fn: any, tick: number): number {
   //   // Try single-call first: axisFunction(tick)
@@ -89,7 +91,11 @@
   let rawTicks = $derived(
     niceTicks
       ? ticks(...nice(min, max, computedTickCount), computedTickCount)
-      : [min, max],
+      : leftPad || rightPad
+        ? polarity === "standard"
+          ? [min + (max - min) * leftPad, max - (max - min) * rightPad]
+          : [min + (max - min) * rightPad, max - (max - min) * leftPad]
+        : [min, max],
   );
 
   let ticksOrdered = $derived(

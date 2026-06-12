@@ -20,7 +20,7 @@
 
   let {
     chartHeight = 100,
-    chartWidth = $bindable<number>(200),
+    chartWidth = 200,
     numberOfTicks = undefined as number | undefined,
     axisDomain = $bindable<number[]>([]),
     ticksArray = $bindable<number[]>([]),
@@ -66,19 +66,19 @@
     range?: [number, number];
     fontSize?: number;
     polarity?: Polarity;
-    gridlines?: Boolean;
+    gridlines?: boolean;
     strokeWidth?: number;
-    showGridlines?: Boolean;
-    showTickMarks?: Boolean;
-    niceTicks?: Boolean;
+    showGridlines?: boolean;
+    showTickMarks?: boolean;
+    niceTicks?: boolean;
     markerRadius?: number;
     distribution?: number[];
   } = $props();
 
-  let minTick = $derived(Math.min(...ticksArray));
-  let maxTick = $derived(Math.max(...ticksArray));
-  let minValue = $derived(Math.min(...distribution));
-  let maxValue = $derived(Math.max(...distribution));
+  let minTick = $derived(ticksArray.length ? Math.min(...ticksArray) : 0);
+  let maxTick = $derived(ticksArray.length ? Math.max(...ticksArray) : 1);
+  let minValue = $derived(distribution.length ? Math.min(...distribution) : 0);
+  let maxValue = $derived(distribution.length ? Math.max(...distribution) : 1);
 
   let leftPad = $derived(
     niceTicks
@@ -129,21 +129,6 @@
   );
   let heightForTicks = $derived(Math.max(0, chartHeight));
 
-  // function computeDefaultDomain(): [number, number] {
-  //   const arr =
-  //     (ticksArray && ticksArray.length ? ticksArray : [min, max]) ?? [];
-  //   const dMin =
-  //     floor ?? (arr.length ? arr.reduce((a, b) => (a < b ? a : b)) : 0);
-  //   const dMax =
-  //     ceiling ?? (arr.length ? arr.reduce((a, b) => (a > b ? a : b)) : 1);
-  //   return [dMin, dMax];
-  // }
-
-  // const tickDomain = $derived([minTick, maxTick]);
-  // let tickRange = $derived(
-  //   orientation.axis === "x" ? [0, widthForTicks] : [heightForTicks, 0],
-  // );
-
   function calculateFullAxisDomain(
     minTick,
     maxTick,
@@ -174,20 +159,6 @@
   $effect(() => {
     axisDomain = fullAxisDomain;
   });
-
-  // const resolvedScale = $derived(() => {
-  //   const base: ScaleContinuousNumeric<number, number> = scale
-  //     ? scale.copy()
-  //     : scaleLinear<number, number>();
-
-  //   base.domain(fullAxisDomain);
-
-  //   base.range(chartWidth);
-
-  //   return base;
-  // });
-
-  // const axisFunction: AxisProjector = $derived((v: number) => resolvedScale(v));
 </script>
 
 <g

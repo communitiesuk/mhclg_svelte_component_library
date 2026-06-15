@@ -97,13 +97,13 @@
   // Computed aria-describedby (shared between both versions)
   const computedAriaDescribedBy = $derived(
     describedBy ||
-    [
-      hint ? `${id}-hint` : null,
-      validationError || error ? `${id}-error` : null,
-    ]
-      .filter(Boolean)
-      .join(" ") ||
-    undefined,
+      [
+        hint ? `${id}-hint` : null,
+        validationError || error ? `${id}-error` : null,
+      ]
+        .filter(Boolean)
+        .join(" ") ||
+      undefined,
   );
 </script>
 
@@ -222,52 +222,34 @@
     </div>
   {/if}
 </div>
+
 <style>
-    .select-row {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: flex-end;
-        gap: 0.5rem;
-        width: 100%;
-    }
+  .select-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.5rem;
+    width: 100%;
+  }
 
-    .select-cell {
-        flex: 0 1 auto;
-        min-width: 0;
-        max-width: 100%;
-    }
+  .select-cell {
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 100%;
+  }
 
-    .select-addon {
-        display: flex;
-        align-items: stretch;
-        flex: 0 0 auto;
-    }
+  .select-addon {
+    display: flex;
+    align-items: stretch;
+    flex: 0 0 auto;
+  }
 
-    .select-cell :global(.govuk-select) {
-        max-width: 100%;
-        min-width: 0;
-        padding-right: 2.75rem;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    .select-cell :global(.select-auto-width),
-    .select-cell :global(.govuk-\!-width-full) {
-        inline-size: fit-content;
-        max-width: min(100%, 28rem);
-        min-width: 0;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
-    }
-
-    .select-addon :global(button),
-    .select-addon :global(a) {
-        height: 100%;
-    }
-
-    .select-addon :global(.govuk-button) {
-        margin-bottom: 0;
-    }
+  .govuk-select {
+    max-width: 100%;
+    min-width: 0;
+    padding-right: 2rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
 </style>

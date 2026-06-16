@@ -3,6 +3,9 @@
 
 name: Node.js Package
 
+permissions:
+  id-token: write
+
 on:
   release:
     types: [created]
@@ -15,6 +18,7 @@ jobs:
       - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903
         with:
           node-version: 20
+          package-manager-cache: false
       - run: npm ci
     #   - run: npm test
 

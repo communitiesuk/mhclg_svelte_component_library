@@ -3,13 +3,12 @@
   import { browser } from "$app/environment";
   import IconSearch from "../../icons/IconSearch.svelte";
   import crossIconUrl from "./../../assets/govuk_publishing_components/images/cross-icon.svg";
+
   type Option = { id: string | number; label: string };
-  type SelectedWithColor = Option & { color: string };
-  type SelectedItem = Option | SelectedWithColor;
 
   let {
     options = [],
-    selected = $bindable<SelectedItem[]>([]),
+    selected = $bindable<(string | number)[]>([]),
     colorArray = ["#808080"],
     placeholder = "Search and select…",
     label = "Choose options",
@@ -19,7 +18,7 @@
     resetButton = false,
   }: {
     options?: Option[];
-    selected?: SelectedItem[];
+    selected?: (string | number)[];
     colorArray?: string[];
     placeholder?: string;
     label?: string;
@@ -32,46 +31,38 @@
   let showDropdown = $state(false);
   let search = $state("");
 
-  let initialSelected = [];
+  // Internal color map: id → color
+  let colorMap = $state<Map<string | number, string>>(new Map());
+
+  // Stores the initial selected ids for reset support
+  let initialSelected: (string | number)[] = [];
 
   const isAtDefault = $derived(() => {
     if (!hasInitialSelection) return true;
-
-    const current = selected
-      .map((s) => s.id)
-      .sort()
-      .join(",");
-    const initial = initialSelected
-      .map((s) => s.id)
-      .sort()
-      .join(",");
-
+    const current = [...selected].sort().join(",");
+    const initial = [...initialSelected].sort().join(",");
     return current === initial;
   });
 
   const hasInitialSelection = $derived(() => initialSelected.length > 0);
 
   function resetToInitial() {
-    selected = initialSelected.map((item) => ({ ...item }));
+    selected = [...initialSelected];
+    // Prune colorMap to only keep ids in the reset selection
+    for (const id of colorMap.keys()) {
+      if (!selected.includes(id)) colorMap.delete(id);
+    }
     search = "";
     queueMicrotask(() => inputEl?.focus());
   }
 
-  // Cursor used ONLY when palette is exhausted (Option 2)
+  // Cursor used ONLY when palette is exhausted
   let colorCursor = $state(0);
 
   function nextColorPreferUnused(used?: Set<string>) {
     if (!Array.isArray(colorArray) || colorArray.length === 0) return "#808080";
 
-    const usedColors =
-      used ??
-      new Set(
-        selected
-          .filter(
-            (s): s is SelectedWithColor => "color" in s && !!(s as any).color,
-          )
-          .map((s) => (s as SelectedWithColor).color),
-      );
+    const usedColors = used ?? new Set(colorMap.values());
 
     // 1) Prefer unused
     const unused = colorArray.find((c) => !usedColors.has(c));
@@ -83,6 +74,7 @@
     return color;
   }
 
+  // Keep colorMap in sync with selected ids
   $effect(() => {
     if (!enableColors) return;
     if (!Array.isArray(selected)) return;
@@ -90,50 +82,41 @@
 
     if (colorCursor >= colorArray.length) colorCursor = 0;
 
-    const used = new Set(
-      selected
-        .filter(
-          (s): s is SelectedWithColor => "color" in s && !!(s as any).color,
-        )
-        .map((s) => (s as SelectedWithColor).color),
-    );
+    const used = new Set(colorMap.values());
 
-    let changed = false;
+    for (const id of selected) {
+      if (!colorMap.has(id)) {
+        const color = nextColorPreferUnused(used);
+        used.add(color);
+        colorMap.set(id, color);
+      }
+    }
 
-    const updated = selected.map((item) => {
-      if ("color" in item && (item as any).color) return item;
-
-      const color = nextColorPreferUnused(used);
-      used.add(color);
-      changed = true;
-
-      return { ...(item as Option), color };
-    });
-
-    if (changed) selected = updated;
+    // Prune removed ids
+    for (const id of colorMap.keys()) {
+      if (!selected.includes(id)) colorMap.delete(id);
+    }
   });
 
   const filteredOptions = $derived.by(() => {
     const q = search.trim().toLowerCase();
-    const selectedIds = new Set(selected.map((s) => s.id));
+    const selectedIds = new Set(selected);
 
     // remove already-selected
     const available = options
       .filter((o) => !selectedIds.has(o.id))
-      // ✅ alphabetical sort
-      .slice() // avoid mutating original
+      .slice()
       .sort((a, b) =>
         a.label.localeCompare(b.label, undefined, {
-          sensitivity: "base", // case-insensitive
-          numeric: true, // "Item 2" < "Item 10"
+          sensitivity: "base",
+          numeric: true,
         }),
       );
 
-    // apply search match after sort (or before—either is fine)
     const matched = q
       ? available.filter((o) => {
-          const label = o.label.toLowerCase();
-          return startsWithSearch ? label.startsWith(q) : label.includes(q);
+          const lbl = o.label.toLowerCase();
+          return startsWithSearch ? lbl.startsWith(q) : lbl.includes(q);
         })
       : available;
 
@@ -143,16 +126,15 @@
   function selectOption(option: Option) {
     if (enableColors) {
       const color = nextColorPreferUnused();
-      selected = [...selected, { ...option, color }];
-    } else {
-      selected = [...selected, option];
+      colorMap.set(option.id, color);
     }
-
+    selected = [...selected, option.id];
     search = "";
   }
 
-  function remove(id: Option["id"]) {
-    selected = selected.filter((s) => s.id !== id);
+  function remove(id: string | number) {
+    selected = selected.filter((s) => s !== id);
+    colorMap.delete(id);
   }
 
   // Close dropdown on outside click — browser only
@@ -167,7 +149,7 @@
   onMount(() => {
     if (!browser) return;
     if (resetButton === true) {
-      initialSelected = selected.map((item) => ({ ...item }));
+      initialSelected = [...selected];
     }
 
     function handleOutside(e: MouseEvent) {
@@ -182,6 +164,7 @@
 
   function clearAll() {
     selected = [];
+    colorMap = new Map();
     search = "";
     queueMicrotask(() => inputEl?.focus());
   }
@@ -220,36 +203,40 @@
             class="choices__list choices__list--multiple"
             aria-label="Selected items"
           >
-            {#each selected as item (item.id)}
-              <span class="choices__item">
-                {#if enableColors && "color" in item}
-                  <span
-                    class="choices__item-circle"
-                    style={`background:${(item as any).color}`}
-                  ></span>
-                {/if}
+            {#each selected as id (id)}
+              {@const item = options.find((o) => o.id === id)}
+              {#if item}
+                <span class="choices__item">
+                  {#if enableColors && colorMap.has(id)}
+                    <span
+                      class="choices__item-circle"
+                      style={`background:${colorMap.get(id)}`}
+                    ></span>
+                  {/if}
 
-                <span class="choices__item-label">{item.label}</span>
+                  <span class="choices__item-label">{item.label}</span>
 
-                <button
-                  type="button"
-                  class="choices__button"
-                  on:click|stopPropagation={() => remove(item.id)}
-                  aria-label={`Remove ${item.label}`}
-                  title={`Remove ${item.label}`}
-                >
-                  <img
-                    src={crossIconUrl}
-                    alt=""
-                    aria-hidden="true"
-                    width="18"
-                    height="18"
-                  />
-                </button>
-              </span>
+                  <button
+                    type="button"
+                    class="choices__button"
+                    on:click|stopPropagation={() => remove(id)}
+                    aria-label={`Remove ${item.label}`}
+                    title={`Remove ${item.label}`}
+                  >
+                    <img
+                      src={crossIconUrl}
+                      alt=""
+                      aria-hidden="true"
+                      width="18"
+                      height="18"
+                    />
+                  </button>
+                </span>
+              {/if}
             {/each}
           </div>
         {/if}
+
         {#if selected.length || (resetButton && hasInitialSelection && !isAtDefault)}
           <div class="choices__actions">
             {#if selected.length}
@@ -258,7 +245,7 @@
                 class="choices__clear-all"
                 on:click|stopPropagation={clearAll}
               >
-                Remove all selected
+                Clear all
               </button>
             {/if}
 
@@ -285,6 +272,7 @@
       </button>
     </div>
   </div>
+
   {#if showDropdown}
     <div
       class="choices__list choices__list--dropdown"
@@ -321,13 +309,13 @@
 
     --select-height: 46px;
     --item-height: 44px;
-    --addon-width: 46px; /* ✅ used for dropdown width alignment */
+    --addon-width: 46px;
   }
 
   :global(.gem-c-select-with-search) {
     display: block;
-    width: 100%; /* ✅ inherit parent width */
-    max-width: 100%; /* ✅ never exceed parent */
+    width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
   }
 
@@ -356,12 +344,11 @@
 
   .choices__search-row {
     display: flex;
-    flex-direction: row; /* side by side */
-    align-items: flex-start; /* ✅ align items to bottom of row */
+    flex-direction: row;
+    align-items: flex-start;
     gap: 0;
   }
 
-  /* ✅ ONE box around input + divider + chips */
   :global(.gem-c-select-with-search) .choices__box {
     border: 2px solid var(--govuk-black);
     border-radius: 0;
@@ -370,15 +357,13 @@
     flex: 1 1 auto;
     min-width: 0;
 
-    /* ✅ stacks input, divider, chips in one box */
     display: flex;
     flex-direction: column;
 
-    padding-right: 0; /* reserve space for button */
+    padding-right: 0;
     box-sizing: border-box;
   }
 
-  /* Yellow focus ring around WHOLE box */
   :global(.gem-c-select-with-search) .choices.is-focused .choices__box,
   :global(.gem-c-select-with-search) .choices.is-open .choices__box {
     outline: 3px solid var(--govuk-focus);
@@ -410,14 +395,13 @@
     outline: none;
   }
 
-  /* ✅ Divider is now an internal border line */
   .ms-divider {
     border-top: 1px solid var(--govuk-grey);
     margin: 0 5px;
   }
 
   /* ========================================
-     MULTI SELECT CHIPS (now INSIDE the same box)
+     MULTI SELECT CHIPS
   ======================================== */
 
   :global(.gem-c-select-with-search) .choices__list--multiple {
@@ -427,9 +411,9 @@
     gap: 4px 10px;
     width: 100%;
 
-    border-top: 1px solid var(--govuk-grey); /* ✅ the ONE divider */
-    margin: 0 5px; /* aligns with input padding */
-    padding: 8px 8px 10px; /* slightly nicer spacing */
+    border-top: 1px solid var(--govuk-grey);
+    margin: 0 5px;
+    padding: 8px 8px 10px;
     width: calc(100% - 10px);
 
     box-sizing: border-box;
@@ -526,12 +510,12 @@
   ======================================== */
 
   .search-addon-btn {
-    width: var(--addon-width); /* keeps the width fixed */
-    height: var(--select-height); /* match the input box height */
+    width: var(--addon-width);
+    height: var(--select-height);
     display: inline-flex;
-    align-items: center; /* center the icon vertically */
-    justify-content: center; /* center the icon horizontally */
-    background-color: var(--govuk-blue); /* keep the blue */
+    align-items: center;
+    justify-content: center;
+    background-color: var(--govuk-blue);
     color: #fff;
     border: 0;
     padding: 0;
@@ -555,12 +539,10 @@
   }
 
   :global(.gem-c-select-with-search) .choices__list--dropdown {
-    /* IMPORTANT: ensure it participates in normal layout */
     position: static !important;
-    inset: auto !important; /* cancels top/left/right/bottom if set somewhere */
+    inset: auto !important;
     transform: none !important;
 
-    /* layout */
     display: block !important;
     width: 100%;
     box-sizing: border-box;
@@ -572,7 +554,7 @@
 
     max-height: 300px;
     overflow-y: auto;
-    z-index: auto; /* z-index not needed when in normal flow */
+    z-index: auto;
     width: calc(100% - var(--addon-width));
     margin-left: 0;
   }
@@ -586,8 +568,8 @@
     width: 100%;
 
     box-sizing: border-box;
-    flex: 0 0 auto; /* don't shrink into columns */
-    white-space: normal; /* allow wrappintext */
+    flex: 0 0 auto;
+    white-space: normal;
   }
 
   :global(.gem-c-select-with-search)
@@ -607,6 +589,7 @@
     color: white;
     cursor: pointer;
   }
+
   :global(.gem-c-select-with-search) .choices__list--dropdown {
     display: block !important;
   }
@@ -624,7 +607,6 @@
     margin-bottom: 0 !important;
   }
 
-  /* Only when chips are present: make the inner section visually merge into chips */
   :global(.gem-c-select-with-search)
     .choices.is-open
     .choices__box:has(.choices__list--multiple)
@@ -634,23 +616,20 @@
     .choices__box:has(.choices__list--multiple)
     .choices__inner {
     border-bottom: 0;
-    padding-bottom: 0; /* optional: removes gap above the divider */
+    padding-bottom: 0;
   }
 
   :global(.gem-c-select-with-search) .choices.is-focused .choices__box,
   :global(.gem-c-select-with-search) .choices.is-open .choices__box {
     outline: none;
-    /* keep a subtle black inset so focus isn't invisible */
     box-shadow: inset 0 0 0 2px var(--govuk-black);
   }
 
-  /* Remove yellow outline on the blue search button */
   .search-addon-btn:focus-visible {
     outline: none;
     box-shadow: inset 0 0 0 3px var(--govuk-black);
   }
 
-  /* Remove yellow outline on the chip remove buttons */
   :global(.gem-c-select-with-search)
     .choices[data-type*="select-multiple"]
     .choices__button:focus {
@@ -659,22 +638,15 @@
   }
 
   .choices__actions {
-    /* stack inside the box under chips */
     display: block;
     width: 100%;
     box-sizing: border-box;
 
-    /* spacing aligned with your chips area */
     margin: 0 5px;
     width: calc(100% - 10px);
     padding: 8px 8px 10px;
 
-    /* optional divider line (remove if you don't want another line) */
-    .choices__actions {
-      border-top: 0;
-    }
-
-    text-align: left; /* keeps it looking like it belongs "under" */
+    text-align: left;
   }
 
   .choices__clear-all {
@@ -689,7 +661,7 @@
   }
 
   .choices__clear-all:hover {
-    color: #003078; /* slightly darker GOV.UK blue */
+    color: #003078;
   }
 
   .choices__clear-all:focus-visible {
@@ -700,7 +672,7 @@
   }
 
   :global(.gem-c-select-with-search) .choices__list--dropdown {
-    margin: 0 !important; /* ✅ kills the 16px */
+    margin: 0px 1px !important;
     padding: 0;
   }
 

@@ -225,19 +225,31 @@
 
 <style>
   .select-row {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    align-items: stretch;
-    column-gap: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0.5rem;
+    width: 100%;
   }
 
   .select-cell {
+    flex: 0 1 auto;
     min-width: 0;
+    max-width: 100%;
   }
 
   .select-addon {
     display: flex;
-    align-items: stretch; /* match .choices container height */
-    max-height: 46px;
+    align-items: stretch;
+    flex: 0 0 auto;
+  }
+
+  .govuk-select {
+    max-width: 100%;
+    min-width: 0;
+    padding-right: 2rem;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 </style>

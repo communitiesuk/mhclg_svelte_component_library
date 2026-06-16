@@ -3,9 +3,6 @@
 
 name: Node.js Package
 
-permissions:
-  id-token: write
-
 on:
   release:
     types: [created]
@@ -28,11 +25,10 @@ jobs:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
       - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903
         with:
-          node-version: 24
+          node-version: 20
           registry-url: https://registry.npmjs.org/
-          package-manager-cache: false
       - run: npm ci
       - run: npm --version
       - run: npm publish
-        # env:
-        #   NODE_AUTH_TOKEN: ${{secrets.npm_token}}
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}

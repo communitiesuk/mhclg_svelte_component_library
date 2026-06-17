@@ -16,7 +16,10 @@ jobs:
         with:
           node-version: 20
       - run: npm ci
-  publish:
+    #   - run: npm test
+
+  publish-npm:
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8
@@ -25,7 +28,6 @@ jobs:
           node-version: 20
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: npm --version
       - run: npm publish
         env:
-          NODE_AUTH_TOKEN: ${{secrets.npm_token_2}}
+          NODE_AUTH_TOKEN: ${{secrets.npm_token}}

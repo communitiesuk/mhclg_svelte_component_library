@@ -4,16 +4,13 @@
     detailedText,
     renderStringAsHTML = false,
     noInset = false,
+    overlapBelow = false,
     expanded = $bindable(false),
-    groupName
+    groupName = undefined,
   } = $props();
 </script>
 
-<details
-        class="govuk-details"
-        open={expanded}
-        name={groupName}
->
+<details class="govuk-details" open={expanded} name={groupName}>
   {#if renderStringAsHTML}
     <summary class="govuk-details__summary-text">
       {@html summaryText}
@@ -22,8 +19,10 @@
     <summary class="govuk-details__summary-text">{summaryText}</summary>
   {/if}
 
-  <div class={`govuk-details__text ${noInset === true ? 'no-inset' : ''}`}>
-    {#if typeof detailedText === 'string'}
+  <div
+    class={`govuk-details__text ${noInset === true ? "no-inset" : ""} ${overlapBelow === true ? "overlap-below" : ""}`}
+  >
+    {#if typeof detailedText === "string"}
       {#if renderStringAsHTML}
         {@html detailedText}
       {:else}
@@ -39,5 +38,14 @@
   .no-inset {
     padding: 0;
     border: 0;
+  }
+
+  details {
+    position: relative;
+  }
+
+  .overlap-below {
+    position: absolute;
+    background-color: white;
   }
 </style>

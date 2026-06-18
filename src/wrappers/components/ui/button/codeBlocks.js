@@ -1,32 +1,40 @@
 export const codeBlock1 = `
+<Button textContent="Click me" buttonType="default"></Button>`;
+
+export const codeBlock2 = `
 <script>
 
-  import Template from "$lib/package-wrapping/Template.svelte";
+    let name = "";
+    let confirmed = $state(false);
+
+    function handleSubmit(event) {
+      event.preventDefault();
+      confirmed = true;
+    }
 
 </script>
 
-<Template
-checkboxProp={true}
-dropdownProp="Dragonfruit"
-jsObjectProp={[
-  {
-    name: "Borussia Dortmund",
-    country: "Germany",
-    color: "#fdff7d",
-  },
-  { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-  {
-    name: "SSC Napoli",
-    country: "Italy",
-    color: "#69bfff",
-  },
-  {
-    name: "S.L. Benfica",
-    country: "Portugal",
-    color: "#ff8c96",
-  },
-]}
-functionProp={function (event, pokemon) {
-  window.alert("Example 1 functionProp has been triggered.");
+    <form onsubmit={handleSubmit}>
+      <label
+        >Enter your name:
+        <input type="text" name="username" required /></label
+      >
+      <Button typeAttribute="submit" textContent="Submit a form"></Button>
+    </form>
+    {#if confirmed}
+      <p style="color: green;">Form submitted successfully!</p>
+    {/if}`;
+
+export const codeBlock3 = `
+<Button textContent="Start" buttonType="start"></Button>`;
+
+export const codeBlock4 = `
+<Button buttonType="moreInfo"></Button>`;
+
+export const codeBlock5 = `
+<Button
+buttonType="default"
+onClickFunction={function () {
+  console.log("Button clicked");
 }}
-></Template>`;
+></Button>`;

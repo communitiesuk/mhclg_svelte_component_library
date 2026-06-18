@@ -2,172 +2,112 @@
   import Icon from "./../../assets/icons/MaterialIcon.svelte";
 
   let {
-    textContent = undefined,
-    buttonType,
-    componentNameProp = undefined,
-    onClickFunction = undefined,
-    noPadding = false,
+    textContent = "Click me",
+    buttonType = "default",
+    onClickFunction = function () {
+      window.alert(`The button function has been triggered by a click.`);
+    },
+    onKeydownFunction = function () {
+      window.alert(`The button function has been triggered by pressing a key.`);
+    },
+    typeAttribute = "button",
   } = $props();
 
-  let buttonClass = $derived(
-    buttonType === "default"
-      ? "govuk-button"
-      : buttonType === "secondary"
-        ? "govuk-button govuk-button--secondary"
-        : buttonType === "warning"
-          ? "govuk-button govuk-button--warning"
-          : buttonType === "dark background"
-            ? "govuk-button govuk-button--inverse"
-            : undefined,
-  );
+  const buttonClasses = {
+    default: "govuk-button",
+    secondary: "govuk-button govuk-button--secondary",
+    warning: "govuk-button govuk-button--warning",
+    darkBackground: "govuk-button govuk-button--inverse",
+    moreInfo: "more-info-button",
+    start: "govuk-button govuk-button--start",
+    tableHeader: "text-header",
+  };
+
+  let buttonClass = $derived(buttonClasses[buttonType]);
 </script>
 
-{#if noPadding}
-  {#if buttonType === "moreInfo"}
-    <div>
-      <button class="more-info-button" onclick={onClickFunction}>
-        <Icon kind="info" />
-      </button>
-    </div>
-  {:else if buttonType === "start"}
-    <a
-      href={"#"}
-      role="button"
-      draggable="false"
-      class="govuk-button govuk-button--start"
-      data-module="govuk-button"
-      onclick={onClickFunction}
+{#if ["default", "secondary", "warning", "darkBackground"].includes(buttonType)}
+  <button
+    type={typeAttribute}
+    class={buttonClass}
+    onclick={onClickFunction}
+    onkeydown={onKeydownFunction}
+  >
+    {textContent}
+  </button>
+{:else if buttonType === "disabled"}
+  <button
+    type={typeAttribute}
+    class={buttonClass}
+    onclick={onClickFunction}
+    onkeydown={onKeydownFunction}
+    disabled
+    aria-disabled="true"
+  >
+    {textContent}
+  </button>
+{:else if buttonType === "moreInfo"}
+  <button
+    type={typeAttribute}
+    class={buttonClass}
+    onclick={onClickFunction}
+    onkeydown={onKeydownFunction}
+    aria-label="More information"
+  >
+    <Icon kind="info" />
+  </button>
+{:else if buttonType === "tableHeader"}
+  <button
+    type={typeAttribute}
+    class={buttonClass}
+    onclick={onClickFunction}
+    onkeydown={onKeydownFunction}
+  >
+    {textContent}
+    <svg
+      width="22"
+      height="22"
+      focusable="false"
+      aria-hidden="true"
+      role="img"
+      viewBox="0 0 22 22"
+      fill="currentColor"
+      xmlns="http://www.w3.org/2000/svg"
     >
-      {textContent}
-      <svg
-        class="govuk-button__start-icon"
-        xmlns="http://www.w3.org/2000/svg"
-        width="17.5"
-        height="19"
-        viewBox="0 0 33 40"
-        aria-hidden="true"
-        focusable="false"
-      >
-        <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
-      </svg>
-    </a>
-  {:else if buttonType === "disabled"}
-    <button
-      type="submit"
-      disabled
-      aria-disabled="true"
-      class="govuk-button"
-      data-module="govuk-button"
-      onclick={onClickFunction}
-    >
-      {textContent}
-    </button>
-  {:else if buttonType === "table header"}
-    <button type="button" class="text-header" onclick={onClickFunction}>
-      {textContent}
-      <svg
-        width="22"
-        height="22"
-        focusable="false"
-        aria-hidden="true"
-        role="img"
-        viewBox="0 0 22 22"
+      <path
+        class="top-triangle"
+        d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
         fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          class="top-triangle"
-          d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
-          fill="currentColor"
-        ></path>
-        <path
-          class="bottom-triangle"
-          d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
-          fill="currentColor"
-        ></path>
-      </svg>
-    </button>
-  {:else}
-    <button
-      type="submit"
-      class={buttonClass}
-      data-module="govuk-button"
-      onclick={onClickFunction}
+      ></path>
+      <path
+        class="bottom-triangle"
+        d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
+        fill="currentColor"
+      ></path>
+    </svg>
+  </button>
+{:else if buttonType === "start"}
+  <a
+    href={"#"}
+    role="button"
+    draggable="false"
+    class={buttonClass}
+    onclick={onClickFunction}
+    onkeydown={onKeydownFunction}
+  >
+    {textContent}
+    <svg
+      class="govuk-button__start-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="17.5"
+      height="19"
+      viewBox="0 0 33 40"
+      aria-hidden="true"
+      focusable="false"
     >
-      {textContent}
-    </button>
-  {/if}
-{:else}
-  <div class="p-4">
-    {#if buttonType === "start"}
-      <a
-        href={"#"}
-        role="button"
-        draggable="false"
-        class="govuk-button govuk-button--start"
-        data-module="govuk-button"
-        onclick={onClickFunction}
-      >
-        {textContent}
-        <svg
-          class="govuk-button__start-icon"
-          xmlns="http://www.w3.org/2000/svg"
-          width="17.5"
-          height="19"
-          viewBox="0 0 33 40"
-          aria-hidden="true"
-          focusable="false"
-        >
-          <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
-        </svg>
-      </a>
-    {:else if buttonType === "disabled"}
-      <button
-        type="submit"
-        disabled
-        aria-disabled="true"
-        class="govuk-button"
-        data-module="govuk-button"
-        onclick={onClickFunction}
-      >
-        {textContent}
-      </button>
-    {:else if buttonType === "table header"}
-      <button type="button" class="text-header" onclick={onClickFunction}>
-        {textContent}
-        <svg
-          width="22"
-          height="22"
-          focusable="false"
-          aria-hidden="true"
-          role="img"
-          viewBox="0 0 22 22"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            class="top-triangle"
-            d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
-            fill="currentColor"
-          ></path>
-          <path
-            class="bottom-triangle"
-            d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
-            fill="currentColor"
-          ></path>
-        </svg>
-      </button>
-    {:else}
-      <button
-        type="button"
-        class={buttonClass}
-        data-module="govuk-button"
-        onclick={onClickFunction}
-      >
-        {textContent}
-      </button>
-    {/if}
-  </div>
+      <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
+    </svg>
+  </a>
 {/if}
 
 <style>

@@ -4,15 +4,43 @@
   import CodeBlock from "$lib/package-wrapping/CodeBlock.svelte";
   import * as codeBlocks from "./codeBlocks.js";
 
-import Button from "$lib/components/ui/Button.svelte";
+  import Button from "$lib/components/ui/Button.svelte";
 
   let accordionSnippetSections = [
     {
       id: "1",
-      heading: "1. Example 1 - describe the use case here",
+      heading: "1. Example 1 - default button",
       content: Example1,
     },
+    {
+      id: "2",
+      heading: "2. Example 2 - button for a form",
+      content: Example2,
+    },
+    {
+      id: "3",
+      heading: "3. Example 3 - start button",
+      content: Example3,
+    },
+    {
+      id: "4",
+      heading: "4. Example 4 - more info icon button",
+      content: Example4,
+    },
+    {
+      id: "5",
+      heading: "5. Example 5 - specify the on click function",
+      content: Example5,
+    },
   ];
+
+  let name = "";
+  let confirmed = $state(false);
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    confirmed = true;
+  }
 </script>
 
 <div class="my-20 p-2">
@@ -37,32 +65,66 @@ import Button from "$lib/components/ui/Button.svelte";
 
 {#snippet Example1()}
   <div class="p-5 bg-white">
-    <Template
-      componentNameProp="Example 1"
-      checkboxProp={true}
-      dropdownProp="Dragonfruit"
-      jsObjectProp={[
-        {
-          name: "Borussia Dortmund",
-          country: "Germany",
-          color: "#fdff7d",
-        },
-        { name: "Liverpool FC", country: "UK", color: "#f59fad" },
-        {
-          name: "SSC Napoli",
-          country: "Italy",
-          color: "#69bfff",
-        },
-        {
-          name: "S.L. Benfica",
-          country: "Portugal",
-          color: "#ff8c96",
-        },
-      ]}
-      functionProp={function () {
-        window.alert(`Example 1 functionProp has been triggered.`);
-      }}
-    ></Template>
+    <Button textContent="Click me" buttonType="default"></Button>
   </div>
   <CodeBlock code={codeBlocks.codeBlock1} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example2()}
+  <div class="p-5 bg-white">
+    <p>
+      Use the typeAttribute prop to set the button's type attribute. If the
+      button is being used to submit a form set the type to 'submit';
+    </p>
+    <form onsubmit={handleSubmit}>
+      <label
+        >Enter your name:
+        <input type="text" name="username" required /></label
+      >
+      <Button typeAttribute="submit" textContent="Submit a form"></Button>
+    </form>
+    {#if confirmed}
+      <p style="color: green;">Form submitted successfully!</p>
+    {/if}
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock2} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example3()}
+  <div class="p-5 bg-white">
+    <p>
+      Use a start button for the main call to action on your service’s Start
+      page. Start buttons do not usually submit form data so a link tag is used
+      instead of a button tag.
+    </p>
+    <Button textContent="Start" buttonType="start"></Button>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock3} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example4()}
+  <div class="p-5 bg-white">
+    <p>
+      Use the more info icon button to give users access to information that you
+      want hidden by default.
+    </p>
+    <Button buttonType="moreInfo"></Button>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock4} language="svelte"></CodeBlock>
+{/snippet}
+
+{#snippet Example5()}
+  <div class="p-5 bg-white">
+    <p>
+      Use the more info icon button to give users access to information that you
+      want hidden by default.
+    </p>
+    <Button
+      buttonType="default"
+      onClickFunction={function () {
+        console.log("Button clicked");
+      }}
+    ></Button>
+  </div>
+  <CodeBlock code={codeBlocks.codeBlock5} language="svelte"></CodeBlock>
 {/snippet}

@@ -162,12 +162,6 @@
   let parametersSourceArray = $derived(
     addIndexAndInitalValue([
       {
-        name: "componentNameProp",
-        category: "Input props",
-        propType: "fixed",
-        value: pageName,
-      },
-      {
         name: "textContent",
         category: "Input props",
         value: `Click me`,
@@ -187,9 +181,10 @@
           "secondary",
           "start",
           "warning",
-          "dark background",
+          "darkBackground",
           "disabled",
-          "table header",
+          "tableHeader",
+          "moreInfo",
         ],
         description: {
           markdown: true,
@@ -212,6 +207,18 @@
           markdown: true,
           arr: [
             `This prop passes a function to the <code>${pageName}</code> component that is executed when the button is clicked`,
+          ],
+        },
+        rows: 5,
+      },
+      {
+        name: "typeAttribute",
+        category: "Input props",
+        options: ["button", "submit", "reset"],
+        description: {
+          markdown: true,
+          arr: [
+            `This sets the 'type' attribute for the <button> element. It must have a value of 'button', 'submit' or 'reset'.`,
           ],
         },
         rows: 5,

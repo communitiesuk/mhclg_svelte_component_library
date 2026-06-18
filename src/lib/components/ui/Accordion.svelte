@@ -17,7 +17,7 @@
     rememberIsExpandedState = true,
     headingLevel = "h4",
     useCustomSectionIcon = false,
-    useDownloadAccordionStyles = false,
+    useLightweightAccordionStyles = false,
   }: {
     sections: {
       heading: string;
@@ -37,7 +37,7 @@
     rememberIsExpandedState?: boolean;
     headingLevel?: string;
     useCustomSectionIcon?: boolean;
-    useDownloadAccordionStyles?: boolean;
+    useLightweightAccordionStyles?: boolean;
   } = $props();
 
   // Attempt to ensure that ids are unique by attaching extra characters
@@ -64,6 +64,7 @@
   let allExpanded = $derived(expandedSections.size === sections.length);
 
   let ariaLiveValue: "polite" | "off" | "assertive" | null | undefined =
+          $state("polite");
 
   function toggleSection(uniqueid: string) {
     if (expandedSections.has(uniqueid)) {
@@ -71,7 +72,6 @@
     } else {
       expandedSections.add(uniqueid);
     }
-    //Announce the contents change when an accoridion section is expanded
 
     ariaLiveValue = "polite";
   }
@@ -84,17 +84,13 @@
     } else {
       expandedSections.clear();
     }
-    //Don't announce all of the changes when we open all sections - this gets noisy and the content isn't associated with the label
 
     ariaLiveValue = "off";
   }
 
-  // Only use session storage logic if rememberIsExpandedState is true
   onMount(() => {
     if (rememberIsExpandedState) {
       uniqueSections.forEach((section) => {
-        // If the section is explicitly expanded, respect that.
-        // Otherwise, try to restore from session storage.
         if (section.expanded) {
           expandedSections.add(section.uniqueid);
         } else {
@@ -105,7 +101,6 @@
         }
       });
     } else {
-      // If rememberIsExpandedState is false, just respect the initial `section.expanded` values
       uniqueSections.forEach((section) => {
         if (section.expanded) {
           expandedSections.add(section.uniqueid);
@@ -114,7 +109,6 @@
     }
   });
 
-  // Effect to update sessionStorage when uniqueSections change
   $effect(() => {
     if (rememberIsExpandedState) {
       uniqueSections.forEach((section) => {
@@ -129,7 +123,7 @@
 
 <div
         class="govuk-accordion"
-        class:govuk-accordion--download-style={useDownloadAccordionStyles}
+        class:govuk-accordion--download-style={useLightweightAccordionStyles}
         data-module="govuk-accordion"
         id="accordion-default"
 >

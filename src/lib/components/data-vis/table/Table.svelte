@@ -8,7 +8,13 @@
     colourScale = undefined,
   } = $props();
 
-  let localCopyOfData = $derived([...data]);
+  let localCopyOfData = $state([...data]);
+
+
+  $effect(() => {
+    localCopyOfData = [...data];
+  });
+
 
   function hasUniqueValues(array, key) {
     const seen = new Set();
@@ -182,15 +188,15 @@
                     'Higher is better'
                       ? normToColor(row[column.key + '__normalised'])
                       : normToColorReverse(row[column.key + '__normalised'])}"
-                    >{row[column.key]}</td
+                    >{@html row[column.key]}</td
                   >
                 {:else}
                   <td class="govuk-table__cell govuk-table__cell--numeric"
-                    >{row[column.key]}</td
+                    >{@html row[column.key]}</td
                   >
                 {/if}
               {:else}
-                <td class="govuk-table__cell">{row[column.key]}</td>
+                <td class="govuk-table__cell">{@html row[column.key]}</td>
               {/if}
             {/each}
           </tr>

@@ -2,6 +2,7 @@
   let {
     summaryText,
     detailedText,
+    renderHeadingAsHTML = false,
     renderStringAsHTML = false,
     noInset = false,
     overlapBelow = false,
@@ -11,7 +12,7 @@
 </script>
 
 <details class="govuk-details" open={expanded} name={groupName}>
-  {#if renderStringAsHTML}
+  {#if renderHeadingAsHTML}
     <summary class="govuk-details__summary-text">
       {@html summaryText}
     </summary>

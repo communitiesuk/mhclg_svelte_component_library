@@ -3,7 +3,7 @@
 
   let {
     data = [],
-    metaData = {},
+    metadata = {},
     caption = undefined,
     colourScale = undefined,
   } = $props();
@@ -50,9 +50,9 @@
   });
 
   const metrics = $derived(
-          columns
-                  .filter((column) => column.dataType === "number")
-                  .map((column) => column.key),
+    columns
+      .filter((column) => column.dataType === "number")
+      .map((column) => column.key),
   );
 
   function updateSortState(columnToSort, sortOrder) {
@@ -61,7 +61,8 @@
   }
 
   function sortFunction() {
-    if (!localCopyOfData.length || !sortState.column || !sortState.order) return;
+    if (!localCopyOfData.length || !sortState.column || !sortState.order)
+      return;
 
     const sorted = [...localCopyOfData];
 
@@ -76,11 +77,11 @@
     if (typeof sorted[0][sortState.column] === "string") {
       if (sortState.order === "ascending") {
         sorted.sort((a, b) =>
-                a[sortState.column].localeCompare(b[sortState.column]),
+          a[sortState.column].localeCompare(b[sortState.column]),
         );
       } else {
         sorted.sort((a, b) =>
-                b[sortState.column].localeCompare(a[sortState.column]),
+          b[sortState.column].localeCompare(a[sortState.column]),
         );
       }
     }
@@ -110,8 +111,7 @@
         const { min, max } = minAndMaxValues[metric];
         const value = row[metric];
 
-        const normalisedValue =
-                max === min ? 0.5 : (value - min) / (max - min);
+        const normalisedValue = max === min ? 0.5 : (value - min) / (max - min);
 
         rowWithNorms[`${metric}__normalised`] = normalisedValue;
       }
@@ -159,7 +159,10 @@
     <div class="legend">
       <div>Colour key:</div>
       {#each colorKey as key}
-        <div class="color-keys" style={`background-color: ${normToColor(key[1])}`}>
+        <div
+          class="color-keys"
+          style={`background-color: ${normToColor(key[1])}`}
+        >
           {key[0]}
         </div>
       {/each}
@@ -171,62 +174,63 @@
 
     <table class="govuk-table" data-module="moj-sortable-table">
       <thead class="govuk-table__head">
-      <tr class="govuk-table__row">
-        {#each columns as column}
-          <th
-                  scope="col"
-                  class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
-                  title={metaData[column.key]?.explainer}
-                  aria-sort={
-                sortState.column !== column.key || sortState.order === null
-                  ? "none"
-                  : sortState.order === "descending"
-                    ? "descending"
-                    : "ascending"
-              }
-          >
-            <div class="header">
-              <Button
-                      textContent={metaData[column.key]?.shortLabel ?? column.key}
-                      buttonType={"table header"}
-                      direction={sortState.column === column.key ? sortState.order : null}
-                      onClickFunction={() => handleSort(column.key)}
-              ></Button>
-            </div>
-          </th>
-        {/each}
-      </tr>
+        <tr class="govuk-table__row">
+          {#each columns as column}
+            <th
+              scope="col"
+              class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
+              title={metadata[column.key]?.explainer}
+              aria-sort={sortState.column !== column.key ||
+              sortState.order === null
+                ? "none"
+                : sortState.order === "descending"
+                  ? "descending"
+                  : "ascending"}
+            >
+              <div class="header">
+                <Button
+                  textContent={metadata[column.key]?.shortLabel ?? column.key}
+                  buttonType={"table header"}
+                  direction={sortState.column === column.key
+                    ? sortState.order
+                    : null}
+                  onClickFunction={() => handleSort(column.key)}
+                ></Button>
+              </div>
+            </th>
+          {/each}
+        </tr>
       </thead>
 
       <tbody class="govuk-table__body">
-      {#each displayRows as row}
-        <tr class="govuk-table__row">
-          {#each columns as column}
-            {#if column.dataType === "number"}
-              {#if colourScale === "On"}
-                <td
-                        class="govuk-table__cell govuk-table__cell--numeric"
-                        style={`background-color: ${
-                      metaData[column.key]?.direction === "Higher is better"
+        {#each displayRows as row}
+          <tr class="govuk-table__row">
+            {#each columns as column}
+              {#if column.dataType === "number"}
+                {#if colourScale === "On"}
+                  <td
+                    class="govuk-table__cell govuk-table__cell--numeric"
+                    style={`background-color: ${
+                      metadata[column.key]?.direction === "Higher is better"
                         ? normToColor(row[column.key + "__normalised"])
                         : normToColorReverse(row[column.key + "__normalised"])
                     }`}
-                >
-                  {@html row[column.key]}
-                </td>
+                  >
+                    {@html row[column.key]}
+                  </td>
+                {:else}
+                  <td class="govuk-table__cell govuk-table__cell--numeric">
+                    {@html row[column.key]}
+                  </td>
+                {/if}
               {:else}
-                <td class="govuk-table__cell govuk-table__cell--numeric">
+                <td class="govuk-table__cell">
                   {@html row[column.key]}
                 </td>
               {/if}
-            {:else}
-              <td class="govuk-table__cell">
-                {@html row[column.key]}
-              </td>
-            {/if}
-          {/each}
-        </tr>
-      {/each}
+            {/each}
+          </tr>
+        {/each}
       </tbody>
     </table>
   </div>

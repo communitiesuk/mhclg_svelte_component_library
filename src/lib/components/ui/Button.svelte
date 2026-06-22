@@ -7,162 +7,257 @@
     componentNameProp = undefined,
     onClickFunction = undefined,
     noPadding = false,
+    direction = null, // "ascending" | "descending" | null
+    disabled = false,
   } = $props();
 
   let buttonClass = $derived(
-    buttonType === "default"
-      ? "govuk-button"
-      : buttonType === "secondary"
-        ? "govuk-button govuk-button--secondary"
-        : buttonType === "warning"
-          ? "govuk-button govuk-button--warning"
-          : buttonType === "dark background"
-            ? "govuk-button govuk-button--inverse"
-            : undefined,
+          buttonType === "default"
+                  ? "govuk-button"
+                  : buttonType === "secondary"
+                          ? "govuk-button govuk-button--secondary"
+                          : buttonType === "warning"
+                                  ? "govuk-button govuk-button--warning"
+                                  : buttonType === "dark background"
+                                          ? "govuk-button govuk-button--inverse"
+                                          : undefined,
   );
 </script>
 
 {#if noPadding}
   {#if buttonType === "moreInfo"}
     <div>
-      <button class="more-info-button" onclick={onClickFunction}>
+      <button class="more-info-button" type="button" onclick={onClickFunction}>
         <Icon kind="info" />
       </button>
     </div>
+
   {:else if buttonType === "start"}
     <a
-      href={"#"}
-      role="button"
-      draggable="false"
-      class="govuk-button govuk-button--start"
-      data-module="govuk-button"
-      onclick={onClickFunction}
+            href="#"
+            role="button"
+            draggable="false"
+            class="govuk-button govuk-button--start"
+            data-module="govuk-button"
+            onclick={onClickFunction}
     >
       {textContent}
       <svg
-        class="govuk-button__start-icon"
-        xmlns="http://www.w3.org/2000/svg"
-        width="17.5"
-        height="19"
-        viewBox="0 0 33 40"
-        aria-hidden="true"
-        focusable="false"
+              class="govuk-button__start-icon"
+              xmlns="http://www.w3.org/2000/svg"
+              width="17.5"
+              height="19"
+              viewBox="0 0 33 40"
+              aria-hidden="true"
+              focusable="false"
       >
         <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
       </svg>
     </a>
+
   {:else if buttonType === "disabled"}
     <button
-      type="submit"
-      disabled
-      aria-disabled="true"
-      class="govuk-button"
-      data-module="govuk-button"
-      onclick={onClickFunction}
+            type="submit"
+            disabled
+            aria-disabled="true"
+            class="govuk-button"
+            data-module="govuk-button"
+            onclick={onClickFunction}
     >
       {textContent}
     </button>
+
   {:else if buttonType === "table header"}
-    <button type="button" class="text-header" onclick={onClickFunction}>
-      {textContent}
-      <svg
-        width="22"
-        height="22"
-        focusable="false"
-        aria-hidden="true"
-        role="img"
-        viewBox="0 0 22 22"
-        fill="currentColor"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <path
-          class="top-triangle"
-          d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
-          fill="currentColor"
-        ></path>
-        <path
-          class="bottom-triangle"
-          d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
-          fill="currentColor"
-        ></path>
-      </svg>
+    <button
+            type="button"
+            class="text-header"
+            onclick={onClickFunction}
+            disabled={disabled}
+    >
+      <span>{textContent}</span>
+
+      <span class="sort-icon" aria-hidden="true">
+        {#if direction === "ascending"}
+          <svg
+                  class="sort-arrow-single"
+                  width="1em"
+                  height="1em"
+                  focusable="false"
+                  role="img"
+                  viewBox="0 0 22 22"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+                    d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
+                    fill="currentColor"
+            ></path>
+          </svg>
+        {:else if direction === "descending"}
+          <svg
+                  class="sort-arrow-single"
+                  width="1em"
+                  height="1em"
+                  focusable="false"
+                  role="img"
+                  viewBox="0 0 22 22"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+                    d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
+                    fill="currentColor"
+            ></path>
+          </svg>
+        {:else}
+          <svg
+                  class="sort-arrow-both"
+                  width="1em"
+                  height="1em"
+                  focusable="false"
+                  role="img"
+                  viewBox="0 0 22 22"
+                  fill="currentColor"
+                  xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+                    d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
+                    fill="currentColor"
+            ></path>
+            <path
+                    d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
+                    fill="currentColor"
+            ></path>
+          </svg>
+        {/if}
+      </span>
     </button>
+
   {:else}
     <button
-      type="submit"
-      class={buttonClass}
-      data-module="govuk-button"
-      onclick={onClickFunction}
+            type="submit"
+            class={buttonClass}
+            data-module="govuk-button"
+            onclick={onClickFunction}
     >
       {textContent}
     </button>
   {/if}
+
 {:else}
   <div class="p-4">
     {#if buttonType === "start"}
       <a
-        href={"#"}
-        role="button"
-        draggable="false"
-        class="govuk-button govuk-button--start"
-        data-module="govuk-button"
-        onclick={onClickFunction}
+              href="#"
+              role="button"
+              draggable="false"
+              class="govuk-button govuk-button--start"
+              data-module="govuk-button"
+              onclick={onClickFunction}
       >
         {textContent}
         <svg
-          class="govuk-button__start-icon"
-          xmlns="http://www.w3.org/2000/svg"
-          width="17.5"
-          height="19"
-          viewBox="0 0 33 40"
-          aria-hidden="true"
-          focusable="false"
+                class="govuk-button__start-icon"
+                xmlns="http://www.w3.org/2000/svg"
+                width="17.5"
+                height="19"
+                viewBox="0 0 33 40"
+                aria-hidden="true"
+                focusable="false"
         >
           <path fill="currentColor" d="M0 0h13l20 20-20 20H0l20-20z"></path>
         </svg>
       </a>
+
     {:else if buttonType === "disabled"}
       <button
-        type="submit"
-        disabled
-        aria-disabled="true"
-        class="govuk-button"
-        data-module="govuk-button"
-        onclick={onClickFunction}
+              type="submit"
+              disabled
+              aria-disabled="true"
+              class="govuk-button"
+              data-module="govuk-button"
+              onclick={onClickFunction}
       >
         {textContent}
       </button>
+
     {:else if buttonType === "table header"}
-      <button type="button" class="text-header" onclick={onClickFunction}>
-        {textContent}
-        <svg
-          width="22"
-          height="22"
-          focusable="false"
-          aria-hidden="true"
-          role="img"
-          viewBox="0 0 22 22"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            class="top-triangle"
-            d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
-            fill="currentColor"
-          ></path>
-          <path
-            class="bottom-triangle"
-            d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
-            fill="currentColor"
-          ></path>
-        </svg>
+      <button
+              type="button"
+              class="text-header"
+              onclick={onClickFunction}
+              disabled={disabled}
+      >
+        <span>{textContent}</span>
+
+        <span class="sort-icon" aria-hidden="true">
+          {#if direction === "ascending"}
+            <svg
+                    class="sort-arrow-single"
+                    width="1em"
+                    height="1em"
+                    focusable="false"
+                    role="img"
+                    viewBox="0 0 22 22"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                      d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
+                      fill="currentColor"
+              ></path>
+            </svg>
+          {:else if direction === "descending"}
+            <svg
+                    class="sort-arrow-single"
+                    width="1em"
+                    height="1em"
+                    focusable="false"
+                    role="img"
+                    viewBox="0 0 22 22"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                      d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
+                      fill="currentColor"
+              ></path>
+            </svg>
+          {:else}
+            <svg
+                    class="sort-arrow-both"
+                    width="1em"
+                    height="1em"
+                    focusable="false"
+                    role="img"
+                    viewBox="0 0 22 22"
+                    fill="currentColor"
+                    xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                      d="M8.1875 9.5L10.9609 3.95703L13.7344 9.5H8.1875Z"
+                      fill="currentColor"
+              ></path>
+              <path
+                      d="M13.7344 12.0781L10.9609 17.6211L8.1875 12.0781H13.7344Z"
+                      fill="currentColor"
+              ></path>
+            </svg>
+          {/if}
+        </span>
       </button>
+
+    {:else if buttonType === "moreInfo"}
+      <button class="more-info-button" type="button" onclick={onClickFunction}>
+        <Icon kind="info" />
+      </button>
+
     {:else}
       <button
-        type="button"
-        class={buttonClass}
-        data-module="govuk-button"
-        onclick={onClickFunction}
+              type="button"
+              class={buttonClass}
+              data-module="govuk-button"
+              onclick={onClickFunction}
       >
         {textContent}
       </button>
@@ -176,6 +271,26 @@
     color: #005ea5;
   }
 
+  .sort-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sort-icon svg {
+    display: block;
+  }
+
+  .sort-arrow-single {
+    width: 1em;
+    height: 1em;
+  }
+
+  .sort-arrow-both {
+    width: 1em;
+    height: 1em;
+  }
+
   .more-info-button {
     display: flex;
     flex: none;
@@ -185,10 +300,10 @@
     cursor: pointer;
   }
 
-  /* For the scale on hover of group parent */
   :hover .more-info-button {
     transform: scale(1.25);
   }
+
   .more-info-button.custom-ring {
     box-shadow: 0 0 0 2px rgba(59, 130, 246, 1);
   }

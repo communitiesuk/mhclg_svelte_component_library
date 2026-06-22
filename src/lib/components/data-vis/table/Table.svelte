@@ -2,54 +2,58 @@
   import Button from "./../../ui/Button.svelte";
 
   let {
-    data = undefined,
-    metaData = undefined,
+    data = [],
+    metaData = {},
     caption = undefined,
     colourScale = undefined,
   } = $props();
 
-  let localCopyOfData = $state([...data]);
+  let localCopyOfData = $state([...(data ?? [])]);
 
-
-  $effect(() => {
-    localCopyOfData = [...data];
+  let sortState = $state({
+    column: null,
+    order: null, // "ascending" | "descending" | null
   });
 
+  $effect(() => {
+    localCopyOfData = [...(data ?? [])];
+  });
 
   function hasUniqueValues(array, key) {
     const seen = new Set();
     for (const obj of array) {
       if (seen.has(obj[key])) {
-        return false; // Duplicate found
+        return false;
       }
       seen.add(obj[key]);
     }
-    return true; // All values are unique
+    return true;
   }
 
-  let columns = [];
+  let columns = $derived.by(() => {
+    if (!data || data.length === 0) return [];
 
-  for (const column in localCopyOfData[0]) {
-    // create a variable to store whether the key is unique or not
-    const keyIsUnique = hasUniqueValues(localCopyOfData, column);
-    // get data type of each column
-    const columnDataType = typeof localCopyOfData[0][column];
-    // for each one create an object and push it into the array
-    const columnObject = {
-      key: column,
-      isUnique: keyIsUnique,
-      dataType: columnDataType,
-    };
-    columns.push(columnObject);
-  }
+    const derivedColumns = [];
 
-  $inspect("columns array is ", columns);
+    for (const column in data[0]) {
+      const keyIsUnique = hasUniqueValues(data, column);
+      const columnDataType = typeof data[0][column];
 
-  const metrics = columns
-    .filter((column) => column.dataType === "number")
-    .map((column) => column.key);
+      derivedColumns.push({
+        key: column,
+        isUnique: keyIsUnique,
+        dataType: columnDataType,
+      });
+    }
 
-  let sortState = $state({ column: "sortedColumn", order: "ascending" });
+    return derivedColumns;
+  });
+
+  const metrics = $derived(
+          columns
+                  .filter((column) => column.dataType === "number")
+                  .map((column) => column.key),
+  );
 
   function updateSortState(columnToSort, sortOrder) {
     sortState.column = columnToSort;
@@ -57,61 +61,63 @@
   }
 
   function sortFunction() {
-    if (typeof localCopyOfData[0][sortState["column"]] === "number") {
+    if (!localCopyOfData.length || !sortState.column || !sortState.order) return;
+
+    const sorted = [...localCopyOfData];
+
+    if (typeof sorted[0][sortState.column] === "number") {
       if (sortState.order === "ascending") {
-        localCopyOfData.sort(
-          (a, b) => a[sortState.column] - b[sortState.column],
+        sorted.sort((a, b) => a[sortState.column] - b[sortState.column]);
+      } else {
+        sorted.sort((a, b) => b[sortState.column] - a[sortState.column]);
+      }
+    }
+
+    if (typeof sorted[0][sortState.column] === "string") {
+      if (sortState.order === "ascending") {
+        sorted.sort((a, b) =>
+                a[sortState.column].localeCompare(b[sortState.column]),
         );
       } else {
-        localCopyOfData.sort(
-          (a, b) => b[sortState.column] - a[sortState.column],
+        sorted.sort((a, b) =>
+                b[sortState.column].localeCompare(a[sortState.column]),
         );
       }
     }
-    if (typeof localCopyOfData[0][sortState["column"]] === "string") {
-      if (sortState.order === "ascending") {
-        localCopyOfData.sort((a, b) =>
-          a[sortState["column"]].localeCompare(b[sortState["column"]]),
-        );
-      } else {
-        localCopyOfData.sort((a, b) =>
-          b[sortState["column"]].localeCompare(a[sortState["column"]]),
-        );
-      }
-    }
+
+    localCopyOfData = sorted;
   }
 
-  $inspect(
-    sortState,
-    localCopyOfData[0],
-    typeof localCopyOfData[0][sortState["column"]],
-  );
-
-  // heat map
-
-  // calculate the min and max of each metric
-  const minAndMaxValues = {}; // create an empty object to store them in
-  for (const metric of metrics) {
-    // get the values
-    const metricValues = localCopyOfData.map((item) => item[metric]);
-    const min = Math.min(...metricValues);
-    const max = Math.max(...metricValues);
-    // store them
-    minAndMaxValues[metric] = { min, max };
-  }
-
-  localCopyOfData = localCopyOfData.map((row) => {
-    const rowWithNorms = { ...row };
+  const minAndMaxValues = $derived.by(() => {
+    const result = {};
 
     for (const metric of metrics) {
-      const { min, max } = minAndMaxValues[metric];
-      const value = row[metric];
-      const normalisedValue = (value - min) / (max - min);
+      const metricValues = localCopyOfData.map((item) => item[metric]);
+      const min = Math.min(...metricValues);
+      const max = Math.max(...metricValues);
 
-      rowWithNorms[`${metric}__normalised`] = normalisedValue;
+      result[metric] = { min, max };
     }
 
-    return rowWithNorms;
+    return result;
+  });
+
+  const displayRows = $derived.by(() => {
+    return localCopyOfData.map((row) => {
+      const rowWithNorms = { ...row };
+
+      for (const metric of metrics) {
+        const { min, max } = minAndMaxValues[metric];
+        const value = row[metric];
+
+        const normalisedValue =
+                max === min ? 0.5 : (value - min) / (max - min);
+
+        rowWithNorms[`${metric}__normalised`] = normalisedValue;
+      }
+
+      return rowWithNorms;
+    });
   });
 
   function normToColor(norm) {
@@ -125,6 +131,27 @@
   }
 
   const colorKey = Object.entries({ Good: 1, Ok: 0.5, Bad: 0 });
+
+  function handleSort(columnKey) {
+    let newDirection = "ascending";
+
+    if (sortState.column === columnKey) {
+      if (sortState.order === "ascending") {
+        newDirection = "descending";
+      } else if (sortState.order === "descending") {
+        newDirection = null;
+      }
+    }
+
+    if (newDirection === null) {
+      updateSortState(null, null);
+      localCopyOfData = [...(data ?? [])];
+      return;
+    }
+
+    updateSortState(columnKey, newDirection);
+    sortFunction();
+  }
 </script>
 
 <div class="p-4">
@@ -132,7 +159,7 @@
     <div class="legend">
       <div>Colour key:</div>
       {#each colorKey as key}
-        <div class="color-keys" style="background-color: {normToColor(key[1])}">
+        <div class="color-keys" style={`background-color: ${normToColor(key[1])}`}>
           {key[0]}
         </div>
       {/each}
@@ -141,66 +168,65 @@
 
   <div class="table-container">
     <div id="table-caption" class="sticky-caption">{caption}</div>
-    <table class="govuk-table" data-module="moj-sortable-table">
-      <thead class="govuk-table__head"
-        ><tr class="govuk-table__row">
-          {#each columns as column}
-            <th
-              scope="col"
-              class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
-              title={metaData[column.key].explainer}
-              aria-sort={sortState.column !== column.key
-                ? "none"
-                : sortState.column === column.key &&
-                    sortState.order === "descending"
-                  ? "descending"
-                  : "ascending"}
-            >
-              <div class="header">
-                <Button
-                  textContent={metaData[column.key].shortLabel}
-                  buttonType={"table header"}
-                  onClickFunction={() => {
-                    const newDirection =
-                      sortState.column === column.key &&
-                      sortState.order === "ascending"
-                        ? "descending"
-                        : "ascending";
 
-                    updateSortState(column.key, newDirection);
-                    sortFunction();
-                  }}
-                ></Button>
-              </div></th
-            >
-          {/each}
-        </tr></thead
-      >
-      <tbody class="govuk-table__body">
-        {#each localCopyOfData as row}
-          <tr class="govuk-table__row">
-            {#each columns as column}
-              {#if column.dataType === "number"}
-                {#if colourScale === "On"}
-                  <td
-                    class="govuk-table__cell govuk-table__cell--numeric"
-                    style="background-color: {metaData[column.key].direction ===
-                    'Higher is better'
-                      ? normToColor(row[column.key + '__normalised'])
-                      : normToColorReverse(row[column.key + '__normalised'])}"
-                    >{@html row[column.key]}</td
-                  >
-                {:else}
-                  <td class="govuk-table__cell govuk-table__cell--numeric"
-                    >{@html row[column.key]}</td
-                  >
-                {/if}
-              {:else}
-                <td class="govuk-table__cell">{@html row[column.key]}</td>
-              {/if}
-            {/each}
-          </tr>
+    <table class="govuk-table" data-module="moj-sortable-table">
+      <thead class="govuk-table__head">
+      <tr class="govuk-table__row">
+        {#each columns as column}
+          <th
+                  scope="col"
+                  class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
+                  title={metaData[column.key]?.explainer}
+                  aria-sort={
+                sortState.column !== column.key || sortState.order === null
+                  ? "none"
+                  : sortState.order === "descending"
+                    ? "descending"
+                    : "ascending"
+              }
+          >
+            <div class="header">
+              <Button
+                      textContent={metaData[column.key]?.shortLabel ?? column.key}
+                      buttonType={"table header"}
+                      direction={sortState.column === column.key ? sortState.order : null}
+                      onClickFunction={() => handleSort(column.key)}
+              ></Button>
+            </div>
+          </th>
         {/each}
+      </tr>
+      </thead>
+
+      <tbody class="govuk-table__body">
+      {#each displayRows as row}
+        <tr class="govuk-table__row">
+          {#each columns as column}
+            {#if column.dataType === "number"}
+              {#if colourScale === "On"}
+                <td
+                        class="govuk-table__cell govuk-table__cell--numeric"
+                        style={`background-color: ${
+                      metaData[column.key]?.direction === "Higher is better"
+                        ? normToColor(row[column.key + "__normalised"])
+                        : normToColorReverse(row[column.key + "__normalised"])
+                    }`}
+                >
+                  {@html row[column.key]}
+                </td>
+              {:else}
+                <td class="govuk-table__cell govuk-table__cell--numeric">
+                  {@html row[column.key]}
+                </td>
+              {/if}
+            {:else}
+              <td class="govuk-table__cell">
+                {@html row[column.key]}
+              </td>
+            {/if}
+          {/each}
+        </tr>
+      {/each}
       </tbody>
     </table>
   </div>
@@ -234,8 +260,14 @@
     gap: 20px;
     margin: 10px;
   }
+
   .color-keys {
     border-radius: 10%;
     padding: 6px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
   }
 </style>

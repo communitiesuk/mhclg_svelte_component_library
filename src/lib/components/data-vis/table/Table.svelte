@@ -43,11 +43,16 @@
         key: column,
         isUnique: keyIsUnique,
         dataType: columnDataType,
+        id: metadata[column].order,
       });
     }
 
-    return derivedColumns;
+    const orderedColumns = derivedColumns.sort((a, b) => a.id - b.id);
+
+    return orderedColumns;
   });
+
+  $inspect(columns);
 
   const metrics = $derived(
     columns
@@ -180,6 +185,9 @@
               scope="col"
               class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
               title={metadata[column.key]?.explainer}
+              style={metadata[column.key]?.width
+                ? `min-width: ${metadata[column.key].width}`
+                : undefined}
               aria-sort={sortState.column !== column.key ||
               sortState.order === null
                 ? "none"
@@ -238,7 +246,7 @@
 
 <style>
   .table-container {
-    max-height: 85vh;
+    max-height: 60vh;
     overflow-y: auto;
     overflow-x: scroll;
     width: 100%;

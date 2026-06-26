@@ -177,7 +177,6 @@
         {#if topLabel && layout.topLabelY !== null}
           <text x={0} y={layout.topLabelY + 14} fill="#666" font-size="0.75em">
             Number of areas
-            {minX}, {maxX}
           </text>
         {/if}
 
@@ -201,28 +200,14 @@
 
         <g transform="translate(0, {layout.chartY})">
           {#if showYAxis}
-            <!-- <Axis
-              bind:axisDomain
-              bind:ticksArray={ticksDomain}
-              {chartHeight}
-              chartWidth={chartWidth - markerRadius * 2}
-              orientation={{ axis: "x", position: "bottom" }}
-              range={[markerRadius, chartWidth - markerRadius]}
-              domain={[xValueFirst, xValueLast]}
-              {min}
-              {max}
-              fontSize={14}
-              {floor}
-              {ceiling}
-              {numberOfTicks}
-              {polarity}
-              {showTickMarks}
-              {showGridlines}
-              {labelFormatter}
-              {niceTicks}
-              {markerRadius}
-              {distribution}
-            ></Axis> -->
+            {#each [3, 6, 9] as x, i}
+              <path
+                transform="translate(0, {scaleLinear([0, 9], [height, 0])(x)})"
+                d={`M0 0 l${containerWidth - 25} 0`}
+                stroke="grey"
+                stroke-width={0.25}
+              ></path>
+            {/each}
           {/if}
 
           {#each bins as bin, i}

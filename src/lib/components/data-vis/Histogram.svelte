@@ -90,6 +90,10 @@
       .range([0, height]),
   );
 
+  let tallest = $derived(
+    bins.map((b) => b.length).indexOf(Math.max(...bins.map((b) => b.length))),
+  );
+
   function interpolateColors(
     startColor,
     endColor,
@@ -149,7 +153,7 @@
     let y = 0;
 
     const topLabelY = topLabel ? y : null;
-    if (topLabel) y += 20;
+    if (topLabel) y += 30;
 
     const annotationY = annotationText ? y : null;
     if (annotationText) y += 25;
@@ -176,7 +180,10 @@
       <g transform="translate({padding / 2}, 0)">
         {#if topLabel && layout.topLabelY !== null}
           <text x={0} y={layout.topLabelY + 14} fill="#666" font-size="0.75em">
-            Number of areas
+            Most common across England
+          </text>
+          <text x={0} y={layout.topLabelY + 26} fill="#666" font-size="0.75em">
+            ↓
           </text>
         {/if}
 

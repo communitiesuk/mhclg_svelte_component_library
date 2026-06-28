@@ -225,7 +225,7 @@
         .colors(2);
 
       const averageNormalised =
-        (averageValue - axisDomain[0]) / (axisDomain[1] - domainMin[0]);
+        (averageValue - domainMin) / (domainMax - domainMin);
 
       const binColors = chroma
         .scale([extremeColors[0], midColor, extremeColors[1]])

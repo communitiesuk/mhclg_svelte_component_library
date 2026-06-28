@@ -225,7 +225,7 @@
         .colors(2);
 
       const averageNormalised =
-        (averageValue - xTickFirst) / (xTickLast - xTickFirst);
+        (averageValue - axisDomain[0]) / (axisDomain[1] - domainMin[0]);
 
       const binColors = chroma
         .scale([extremeColors[0], midColor, extremeColors[1]])
@@ -275,7 +275,8 @@
       Math.min(
         nSegments - 1,
         Math.floor(
-          (nSegments * (value - xTickFirst)) / (xTickLast - xTickFirst),
+          (nSegments * (value - axisDomain[0])) /
+            (axisDomain[1] - axisDomain[0]),
         ),
       ),
     );
@@ -446,6 +447,7 @@
                   markerRadius},{positionChart.chartHeight / 2})"
               >
                 {#if rowValue.shape === "line"}
+                  {console.log("seg", segmentIndex(rowValue.value))}
                   <line
                     x1={0}
                     x2={0}

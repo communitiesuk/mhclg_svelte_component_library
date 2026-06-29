@@ -34,8 +34,6 @@
     paddingBottom?: string;
     contentSnippet?: Snippet;
   }>();
-
-  let arg = "hello";
 </script>
 
 <div

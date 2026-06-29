@@ -85,7 +85,7 @@
     onMouseLeaveMarker = (event, marker, dataId) => {
       activeMarkerId = null;
     },
-    activeMarkerId = undefined,
+    activeMarkerId = $bindable(undefined),
     distribution = [],
     floor = undefined,
     ceiling = undefined,
@@ -511,7 +511,8 @@
             >
               <tspan x="1" dy="15">▲</tspan>
               <tspan x="1" dy="4">|</tspan>
-              <tspan font-family="GDS Transport" x="1" dy="13">Average</tspan>
+
+              <tspan font-family="GDS Transport" x="1" dy="15">Average</tspan>
             </text>
           </g>
         {/if}

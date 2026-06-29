@@ -225,7 +225,7 @@
         .colors(2);
 
       const averageNormalised =
-        (averageValue - xTickFirst) / (xTickLast - xTickFirst);
+        (averageValue - domainMin) / (domainMax - domainMin);
 
       const binColors = chroma
         .scale([extremeColors[0], midColor, extremeColors[1]])
@@ -275,7 +275,8 @@
       Math.min(
         nSegments - 1,
         Math.floor(
-          (nSegments * (value - xTickFirst)) / (xTickLast - xTickFirst),
+          (nSegments * (value - axisDomain[0])) /
+            (axisDomain[1] - axisDomain[0]),
         ),
       ),
     );
@@ -391,6 +392,30 @@
               fill={colorScale[number]}
             ></rect></g
           >{/each}
+        {#if showAxis}
+          <Axis
+            bind:axisDomain
+            bind:ticksArray={ticksDomain}
+            {chartHeight}
+            chartWidth={chartWidth - markerRadius * 2}
+            orientation={{ axis: "x", position: "bottom" }}
+            range={[markerRadius, chartWidth - markerRadius]}
+            domain={[xTickFirst, xTickLast]}
+            {min}
+            {max}
+            fontSize={14}
+            {floor}
+            {ceiling}
+            {numberOfTicks}
+            {polarity}
+            {showTickMarks}
+            {showGridlines}
+            {labelFormatter}
+            {niceTicks}
+            {markerRadius}
+            {distribution}
+          ></Axis>
+        {/if}
         {#each Object.entries(positionChart.rowData) as [tier, points]}
           {#each points as rowValue, i}
             {#if !isNaN(Number(rowValue.value))}
@@ -422,6 +447,7 @@
                   markerRadius},{positionChart.chartHeight / 2})"
               >
                 {#if rowValue.shape === "line"}
+                  {console.log("seg", segmentIndex(rowValue.value))}
                   <line
                     x1={0}
                     x2={0}
@@ -430,7 +456,7 @@
                     stroke={rowValue.color === "inherit"
                       ? colorScale[segmentIndex(rowValue.value)]
                       : rowValue.color}
-                    stroke-width={rowValue.markerRadius * 5}
+                    stroke-width={rowValue.markerRadius * 7}
                     opacity={0}
                     pointer-events={rowValue.pointerEvents}
                   ></line>
@@ -455,7 +481,7 @@
                     fill={rowValue.color === "inherit"
                       ? colorScale[segmentIndex(rowValue.value)]
                       : rowValue.color}
-                    stroke-width={3}
+                    stroke-width={5}
                     opacity={rowValue.opacity}
                   ></circle>
                   <circle
@@ -465,8 +491,8 @@
                     fill={rowValue.color === "inherit"
                       ? colorScale[segmentIndex(rowValue.value)]
                       : rowValue.color}
-                    stroke="black"
-                    stroke-width={1.5}
+                    stroke="#111"
+                    stroke-width={3}
                     opacity={rowValue.opacity}
                   ></circle>
                 {/if}
@@ -474,30 +500,7 @@
             {/if}
           {/each}
         {/each}
-        {#if showAxis}
-          <Axis
-            bind:axisDomain
-            bind:ticksArray={ticksDomain}
-            {chartHeight}
-            chartWidth={chartWidth - markerRadius * 2}
-            orientation={{ axis: "x", position: "bottom" }}
-            range={[markerRadius, chartWidth - markerRadius]}
-            domain={[xTickFirst, xTickLast]}
-            {min}
-            {max}
-            fontSize={14}
-            {floor}
-            {ceiling}
-            {numberOfTicks}
-            {polarity}
-            {showTickMarks}
-            {showGridlines}
-            {labelFormatter}
-            {niceTicks}
-            {markerRadius}
-            {distribution}
-          ></Axis>
-        {/if}
+
         {#if showAverage}
           <g
             transform="translate({xFunction(chartDomain)(averageValue) +

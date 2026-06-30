@@ -1,5 +1,5 @@
 <script>
-  import Button from "./../../ui/Button.svelte";
+  import { Button } from "@communitiesuk/svelte-component-library";
 
   let {
     data = [],
@@ -43,7 +43,7 @@
         key: column,
         isUnique: keyIsUnique,
         dataType: columnDataType,
-        id: metadata[column].order,
+        id: metadata?.[column]?.order ?? 0,
       });
     }
 
@@ -184,8 +184,8 @@
             <th
               scope="col"
               class={`govuk-table__header ${column.dataType === "number" ? "govuk-table__header--numeric" : ""}`}
-              title={metadata[column.key]?.explainer}
-              style={metadata[column.key]?.width
+              title={metadata?.[column.key]?.explainer}
+              style={metadata?.[column.key]?.width
                 ? `min-width: ${metadata[column.key].width}`
                 : undefined}
               aria-sort={sortState.column !== column.key ||
@@ -197,7 +197,7 @@
             >
               <div class="header">
                 <Button
-                  textContent={metadata[column.key]?.shortLabel ?? column.key}
+                  textContent={metadata?.[column.key]?.shortLabel ?? column.key}
                   buttonType={"table header"}
                   direction={sortState.column === column.key
                     ? sortState.order
@@ -219,7 +219,7 @@
                   <td
                     class="govuk-table__cell govuk-table__cell--numeric"
                     style={`background-color: ${
-                      metadata[column.key]?.direction === "Higher is better"
+                      metadata?.[column.key]?.direction === "Higher is better"
                         ? normToColor(row[column.key + "__normalised"])
                         : normToColorReverse(row[column.key + "__normalised"])
                     }`}

@@ -225,7 +225,7 @@
         .colors(2);
 
       const averageNormalised =
-        (averageValue - domainMin) / (domainMax - domainMin);
+        (averageValue - chartDomain[0]) / (chartDomain[1] - chartDomain[0]);
 
       const binColors = chroma
         .scale([extremeColors[0], midColor, extremeColors[1]])
@@ -275,8 +275,8 @@
       Math.min(
         nSegments - 1,
         Math.floor(
-          (nSegments * (value - axisDomain[0])) /
-            (axisDomain[1] - axisDomain[0]),
+          (nSegments * (value - chartDomain[0])) /
+            (chartDomain[1] - chartDomain[0]),
         ),
       ),
     );

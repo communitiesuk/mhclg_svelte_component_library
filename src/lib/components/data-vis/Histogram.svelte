@@ -94,6 +94,8 @@
     bins.map((b) => b.length).indexOf(Math.max(...bins.map((b) => b.length))),
   );
 
+  $inspect({ tallest });
+
   function interpolateColors(
     startColor,
     endColor,
@@ -179,10 +181,22 @@
     <svg width={containerWidth} height={layout.totalHeight}>
       <g transform="translate({padding / 2}, 0)">
         {#if topLabel && layout.topLabelY !== null}
-          <text x={0} y={layout.topLabelY + 14} fill="#666" font-size="0.75em">
-            Most common across England
+          {@const centerX =
+            (xScale(bins[tallest].x0) + xScale(bins[tallest].x1)) / 2 - 4.5}
+          <text
+            x={centerX}
+            y={layout.topLabelY + 14}
+            fill="#666"
+            font-size="0.75em"
+          >
+            Most common in England
           </text>
-          <text x={0} y={layout.topLabelY + 26} fill="#666" font-size="0.75em">
+          <text
+            x={centerX}
+            y={layout.topLabelY + 26}
+            fill="#666"
+            font-size="0.75em"
+          >
             ↓
           </text>
         {/if}

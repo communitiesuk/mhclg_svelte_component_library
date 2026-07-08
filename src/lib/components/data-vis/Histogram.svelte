@@ -3,6 +3,8 @@
   import { bin, range as d3range } from "d3-array";
   import Axis from "./axis/Axis.svelte";
   import chroma from "chroma-js";
+  import { splitAtNearestSpaceMidpoint } from "../../utils/splitAtNearestSpaceMidpoint.js";
+  import {getStringLength} from "../../utils/getStringLength.ts"
 
   let {
     averageValue = undefined,
@@ -90,6 +92,23 @@
       .range([0, height]),
   );
 
+  let annotationTextDims = $state(getStringLength("hello", "16px"));
+
+  let annotationXPosition = $derived(
+       xScale(annotationValue)
+  );
+
+  $inspect({annotationXPosition})
+
+  let spaceForText = $derived(
+    annotationXPosition > containerWidth / 2
+      ? annotationXPosition - annotationTextDims
+      : containerWidth - annotationXPosition - annotationTextDims,
+  );
+
+  $inspect({ spaceForText });
+
+
   function interpolateColors(
     startColor,
     endColor,
@@ -175,9 +194,21 @@
     <svg width={containerWidth} height={layout.totalHeight}>
       <g transform="translate({padding / 2}, 0)">
         {#if topLabel && layout.topLabelY !== null}
-          <text x={0} y={layout.topLabelY + 14} fill="#666" font-size="0.75em">
-            Number of areas
-          </text>
+          {#if annotationTextDims?.width >= spaceForText}
+            {#each splitAtNearestSpaceMidpoint(annotationText) as line, i}
+              <text
+                x={0}
+                y={layout.topLabelY + 14}
+                fill="#666"
+                font-size="0.75em"
+                text-anchor={annotationXPosition > containerWidth / 2
+                  ? "end"
+                  : "start"}
+              >
+                {line}
+              </text>
+            {/each}
+          {/if}
         {/if}
 
         {#if annotationText && layout.annotationY !== null}

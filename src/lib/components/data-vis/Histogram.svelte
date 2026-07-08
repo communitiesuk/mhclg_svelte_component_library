@@ -92,13 +92,11 @@
       .range([0, height]),
   );
 
-  let annotationTextDims = $state(getStringLength("hello", "16px"));
+  let annotationTextDims = $state(getStringLength(annotationText, "16px"));
 
   let annotationXPosition = $derived(
        xScale(annotationValue)
   );
-
-  $inspect({annotationXPosition})
 
   let spaceForText = $derived(
     annotationXPosition > containerWidth / 2
@@ -106,7 +104,6 @@
       : containerWidth - annotationXPosition - annotationTextDims,
   );
 
-  $inspect({ spaceForText });
 
 
   function interpolateColors(
@@ -189,29 +186,51 @@
   });
 </script>
 
+<p class="govuk-body-s">annotationTextDims: {annotationTextDims}</p>
+<p class="govuk-body-s">spaceForText: {spaceForText}</p>
+
+
 {#key containerWidth}
   <div class="scale-container" bind:clientWidth={containerWidth}>
     <svg width={containerWidth} height={layout.totalHeight}>
       <g transform="translate({padding / 2}, 0)">
-        {#if topLabel && layout.topLabelY !== null}
+        {#if annotationText && layout.annotationY !== null}
+        <g transform="translate({annotationXPosition},{layout.totalHeight-42})">
+                <path
+                x
+									d="M0 0 l-6 -8 l12 0 z"
+									stroke-width="0px"
+									stroke="#888"
+									fill="#888"
+								></path>
+								<path
+									d="M0 -5 l0 -10 l{annotationXPosition > containerWidth / 2
+										? -20
+										: 20} 0"
+									stroke="#888"
+									fill="none"
+									stroke-width="1px"
+								></path>
+                </g>
+        <text x={annotationXPosition} y={layout.annotationY + 14} font-size="16px">{annotationText}</text>
           {#if annotationTextDims?.width >= spaceForText}
-            {#each splitAtNearestSpaceMidpoint(annotationText) as line, i}
+            <!-- {#each splitAtNearestSpaceMidpoint(annotationText) as line, i}
               <text
                 x={0}
-                y={layout.topLabelY + 14}
-                fill="#666"
-                font-size="0.75em"
+                y={layout.annotationY + 14}
+                fill="#888"
+                font-size="16px"
                 text-anchor={annotationXPosition > containerWidth / 2
                   ? "end"
                   : "start"}
               >
                 {line}
               </text>
-            {/each}
+            {/each} -->
           {/if}
         {/if}
 
-        {#if annotationText && layout.annotationY !== null}
+        <!-- {#if annotationText && layout.annotationY !== null}
           <g
             transform="translate({xScale(
               annotationValue,
@@ -219,7 +238,7 @@
           >
             <text
               fill="#555555"
-              font-size="0.8em"
+              font-size="16px"
               text-anchor="middle"
               dominant-baseline="hanging"
             >
@@ -227,7 +246,7 @@
               <tspan x="0" dy="12">▼</tspan>
             </text>
           </g>
-        {/if}
+        {/if} -->
 
         <g transform="translate(0, {layout.chartY})">
           {#if showYAxis}

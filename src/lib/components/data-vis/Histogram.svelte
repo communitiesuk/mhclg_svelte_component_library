@@ -4,7 +4,7 @@
   import Axis from "./axis/Axis.svelte";
   import chroma from "chroma-js";
   import { splitAtNearestSpaceMidpoint } from "../../utils/splitAtNearestSpaceMidpoint.js";
-  import {getStringLength} from "../../utils/getStringLength.ts"
+  import { getStringLength } from "../../utils/getStringLength.ts";
 
   let {
     averageValue = undefined,
@@ -86,6 +86,10 @@
     proportionsInBins.at(-1),
   ]);
 
+  let indexOfTallestBar = $derived(
+    proportionsInBins.indexOf(Math.max(...proportionsInBins)),
+  );
+
   let yScale = $derived(
     scaleLinear()
       .domain([0, Math.max(...bins.map((b) => b.length))])
@@ -94,17 +98,13 @@
 
   let annotationTextDims = $state(getStringLength(annotationText, "16px"));
 
-  let annotationXPosition = $derived(
-       xScale(annotationValue)
-  );
+  let annotationXPosition = $derived(xScale(annotationValue));
 
   let spaceForText = $derived(
     annotationXPosition > containerWidth / 2
       ? annotationXPosition - annotationTextDims
       : containerWidth - annotationXPosition - annotationTextDims,
   );
-
-
 
   function interpolateColors(
     startColor,
@@ -188,31 +188,37 @@
 
 <p class="govuk-body-s">annotationTextDims: {annotationTextDims}</p>
 <p class="govuk-body-s">spaceForText: {spaceForText}</p>
-
+<p class="govuk-body-s">indexOfTallestBar: {indexOfTallestBar}</p>
 
 {#key containerWidth}
   <div class="scale-container" bind:clientWidth={containerWidth}>
     <svg width={containerWidth} height={layout.totalHeight}>
       <g transform="translate({padding / 2}, 0)">
         {#if annotationText && layout.annotationY !== null}
-        <g transform="translate({annotationXPosition},{layout.totalHeight-42})">
-                <path
-                x
-									d="M0 0 l-6 -8 l12 0 z"
-									stroke-width="0px"
-									stroke="#888"
-									fill="#888"
-								></path>
-								<path
-									d="M0 -5 l0 -10 l{annotationXPosition > containerWidth / 2
-										? -20
-										: 20} 0"
-									stroke="#888"
-									fill="none"
-									stroke-width="1px"
-								></path>
-                </g>
-        <text x={annotationXPosition} y={layout.annotationY + 14} font-size="16px">{annotationText}</text>
+          <g
+            transform="translate({annotationXPosition},{layout.totalHeight -
+              42})"
+          >
+            <path
+              d="M0 0 l-6 -8 l12 0 z"
+              stroke-width="0px"
+              stroke="#888"
+              fill="#888"
+            ></path>
+            <path
+              d="M0 -5 l0 -10 l{annotationXPosition > containerWidth / 2
+                ? -20
+                : 20} 0"
+              stroke="#888"
+              fill="none"
+              stroke-width="1px"
+            ></path>
+          </g>
+          <text
+            x={annotationXPosition}
+            y={layout.annotationY + 14}
+            font-size="16px">{annotationText}</text
+          >
           {#if annotationTextDims?.width >= spaceForText}
             <!-- {#each splitAtNearestSpaceMidpoint(annotationText) as line, i}
               <text

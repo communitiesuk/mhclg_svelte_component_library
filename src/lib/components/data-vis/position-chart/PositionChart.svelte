@@ -100,6 +100,7 @@
     niceTicks = true,
     ticksDomain = $bindable([[]]),
     axisDomain = $bindable([[]]),
+    getChartDomain = undefined,
   } = $props();
 
   let xTickFirst = $derived(ticksDomain.length ? ticksDomain[0] : 0);
@@ -110,6 +111,10 @@
   let chartDomain = $derived(
     polarity === "standard" ? [domainMin, domainMax] : [domainMax, domainMin],
   );
+
+  $effect(() => {
+    getChartDomain?.(chartDomain);
+  });
 
   const segmentScale = $derived(
     scaleLinear().domain([0, nSegments]).range([domainMin, domainMax]),

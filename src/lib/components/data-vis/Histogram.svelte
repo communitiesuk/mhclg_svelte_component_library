@@ -42,6 +42,7 @@
     barStrokeColor = "white",
     topLabel = true,
     includeOutliers = true,
+    onUpdate = undefined,
   } = $props();
 
   let useRange = $derived(
@@ -76,6 +77,10 @@
       ? binnedDistribution.toReversed()
       : binnedDistribution,
   );
+
+  $effect(() => {
+    onUpdate?.({ bins, containerWidth });
+  });
 
   const proportionsInBins = $derived(
     bins.map((b) => b.length / distribution.length),
@@ -202,29 +207,36 @@
             <path
               d="M0 0 l-6 -8 l12 0 z"
               stroke-width="0px"
-              stroke="#888"
-              fill="#888"
+              stroke="#666"
+              fill="#666"
             ></path>
             <path
               d="M0 -5 l0 -10 l{annotationXPosition > containerWidth / 2
                 ? -20
                 : 20} 0"
-              stroke="#888"
+              stroke="#666"
               fill="none"
               stroke-width="1px"
             ></path>
           </g>
           <text
-            x={annotationXPosition}
+            x={annotationXPosition +
+              (annotationXPosition > containerWidth / 2 ? -20 : 20)}
             y={layout.annotationY + 14}
-            font-size="16px">{annotationText}</text
+            font-size="16px"
+            fill="#666"
+            text-anchor={annotationXPosition > containerWidth / 2
+              ? "end"
+              : "start"}
           >
+            {annotationText}
+          </text>
           {#if annotationTextDims?.width >= spaceForText}
             <!-- {#each splitAtNearestSpaceMidpoint(annotationText) as line, i}
               <text
                 x={0}
                 y={layout.annotationY + 14}
-                fill="#888"
+                fill="#666"
                 font-size="16px"
                 text-anchor={annotationXPosition > containerWidth / 2
                   ? "end"

@@ -1,0 +1,194 @@
+:root {
+    --govuk-header-link-underline-thickness: 3px;
+    --toggle-content-spacing: 8px;
+    --toggle-padding: 15px;
+    --block-link-spacing: 15px; /* govuk-spacing(3) */
+    --logo-height: 30px;
+    --toggle-border-height: 3px;
+
+    --brand-colour: #1d70b8; /* replace with actual brand colour */
+    --focus-colour: #ffdd00;
+    --focus-text-colour: #0b0c0c;
+    --white: #ffffff;
+    --black: #0b0c0c;
+}
+
+.rebranded-one-login-header {
+    color: var(--white);
+    position: relative;
+    background: var(--brand-colour);
+    font-size: 16px;
+    line-height: 1.25;
+}
+
+.rebranded-one-login-header__container {
+    display: flex;
+    position: relative;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid transparent;
+}
+
+.rebranded-one-login-header__logo {
+    min-width: max-content;
+    max-width: 33.33%;
+    padding-top: 16px;
+    padding-bottom: 12px;
+    box-sizing: border-box;
+}
+
+@media (min-width: 1024px) {
+    .rebranded-one-login-header__logo {
+        width: 33.33%;
+        padding-right: var(--toggle-padding);
+    }
+}
+
+.rebranded-one-login-header__logotype {
+    display: inline-block;
+    position: relative;
+    top: -3px;
+    margin-bottom: 2px;
+    max-width: 80vw;
+    fill: currentColor;
+    vertical-align: sub;
+}
+
+@media (forced-colors: active) {
+    .rebranded-one-login-header__logotype {
+        forced-color-adjust: none;
+        color: LinkText;
+    }
+}
+
+.rebranded-one-login-header__link--homepage {
+    display: inline;
+    margin-right: 10px;
+    font-size: 30px;
+    font-weight: 700;
+    line-height: 1;
+}
+
+.rebranded-one-login-header__link--homepage:link,
+.rebranded-one-login-header__link--homepage:visited {
+    text-decoration: none;
+}
+
+.rebranded-one-login-header__link--homepage:hover,
+.rebranded-one-login-header__link--homepage:active {
+    margin-bottom: -3px;
+    border-bottom: 3px solid currentColor;
+}
+
+.rebranded-one-login-header__link--homepage:focus {
+    margin-bottom: 0;
+    border-bottom: 0;
+}
+
+.rebranded-one-login-header__link,
+.rebranded-one-login-header__nav__link {
+    text-decoration: none;
+}
+
+.rebranded-one-login-header__link:hover,
+.rebranded-one-login-header__nav__link:hover {
+    text-decoration: underline;
+    text-decoration-thickness: var(--govuk-header-link-underline-thickness);
+}
+
+.rebranded-one-login-header__link:not(:focus) {
+    background-color: var(--brand-colour);
+}
+
+.rebranded-one-login-header__nav {
+    width: 100%;
+}
+
+@media (min-width: 768px) {
+    .rebranded-one-login-header__nav {
+        max-width: 66%;
+    }
+}
+
+.rebranded-one-login-header__nav__button {
+    border: 0;
+    cursor: pointer;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    font-size: 16px;
+}
+
+.rebranded-one-login-header__nav__button:focus {
+    background-color: var(--focus-colour);
+    color: var(--focus-text-colour);
+    outline: none;
+}
+
+.rebranded-one-login-header__nav__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+@media (min-width: 768px) {
+    .rebranded-one-login-header__nav__list {
+        display: flex;
+        align-items: center;
+    }
+}
+
+.rebranded-one-login-header__nav__list-item {
+    display: flex;
+    align-items: center;
+}
+
+.rebranded-cross-service-header__toggle {
+    display: none;
+    font-size: 16px;
+    font-weight: 700;
+    position: absolute;
+    right: 0;
+    top: 0;
+    cursor: pointer;
+    border: 0;
+    background: none;
+    color: inherit;
+    padding:
+            var(--toggle-padding)
+            var(--toggle-padding)
+            calc(var(--toggle-padding) + 1px)
+            var(--toggle-padding);
+}
+
+.toggle-enabled .rebranded-cross-service-header__toggle {
+    display: inline;
+}
+
+@media (min-width: 768px) {
+    .toggle-enabled .rebranded-cross-service-header__toggle {
+        display: none;
+    }
+}
+
+.rebranded-one-login-header__logo-dot {
+    fill: #00ffe0;
+}
+
+@media print {
+    .rebranded-one-login-header__logo-dot {
+        fill: currentColor;
+    }
+}
+
+@media (forced-colors: active) {
+    .rebranded-one-login-header__logo-dot {
+        fill: currentColor;
+    }
+}
+
+:focus .rebranded-one-login-header__logo-dot {
+    fill: currentColor;
+}

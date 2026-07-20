@@ -24,3 +24,5 @@ vite.config.ts.timestamp-*
 
 *.mdc
 .github/*.md
+
+.idea

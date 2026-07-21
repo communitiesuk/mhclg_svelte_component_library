@@ -27,7 +27,6 @@ It should only show the GOV.UK logo and any GOV.UK-wide links and tools to help 
                     href={homepageUrl}
                     class="govuk-header__link govuk-header__link--homepage"
             >
-
                 <!-- New rebranded GOV.UK logo with integrated crown -->
                 <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -61,22 +60,6 @@ It should only show the GOV.UK logo and any GOV.UK-wide links and tools to help 
                 </svg>
             </a>
         </div>
-        <button type="button"
-                aria-controls="one-login-header__nav"
-                aria-label="Show GOV.UK One Login menu"
-                data-open-class="rebranded-cross-service-header__toggle--open"
-                data-label-for-show="Show GOV.UK One Login menu"
-                data-label-for-hide="Hide GOV.UK One Login menu"
-                aria-expanded="false"
-                class="rebranded-cross-service-header__toggle js-x-header-toggle">
-        <span class="rebranded-cross-service-header__toggle-content-wrapper">
-  <svg focusable="false" xmlns="http://www.w3.org/2000/svg" width="15" height="30" viewBox="150 150 250 250" fill="currentcolor" class="rebranded-cross-service-header__logo " aria-hidden="true">
-    <path d="M300.002 312.261C249.445 312.261 208.346 271.165 208.346 220.608C208.346 170.051 249.445 128.954 300.002 128.954C350.559 128.954 391.655 170.051 391.655 220.608C391.655 271.165 350.559 312.261 300.002 312.261ZM300.002 170.892C272.673 170.892 250.389 193.175 250.389 220.504C250.389 247.83 272.673 270.113 300.002 270.113C327.33 270.113 349.611 247.83 349.611 220.504C349.611 193.175 327.33 170.892 300.002 170.892Z" />
-    <path d="M221.275 471.046H179.231V365.202H420.769V407.246H221.275V471.046Z"/>
-  </svg>
-          <span class="rebranded-cross-service-header__toggle-content">One Login</span>
-        </span>
-        </button>
         <nav aria-label="GOV.UK One Login" class="rebranded-one-login-header__nav" data-open-class="rebranded-one-login-header__nav--open" id="one-login-header__nav">
             <ul class="rebranded-one-login-header__nav__list">
                 <li class="rebranded-one-login-header__nav__list-item">
@@ -91,4 +74,8 @@ It should only show the GOV.UK logo and any GOV.UK-wide links and tools to help 
         </nav>
     </div>
 </header>
-
+<style>
+    .rebranded-one-login-header__nav__text--sign-out{
+        color: #FFFFFF;
+    }
+</style>

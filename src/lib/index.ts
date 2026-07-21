@@ -24,7 +24,6 @@ export { default as Breadcrumbs } from './components/layout/Breadcrumbs.svelte';
 export { default as Footer } from './components/layout/Footer.svelte';
 export { default as Header } from './components/layout/Header.svelte';
 export { default as InternalHeader } from './components/layout/InternalHeader.svelte';
-export { default as OneLoginHeader } from './components/layout/OneLoginHeader.svelte';
 export { default as PhaseBanner } from './components/layout/PhaseBanner.svelte';
 export { default as ServiceNavigation } from './components/layout/ServiceNavigation.svelte';
 export { default as SideNavigation } from './components/layout/SideNavigation.svelte';

@@ -16,7 +16,7 @@ export default defineConfig({
   ],
   server: {
     fs: {
-      allow: ["node_modules/govuk-frontend"],
+      allow: [".", "node_modules/govuk-frontend"],
     },
   },
   resolve: {

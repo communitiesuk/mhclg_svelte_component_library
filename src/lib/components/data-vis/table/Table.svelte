@@ -1,5 +1,5 @@
 <script>
-  import { Button } from "@communitiesuk/svelte-component-library";
+  import Button from "../../ui/Button.svelte";
 
   let {
     data = [],

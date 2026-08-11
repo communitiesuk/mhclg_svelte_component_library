@@ -209,36 +209,79 @@
 
   const range = $derived(Array.from({ length: nSegments }, (_, i) => i));
 
+  // function interpolateColors(
+  //   startColor,
+  //   endColor,
+  //   nSegments,
+  //   midColor = null,
+  //   skew,
+  // ) {
+  //   const colorArray = [startColor, midColor, endColor].filter(Boolean);
+
+  //   if (!skew) {
+  //     return chroma.scale(colorArray).colors(nSegments);
+  //   } else {
+  //     const extremeColors = chroma
+  //       .scale([startColor, midColor, endColor])
+  //       .padding([
+  //         proportionInExtremeBins[0] / 2,
+  //         proportionInExtremeBins[1] / 2,
+  //       ])
+  //       .colors(2);
+
+  //     const averageNormalised =
+  //       (averageValue - chartDomain[0]) / (chartDomain[1] - chartDomain[0]);
+
+  //     const binColors = chroma
+  //       .scale([extremeColors[0], midColor, extremeColors[1]])
+  //       .domain([0, averageNormalised, 1])
+  //       .colors(10);
+
+  //     return binColors;
+  //   }
+  // }
+
+  function sampleScale(colors, gamma, n) {
+    const scale = chroma.scale(colors).gamma(gamma);
+    // sample bin centers, not endpoints, so neither color stop
+    // (including the shared midColor) appears as its own swatch
+    return Array.from({ length: n }, (_, i) => scale((i + 0.5) / n).hex());
+  }
+
   function interpolateColors(
     startColor,
     endColor,
     nSegments,
     midColor = null,
     skew,
+    gammaLow = 3,
+    gammaHigh = 0.33,
   ) {
     const colorArray = [startColor, midColor, endColor].filter(Boolean);
 
     if (!skew) {
       return chroma.scale(colorArray).colors(nSegments);
-    } else {
-      const extremeColors = chroma
-        .scale([startColor, midColor, endColor])
-        .padding([
-          proportionInExtremeBins[0] / 2,
-          proportionInExtremeBins[1] / 2,
-        ])
-        .colors(2);
-
-      const averageNormalised =
-        (averageValue - chartDomain[0]) / (chartDomain[1] - chartDomain[0]);
-
-      const binColors = chroma
-        .scale([extremeColors[0], midColor, extremeColors[1]])
-        .domain([0, averageNormalised, 1])
-        .colors(10);
-
-      return binColors;
     }
+
+    const extremeColors = chroma
+      .scale([startColor, midColor, endColor])
+      .padding([proportionInExtremeBins[0] / 2, proportionInExtremeBins[1] / 2])
+      .colors(2);
+
+    const half = nSegments / 2; // requires nSegments to be even
+
+    const binColors1 = sampleScale(
+      [extremeColors[0], midColor],
+      gammaLow,
+      half,
+    );
+    const binColors2 = sampleScale(
+      [midColor, extremeColors[1]],
+      gammaHigh,
+      half,
+    );
+
+    return [...binColors1, ...binColors2];
   }
 
   let colorScale = $derived(

@@ -1,4 +1,11 @@
 <script>
+  import {
+    prepare,
+    prepareWithSegments,
+    measureLineStats,
+    measureNaturalWidth,
+    layout,
+  } from "@chenglou/pretext";
   let {
     activeMarkerId,
     labelColor = "red",
@@ -12,47 +19,71 @@
     tooltipSnippet,
     labelText = undefined,
     yOffset = 20,
+    containerWidth = undefined,
   } = $props();
 
-  let textDimensions = $state();
+  const preparedText = prepare(
+    "Bournemouth, Christchurch and Poole",
+    "19px GDS Transport",
+  );
+
   let verticalPadding = $state(8);
   let horizontalPadding = $derived(verticalPadding * 2);
+
+  let xPosition = $derived(markerRect?.x ?? 0);
+
+  const { lineCount, maxLineWidth } = $derived(
+    measureLineStats(preparedText, containerWidth - 50),
+  );
+
+  $inspect({ containerWidth, maxLineWidth, lineCount });
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(value, max));
+  }
+
+  let left = $derived(xPosition - maxLineWidth / 2);
 </script>
 
 <!-- <div
-  style="position:absolute;
-  top: {markerRect?.y - (textDimensions?.height ?? 0) - 15}px;
-left: {markerRect?.x +
-    (markerRect?.width ?? 0) / 2 -
-    (textDimensions?.width ?? 0) / 2}px;
-  pointer-events: none; border 1px solid blue
-  "
-> -->
+    style="position:absolute;
+    top: {markerRect?.y - (textDimensions?.height ?? 0) - 15}px;
+  left: {markerRect?.x +
+      (markerRect?.width ?? 0) / 2 -
+      (textDimensions?.width ?? 0) / 2}px;
+    pointer-events: none; border 1px solid blue
+    "
+  > -->
 <div
-  style="position:absolute; left: {markerRect?.x - textDimensions?.width / 2}px;
-      top: {markerRect?.y -
-    textDimensions?.height -
-    yOffset}px; pointer-events: none"
-  bind:contentRect={textDimensions}
+  style="position:absolute; 
+  left: {`${left}px`};
+pointer-events: none;
+  max-width: {containerWidth + horizontalPadding * 2}px;
+"
 >
   {#if tooltipSnippet === undefined}
-    <div
-      style="background-color: {labelColor};
-  padding: 5px;
-  border-radius: 5px;"
-    >
+    <div class="tooltip-text">
       {#if tooltipContent}
-        <div>
+        <!-- <div role="tooltip">
           {activeMarkerId[tooltipContent]}
-        </div>
+        </div> -->
+        {tooltipContent}
       {:else}
-        <div>
-          <div>{activeMarkerId?.value ?? activeMarkerId}</div>
-        </div>{/if}
+        <div role="tooltip">{activeMarkerId?.value ?? activeMarkerId}</div>
+      {/if}
     </div>
   {:else}
-    <div>
+    <div role="tooltip">
       {@render tooltipSnippet(activeMarkerId)}
     </div>
   {/if}
 </div>
+
+<style>
+  .tooltip-text {
+    font-size: 19px;
+    padding: 5px;
+    border: 1px solid black;
+    background-color: white;
+  }
+</style>

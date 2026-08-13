@@ -3,6 +3,7 @@
   import { bin, range as d3range } from "d3-array";
   import Axis from "./axis/Axis.svelte";
   import chroma from "chroma-js";
+  import { prepareWithSegments, measureLineStats } from "@chenglou/pretext";
 
   let {
     averageValue = undefined,
@@ -40,7 +41,12 @@
     barStrokeColor = "white",
     topLabel = true,
     includeOutliers = true,
+    onUpdate = undefined,
   } = $props();
+
+  $effect(() => {
+    onUpdate?.(bins);
+  });
 
   let useRange = $derived(
     polarity === "standard"
@@ -174,6 +180,40 @@
       totalHeight: y,
     };
   });
+
+  let annotationString = $state("Most common in England");
+
+  let availableSpace = $derived(containerWidth - padding);
+
+  let annotationTextSize = $state("12pt");
+
+  let preparedText = $derived(
+    prepareWithSegments(
+      annotationString,
+      `${annotationTextSize} GDS Transport`,
+    ),
+  );
+  let { lineCount, maxLineWidth } = $derived(
+    measureLineStats(preparedText, 100),
+  );
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(value, max));
+  }
+
+  let centerX = $derived(
+    (xScale(bins[tallest].x0) + xScale(bins[tallest].x1)) / 2 - 4.5,
+  );
+
+  let pos = $derived(
+    clamp(
+      centerX - maxLineWidth / 2,
+      0,
+      containerWidth - padding - maxLineWidth,
+    ),
+  );
+
+  $inspect({ containerWidth, maxLineWidth, lineCount });
 </script>
 
 {#key containerWidth}
@@ -181,15 +221,13 @@
     <svg width={containerWidth} height={layout.totalHeight}>
       <g transform="translate({padding / 2}, 0)">
         {#if topLabel && layout.topLabelY !== null}
-          {@const centerX =
-            (xScale(bins[tallest].x0) + xScale(bins[tallest].x1)) / 2 - 4.5}
           <text
-            x={centerX}
+            x={pos}
             y={layout.topLabelY + 14}
             fill="#666"
-            font-size="0.75em"
+            font-size={annotationTextSize}
           >
-            Most common in England
+            {annotationString}
           </text>
           <text
             x={centerX}
@@ -200,24 +238,24 @@
             ↓
           </text>
         {/if}
-
-        {#if annotationText && layout.annotationY !== null}
-          <g
-            transform="translate({xScale(
-              annotationValue,
-            )}, {layout.annotationY})"
-          >
-            <text
-              fill="#555555"
-              font-size="0.8em"
-              text-anchor="middle"
-              dominant-baseline="hanging"
+        {#if false}
+          {#if annotationText && layout.annotationY !== null}
+            <g
+              transform="translate({xScale(
+                annotationValue,
+              )}, {layout.annotationY})"
             >
-              <tspan x="0" dy="0">{annotationText}</tspan>
-              <tspan x="0" dy="12">▼</tspan>
-            </text>
-          </g>
-        {/if}
+              <text
+                fill="#555555"
+                font-size="0.8em"
+                text-anchor="middle"
+                dominant-baseline="hanging"
+              >
+                <tspan x="0" dy="0">{annotationText}</tspan>
+                <tspan x="0" dy="12">▼</tspan>
+              </text>
+            </g>
+          {/if}{/if}
 
         <g transform="translate(0, {layout.chartY})">
           {#if showYAxis}

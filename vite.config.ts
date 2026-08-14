@@ -24,4 +24,10 @@ export default defineConfig({
       $routes: "/src/routes",
     },
   },
+  css: {
+    transformer: 'lightningcss',
+    lightningcss: {
+      errorRecovery: true
+    }
+  }
 });

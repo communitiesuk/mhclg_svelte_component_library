@@ -65,7 +65,7 @@
     "@sveltejs/adapter-static": "^3.0.8",
     "@sveltejs/kit": "^2.16.1",
     "@sveltejs/package": "^2.0.0",
-    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.0",
     "@tailwindcss/aspect-ratio": "^0.4.2",
     "@tailwindcss/forms": "^0.5.9",
     "@tailwindcss/typography": "^0.5.15",
@@ -90,7 +90,7 @@
     "tsx": "^4.19.2",
     "typescript": "^5.0.0",
     "typescript-eslint": "^8.0.0",
-    "vite": "^5.0.11"
+    "vite": "^8.2.1"
   },
   "dependencies": {
     "@dwp/dwp-frontend": "^3.3.0",

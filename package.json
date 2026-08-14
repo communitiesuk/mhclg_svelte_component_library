@@ -54,7 +54,7 @@
     "./src/lib/*": "./src/lib/*"
   },
   "engines": {
-    "node": ">=20.0.0"
+    "node": ">=24.0.0"
   },
   "peerDependencies": {
     "@sveltejs/kit": "^2.0.0",

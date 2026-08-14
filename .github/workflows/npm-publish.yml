@@ -28,6 +28,6 @@ jobs:
           node-version: 24
           registry-url: https://registry.npmjs.org/
       - run: npm ci
-      - run: npm publish
+      - run: npm publish --tag deprivation
         env:
           NODE_AUTH_TOKEN: ${{secrets.npm_token}}

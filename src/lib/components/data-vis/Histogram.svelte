@@ -25,7 +25,6 @@
     padding = 0,
     height = 50,
     polarity = "standard",
-    annotationValue = 0,
     annotationText = "",
     labelFormatter = (tick, index, numberOfTicks, values) => {
       return tick;
@@ -39,9 +38,9 @@
     tickStrokeWidth = 0.25,
     barStrokeWidth = 0,
     barStrokeColor = "white",
-    topLabel = true,
     includeOutliers = true,
     onUpdate = undefined,
+    annotationPosition = { xPosition: undefined, segmentIndex: undefined },
   } = $props();
 
   $effect(() => {
@@ -95,12 +94,6 @@
       .domain([0, Math.max(...bins.map((b) => b.length))])
       .range([0, height]),
   );
-
-  let tallest = $derived(
-    bins.map((b) => b.length).indexOf(Math.max(...bins.map((b) => b.length))),
-  );
-
-  $inspect({ tallest });
 
   function interpolateColors(
     startColor,
@@ -160,11 +153,8 @@
   const layout = $derived.by(() => {
     let y = 0;
 
-    const topLabelY = topLabel ? y : null;
-    if (topLabel) y += 30;
-
     const annotationY = annotationText ? y : null;
-    if (annotationText) y += 25;
+    if (annotationText) y += 30;
 
     const chartY = y;
     y += height;
@@ -173,7 +163,6 @@
     if (showXAxis) y += 25;
 
     return {
-      topLabelY,
       annotationY,
       chartY,
       xAxisY,
@@ -181,20 +170,15 @@
     };
   });
 
-  let annotationString = $state("Most common in England");
-
   let availableSpace = $derived(containerWidth - padding);
 
-  let annotationTextSize = $state("12pt");
+  let annotationTextSize = $state("10pt");
 
   let preparedText = $derived(
-    prepareWithSegments(
-      annotationString,
-      `${annotationTextSize} GDS Transport`,
-    ),
+    prepareWithSegments(annotationText, `${annotationTextSize} GDS Transport`),
   );
   let { lineCount, maxLineWidth } = $derived(
-    measureLineStats(preparedText, 100),
+    measureLineStats(preparedText, availableSpace),
   );
 
   function clamp(value, min, max) {
@@ -202,60 +186,45 @@
   }
 
   let centerX = $derived(
-    (xScale(bins[tallest].x0) + xScale(bins[tallest].x1)) / 2 - 4.5,
+    annotationPosition.xPosition !== undefined
+      ? xScale(annotationPosition.xPosition)
+      : (xScale(bins[annotationPosition.segmentIndex].x0) +
+          xScale(bins[annotationPosition.segmentIndex].x1)) /
+          2 -
+          4.5,
   );
 
-  let pos = $derived(
+  let clampedAnnotationPosition = $derived(
     clamp(
       centerX - maxLineWidth / 2,
       0,
       containerWidth - padding - maxLineWidth,
     ),
   );
-
-  $inspect({ containerWidth, maxLineWidth, lineCount });
 </script>
 
 {#key containerWidth}
   <div class="scale-container" bind:clientWidth={containerWidth}>
     <svg width={containerWidth} height={layout.totalHeight}>
       <g transform="translate({padding / 2}, 0)">
-        {#if topLabel && layout.topLabelY !== null}
+        {#if annotationText && layout.annotationY !== null}
           <text
-            x={pos}
-            y={layout.topLabelY + 14}
+            x={clampedAnnotationPosition}
+            y={layout.annotationY + 14}
             fill="#666"
             font-size={annotationTextSize}
           >
-            {annotationString}
+            {annotationText}
           </text>
           <text
             x={centerX}
-            y={layout.topLabelY + 26}
+            y={layout.annotationY + 26}
             fill="#666"
             font-size="0.75em"
           >
             ↓
           </text>
         {/if}
-        {#if false}
-          {#if annotationText && layout.annotationY !== null}
-            <g
-              transform="translate({xScale(
-                annotationValue,
-              )}, {layout.annotationY})"
-            >
-              <text
-                fill="#555555"
-                font-size="0.8em"
-                text-anchor="middle"
-                dominant-baseline="hanging"
-              >
-                <tspan x="0" dy="0">{annotationText}</tspan>
-                <tspan x="0" dy="12">▼</tspan>
-              </text>
-            </g>
-          {/if}{/if}
 
         <g transform="translate(0, {layout.chartY})">
           {#if showYAxis}

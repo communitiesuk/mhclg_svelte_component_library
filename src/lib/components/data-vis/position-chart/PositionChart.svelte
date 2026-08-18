@@ -7,6 +7,7 @@
   import Button from "../../ui/Button.svelte";
   import InsetText from "../../content/InsetText.svelte";
   import Axis from "../axis/Axis.svelte";
+  import { prepareWithSegments, layoutWithLines } from "@chenglou/pretext";
   let {
     value = undefined,
     min = undefined,
@@ -297,10 +298,23 @@
   let svgHeight = $derived(
     chartHeight + (showAxis ? 25 : 0) + (showAverage ? 35 : 0),
   );
+
+  let availableAnnotationSpace = $derived(topWidth);
+
+  let annotationTextSize = "12pt";
 </script>
 
 {#if annotations.length}
   {#each annotations as d (d.value)}
+    {@const preparedText = prepareWithSegments(
+      d.annotation,
+      `${annotationTextSize} GDS Transport`,
+    )}
+    {@const annotationLines = layoutWithLines(
+      preparedText,
+      availableAnnotationSpace,
+      12,
+    )}
     <div bind:clientWidth={topWidth}>
       <svg width={topWidth} height="60">
         <g>
@@ -309,13 +323,16 @@
             id="label"
             x={d.value}
             y="20"
-            fill={d.color}
-            font-size="18"
+            fill={d.color === "inherit" ? "#333" : d.color}
+            font-size={annotationTextSize}
             opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
               ? 0.2
               : 1}
           >
-            {d.annotation}
+            {#each annotationLines as line, i}
+              {console.log(line)}
+              {line}
+            {/each}
           </text>
         </g>
         <defs>
@@ -331,7 +348,10 @@
               ? 0.2
               : 1}
           >
-            <path d="M 0 0 L 6 3 L 0 6 z" fill={d.color}></path>
+            <path
+              d="M 0 0 L 6 3 L 0 6 z"
+              fill={d.color === "inherit" ? "#333" : d.color}
+            ></path>
           </marker>
         </defs>
         <path
@@ -340,8 +360,8 @@
             4 +
             (topWidth - chartWidth)}  v 15"
           fill="none"
-          stroke={d.color}
-          stroke-width="1.5"
+          stroke={d.color === "inherit" ? "#333" : d.color}
+          stroke-width="1.2"
           marker-end="url(#arrow-down)"
           opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
             ? 0.2

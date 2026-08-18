@@ -22,10 +22,7 @@
     containerWidth = undefined,
   } = $props();
 
-  const preparedText = prepare(
-    "Bournemouth, Christchurch and Poole",
-    "19px GDS Transport",
-  );
+  const preparedText = $derived(prepare(tooltipContent, "16pt GDS Transport"));
 
   let verticalPadding = $state(8);
   let horizontalPadding = $derived(verticalPadding * 2);
@@ -33,7 +30,7 @@
   let xPosition = $derived(markerRect?.x ?? 0);
 
   const { lineCount, maxLineWidth } = $derived(
-    measureLineStats(preparedText, containerWidth - 50),
+    measureLineStats(preparedText, containerWidth - horizontalPadding * 2),
   );
 
   $inspect({ containerWidth, maxLineWidth, lineCount });
@@ -42,7 +39,7 @@
     return Math.max(min, Math.min(value, max));
   }
 
-  let left = $derived(xPosition - maxLineWidth / 2);
+  let left = $derived(xPosition);
 </script>
 
 <!-- <div
@@ -58,7 +55,6 @@
   style="position:absolute; 
   left: {`${left}px`};
 pointer-events: none;
-  max-width: {containerWidth + horizontalPadding * 2}px;
 "
 >
   {#if tooltipSnippet === undefined}
@@ -73,17 +69,17 @@ pointer-events: none;
       {/if}
     </div>
   {:else}
-    <div role="tooltip">
+    <!-- <div role="tooltip">
       {@render tooltipSnippet(activeMarkerId)}
-    </div>
+    </div> -->
   {/if}
 </div>
 
 <style>
   .tooltip-text {
-    font-size: 19px;
+    font-size: 12pt;
     padding: 5px;
     border: 1px solid black;
-    background-color: white;
+    background-color: red;
   }
 </style>

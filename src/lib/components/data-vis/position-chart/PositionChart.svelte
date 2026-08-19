@@ -101,6 +101,7 @@
     ticksDomain = $bindable([[]]),
     axisDomain = $bindable([[]]),
     getChartDomain = undefined,
+    standardDeviation = undefined,
   } = $props();
 
   let xTickFirst = $derived(ticksDomain.length ? ticksDomain[0] : 0);
@@ -218,11 +219,24 @@
   ) {
     const colorArray = [startColor, midColor, endColor].filter(Boolean);
 
+    let thresholdValue = standardDeviation / (domainMax - domainMin);
+
+    const thresholdColors = [
+      chroma.scale([startColor, midColor])(0.9),
+      chroma.scale([midColor, endColor])(0.1),
+    ];
+
     if (!skew) {
       return chroma.scale(colorArray).colors(nSegments);
     } else {
       const extremeColors = chroma
-        .scale([startColor, midColor, endColor])
+        .scale([
+          startColor,
+          thresholdColors[0],
+          midColor,
+          thresholdColors[1],
+          endColor,
+        ])
         .padding([
           proportionInExtremeBins[0] / 2,
           proportionInExtremeBins[1] / 2,
@@ -232,10 +246,47 @@
       const averageNormalised =
         (averageValue - chartDomain[0]) / (chartDomain[1] - chartDomain[0]);
 
+      let thresholds = [
+        averageNormalised - thresholdValue,
+        averageNormalised + thresholdValue,
+      ];
+
+      // const binColors = chroma
+      //   .scale([
+      //     extremeColors[0],
+      //     thresholdColors[0],
+      //     midColor,
+      //     thresholdColors[1],
+      //     extremeColors[1],
+      //   ])
+      //   .domain([0, thresholds[0], averageNormalised, thresholds[1], 1])
+      //   .colors(10);
+
+      const lowClamped = thresholds[0] < 0;
+      const highClamped = thresholds[1] > 1;
+
+      const stops = [
+        !lowClamped && { color: extremeColors[0], value: 0 },
+        { color: thresholdColors[0], value: Math.max(thresholds[0], 0) },
+        { color: midColor, value: averageNormalised },
+        { color: thresholdColors[1], value: Math.min(thresholds[1], 1) },
+        !highClamped && { color: extremeColors[1], value: 1 },
+      ].filter(Boolean);
+
       const binColors = chroma
-        .scale([extremeColors[0], midColor, extremeColors[1]])
-        .domain([0, averageNormalised, 1])
-        .colors(10);
+        .scale(stops.map((s) => s.color))
+        .domain(stops.map((s) => s.value))
+        .colors(nSegments);
+
+      // const binColors = chroma
+      //   .scale([
+      //     extremeColors[0]
+      //     thresholdColors[0],
+      //     thresholdColors[1],
+      //     extremeColors[1],
+      //   ])
+      //   .domain([0, thresholds[0], thresholds[1], 1])
+      //   .colors(nSegments);
 
       return binColors;
     }

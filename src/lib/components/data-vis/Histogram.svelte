@@ -178,7 +178,7 @@
 
   let availableSpace = $derived(containerWidth - padding);
 
-  let annotationTextSize = $state("10pt");
+  let annotationTextSize = "10pt";
 
   let preparedText = $derived(
     prepareWithSegments(annotationText, `${annotationTextSize} GDS Transport`),

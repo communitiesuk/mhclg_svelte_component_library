@@ -153,14 +153,20 @@
   const layout = $derived.by(() => {
     let y = 0;
 
-    const annotationY = annotationText ? y : null;
-    if (annotationText) y += 30;
+    let annotationY = null;
+    if (annotationText) {
+      annotationY = y;
+      y += 30;
+    }
 
     const chartY = y;
     y += height;
 
-    const xAxisY = showXAxis ? y : null;
-    if (showXAxis) y += 25;
+    let xAxisY = null;
+    if (showXAxis) {
+      xAxisY = y;
+      y += 25;
+    }
 
     return {
       annotationY,
@@ -203,55 +209,54 @@
   );
 </script>
 
-{#key containerWidth}
-  <div class="scale-container" bind:clientWidth={containerWidth}>
-    <svg width={containerWidth} height={layout.totalHeight}>
-      <g transform="translate({padding / 2}, 0)">
-        {#if annotationText && layout.annotationY !== null}
-          <text
-            x={clampedAnnotationPosition}
-            y={layout.annotationY + 14}
-            fill="#666"
-            font-size={annotationTextSize}
-          >
-            {annotationText}
-          </text>
-          <text
-            x={centerX}
-            y={layout.annotationY + 26}
-            fill="#666"
-            font-size="0.75em"
-          >
-            ↓
-          </text>
+<div class="scale-container" bind:clientWidth={containerWidth}>
+  <svg width={containerWidth} height={layout.totalHeight}>
+    <g transform="translate({padding / 2}, 0)">
+      {#if annotationText && layout.annotationY !== null}
+        <text
+          x={clampedAnnotationPosition}
+          y={layout.annotationY + 14}
+          fill="#666"
+          font-size={annotationTextSize}
+        >
+          {annotationText}
+        </text>
+        <text
+          x={centerX}
+          y={layout.annotationY + 26}
+          fill="#666"
+          font-size="0.75em"
+        >
+          ↓
+        </text>
+      {/if}
+
+      <g transform="translate(0, {layout.chartY})">
+        {#if showYAxis}
+          {#each [3, 6, 9] as x, i}
+            <path
+              transform="translate(0, {scaleLinear([0, 9], [height, 0])(x)})"
+              d={`M0 0 l${containerWidth - 25} 0`}
+              stroke="grey"
+              stroke-width={0.25}
+            ></path>
+          {/each}
         {/if}
 
-        <g transform="translate(0, {layout.chartY})">
-          {#if showYAxis}
-            {#each [3, 6, 9] as x, i}
-              <path
-                transform="translate(0, {scaleLinear([0, 9], [height, 0])(x)})"
-                d={`M0 0 l${containerWidth - 25} 0`}
-                stroke="grey"
-                stroke-width={0.25}
-              ></path>
-            {/each}
-          {/if}
-
-          {#each bins as bin, i}
-            {#key bin.x0}
-              {@const fullWidth = Math.abs(xScale(bin.x1) - xScale(bin.x0))}
-              {@const barWidth = fullWidth * 0.97}
-              {@const offset = (fullWidth - barWidth) / 2}
-              <rect
-                x={(polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)) +
-                  offset}
-                y={height - yScale(bin.length)}
-                width={barWidth}
-                height={yScale(bin.length)}
-                fill={fill ?? colorScale[i]}
-              ></rect>
-              <!-- <text
+        {#each bins as bin, i}
+          {#key bin.x0}
+            {@const fullWidth = Math.abs(xScale(bin.x1) - xScale(bin.x0))}
+            {@const barWidth = fullWidth * 0.97}
+            {@const offset = (fullWidth - barWidth) / 2}
+            <rect
+              x={(polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)) +
+                offset}
+              y={height - yScale(bin.length)}
+              width={barWidth}
+              height={yScale(bin.length)}
+              fill={fill ?? colorScale[i]}
+            ></rect>
+            <!-- <text
                 x={(polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)) +
                   offset}
                 y={height - yScale(bin.length)}
@@ -259,13 +264,13 @@
                 >{bin.length} areas between
                 {Math.round(bin.x0)} and {Math.round(bin.x1)}
               </text> -->
-            {/key}
-          {/each}
-        </g>
+          {/key}
+        {/each}
+      </g>
 
-        {#if showXAxis && layout.xAxisY !== null}
-          <g transform="translate(0, {layout.xAxisY})">
-            <!-- <Axis
+      {#if showXAxis && layout.xAxisY !== null}
+        <g transform="translate(0, {layout.xAxisY})">
+          <!-- <Axis
               bind:ticksArray={xTicks}
               chartHeight={height}
               chartWidth={containerWidth - padding}
@@ -280,12 +285,11 @@
               {labelFormatter}
               {numberOfTicks}
             /> -->
-          </g>
-        {/if}
-      </g>
-    </svg>
-  </div>
-{/key}
+        </g>
+      {/if}
+    </g>
+  </svg>
+</div>
 
 <div style="content-visibility: hidden;">
   {#if !showXAxis}

@@ -191,7 +191,7 @@
     return Math.max(min, Math.min(value, max));
   }
 
-  let centerX = $derived.by(() => {
+  let annotationCentre = $derived.by(() => {
     if (annotationPosition.xPosition !== undefined) {
       return xScale(annotationPosition.xPosition);
     }
@@ -204,12 +204,15 @@
       return 0;
     }
 
-    return (xScale(segment.x0) + xScale(segment.x1)) / 2 - 4.5;
+    const centreOfTallestBar =
+      (xScale(segment.x0) + xScale(segment.x1)) / 2 - 4.5;
+
+    return centreOfTallestBar;
   });
 
   let clampedAnnotationPosition = $derived(
     clamp(
-      centerX - maxLineWidth / 2,
+      annotationCentre - maxLineWidth / 2,
       0,
       containerWidth - padding - maxLineWidth,
     ),
@@ -229,7 +232,7 @@
           {annotationText}
         </text>
         <text
-          x={centerX}
+          x={annotationCentre}
           y={layout.annotationY + 26}
           fill="#666"
           font-size="0.75em"

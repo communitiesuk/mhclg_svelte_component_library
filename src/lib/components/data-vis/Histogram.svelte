@@ -214,7 +214,7 @@
     clamp(
       annotationCentre - maxLineWidth / 2,
       0,
-      containerWidth - padding - maxLineWidth,
+      availableSpace - maxLineWidth,
     ),
   );
 </script>

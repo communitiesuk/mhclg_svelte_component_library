@@ -191,14 +191,21 @@
     return Math.max(min, Math.min(value, max));
   }
 
-  let centerX = $derived(
-    annotationPosition.xPosition !== undefined
-      ? xScale(annotationPosition.xPosition)
-      : (xScale(bins[annotationPosition.segmentIndex].x0) +
-          xScale(bins[annotationPosition.segmentIndex].x1)) /
-          2 -
-          4.5,
-  );
+  let centerX = $derived.by(() => {
+    if (annotationPosition.xPosition !== undefined) {
+      return xScale(annotationPosition.xPosition);
+    }
+
+    const segment = bins[annotationPosition.segmentIndex ?? 0];
+    if (!segment) {
+      console.warn(
+        "annotationPosition needs xPosition or a valid segmentIndex",
+      );
+      return 0;
+    }
+
+    return (xScale(segment.x0) + xScale(segment.x1)) / 2 - 4.5;
+  });
 
   let clampedAnnotationPosition = $derived(
     clamp(

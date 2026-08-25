@@ -18,6 +18,7 @@
     headingLevel = "h4",
     useCustomSectionIcon = false,
     useLightweightAccordionStyles = false,
+    openSections = [],
   }: {
     sections: {
       heading: string;
@@ -38,6 +39,7 @@
     headingLevel?: string;
     useCustomSectionIcon?: boolean;
     useLightweightAccordionStyles?: boolean;
+    openSections?: string[];
   } = $props();
 
   // Attempt to ensure that ids are unique by attaching extra characters
@@ -120,12 +122,14 @@
     }
   });
 
-  export function openSection(id: string) {
-    const section = uniqueSections.find((s) => s.id === id);
-    if (section) {
-      expandedSections.add(section.uniqueid);
+  $effect(() => {
+    for (const id of openSections) {
+      const match = uniqueSections.find((section) => section.id === id);
+      if (match) {
+        expandedSections.add(match.uniqueid);
+      }
     }
-  }
+  });
 </script>
 
 <div

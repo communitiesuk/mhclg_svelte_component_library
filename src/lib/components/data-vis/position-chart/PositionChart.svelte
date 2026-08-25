@@ -452,7 +452,6 @@
                   markerRadius},{positionChart.chartHeight / 2})"
               >
                 {#if rowValue.shape === "line"}
-                  {console.log("seg", segmentIndex(rowValue.value))}
                   <line
                     x1={0}
                     x2={0}

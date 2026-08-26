@@ -1,4 +1,4 @@
-export function convertToCSV(array) {
+export function convertToCSV(array) { 
     if (!array.length) return "";
   
     const header = Object.keys(array[0]).join(", "); // Add space after commas in header

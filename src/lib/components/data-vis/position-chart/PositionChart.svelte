@@ -322,7 +322,7 @@
     {@const horizontalOffset = markerRadius + (topWidth - chartWidth)}
     {@const hDelta =
       annotationSide === "left" ? horizontalOffset : -horizontalOffset}
-    {@const annotationColor = d.color === "inherit" ? "#333" : d.color}
+    {@const annotationColor = (!d.color || d.color === "inherit") ? "#333" : d.color}
     {@const dimmedOpacity = activeMarkerId ? 0.2 : 1}
     <div bind:clientWidth={topWidth}>
       <svg width={topWidth} height={annotationLines.height + 20}>

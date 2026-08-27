@@ -263,6 +263,8 @@
       ),
   );
 
+  $inspect({ annotations });
+
   let gridTemplateRows = $derived(
     allDataNormalized
       .map((item, i) => {
@@ -330,7 +332,7 @@
         <g>
           <text
             font-family="GDS Transport"
-            id="label"
+            id="label-${d.annotation}"
             y="0"
             fill={annotationColor}
             font-size={annotationTextSize}

@@ -101,7 +101,6 @@
     ticksDomain = $bindable([[]]),
     axisDomain = $bindable([[]]),
     getChartDomain = undefined,
-    standardDeviation = undefined,
     ...rest
   } = $props();
 
@@ -221,9 +220,8 @@
     const colorArray = [startColor, midColor, endColor].filter(Boolean);
 
     let thresholdValue = rest.selectedThresholdValue
-      ? (standardDeviation / (domainMax - domainMin)) *
-        rest.selectedThresholdValue
-      : standardDeviation / (domainMax - domainMin);
+      ? (rest.MAD * rest.selectedThresholdValue) / (domainMax - domainMin)
+      : 0;
 
     const thresholdColors = [
       chroma.scale([startColor, midColor])(0.9),

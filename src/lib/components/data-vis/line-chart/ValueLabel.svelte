@@ -22,64 +22,57 @@
     containerWidth = undefined,
   } = $props();
 
-  const preparedText = $derived(prepare(tooltipContent, "16pt GDS Transport"));
+  const preparedText = $derived(prepare(tooltipContent, "12pt GDS Transport"));
 
-  let verticalPadding = $state(8);
+  let verticalPadding = 3;
   let horizontalPadding = $derived(verticalPadding * 2);
 
   let xPosition = $derived(markerRect?.x ?? 0);
+  let yPosition = $derived(markerRect?.y ?? 0);
+
+  let marginOfError = 4;
 
   const { lineCount, maxLineWidth } = $derived(
     measureLineStats(preparedText, containerWidth - horizontalPadding * 2),
   );
 
-  $inspect({ containerWidth, maxLineWidth, lineCount });
-
   function clamp(value, min, max) {
     return Math.max(min, Math.min(value, max));
   }
 
-  let left = $derived(xPosition);
+  let left = $derived(
+    clamp(
+      xPosition - maxLineWidth / 2,
+      0,
+      containerWidth - maxLineWidth - horizontalPadding * 2 - marginOfError,
+    ),
+  );
 </script>
 
-<!-- <div
-    style="position:absolute;
-    top: {markerRect?.y - (textDimensions?.height ?? 0) - 15}px;
-  left: {markerRect?.x +
-      (markerRect?.width ?? 0) / 2 -
-      (textDimensions?.width ?? 0) / 2}px;
-    pointer-events: none; border 1px solid blue
-    "
-  > -->
 <div
   style="position:absolute; 
   left: {`${left}px`};
+  top: {yPosition - 45}px;
 pointer-events: none;
+    border: 1px solid black;
+    padding: {`${verticalPadding}px ${horizontalPadding}px`};
+    width: {maxLineWidth + horizontalPadding * 2 + marginOfError}px;
 "
 >
   {#if tooltipSnippet === undefined}
-    <div class="tooltip-text">
-      {#if tooltipContent}
-        <!-- <div role="tooltip">
-          {activeMarkerId[tooltipContent]}
-        </div> -->
-        {tooltipContent}
-      {:else}
-        <div role="tooltip">{activeMarkerId?.value ?? activeMarkerId}</div>
-      {/if}
-    </div>
+    {#if tooltipContent}
+      <span class="tooltip-text">{tooltipContent}</span>
+    {:else}
+      <div role="tooltip">{activeMarkerId?.value ?? activeMarkerId}</div>
+    {/if}
   {:else}
-    <!-- <div role="tooltip">
-      {@render tooltipSnippet(activeMarkerId)}
-    </div> -->
+    <!-- something-->
   {/if}
 </div>
 
 <style>
   .tooltip-text {
     font-size: 12pt;
-    padding: 5px;
-    border: 1px solid black;
-    background-color: red;
+    font-family: "GDS Transport";
   }
 </style>

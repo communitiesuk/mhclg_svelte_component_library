@@ -22,7 +22,14 @@
     containerWidth = undefined,
   } = $props();
 
-  const preparedText = $derived(prepare(tooltipContent, "12pt GDS Transport"));
+  // Normalize tooltipContent to always be an array of lines internally.
+  const contentLines = $derived(
+    tooltipContent === undefined
+      ? []
+      : Array.isArray(tooltipContent)
+        ? tooltipContent
+        : [tooltipContent],
+  );
 
   let verticalPadding = 3;
   let horizontalPadding = $derived(verticalPadding * 2);
@@ -32,8 +39,26 @@
 
   let marginOfError = 4;
 
-  const { lineCount, maxLineWidth } = $derived(
-    measureLineStats(preparedText, containerWidth - horizontalPadding * 2),
+  // Prepare + measure each line individually.
+  const preparedLines = $derived(
+    contentLines.map((line) => prepare(line, "12pt GDS Transport")),
+  );
+
+  const lineMeasurements = $derived(
+    preparedLines.map((preparedText) =>
+      measureLineStats(preparedText, containerWidth - horizontalPadding * 2),
+    ),
+  );
+
+  // Overall stats: max width across all lines, total line count summed.
+  const maxLineWidth = $derived(
+    lineMeasurements.length
+      ? Math.max(...lineMeasurements.map((m) => m.maxLineWidth))
+      : 0,
+  );
+
+  const lineCount = $derived(
+    lineMeasurements.reduce((sum, m) => sum + m.lineCount, 0),
   );
 
   function clamp(value, min, max) {
@@ -52,16 +77,19 @@
 <div
   style="position:absolute; 
   left: {`${left}px`};
-  top: {yPosition - 45}px;
+  bottom: {yPosition}px;
 pointer-events: none;
     border: 1px solid black;
+    background-color: white;
     padding: {`${verticalPadding}px ${horizontalPadding}px`};
     width: {maxLineWidth + horizontalPadding * 2 + marginOfError}px;
 "
 >
   {#if tooltipSnippet === undefined}
-    {#if tooltipContent}
-      <span class="tooltip-text">{tooltipContent}</span>
+    {#if contentLines.length}
+      {#each contentLines as line}
+        <span class="tooltip-text">{line}</span>
+      {/each}
     {:else}
       <div role="tooltip">{activeMarkerId?.value ?? activeMarkerId}</div>
     {/if}
@@ -74,5 +102,6 @@ pointer-events: none;
   .tooltip-text {
     font-size: 12pt;
     font-family: "GDS Transport";
+    display: block;
   }
 </style>

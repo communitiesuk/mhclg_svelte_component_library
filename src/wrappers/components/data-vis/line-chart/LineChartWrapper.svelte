@@ -46,11 +46,11 @@
    * ?  You can add other categories to the detailsArray or, if you need a more flexible solution, edit the WrapperInformation snippet directly.
    *
    */
-  let descriptionArray = ["Explain here what the component does."];
-
-  let contextArray = [
-    "Explain here the different contexts in which the component should be used.",
+  let descriptionArray = [
+    "Chart for showing change over time (or other change in continuous data, for discrete categories).",
   ];
+
+  let contextArray = ["Uses Line and Lines components."];
 
   let detailsArray = [
     {

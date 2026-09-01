@@ -72,8 +72,6 @@
       containerWidth - maxLineWidth - horizontalPadding * 2 - marginOfError,
     ),
   );
-
-  $inspect({ xPosition, yPosition });
 </script>
 
 <div

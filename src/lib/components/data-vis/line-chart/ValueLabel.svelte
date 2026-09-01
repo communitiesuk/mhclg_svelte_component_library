@@ -72,13 +72,16 @@
       containerWidth - maxLineWidth - horizontalPadding * 2 - marginOfError,
     ),
   );
+
+  $inspect({ xPosition, yPosition });
 </script>
 
 <div
   style="position:absolute; 
   left: {`${left}px`};
-  bottom: {yPosition}px;
+  top: {-yPosition}px;
 pointer-events: none;
+  transform: translate(0%, -100%);
     border: 1px solid black;
     background-color: white;
     padding: {`${verticalPadding}px ${horizontalPadding}px`};

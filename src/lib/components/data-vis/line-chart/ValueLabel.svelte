@@ -16,7 +16,7 @@
     x = undefined,
     y = undefined,
     markerRect = undefined,
-    tooltipSnippet,
+    tooltipSnippet = undefined,
     labelText = undefined,
     yOffset = 20,
     containerWidth = undefined,

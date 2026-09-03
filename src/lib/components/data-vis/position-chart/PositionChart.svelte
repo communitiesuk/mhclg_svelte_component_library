@@ -248,17 +248,6 @@
       averageNormalised + thresholdValue,
     ];
 
-    // const binColors = chroma
-    //   .scale([
-    //     extremeColors[0],
-    //     thresholdColors[0],
-    //     midColor,
-    //     thresholdColors[1],
-    //     extremeColors[1],
-    //   ])
-    //   .domain([0, thresholds[0], averageNormalised, thresholds[1], 1])
-    //   .colors(10);
-
     const lowClamped = thresholds[0] < 0;
     const highClamped = thresholds[1] > 1;
     const noThreshold = thresholdValue === 0;
@@ -300,16 +289,6 @@
       ...middleBinsOnly,
       thresholds[1] > 0.85 && thresholds[1] < 1 ? newLast : oldLast,
     ];
-
-    // const binColors = chroma
-    //   .scale([
-    //     extremeColors[0]
-    //     thresholdColors[0],
-    //     thresholdColors[1],
-    //     extremeColors[1],
-    //   ])
-    //   .domain([0, thresholds[0], thresholds[1], 1])
-    //   .colors(nSegments);
 
     return newBinColors;
   }

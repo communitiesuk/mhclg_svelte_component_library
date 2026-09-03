@@ -241,8 +241,8 @@
       .colors(2);
 
     const averageNormalised = skew
-      ? 0.5
-      : (averageValue - chartDomain[0]) / (chartDomain[1] - chartDomain[0]);
+      ? (averageValue - chartDomain[0]) / (chartDomain[1] - chartDomain[0])
+      : 0.5;
 
     let thresholds = [
       averageNormalised - thresholdValue,

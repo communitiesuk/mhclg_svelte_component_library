@@ -7,6 +7,7 @@
   import Button from "../../ui/Button.svelte";
   import InsetText from "../../content/InsetText.svelte";
   import Axis from "../axis/Axis.svelte";
+  import { prepareWithSegments, layoutWithLines } from "@chenglou/pretext";
   let {
     value = undefined,
     min = undefined,
@@ -307,12 +308,14 @@
   }
 
   let annotations = $derived(
-    Object.values(allDataNormalized[0].rowData)
+    Object.values(allDataNormalized?.[0].rowData)
       .flat()
       .filter(
         (d) => typeof d.annotation === "string" && d.annotation.length > 0,
       ),
   );
+
+  $inspect({ annotations });
 
   let gridTemplateRows = $derived(
     allDataNormalized
@@ -349,25 +352,55 @@
   let svgHeight = $derived(
     chartHeight + (showAxis ? 25 : 0) + (showAverage ? 35 : 0),
   );
+
+  let annotationTextSize = "12pt";
+
+  let lineHeight = 16;
+
+  let dimmedOpacity = $derived(activeMarkerId ? 0.2 : 1);
 </script>
 
 {#if annotations.length}
   {#each annotations as d (d.value)}
+    {@const xPos = xFunction(chartDomain)(d.value)}
+    {@const spaceRight = topWidth - xPos - markerRadius * 2}
+    {@const availableAnnotationSpace = Math.max(spaceRight, xPos)}
+    {@const annotationSide = spaceRight >= xPos ? "right" : "left"}
+    {@const preparedText = prepareWithSegments(
+      d.annotation,
+      `${annotationTextSize} GDS Transport`,
+    )}
+    {@const annotationLines = layoutWithLines(
+      preparedText,
+      availableAnnotationSpace,
+      lineHeight,
+    )}
+    {@const horizontalOffset = markerRadius + (topWidth - chartWidth)}
+    {@const hDelta =
+      annotationSide === "left" ? horizontalOffset : -horizontalOffset}
+    {@const annotationColor =
+      !d.color || d.color === "inherit" ? "#333" : d.color}
     <div bind:clientWidth={topWidth}>
-      <svg width={topWidth} height="60">
+      <svg width={topWidth} height={annotationLines.height + 20}>
         <g>
           <text
             font-family="GDS Transport"
-            id="label"
-            x={d.value}
-            y="20"
-            fill={d.color}
-            font-size="18"
-            opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
-              ? 0.2
-              : 1}
+            id="label-${d.annotation}"
+            y="0"
+            fill={annotationColor}
+            font-size={annotationTextSize}
+            opacity={dimmedOpacity}
           >
-            {d.annotation}
+            {#each annotationLines.lines as line, i}
+              <tspan
+                x={annotationSide == "left"
+                  ? xPos - line.width
+                  : xPos + markerRadius * 2}
+                y={18 + i * lineHeight}
+              >
+                {line.text}
+              </tspan>
+            {/each}
           </text>
         </g>
         <defs>
@@ -379,25 +412,20 @@
             refY="3"
             orient="auto"
             markerUnits="strokeWidth"
-            opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
-              ? 0.2
-              : 1}
+            opacity={dimmedOpacity}
           >
-            <path d="M 0 0 L 6 3 L 0 6 z" fill={d.color}></path>
+            <path d="M 0 0 L 6 3 L 0 6 z" fill={annotationColor}></path>
           </marker>
         </defs>
         <path
-          d="M 4 25 v 10 h {xFunction(chartDomain)(d.value) +
-            markerRadius -
-            4 +
-            (topWidth - chartWidth)}  v 15"
+          d="M {(annotationSide === 'left' ? 0 : markerRadius * 2) +
+            xPos} {annotationLines.height - 2}
+    h {hDelta} v 15"
           fill="none"
-          stroke={d.color}
-          stroke-width="1.5"
+          stroke={annotationColor}
+          stroke-width="1.2"
           marker-end="url(#arrow-down)"
-          opacity={typeof activeMarkerId !== "undefined" && activeMarkerId
-            ? 0.2
-            : 1}
+          opacity={dimmedOpacity}
         ></path>
       </svg>
     </div>

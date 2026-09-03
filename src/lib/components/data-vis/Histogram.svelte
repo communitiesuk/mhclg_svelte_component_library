@@ -3,6 +3,7 @@
   import { bin, range as d3range } from "d3-array";
   import Axis from "./axis/Axis.svelte";
   import chroma from "chroma-js";
+  import { prepareWithSegments, measureLineStats } from "@chenglou/pretext";
 
   let {
     averageValue = undefined,
@@ -24,7 +25,6 @@
     padding = 0,
     height = 50,
     polarity = "standard",
-    annotationValue = 0,
     annotationText = "",
     labelFormatter = (tick, index, numberOfTicks, values) => {
       return tick;
@@ -38,9 +38,14 @@
     tickStrokeWidth = 0.25,
     barStrokeWidth = 0,
     barStrokeColor = "white",
-    topLabel = true,
     includeOutliers = true,
+    onUpdate = undefined,
+    annotationPosition = { xPosition: undefined, segmentIndex: undefined },
   } = $props();
+
+  $effect(() => {
+    onUpdate?.(bins);
+  });
 
   let useRange = $derived(
     polarity === "standard"
@@ -148,82 +153,120 @@
   const layout = $derived.by(() => {
     let y = 0;
 
-    const topLabelY = topLabel ? y : null;
-    if (topLabel) y += 20;
-
-    const annotationY = annotationText ? y : null;
-    if (annotationText) y += 25;
+    let annotationY = null;
+    if (annotationText) {
+      annotationY = y;
+      y += 30;
+    }
 
     const chartY = y;
     y += height;
 
-    const xAxisY = showXAxis ? y : null;
-    if (showXAxis) y += 25;
+    let xAxisY = null;
+    if (showXAxis) {
+      xAxisY = y;
+      y += 25;
+    }
 
     return {
-      topLabelY,
       annotationY,
       chartY,
       xAxisY,
       totalHeight: y,
     };
   });
+
+  let availableSpace = $derived(containerWidth - padding);
+
+  let annotationTextSize = "10pt";
+
+  let preparedText = $derived(
+    prepareWithSegments(annotationText, `${annotationTextSize} GDS Transport`),
+  );
+  let { lineCount, maxLineWidth } = $derived(
+    measureLineStats(preparedText, availableSpace),
+  );
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(value, max));
+  }
+
+  let annotationCentre = $derived.by(() => {
+    if (annotationPosition.xPosition !== undefined) {
+      return xScale(annotationPosition.xPosition);
+    }
+
+    const segment = bins[annotationPosition.segmentIndex ?? 0];
+    if (!segment) {
+      console.warn(
+        "annotationPosition needs xPosition or a valid segmentIndex",
+      );
+      return 0;
+    }
+
+    const centreOfTallestBar =
+      (xScale(segment.x0) + xScale(segment.x1)) / 2 - 4.5;
+
+    return centreOfTallestBar;
+  });
+
+  let clampedAnnotationPosition = $derived(
+    clamp(
+      annotationCentre - maxLineWidth / 2,
+      0,
+      availableSpace - maxLineWidth,
+    ),
+  );
 </script>
 
-{#key containerWidth}
-  <div class="scale-container" bind:clientWidth={containerWidth}>
-    <svg width={containerWidth} height={layout.totalHeight}>
-      <g transform="translate({padding / 2}, 0)">
-        {#if topLabel && layout.topLabelY !== null}
-          <text x={0} y={layout.topLabelY + 14} fill="#666" font-size="0.75em">
-            Number of areas
-          </text>
+<div class="scale-container" bind:clientWidth={containerWidth}>
+  <svg width={containerWidth} height={layout.totalHeight}>
+    <g transform="translate({padding / 2}, 0)">
+      {#if annotationText && layout.annotationY !== null}
+        <text
+          x={clampedAnnotationPosition}
+          y={layout.annotationY + 14}
+          fill="#666"
+          font-size={annotationTextSize}
+        >
+          {annotationText}
+        </text>
+        <text
+          x={annotationCentre}
+          y={layout.annotationY + 26}
+          fill="#666"
+          font-size="0.75em"
+        >
+          ↓
+        </text>
+      {/if}
+
+      <g transform="translate(0, {layout.chartY})">
+        {#if showYAxis}
+          {#each [3, 6, 9] as x, i}
+            <path
+              transform="translate(0, {scaleLinear([0, 9], [height, 0])(x)})"
+              d={`M0 0 l${containerWidth - 25} 0`}
+              stroke="grey"
+              stroke-width={0.25}
+            ></path>
+          {/each}
         {/if}
 
-        {#if annotationText && layout.annotationY !== null}
-          <g
-            transform="translate({xScale(
-              annotationValue,
-            )}, {layout.annotationY})"
-          >
-            <text
-              fill="#555555"
-              font-size="0.8em"
-              text-anchor="middle"
-              dominant-baseline="hanging"
-            >
-              <tspan x="0" dy="0">{annotationText}</tspan>
-              <tspan x="0" dy="12">▼</tspan>
-            </text>
-          </g>
-        {/if}
-
-        <g transform="translate(0, {layout.chartY})">
-          {#if showYAxis}
-            {#each [3, 6, 9] as x, i}
-              <path
-                transform="translate(0, {scaleLinear([0, 9], [height, 0])(x)})"
-                d={`M0 0 l${containerWidth - 25} 0`}
-                stroke="grey"
-                stroke-width={0.25}
-              ></path>
-            {/each}
-          {/if}
-
-          {#each bins as bin, i}
-            {#key bin.x0}
-              {@const fullWidth = Math.abs(xScale(bin.x1) - xScale(bin.x0))}
-              {@const barWidth = fullWidth * 0.97}
-              {@const offset = (fullWidth - barWidth) / 2}
-              <rect
-                x={(polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)) +
-                  offset}
-                y={height - yScale(bin.length)}
-                width={barWidth}
-                height={yScale(bin.length)}
-                fill={fill ?? colorScale[i]}
-              ></rect>
-              <!-- <text
+        {#each bins as bin, i}
+          {#key bin.x0}
+            {@const fullWidth = Math.abs(xScale(bin.x1) - xScale(bin.x0))}
+            {@const barWidth = fullWidth * 0.97}
+            {@const offset = (fullWidth - barWidth) / 2}
+            <rect
+              x={(polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)) +
+                offset}
+              y={height - yScale(bin.length)}
+              width={barWidth}
+              height={yScale(bin.length)}
+              fill={fill ?? colorScale[i]}
+            ></rect>
+            <!-- <text
                 x={(polarity === "reverse" ? xScale(bin.x1) : xScale(bin.x0)) +
                   offset}
                 y={height - yScale(bin.length)}
@@ -231,13 +274,13 @@
                 >{bin.length} areas between
                 {Math.round(bin.x0)} and {Math.round(bin.x1)}
               </text> -->
-            {/key}
-          {/each}
-        </g>
+          {/key}
+        {/each}
+      </g>
 
-        {#if showXAxis && layout.xAxisY !== null}
-          <g transform="translate(0, {layout.xAxisY})">
-            <!-- <Axis
+      {#if showXAxis && layout.xAxisY !== null}
+        <g transform="translate(0, {layout.xAxisY})">
+          <!-- <Axis
               bind:ticksArray={xTicks}
               chartHeight={height}
               chartWidth={containerWidth - padding}
@@ -252,12 +295,11 @@
               {labelFormatter}
               {numberOfTicks}
             /> -->
-          </g>
-        {/if}
-      </g>
-    </svg>
-  </div>
-{/key}
+        </g>
+      {/if}
+    </g>
+  </svg>
+</div>
 
 <div style="content-visibility: hidden;">
   {#if !showXAxis}

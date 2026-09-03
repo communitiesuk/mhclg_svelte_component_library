@@ -96,6 +96,7 @@
       "cookie": "^0.7.0"
   },
   "dependencies": {
+    "@chenglou/pretext": "^0.0.8",
     "@dwp/dwp-frontend": "^3.3.0",
     "@maptiler/sdk": "^3.0.1",
     "@ministryofjustice/frontend": "^4.0.1",

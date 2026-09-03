@@ -1,4 +1,11 @@
 <script>
+  import {
+    prepare,
+    prepareWithSegments,
+    measureLineStats,
+    measureNaturalWidth,
+    layout,
+  } from "@chenglou/pretext";
   let {
     activeMarkerId,
     labelColor = "red",
@@ -9,50 +16,93 @@
     x = undefined,
     y = undefined,
     markerRect = undefined,
-    tooltipSnippet,
+    tooltipSnippet = undefined,
     labelText = undefined,
     yOffset = 20,
+    containerWidth = undefined,
   } = $props();
 
-  let textDimensions = $state();
-  let verticalPadding = $state(8);
+  // Normalize tooltipContent to always be an array of lines internally.
+  const contentLines = $derived(
+    tooltipContent === undefined
+      ? []
+      : Array.isArray(tooltipContent)
+        ? tooltipContent
+        : [tooltipContent],
+  );
+
+  let verticalPadding = 3;
   let horizontalPadding = $derived(verticalPadding * 2);
+
+  let xPosition = $derived(markerRect?.x ?? 0);
+  let yPosition = $derived(markerRect?.y ?? 0);
+
+  let marginOfError = 4;
+
+  // Prepare + measure each line individually.
+  const preparedLines = $derived(
+    contentLines.map((line) => prepare(line, "12pt GDS Transport")),
+  );
+
+  const lineMeasurements = $derived(
+    preparedLines.map((preparedText) =>
+      measureLineStats(preparedText, containerWidth - horizontalPadding * 2),
+    ),
+  );
+
+  // Overall stats: max width across all lines, total line count summed.
+  const maxLineWidth = $derived(
+    lineMeasurements.length
+      ? Math.max(...lineMeasurements.map((m) => m.maxLineWidth))
+      : 0,
+  );
+
+  const lineCount = $derived(
+    lineMeasurements.reduce((sum, m) => sum + m.lineCount, 0),
+  );
+
+  function clamp(value, min, max) {
+    return Math.max(min, Math.min(value, max));
+  }
+
+  let left = $derived(
+    clamp(
+      xPosition - maxLineWidth / 2,
+      0,
+      containerWidth - maxLineWidth - horizontalPadding * 2 - marginOfError,
+    ),
+  );
 </script>
 
-<!-- <div
-  style="position:absolute;
-  top: {markerRect?.y - (textDimensions?.height ?? 0) - 15}px;
-left: {markerRect?.x +
-    (markerRect?.width ?? 0) / 2 -
-    (textDimensions?.width ?? 0) / 2}px;
-  pointer-events: none; border 1px solid blue
-  "
-> -->
 <div
-  style="position:absolute; left: {markerRect?.x - textDimensions?.width / 2}px;
-      top: {markerRect?.y -
-    textDimensions?.height -
-    yOffset}px; pointer-events: none"
-  bind:contentRect={textDimensions}
+  style="position:absolute; 
+  left: {`${left}px`};
+  top: {-yPosition}px;
+pointer-events: none;
+  transform: translate(0%, -100%);
+    border: 1px solid black;
+    background-color: white;
+    padding: {`${verticalPadding}px ${horizontalPadding}px`};
+    width: {maxLineWidth + horizontalPadding * 2 + marginOfError}px;
+"
 >
   {#if tooltipSnippet === undefined}
-    <div
-      style="background-color: {labelColor};
-  padding: 5px;
-  border-radius: 5px;"
-    >
-      {#if tooltipContent}
-        <div>
-          {activeMarkerId[tooltipContent]}
-        </div>
-      {:else}
-        <div>
-          <div>{activeMarkerId?.value ?? activeMarkerId}</div>
-        </div>{/if}
-    </div>
+    {#if contentLines.length}
+      {#each contentLines as line}
+        <span class="tooltip-text">{line}</span>
+      {/each}
+    {:else}
+      <div role="tooltip">{activeMarkerId?.value ?? activeMarkerId}</div>
+    {/if}
   {:else}
-    <div>
-      {@render tooltipSnippet(activeMarkerId)}
-    </div>
+    <!-- something-->
   {/if}
 </div>
+
+<style>
+  .tooltip-text {
+    font-size: 12pt;
+    font-family: "GDS Transport";
+    display: block;
+  }
+</style>

@@ -503,7 +503,7 @@
         {/if}
         {#each Object.entries(positionChart.rowData) as [tier, points]}
           {#each points as rowValue, i}
-            {#if !isNaN(Number(rowValue.value))}
+            {#if rowValue.value != null && !isNaN(Number(rowValue.value))}
               {@const markerId = "marker-" + rowValue.value}
               <g
                 data-id={markerId}

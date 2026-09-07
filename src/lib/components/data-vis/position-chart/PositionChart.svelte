@@ -152,6 +152,7 @@
     strokeColor,
     opacity,
     annotation,
+    annotationColor,
     markerRadius,
   });
 
@@ -387,7 +388,7 @@
     {@const horizontalOffset = markerRadius + (topWidth - chartWidth)}
     {@const hDelta =
       annotationSide === "left" ? horizontalOffset : -horizontalOffset}
-    {@const annotationTextColor = d.annotationColor
+    {@const thisAnnotationColor = d.annotationColor
       ? d.annotationColor
       : !d.color || d.color === "inherit"
         ? "#333"
@@ -399,7 +400,7 @@
             font-family="GDS Transport"
             id="label-${d.annotation}"
             y="0"
-            fill={annotationTextColor}
+            fill={thisAnnotationColor}
             font-size={annotationTextSize}
             opacity={dimmedOpacity}
           >
@@ -426,7 +427,7 @@
             markerUnits="strokeWidth"
             opacity={dimmedOpacity}
           >
-            <path d="M 0 0 L 6 3 L 0 6 z" fill={annotationTextColor}></path>
+            <path d="M 0 0 L 6 3 L 0 6 z" fill={thisAnnotationColor}></path>
           </marker>
         </defs>
         <path
@@ -434,7 +435,7 @@
             xPos} {annotationLines.height - 2}
     h {hDelta} v 15"
           fill="none"
-          stroke={annotationTextColor}
+          stroke={thisAnnotationColor}
           stroke-width="1.2"
           marker-end="url(#arrow-down)"
           opacity={dimmedOpacity}

@@ -612,9 +612,25 @@
         {/each}
 
         {#if showAverage}
+          {@const rowValue = { value: 4, area_nm: "England average (median)" }}
+          {@const markerId = "marker-" + rowValue.value}
           <g
             transform="translate({xFunction(chartDomain)(averageValue) +
               markerRadius}, {chartHeight + (showAxis ? 20 : 0)})"
+            onmouseenter={interactiveMarkers
+              ? (event) =>
+                  onMouseEnterMarker(
+                    event,
+                    rowValue,
+                    markerId,
+                    event.currentTarget.getBoundingClientRect(),
+                  )
+              : null}
+            onmouseleave={interactiveMarkers
+              ? (event) => onMouseLeaveMarker(event, rowValue, markerId)
+              : null}
+            role="button"
+            tabindex="0"
           >
             <text
               fill="#444"

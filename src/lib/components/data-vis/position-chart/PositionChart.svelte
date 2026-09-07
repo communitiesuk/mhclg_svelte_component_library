@@ -20,6 +20,7 @@
     chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,
     color = "#CA357C",
+    strokeColor = "#111",
     nSegments = 10,
     startColor = "#8EB8DC",
     endColor = "#0F385C",
@@ -27,6 +28,7 @@
     customColorScale = undefined,
     opacity = 1,
     annotation = undefined,
+    annotationColor = "#111",
     showIcon = false,
     moreInfo = undefined,
     markerRadius = chartHeight / 2,
@@ -144,10 +146,17 @@
   ]);
 
   // base defaults that apply to every row
-  const baseRow = { value, color, opacity, annotation, markerRadius };
+  const baseRow = $derived({
+    value,
+    color,
+    strokeColor,
+    opacity,
+    annotation,
+    markerRadius,
+  });
 
   // base defaults that apply to every chart
-  const baseChart = { label, chartHeight, min, max, showAxis };
+  const baseChart = $derived({ label, chartHeight, min, max, showAxis });
 
   let topWidth = $state();
 
@@ -378,8 +387,11 @@
     {@const horizontalOffset = markerRadius + (topWidth - chartWidth)}
     {@const hDelta =
       annotationSide === "left" ? horizontalOffset : -horizontalOffset}
-    {@const annotationColor =
-      !d.color || d.color === "inherit" ? "#333" : d.color}
+    {@const annotationTextColor = d.annotationColor
+      ? d.annotationColor
+      : !d.color || d.color === "inherit"
+        ? "#333"
+        : d.color}
     <div bind:clientWidth={topWidth}>
       <svg width={topWidth} height={annotationLines.height + 20}>
         <g>
@@ -387,7 +399,7 @@
             font-family="GDS Transport"
             id="label-${d.annotation}"
             y="0"
-            fill={annotationColor}
+            fill={annotationTextColor}
             font-size={annotationTextSize}
             opacity={dimmedOpacity}
           >
@@ -414,7 +426,7 @@
             markerUnits="strokeWidth"
             opacity={dimmedOpacity}
           >
-            <path d="M 0 0 L 6 3 L 0 6 z" fill={annotationColor}></path>
+            <path d="M 0 0 L 6 3 L 0 6 z" fill={annotationTextColor}></path>
           </marker>
         </defs>
         <path
@@ -422,7 +434,7 @@
             xPos} {annotationLines.height - 2}
     h {hDelta} v 15"
           fill="none"
-          stroke={annotationColor}
+          stroke={annotationTextColor}
           stroke-width="1.2"
           marker-end="url(#arrow-down)"
           opacity={dimmedOpacity}
@@ -575,7 +587,9 @@
                     fill={rowValue.color === "inherit"
                       ? colorScale[segmentIndex(rowValue.value)]
                       : rowValue.color}
-                    stroke="#111"
+                    stroke={rowValue.strokeColor === "inherit"
+                      ? colorScale[segmentIndex(rowValue.value)]
+                      : rowValue.strokeColor}
                     stroke-width={3}
                     opacity={rowValue.opacity}
                   ></circle>

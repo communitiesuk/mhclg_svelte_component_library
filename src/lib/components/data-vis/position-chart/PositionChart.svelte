@@ -591,7 +591,18 @@
                     stroke={rowValue.strokeColor === "inherit"
                       ? colorScale[segmentIndex(rowValue.value)]
                       : rowValue.strokeColor}
-                    stroke-width={3}
+                    stroke-width={3.5}
+                    opacity={rowValue.opacity}
+                  ></circle>
+                  <circle
+                    r={rowValue.markerRadius * 0.7}
+                    cx="0"
+                    cy="0"
+                    fill={rowValue.color === "inherit"
+                      ? colorScale[segmentIndex(rowValue.value)]
+                      : rowValue.color}
+                    stroke="white"
+                    stroke-width={1}
                     opacity={rowValue.opacity}
                   ></circle>
                 {/if}

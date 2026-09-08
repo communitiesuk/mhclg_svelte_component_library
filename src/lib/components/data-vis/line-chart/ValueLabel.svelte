@@ -48,10 +48,6 @@
       : 0,
   );
 
-  const lineCount = $derived(
-    lineMeasurements.reduce((sum, m) => sum + m.lineCount, 0),
-  );
-
   function clamp(value, min, max) {
     return Math.max(min, Math.min(value, max));
   }

@@ -12,6 +12,8 @@
     markerRect = undefined,
     tooltipSnippet = undefined,
     containerWidth = undefined,
+    verticalPadding = 3,
+    horizontalPadding = verticalPadding * 2,
   } = $props();
 
   // Normalize tooltipContent to always be an array of lines internally.
@@ -22,9 +24,6 @@
         ? tooltipContent
         : [tooltipContent],
   );
-
-  let verticalPadding = 3;
-  let horizontalPadding = $derived(verticalPadding * 2);
 
   let xPosition = $derived(markerRect?.x ?? 0);
   let yPosition = $derived(markerRect?.y ?? 0);

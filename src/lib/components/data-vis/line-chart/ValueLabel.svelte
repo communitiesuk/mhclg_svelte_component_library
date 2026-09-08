@@ -82,7 +82,6 @@ pointer-events: none;
       <div role="tooltip">{activeMarkerId?.value ?? activeMarkerId}</div>
     {/if}
   {:else}
-    <!-- something-->
   {/if}
 </div>
 

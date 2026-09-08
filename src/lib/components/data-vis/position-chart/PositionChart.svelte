@@ -448,6 +448,7 @@
 <div
   class="grid-container"
   bind:this={container}
+  bind:clientWidth={topWidth}
   style="
     position: relative;
     grid-template-columns: {gridTemplateColumns};
@@ -671,7 +672,7 @@
   {#if activeMarkerId}
     <ValueLabel
       {activeMarkerId}
-      labelColor="lightgrey"
+      labelColor="darkgrey"
       labelTextColor="black"
       {labelText}
       {tooltipContent}
@@ -681,6 +682,7 @@
       {y}
       {markerRect}
       {tooltipSnippet}
+      containerWidth={topWidth}
     ></ValueLabel>
   {/if}
 </div>

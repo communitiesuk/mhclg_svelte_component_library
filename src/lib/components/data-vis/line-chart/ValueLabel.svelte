@@ -8,17 +8,9 @@
   } from "@chenglou/pretext";
   let {
     activeMarkerId,
-    labelColor = "red",
-    labelTextColor,
     tooltipContent = undefined,
-    xFunction,
-    yFunction,
-    x = undefined,
-    y = undefined,
     markerRect = undefined,
     tooltipSnippet = undefined,
-    labelText = undefined,
-    yOffset = 20,
     containerWidth = undefined,
   } = $props();
 

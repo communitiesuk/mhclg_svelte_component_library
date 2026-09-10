@@ -16,14 +16,12 @@ Use the component with or without navigation items based on your needs. -->
     serviceName = "Service name",
     serviceUrl = "#",
     navigationItems = undefined,
-    collapseOnDesktop = false,
     customiseServiceNameLink = false,
     serviceNameLinkStyle = "govuk-link no-underline",
   } = $props<{
     serviceName?: string;
     serviceUrl?: string;
     navigationItems?: NavigationItem[];
-    collapseOnDesktop?: boolean;
     customiseServiceNameLink?: boolean;
     serviceNameLinkStyle?: string;
   }>();
@@ -31,63 +29,10 @@ Use the component with or without navigation items based on your needs. -->
   // Reactive state declarations
   let hasNavigation = $derived(navigationItems && navigationItems.length > 0);
   let menuIsOpen = $state(false);
-  let isDesktopView = $state(!collapseOnDesktop); // Default to desktop view until we can check
-  let tabletBreakpoint = $state("");
 
   // References to DOM elements
   let navigationElement = $state<HTMLElement | null>(null);
   let buttonElement = $state<HTMLButtonElement | null>(null);
-
-  // Derived values for UI state
-  let isMenuVisible = $derived(isDesktopView || menuIsOpen);
-  let isButtonHidden = $derived(isDesktopView);
-
-  onMount(() => {
-    if (!browser) return;
-
-    // Get the breakpoint from CSS custom property
-    const property = "--govuk-frontend-breakpoint-tablet";
-    const value = window
-      .getComputedStyle(document.documentElement)
-      .getPropertyValue(property)
-      .trim();
-
-    tabletBreakpoint = value || "768px";
-
-    if (!value) {
-      console.warn(
-        "CSS custom property (--govuk-frontend-breakpoint-tablet) not found, using fallback",
-      );
-    }
-
-    // Initialize media query
-    const mql = window.matchMedia(`(min-width: ${tabletBreakpoint})`);
-
-    // Set initial state
-    isDesktopView = collapseOnDesktop ? isDesktopView : mql.matches;
-
-    // Set up event listener for viewport changes
-    const handleViewportChange = (e: MediaQueryListEvent) => {
-      isDesktopView = e.matches;
-      if (isDesktopView) {
-        // Reset menu state when switching to desktop
-        menuIsOpen = false;
-      }
-    };
-
-    if (!collapseOnDesktop) {
-      mql.addEventListener("change", handleViewportChange);
-    }
-
-    return () => {
-      mql.removeEventListener("change", handleViewportChange);
-    };
-  });
-
-  // Handle menu button click
-  function toggleMenu() {
-    menuIsOpen = !menuIsOpen;
-  }
 </script>
 
 <section
@@ -112,20 +57,19 @@ Use the component with or without navigation items based on your needs. -->
         <nav aria-label="Menu" class="govuk-service-navigation__wrapper">
           <button
             type="button"
-            class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle"
+            class="govuk-service-navigation__toggle govuk-js-service-navigation-toggle menu-button"
+            onclick={() => (menuIsOpen = !menuIsOpen)}
             aria-controls="navigation"
             aria-expanded={menuIsOpen}
-            onclick={toggleMenu}
             bind:this={buttonElement}
-            hidden={isButtonHidden}
           >
             Menu
           </button>
           <ul
-            class="govuk-service-navigation__list"
+            class="govuk-service-navigation__list menu-list"
+            class:is-open={menuIsOpen}
             id="navigation"
             bind:this={navigationElement}
-            hidden={!isMenuVisible}
           >
             {#each navigationItems as item}
               <li
@@ -161,5 +105,26 @@ Use the component with or without navigation items based on your needs. -->
   }
   .no-underline:hover {
     text-decoration: underline;
+  }
+
+  /* Mobile-first: button visible, menu hidden unless open */
+  .menu-button {
+    display: block;
+  }
+  .menu-list {
+    display: none;
+  }
+  .menu-list.is-open {
+    display: block;
+  }
+
+  /* Desktop: button hidden, menu always visible */
+  @media (min-width: 768px) {
+    .menu-button {
+      display: none;
+    }
+    .menu-list {
+      display: block;
+    }
   }
 </style>

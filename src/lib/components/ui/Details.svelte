@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
+
   let {
     summaryText,
     detailedText,
@@ -7,10 +9,25 @@
     overlapBelow = false,
     expanded = $bindable(false),
     groupName = undefined,
+    noBottomMargin = false,
+  }: {
+    summaryText: string;
+    detailedText: string | Snippet;
+    renderStringAsHTML?: boolean;
+    noInset?: boolean;
+    overlapBelow?: boolean;
+    expanded?: boolean;
+    groupName?: string;
+    noBottomMargin?: boolean;
   } = $props();
 </script>
 
-<details class="govuk-details" open={expanded} name={groupName}>
+<details
+  class="govuk-details"
+  class:details-no-margin={noBottomMargin}
+  open={expanded}
+  name={groupName}
+>
   {#if renderStringAsHTML}
     <summary class="govuk-details__summary-text">
       {@html summaryText}
@@ -42,6 +59,10 @@
 
   details {
     position: relative;
+  }
+
+  .details-no-margin {
+    margin-bottom: 0;
   }
 
   .overlap-below {

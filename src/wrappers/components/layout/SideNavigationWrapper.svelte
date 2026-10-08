@@ -227,6 +227,11 @@
           hideButtonText: "Hide navigation",
         },
       },
+      {
+        name: "spacing",
+        category: "UI Options", 
+        value: "20px"
+      }
     ]),
   );
 

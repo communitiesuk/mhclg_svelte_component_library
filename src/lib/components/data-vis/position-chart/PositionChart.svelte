@@ -325,8 +325,6 @@
       ),
   );
 
-  $inspect({ annotations });
-
   let gridTemplateRows = $derived(
     allDataNormalized
       .map((item, i) => {

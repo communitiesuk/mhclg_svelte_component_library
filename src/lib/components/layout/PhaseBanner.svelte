@@ -25,7 +25,12 @@
       {tagText}
     </strong>
     <span class="govuk-phase-banner__text">
-      {bannerText}<a class="govuk-link" href={linkHref}>{linkText}</a>.
+      {bannerText}<a
+        class="govuk-link"
+        href={linkHref}
+        rel={openInNewTab ?? "noreferrer noopener"}
+        target={openInNewTab ?? "_blank"}>{linkText}</a
+      >.
     </span>
   </p>
 </div>

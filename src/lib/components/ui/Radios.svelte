@@ -4,7 +4,6 @@
   import Button from "./Button.svelte";
   import InsetText from "../content/InsetText.svelte";
 
-  // Define the RadioOption type
   export type RadioOption = {
     value: string;
     label: string;
@@ -18,7 +17,6 @@
     };
   };
 
-  // Component props
   let {
     selectedValue = $bindable(null),
     legend,
@@ -31,7 +29,7 @@
     inline = false,
     options = [],
     validate = undefined,
-    spacing = "0",
+    spacing = "5px",
   } = $props<{
     legend: string;
     hint?: string;
@@ -47,7 +45,6 @@
     spacing?: string;
   }>();
 
-  // Add support detection
   let isSupported = $state(false);
 
   onMount(() => {
@@ -114,115 +111,128 @@
             class="govuk-radios{small ? ' govuk-radios--small' : ''}{inline
         ? ' govuk-radios--inline'
         : ''}"
+            class:radio-spacing={!inline}
+            style:--radio-spacing={spacing}
             data-module="govuk-radios"
             role="radiogroup"
             aria-labelledby="{name}-legend"
     >
       {#each options as option, i}
-        {#if option.divider}
-          <div
-                  class="mt-2"
-                  style="border-bottom: solid; border-color: #e8ebed; border-width: 0.5px;"
-          ></div>
-        {/if}
+        <div class="radio-option">
+          {#if option.divider}
+            <div
+                    class="mt-2"
+                    style="border-bottom: solid; border-color: #e8ebed; border-width: 0.5px;"
+            ></div>
+          {/if}
 
-        {#if option.exclusive && i > 0}
-          <div
-                  class="govuk-radios__divider"
-                  role="separator"
-                  aria-orientation="horizontal"
-          >
-            or
-          </div>
-        {/if}
-
-        <div
-                class={option.moreInfo ? "item-and-more-info-button-container" : ""}
-                style:margin-bottom={spacing}
-        >
-          <div
-                  class="govuk-radios__item item-container"
-                  role="radio"
-                  aria-checked={isSupported ? selectedValue === option.value : null}
-          >
-            <input
-                    type="radio"
-                    {name}
-                    id="{name}-{i}"
-                    class="govuk-radios__input"
-                    value={option.value}
-                    bind:group={selectedValue}
-                    data-aria-controls={option.conditional?.id}
-                    aria-describedby={[
-                option.hint ? `${name}-${i}-hint` : null,
-                option.conditional ? option.conditional.id : null,
-              ]
-                .filter(Boolean)
-                .join(" ")}
-                    data-behaviour={option.exclusive ? "exclusive" : undefined}
-            />
-
-            <label
-                    class="govuk-label govuk-radios__label"
-                    for="{name}-{i}"
-                    id="{name}-{i}-label"
+          {#if option.exclusive && i > 0}
+            <div
+                    class="govuk-radios__divider"
+                    role="separator"
+                    aria-orientation="horizontal"
             >
-              {option.label}
-            </label>
+              or
+            </div>
+          {/if}
 
-            {#if option.hint}
-              <div
-                      id="{name}-{i}-hint"
-                      class="govuk-hint govuk-radios__hint"
-                      role="note"
+          <div
+                  class={option.moreInfo
+              ? "item-and-more-info-button-container"
+              : ""}
+          >
+            <div
+                    class="govuk-radios__item item-container"
+                    role="radio"
+                    aria-checked={isSupported
+                ? selectedValue === option.value
+                : null}
+            >
+              <input
+                      type="radio"
+                      {name}
+                      id="{name}-{i}"
+                      class="govuk-radios__input"
+                      value={option.value}
+                      bind:group={selectedValue}
+                      data-aria-controls={option.conditional?.id}
+                      aria-describedby={[
+                  option.hint ? `${name}-${i}-hint` : null,
+                  option.conditional ? option.conditional.id : null,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                      data-behaviour={option.exclusive ? "exclusive" : undefined}
+              />
+
+              <label
+                      class="govuk-label govuk-radios__label"
+                      for="{name}-{i}"
+                      id="{name}-{i}-label"
               >
-                {option.hint}
-              </div>
+                {option.label}
+              </label>
+
+              {#if option.hint}
+                <div
+                        id="{name}-{i}-hint"
+                        class="govuk-hint govuk-radios__hint"
+                        role="note"
+                >
+                  {option.hint}
+                </div>
+              {/if}
+            </div>
+
+            {#if option.moreInfo}
+              <Button
+                      textContent="i"
+                      buttonType="moreInfo"
+                      noPadding={true}
+                      onClickFunction={() => updateMoreInfoTogglesArray(i)}
+              ></Button>
             {/if}
           </div>
 
-          {#if option.moreInfo}
-            <Button
-                    textContent="i"
-                    buttonType="moreInfo"
-                    noPadding={true}
-                    onClickFunction={() => updateMoreInfoTogglesArray(i)}
-            ></Button>
+          {#if option.conditional}
+            <div
+                    id={option.conditional.id}
+                    class="govuk-radios__conditional{!isSupported ||
+              selectedValue !== option.value
+                ? ' govuk-radios__conditional--hidden'
+                : ''}"
+                    role="region"
+                    aria-labelledby="{name}-{i}-label"
+            >
+              {#if typeof option.conditional.content === "string"}
+                {@html option.conditional.content}
+              {:else if option.conditional.content satisfies Snippet}
+                {@render option.conditional.content()}
+              {:else}
+                <option.conditional.content />
+              {/if}
+            </div>
+          {/if}
+
+          {#if moreInfoTogglesArray[i]}
+            <InsetText
+                    content={option.moreInfo}
+                    renderStringAsHTML={true}
+            ></InsetText>
           {/if}
         </div>
-
-        {#if option.conditional}
-          <div
-                  id={option.conditional.id}
-                  class="govuk-radios__conditional{!isSupported ||
-            selectedValue !== option.value
-              ? ' govuk-radios__conditional--hidden'
-              : ''}"
-                  role="region"
-                  aria-labelledby="{name}-{i}-label"
-          >
-            {#if typeof option.conditional.content === "string"}
-              {@html option.conditional.content}
-            {:else if option.conditional.content satisfies Snippet}
-              {@render option.conditional.content()}
-            {:else}
-              <option.conditional.content />
-            {/if}
-          </div>
-        {/if}
-
-        {#if moreInfoTogglesArray[i]}
-          <InsetText
-                  content={option.moreInfo}
-                  renderStringAsHTML={true}
-          ></InsetText>
-        {/if}
       {/each}
     </div>
   </fieldset>
 </div>
 
 <style>
+  .radio-spacing {
+    display: flex;
+    flex-direction: column;
+    gap: var(--radio-spacing);
+  }
+
   .item-and-more-info-button-container {
     display: flex;
     flex-direction: row;

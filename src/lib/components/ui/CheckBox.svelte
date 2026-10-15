@@ -1,8 +1,7 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
-  import { onMount } from "svelte";
+  import { onMount, type Snippet } from 'svelte';
 
-  import Button from "./Button.svelte";
+  import Button from './Button.svelte';
 
   export type CheckboxOption = {
     value: string;
@@ -19,6 +18,7 @@
     heading: string;
     hint?: string;
     options: CheckboxOption[];
+    disabled?: boolean;
   };
 
   let {
@@ -27,34 +27,23 @@
     error,
     name,
     isPageHeading = false,
-    legendSize = "l",
+    legendSize = 'l',
     small = false,
     options = [],
     sections = [],
-    validate = undefined,
+    validate,
     selectedValues = $bindable([]),
-    selectAllButton = false,
+    selectAllButton = false
   } = $props<{
     legend: string;
     hint?: string;
     error?: string;
     name: string;
     isPageHeading?: boolean;
-    legendSize?: "l" | "m" | "s";
+    legendSize?: 'l' | 'm' | 's';
     small?: boolean;
-
-    /**
-     * Use options for a single, ungrouped list.
-     */
     options?: CheckboxOption[];
-
-    /**
-     * Use sections when the checkboxes need to be grouped.
-     *
-     * The component can render both options and sections if required.
-     */
     sections?: CheckboxSection[];
-
     validate?: (values: string[]) => string | undefined;
     selectedValues?: string[];
     selectAllButton?: boolean;
@@ -63,60 +52,56 @@
   let isSupported = $state(false);
 
   onMount(() => {
-    isSupported =
-            document.body?.classList.contains("govuk-frontend-supported") ?? false;
+    isSupported = document.body?.classList.contains('govuk-frontend-supported') ?? false;
   });
 
-  /**
-   * Combines the ungrouped options and all section options.
-   *
-   * This allows validation, exclusivity and Select all to work across
-   * the entire checkbox component.
+  /*
+   * Option state
    */
-  let allOptions = $derived([
-    ...options,
-    ...sections.flatMap((section) => section.options),
-  ]);
 
-  /**
-   * Exclusive options, such as "None of the above", should not be selected
-   * by the Select all button.
+  const enabledSectionOptions = $derived(
+          sections.filter((section) => !section.disabled).flatMap((section) => section.options)
+  );
+
+  const allEnabledOptions = $derived([...options, ...enabledSectionOptions]);
+
+  /*
+   * Exclusive options, such as "None of the above",
+   * are not included by the Select all button.
    */
-  let selectableOptions = $derived(
-          allOptions.filter((option) => !option.exclusive),
+  const selectableOptions = $derived(
+          allEnabledOptions.filter((option) => !option.exclusive)
   );
 
-  let selectableValues = $derived(
-          selectableOptions.map((option) => option.value),
+  const selectableValues = $derived(
+          selectableOptions.map((option) => option.value)
   );
 
-  let isChecked = $derived((value: string) =>
-          selectedValues.includes(value),
+  const isChecked = $derived(
+          (value: string) => selectedValues.includes(value)
   );
 
-  let validationError = $derived<string | undefined>(
-          isSupported && validate ? validate(selectedValues) : undefined,
+  const validationError = $derived<string | undefined>(
+          isSupported && validate ? validate(selectedValues) : undefined
   );
 
-  let displayedError = $derived(validationError || error);
+  const displayedError = $derived(validationError || error);
 
-  /**
-   * All selectable options are selected.
-   *
-   * Exclusive options are deliberately ignored.
-   */
-  let allSelected = $derived(
+  const allSelected = $derived(
           selectableValues.length > 0 &&
-          selectableValues.every((value) => selectedValues.includes(value)),
+          selectableValues.every((value) => selectedValues.includes(value))
   );
 
-  function toggleCheckbox(option: CheckboxOption) {
-    /*
-     * If the supported GOV.UK Frontend class is not present, allow the
-     * native checkbox behaviour to continue.
-     */
-    if (!isSupported) return;
+  /*
+   * Interaction handlers
+   */
 
+  function toggleCheckbox(option: CheckboxOption, disabled = false): void {
+    if (!isSupported || disabled) {
+      return;
+    }
+
+    // Exclusive options clear all other selections.
     if (option.exclusive) {
       selectedValues = selectedValues.includes(option.value)
               ? []
@@ -125,40 +110,68 @@
       return;
     }
 
+    // Remove the option if it is already selected.
     if (selectedValues.includes(option.value)) {
       selectedValues = selectedValues.filter(
-              (value) => value !== option.value,
+              (value) => value !== option.value
+      );
+
+      return;
+    }
+
+    // Selecting a normal option removes any exclusive option.
+    const valuesWithoutExclusiveOptions = selectedValues.filter(
+            (selectedValue) =>
+                    !allEnabledOptions.some(
+                            (option) =>
+                                    option.value === selectedValue &&
+                                    option.exclusive
+                    )
+    );
+
+    selectedValues = [
+      ...valuesWithoutExclusiveOptions,
+      option.value
+    ];
+  }
+
+  function toggleSelectAll(): void {
+    if (!isSupported) {
+      return;
+    }
+
+    if (allSelected) {
+      /*
+       * Only remove enabled/selectable values.
+       * Values belonging to disabled sections are preserved.
+       */
+      selectedValues = selectedValues.filter(
+              (value) => !selectableValues.includes(value)
       );
 
       return;
     }
 
     /*
-     * Selecting a standard option removes any currently selected
-     * exclusive options.
+     * Preserve existing values and add all currently
+     * enabled/selectable options.
      */
-    const valuesWithoutExclusiveOptions = selectedValues.filter(
-            (selectedValue) =>
-                    !allOptions.some(
-                            (option) =>
-                                    option.value === selectedValue && option.exclusive,
-                    ),
-    );
-
     selectedValues = [
-      ...valuesWithoutExclusiveOptions,
-      option.value,
+      ...new Set([
+        ...selectedValues,
+        ...selectableValues
+      ])
     ];
   }
 
-  function toggleSelectAll() {
-    selectedValues = allSelected ? [] : [...selectableValues];
-  }
+  /*
+   * ID helpers
+   */
 
   function getOptionId(
           sectionIndex: number | undefined,
-          optionIndex: number,
-  ) {
+          optionIndex: number
+  ): string {
     if (sectionIndex === undefined) {
       return `${name}-option-${optionIndex}`;
     }
@@ -166,7 +179,7 @@
     return `${name}-section-${sectionIndex}-option-${optionIndex}`;
   }
 
-  function getSectionId(sectionIndex: number) {
+  function getSectionId(sectionIndex: number): string {
     return `${name}-section-${sectionIndex}`;
   }
 </script>
@@ -178,11 +191,11 @@
   <fieldset
           class="govuk-fieldset"
           aria-describedby={[
-      hint ? `${name}-hint` : null,
-      displayedError ? `${name}-error` : null,
-    ]
-      .filter(Boolean)
-      .join(" ") || undefined}
+			hint ? `${name}-hint` : null,
+			displayedError ? `${name}-error` : null
+		]
+			.filter(Boolean)
+			.join(' ') || undefined}
   >
     <legend
             id={`${name}-legend`}
@@ -198,13 +211,19 @@
     </legend>
 
     {#if hint}
-      <div id={`${name}-hint`} class="govuk-hint">
+      <div
+              id={`${name}-hint`}
+              class="govuk-hint"
+      >
         {hint}
       </div>
     {/if}
 
     {#if displayedError}
-      <p id={`${name}-error`} class="govuk-error-message">
+      <p
+              id={`${name}-error`}
+              class="govuk-error-message"
+      >
         <span class="govuk-visually-hidden">Error:</span>
         {displayedError}
       </p>
@@ -213,8 +232,8 @@
     {#if selectAllButton && selectableOptions.length > 0}
       <div class="checkbox-select-all">
         <Button
-                buttonType={allSelected ? "warning" : "secondary"}
-                textContent={allSelected ? "De-select all" : "Select all"}
+                buttonType={allSelected ? 'warning' : 'secondary'}
+                textContent={allSelected ? 'Deselect all' : 'Select all'}
                 onClickFunction={toggleSelectAll}
                 noPadding={true}
         />
@@ -251,20 +270,16 @@
                     checked={checked}
                     onchange={() => toggleCheckbox(option)}
                     data-aria-controls={option.conditional?.id}
-                    data-behaviour={option.exclusive
-                ? "exclusive"
-                : undefined}
+                    data-behaviour={option.exclusive ? 'exclusive' : undefined}
                     aria-expanded={option.conditional && isSupported
-                ? checked
-                : undefined}
+								? checked
+								: undefined}
                     aria-describedby={[
-                option.hint ? hintId : null,
-                option.conditional
-                  ? option.conditional.id
-                  : null,
-              ]
-                .filter(Boolean)
-                .join(" ") || undefined}
+								option.hint ? hintId : null,
+								option.conditional ? option.conditional.id : null
+							]
+								.filter(Boolean)
+								.join(' ') || undefined}
             />
 
             <label
@@ -289,11 +304,10 @@
             <div
                     id={option.conditional.id}
                     class:govuk-checkboxes__conditional={true}
-                    class:govuk-checkboxes__conditional--hidden={isSupported &&
-                !checked}
+                    class:govuk-checkboxes__conditional--hidden={isSupported && !checked}
                     aria-labelledby={labelId}
             >
-              {#if typeof option.conditional.content === "string"}
+              {#if typeof option.conditional.content === 'string'}
                 {@html option.conditional.content}
               {:else}
                 {@render option.conditional.content()}
@@ -313,7 +327,11 @@
 
           <section
                   class="checkbox-section"
+                  class:checkbox-section--disabled={section.disabled}
                   aria-labelledby={`${sectionId}-heading`}
+                  aria-describedby={section.hint
+							? `${sectionId}-hint`
+							: undefined}
           >
             <h2
                     id={`${sectionId}-heading`}
@@ -335,15 +353,9 @@
                     class:govuk-checkboxes={true}
                     class:govuk-checkboxes--small={small}
                     data-module="govuk-checkboxes"
-                    aria-describedby={section.hint
-                ? `${sectionId}-hint`
-                : undefined}
             >
               {#each section.options as option, optionIndex}
-                {@const optionId = getOptionId(
-                        sectionIndex,
-                        optionIndex,
-                )}
+                {@const optionId = getOptionId(sectionIndex, optionIndex)}
                 {@const labelId = `${optionId}-label`}
                 {@const hintId = `${optionId}-hint`}
                 {@const checked = isChecked(option.value)}
@@ -362,22 +374,24 @@
                           class="govuk-checkboxes__input"
                           value={option.value}
                           checked={checked}
-                          onchange={() => toggleCheckbox(option)}
+                          disabled={section.disabled}
+                          onchange={() =>
+											toggleCheckbox(option, section.disabled)}
                           data-aria-controls={option.conditional?.id}
                           data-behaviour={option.exclusive
-                      ? "exclusive"
-                      : undefined}
+											? 'exclusive'
+											: undefined}
                           aria-expanded={option.conditional && isSupported
-                      ? checked
-                      : undefined}
+											? checked
+											: undefined}
                           aria-describedby={[
-                      option.hint ? hintId : null,
-                      option.conditional
-                        ? option.conditional.id
-                        : null,
-                    ]
-                      .filter(Boolean)
-                      .join(" ") || undefined}
+											option.hint ? hintId : null,
+											option.conditional
+												? option.conditional.id
+												: null
+										]
+											.filter(Boolean)
+											.join(' ') || undefined}
                   />
 
                   <label
@@ -402,12 +416,10 @@
                   <div
                           id={option.conditional.id}
                           class:govuk-checkboxes__conditional={true}
-                          class:govuk-checkboxes__conditional--hidden={isSupported &&
-                      !checked}
+                          class:govuk-checkboxes__conditional--hidden={isSupported && !checked}
                           aria-labelledby={labelId}
                   >
-                    {#if typeof option.conditional.content ===
-                    "string"}
+                    {#if typeof option.conditional.content === 'string'}
                       {@html option.conditional.content}
                     {:else}
                       {@render option.conditional.content()}
@@ -440,5 +452,10 @@
 
   .checkbox-section__hint {
     margin-bottom: 15px;
+  }
+
+  .checkbox-section--disabled .checkbox-section__heading,
+  .checkbox-section--disabled .checkbox-section__hint {
+    color: #505a5f;
   }
 </style>

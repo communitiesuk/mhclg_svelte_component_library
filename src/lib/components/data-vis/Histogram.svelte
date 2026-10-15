@@ -41,6 +41,7 @@
     includeOutliers = true,
     onUpdate = undefined,
     annotationPosition = { xPosition: undefined, segmentIndex: undefined },
+    annotationInFront = false,
   } = $props();
 
   $effect(() => {
@@ -219,10 +220,49 @@
   );
 </script>
 
+{#if annotationInFront}
+  <div
+    style="position:absolute; height:300px; width:100px; top: 0; z-index:1; pointer-events:none"
+  >
+    <svg width={containerWidth}>
+      <g transform="translate({padding / 2}, 0)">
+        <text
+          x={clampedAnnotationPosition}
+          y={height - 65}
+          fill="#666"
+          stroke="white"
+          stroke-width="3.5px"
+          font-family="GDS Transport"
+          font-size={annotationTextSize}
+        >
+          {annotationText}
+        </text>
+        <text
+          x={clampedAnnotationPosition}
+          y={height - 65}
+          fill="#666"
+          font-family="GDS Transport"
+          font-size={annotationTextSize}
+        >
+          {annotationText}
+        </text>
+        <text
+          x={annotationCentre}
+          y={height - 53}
+          fill="#666"
+          font-size="0.75em"
+        >
+          ↓
+        </text>
+      </g></svg
+    >
+  </div>
+{/if}
+
 <div class="scale-container" bind:clientWidth={containerWidth}>
   <svg width={containerWidth} height={layout.totalHeight}>
     <g transform="translate({padding / 2}, 0)">
-      {#if annotationText && layout.annotationY !== null}
+      {#if annotationText && layout.annotationY !== null && !annotationInFront}
         <text
           x={clampedAnnotationPosition}
           y={layout.annotationY + 14}
@@ -236,6 +276,7 @@
           y={layout.annotationY + 26}
           fill="#666"
           font-size="0.75em"
+          font-family="GDS Transport"
         >
           ↓
         </text>

@@ -104,6 +104,7 @@
     ticksDomain = $bindable([[]]),
     axisDomain = $bindable([[]]),
     getChartDomain = undefined,
+    tallAnnotation = undefined,
     ...rest
   } = $props();
 
@@ -391,8 +392,18 @@
       : !d.color || d.color === "inherit"
         ? "#333"
         : d.color}
-    <div bind:clientWidth={topWidth}>
-      <svg width={topWidth} height={annotationLines.height + 20}>
+
+    {@const histogramHeight = tallAnnotation ? 80 + 15 : 0}
+    <div
+      bind:clientWidth={topWidth}
+      style={tallAnnotation
+        ? `position: relative; height: 0; bottom: ${annotationLines.height + histogramHeight + 20 + 7}px; pointer-events: none;`
+        : undefined}
+    >
+      <svg
+        width={topWidth}
+        height={annotationLines.height + histogramHeight + 20 + 3}
+      >
         <g>
           <text
             font-family="GDS Transport"
@@ -431,10 +442,10 @@
         <path
           d="M {(annotationSide === 'left' ? 0 : markerRadius * 2) +
             xPos} {annotationLines.height - 2}
-    h {hDelta} v 15"
+  h {hDelta} v {histogramHeight + 15}"
           fill="none"
           stroke={thisAnnotationColor}
-          stroke-width="1.2"
+          stroke-width={histogramHeight ? 2.2 : 1.2}
           marker-end="url(#arrow-down)"
           opacity={dimmedOpacity}
         ></path>

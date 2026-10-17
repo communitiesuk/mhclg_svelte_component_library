@@ -103,7 +103,9 @@
     niceTicks = true,
     ticksDomain = $bindable([[]]),
     axisDomain = $bindable([[]]),
+    annotationHeight = $bindable(),
     getChartDomain = undefined,
+    tallAnnotation = undefined,
     ...rest
   } = $props();
 
@@ -361,9 +363,9 @@
     chartHeight + (showAxis ? 25 : 0) + (showAverage ? 35 : 0),
   );
 
-  let annotationTextSize = "12pt";
+  let annotationTextSize = $derived(tallAnnotation ? "14pt" : "12pt");
 
-  let lineHeight = 16;
+  let lineHeight = $derived(tallAnnotation ? 22 : 16);
 
   let dimmedOpacity = $derived(activeMarkerId ? 0.2 : 1);
 </script>
@@ -391,54 +393,66 @@
       : !d.color || d.color === "inherit"
         ? "#333"
         : d.color}
-    <div bind:clientWidth={topWidth}>
-      <svg width={topWidth} height={annotationLines.height + 20}>
-        <g>
-          <text
-            font-family="GDS Transport"
-            id="label-${d.annotation}"
-            y="0"
-            fill={thisAnnotationColor}
-            font-size={annotationTextSize}
+
+    {@const histogramHeight = tallAnnotation ? 80 + 15 : 0}
+    <div
+      bind:clientWidth={topWidth}
+      style={tallAnnotation
+        ? `position: relative; height: 0; bottom: ${annotationLines.height + histogramHeight + 20 + 7}px; pointer-events: none;`
+        : undefined}
+    >
+      <div bind:clientHeight={annotationHeight}>
+        <svg
+          width={topWidth}
+          height={annotationLines.height + histogramHeight + 20 + 3}
+        >
+          <g>
+            <text
+              font-family="GDS Transport"
+              id="label-${d.annotation}"
+              y="0"
+              fill={thisAnnotationColor}
+              font-size={annotationTextSize}
+              opacity={dimmedOpacity}
+            >
+              {#each annotationLines.lines as line, i}
+                <tspan
+                  x={annotationSide == "left"
+                    ? xPos - line.width
+                    : xPos + markerRadius * 2}
+                  y={(tallAnnotation ? 26 : 18) + i * lineHeight}
+                >
+                  {line.text}
+                </tspan>
+              {/each}
+            </text>
+          </g>
+          <defs>
+            <marker
+              id="arrow-down"
+              markerWidth="10"
+              markerHeight="10"
+              refX="3"
+              refY="3"
+              orient="auto"
+              markerUnits="strokeWidth"
+              opacity={dimmedOpacity}
+            >
+              <path d="M 0 0 L 6 3 L 0 6 z" fill={thisAnnotationColor}></path>
+            </marker>
+          </defs>
+          <path
+            d="M {(annotationSide === 'left' ? 0 : markerRadius * 2) +
+              xPos} {annotationLines.height - 2}
+  h {hDelta} v {histogramHeight + 15}"
+            fill="none"
+            stroke={thisAnnotationColor}
+            stroke-width={histogramHeight ? 2 : 1.2}
+            marker-end="url(#arrow-down)"
             opacity={dimmedOpacity}
-          >
-            {#each annotationLines.lines as line, i}
-              <tspan
-                x={annotationSide == "left"
-                  ? xPos - line.width
-                  : xPos + markerRadius * 2}
-                y={18 + i * lineHeight}
-              >
-                {line.text}
-              </tspan>
-            {/each}
-          </text>
-        </g>
-        <defs>
-          <marker
-            id="arrow-down"
-            markerWidth="10"
-            markerHeight="10"
-            refX="3"
-            refY="3"
-            orient="auto"
-            markerUnits="strokeWidth"
-            opacity={dimmedOpacity}
-          >
-            <path d="M 0 0 L 6 3 L 0 6 z" fill={thisAnnotationColor}></path>
-          </marker>
-        </defs>
-        <path
-          d="M {(annotationSide === 'left' ? 0 : markerRadius * 2) +
-            xPos} {annotationLines.height - 2}
-    h {hDelta} v 15"
-          fill="none"
-          stroke={thisAnnotationColor}
-          stroke-width="1.2"
-          marker-end="url(#arrow-down)"
-          opacity={dimmedOpacity}
-        ></path>
-      </svg>
+          ></path>
+        </svg>
+      </div>
     </div>
   {/each}
 {/if}

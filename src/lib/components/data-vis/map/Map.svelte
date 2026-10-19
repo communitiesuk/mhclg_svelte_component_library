@@ -14,7 +14,6 @@
   import { contrastingColor } from "./colors.js";
   import { colorbrewer } from "./colorbrewer.js";
   import { hoverStateFilter } from "svelte-maplibre/filters.js";
-  import type { LngLatLike, LngLatBoundsLike } from "maplibre-gl";
   import type { FeatureCollection } from "geojson";
   import fullTopo from "./fullTopo.json";
   import * as topojson from "topojson-client";
@@ -26,15 +25,21 @@
     quantileBreaks,
     computeBounds,
     createPaintObjectFromMetric,
-    extractVectorMetricValues,
   } from "./mapUtils.js";
   import NonStandardControls from "./NonStandardControls.svelte";
   import { replaceState } from "$app/navigation";
   import { page } from "$app/state";
   import { joinData } from "./dataJoin.js";
 
-  import maplibre from "maplibre-gl";
-  const { LngLatBounds } = maplibre;
+  import * as maplibregl from "maplibre-gl";
+  import type {
+    LngLatLike,
+    LngLatBoundsLike,
+    MapMoveEvent,
+    StyleLoadEvent,
+  } from "maplibre-gl";
+
+  const { LngLatBounds } = maplibregl;
 
   let {
     data,
@@ -117,6 +122,7 @@
     clickedArea = $bindable([]),
     areaToColorLookup,
     hoveredArea = $bindable(),
+
   }: {
     data?: object[];
     countries?: string[];
@@ -198,6 +204,7 @@
     clickedArea?: [];
     areaToColorLookup?: object;
     hoveredArea?: string;
+
   } = $props();
 
   // ISO-3166/ONS-style prefixes for area codes

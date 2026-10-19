@@ -1,6 +1,8 @@
 <script module>
   import BaseNameAndStatus from "$lib/package-wrapping/BaseNameAndStatus.svelte";
   import BaseInformation from "$lib/package-wrapping/BaseInformation.svelte";
+
+
   export { WrapperNameAndStatus, WrapperInformation };
 
   /**
@@ -75,6 +77,9 @@
 
 <script>
   //@ts-nocheck
+  import * as maplibregl from "maplibre-gl";
+  import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+
   import { page } from "$app/state";
   import { browser } from "$app/environment";
 
@@ -92,6 +97,7 @@
   import { defaultScreenWidthBreakpoints } from "$lib/config.js";
 
   import Map from "$lib/components/data-vis/map/Map.svelte";
+  maplibregl.setWorkerUrl(maplibreWorkerUrl);
 
   let { data } = $props();
   $inspect(data.dataInFormatForMap);

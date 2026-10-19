@@ -6,12 +6,14 @@
     linkText = "give your feedback by email",
     linkHref = "#",
     bottomBorder = true,
+    openInNewTab = false,
   } = $props<{
     tagText?: string;
     bannerText?: string;
     linkText?: string;
     linkHref?: string;
     bottomBorder?: boolean;
+    openInNewTab?: boolean;
   }>();
 </script>
 
@@ -28,8 +30,8 @@
       {bannerText}<a
         class="govuk-link"
         href={linkHref}
-        rel={openInNewTab ?? "noreferrer noopener"}
-        target={openInNewTab ?? "_blank"}>{linkText}</a
+        rel={openInNewTab ? "noreferrer noopener" : undefined}
+        target={openInNewTab ? "_blank" : undefined}>{linkText}</a
       >.
     </span>
   </p>

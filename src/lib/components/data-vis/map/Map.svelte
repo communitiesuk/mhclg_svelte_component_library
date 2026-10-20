@@ -32,6 +32,7 @@
   import { joinData } from "./dataJoin.js";
 
   import * as maplibregl from "maplibre-gl";
+  import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
   import type {
     LngLatLike,
     LngLatBoundsLike,
@@ -122,7 +123,6 @@
     clickedArea = $bindable([]),
     areaToColorLookup,
     hoveredArea = $bindable(),
-
   }: {
     data?: object[];
     countries?: string[];
@@ -204,8 +204,9 @@
     clickedArea?: [];
     areaToColorLookup?: object;
     hoveredArea?: string;
-
   } = $props();
+
+  maplibregl.setWorkerUrl(maplibreWorkerUrl);
 
   // ISO-3166/ONS-style prefixes for area codes
   const areaCodePrefixes: Record<string, string[]> = {

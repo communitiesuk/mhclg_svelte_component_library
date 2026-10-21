@@ -25,7 +25,7 @@ It should only show the GOV.UK logo and any GOV.UK-wide links and tools to help 
     <div class="govuk-header__logo">
       <a
         href={homepageUrl}
-        class="govuk-header__link govuk-header__link--homepage"
+        class="govuk-header__homepage-link govuk-header__link--homepage"
       >
         {#if rebrand}
           <!-- New rebranded GOV.UK logo with integrated crown -->

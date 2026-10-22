@@ -1,6 +1,7 @@
 <script module>
   import BaseNameAndStatus from "$lib/package-wrapping/BaseNameAndStatus.svelte";
   import BaseInformation from "$lib/package-wrapping/BaseInformation.svelte";
+
   export { WrapperNameAndStatus, WrapperInformation };
 
   /**
@@ -75,6 +76,7 @@
 
 <script>
   //@ts-nocheck
+
   import { page } from "$app/state";
   import { browser } from "$app/environment";
 

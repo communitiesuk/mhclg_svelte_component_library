@@ -15,7 +15,7 @@
     label = undefined,
     showAxis = true,
     showArrows = false,
-    arrowTextSize = "s",
+    arrowTextSize = "16px",
     showAverage = false,
     chartWidth = $bindable(500), // the 'chart' is the bar and the marker
     chartHeight = 24,

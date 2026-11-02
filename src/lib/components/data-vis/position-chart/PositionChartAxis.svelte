@@ -1,8 +1,8 @@
 <script>
-  let { textSize = "s", axisLabels = ["Left", "Right"] } = $props();
+  let { textSize = "16px", axisLabels = ["Left", "Right"] } = $props();
 </script>
 
-<div class="axis govuk-body-{textSize}">
+<div class="axis">
   <div class="left-label">
     <div class="arrow-container">
       <svg
@@ -21,10 +21,14 @@
         ></path>
       </svg>
     </div>
-    <span class="axis-text">{axisLabels[0]}</span>
+    <span class="axis-text" style="--axis-text-size: {textSize};"
+      >{axisLabels[0]}</span
+    >
   </div>
   <div class="right-label">
-    <span class="axis-text">{axisLabels[1]}</span>
+    <span class="axis-text" style="--axis-text-size: {textSize};"
+      >{axisLabels[1]}</span
+    >
     <div class="arrow-container">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -72,6 +76,7 @@
     line-height: 0.9;
     color: #666666;
     font-style: italic;
+    font-size: var(--axis-text-size);
   }
 
   .arrow-container {

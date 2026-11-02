@@ -21,11 +21,13 @@
         ></path>
       </svg>
     </div>
-    <span class="axis-text" style="font-size: {textSize};">{axisLabels[0]}</span
+    <span class="axis-text" style="--axis-text-size: {textSize};"
+      >{axisLabels[0]}</span
     >
   </div>
   <div class="right-label">
-    <span class="axis-text" style="font-size: {textSize};">{axisLabels[1]}</span
+    <span class="axis-text" style="--axis-text-size: {textSize};"
+      >{axisLabels[1]}</span
     >
     <div class="arrow-container">
       <svg
@@ -74,6 +76,7 @@
     line-height: 0.9;
     color: #666666;
     font-style: italic;
+    font-size: var(--axis-text-size);
   }
 
   .arrow-container {

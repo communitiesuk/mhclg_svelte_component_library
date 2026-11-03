@@ -103,7 +103,6 @@ Make sure you are on your main development branch you want to release (e.g., `ma
 
 Use the `npm version` command to update `package.json` and `package-lock.json`, create a commit, and create an annotated Git tag. Choose **one** of the following based on [Semantic Versioning (SemVer)](https://semver.org/):
 
-
 - **Pre-Release:**
 
   ```bash
@@ -153,6 +152,10 @@ git push && git push --tags
 5. Add a release title and description
 6. Click "Publish release"
 
+## 5. Get access token from npm and copy into github
+
+See [EDDIP docs](https://github.com/communitiesuk/eddip-documents/wiki/How-to-get-npm-access-token) for instructions on how to do this.
+
 ## 5. Automatic Publishing
 
 Once you create the GitHub release, If you now go to the "Actions" tab in the repo's horizontal nav bar, you'll see the publish workflow being triggered. The GitHub Actions workflow (`.github/workflows/npm-publish.yml`) will automatically:
@@ -166,9 +169,17 @@ Once you create the GitHub release, If you now go to the "Actions" tab in the re
 After the GitHub Action completes, verify that your package was published successfully:
 
 1. Check the [npm package page](https://www.npmjs.com/package/@communitiesuk/svelte-component-library)
-2. Try installing the new version in a test project:
+2. Try installing the new version in a test project. First clear your cache with
+   ```bash
+   npm cache clean --force
+   ```
+   Then:
    ```bash
    npm install @communitiesuk/svelte-component-library@latest
+   ```
+   or for a pre-release version:
+   ```bash
+   npm install @communitiesuk/svelte-component-library@pre-release
    ```
 
 ## Notes

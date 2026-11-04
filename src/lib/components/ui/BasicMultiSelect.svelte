@@ -16,6 +16,8 @@
     enableColors = true,
     startsWithSearch = true,
     resetButton = false,
+    dropdownOverlay = false,
+          closeOnSelect = false,
   }: {
     options?: Option[];
     selected?: (string | number)[];
@@ -26,6 +28,8 @@
     enableColors?: boolean;
     startsWithSearch?: boolean;
     resetButton?: boolean;
+    dropdownOverlay?: boolean;
+    closeOnSelect?: boolean;
   } = $props();
 
   let showDropdown = $state(false);
@@ -130,6 +134,9 @@
     }
     selected = [...selected, option.id];
     search = "";
+    if (closeOnSelect){
+      showDropdown = false
+    }
   }
 
   function remove(id: string | number) {
@@ -170,7 +177,11 @@
   }
 </script>
 
-<div class="gem-c-select-with-search" bind:this={container}>
+<div
+        class="gem-c-select-with-search"
+        class:dropdown-overlay={dropdownOverlay}
+        bind:this={container}
+>
   <label class="govuk-label" for="ms-input">{label}</label>
   {#if hint}
     <div class="govuk-hint">{hint}</div>
@@ -409,7 +420,6 @@
     flex-wrap: wrap;
     align-items: flex-start;
     gap: 4px 10px;
-    width: 100%;
 
     border-top: 1px solid var(--govuk-grey);
     margin: 0 5px;
@@ -456,10 +466,9 @@
   }
 
   :global(.gem-c-select-with-search)
-    .choices[data-type*="select-multiple"]
-    .choices__button {
+  .choices[data-type*="select-multiple"]
+  .choices__button {
     width: 32px;
-    padding: 0;
 
     display: inline-flex;
     align-items: center;
@@ -477,29 +486,25 @@
     opacity: 0.85;
     cursor: pointer;
     transition:
-      background-color 120ms ease,
-      opacity 120ms ease;
+            background-color 120ms ease,
+            opacity 120ms ease;
 
     align-self: stretch;
     height: auto;
     min-height: 100%;
     padding: 0 10px;
-    border-left: 1px solid var(--govuk-grey);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
   }
 
   :global(.gem-c-select-with-search)
-    .choices[data-type*="select-multiple"]
-    .choices__button:hover {
+  .choices[data-type*="select-multiple"]
+  .choices__button:hover {
     background-color: #e0e0e0;
     opacity: 1;
   }
 
   :global(.gem-c-select-with-search)
-    .choices[data-type*="select-multiple"]
-    .choices__button:focus {
+  .choices[data-type*="select-multiple"]
+  .choices__button:focus {
     outline: 3px solid var(--govuk-focus);
     outline-offset: 0;
     opacity: 1;
@@ -538,26 +543,61 @@
     justify-content: center;
   }
 
+  /* ========================================
+     DROPDOWN
+  ======================================== */
+
+  /*
+   * Default behaviour.
+   * Dropdown remains in the normal page flow.
+   */
   :global(.gem-c-select-with-search) .choices__list--dropdown {
     position: static !important;
     inset: auto !important;
     transform: none !important;
 
     display: block !important;
-    width: 100%;
     box-sizing: border-box;
 
-    margin-top: 0;
+    width: calc(100% - var(--addon-width));
+    margin: 0 1px !important;
+    padding: 0;
+
     border: 2px solid var(--govuk-black);
     border-top: none;
     background: white;
 
     max-height: 300px;
     overflow-y: auto;
+    scrollbar-width: thin;
+
     z-index: auto;
-    width: calc(100% - var(--addon-width));
-    margin-left: 0;
   }
+
+  /*
+   * Overlay behaviour.
+   *
+   * When dropdownOverlay=true, the dropdown is taken out
+   * of normal document flow so it does not push the
+   * surrounding content down.
+   */
+  :global(.gem-c-select-with-search.dropdown-overlay) {
+    position: relative;
+    z-index: 1000;
+  }
+
+  :global(.gem-c-select-with-search.dropdown-overlay)
+  .choices__list--dropdown {
+    position: absolute !important;
+    left: 0;
+    inset: auto auto auto 0 !important;
+    transform: none !important;
+    z-index: 1001;
+  }
+
+  /* ========================================
+     DROPDOWN ITEMS
+  ======================================== */
 
   :global(.gem-c-select-with-search) .choices__list--dropdown .choices__item {
     display: flex;
@@ -573,8 +613,8 @@
   }
 
   :global(.gem-c-select-with-search)
-    .choices__list--dropdown
-    .choices__item::after {
+  .choices__list--dropdown
+  .choices__item::after {
     content: "";
     position: absolute;
     left: 15px;
@@ -590,31 +630,31 @@
     cursor: pointer;
   }
 
-  :global(.gem-c-select-with-search) .choices__list--dropdown {
-    display: block !important;
-  }
+  /* ========================================
+     OPEN / FOCUSED STATE
+  ======================================== */
 
   :global(.gem-c-select-with-search)
-    .choices.is-open
-    .choices__box
-    .choices__inner,
+  .choices.is-open
+  .choices__box
+  .choices__inner,
   :global(.gem-c-select-with-search)
-    .choices.is-focused
-    .choices__box
-    .choices__inner {
+  .choices.is-focused
+  .choices__box
+  .choices__inner {
     border-bottom: 0;
     box-shadow: none;
     margin-bottom: 0 !important;
   }
 
   :global(.gem-c-select-with-search)
-    .choices.is-open
-    .choices__box:has(.choices__list--multiple)
-    .choices__inner,
+  .choices.is-open
+  .choices__box:has(.choices__list--multiple)
+  .choices__inner,
   :global(.gem-c-select-with-search)
-    .choices.is-focused
-    .choices__box:has(.choices__list--multiple)
-    .choices__inner {
+  .choices.is-focused
+  .choices__box:has(.choices__list--multiple)
+  .choices__inner {
     border-bottom: 0;
     padding-bottom: 0;
   }
@@ -631,15 +671,18 @@
   }
 
   :global(.gem-c-select-with-search)
-    .choices[data-type*="select-multiple"]
-    .choices__button:focus {
+  .choices[data-type*="select-multiple"]
+  .choices__button:focus {
     outline: none;
     box-shadow: inset 0 0 0 3px var(--govuk-black);
   }
 
+  /* ========================================
+     ACTIONS
+  ======================================== */
+
   .choices__actions {
     display: block;
-    width: 100%;
     box-sizing: border-box;
 
     margin: 0 5px;
@@ -671,11 +714,6 @@
     text-decoration: none;
   }
 
-  :global(.gem-c-select-with-search) .choices__list--dropdown {
-    margin: 0px 1px !important;
-    padding: 0;
-  }
-
   .choices__reset {
     background: transparent;
     border: 0;
@@ -700,22 +738,22 @@
     text-decoration: none;
   }
 
-  :global(.gem-c-select-with-search) .choices__list--dropdown {
-    scrollbar-width: thin;
+  .choices__actions:empty {
+    display: none;
   }
 
+  /* ========================================
+     SCROLLBAR
+  ======================================== */
+
   :global(.gem-c-select-with-search)
-    .choices__list--dropdown::-webkit-scrollbar {
+  .choices__list--dropdown::-webkit-scrollbar {
     width: 10px;
   }
 
   :global(.gem-c-select-with-search)
-    .choices__list--dropdown::-webkit-scrollbar-thumb {
+  .choices__list--dropdown::-webkit-scrollbar-thumb {
     background-color: var(--govuk-grey);
     border-radius: 0;
-  }
-
-  .choices__actions:empty {
-    display: none;
   }
 </style>

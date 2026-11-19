@@ -106,7 +106,7 @@ Use the `npm version` command to update `package.json` and `package-lock.json`, 
 - **Pre-Release:**
 
   ```bash
-  npm version prerelease --preid=alpha
+  npm version prerelease --preid=pre-release
   ```
 
 - **Patch Release (Bug fixes, tiny changes - e.g., 1.0.0 → 1.0.1):**
@@ -152,17 +152,14 @@ git push && git push --tags
 5. Add a release title and description
 6. Click "Publish release"
 
-## 5. Get access token from npm and copy into github
-
-See [EDDIP docs](https://github.com/communitiesuk/eddip-documents/wiki/How-to-get-npm-access-token) for instructions on how to do this.
-
 ## 5. Automatic Publishing
 
-Once you create the GitHub release, If you now go to the "Actions" tab in the repo's horizontal nav bar, you'll see the publish workflow being triggered. The GitHub Actions workflow (`.github/workflows/npm-publish.yml`) will automatically:
+Once you create the GitHub release, If you now go to the "Actions" tab in the repo's horizontal nav bar, you'll see the publish workflow being triggered. The GitHub Actions workflow (`.github/workflows/npm-publish-trusted.yml`) will automatically:
 
 - Build the package
-- Publish it to npm public registry
-- Make it available for installation via `npm install @communitiesuk/svelte-component-library`
+- Stage it in the npm public registry
+
+You'll need to verify the release on npm.js. 
 
 ## 6. Verify the Release
 

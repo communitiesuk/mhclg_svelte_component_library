@@ -106,7 +106,7 @@ Use the `npm version` command to update `package.json` and `package-lock.json`, 
 - **Pre-Release:**
 
   ```bash
-  npm version prerelease --preid=pre-release
+  npm version prerelease --preid=beta
   ```
 
 - **Patch Release (Bug fixes, tiny changes - e.g., 1.0.0 → 1.0.1):**
